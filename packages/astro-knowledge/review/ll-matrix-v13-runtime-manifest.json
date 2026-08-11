@@ -34,10 +34,11 @@
   },
   "uniqueServingContentKeys": 301,
   "fallbackSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-  "precedence": "V13 rows append after earlier LL rows; the existing latest-eligible resolver rule makes the exact V13 key canonical.",
+  "precedence": "V13 rows replace earlier same-contentKey LL rows; one canonical row remains for every contentKey.",
   "invariants": {
     "existingApprovedRowsChanged": 0,
-    "existingApprovedRowsSha256": "2a3582a520163bfebad1b2f74f0fff2beade8ef987e184f6d8af52ff8ab721e0",
+    "existingApprovedRowsSha256": "e9398583a4a95f3147726c006016af4d3241d07fb2b8fc581077e9748cfe65c8",
+    "sameKeyRepairRecord": "packages/astro-knowledge/review/v13-duplicate-contentkey-repair-2026-08-11.json",
     "sourceExportSha256": "a85593bdfb90b136054768bfa9c3c4dbaabe5aee103f2ba371f2d42161c1cd03",
     "approvedPayloadSha256": "6004f25177da5aec8412223fbdaa229a5aba03fccaee02605fbdcacece212904"
   },

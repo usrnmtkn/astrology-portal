@@ -1,0 +1,2403 @@
+{
+  "schemaVersion": 1,
+  "record": "v13-duplicate-contentkey-repair-2026-08-11",
+  "baseCommit": "1a749f1d6c3f8c3baed7ea7fa51ea5da6764dddd",
+  "source": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+  "lockedAuthority": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
+  "ownerRuling": "Owner ruling 2026-08-11: For fallback-hook/natal-aspect-lived/moon/opposition/ascendant, keep the V13 copy ending \"…somebody else's mood keeps deciding the whole day.\" For fallback-hook/placement-sign-lived/mars/cancer, keep the V13 copy ending \"The anger builds when you cannot address it directly.\" For all 108 duplicated contentKeys, the V13 row supersedes the earlier row per the documented V13 precedence.",
+  "rootCause": "Commit 77f2602e appended V13 rows instead of replacing earlier same-key rows.",
+  "counts": {
+    "duplicateKeysBefore": 108,
+    "supersededRowsRemoved": 108,
+    "duplicateKeysAfter": 0,
+    "v13RowsRetained": 301,
+    "copyIdenticalDuplicates": 106,
+    "ownerRuledCopyConflicts": 2
+  },
+  "invariants": {
+    "sourceBeforeSha256": "46c261216926532f694ca861d0fdf041fe91d23c4d136c8529a6c12cb3c61409",
+    "sourceAfterSha256": "e7929e6314c152adb91fd17afe5d4b6ace596adaed16f81037f46a60250ec83f",
+    "nonRemovedApprovedRowsBeforeSha256": "250c7b9b6b045eb98bcf5f78e3c4e036a6f9deac8c01f3dba577edc735c246f3",
+    "approvedRowsAfterSha256": "250c7b9b6b045eb98bcf5f78e3c4e036a6f9deac8c01f3dba577edc735c246f3",
+    "otherApprovedRowsChanged": 0,
+    "v13RowsRetainedByteIdentical": true
+  },
+  "entries": [
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/ascendant",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "9aa9ac4ffa721ae23748db4c33b05537570c09b88873e9104d7578bdb5e28f6f",
+        "copy": {
+          "body": "Jupiter inconjunct the Ascendant can turn a simple shared plan into a small fight over who gets to decide. You volunteer to organize the day, then feel yourself tighten when someone changes the route, the timing, or the restaurant. You are happy to help. It is harder when helping means the plan no longer goes the way you pictured it.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "83d9cc24841faf07c632660216749ea72f771a25c4b67aeacaf733bee60c3709",
+        "copy": {
+          "body": "Jupiter inconjunct the Ascendant can turn a simple shared plan into a small fight over who gets to decide. You volunteer to organize the day, then feel yourself tighten when someone changes the route, the timing, or the restaurant. You are happy to help. It is harder when helping means the plan no longer goes the way you pictured it.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/midheaven",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "5e27f79804676de22919bdacabf62720f4f41ca182d3c4d10a64acb5b5587782",
+        "copy": {
+          "body": "Jupiter inconjunct the Midheaven can make the better title look less impressive once you see the life attached to it. The salary goes up, but so do the hours. The role carries more status, but the travel or free time disappears. You may still want the opportunity and decide that you do not want the schedule that comes with it.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "962268f1a2b00c0527a677b65b3a2a29282f0b9dc79a5f77332b7029aeadf7f5",
+        "copy": {
+          "body": "Jupiter inconjunct the Midheaven can make the better title look less impressive once you see the life attached to it. The salary goes up, but so do the hours. The role carries more status, but the travel or free time disappears. You may still want the opportunity and decide that you do not want the schedule that comes with it.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/north-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "4976a55d35b7f17a3a22ff6fe4033b66ff6cc37e4a43b6fdf29c327efb1d96a5",
+        "copy": {
+          "body": "Jupiter inconjunct the North Node can make you lose respect for a teacher the minute you see them struggling with the same lesson they teach. Maybe their advice is useful and their own life is still messy. Both can be true. An imperfect example does not automatically make the useful part of what they know worthless.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "fb59193034707602b69cd84bbaf8bd91469bcc03c0b1e024f4b40a532ce45977",
+        "copy": {
+          "body": "Jupiter inconjunct the North Node can make you lose respect for a teacher the minute you see them struggling with the same lesson they teach. Maybe their advice is useful and their own life is still messy. Both can be true. An imperfect example does not automatically make the useful part of what they know worthless.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/pluto",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "c47f8008ee543548672a2898d1080397896f1a138bb0b902226f76d61994f960",
+        "copy": {
+          "body": "With Jupiter inconjunct Pluto, you can walk into a meeting already knowing which argument will win people over. Support, funding, permission, or agreement may come quickly because you know how to frame the plan. The problem shows up when nobody has much room to question it and every conversation somehow lands at the result you wanted from the beginning.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "63013d389d7cc53ce33a0727e9e807dbd5dd4408b5c5d265b6ccd5a8cc21ed14",
+        "copy": {
+          "body": "With Jupiter inconjunct Pluto, you can walk into a meeting already knowing which argument will win people over. Support, funding, permission, or agreement may come quickly because you know how to frame the plan. The problem shows up when nobody has much room to question it and every conversation somehow lands at the result you wanted from the beginning.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/saturn",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "91351dfbecd35b2cb8ffed76515140c6bf01f5aa0526b8cec07c1b536e26025a",
+        "copy": {
+          "body": "Jupiter inconjunct Saturn can spend Monday booking the trip, pitching the bigger idea, or wanting more room, then spend Tuesday making a stricter budget or a tighter schedule. Too much structure feels suffocating. Too much freedom starts to feel irresponsible. Changing the calendar helps for a while, but both needs keep returning.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "ccbcb13c49d5414e1578535d6d9826e2ffd40ba2d4913e45d764d3b61fda7d15",
+        "copy": {
+          "body": "Jupiter inconjunct Saturn can spend Monday booking the trip, pitching the bigger idea, or wanting more room, then spend Tuesday making a stricter budget or a tighter schedule. Too much structure feels suffocating. Too much freedom starts to feel irresponsible. Changing the calendar helps for a while, but both needs keep returning.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "acb07b00895295ab0566730bd4e06cf4017462d749a39bdb847a6ae4cb81b6f7",
+        "copy": {
+          "body": "Jupiter inconjunct the South Node can make a belief you have relied on for years stop explaining what keeps happening. You repeat the same reason, defend the same rule, and then another experience does not fit it. Eventually it takes more work to protect the old explanation than to admit your mind has changed.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "3862cd49191ed62a480ad2ed681fc7f35dfe710b263d926e7698ee1c6308c06c",
+        "copy": {
+          "body": "Jupiter inconjunct the South Node can make a belief you have relied on for years stop explaining what keeps happening. You repeat the same reason, defend the same rule, and then another experience does not fit it. Eventually it takes more work to protect the old explanation than to admit your mind has changed.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/uranus",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "79471797f35da2a1b3d4d94ad350564a6e92921c219056a9310d77588204eb0e",
+        "copy": {
+          "body": "Jupiter inconjunct Uranus can make a group project feel great until the third meeting needs another round of approval. You start wishing you could do it alone. Then you get the freedom you wanted and miss having someone to exchange ideas with. Too much collaboration feels restrictive. Too much independence gets lonely.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "30a5bd9a1e1a30a69e4404a727e745bb4043119dc2d135d151fd2259f2971432",
+        "copy": {
+          "body": "Jupiter inconjunct Uranus can make a group project feel great until the third meeting needs another round of approval. You start wishing you could do it alone. Then you get the freedom you wanted and miss having someone to exchange ideas with. Too much collaboration feels restrictive. Too much independence gets lonely.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/sextile/part-of-fortune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "caa30056da81a18ab165d7ee43531c8fadaf58dcf2fd8ca9428aec6a1497d0b9",
+        "copy": {
+          "body": "Jupiter sextile the Part of Fortune can make the useful part of a disappointment easier to notice. The plan falls through, but you meet someone you would not have met, find the place you end up loving, or finally ask the question you had been avoiding. The experience can still be disappointing and leave something valuable behind.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "7d031d725f4675a3e33a150594d0553d697d96edc6b366229a1aefc5f16f213b",
+        "copy": {
+          "body": "Jupiter sextile the Part of Fortune can make the useful part of a disappointment easier to notice. The plan falls through, but you meet someone you would not have met, find the place you end up loving, or finally ask the question you had been avoiding. The experience can still be disappointing and leave something valuable behind.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/sextile/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "fec9ccac90309b95086a1b79cfffc82e07fd80001fcb8d3bda930a9cc526349b",
+        "copy": {
+          "body": "Jupiter sextile the South Node can make a familiar problem easier to recognize before frustration takes over. The same kind of situation comes back and you remember exactly how the last version went. That memory gives you a little more perspective this time, so the repeat does not have to feel like meaningless bad luck.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "08b562a61d51905d1ad52d6cfe96d8101b7c9911319268a522ee46db4dbd6756",
+        "copy": {
+          "body": "Jupiter sextile the South Node can make a familiar problem easier to recognize before frustration takes over. The same kind of situation comes back and you remember exactly how the last version went. That memory gives you a little more perspective this time, so the repeat does not have to feel like meaningless bad luck.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/opposition/saturn",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "8f79e8e7ccbdcb03c6f0554fd6a0b5edbc112a680d92c590a6fa5e984bc4f3aa",
+        "copy": {
+          "body": "Mars opposite Saturn can make a week of responsibilities feel like proof that your personal life never gets a turn. You do the work, keep the promise, say you are fine, and then snap at someone over a small request. The anger is often less about that moment than about how long duty has been taking up all the available space.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "337e5068a3ee6bf611361655f45220c4d7c1fee4e8f970248c1e251261bba18e",
+        "copy": {
+          "body": "Mars opposite Saturn can make a week of responsibilities feel like proof that your personal life never gets a turn. You do the work, keep the promise, say you are fine, and then snap at someone over a small request. The anger is often less about that moment than about how long duty has been taking up all the available space.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/ascendant",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "41da975fefe642cd7d1933223edea8fe5f419636014868c9ee3808088ffef5b1",
+        "copy": {
+          "body": "Mars inconjunct the Ascendant can make a shared project feel slower than simply doing it yourself. You know how you would handle the job, but now you have to explain the plan, wait for an answer, or change part of it because somebody else is involved. The irritation starts when every adjustment feels like interference.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "37620bdf9dd68521c003c2f84b933a5100694bd6361ab39301f9d30230e530bb",
+        "copy": {
+          "body": "Mars inconjunct the Ascendant can make a shared project feel slower than simply doing it yourself. You know how you would handle the job, but now you have to explain the plan, wait for an answer, or change part of it because somebody else is involved. The irritation starts when every adjustment feels like interference.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/jupiter",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "7f92c91ab98fa2c8cf83a983f6a365766bf14b5f9bfe78ba0a8cd9d58e86c3cc",
+        "copy": {
+          "body": "Mars inconjunct Jupiter can say yes before you check the distance, the price, or how tired you already are. The hike looks manageable, the extra project sounds exciting, or one more round feels harmless because moving feels better than waiting. The problem usually becomes obvious later, when your body, budget, or schedule has to absorb the decision.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "fa0b5098299e8174743464ff5d6755743b118beb74e78aafb9aeabff94165ed0",
+        "copy": {
+          "body": "Mars inconjunct Jupiter can say yes before you check the distance, the price, or how tired you already are. The hike looks manageable, the extra project sounds exciting, or one more round feels harmless because moving feels better than waiting. The problem usually becomes obvious later, when your body, budget, or schedule has to absorb the decision.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/midheaven",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "362f7683c9d3f6374f22c12afc8c0df909bd3c9aad0155091c931e94543e221d",
+        "copy": {
+          "body": "Mars inconjunct the Midheaven can make the first slow stretch of a career feel like proof that nothing is happening. You want the promotion, the bigger role, or the visible result, and the middle steps feel painfully ordinary. That is often when quitting or looking elsewhere starts to sound better than staying long enough to build something.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "a0dfcb67dc901df6ecf94c487192ad2d0766e571a8b38e1794782795a02fa8fe",
+        "copy": {
+          "body": "Mars inconjunct the Midheaven can make the first slow stretch of a career feel like proof that nothing is happening. You want the promotion, the bigger role, or the visible result, and the middle steps feel painfully ordinary. That is often when quitting or looking elsewhere starts to sound better than staying long enough to build something.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/north-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "e65ffca0c4d3aef97657d441f0ff4f7db26044126695fb4c8d295dc820f53c46",
+        "copy": {
+          "body": "Mars inconjunct the North Node can make it hard to take advice from someone who still loses their temper, chases the wrong desire, or struggles with self-control themselves. The contradiction is easy to see. It does not mean they understand nothing about the problem. Someone can know where the trap is and still step in it sometimes.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "a76e3cbd58ef9ee070dca6e4ef190d56344a48b556dc8f58948e779f1e30d088",
+        "copy": {
+          "body": "Mars inconjunct the North Node can make it hard to take advice from someone who still loses their temper, chases the wrong desire, or struggles with self-control themselves. The contradiction is easy to see. It does not mean they understand nothing about the problem. Someone can know where the trap is and still step in it sometimes.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/pluto",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "31449f4b86503c8b3bbe1e3dacf06f88fca501f9a027997c55d1144bc2c4982d",
+        "copy": {
+          "body": "Mars inconjunct Pluto can walk into a shared project with the method already decided. Someone suggests a different approach and you are rejecting it before they finish the sentence. You may genuinely want the best result. Cooperation becomes impossible when the only acceptable result is the one reached your way.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "2f6a7bac13be9ac7db5f2601e341117f664bc8898ad35201c23380fcf746d5a0",
+        "copy": {
+          "body": "Mars inconjunct Pluto can walk into a shared project with the method already decided. Someone suggests a different approach and you are rejecting it before they finish the sentence. You may genuinely want the best result. Cooperation becomes impossible when the only acceptable result is the one reached your way.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/saturn",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "d422371e5f8f0e30924835255f47c98eb8cd9c3616f1ffb95eb4ccf91655a1c5",
+        "copy": {
+          "body": "Mars inconjunct Saturn can spend the whole week doing what has to be done and then make everybody else's fun annoying. You finish the deadline, handle the caregiving, answer the messages, and look up to realize the day is gone. Resentment usually arrives before you admit how little time is left for anything you actually wanted.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "b9670591bf477bec912c9d6596581c1177528e0a93499e0e9adbaaa40ba272a5",
+        "copy": {
+          "body": "Mars inconjunct Saturn can spend the whole week doing what has to be done and then make everybody else's fun annoying. You finish the deadline, handle the caregiving, answer the messages, and look up to realize the day is gone. Resentment usually arrives before you admit how little time is left for anything you actually wanted.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "b226d47f8e482f3fb7ff5f69a5324271ffac07acb59475daa5d2bb4f37e5f8a1",
+        "copy": {
+          "body": "Mars inconjunct the South Node can make you chase a new version of an old want and end up in a familiar problem. The job is different, the person is different, or the plan has a new name, but the frustration feels exactly the same. At some point the question is not only why the obstacle keeps returning. It is why this particular desire keeps leading you back there.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "9411bb0f8da63dcc227fc6cc28e98fbee281b3517ef4acdcdf546df0453da1e9",
+        "copy": {
+          "body": "Mars inconjunct the South Node can make you chase a new version of an old want and end up in a familiar problem. The job is different, the person is different, or the plan has a new name, but the frustration feels exactly the same. At some point the question is not only why the obstacle keeps returning. It is why this particular desire keeps leading you back there.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/uranus",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "d79631bbd563bdb7bc7606e1a69935718b80e85c11787a371f347302ff206918",
+        "copy": {
+          "body": "Mars inconjunct Uranus can make a small delay feel unbearable. Traffic stops, a machine jams, or somebody moves more slowly than you want, and suddenly forcing the next step feels reasonable. Anger makes speed look useful at exactly the moment it is easiest to break something, get hurt, or turn a delay into a bigger problem.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "bbbc7637b0e7f8b883c24341ae7c6ecbf927c3723542350729ac8782271f2af5",
+        "copy": {
+          "body": "Mars inconjunct Uranus can make a small delay feel unbearable. Traffic stops, a machine jams, or somebody moves more slowly than you want, and suddenly forcing the next step feels reasonable. Anger makes speed look useful at exactly the moment it is easiest to break something, get hurt, or turn a delay into a bigger problem.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/sextile/jupiter",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "8efb598946dc3b219f96b0d83b96308d046635388fd3a2819aaf663a7d3328c8",
+        "copy": {
+          "body": "The part of the project you expected to drag takes half the time. You have enough energy left for the presentation, the workout, or the errand you thought would have to wait until tomorrow. Mars sextile Jupiter can make effort go further, so a difficult job feels satisfying instead of draining.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "5ed8fe047850643b85ba648088d9d637cd586a36f4b767d7abc984ef9e72c019",
+        "copy": {
+          "body": "The part of the project you expected to drag takes half the time. You have enough energy left for the presentation, the workout, or the errand you thought would have to wait until tomorrow. Mars sextile Jupiter can make effort go further, so a difficult job feels satisfying instead of draining.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/sextile/part-of-fortune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "67fd7ba0aa00acda3414fdc70b96a5a22aa9e630c104e89dd339d877da40b136",
+        "copy": {
+          "body": "Mars sextile the Part of Fortune can give you a second before an old desire turns into another commitment. You are about to send the message, take the bait, or say yes to the pursuit you already know well, and you remember what usually happens next. The want is still there. This time you notice it before you are already chasing it.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "6b741e2c17e48dc530bc2eda4c5ff9f2b9039bcf304fafa1c7ce5bf940dc8e6c",
+        "copy": {
+          "body": "Mars sextile the Part of Fortune can give you a second before an old desire turns into another commitment. You are about to send the message, take the bait, or say yes to the pursuit you already know well, and you remember what usually happens next. The want is still there. This time you notice it before you are already chasing it.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/sextile/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "73d4dc918cc54000985923f281870acfa0f61910d3d7167bd8c99788f8369038",
+        "copy": {
+          "body": "Mars sextile the South Node can make the familiar pursuit obvious as soon as it shows up. The same kind of offer, challenge, or temptation appears and you already know the route it tends to take. You still feel the pull, but you are not halfway through the repeat before recognizing it.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "182341505c8b558afbea2708231567bf36d06e584166d2e1b74e31c49b84534b",
+        "copy": {
+          "body": "Mars sextile the South Node can make the familiar pursuit obvious as soon as it shows up. The same kind of offer, challenge, or temptation appears and you already know the route it tends to take. You still feel the pull, but you are not halfway through the repeat before recognizing it.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/opposition/midheaven",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "d505fef714fd13221a0e85be40ce565eaf2fa25c33a3d16a54fe9906f7be5e14",
+        "copy": {
+          "body": "Mercury opposite the Midheaven can make one coworker's comment follow you home. By dinner, a rumor or criticism has started sounding louder than the career plan you were confident about that morning. Gossip gains power when people who do not have to live with your decision start deciding how you feel about it.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "bc2a303c7f8641a14739081ad6dd22c3362046d5f2c154d2acc3ca2bbbf63b52",
+        "copy": {
+          "body": "Mercury opposite the Midheaven can make one coworker's comment follow you home. By dinner, a rumor or criticism has started sounding louder than the career plan you were confident about that morning. Gossip gains power when people who do not have to live with your decision start deciding how you feel about it.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/ascendant",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "d815b86e0d2168da6c7882cf88e28d1fe51a9cedd78346fa1b3ab9166fb297f1",
+        "copy": {
+          "body": "Mercury inconjunct the Ascendant can turn a simple text into a paragraph nobody asked for. You type the answer, reread it, add context so you do not sound rude, then add one more sentence so nobody can misunderstand you. By the time you hit send, the clear point is buried under the explanation.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "7d3bfe26f1ae19817660d69e2affada79e297558de15619323ef7f5a9d4d9fb1",
+        "copy": {
+          "body": "Mercury inconjunct the Ascendant can turn a simple text into a paragraph nobody asked for. You type the answer, reread it, add context so you do not sound rude, then add one more sentence so nobody can misunderstand you. By the time you hit send, the clear point is buried under the explanation.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/jupiter",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "824b0badf1329806921db464bd36c8fbbc50b973548d480edfe8da7d4062d1f5",
+        "copy": {
+          "body": "Mercury inconjunct Jupiter can make the idea feel finished while the practical work is still mostly in your head. You can explain the vision, tell everyone how it should work, and even hold other people to the standard before your own version is ready. Your plan is still missing dates, numbers, or structure. Big ideas still need details.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "5fa2f8cb66404627bbb0e8c2e3285140ece2ffbafd1f0c0271026d440d94a8f1",
+        "copy": {
+          "body": "Mercury inconjunct Jupiter can make the idea feel finished while the practical work is still mostly in your head. You can explain the vision, tell everyone how it should work, and even hold other people to the standard before your own version is ready. Your plan is still missing dates, numbers, or structure. Big ideas still need details.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/mars",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "d0e3cadb78df19c42eceae29026b98f186f3e05c1d3d7471bfaf0d8579e8d1b5",
+        "copy": {
+          "body": "Mercury inconjunct Mars can keep an argument going after the facts have already changed. You hear the new information, know part of your original point no longer holds, and still feel the urge to defend it because backing down is embarrassing. The fight lasts longer when being wrong feels worse than changing your mind.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "f07c0d0c3c2ccaee56b879cc291f4a4d974d9db03617dfa6a10761a0745ba36f",
+        "copy": {
+          "body": "Mercury inconjunct Mars can keep an argument going after the facts have already changed. You hear the new information, know part of your original point no longer holds, and still feel the urge to defend it because backing down is embarrassing. The fight lasts longer when being wrong feels worse than changing your mind.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/north-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "661236355a474a52804dbfe3e9f6b2bea2bebf0cb172afc6f1955d24f9b148d8",
+        "copy": {
+          "body": "Mercury inconjunct the North Node can make you think you have no business teaching something you are still changing your mind about. You correct an old opinion, learn new material, or admit that you got part of it wrong. That does not erase what you already understand well enough to explain clearly.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "b4fc9d8665c36a4fa5c9ff4bfa394fe6d5fec89cd37872ec147e3bf829441c7d",
+        "copy": {
+          "body": "Mercury inconjunct the North Node can make you think you have no business teaching something you are still changing your mind about. You correct an old opinion, learn new material, or admit that you got part of it wrong. That does not erase what you already understand well enough to explain clearly.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/pluto",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "51ad12ba28eb0b359921d468b2a56f4b8c10ff4f210512668d31df9e16b0029b",
+        "copy": {
+          "body": "Mercury inconjunct Pluto can turn a strong idea into a sentence nobody wants to read twice. You add the specialized term, the extra clause, and three more details because the subject is complicated. The research may be excellent. The point gets stronger when the language stops trying to prove how much you know.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "acbcebf8a12414570ceb7a25c37b4a8f4324e22605522b5a37cc64ffd2114fbf",
+        "copy": {
+          "body": "Mercury inconjunct Pluto can turn a strong idea into a sentence nobody wants to read twice. You add the specialized term, the extra clause, and three more details because the subject is complicated. The research may be excellent. The point gets stronger when the language stops trying to prove how much you know.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/saturn",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "696c6758614ab9b7ffb61117da272a2993ed057f857c49ef8c64ecb4d7244458",
+        "copy": {
+          "body": "Mercury inconjunct Saturn can make you the person who spots the weak point before everyone else gets excited. You hear the pitch and immediately notice the missing number, the bad assumption, or the reason it could fail. That judgment is useful. It becomes limiting when every hopeful idea gets dismissed before it has any evidence of its own.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "5d9eb8881f566725da86f94dea1d149e0d801606c333172bcf64d7029f9a4400",
+        "copy": {
+          "body": "Mercury inconjunct Saturn can make you the person who spots the weak point before everyone else gets excited. You hear the pitch and immediately notice the missing number, the bad assumption, or the reason it could fail. That judgment is useful. It becomes limiting when every hopeful idea gets dismissed before it has any evidence of its own.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "ab002dd059c7847935034945e3ecbacb6955bd7d9ee8110c610b5f969d212cf0",
+        "copy": {
+          "body": "Mercury inconjunct the South Node can give a recurring problem a brand-new explanation every time it comes back. This time it was the timing. Last time it was the other person. Before that, the circumstances were different. The reasons change while the same thought pattern keeps producing a familiar result.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "6736da48ba86eb444f5d18e57322fff7cd330ef733510fc7ec01c2a6c360dcbb",
+        "copy": {
+          "body": "Mercury inconjunct the South Node can give a recurring problem a brand-new explanation every time it comes back. This time it was the timing. Last time it was the other person. Before that, the circumstances were different. The reasons change while the same thought pattern keeps producing a familiar result.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/uranus",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "0e819d82f51442f8cbc333844f824cc0b5f898eff854eaa0958ea37af2017825",
+        "copy": {
+          "body": "Mercury inconjunct Uranus can open five tabs before the first article is finished. One idea leads to another, then another, and the original question is still sitting there unanswered. The speed is useful when connections matter. After enough unfinished subjects, it starts to feel like mental exhaustion instead of curiosity.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "fa447fe20fff7484d1872fea76c84c6dfe8a5afd803872d2b908f9de84e0b3b7",
+        "copy": {
+          "body": "Mercury inconjunct Uranus can open five tabs before the first article is finished. One idea leads to another, then another, and the original question is still sitting there unanswered. The speed is useful when connections matter. After enough unfinished subjects, it starts to feel like mental exhaustion instead of curiosity.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/sextile/mars",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "01d8efa2c97db43119fcd49efb3cf717ae10ca7a2e9b615dfabceb546824e39b",
+        "copy": {
+          "body": "Mercury sextile Mars can make it easy to see the steps while everyone else is still discussing the idea. You can explain how to fix it, write the instructions, run the numbers, or break the job into a sequence and get started. The mind moves quickly without the action having to become rushed.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "a8c855feaf225db0881b704f0ec7a939ac698585f3fc5578e8ef3a03f9f8c0ab",
+        "copy": {
+          "body": "Mercury sextile Mars can make it easy to see the steps while everyone else is still discussing the idea. You can explain how to fix it, write the instructions, run the numbers, or break the job into a sequence and get started. The mind moves quickly without the action having to become rushed.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/sextile/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "6e1d015327a28262306024db642efa205138943426d73ae8769789dfba2599b6",
+        "copy": {
+          "body": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "74486de222ae69e4fb90d6a1b49f1d4504129fe0f924a5f08c7405cb4c00442a",
+        "copy": {
+          "body": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/square/pluto",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "633437537cddb33ad1fd17d383fefa71d893d73ee6a3e0f17f0fed543dd7d189",
+        "copy": {
+          "body": "Mercury square Pluto can turn a reasonable request for proof into refusing to consider anything that cannot be proven immediately. You keep asking for another source, another explanation, another test, and at some point the investigation has quietly become a verdict. Skepticism helps when it keeps looking. It stops helping when ridicule ends the search early.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "0b1eb4009220bb8df916819f89b117100532a2bdd1da39c38f5fb4badc90fd40",
+        "copy": {
+          "body": "Mercury square Pluto can turn a reasonable request for proof into refusing to consider anything that cannot be proven immediately. You keep asking for another source, another explanation, another test, and at some point the investigation has quietly become a verdict. Skepticism helps when it keeps looking. It stops helping when ridicule ends the search early.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/mars",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "b47772a611a9b982d3f45320c90d1ec069d320607dc9c9e5b7d4b353cecf512e",
+        "copy": {
+          "body": "Moon conjunct Mars can make one strong feeling sound like the whole truth. A comment lands wrong and suddenly you want to cancel the plan, send the sharp reply, or decide you are done. The mood is real. It is also moving quickly, which is why today's reaction can feel much more permanent than it actually is.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "5c9bacb5cdb44cd5637f0a288dbeabf2ee51a232d97919c5b58f26ec247efd76",
+        "copy": {
+          "body": "Moon conjunct Mars can make one strong feeling sound like the whole truth. A comment lands wrong and suddenly you want to cancel the plan, send the sharp reply, or decide you are done. The mood is real. It is also moving quickly, which is why today's reaction can feel much more permanent than it actually is.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/neptune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "dea61076c66da60c629da67d6713e12910c0a142afa624091894dee9fa165c2e",
+        "copy": {
+          "body": "Moon conjunct Neptune can make you notice somebody else's mood before they tell you what happened. You walk into the room and know something is off, or a song, movie, or memory changes the whole atmosphere inside you. Sensitivity gets confusing when another person's sadness starts feeling like your own, or when the version of someone in your head is easier to love than the person in front of you.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "9a133e933f1bbc5a6ab7bc60cd3e49d5df579a750c8140f13f146cfb14baa88f",
+        "copy": {
+          "body": "Moon conjunct Neptune can make you notice somebody else's mood before they tell you what happened. You walk into the room and know something is off, or a song, movie, or memory changes the whole atmosphere inside you. Sensitivity gets confusing when another person's sadness starts feeling like your own, or when the version of someone in your head is easier to love than the person in front of you.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/ascendant",
+      "copyChanged": true,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "73f6cf17ecd99666a574341badacafad21f3c1df958d7dfeb13762cfa0100582",
+        "copy": {
+          "body": "Moon opposite the Ascendant can make another person's bad day become the schedule for yours. You cancel the plan, monitor their mood, change what you were going to do, and realize hours later that you never checked what you needed. Empathy gets costly when somebody else's mood keeps deciding the whole day.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "a9853aea2bb54288197ae1d53a135bc5cf20eb0a811bb9b177267c2c15e7c913",
+        "copy": {
+          "body": "Moon opposite the Ascendant can make another person's bad day become the schedule for yours. You cancel the plan, monitor their mood, change what you were going to do, and realize hours later that you never checked what you needed. Empathy gets costly when somebody else's emotional weather keeps deciding the whole day.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/midheaven",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "8f7f79c6660dec56ec01f2fc09f7a82e5dd11dc9e47676a04d53e211b9f15167",
+        "copy": {
+          "body": "Moon opposite the Midheaven can make one hard meeting change how you feel about your whole career by lunchtime. A boss criticizes the work, a public moment goes badly, or you feel embarrassed, and suddenly quitting sounds like the only reasonable response. The feeling deserves attention. It does not always deserve the final career decision.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "a0cdfb53dce853a69b5408282a0f2105a78a02db15f89b8fe9847b4309df8ed7",
+        "copy": {
+          "body": "Moon opposite the Midheaven can make one hard meeting change how you feel about your whole career by lunchtime. A boss criticizes the work, a public moment goes badly, or you feel embarrassed, and suddenly quitting sounds like the only reasonable response. The feeling deserves attention. It does not always deserve the final career decision.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/part-of-fortune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "468374ab85ac9fcb725eb746d958d65b77c6fe838fc0da745028ba2c37e41245",
+        "copy": {
+          "body": "Moon opposite the Part of Fortune can make ordinary emotional needs feel embarrassingly small next to a spiritual goal. You skip rest, cancel the dinner, or keep telling yourself that needing reassurance should not matter because there is something more important to focus on. The spiritual practice gets thinner when your actual emotional life is treated like an inconvenience.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "41539b474e027e3326ff7bbe8aed35e1b4b5288bdafabdd9f38fcf9f3839cc00",
+        "copy": {
+          "body": "Moon opposite the Part of Fortune can make ordinary emotional needs feel embarrassingly small next to a spiritual goal. You skip rest, cancel the dinner, or keep telling yourself that needing reassurance should not matter because there is something more important to focus on. The spiritual practice gets thinner when your actual emotional life is treated like an inconvenience.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/pluto",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "3d08e024c5e26bb09d6e21da52db049451c39445e52535e57d338e584b82dfb0",
+        "copy": {
+          "body": "Moon opposite Pluto can want complete freedom and complete reassurance at the same time. You dislike being questioned about your plans, then notice yourself checking where someone is, why they have not replied, or what a change in tone means. Intimacy gets difficult when independence is only allowed on one side.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "09abfc80c9797ea5052bb81a4cf5677b5e056a0c3a3f2ad0a1c936e263265043",
+        "copy": {
+          "body": "Moon opposite Pluto can want complete freedom and complete reassurance at the same time. You dislike being questioned about your plans, then notice yourself checking where someone is, why they have not replied, or what a change in tone means. Intimacy gets difficult when independence is only allowed on one side.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/saturn",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "891b5aa01169f2c2454ee706b106a4210b6f04361f54c681277717774cc42135",
+        "copy": {
+          "body": "Moon opposite Saturn can expect the disappointing answer before the message has even been opened. You hold back affection, wait for the other person to prove they care, or tell yourself you need less because needing anything feels risky. There can be plenty of warmth here. Fear makes it slow to come out.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "4b25e489291442ff92e2a03827b62c47af8a0a11e07d9233596d0d6f0bbf6275",
+        "copy": {
+          "body": "Moon opposite Saturn can expect the disappointing answer before the message has even been opened. You hold back affection, wait for the other person to prove they care, or tell yourself you need less because needing anything feels risky. There can be plenty of warmth here. Fear makes it slow to come out.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/mars",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "fef1e1f53d06d5bc6aa1d7062c037ae7312754bfcd1e08c39ee784397547fc49",
+        "copy": {
+          "body": "Moon inconjunct Mars can hear criticism as an attack before the sentence is finished. You hold the irritation in, tell yourself it is fine, and then answer much harder once you feel cornered. A disagreement about a task, opinion, or plan gets bigger when it starts feeling like something you have to defend yourself from.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "d2c7fdeba7cd6dd4dcb73abce7e245a7655bbb6b0035c73dbac4f31978a061a8",
+        "copy": {
+          "body": "Moon inconjunct Mars can hear criticism as an attack before the sentence is finished. You hold the irritation in, tell yourself it is fine, and then answer much harder once you feel cornered. A disagreement about a task, opinion, or plan gets bigger when it starts feeling like something you have to defend yourself from.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/neptune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "5741140d2da8776ed656dc7a843884886d2527f95998cf8dd6cc9eda74bde916",
+        "copy": {
+          "body": "Moon inconjunct Neptune can make leaving the room feel like the fastest way to get relief. Someone is upset, the atmosphere is heavy, or you are tired of absorbing everybody else's mood, so you disappear for a while. Distance helps until staying away starts creating the loneliness you were trying to avoid.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "5d98b3b9d2040198753459c93585722fb8c2e58d3a5c9ac1cfce25c811d120e1",
+        "copy": {
+          "body": "Moon inconjunct Neptune can make leaving the room feel like the fastest way to get relief. Someone is upset, the atmosphere is heavy, or you are tired of absorbing everybody else's mood, so you disappear for a while. Distance helps until staying away starts creating the loneliness you were trying to avoid.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/north-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "1ea0dd1b24bfb35d3dfb0d8a94f1d9931524456a40a4ea49a6dbe734f8361a43",
+        "copy": {
+          "body": "Moon inconjunct the North Node can make your own emotional mess feel like proof that you should not be helping anybody else. Then a friend calls in a panic and you know exactly what to say because you recognize the feeling immediately. Struggling with something yourself does not mean you understand nothing about how it works.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "fb698cd5f24f9c0f6c879bfcf8e71b5e9c7a1e27eae028e75c818d065c9587aa",
+        "copy": {
+          "body": "Moon inconjunct the North Node can make your own emotional mess feel like proof that you should not be helping anybody else. Then a friend calls in a panic and you know exactly what to say because you recognize the feeling immediately. Struggling with something yourself does not mean you understand nothing about how it works.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/saturn",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "5d6f81f6b099413e893ac217c670222289469a04b2160c9284b55db947358908",
+        "copy": {
+          "body": "Moon inconjunct Saturn can make the promotion feel good until the first criticism lands. You wanted more responsibility and respect, but now a difficult meeting follows you home and sounds personal long after work is over. Leadership gets lonely when approval is still doing too much work as proof that you are doing well.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "e3b2f6ed5a50b44a74abd296f5767a6fbdd33122349eed4d744c04e9f82b0092",
+        "copy": {
+          "body": "Moon inconjunct Saturn can make the promotion feel good until the first criticism lands. You wanted more responsibility and respect, but now a difficult meeting follows you home and sounds personal long after work is over. Leadership gets lonely when approval is still doing too much work as proof that you are doing well.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "ef84af601557e825b94f87774fad1bb2c69cdfaff9eaba614842a352c7fb94d1",
+        "copy": {
+          "body": "Moon inconjunct the South Node can make a familiar family or home problem bring back the same feeling before you have time to think about it. The conversation starts and the old fear, resentment, or need for reassurance is already there. You may understand the pattern perfectly and still have an emotional reaction that has not caught up.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "a1d4d6454c4e70c35f5b6636f18b58dcca44ad55dd6eb0bb78587e181576135c",
+        "copy": {
+          "body": "Moon inconjunct the South Node can make a familiar family or home problem bring back the same feeling before you have time to think about it. The conversation starts and the old fear, resentment, or need for reassurance is already there. You may understand the pattern perfectly and still have an emotional reaction that has not caught up.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/venus",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "2999bf08434bad37780e0f6f1970d7844fec241c9a1696c0c8e76a7794cd0e1a",
+        "copy": {
+          "body": "Moon inconjunct Venus can make one ordinary piece of feedback feel like affection changed overnight. The reply is shorter, the compliment is less enthusiastic, or someone prefers a different plan and suddenly you are looking for proof that they still care. The relationship gets exhausting when every imperfection needs another round of reassurance.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "767ace5aa55965bf22d4b7eefa9cffeb5610e30fa6f96e0ca32dbeaf97fec019",
+        "copy": {
+          "body": "Moon inconjunct Venus can make one ordinary piece of feedback feel like affection changed overnight. The reply is shorter, the compliment is less enthusiastic, or someone prefers a different plan and suddenly you are looking for proof that they still care. The relationship gets exhausting when every imperfection needs another round of reassurance.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/sextile/mars",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "e801aaef6c48fe3ea82b7c39460256c15eff2235f48333438ebbe60e65254cb0",
+        "copy": {
+          "body": "Moon sextile Mars can make a strong mood easier to move through by doing something with it. You clean the room, go for the run, cook dinner, make the call, or put the feeling into a project and notice that your body settles before your mind does. Emotion has somewhere to go besides another argument.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "58df3891441476f297ce0ca91fd296ffa2bb5ee38628ef11b28bb5018e0cbdbf",
+        "copy": {
+          "body": "Moon sextile Mars can make a strong mood easier to move through by doing something with it. You clean the room, go for the run, cook dinner, make the call, or put the feeling into a project and notice that your body settles before your mind does. Emotion has somewhere to go besides another argument.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/sextile/neptune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "2ce918a292143b9e628038235ff9eeab1b7d82b3947932a1dacf65055434717a",
+        "copy": {
+          "body": "Moon sextile Neptune can help you notice a heavy atmosphere without carrying all of it home. You put on music after the tense meeting, take ten quiet minutes after the visit, or let yourself imagine something gentler without pretending the hard mood was not real. Sensitivity works better when every feeling in the room does not become yours.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "1652d171aa941baa332e47d2e000c3e444dfe853d90569f930243d009162e7d2",
+        "copy": {
+          "body": "Moon sextile Neptune can help you notice a heavy atmosphere without carrying all of it home. You put on music after the tense meeting, take ten quiet minutes after the visit, or let yourself imagine something gentler without pretending the hard mood was not real. Sensitivity works better when every feeling in the room does not become yours.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/quincunx/ascendant",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "2048b91b3244893628bea35b2408a548c2181f2ed31f4c3c0c3343137406ca3a",
+        "copy": {
+          "body": "Neptune inconjunct the Ascendant can turn a favor into a quiet test without you meaning to. You give the ride, cover the bill, stay late, or make yourself endlessly available, then wait to see if the affection comes back. The help stops feeling generous once it becomes a way to find out if you matter.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "ffa76a1719f23148c105c3f8204bd052bdcd65b83411421dce039f83a65c4be8",
+        "copy": {
+          "body": "Neptune inconjunct the Ascendant can turn a favor into a quiet test without you meaning to. You give the ride, cover the bill, stay late, or make yourself endlessly available, then wait to see if the affection comes back. The help stops feeling generous once it becomes a way to find out if you matter.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/quincunx/north-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "c9bb5292278e8777d9b219cbcf3c10e3ba5d5a9e064f5c12153404e9138ba20d",
+        "copy": {
+          "body": "Neptune inconjunct the North Node can make you lose faith in a guide the minute you see that they still have questions of their own. Maybe their practice is inconsistent or they are still learning the lesson they teach. That can be disappointing. It does not automatically make the part they understand useless.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "545fbb30204b71dbc396300c3b10cd1ab81ac63f3e99dd46658a9e1d8f7b0878",
+        "copy": {
+          "body": "Neptune inconjunct the North Node can make you lose faith in a guide the minute you see that they still have questions of their own. Maybe their practice is inconsistent or they are still learning the lesson they teach. That can be disappointing. It does not automatically make the part they understand useless.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/quincunx/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "f5aa8a107bb71ebef6dea05d9490c560adc488c06dceda4c6f9cc9e24d101864",
+        "copy": {
+          "body": "Neptune inconjunct the South Node can make an unfamiliar dream, belief, or intuition feel suspicious simply because you cannot explain it. You wake up from the same strange dream and immediately decide it means nothing, or dismiss an idea because it does not fit what you already trust. Fear of the unknown can sound very reasonable when it wants the subject closed.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "506498d2a4be0cbc858498ff7dfe16901fbef941d2c7d870845422830d38bc41",
+        "copy": {
+          "body": "Neptune inconjunct the South Node can make an unfamiliar dream, belief, or intuition feel suspicious simply because you cannot explain it. You wake up from the same strange dream and immediately decide it means nothing, or dismiss an idea because it does not fit what you already trust. Fear of the unknown can sound very reasonable when it wants the subject closed.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/sextile/part-of-fortune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "41f98bbc6a0b5598b8205a4e72e17bff1ba15165822e096db8c54dcfd838e5e7",
+        "copy": {
+          "body": "Neptune sextile the Part of Fortune can make a quiet impression stay with you long enough to notice it. A dream is still vivid over breakfast, a feeling about a conversation follows you through the afternoon, or an image keeps returning after you thought you forgot it. The useful part is that it does not disappear before you have time to look at it.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "c58aee5a9ef26ad78a382a96c3cf33e615c2f541db11bbea1d0303feb9a803f4",
+        "copy": {
+          "body": "Neptune sextile the Part of Fortune can make a quiet impression stay with you long enough to notice it. A dream is still vivid over breakfast, a feeling about a conversation follows you through the afternoon, or an image keeps returning after you thought you forgot it. The useful part is that it does not disappear before you have time to look at it.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/sextile/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "e795c5dfdf17a190c2cc7b0ffad8d5725465f307126a791178250a62ed06b53b",
+        "copy": {
+          "body": "Neptune sextile the South Node can make a familiar strange feeling easier to stay with. The dream comes back, the memory returns, or a place gives you the same hard-to-name reaction and you do not immediately shut it down. You have more room to notice what it brings up before fear decides what it means.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "d29080933616a89330386aae6b88a5d170f4ff04bed52fca4fe2931cee9b8b13",
+        "copy": {
+          "body": "Neptune sextile the South Node can make a familiar strange feeling easier to stay with. The dream comes back, the memory returns, or a place gives you the same hard-to-name reaction and you do not immediately shut it down. You have more room to notice what it brings up before fear decides what it means.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/north-node/sextile/ascendant",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "e41639c463723699322dd7bb1f9e7c20d6c47090cfb37c4be51e6031cf003c46",
+        "copy": {
+          "body": "North Node sextile the Ascendant can make a new direction show up in a small choice you almost would not count. You accept the unfamiliar invitation, answer the conversation differently, or choose the option you usually avoid. The change becomes visible in what you do before you have a bigger story about who you are becoming.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "b49db601d40f4cd3001694ec74226e50876be55fb39b61d45c304ea7d9cd2dd8",
+        "copy": {
+          "body": "North Node sextile the Ascendant can make a new direction show up in a small choice you almost would not count. You accept the unfamiliar invitation, answer the conversation differently, or choose the option you usually avoid. The change becomes visible in what you do before you have a bigger story about who you are becoming.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/quincunx/ascendant",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "52b1759182606089aef3c8da73471d09ab7db02d894e869ea2e3eb4928fb5a18",
+        "copy": {
+          "body": "Pluto inconjunct the Ascendant can make uncertainty feel like a reason to take control fast. Someone proposes a different method and you shut it down, make the decision yourself, or end the conversation before the other option is clear. The first reaction is often trying to make sure nobody else gets enough room to change the outcome.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "bd2b69673abfa1acf8a8450274ecaa0de260eac3df3ace55ba750e65fb0f38ff",
+        "copy": {
+          "body": "Pluto inconjunct the Ascendant can make uncertainty feel like a reason to take control fast. Someone proposes a different method and you shut it down, make the decision yourself, or end the conversation before the other option is clear. The first reaction is often trying to make sure nobody else gets enough room to change the outcome.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/quincunx/north-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "b96a92fa38b6738fc91fae678004259fd1c9304ddd3dc0f50d48131abffeed21",
+        "copy": {
+          "body": "Pluto inconjunct the North Node can make you think you need to be completely done with your own control issues before anything you know can help somebody else. Then someone asks about a pattern you have spent years wrestling with, and you realize you understand more than you give yourself credit for. Being unfinished is not the same as knowing nothing.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "fb0c4b33bfb59fb944fd97384df87773437b639f4538ce906c277bef70003a74",
+        "copy": {
+          "body": "Pluto inconjunct the North Node can make you think you need to be completely done with your own control issues before anything you know can help somebody else. Then someone asks about a pattern you have spent years wrestling with, and you realize you understand more than you give yourself credit for. Being unfinished is not the same as knowing nothing.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/quincunx/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "89862e397bfa66b612e29709f75759d965fe76447fce2ee163a06c74e0a91b99",
+        "copy": {
+          "body": "Pluto inconjunct the South Node can make an old role feel threatened when life stops rewarding the version of you that used to work. Maybe you were always the capable one, the private one, or the person who stayed in control. When that response stops helping, defending the identity can become harder than changing it.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "420baa4579f42ff396885571ca7b28298faa2dbf3247dd1666c14bde10b4a6ba",
+        "copy": {
+          "body": "Pluto inconjunct the South Node can make an old role feel threatened when life stops rewarding the version of you that used to work. Maybe you were always the capable one, the private one, or the person who stayed in control. When that response stops helping, defending the identity can become harder than changing it.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/sextile/part-of-fortune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "3b754c161babc25e6d62284257289b3cf05697fcb9f84989ffa1acb9b013d4f9",
+        "copy": {
+          "body": "Pluto sextile the Part of Fortune can make an old belief sound different the moment you hear yourself say it again. A rule about who you are, what life is supposed to look like, or what you can expect no longer feels completely true. You notice the change before a crisis has to prove it for you.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "b562e40b0b5c551ca675295418de313fbdcb428ad0360e3592b16b026e85d065",
+        "copy": {
+          "body": "Pluto sextile the Part of Fortune can make an old belief sound different the moment you hear yourself say it again. A rule about who you are, what life is supposed to look like, or what you can expect no longer feels completely true. You notice the change before a crisis has to prove it for you.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/sextile/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "8bf09d51f9a10007374e3f9604d4ffa10dc887b94b737901fd69a180d318bfbe",
+        "copy": {
+          "body": "Pluto sextile the South Node can make the deeper pattern easier to see inside a familiar problem. The same conflict comes back and, instead of only wanting out, you notice what it keeps exposing about control, fear, or the role you fall into. The situation may look familiar because the part underneath it is familiar too.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "377cac3ac5b0aa0a8ad5143d3e4558de26417aedc0739dcddcffb91c4e984f38",
+        "copy": {
+          "body": "Pluto sextile the South Node can make the deeper pattern easier to see inside a familiar problem. The same conflict comes back and, instead of only wanting out, you notice what it keeps exposing about control, fear, or the role you fall into. The situation may look familiar because the part underneath it is familiar too.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/opposition/neptune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "5b28df6ec3bb9369eed8ee4da9c4dde8ed350cfbfcf4dde3cdbb100af5109f77",
+        "copy": {
+          "body": "Saturn opposite Neptune can make you look for guarantees after something important has been lost or betrayed. You check the account again, hold tighter to the role, or want the relationship to promise it is not going anywhere. The fear makes sense. The harder lesson is living with something valuable without being able to make it permanent.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "9a97ce4d79b317ffb07ebdc654b6350afc393ede085ecd27406fdd33e42d9765",
+        "copy": {
+          "body": "Saturn opposite Neptune can make you look for guarantees after something important has been lost or betrayed. You check the account again, hold tighter to the role, or want the relationship to promise it is not going anywhere. The fear makes sense. The harder lesson is living with something valuable without being able to make it permanent.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/ascendant",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "81e5f7a7af8733ecdb5c9e6d2ded5c154dfbe805d029c86502e8876c3b4b59dc",
+        "copy": {
+          "body": "Saturn inconjunct the Ascendant can let serious work eat the part of the day you meant to enjoy. You stay late, cancel the lighter plan, finish one more task, and tell yourself rest will feel better once everything is done. The trouble is that everything is rarely done at the same time.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "676cca8e085ed9c8b02980e384efe096c8d4fd26fa3acaf3edf5e8c618385056",
+        "copy": {
+          "body": "Saturn inconjunct the Ascendant can let serious work eat the part of the day you meant to enjoy. You stay late, cancel the lighter plan, finish one more task, and tell yourself rest will feel better once everything is done. The trouble is that everything is rarely done at the same time.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/neptune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "35495e33533e381ec1dcc81b2c395a78e78394468fc4622e80d5d92fb2907e12",
+        "copy": {
+          "body": "Saturn inconjunct Neptune can finish the project and move the finish line before you have time to enjoy it. Someone thanks you, the work is good, or something beautiful exists, and your mind is already listing why it does not count yet. Satisfaction stays out of reach when every completed effort immediately needs to become bigger or more important.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "b29ce4ae1439afbb7bc2a649cff50a88aee6d071d3f5f854a0a6867ba5744751",
+        "copy": {
+          "body": "Saturn inconjunct Neptune can finish the project and move the finish line before you have time to enjoy it. Someone thanks you, the work is good, or something beautiful exists, and your mind is already listing why it does not count yet. Satisfaction stays out of reach when every completed effort immediately needs to become bigger or more important.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/north-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "cef33cd77e79348488acee4bd64e93da85688194034faac9af14e784f83f67e9",
+        "copy": {
+          "body": "Saturn inconjunct the North Node can make your own struggles with responsibility or authority feel like proof that you should not advise anyone else. Then someone asks a question about the exact lesson you have spent years learning the hard way. A useful guide can still have the same problem in their own life.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "3c182d39cb1371d4be83c389438d44001f92f60d26b63bd60c3ff2a33925b706",
+        "copy": {
+          "body": "Saturn inconjunct the North Node can make your own struggles with responsibility or authority feel like proof that you should not advise anyone else. Then someone asks a question about the exact lesson you have spent years learning the hard way. A useful guide can still have the same problem in their own life.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/pluto",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "33683f195927f19811f32f6007d5fa28d82b8a2eb036243d23033b5caae03538",
+        "copy": {
+          "body": "Saturn inconjunct Pluto can keep you in a job, relationship, or arrangement long after the daily evidence says it is not working. You know how to endure, so you keep getting through another week while sleep gets worse and your body stays tense. Staying can look like strength long after it has stopped being useful.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "95d96384a33feb377276b4497512c3ef059969564c0c796c6f0ba7470da01b17",
+        "copy": {
+          "body": "Saturn inconjunct Pluto can keep you in a job, relationship, or arrangement long after the daily evidence says it is not working. You know how to endure, so you keep getting through another week while sleep gets worse and your body stays tense. Staying can look like strength long after it has stopped being useful.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "362f6b2c91f7022866aee98307ed9a1f1b234e8aaf352193370add9718fb4b33",
+        "copy": {
+          "body": "Saturn inconjunct the South Node can make a familiar limit feel personal almost immediately. The answer is no, the deadline will not move, or someone else has the authority to decide, and the old anger comes back before you have considered the actual restriction. The same kind of limit keeps finding the same sore response.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "ac68c4973a677958be562aa5954d49825337035ed85f17a28b0fe97c7d3a3047",
+        "copy": {
+          "body": "Saturn inconjunct the South Node can make a familiar limit feel personal almost immediately. The answer is no, the deadline will not move, or someone else has the authority to decide, and the old anger comes back before you have considered the actual restriction. The same kind of limit keeps finding the same sore response.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/uranus",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "5db2f77f36ecb336d9318e38ff2baee4a3ddd2c13b8f569a77fc62d7051cc833",
+        "copy": {
+          "body": "Saturn inconjunct Uranus can make your body complain about a schedule you keep insisting is manageable. You take the extra shift, handle somebody else's responsibility, say yes again, and then wonder why your shoulders are tight and every obligation feels unbearable. The urge to escape often gets loud after too much has quietly become yours.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "b928aaa7fd6fad9a6d6e9487aeffd351704169b983db41f6d60c451d06f25093",
+        "copy": {
+          "body": "Saturn inconjunct Uranus can make your body complain about a schedule you keep insisting is manageable. You take the extra shift, handle somebody else's responsibility, say yes again, and then wonder why your shoulders are tight and every obligation feels unbearable. The urge to escape often gets loud after too much has quietly become yours.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/sextile/part-of-fortune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "890dafdd7a36c50d828afd892f08d62944c31179c33b72408a38fee2ca7f2e49",
+        "copy": {
+          "body": "Saturn sextile the Part of Fortune can make correction easier to use. The draft comes back with notes, the application needs another document, or someone points out the part that has to be fixed. You may not like it, but the feedback does not automatically turn into a story about being incapable.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "0685351d9418d3af31d1be5d4a107fb5a07988cd39baa3173b86244e8b4d89e7",
+        "copy": {
+          "body": "Saturn sextile the Part of Fortune can make correction easier to use. The draft comes back with notes, the application needs another document, or someone points out the part that has to be fixed. You may not like it, but the feedback does not automatically turn into a story about being incapable.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/sextile/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "e830fb7fd1f9244403b9e596ab28fd2d8b58ec115404f1cb579ca01cf524dc59",
+        "copy": {
+          "body": "The answer is no, the deadline cannot move, or the budget is smaller than you hoped. You are disappointed, but you do not spend the rest of the day treating the limit like proof that everything is going wrong. Saturn sextile the South Node can help you recognize the restriction faster and adjust what actually needs to change.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "d3ed7f6549822b6953974dd6ce0549428ae79bf63ca168c95357f4e657302a53",
+        "copy": {
+          "body": "The answer is no, the deadline cannot move, or the budget is smaller than you hoped. You are disappointed, but you do not spend the rest of the day treating the limit like proof that everything is going wrong. Saturn sextile the South Node can help you recognize the restriction faster and adjust what actually needs to change.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/uranus",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "0e54ab5205161675063725b87f2a812fa51b389802f5acdf15067eea4bd02154",
+        "copy": {
+          "body": "Saturn square Uranus can make you keep doing what is required until one more obligation feels unbearable. You say yes for weeks, resent every yes, and then want to quit the job, leave the group, or blow up the agreement all at once. By the time freedom looks like an emergency exit, the problem has usually been building for a while.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "eb9754706f8463ad3aed85cd3c25abd6e8ec1fec06fdbc8e3d04833e6021b5ae",
+        "copy": {
+          "body": "Saturn square Uranus can make you keep doing what is required until one more obligation feels unbearable. You say yes for weeks, resent every yes, and then want to quit the job, leave the group, or blow up the agreement all at once. By the time freedom looks like an emergency exit, the problem has usually been building for a while.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/south-node/opposition/midheaven",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "6d18fe24ff709f2e042dcf4eb02a874f41c2bced2124ac2e9b4324fafd92305e",
+        "copy": {
+          "body": "South Node opposite the Midheaven can make an opportunity arrive while an old responsibility is still asking for time. The interview, promotion, or public role matters, and so does the family obligation or unfinished promise you cannot simply ignore. Guilt gets louder when wanting more for yourself starts sounding selfish.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "42f7716be2364c009d73019780885b8f34550a658dc022faca72ed9f488e7b24",
+        "copy": {
+          "body": "South Node opposite the Midheaven can make an opportunity arrive while an old responsibility is still asking for time. The interview, promotion, or public role matters, and so does the family obligation or unfinished promise you cannot simply ignore. Guilt gets louder when wanting more for yourself starts sounding selfish.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/south-node/quincunx/ascendant",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "4ee114971514163b9f200b017bbb8b23e922af8f56b506f05814f368d8dd8ebc",
+        "copy": {
+          "body": "South Node inconjunct the Ascendant can make an older version of you answer before the present situation has had a chance. A tense conversation starts and you become agreeable, defensive, distant, or controlling almost on cue. The reaction is fast because it is familiar, not because it fits what is happening now.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "61e98f39f9a33417a8e2e8fb5c615dcda6831e9c246fbc68d12f9ccea98699c2",
+        "copy": {
+          "body": "South Node inconjunct the Ascendant can make an older version of you answer before the present situation has had a chance. A tense conversation starts and you become agreeable, defensive, distant, or controlling almost on cue. The reaction is fast because it is familiar, not because it fits what is happening now.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/south-node/square/ascendant",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "22310b8f17bc38f1d95fb74ccf8d5bc0e4cd3d7fddd0d2f9ce1d28f74ee2e941",
+        "copy": {
+          "body": "South Node square the Ascendant can make you slip into the old role in a new room. You become the peacemaker, the difficult one, the invisible one, or the person who takes over because that response once kept life manageable. A familiar role can feel natural even when nobody in the current situation asked you to play it.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "91c085c3a852b66bd50900e0ef0a5451dadd5512c1c5d1780db8203a5051cc00",
+        "copy": {
+          "body": "South Node square the Ascendant can make you slip into the old role in a new room. You become the peacemaker, the difficult one, the invisible one, or the person who takes over because that response once kept life manageable. A familiar role can feel natural even when nobody in the current situation asked you to play it.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/opposition/part-of-fortune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "c14f20220f192fe730ab8753eb8af98e27354146ce89d898abe200b6b47b828d",
+        "copy": {
+          "body": "Sun opposite the Part of Fortune can make wanting recognition feel less spiritual than it actually is. You downplay the promotion, hide the work, or feel guilty for wanting your name attached to something you built because ordinary ambition seems too small next to a larger purpose. A spiritual life gets distorted when becoming more fully yourself is treated like a distraction.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "e9f9cafb58343ad98d6c15d27afd12ddba8944d12f5373dbbfe8779b3e8f22cc",
+        "copy": {
+          "body": "Sun opposite the Part of Fortune can make wanting recognition feel less spiritual than it actually is. You downplay the promotion, hide the work, or feel guilty for wanting your name attached to something you built because ordinary ambition seems too small next to a larger purpose. A spiritual life gets distorted when becoming more fully yourself is treated like a distraction.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/moon",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "b27eb9c6e1fe02e6c45570a8aeec1181dd4f04171cbd8fdf1a000a2e4147c527",
+        "copy": {
+          "body": "Sun inconjunct Moon can make the reaction happen before you know what you actually wanted to say. You snap during the family conversation, leave the room, and understand your real point later while replaying it in your head. The feeling is not wrong. It gets harder when you think you have to stop feeling it before you can make a reasonable decision.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "b897f2c9c2205456ddfadea12d35f0a1f7fb3f95b6d45b67c411e06c3d137a83",
+        "copy": {
+          "body": "Sun inconjunct Moon can make the reaction happen before you know what you actually wanted to say. You snap during the family conversation, leave the room, and understand your real point later while replaying it in your head. The feeling is not wrong. It gets harder when you think you have to stop feeling it before you can make a reasonable decision.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/neptune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "c1ee0e83ab9c879c4ca7a46a418b472b4bcddaca20cad790ddf7a95246cfb952",
+        "copy": {
+          "body": "Sun inconjunct Neptune can make a real preference sound like a suggestion. You say you are fine with either restaurant, hint that the later time might be hard, and leave room for everybody else to decide. Then the reservation is made and you are upset that your needs disappeared from a plan you never clearly asked to change.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "bfe8c8d7f4b7f70ad9f15823ad1bdb8d3e56e818987f92a5cecafe4e3c4f7255",
+        "copy": {
+          "body": "Sun inconjunct Neptune can make a real preference sound like a suggestion. You say you are fine with either restaurant, hint that the later time might be hard, and leave room for everybody else to decide. Then the reservation is made and you are upset that your needs disappeared from a plan you never clearly asked to change.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/north-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "97d7a8eb935f3d304a85516a57c32a10a6bb49636bc1624b8722221267ffc364",
+        "copy": {
+          "body": "Sun inconjunct the North Node can make one flaw in the messenger drown out the part worth hearing. You find out the teacher is inconsistent, hypocritical, or simply human and feel tempted to throw away the whole lesson. The contradiction can be real without making every useful sentence false.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "98850ca969f9c0227f0a5cfae8c9aa8eea939e3c7169555933787a95510ff18f",
+        "copy": {
+          "body": "Sun inconjunct the North Node can make one flaw in the messenger drown out the part worth hearing. You find out the teacher is inconsistent, hypocritical, or simply human and feel tempted to throw away the whole lesson. The contradiction can be real without making every useful sentence false.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/part-of-fortune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "ecb8f1df60e2f79732d8cd4b9154ac37d2a78ef484a44673d8ac7575521e9513",
+        "copy": {
+          "body": "Sun inconjunct the Part of Fortune can make an old spiritual rule keep deciding your life long after you stopped examining it. You say no to the opportunity, relationship, or desire because it does not fit what you were taught to value. Something can still feel sacred and be wrong for the life you are trying to build now.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "c17b3e025eded3fdbb6cf8c18eb264220821f8a87193a3e75895824c4d2b4c47",
+        "copy": {
+          "body": "Sun inconjunct the Part of Fortune can make an old spiritual rule keep deciding your life long after you stopped examining it. You say no to the opportunity, relationship, or desire because it does not fit what you were taught to value. Something can still feel sacred and be wrong for the life you are trying to build now.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "20acf5266bc67485c23eab6538138e3956ea7d29ecd920ded0c60f9ba53a4975",
+        "copy": {
+          "body": "Sun inconjunct the South Node can make you very good at explaining the pattern and surprisingly quick to repeat it. You know exactly why you keep saying yes to the same role, choosing the same kind of problem, or reacting the same way, then watch yourself do it again. Knowing the story is not always the same as changing the ending.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "0e27ddadba07396c64d3da90618ac09e4a320804ec5991b0a1e2d46e54253382",
+        "copy": {
+          "body": "Sun inconjunct the South Node can make you very good at explaining the pattern and surprisingly quick to repeat it. You know exactly why you keep saying yes to the same role, choosing the same kind of problem, or reacting the same way, then watch yourself do it again. Knowing the story is not always the same as changing the ending.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/sextile/neptune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "fca25b908b12d9be1d713dc54fe014e46354b23e0da9f05130c28711b5ef169f",
+        "copy": {
+          "body": "Sun sextile Neptune can help an idea leave your head and become something another person can actually see. You write the page, record the song, sketch the design, rehearse the piece, or finally give the dream enough structure to exist outside your imagination. Inspiration feels different once there is something finished in front of you.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "d856a1edddaa84d58b467c9c7778cbc4a8a2f1da979c5f53b74bf7ad8eb5d63f",
+        "copy": {
+          "body": "Sun sextile Neptune can help an idea leave your head and become something another person can actually see. You write the page, record the song, sketch the design, rehearse the piece, or finally give the dream enough structure to exist outside your imagination. Inspiration feels different once there is something finished in front of you.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/square/moon",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "542407ae039e3cdd13833c665552147211434b5bfcc22eb8bece46efeaa18d47",
+        "copy": {
+          "body": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "791ac7ddc084bb1d70ea8f951b65af3a8b9149f41840ea251557fc994f9bce72",
+        "copy": {
+          "body": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/midheaven",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "285a26e01644b203aecedbdecc37888e571ae42e9accf99fb2d8489f99b44ee9",
+        "copy": {
+          "body": "Uranus inconjunct the Midheaven can make the impressive job feel less impressive once you realize how little freedom comes with it. You may turn down the title, choose unusual work, work for yourself, or accept less status for more control over your day. The decision can look smaller from the outside and feel much more like success from inside your actual life.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "d08851b7e8fb1e0e578fa7846688396f64c76e262545a7c6064f1f4209b0ed62",
+        "copy": {
+          "body": "Uranus inconjunct the Midheaven can make the impressive job feel less impressive once you realize how little freedom comes with it. You may turn down the title, choose unusual work, work for yourself, or accept less status for more control over your day. The decision can look smaller from the outside and feel much more like success from inside your actual life.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/neptune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "d15ac76773f870e4366ac0001d421777a358f848bf8ddf5ade01b127f72ec59e",
+        "copy": {
+          "body": "Uranus inconjunct Neptune can make someone else's belief bother you more than the conversation should. You roll your eyes at the practice, dismiss the philosophy, or argue harder than usual, then spend the ride home wondering why it got under your skin. Sometimes another person's certainty is irritating because your own answer is less settled than you want to admit.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "d0fd7efac28589f29f267b44762a11f280bcb874e1d25768e8c13ee12cb1ed30",
+        "copy": {
+          "body": "Uranus inconjunct Neptune can make someone else's belief bother you more than the conversation should. You roll your eyes at the practice, dismiss the philosophy, or argue harder than usual, then spend the ride home wondering why it got under your skin. Sometimes another person's certainty is irritating because your own answer is less settled than you want to admit.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/north-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "fc8f605031fd205638cc93c790a4d65a3e7f698a89e04610264f36aa82933283",
+        "copy": {
+          "body": "Uranus inconjunct the North Node can make a teacher's blind spot hard to ignore. You can see exactly where they contradict themselves and still find that one idea they offered keeps helping you. Insight does not always arrive after the person giving it has solved every version of the problem.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "de6f0f18b59578f0868ef4536af64633d94408258eb56f01056605df6c05b669",
+        "copy": {
+          "body": "Uranus inconjunct the North Node can make a teacher's blind spot hard to ignore. You can see exactly where they contradict themselves and still find that one idea they offered keeps helping you. Insight does not always arrive after the person giving it has solved every version of the problem.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/pluto",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "ad4da6a48d184a40379e9618e377dc83c82b0a1425e9f502bb8271e4b3895240",
+        "copy": {
+          "body": "Uranus inconjunct Pluto can make one belief become the part of life you refuse to reconsider while everything else is changing. The job shifts, the relationship changes, the schedule moves, and suddenly somebody questioning that one idea feels unbearable. Rigidity can become a way to create one fixed point when the rest of life will not hold still.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "47b4c8734087de0cb951767ad3f87caa06f933a95e0c2cb9f54ab4cc1f58452e",
+        "copy": {
+          "body": "Uranus inconjunct Pluto can make one belief become the part of life you refuse to reconsider while everything else is changing. The job shifts, the relationship changes, the schedule moves, and suddenly somebody questioning that one idea feels unbearable. Rigidity can become a way to create one fixed point when the rest of life will not hold still.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "54b1fd4448b080205027bca8fceca18d59f524e829ae9b3406bd23716d6ffbde",
+        "copy": {
+          "body": "Uranus inconjunct the South Node can make one late reply, sudden change, or unexpected cancellation feel exactly like something that happened before. Your body reacts first and the conclusion arrives fast: here we go again. The memory is real. The present still deserves time to prove what it actually is.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "b654b4b7b7764e84d073e998235058fefdfc0e5bd19032114157e0e4f46ebec2",
+        "copy": {
+          "body": "Uranus inconjunct the South Node can make one late reply, sudden change, or unexpected cancellation feel exactly like something that happened before. Your body reacts first and the conclusion arrives fast: here we go again. The memory is real. The present still deserves time to prove what it actually is.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/sextile/neptune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "fa86836cc1ee888c222a59c3e5a27f75935a6be50e7c058ee3a4ec0d1a70c7bf",
+        "copy": {
+          "body": "Uranus sextile Neptune can make you curious about an idea you normally would have dismissed. You keep reading, try the practice, listen to the strange theory, or let somebody explain their belief without needing to agree by the end. Some questions get more interesting when you do not force an answer immediately.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "0714ca5b92f0f0809755237c6b89b68161b2bb2b71208d3e824b5dbf6c231db6",
+        "copy": {
+          "body": "Uranus sextile Neptune can make you curious about an idea you normally would have dismissed. You keep reading, try the practice, listen to the strange theory, or let somebody explain their belief without needing to agree by the end. Some questions get more interesting when you do not force an answer immediately.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/sextile/part-of-fortune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "fd5f406eab21548a14394fbb02f5ff5c82762aa755e39b8c14bbccba6e5e09bc",
+        "copy": {
+          "body": "Uranus sextile the Part of Fortune can make an odd connection hit while you are doing something ordinary. Two ideas suddenly fit together, a dream makes sense hours later, or an unexpected solution appears before you know why. It is easy to talk yourself out of it if you decide too quickly that the thought was random.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "d912a0ec91907f1e023dfcdc06d3be95036fdc7ff1ecd069240e1834da45249d",
+        "copy": {
+          "body": "Uranus sextile the Part of Fortune can make an odd connection hit while you are doing something ordinary. Two ideas suddenly fit together, a dream makes sense hours later, or an unexpected solution appears before you know why. It is easy to talk yourself out of it if you decide too quickly that the thought was random.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/sextile/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "35d5b44eff91d24749dabb903a8947daf9b0947599b9f0395dddf85adf12a1e0",
+        "copy": {
+          "body": "Uranus sextile the South Node can make a small argument reveal that you are reacting to much more than tonight. The comment is ordinary, but your response is huge, and suddenly you recognize the older experience sitting underneath it. Seeing the connection early keeps the surface story from taking all the blame.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "944e04ca7c27eadcccec88e3d86b96d6ae89d8d7520f52fc5543f6c99408fe29",
+        "copy": {
+          "body": "Uranus sextile the South Node can make a small argument reveal that you are reacting to much more than tonight. The comment is ordinary, but your response is huge, and suddenly you recognize the older experience sitting underneath it. Seeing the connection early keeps the surface story from taking all the blame.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/square/pluto",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "ffcaacd4fbd2c930a1e3b52060ef81bb7d7480fb28f15eb1886bb65c3a8a527f",
+        "copy": {
+          "body": "Uranus square Pluto can make independence feel exciting until you realize what support might disappear with it. You leave the role, step away from the group, or insist on doing it yourself and then feel exposed when nobody is automatically there to catch the loose ends. Change can feel like abandonment even when nobody has actually left.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "d3a0259fc67b6eab481ef38c48c9c5e974672eba6a95f56100b7c66a2f4b3944",
+        "copy": {
+          "body": "Uranus square Pluto can make independence feel exciting until you realize what support might disappear with it. You leave the role, step away from the group, or insist on doing it yourself and then feel exposed when nobody is automatically there to catch the loose ends. Change can feel like abandonment even when nobody has actually left.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/jupiter",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "66d2306b6f4d8f0d718b6e05e8b2684f91f4dc0cdfa0a07bf3290fd1217d1f0b",
+        "copy": {
+          "body": "Venus inconjunct Jupiter can make a generous night get expensive quickly. You choose the nicer restaurant, cover the extra round, buy the better seat, or say yes to one more plan because it feels good to be generous. Later you notice the account is lower than expected, or feel oddly disappointed that nobody matched the effort. Pleasure is easy to choose here. Limits are easier to notice afterward.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "9274e9d29b19070c144482f37852952d8ffbf20270110f2d18d8022df17470b7",
+        "copy": {
+          "body": "Venus inconjunct Jupiter can make a generous night get expensive quickly. You choose the nicer restaurant, cover the extra round, buy the better seat, or say yes to one more plan because it feels good to be generous. Later you notice the account is lower than expected, or feel oddly disappointed that nobody matched the effort. Pleasure is easy to choose here. Limits are easier to notice afterward.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/neptune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "37d7353e9ad63a2d4ac778112381f7929466995bb3b8d0e2b07eed8f7373f909",
+        "copy": {
+          "body": "Venus inconjunct Neptune can make love feel like another job you are trying to do well enough to keep. You help, fix, forgive, remember, rearrange, and make yourself useful, then quietly wonder if anybody would stay if you stopped doing all of it. Affection gets exhausting when your own needs start feeling like the price of being loved.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "34b2f906a2de78174544b1bf4599789d7485082703d1d254beb3225e2e076a61",
+        "copy": {
+          "body": "Venus inconjunct Neptune can make love feel like another job you are trying to do well enough to keep. You help, fix, forgive, remember, rearrange, and make yourself useful, then quietly wonder if anybody would stay if you stopped doing all of it. Affection gets exhausting when your own needs start feeling like the price of being loved.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/north-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "50e7362de9cece561582f34a23f6a98422c2d9af2f2731a70cabe93813d42e0d",
+        "copy": {
+          "body": "Venus inconjunct the North Node can make you feel ridiculous giving relationship advice while your own love life or values are still complicated. Then somebody asks a question you have already learned the hard way, and you know exactly what part matters. Your own unfinished choices do not erase every useful lesson you earned from them.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "94317643fcec23b0f057cb02ef00a9ec1b2d6e20e350551d8bb4a921dea7fff7",
+        "copy": {
+          "body": "Venus inconjunct the North Node can make you feel ridiculous giving relationship advice while your own love life or values are still complicated. Then somebody asks a question you have already learned the hard way, and you know exactly what part matters. Your own unfinished choices do not erase every useful lesson you earned from them.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/saturn",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "1221cac60c22c48409108208710e155f1a843d3edd59aafbd081d788847022f0",
+        "copy": {
+          "body": "Venus inconjunct Saturn can fill the calendar with enough work that there is nobody left to see by the end of the week. Dinner gets postponed, the date gets rescheduled, the friend stops asking, and the hobby waits because another task looks more legitimate. Loneliness can become the first sign that responsibility has been taking too much.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "26c94a3816835c172e170029092d31314119ce0077b16c4dcea2b7c391467749",
+        "copy": {
+          "body": "Venus inconjunct Saturn can fill the calendar with enough work that there is nobody left to see by the end of the week. Dinner gets postponed, the date gets rescheduled, the friend stops asking, and the hobby waits because another task looks more legitimate. Loneliness can become the first sign that responsibility has been taking too much.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/south-node",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "a79f53ca4b03d5c8c7beac1fd33dddb53fd65dadbc5bbd1fbc852d23ce361505",
+        "copy": {
+          "body": "Venus inconjunct the South Node can make the same want keep arriving inside a familiar problem. The person is different, the purchase is different, or the situation looks new, but you are once again chasing the same approval, comfort, or relationship outcome. The repetition starts asking a harder question about the desire itself.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "8bfc77fc36db8ec224a07d5a8746d707ccb6b097084a08b437ec972c69863b87",
+        "copy": {
+          "body": "Venus inconjunct the South Node can make the same want keep arriving inside a familiar problem. The person is different, the purchase is different, or the situation looks new, but you are once again chasing the same approval, comfort, or relationship outcome. The repetition starts asking a harder question about the desire itself.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/uranus",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "c86d5943c8d00951dbcd3f080e8270d25a0d526dff9b321e744b9ae463b42144",
+        "copy": {
+          "body": "Venus inconjunct Uranus can make generosity turn into resentment once other people start expecting it. You answer every call, rearrange your plans, stay available, and then suddenly want everybody to leave you alone. Closeness becomes difficult when the pattern begins with over-giving and ends with needing to escape it.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "e057d87b85fa0816f524a8e3a5e9f15e3dff3b42cd45b388c245db6a2c3a2e66",
+        "copy": {
+          "body": "Venus inconjunct Uranus can make generosity turn into resentment once other people start expecting it. You answer every call, rearrange your plans, stay available, and then suddenly want everybody to leave you alone. Closeness becomes difficult when the pattern begins with over-giving and ends with needing to escape it.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/sextile/part-of-fortune",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "ffdad76356e8a41d5a457eeb81c354d69f0cd29a38f0d5c942255c0301a9e376",
+        "copy": {
+          "body": "Venus sextile the Part of Fortune can catch you halfway through agreeing to the familiar choice. You are about to order the same option, return to the same kind of relationship, or say yes because it is what you usually do, and realize you do not actually want it this time. The old preference is easier to notice before it becomes another decision.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "3bebe925dd2ca77892d73a5300859c2989ce489f60c10ff03200619a8f68bec8",
+        "copy": {
+          "body": "Venus sextile the Part of Fortune can catch you halfway through agreeing to the familiar choice. You are about to order the same option, return to the same kind of relationship, or say yes because it is what you usually do, and realize you do not actually want it this time. The old preference is easier to notice before it becomes another decision.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/sextile/pluto",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "7f8749bd2d3f4316d91728895312f5042b11f861814ec07c3c3e612ecfd63c65",
+        "copy": {
+          "body": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "970215b38697fcb38750069d737e6f7d9e0c70cd5ef1824de574adc55b1aafb7",
+        "copy": {
+          "body": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/placement-house-lived/moon/6",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "0f725fa01a0ab00f302dbb9666fc814616898e87d831ad18a4999bf9dcec50ec",
+        "copy": {
+          "body": "Moon in the 6th house can make one small problem take over the whole day. The missed detail is hard to ignore, so is the unfinished task, the physical symptom, or the coworker who suddenly needs help. Stress can follow you into meals too, especially when you eat exhausted or upset. There is a real instinct for fixing what is not working. The trouble starts when every flaw gets promoted to an emergency.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "c6ec818c3a69525d67b9b94da7db06f1cc0174e681e53ad18e2e52b0ec095cb7",
+        "copy": {
+          "body": "Moon in the 6th house can make one small problem take over the whole day. The missed detail is hard to ignore, so is the unfinished task, the physical symptom, or the coworker who suddenly needs help. Stress can follow you into meals too, especially when you eat exhausted or upset. There is a real instinct for fixing what is not working. The trouble starts when every flaw gets promoted to an emergency.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/placement-house-lived/north-node/10",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "71b593d99ab76e1b163bb6a5b0c3b39bf16f26990d501db776f56f9f21324acb",
+        "copy": {
+          "body": "North Node in the 10th house can make the finished work feel more uncomfortable once it is time to put your name on it. Staying private is familiar. Sending the application, taking the leadership role, publishing the project, or letting other people see what you can do is the unfamiliar part. The ability has to leave the house before anyone else can benefit from it.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "0871744890b4cf404dc360ddb9755c9a78b9594f63fe0bce7093112261a3967d",
+        "copy": {
+          "body": "North Node in the 10th house can make the finished work feel more uncomfortable once it is time to put your name on it. Staying private is familiar. Sending the application, taking the leadership role, publishing the project, or letting other people see what you can do is the unfamiliar part. The ability has to leave the house before anyone else can benefit from it.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/10",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "3f6942995c54f43ac28919691d612200a5e8e235546efb1077c05cc286fed6f6",
+        "copy": {
+          "body": "Part of Fortune in the 10th house can make a bad mood easier to move through once there is something finished you can point to. You send the proposal, fix the problem, complete the shift, or put the work where other people can actually see it. Recognition feels better when there is a real contribution underneath it.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "745aabf8e0a1cab68bc79ebf92c76290e9bd92d27905cad3c09de02ddeca787e",
+        "copy": {
+          "body": "Part of Fortune in the 10th house can make a bad mood easier to move through once there is something finished you can point to. You send the proposal, fix the problem, complete the shift, or put the work where other people can actually see it. Recognition feels better when there is a real contribution underneath it.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/5",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "241151c23006ac123525a7a623499e13bee5b343420b892ab82d2351cdbac2f8",
+        "copy": {
+          "body": "Part of Fortune in the 5th house can turn restlessness into an afternoon that disappears inside something you enjoy making. You pick up the camera, start the drawing, work on the song, play the game, or get absorbed in a personal interest and notice your mood change with it. The trouble starts when all the excitement has to come from romance, attention, or somebody else entertaining you.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "b48dad5a74a89af3e1b6aab60e3a559fe953c5c205ab7d65d624acee784160a1",
+        "copy": {
+          "body": "Part of Fortune in the 5th house can turn restlessness into an afternoon that disappears inside something you enjoy making. You pick up the camera, start the drawing, work on the song, play the game, or get absorbed in a personal interest and notice your mood change with it. The trouble starts when all the excitement has to come from romance, attention, or somebody else entertaining you.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/6",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "402b1d5c73c7b80991c119ff0912e46e3573fb8715a7c2a583bca690550c59bb",
+        "copy": {
+          "body": "Part of Fortune in the 6th house can make a restless mood easier to handle once one practical problem is fixed. You clean the counter, answer the overdue email, organize the work, or repair the small thing that has been bothering you all week. The relief is real. It gets less useful when staying busy becomes the only way you know how not to feel.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "2dca7452b57ac73ca81ccf4ebd5c6eb10af2798c6ca8c807e23a57a6a5653eeb",
+        "copy": {
+          "body": "Part of Fortune in the 6th house can make a restless mood easier to handle once one practical problem is fixed. You clean the counter, answer the overdue email, organize the work, or repair the small thing that has been bothering you all week. The relief is real. It gets less useful when staying busy becomes the only way you know how not to feel.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/7",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "33133cfb87112911f5856995c5e60e06a590cd8a5088b6ac417d526d3168c565",
+        "copy": {
+          "body": "Part of Fortune in the 7th house can make relationship tension easier to handle once the actual agreement is clear. The argument stops circling, somebody names the boundary, and the two of you finally say what each person is willing to do. Repeating the same partnership pattern with different people does not create a different result.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "d1ad5e62ef3bca1764ef5dd43b9615bacdfee6a7edb6a27b5b8d0155ae58f1af",
+        "copy": {
+          "body": "Part of Fortune in the 7th house can make relationship tension easier to handle once the actual agreement is clear. The argument stops circling, somebody names the boundary, and the two of you finally say what each person is willing to do. Repeating the same partnership pattern with different people does not create a different result.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/8",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "c390e8c1119af51c4d0582ac3ba9c803ccf06e80154597ecd97d4bafb9e00a35",
+        "copy": {
+          "body": "Part of Fortune in the 8th house can make anxiety about shared money or responsibility easier to handle once the numbers are in front of you. You open the account, divide the bill, confirm who owes what, and say what you can contribute. The same imbalance keeps returning when the arrangement changes but the way the responsibility is shared does not.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "0f11eaded72ac2aa9c39a4951e36211f4912e22ae8e23b650b48aa6079d7a3cc",
+        "copy": {
+          "body": "Part of Fortune in the 8th house can make anxiety about shared money or responsibility easier to handle once the numbers are in front of you. You open the account, divide the bill, confirm who owes what, and say what you can contribute. The same imbalance keeps returning when the arrangement changes but the way the responsibility is shared does not.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/placement-house-lived/uranus/10",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "a533f77fc91d29c02ac7d4d53c885fe854f7b0802044fd1b9ff5772a5b4ba99d",
+        "copy": {
+          "body": "Uranus in the 10th house can make the third conventional job feel just as narrow as the first two. You change fields, work independently, move toward technology or unusual work, or leave when the structure starts costing more freedom than you can tolerate. Reinvention is a real strength. A career still needs enough continuity for all those fresh starts to become something you can build on.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "25ea74eeed802b0c21676b8b725faf49755d73dafb8a4afa6c9b671082f0ce37",
+        "copy": {
+          "body": "Uranus in the 10th house can make the third conventional job feel just as narrow as the first two. You change fields, work independently, move toward technology or unusual work, or leave when the structure starts costing more freedom than you can tolerate. Reinvention is a real strength. A career still needs enough continuity for all those fresh starts to become something you can build on.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/placement-sign-lived/mars/cancer",
+      "copyChanged": true,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2",
+        "copy": {
+          "body": "Mars in Cancer can make a family problem stay with you long after the call ends. You are still irritated while making dinner, still replaying the criticism in bed, or eating too quickly because your body has not caught up with the fact that the argument is over. You can work incredibly hard for what feels personal. The anger builds when you cannot address it directly.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "b1282f0a292616d401365f6fdb802b1e773b8d1168a4e27131a0daacfacbf653",
+        "copy": {
+          "body": "Mars in Cancer can make a family problem stay with you long after the call ends. You are still irritated while making dinner, still replaying the criticism in bed, or eating too quickly because your body has not caught up with the fact that the argument is over. You can work incredibly hard for what feels personal. The anger gets heavier when it has nowhere direct to go.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/placement-sign-lived/mercury/aries",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
+        "copy": {
+          "body": "Mercury in Aries can have the answer out before everybody else has finished the question. The joke is quick, the point is clear, and the interruption happens because waiting for the slower explanation is genuinely difficult. Thinking fast is easy here. Staying with one idea long enough to develop it and hear somebody else's answer takes more effort.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "eeaf9892efae00278fbb15244b646b47e2a69bf1a7e7ccc910faff71be442cbd",
+        "copy": {
+          "body": "Mercury in Aries can have the answer out before everybody else has finished the question. The joke is quick, the point is clear, and the interruption happens because waiting for the slower explanation is genuinely difficult. Thinking fast is easy here. Staying with one idea long enough to develop it and hear somebody else's answer takes more effort.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    },
+    {
+      "contentKey": "fallback-hook/planet-lived/jupiter",
+      "copyChanged": false,
+      "kept": {
+        "sourceRelease": "ll-matrix-v13-owner-approved-runtime",
+        "rowSha256": "a02988cabd5b2561a5d02eb6ec4934fbf956123afee1f3f30f5a32af09055174",
+        "copy": {
+          "body": "Jupiter describes what gets bigger. One invitation turns into three. A raise creates more room in the budget and spending grows with it. Confidence can expand too, along with appetite, certainty, generosity, or a problem that was already there. More is not automatically better. Jupiter shows what happens when there is suddenly more to work with.",
+          "body_you": null,
+          "body_they": null
+        }
+      },
+      "dropped": {
+        "sourceRelease": null,
+        "rowSha256": "65c93b8e8c3175e8fbb6c777bb058c528056e95f1ce9b71d3f9e865b9f3e9fae",
+        "copy": {
+          "body": "Jupiter describes what gets bigger. One invitation turns into three. A raise creates more room in the budget and spending grows with it. Confidence can expand too, along with appetite, certainty, generosity, or a problem that was already there. More is not automatically better. Jupiter shows what happens when there is suddenly more to work with.",
+          "body_you": null,
+          "body_they": null
+        }
+      }
+    }
+  ]
+}

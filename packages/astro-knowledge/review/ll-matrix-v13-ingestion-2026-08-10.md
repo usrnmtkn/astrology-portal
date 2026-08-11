@@ -38,11 +38,11 @@ The active implementations preserve this boundary: `knowledgeMatrixV13Runtime.ts
 
 ## Change control
 
-The runtime selects the V13 exact-key row ahead of earlier LL natal copy while preserving all earlier approved source rows byte-for-byte. This precedence is limited to the LL natal lineage and does not replace CC V9 transit or house content. A missing V13 key does not borrow another row. Any future wording change requires a new owner-approved workbook lineage and regenerated hashes; the discarded Gemini blind-edit path is not an authorized build step.
+The runtime stores one canonical row per content key. A V13 exact-key row replaces an earlier LL natal row with the same content key while every non-superseded approved row remains byte-identical. This precedence is limited to the LL natal lineage and does not replace CC V9 transit or house content. A missing V13 key does not borrow another row. The 108 same-key replacements and the owner's ruling on the two copy conflicts are recorded in `packages/astro-knowledge/review/v13-duplicate-contentkey-repair-2026-08-11.md`. Any future wording change requires a new owner-approved workbook lineage and regenerated hashes; the discarded Gemini blind-edit path is not an authorized build step.
 
 ## Fingerprints
 
 - Canonical workbook SHA-256: `937549e74eb8e68f8c7e884db6789aeaa79368e53dba5b6ef1c4be697dddb41c`
 - Raw full export SHA-256: `a85593bdfb90b136054768bfa9c3c4dbaabe5aee103f2ba371f2d42161c1cd03`
 - Locked owner-approved JSON SHA-256: `9ca15c189f5ba7622e1376e4b6a1c67e0f131db5b0d6badcfee452341850aeb9`
-- Existing approved rows before V13 SHA-256: `2a3582a520163bfebad1b2f74f0fff2beade8ef987e184f6d8af52ff8ab721e0`
+- Preserved non-superseded approved rows SHA-256: `e9398583a4a95f3147726c006016af4d3241d07fb2b8fc581077e9748cfe65c8`

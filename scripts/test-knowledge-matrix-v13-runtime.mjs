@@ -160,9 +160,9 @@ assert.equal(browser.renderNatalPlacement({ planet: "mars", sign: "aries", voice
 assert.equal(browser.renderNatalAspect({ planetA: "moon", aspect: "square", planetB: "sun", voice: "you" }).body, sunMoon?.copy);
 assert.equal(browser.renderNatalAspect({ planetA: "mars", aspect: "sextile", planetB: "pluto", voice: "you" }).templateKey, "fallback-hook/aspect-lived/sextile");
 const jupiterRows = sourceRows.hookRows.filter((row) => row.contentKey === "fallback-hook/planet-lived/jupiter");
-assert.ok(jupiterRows.length >= 2, "The prior Jupiter row must remain preserved.");
-assert.equal(jupiterRows.at(-1)?.source_release, "ll-matrix-v13-owner-approved-runtime");
-assert.equal(jupiterRows.at(-1)?.body, sourceByReleaseKey.get("fallback-hook/planet-lived/jupiter")?.body);
+assert.equal(jupiterRows.length, 1, "V13 same-key precedence must leave one canonical Jupiter row.");
+assert.equal(jupiterRows[0]?.source_release, "ll-matrix-v13-owner-approved-runtime");
+assert.equal(jupiterRows[0]?.body, sourceByReleaseKey.get("fallback-hook/planet-lived/jupiter")?.body);
 
 const materializerTempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tldr-ll-v13-materializer-"));
 try {
