@@ -289,6 +289,7 @@ const spliceChain = await runReportWriterChain({ payload: spliceChainPayload, ca
 assert.deepEqual(spliceChainSchemas, ["report_unit_draft", "report_unit_critique", "report_unit_revision_spans", "report_unit_cold_read"], "All named defects must be revised in one span-only call before the final cold read.");
 assert.equal(spliceChain.revised.body, "FIXTURE_ONLY_REPLACED. FIXTURE_ONLY_SECOND.");
 assert.equal(spliceChain.revised.summary, spliceChainDraft.summary, "The writer chain must keep unnamed text byte-identical.");
+assert.equal(spliceChain.coldCritique.result, "no_defects");
 assert.equal(verifyReportFactLock({ ...draft, body: "March 3 is traceable." }, frozen).passed, true);
 assert.equal(verifyReportFactLock({ ...draft, body: "March 31 is not traceable." }, frozen).passed, false);
 assert.equal(verifyReportFactLock({ ...draft, body: "MAR 3 · FIXTURE_ONLY · FIXTURE_ONLY. · *A lunar eclipse falls on your natal Saturn.*" }, frozen).passed, true);
@@ -1067,6 +1068,8 @@ assert.equal(firstPersistenceModel.count() + secondPersistenceModel.count(), 13,
 assert.equal(persistenceJudgeCalls, 4, "Infrastructure retry must not re-bill the cached overview judge.");
 assert.deepEqual(persistenceStore.jobs.get(persistenceJob.id).passing_unit_cache, {}, "A cached unit clears only after its write and report accounting succeed.");
 assert.deepEqual(persistenceStore.units.get("persistence-report:overview").source_snapshot.judge.scores, passingJudgeScores);
+assert.equal(persistenceStore.units.get("persistence-report:overview").source_snapshot.writerReviews[0].coldCritique.result, "no_defects",
+  "Persisted review evidence must include the context-free closing pass.");
 
 const retryStore = createMemoryStore();
 retryStore.claimJobs = async () => [authorizedJob({ id: "retry-job", report_id: "retry-report", entitlement_id: "retry-ent", state: "running", step: "writing", attempt: 1 })];
