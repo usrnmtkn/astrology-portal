@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import {
   composeReportFacts,
-  createTldrAstroReportFactsClient
+  createTldrAstroReportFactsClient,
+  normalizeReportFactDates
 } from "../api/_lib/report-facts.ts";
 
 class MemoryStore {
@@ -80,7 +81,8 @@ const input = {
   reportDomain: "general",
   reportHorizon: "1_month",
   start: "2026-02-18T01:59:11Z",
-  end: "2026-03-18T01:59:11Z"
+  end: "2026-03-18T01:59:11Z",
+  natalPointLongitudes: { Ascendant: 71.15, Midheaven: 316.6 }
 };
 const store = new MemoryStore();
 let calls = 0;
@@ -160,12 +162,15 @@ const client = createTldrAstroReportFactsClient({
       }), { status: 200 });
     }
     if (init?.body === "{}") return new Response(JSON.stringify({ detail: [] }), { status: 422 });
-    return new Response(JSON.stringify({ reportHorizon: "1_month" }), { status: 200 });
+    return new Response(JSON.stringify({
+      reportHorizon: "1_month",
+      slowTransitArcs: [{ passes: [{ exactAt: "2026-05-19T03:30:00Z" }] }]
+    }), { status: 200 });
   }
 });
 await client.preflight();
 assert.equal(await client.serviceVersion(), "fixture-version");
-await client.reportWindow(input);
+const normalizedWindow = await client.reportWindow(input);
 assert.deepEqual(fetchCalls.slice(0, 3).map((call) => [call.init.method, call.url]), [
   ["GET", "https://fixture.invalid/meta/status"],
   ["POST", "https://fixture.invalid/timing/report-window"],
@@ -175,6 +180,10 @@ assert.equal(fetchCalls[4].url, "https://fixture.invalid/timing/report-window");
 const sent = JSON.parse(fetchCalls[4].init.body);
 assert.equal(sent.includeSolarReturn, false);
 assert.equal(sent.includeContentFacts, false);
+assert.deepEqual(sent.natalPointLongitudes, { Ascendant: 71.15, Midheaven: 316.6 });
+assert.equal(normalizedWindow.slowTransitArcs[0].passes[0].exactAtDate, "2026-05-18",
+  "All report prose dates must be normalized once through the report-location timezone.");
+assert.equal(normalizeReportFactDates({ occursAt: "2026-10-07T02:10:26Z" }, "America/New_York").occursAtDate, "2026-10-06");
 
 const missingEndpointClient = createTldrAstroReportFactsClient({
   baseUrl: "https://missing-fixture.invalid",

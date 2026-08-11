@@ -3,7 +3,7 @@ import { reportPromptFromPayload, validateReportDraft } from "./report-generatio
 import { assertReportEvaluationPacketReady, completeReportUnit, reportEvaluationPacket, reportDraftMovementApplicable } from "./report-evaluation-packet.js";
 import { verifyReportFactLock } from "./report-fact-lock.js";
 import { callReportModel, type ReportModelCall, type ReportModelUsage, writerModelTarget } from "./report-model-client.js";
-import { loadVersionedReportPrompt, REPORT_CRITIQUE_PROMPT_PATH } from "./report-prompt-versions.js";
+import { loadActiveReportCritiquePrompt } from "./report-prompt-versions.js";
 import { scopeReportPayloadToUnit } from "./report-unit-scope.js";
 
 export const REPORT_DEFECT_CATEGORIES = [
@@ -42,7 +42,8 @@ export type ReportWriterChainResult = {
   draft: ReportDraft;
   critique: ReportCritique;
   revised: ReportDraft;
-  calls: Array<{ stage: "draft" | "critique" | "revise"; model: string; provider: string; usage: ReportModelUsage }>;
+  coldCritique: ReportCritique;
+  calls: Array<{ stage: "draft" | "critique" | "revise" | "cold_read" | "cold_revise"; model: string; provider: string; usage: ReportModelUsage }>;
   promptVersion: string;
 };
 
@@ -156,8 +157,9 @@ function textFields(draft: ReportDraft) {
 
 function issueCategory(code: string): ReportDefectCategory {
   if (/untraceable|next_year|saturn_return/iu.test(code)) return "factual_traceability";
-  if (/menu_size|lexical_budget|isolated_one_liners|status_branching/iu.test(code)) return "density_violation";
+  if (/menu_size|lexical_budget|isolated_one_liners|status_branching|repeated|duplicate|modal_budget/iu.test(code)) return "density_violation";
   if (/possibility_language|do_not_assume|invention|specificity/iu.test(code)) return "astrology_chronology";
+  if (/no_cleverness|vague_noun|astrology_as_agent|labor_for_work|mechanism_grounding/iu.test(code)) return "owner_voice_drift";
   return "unnatural_phrasing";
 }
 
@@ -182,6 +184,18 @@ function mechanicalInstruction(issue: MechanicalValidationIssue, noun?: string) 
       return "Remove the internal writer-facing language from the quoted sentence and preserve only reader-facing meaning.";
     case "generic_advice":
       return "Replace the generic advice in the quoted sentence with one situated, observable consequence already supported by the unit facts.";
+    case "vague_noun":
+      return "Replace the vague noun 'things' with the supported behavior, circumstance, decision, or consequence.";
+    case "banned_settled":
+      return "Replace the abstract 'not settled' disclaimer with the concrete decision or range of chart-earned outcomes.";
+    case "astrology_as_agent":
+      return "State the astrological mechanism directly without making the year, eclipse, transit, profection, or Solar Return ask, want, invite, or encourage anything.";
+    case "labor_for_work":
+      return "Replace 'labor' with the concrete kind of work, task, responsibility, or household work meant in this sentence.";
+    case "no_cleverness_tax":
+      return "Rewrite the quoted sentence so it names the observable behavior, circumstance, decision, or consequence directly. The reader must not have to decode a metaphor, compressed phrase, or abstract noun.";
+    case "mechanism_grounding":
+      return "Name the astrological mechanism and the concrete cost in hours, sleep, meals, appointments, travel, preparation, follow-up, workload, recovery, caregiving, schedule, money, or expenses. Do not turn the passage into generic balance advice.";
     case "money_abstraction":
       return "Translate the abstraction in the quoted sentence into rate, hours, expenses, scope, payment timing, or another supported concrete financial term.";
     case "love_banned_vocabulary":
@@ -446,6 +460,7 @@ export async function reviseReportDraftForNamedDefects(input: {
   draft: ReportDraft;
   defects: ReportDefect[];
   callModel?: ReportModelCall;
+  stage?: "revise" | "cold_revise";
 }) {
   const callModel = input.callModel ?? callReportModel;
   const target = writerModelTarget();
@@ -468,7 +483,7 @@ export async function reviseReportDraftForNamedDefects(input: {
     schema: revisionPatchSchema
   });
   const calls: ReportWriterChainResult["calls"] = [{
-    stage: "revise", model: reviseResult.model, provider: reviseResult.provider, usage: reviseResult.usage
+    stage: input.stage ?? "revise", model: reviseResult.model, provider: reviseResult.provider, usage: reviseResult.usage
   }];
   return { revised: spliceReportRevision(input.draft, defects, reviseResult.value), defects, calls };
 }
@@ -484,7 +499,7 @@ export async function runReportWriterChain(input: {
   // Fail closed before draft generation: a packet missing owner comparisons
   // must never consume a billed provider call.
   assertReportEvaluationPacketReady(payload);
-  const critiquePrompt = loadVersionedReportPrompt(REPORT_CRITIQUE_PROMPT_PATH);
+  const critiquePrompt = loadActiveReportCritiquePrompt();
   const calls: ReportWriterChainResult["calls"] = [];
   const draftResult = await callModel<ReportDraft>({
     ...target,
@@ -504,6 +519,8 @@ export async function runReportWriterChain(input: {
       critiquePrompt.text,
       `CANONICAL_PROMPT\n${payload.canonicalOwnerPrompt.text}`,
       `LIVED_PROSE_STANDARD\n${payload.livedProseStandard.text}`,
+      `NO_CLEVERNESS_TAX_OWNER_RULING\n${payload.noClevernessRuling.text}`,
+      `OWNER_REVIEW_EVIDENCE\n${payload.ownerReviewEvidence.text}`,
       FLATNESS_DIAGNOSTIC_ROUTING,
       `PRODUCTION_LOCATION_CONTRACT\n${packet.locationContract}`,
       `COMPLETE_UNIT\n${packet.completeUnit}`,
@@ -536,10 +553,54 @@ export async function runReportWriterChain(input: {
       throw new Error(`V3 owner_voice_drift defect ${defect.id} lacks eligible comparison evidence.`);
     }
   }
-  if (critique.result === "no_defects" || critique.defects.length === 0) {
-    return { draft: draftResult.value, critique: { ...critique, result: "no_defects", defects: [] }, revised: draftResult.value, calls, promptVersion: critiquePrompt.version };
+  let revised = draftResult.value;
+  if (critique.result !== "no_defects" && critique.defects.length > 0) {
+    const revision = await reviseReportDraftForNamedDefects({ payload, draft: draftResult.value, defects: critique.defects, callModel });
+    calls.push(...revision.calls);
+    revised = revision.revised;
   }
-  const revision = await reviseReportDraftForNamedDefects({ payload, draft: draftResult.value, defects: critique.defects, callModel });
-  calls.push(...revision.calls);
-  return { draft: draftResult.value, critique, revised: revision.revised, calls, promptVersion: critiquePrompt.version };
+
+  // Closing discipline: this request deliberately contains only the rendered
+  // unit and the owner cold-prose ruling. Facts, prompts, comparison evidence,
+  // validator output, and drafting context are excluded so none can rescue
+  // prose that a reader cannot understand cold.
+  const coldResult = await callModel<ReportCritique>({
+    ...target,
+    prompt: [
+      payload.coldProseRuling.text,
+      "Read only the rendered unit below. Return findings only; never rewrite. Route vague referents, assembled or formal language to unnatural_phrasing or owner_voice_drift; repeated setup or explanation-after-landing to density_violation; abrupt or disconnected movement to interpretive_gap. Use the smallest sentence scope that identifies the defect.",
+      `RENDERED_UNIT\n${completeReportUnit(revised)}`
+    ].join("\n\n"),
+    schemaName: "report_unit_cold_read",
+    schema: critiqueSchema
+  });
+  calls.push({ stage: "cold_read", model: coldResult.model, provider: coldResult.provider, usage: coldResult.usage });
+  const coldMovementApplicable = reportDraftMovementApplicable(revised);
+  const coldCritique: ReportCritique = {
+    ...coldResult.value,
+    applicability: {
+      interpretive_movement: coldMovementApplicable ? "applicable" : "not_applicable",
+      reason: coldMovementApplicable
+        ? "The rendered unit contains at least two substantive prose paragraphs."
+        : "The rendered unit contains fewer than two substantive prose paragraphs."
+    }
+  };
+  if (!coldMovementApplicable && coldCritique.defects.some((defect) => defect.category === "interpretive_gap")) {
+    throw new Error("Cold read returned interpretive_gap for a unit where interpretive movement is not applicable.");
+  }
+  if (coldCritique.result !== "no_defects" && coldCritique.defects.length > 0) {
+    const coldRevision = await reviseReportDraftForNamedDefects({
+      payload, draft: revised, defects: coldCritique.defects, callModel, stage: "cold_revise"
+    });
+    calls.push(...coldRevision.calls);
+    revised = coldRevision.revised;
+  }
+  return {
+    draft: draftResult.value,
+    critique: critique.defects.length ? critique : { ...critique, result: "no_defects", defects: [] },
+    coldCritique: coldCritique.defects.length ? coldCritique : { ...coldCritique, result: "no_defects", defects: [] },
+    revised,
+    calls,
+    promptVersion: critiquePrompt.version
+  };
 }

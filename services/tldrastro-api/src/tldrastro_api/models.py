@@ -382,6 +382,7 @@ class ReportWindowRequest(BaseModel):
     settings: ChartSettings = Field(default_factory=ChartSettings)
     includeSolarReturn: bool = True
     includeContentFacts: bool = False
+    natalPointLongitudes: Dict[str, float] = Field(default_factory=dict)
 
 
 class ReportTransitPass(BaseModel):
