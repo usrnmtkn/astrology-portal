@@ -1364,9 +1364,9 @@ test.describe("client-facing user flow case studies", () => {
   test("calendar ingress, station, and aspect details always open with approved prose", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
     const cases = [
-      { date: "2026-07-09", eventType: "ingress", title: "Venus enters Virgo" },
-      { date: "2026-07-23", eventType: "station", title: "Mercury stations direct" },
-      { date: "2026-07-13", eventType: "aspect", title: "Venus square Uranus" }
+      { date: "2026-07-09", eventType: "ingress", title: "Venus enters Virgo", usesV9: true },
+      { date: "2026-07-23", eventType: "station", title: "Mercury stations direct", usesV9: true },
+      { date: "2026-07-13", eventType: "aspect", title: "Venus square Uranus", usesV9: false }
     ];
 
     await seedClientState(page, { now: "2026-07-31T12:00:00.000Z" });
@@ -1379,6 +1379,11 @@ test.describe("client-facing user flow case studies", () => {
         .filter({ hasText: eventCase.title });
 
       await expect(eventButton, `${eventCase.title} has one Calendar detail trigger`).toHaveCount(1);
+      if (eventCase.usesV9) {
+        await expect(eventButton).toHaveAttribute("data-content-key", /^knowledge-matrix-v9\/transit\//u);
+      } else {
+        await expect(eventButton).not.toHaveAttribute("data-content-key", /^knowledge-matrix-v9\//u);
+      }
       await eventButton.click();
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
       const detailParagraphs = page.locator(".app-shell.mode-detail article p");

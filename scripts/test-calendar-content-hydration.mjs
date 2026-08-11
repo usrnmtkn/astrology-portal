@@ -9,6 +9,7 @@ import SwissEph from "swisseph-wasm";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const bundleFile = path.join(os.tmpdir(), "tldrastro-calendar-content-hydration.bundle.mjs");
+const v9BundleFile = path.join(os.tmpdir(), "tldrastro-calendar-v9-transit.bundle.mjs");
 const lunarBundleFile = path.join(os.tmpdir(), "tldrastro-calendar-lunar-content-hydration.bundle.mjs");
 const seasonBundleFile = path.join(os.tmpdir(), "tldrastro-calendar-season-content-hydration.bundle.mjs");
 const ephemerisBundleDir = path.join(repoRoot, "node_modules/.cache/tldrastro");
@@ -29,6 +30,21 @@ const {
   calendarEventGeneratedContentKeys,
   calendarTransitDetailContentKeys
 } = await import(`${pathToFileURL(bundleFile).href}?t=${Date.now()}`);
+
+await build({
+  bundle: true,
+  define: { "import.meta.env": "{}" },
+  entryPoints: [path.join(repoRoot, "apps/web/src/features/calendar/calendarV9Transit.ts")],
+  format: "esm",
+  logLevel: "silent",
+  outfile: v9BundleFile,
+  platform: "node"
+});
+
+const {
+  calendarV9TransitFacts,
+  resolveCalendarV9Transit
+} = await import(`${pathToFileURL(v9BundleFile).href}?t=${Date.now()}`);
 
 await build({
   bundle: true,
@@ -132,6 +148,66 @@ const chironStationEvent = {
   direction: "retrograde",
   phase: "station-retrograde"
 };
+
+assert.deepEqual(calendarV9TransitFacts(ingressEvent), {
+  planet: "Jupiter",
+  transitSign: "Leo",
+  eventType: "ingress"
+});
+assert.deepEqual(calendarV9TransitFacts(retrogradeEvent), {
+  planet: "Uranus",
+  transitSign: "Gemini",
+  eventType: "retrograde"
+});
+assert.deepEqual(calendarV9TransitFacts(directEvent), {
+  planet: "Uranus",
+  transitSign: "Gemini",
+  eventType: "direct"
+});
+assert.deepEqual(calendarV9TransitFacts(mercuryStationEvent), {
+  planet: "Mercury",
+  transitSign: "Pisces",
+  eventType: "station"
+});
+assert.equal(calendarV9TransitFacts(aspectEvent), null, "V9 transit meanings must not replace aspect copy.");
+assert.deepEqual(calendarV9TransitFacts({
+  id: "lilith-station",
+  type: "station",
+  title: "Lilith stations retrograde in Scorpio",
+  startsAt: "2026-08-01T12:00:00.000Z",
+  planet: "Lilith",
+  sign: "Scorpio",
+  direction: "retrograde",
+  phase: "station-retrograde"
+}), {
+  planet: "Black Moon Lilith",
+  transitSign: "Scorpio",
+  eventType: "station"
+});
+
+const v9Root = "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-governance-labeled";
+const v9Manifest = JSON.parse(read(`${v9Root}/knowledge-matrix-v9-import-manifest.json`));
+const v9Rows = JSON.parse(read(`${v9Root}/knowledge-matrix-v9-owner-approved-rows.json`));
+const v9BuildReport = JSON.parse(read(`${v9Root}/knowledge-matrix-v9-build-report.json`));
+const { createKnowledgeMatrixV9Resolver } = await import(
+  `${pathToFileURL(path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js")).href}?t=${Date.now()}`
+);
+const v9Resolver = createKnowledgeMatrixV9Resolver(v9Manifest, v9Rows, v9BuildReport);
+const expectedUranusRetrograde = v9Rows.transit_meanings.find((row) => (
+  row.Planet === "Uranus"
+  && row.Sign === "Gemini"
+  && row.Event === "retrograde"
+));
+const resolvedUranusRetrograde = resolveCalendarV9Transit(retrogradeEvent, v9Resolver);
+
+assert.ok(expectedUranusRetrograde);
+assert.equal(resolvedUranusRetrograde?.body, expectedUranusRetrograde.Copy);
+assert.equal(resolvedUranusRetrograde?.sourceRow, expectedUranusRetrograde.source_row);
+assert.equal(
+  resolveCalendarV9Transit(aspectEvent, v9Resolver),
+  null,
+  "Calendar aspects must remain on the Sky aspect resolver."
+);
 
 const aspectKeys = calendarEventGeneratedContentKeys(aspectEvent);
 assert.equal(aspectKeys.length, 2, "Calendar aspects must request evergreen and dated approved-card keys.");
@@ -314,6 +390,21 @@ const themeCss = read("apps/web/src/styles/theme.css");
 const bundledSkyCore = JSON.parse(read("apps/web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json"));
 const venusLibraIngress = bundledSkyCore.hookRows.find(
   (row) => row.contentKey === "fallback-hook/sky-event/ingress/venus/libra"
+);
+const authoredCalendarCopyIndex = calendarSource.indexOf("if (content && generatedDescription && generatedDescriptionFitsDateContext)");
+const v9CalendarCopyIndex = calendarSource.indexOf("const matrixResult = resolveCalendarV9Transit(event, knowledgeMatrixV9)");
+const packageCalendarCopyIndex = calendarSource.indexOf("const packageDescription = calendarEventPackageDescription(event, dateLine)");
+
+assert.ok(
+  authoredCalendarCopyIndex >= 0
+  && v9CalendarCopyIndex > authoredCalendarCopyIndex
+  && packageCalendarCopyIndex > v9CalendarCopyIndex,
+  "Calendar copy precedence must remain exact authored row, then exact V9 transit row, then the existing package fallback."
+);
+assert.match(
+  calendarSource,
+  /loadKnowledgeMatrixV9Runtime\(\)[\s\S]*?setKnowledgeMatrixV9\(resolver\)/u,
+  "Calendar must load the governed V9 runtime before selecting its transit rows."
 );
 
 assert.doesNotMatch(
