@@ -105,15 +105,22 @@ assert.ok(!unitCodes("You may say, \"I need more notice.\"").some((code) => /quo
 
 const rulingText = fs.readFileSync(new URL("../tldr-astro-phrasebank/TLDR-REPORT-NO-CLEVERNESS-TAX-RULING-OWNER.md", import.meta.url), "utf8");
 assert.equal(crypto.createHash("sha256").update(rulingText).digest("hex"), "676df491b580b1da4be181d8c655cf2d6646fb833e9ce982e7b9fc7af7743637");
-const v2Draft = fs.readFileSync(new URL("../tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-V2-DRAFT.md", import.meta.url), "utf8");
+const v2Owner = fs.readFileSync(new URL("../tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-V2-OWNER.md", import.meta.url), "utf8");
 const v4Draft = fs.readFileSync(new URL("../tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V4-DRAFT.md", import.meta.url), "utf8");
-const v5Draft = fs.readFileSync(new URL("../tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V5-DRAFT.md", import.meta.url), "utf8");
-const judgeV32Draft = fs.readFileSync(new URL("../tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3.2-DRAFT.md", import.meta.url), "utf8");
-for (const draft of [v2Draft, v4Draft, v5Draft, judgeV32Draft]) {
+const v5Owner = fs.readFileSync(new URL("../tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V5-OWNER.md", import.meta.url), "utf8");
+const judgeV32Owner = fs.readFileSync(new URL("../tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3.2-OWNER.md", import.meta.url), "utf8");
+for (const draft of [v4Draft]) {
   assert.match(draft, /\*\*Status:\*\* `needs_review`/u);
   assert.match(draft, /\*\*Owner approved:\*\* `false`/u);
   assert.match(draft, /\*\*Active in production:\*\* `false`/u);
   assert.match(draft, /\*\*Promotion authorized:\*\* `false`/u);
+}
+for (const approved of [v2Owner, v5Owner, judgeV32Owner]) {
+  assert.match(approved, /\*\*Status:\*\* `owner_approved`/u);
+  assert.match(approved, /\*\*Owner approved:\*\* `true`/u);
+  assert.match(approved, /\*\*Active in production:\*\* `true`/u);
+  assert.match(approved, /\*\*Promotion authorized:\*\* `true`/u);
+  assert.match(approved, /\*\*Approved source SHA-256:\*\* `[a-f0-9]{64}`/u);
 }
 
 const manifestationSets = JSON.parse(fs.readFileSync(new URL("../packages/astro-knowledge/data/manifestation-sets/year-ahead-v1.json", import.meta.url), "utf8"));
@@ -122,4 +129,4 @@ for (const term of ["grief when an emotionally significant ending supports it", 
 assert.ok(twelfthHouse.possibleLivedManifestations.some((entry) => entry.includes("wanted or necessary")));
 assert.ok(!JSON.stringify(twelfthHouse).includes("protect your energy"));
 
-console.log(`Report assembly passed: ${issues.length} exact-review findings, report-level budgets, owner-ruling wiring, and needs-review prompt drafts.`);
+console.log(`Report assembly passed: ${issues.length} exact-review findings, report-level budgets, owner-ruling wiring, and activated v2/v3.2/v5 prompts.`);

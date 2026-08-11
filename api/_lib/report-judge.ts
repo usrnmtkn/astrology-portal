@@ -2,7 +2,7 @@ import fs from "node:fs";
 import type { ReportDraft, ReportGenerationPayload } from "./report-generation.ts";
 import { reportDraftMovementApplicable, reportEvaluationPacket } from "./report-evaluation-packet.js";
 import { callReportModel, judgeModelTarget, type ReportModelCall, type ReportModelUsage } from "./report-model-client.js";
-import { loadVersionedReportPrompt, REPORT_JUDGE_PROMPT_PATH } from "./report-prompt-versions.js";
+import { loadActiveReportJudgePrompt } from "./report-prompt-versions.js";
 
 export const REPORT_JUDGE_CATEGORIES = [
   "astrology_chronology",
@@ -73,7 +73,7 @@ export async function judgeReportUnit(input: {
   threshold: number;
   callModel?: ReportModelCall;
 }): Promise<{ result: ReportJudgeResult; usage: ReportModelUsage; model: string; promptVersion: string }> {
-  const prompt = loadVersionedReportPrompt(REPORT_JUDGE_PROMPT_PATH);
+  const prompt = loadActiveReportJudgePrompt();
   const target = judgeModelTarget();
   const packet = reportEvaluationPacket(input.payload, input.draft);
   const response = await (input.callModel ?? callReportModel)<ReportJudgeResult>({
