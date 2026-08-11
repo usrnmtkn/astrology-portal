@@ -79,9 +79,10 @@ const payload = assembleReportGenerationPayload({
   frozenFacts: frozen
 });
 assert.equal(payload.noClevernessRuling.sourcePath, "tldr-astro-phrasebank/TLDR-REPORT-NO-CLEVERNESS-TAX-RULING-OWNER.md");
+assert.equal(payload.coldProseRuling.sourcePath, "tldr-astro-phrasebank/TLDR-REPORT-COLD-PROSE-RULE-OWNER.md");
 assert.match(payload.noClevernessRuling.text, /New report rule: no cleverness tax/u);
-assert.match(payload.ownerReviewEvidence.text, /Jupiter makes every offer, invitation, or collaboration look easy and expansive on paper\./u);
-assert.match(reportPromptFromPayload(payload), /NO_CLEVERNESS_TAX_OWNER_RULING[\s\S]*OWNER_REVIEW_EVIDENCE/u);
+assert.match(payload.ownerReviewEvidence.text, /Each new opportunity can look manageable by itself\./u);
+assert.match(reportPromptFromPayload(payload), /NO_CLEVERNESS_TAX_OWNER_RULING[\s\S]*OWNER_REVIEW_EVIDENCE[\s\S]*COLD_RENDERED_PROSE_OWNER_RULING/u);
 
 const unitCodes = (body) => validateReportDraft({ body }, payload).map((entry) => entry.code);
 for (const [body, code] of [
@@ -106,7 +107,9 @@ const rulingText = fs.readFileSync(new URL("../tldr-astro-phrasebank/TLDR-REPORT
 assert.equal(crypto.createHash("sha256").update(rulingText).digest("hex"), "676df491b580b1da4be181d8c655cf2d6646fb833e9ce982e7b9fc7af7743637");
 const v2Draft = fs.readFileSync(new URL("../tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-V2-DRAFT.md", import.meta.url), "utf8");
 const v4Draft = fs.readFileSync(new URL("../tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V4-DRAFT.md", import.meta.url), "utf8");
-for (const draft of [v2Draft, v4Draft]) {
+const v5Draft = fs.readFileSync(new URL("../tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V5-DRAFT.md", import.meta.url), "utf8");
+const judgeV32Draft = fs.readFileSync(new URL("../tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3.2-DRAFT.md", import.meta.url), "utf8");
+for (const draft of [v2Draft, v4Draft, v5Draft, judgeV32Draft]) {
   assert.match(draft, /\*\*Status:\*\* `needs_review`/u);
   assert.match(draft, /\*\*Owner approved:\*\* `false`/u);
   assert.match(draft, /\*\*Active in production:\*\* `false`/u);
@@ -115,8 +118,8 @@ for (const draft of [v2Draft, v4Draft]) {
 
 const manifestationSets = JSON.parse(fs.readFileSync(new URL("../packages/astro-knowledge/data/manifestation-sets/year-ahead-v1.json", import.meta.url), "utf8"));
 const twelfthHouse = manifestationSets.records["profection-year-house-12"];
-for (const term of ["grief", "release", "mourning what has run its course"]) assert.ok(twelfthHouse.domain.includes(term));
-assert.ok(twelfthHouse.possibleLivedManifestations.some((entry) => entry.includes("quiet loss")));
+for (const term of ["grief when an emotionally significant ending supports it", "release", "mourning what has run its course"]) assert.ok(twelfthHouse.domain.includes(term));
+assert.ok(twelfthHouse.possibleLivedManifestations.some((entry) => entry.includes("wanted or necessary")));
 assert.ok(!JSON.stringify(twelfthHouse).includes("protect your energy"));
 
 console.log(`Report assembly passed: ${issues.length} exact-review findings, report-level budgets, owner-ruling wiring, and needs-review prompt drafts.`);

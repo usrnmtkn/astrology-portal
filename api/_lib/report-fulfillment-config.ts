@@ -97,9 +97,10 @@ export function resolvedStripePriceId(sku: ReportSku) {
 export function reportCallEstimate(horizon: ReportHorizon) {
   const unitCount = horizon === "1_month" ? 4 : horizon === "4_months" || horizon === "6_months" ? 6 : 11;
   const redundancyPassCalls = 1; // findings-only assembled-report pass
-  const cleanPathCalls = unitCount * 3 + redundancyPassCalls; // draft + critique + judge + report-level pass
-  const expectedCallBudget = unitCount * 4 + redundancyPassCalls; // draft + critique + one splice revision + judge + report-level pass
-  const safetyMarginCalls = unitCount; // one additional provider attempt per unit on average
+  const coldReadCalls = unitCount;
+  const cleanPathCalls = unitCount * 4 + redundancyPassCalls; // draft + critique + cold read + judge + report-level pass
+  const expectedCallBudget = unitCount * 5 + redundancyPassCalls; // clean path + one ordinary splice revision per unit
+  const safetyMarginCalls = unitCount; // one cold-read splice revision per unit at the conservative ceiling
   const recommendedCallBudget = expectedCallBudget + safetyMarginCalls;
   const config = reportFulfillmentConfig();
   const planning = horizon === "12_months" ? estimateReportPlanningProfile(horizon) : null;
@@ -107,6 +108,7 @@ export function reportCallEstimate(horizon: ReportHorizon) {
     unitCount,
     cleanPathCalls,
     redundancyPassCalls,
+    coldReadCalls,
     expectedCallBudget,
     safetyMarginCalls,
     recommendedCallBudget,
