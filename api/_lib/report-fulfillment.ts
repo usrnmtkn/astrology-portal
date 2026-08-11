@@ -14,6 +14,12 @@ import {
   type ReportHorizon
 } from "./report-generation.js";
 import { reportSystemPromptVersions } from "./report-prompt-versions.js";
+import {
+  runReportRedundancyPass,
+  validateAssembledReport,
+  type AssembledReportUnit,
+  type ReportAssemblyIssue
+} from "./report-assembly.js";
 import { callReportModel, type ReportModelCall } from "./report-model-client.js";
 import { estimateReportModelCost } from "./report-model-pricing.js";
 import {
@@ -22,7 +28,7 @@ import {
   runReportWriterChain
 } from "./report-writer-chain.js";
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
-import { ReportBirthDataError, requireReportBirthProfile, type BirthProfile } from "./report-billing-window.js";
+import { natalPointLongitudesFromChart, ReportBirthDataError, requireReportBirthProfile, type BirthProfile } from "./report-billing-window.js";
 import { reportUrl } from "./report-http.js";
 
 const unitsByHorizon = {
@@ -89,6 +95,7 @@ type PassingUnitCacheEntry = {
     fulfillmentPassed: true;
     validatorResults: unknown[];
     judge: ReportJudgeResult;
+    writerReviews: Array<{ critique: unknown; coldCritique: unknown }>;
     promptVersions: Record<string, unknown>;
     factsHash: string | null;
     attemptCounts: { validator: number; judge: number };
@@ -113,6 +120,16 @@ export class ReportPersistenceInfrastructureError extends Error {
     const message = cause instanceof Error ? cause.message : String(cause);
     super(`REPORT_INFRASTRUCTURE_ERROR: persistence failed for gated unit ${unitId} after ${attempts} attempts: ${message}`);
     this.name = "ReportPersistenceInfrastructureError";
+  }
+}
+
+export class ReportAssemblyRegenerationRequired extends Error {
+  readonly issues: ReportAssemblyIssue[];
+
+  constructor(issues: ReportAssemblyIssue[]) {
+    super(`REPORT_ASSEMBLY_REGENERATION_REQUIRED: ${JSON.stringify(issues)}`);
+    this.name = "ReportAssemblyRegenerationRequired";
+    this.issues = issues;
   }
 }
 
@@ -152,8 +169,14 @@ export function createReportFactsCalculator(admin: SupabaseReportAdmin = createS
   const prepareBirthProfile = async (report: FulfillmentReportRow, requiresBirthTime: boolean) => {
     const profileRow = await admin.selectOne<{ data: unknown }>("user_profiles", new URLSearchParams({ user_id: `eq.${report.user_id}`, select: "data" }));
     const birth = requireReportBirthProfile(profileRow?.data, requiresBirthTime);
-    preparedBirthProfiles.set(report.id, birth);
-    return birth;
+    const socialProfile = await admin.selectOne<{ natal_chart?: unknown }>("social_profiles", new URLSearchParams({ user_id: `eq.${report.user_id}`, select: "natal_chart" }));
+    const socialAngles = natalPointLongitudesFromChart(socialProfile?.natal_chart);
+    const prepared = {
+      ...birth,
+      natalPointLongitudes: Object.keys(socialAngles).length ? socialAngles : birth.natalPointLongitudes
+    };
+    preparedBirthProfiles.set(report.id, prepared);
+    return prepared;
   };
   const calculate: ReportFactsCalculator = async (report) => {
     const birth = preparedBirthProfiles.get(report.id) ?? await prepareBirthProfile(report, true);
@@ -166,7 +189,7 @@ export function createReportFactsCalculator(admin: SupabaseReportAdmin = createS
     };
     const [version, facts] = await Promise.all([
       client.serviceVersion(),
-      client.reportWindow({ natalSubject, location: birth.birthLocation, reportDomain: report.report_domain, reportHorizon: report.report_horizon, start: report.period_start, end: report.period_end })
+      client.reportWindow({ natalSubject, location: birth.birthLocation, reportDomain: report.report_domain, reportHorizon: report.report_horizon, start: report.period_start, end: report.period_end, natalPointLongitudes: birth.natalPointLongitudes })
     ]);
     return { facts, facts_engine: `tldrastro-api@${version}` };
   };
@@ -276,6 +299,7 @@ export async function processReportFulfillmentJob(input: {
   const validatorSummary: Array<{ unitId: string; passed: true; issues: unknown[] }> = [];
   let validatorAttempts = report.attempt_counts?.validator ?? 0;
   let judgeAttempts = report.attempt_counts?.judge ?? 0;
+  let redundancyAttempts = report.attempt_counts?.redundancy ?? 0;
   const passingUnitCache = parsedPassingUnitCache(input.job.passing_unit_cache);
   let generatedUnitsThisCycle = 0;
 
@@ -359,6 +383,9 @@ export async function processReportFulfillmentJob(input: {
     promptVersions.canonical = versions.canonical.version;
     promptVersions.critique = versions.critique.version;
     promptVersions.judge = versions.judge.version;
+    promptVersions.noCleverness = versions.noCleverness.version;
+    promptVersions.ownerReviewEvidence = versions.ownerReviewEvidence.version;
+    promptVersions.coldProse = versions.coldProse.version;
     const validatorAttemptCap = reportValidatorAttemptCap(input.job, unitId, config.validatorAttemptCap);
     const validateWithNamedRevisions = async (initialDraft: ReportDraft, initialChainTokens: number) => {
       let candidate = initialDraft;
@@ -385,7 +412,18 @@ export async function processReportFulfillmentJob(input: {
     };
     await input.store.updateReport(report.id, nowPatch("writing"));
     await input.store.updateJob(input.job.id, { step: "writing" });
-    const initialChain = await runReportWriterChain({ payload, callModel: authorizedCall });
+    const assemblyFailureContext = Array.isArray((existing?.source_snapshot?.assemblyValidation as { issues?: unknown[] } | undefined)?.issues)
+      ? (existing?.source_snapshot?.assemblyValidation as { issues: unknown[] }).issues.map((entry) => JSON.stringify(entry))
+      : [];
+    const initialChain = await runReportWriterChain({
+      payload,
+      failureContext: assemblyFailureContext.length ? assemblyFailureContext : undefined,
+      callModel: authorizedCall
+    });
+    const writerReviews: Array<{ critique: unknown; coldCritique: unknown }> = [{
+      critique: initialChain.critique,
+      coldCritique: initialChain.coldCritique
+    }];
     const initialValidation = await validateWithNamedRevisions(initialChain.revised, totalTokens(initialChain.calls));
     let draft = initialValidation.draft;
     let acceptedChainTokens = initialValidation.acceptedTokens;
@@ -404,6 +442,7 @@ export async function processReportFulfillmentJob(input: {
       await input.store.updateReport(report.id, nowPatch("writing"));
       await input.store.updateJob(input.job.id, { step: "writing" });
       const chain = await runReportWriterChain({ payload, failureContext: judged.result.findings.map((finding) => JSON.stringify(finding)), callModel: authorizedCall });
+      writerReviews.push({ critique: chain.critique, coldCritique: chain.coldCritique });
       const judgeRevisionValidation = await validateWithNamedRevisions(chain.revised, totalTokens(chain.calls));
       draft = judgeRevisionValidation.draft;
       acceptedChainTokens = judgeRevisionValidation.acceptedTokens;
@@ -412,6 +451,7 @@ export async function processReportFulfillmentJob(input: {
     if (!judged || judged.result.verdict !== "pass") throw new Error(`Judge attempt cap exhausted for ${unitId}.`);
     const sourceSnapshot: PassingUnitCacheEntry["sourceSnapshot"] = {
       fulfillmentPassed: true, validatorResults, judge: judged.result, promptVersions,
+      writerReviews,
       factsHash: report.facts_hash, attemptCounts: { validator: validatorAttempts, judge: judgeAttempts }
     };
     const passingUnit: PassingUnitCacheEntry = {
@@ -429,12 +469,85 @@ export async function processReportFulfillmentJob(input: {
     generatedUnitsThisCycle += 1;
   }
 
+  const orderedUnitIds = [...fulfillmentUnitIds(report.report_domain, report.report_horizon)];
+  const unitRows = await input.store.unitRows(report.id);
+  const unitById = new Map(unitRows.map((row) => [row.content_key.replace(`report:${report.id}:`, ""), row]));
+  const assembledUnits: AssembledReportUnit[] = orderedUnitIds.map((unitId) => {
+    const row = unitById.get(unitId);
+    if (!row) throw new Error(`REPORT_ASSEMBLY_INCOMPLETE: missing persisted unit '${unitId}'.`);
+    return {
+      unitId,
+      draft: {
+        headline: row.headline,
+        summary: row.summary,
+        body: row.body,
+        sections: Array.isArray(row.sections) ? row.sections as Array<{ heading?: string; body?: string }> : []
+      }
+    };
+  });
+  const invalidateAssemblyUnits = async (issues: ReportAssemblyIssue[]) => {
+    const byUnit = new Map<string, ReportAssemblyIssue[]>();
+    for (const entry of issues) byUnit.set(entry.unitId, [...(byUnit.get(entry.unitId) ?? []), entry]);
+    for (const [unitId, unitIssues] of byUnit) {
+      const row = unitById.get(unitId);
+      const assembled = assembledUnits.find((unit) => unit.unitId === unitId);
+      if (!row || !assembled) continue;
+      await input.store.saveUnit(report, unitId, assembled.draft, {
+        ...row.source_snapshot,
+        fulfillmentPassed: false,
+        assemblyValidation: { passed: false, issues: unitIssues }
+      });
+    }
+    await input.store.updateReport(report.id, {
+      ...nowPatch("writing"),
+      token_count: tokenCount,
+      token_count_total: tokenCountTotal,
+      token_spend_usd_estimate: estimatedCostTotal,
+      attempt_counts: { validator: validatorAttempts, judge: judgeAttempts, redundancy: redundancyAttempts }
+    });
+  };
+  const structuralIssues = validateAssembledReport(assembledUnits);
+  if (structuralIssues.length) {
+    await invalidateAssemblyUnits(structuralIssues);
+    throw new ReportAssemblyRegenerationRequired(structuralIssues);
+  }
+
+  await input.store.updateReport(report.id, nowPatch("validating"));
+  await input.store.updateJob(input.job.id, { step: "validating" });
+  redundancyAttempts += 1;
+  const reportPayload = assembleReportGenerationPayload({
+    reportId: report.id,
+    reportDomain: report.report_domain,
+    reportHorizon: report.report_horizon,
+    unitId: orderedUnitIds[0],
+    frozenFacts: report.facts
+  });
+  const redundancy = await runReportRedundancyPass({ units: assembledUnits, payload: reportPayload, callModel: authorizedCall });
+  tokenCount += redundancy.usage.totalTokens;
+  promptVersions.redundancy = redundancy.promptVersion;
+  if (redundancy.findings.length) {
+    const redundancyIssues: ReportAssemblyIssue[] = redundancy.findings.map((finding) => ({
+      code: `report_${finding.category}`,
+      message: finding.evidence,
+      severity: "error",
+      unitId: finding.unit_id,
+      relatedUnitIds: finding.related_unit_ids,
+      location: finding.location,
+      sentenceIndex: finding.sentence_index,
+      scopeStart: finding.scope_start,
+      scopeEnd: finding.scope_end,
+      quote: finding.quote
+    }));
+    await invalidateAssemblyUnits(redundancyIssues);
+    throw new ReportAssemblyRegenerationRequired(redundancyIssues);
+  }
+
   const publicationStatus = config.autoPublishEnabled ? "live" : "needs_review";
   await input.store.updateReport(report.id, {
     ...nowPatch(publicationStatus), status: publicationStatus, prompt_versions: promptVersions,
     judge_scores: judgeScores, token_count: tokenCount,
     validator_results: validatorSummary,
-    attempt_counts: { validator: validatorAttempts, judge: judgeAttempts },
+    attempt_counts: { validator: validatorAttempts, judge: judgeAttempts, redundancy: redundancyAttempts },
     ...(config.autoPublishEnabled ? { delivered_at: new Date().toISOString() } : {})
   });
   await input.store.updateJob(input.job.id, { state: "complete", step: "complete", locked_at: null, locked_by: null });
@@ -501,8 +614,9 @@ export async function runReportFulfillmentBatch(input: {
       const birthDataFailure = error instanceof ReportBirthDataError || /^BIRTH_DATA_(?:MISSING|INVALID):/u.test(message);
       const clientFailure = error instanceof ReportCalculationApiClientError || /^CALCULATION_API_CLIENT_ERROR:/u.test(message);
       const persistenceInfrastructureFailure = error instanceof ReportPersistenceInfrastructureError || /^REPORT_INFRASTRUCTURE_ERROR: persistence/u.test(message);
+      const assemblyRegeneration = error instanceof ReportAssemblyRegenerationRequired || /^REPORT_ASSEMBLY_REGENERATION_REQUIRED:/u.test(message);
       const terminal = birthDataFailure || clientFailure || /REPORT_CALL_AUTHORIZATION_REQUIRED|REPORT_DOMAIN_PROMPT_PENDING|CALCULATION_API_PREFLIGHT_FAILED|SOURCE_GAP|attempt cap exhausted|token budget exceeded|birth data is unavailable|lost its report or entitlement|facts bundle/iu.test(message);
-      const retryable = persistenceInfrastructureFailure
+      const retryable = persistenceInfrastructureFailure || assemblyRegeneration
         ? job.attempt < config.jobAttemptCap
         : message.startsWith("FACTS_PENDING:") || (!terminal && job.attempt < config.jobAttemptCap);
       if (report) {
@@ -525,7 +639,7 @@ export async function runReportFulfillmentBatch(input: {
         jobId: job.id,
         error: message,
         retryable,
-        failureClass: persistenceInfrastructureFailure ? "infrastructure_persistence" : birthDataFailure ? "birth_data" : clientFailure ? "calculation_client" : "runtime"
+        failureClass: persistenceInfrastructureFailure ? "infrastructure_persistence" : assemblyRegeneration ? "assembly_regeneration" : birthDataFailure ? "birth_data" : clientFailure ? "calculation_client" : "runtime"
       });
     }
   }
