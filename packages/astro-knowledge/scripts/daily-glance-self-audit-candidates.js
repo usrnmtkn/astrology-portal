@@ -65,15 +65,14 @@ function transitMechanism(packet) {
 
 function deterministicLintRules(packet, config) {
   const fixed = [
-    { id: "SOL-DIRECTIVE-output-schema", rule: "Return strict JSON with exactly transit_key, headline, body, screenshot_line, and portability_check; transit_key must equal the requested key and every value must be a non-empty string." },
+    { id: "SOL-DIRECTIVE-output-schema", rule: "Return strict JSON with exactly transit_key, headline, body, and screenshot_line; transit_key must equal the requested key and every value must be a non-empty string." },
     { id: "SOL-DIRECTIVE-headline", rule: "Headline is one declarative sentence, ends with a period, contains 4–12 words, contains no question or exclamation mark, and is not a Notice/Allow/Pay attention command." },
     { id: "SOL-DIRECTIVE-body-length", rule: "Body contains 50–90 words in 3–5 sentences." },
     { id: "SOL-DIRECTIVE-body-register", rule: "Body uses second person and does not repeat the complete headline." },
     { id: "SOL-DIRECTIVE-one-situation", rule: "Use one concrete situation; stacked interchangeable examples and menu constructions are prohibited." },
     { id: "SOL-DIRECTIVE-formula", rule: "Do not open with a rhetorical question, Notice when, or Pay attention to; do not use the scene → diagnosis → permission → instruction template." },
     { id: "SOL-DIRECTIVE-hedging", rule: "Use may, might, and perhaps at most once in total; never use ironically or usually; do not assert another person's hidden intent." },
-    { id: "SOL-DIRECTIVE-screenshot", rule: "screenshot_line must be exactly one complete sentence copied verbatim from the body." },
-    { id: "SOL-DIRECTIVE-portability", rule: "portability_check must be one sentence of at least five words explaining why the copy fits only this transit key." }
+    { id: "SOL-DIRECTIVE-screenshot", rule: "screenshot_line must be exactly one complete sentence copied verbatim from the body." }
   ];
   const governed = [
     ...packet.styleMarkers.map((entry) => ({ id: entry.id, rule: entry.rule })),
@@ -101,30 +100,47 @@ function renderExamples(examples) {
   ].join("\n")).join("\n\n");
 }
 
-function renderSelfAuditWriterInput(packet, config, examples) {
+function renderSceneContext(sceneContext) {
+  if (!sceneContext?.canGenerateContextualCandidate || !sceneContext?.writerBoundary?.enabled) {
+    throw new Error("Resolved chart context with explicitly approved scene licenses is required before writer input can be rendered.");
+  }
+  return JSON.stringify({
+    chartContext: sceneContext.chartContext,
+    mechanism: sceneContext.mechanism,
+    aspectGrammar: sceneContext.aspectGrammar,
+    licenses: sceneContext.licenses,
+    writerBoundary: sceneContext.writerBoundary
+  }, null, 2);
+}
+
+function renderSelfAuditWriterInput(packet, config, examples, sceneContext) {
   const directive = loadDirective(config);
   const rules = deterministicLintRules(packet, config).map((entry) => `- [${entry.tier.toUpperCase()}] ${entry.id}: ${entry.rule}`).join("\n");
   let modelInput = directive
     .replace("- `{{TRANSIT_KEY}}` — e.g. `square/uranus`, `house/8`", `### Transit key\n${packet.target.key}`)
     .replace("- `{{TRANSIT_MECHANISM}}` — one-paragraph description of what this transit specifically does", `### Transit mechanism\n${transitMechanism(packet)}`)
+    .replace("- `{{RESOLVED_CHART_CONTEXT}}` — the calculation-resolved chart factors and explicitly approved scene licenses for this reader and event", `### Resolved chart context and scene licenses\n${renderSceneContext(sceneContext)}`)
     .replace("- `{{GOOD_EXAMPLES}}` — owner-approved cards. Match their register exactly.", `### Good examples\n${renderExamples(examples)}`)
     .replace("- `{{LINT_RULES}}` — the deterministic lint spec, verbatim. Blocking failures discard the candidate; advisory failures are reported without blocking it.", `### Deterministic lint rules (blocking gates and advisory diagnostics)\n${rules}`);
   modelInput = modelInput.split("{{TRANSIT_KEY}}").join(packet.target.key);
   modelInput = modelInput.split("{{TRANSIT_MECHANISM}}").join("the transit mechanism supplied above");
+  modelInput = modelInput.split("{{RESOLVED_CHART_CONTEXT}}").join("the resolved chart context supplied above");
   modelInput = modelInput.split("{{GOOD_EXAMPLES}}").join("the approved examples supplied above");
   modelInput = modelInput.split("{{LINT_RULES}}").join("the deterministic lint spec supplied above");
   if (/\{\{[A-Z_]+\}\}/u.test(modelInput)) throw new Error(`Unresolved self-audit directive placeholder for ${packet.target.key}.`);
   return modelInput;
 }
 
-function selfAuditPacketLint(packet, modelInput, config, examples, currentPair = null) {
+function selfAuditPacketLint(packet, modelInput, config, examples, currentPair = null, sceneContext = null) {
   const canonical = packetLint(packet, renderModelInput(packet), config);
   const checks = [
     { id: "canonical-packet-preflight", passed: canonical.passed, details: canonical.checks.filter((check) => !check.passed) },
     { id: "owner-directive-loaded", passed: modelInput.startsWith("# Sol writing directive — daily-glance candidate (one per call)"), details: config.selfAuditDirectivePath },
     { id: "pipeline-notes-excluded", passed: !modelInput.includes("Pipeline notes") && !modelInput.includes("Best-of-three ="), details: "Non-prompt pipeline notes are absent." },
     { id: "one-candidate-contract", passed: modelInput.includes("Write exactly one candidate") && !modelInput.includes("Write 3 candidates"), details: "One candidate per independent call." },
-    { id: "exact-output-schema", passed: modelInput.includes('"transit_key"') && modelInput.includes('"screenshot_line"') && modelInput.includes('"portability_check"'), details: "Five-field owner schema included." },
+    { id: "exact-output-schema", passed: modelInput.includes('"transit_key"') && modelInput.includes('"screenshot_line"') && !modelInput.includes('"portability_check"'), details: "Four-field owner schema included." },
+    { id: "resolved-chart-context", passed: sceneContext?.canGenerateContextualCandidate === true && sceneContext?.writerBoundary?.enabled === true && modelInput.includes('### Resolved chart context and scene licenses'), details: sceneContext?.chartContext || "missing" },
+    { id: "explicit-scene-license-approval", passed: (sceneContext?.licenses || []).length > 0 && sceneContext.licenses.every((license) => license.approval?.ownerApproved === true && license.approval?.writerEligible === true), details: (sceneContext?.licenses || []).map((license) => license.licenseId) },
     { id: "same-group-approved-examples", passed: examples.length === 3 && examples.every((entry) => entry.key !== packet.target.key && entry.key.split("/")[0] === packet.target.key.split("/")[0] && entry.headlineStatus === "approved" && entry.bodyStatus === "approved"), details: examples.map((entry) => entry.key) },
     { id: "no-unresolved-placeholders", passed: !/\{\{[A-Z_]+\}\}/u.test(modelInput), details: "All directive inputs resolved." },
     { id: "deterministic-lint-spec", passed: deterministicLintRules(packet, config).every((entry) => modelInput.includes(`- [${entry.tier.toUpperCase()}] ${entry.id}: ${entry.rule}`)), details: `${deterministicLintRules(packet, config).length} exact tiered lint rules included.` },
@@ -145,7 +161,7 @@ function selfAuditPacketLint(packet, modelInput, config, examples, currentPair =
 function parseSelfAuditCandidate(raw, expectedKey) {
   const clean = String(raw || "").trim().replace(/^```(?:json)?\s*/iu, "").replace(/\s*```$/u, "");
   const value = JSON.parse(clean);
-  const expectedFields = "body|headline|portability_check|screenshot_line|transit_key";
+  const expectedFields = "body|headline|screenshot_line|transit_key";
   if (Object.keys(value).sort().join("|") !== expectedFields) throw new Error(`Output must contain exactly ${expectedFields}.`);
   if (Object.values(value).some((entry) => typeof entry !== "string" || !entry.trim())) throw new Error("Every output field must be a non-empty string.");
   if (value.transit_key !== expectedKey) throw new Error(`Output transit_key ${JSON.stringify(value.transit_key)} does not match ${JSON.stringify(expectedKey)}.`);
@@ -158,7 +174,6 @@ function lintSelfAuditCandidate(candidate, key, config) {
   const bodySentences = sentences(candidate.body);
   const hedgeCount = (candidate.body.match(/\b(?:may|might|perhaps)\b/giu) || []).length;
   const screenshotSentences = sentences(candidate.screenshot_line);
-  const portabilitySentences = sentences(candidate.portability_check);
   const stackedExamples = sentences(candidate.body).filter((sentence) => /^(?:An?|Your|Someone|A friend|A coworker|A partner)\b/iu.test(sentence)).length >= 3;
   const checks = applyLintTiers([
     ...base.checks,
@@ -169,20 +184,24 @@ function lintSelfAuditCandidate(candidate, key, config) {
     { id: "SOL-DIRECTIVE-one-situation", passed: !stackedExamples && !/\b(?:for example|another example|or maybe)\b/iu.test(candidate.body), details: stackedExamples ? "Stacked example-like sentence openers detected." : "No mechanical menu-of-scenes pattern detected." },
     { id: "SOL-DIRECTIVE-formula", passed: !/^\s*(?:Notice when|Pay attention to)\b/iu.test(candidate.body) && !/^\s*[^.!?]*\?/u.test(candidate.body), details: "No prohibited opener detected." },
     { id: "SOL-DIRECTIVE-hedging", passed: hedgeCount <= 1 && !/\b(?:ironically|usually)\b/iu.test(candidate.body) && !/\bjust enough to keep you from leaving\b/iu.test(candidate.body), details: `${hedgeCount} may/might/perhaps usage(s)` },
-    { id: "SOL-DIRECTIVE-screenshot", passed: screenshotSentences.length === 1 && candidate.body.includes(candidate.screenshot_line.trim()), details: screenshotSentences.length === 1 && candidate.body.includes(candidate.screenshot_line.trim()) ? "Exact body sentence supplied." : "screenshot_line is not one exact body sentence." },
-    { id: "SOL-DIRECTIVE-portability", passed: portabilitySentences.length === 1 && wordCount(candidate.portability_check) >= 5, details: `${wordCount(candidate.portability_check)} words; ${portabilitySentences.length} sentence(s)` }
+    { id: "SOL-DIRECTIVE-screenshot", passed: screenshotSentences.length === 1 && candidate.body.includes(candidate.screenshot_line.trim()), details: screenshotSentences.length === 1 && candidate.body.includes(candidate.screenshot_line.trim()) ? "Exact body sentence supplied." : "screenshot_line is not one exact body sentence." }
   ]);
   return {
     ...base,
     passed: blockingChecksPassed(checks),
     allChecksPassed: checks.every((check) => check.passed),
     checks,
-    directiveCounts: { hedgeCount, screenshotSentences: screenshotSentences.length, portabilitySentences: portabilitySentences.length }
+    directiveCounts: { hedgeCount, screenshotSentences: screenshotSentences.length }
   };
 }
 
 function selectLintCleanWinner(candidates, operatingMode, compare) {
-  const eligible = candidates.filter((entry) => entry.candidate && entry.lint?.passed && !entry.judge?.skipped);
+  const eligible = candidates.filter((entry) => entry.candidate
+    && entry.lint?.passed
+    && !entry.judge?.skipped
+    && entry.promotionEligible !== false
+    && entry.candidatePoolEligible !== false
+    && entry.disposition !== "RETAIN_AS_REGISTER_EVIDENCE / DO_NOT_SERVE");
   return eligible.length ? eligible.slice().sort((left, right) => compare(left, right, operatingMode))[0] : null;
 }
 
