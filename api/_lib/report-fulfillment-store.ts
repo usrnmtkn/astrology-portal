@@ -4,6 +4,7 @@ import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 export type FulfillmentJobRow = {
   id: string; report_id: string; entitlement_id: string; state: string; step: string; attempt: number;
   authorization_token: string | null; authorized_call_budget: number | null; model_call_count: number;
+  passing_unit_cache?: Record<string, unknown>;
 };
 export type FulfillmentReportRow = {
   id: string; user_id: string; subject_id: string | null; report_domain: ReportDomain; report_horizon: ReportHorizon;
@@ -110,10 +111,11 @@ export function createReportFulfillmentStore(admin = createSupabaseReportAdmin()
       const value = draft as { headline?: string; summary?: string; body?: string; sections?: unknown };
       await admin.insert("user_generated_interpretations", {
         user_id: report.user_id, subject_type: "report_unit", subject_id: report.id,
-        content_key: `report:${report.id}:${unitId}`, surface: "year_ahead", mode: "report", status: "DRAFT",
+        content_key: `report:${report.id}:${unitId}`, target_date: report.period_start,
+        surface: "year_ahead", mode: "report", status: "DRAFT",
         event_type: "report_unit", headline: value.headline ?? "", summary: value.summary ?? "", body: value.body ?? "",
         sections: value.sections ?? [], facts: report.facts, source_snapshot: sourceSnapshot
-      }, { onConflict: "content_key,target_date,mode" });
+      }, { onConflict: "user_id,subject_type,subject_id,content_key,target_date,mode" });
     },
     unitRows: async (reportId) => admin.request(`user_generated_interpretations?subject_id=eq.${reportId}&subject_type=eq.report_unit&select=content_key,body,sections,source_snapshot&order=content_key.asc`),
     async countCombination(report, promptVersions) {
