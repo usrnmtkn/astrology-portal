@@ -25,7 +25,10 @@ const authored = readJson("apps/web/src/content/fallbackArchitectureV3/authored-
 const canonical = readJson("packages/astro-knowledge/review/empty-house-v14/empty-house-v14-owner-approved-rows.json");
 const friendReview = readJson("packages/astro-knowledge/review/empty-house-v14/empty-house-v14-friend-variants-review.json");
 const approval = readJson("packages/astro-knowledge/review/empty-house-v14/friend-variant-approval-record.json");
-const projection = readJson("packages/astro-knowledge/review/empty-house-v14/serving-projection-v14-projection-4.json");
+const projection = readJson("packages/astro-knowledge/review/empty-house-v14/serving-projection-v14-projection-5.json");
+const ownerRevision = readJson("packages/astro-knowledge/review/empty-house-v14/owner-revision-2026-08-11.json");
+const bridgeProposal = readJson("packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json");
+const bridgeVocabFix = readJson("packages/astro-knowledge/review/empty-house-v14/bridge-vocab-fix-2026-08-11.json");
 const originalFriendFlags = readJson("packages/astro-knowledge/review/empty-house-v14/body-they-flagged-for-owner.json");
 const friendCorrections = readJson("packages/astro-knowledge/review/empty-house-v14/body-they-corrections.json");
 const friendDecisionAid = readJson("packages/astro-knowledge/review/empty-house-v14/body-they-decision-aid.json");
@@ -75,7 +78,7 @@ assert.deepEqual(categoryCounts, {
   empty_house_ruler_planet_example: 132,
 });
 assert.equal(projection.package, "empty-house-corpus-v14-serving-projection");
-assert.equal(projection.version, "v14-projection-4");
+assert.equal(projection.version, "v14-projection-5");
 assert.equal(projection.source_workbook_sha256, canonical.source_workbook_sha256);
 assert.equal(projection.counts.serving_rows, 541);
 assert.equal(projection.counts.traditional_rows_to_author, 33);
@@ -96,6 +99,7 @@ assert.equal(new Set(canonical.entries.map((entry) => entry.key)).size, 550, "V1
 
 const readerEntries = canonical.entries.filter((entry) => entry.category !== "principle");
 const canonicalByKey = new Map(readerEntries.map((entry) => [entry.key, entry]));
+const ownerRevisionByKey = new Map(ownerRevision.rows.map((row) => [row.corpus_key, row]));
 const authoredByKey = new Map(authored.rows.map((row) => [row.corpus_key, row]));
 const friendByKey = new Map(friendReview.rows.map((row) => [row.corpus_key, row]));
 const correctionByKey = new Map(friendCorrections.rows.map((row) => [row.corpus_key, row]));
@@ -117,11 +121,11 @@ assert.equal(friendReview.prior_projection_body_they_digest_sha256, projection.p
 assert.equal(
   crypto.createHash("sha256").update(JSON.stringify(authored.rows.map(({ corpus_key, body_they }) => ({ corpus_key, body_they })))).digest("hex"),
   projection.body_they_approval_payload_sha256,
-  "Projection-4 corrected Friend bytes must remain exact."
+  "Projection-5 corrected Friend bytes must remain exact."
 );
 assert.equal(approval.payload_sha256, friendReview.payload_sha256);
 assert.equal(approval.row_count, 541);
-assert.equal(PACKAGE_VERSION, promoted ? "v3-2026-08-11c" : "v3-2026-08-10b");
+assert.equal(PACKAGE_VERSION, promoted ? "v3-2026-08-11d" : "v3-2026-08-10b");
 
 for (const entry of canonical.entries) {
   assert.equal(entry.owner_approved, true, `${entry.key}: V14 You copy must be owner-approved.`);
@@ -134,7 +138,7 @@ for (const entry of canonical.entries) {
 for (const entry of readerEntries) {
   const row = authoredByKey.get(entry.key);
   assert.ok(row, `${entry.key}: missing authored projection.`);
-  assert.equal(row.body_you, entry.copy_you, `${entry.key}: owner-approved You bytes changed.`);
+  assert.equal(row.body_you, ownerRevisionByKey.get(entry.key)?.body_you ?? entry.copy_you, `${entry.key}: owner-approved You bytes changed.`);
   assert.ok(row.body_they?.trim(), `${entry.key}: missing explicit Friend variant.`);
   assert.doesNotMatch(row.body_they, /\b(?:you|your|yours|yourself)\b/iu, `${entry.key}: Friend copy leaks second person.`);
   assert.equal(row.body_you_review_status, "approved");
@@ -170,6 +174,14 @@ for (const entry of readerEntries) {
   assert.doesNotMatch(row.body_they, /\b(?:place|test|know|knows|prove|proves|proving|places) them (?:return|are|were|know|have|will|can|matter|live|go)\b/iu);
   assert.doesNotMatch(row.body_they, /\bfollowing they\b/iu);
 }
+
+const revisedCancer = authoredByKey.get("empty-2nd|cancer");
+assert.equal(revisedCancer.body_you, ownerRevision.rows[0].body_you);
+assert.equal(revisedCancer.body_they, ownerRevision.rows[0].body_they);
+assert.equal(revisedCancer.body_you_sha256, crypto.createHash("sha256").update(ownerRevision.rows[0].body_you).digest("hex"));
+assert.equal(revisedCancer.body_they_sha256, crypto.createHash("sha256").update(ownerRevision.rows[0].body_they).digest("hex"));
+assert.equal(revisedCancer.owner_revision.bodyYouDigestSha256, ownerRevision.new_body_you_digest_sha256);
+assert.equal(revisedCancer.owner_revision.bodyTheyDigestSha256, ownerRevision.new_body_they_digest_sha256);
 
 assert.equal(
   effectiveRows.hookRows.filter((row) => row.contentKey.startsWith(prefix)).length,
@@ -239,6 +251,94 @@ assert.deepEqual(
   [],
   "The modern launch map must leave zero unreachable V14 serving rows."
 );
+
+const standardBridgeExample = sourceRenderer.renderNatalEmptyHouse({
+  house: 2,
+  sign: "cancer",
+  primaryRuler: "moon",
+  rulerHouse: 6,
+  voice: "you",
+}, { ...renderOpts, includeEmptyHouseBridge: true });
+assert.equal(standardBridgeExample.parts[1], bridgeProposal.example_renders[0].rendered_you);
+assert.equal(standardBridgeExample.parts.length, 3);
+
+const houseOneBridgeExample = sourceRenderer.renderNatalEmptyHouse({
+  house: 1,
+  sign: "gemini",
+  primaryRuler: "mercury",
+  rulerHouse: 10,
+  voice: "you",
+}, { ...renderOpts, includeEmptyHouseBridge: true });
+assert.equal(houseOneBridgeExample.parts[1], bridgeProposal.example_renders[1].rendered_you);
+assert.equal(houseOneBridgeExample.parts.length, 3);
+
+for (const row of bridgeVocabFix.rows) {
+  assert.equal(
+    rows.vocabularyRows.find((candidate) => candidate.contentKey === row.contentKey)?.body,
+    row.body,
+    `${row.contentKey} must preserve the owner-approved bridge vocabulary revision.`,
+  );
+}
+
+const revisedBridgeExamples = [
+  { house: 6, rulerHouse: 7 },
+  { house: 8, rulerHouse: 10 },
+  { house: 9, rulerHouse: 3 },
+  { house: 12, rulerHouse: 11 },
+].map(({ house, rulerHouse }) => sourceRenderer.renderNatalEmptyHouse({
+  house,
+  sign: "aries",
+  primaryRuler: "mars",
+  rulerHouse,
+  voice: "you",
+}, { ...renderOpts, includeEmptyHouseBridge: true }).parts[1]);
+revisedBridgeExamples.forEach((rendered, index) => {
+  assert.ok(
+    rendered.endsWith(bridgeVocabFix.example_renders_after_fix[index]),
+    `Bridge example ${index + 1} must end with the owner-approved natural topic phrase.`,
+  );
+});
+
+let bridgeRenderCount = 0;
+for (const sign of signs) {
+  const ruler = modernRulers[sign];
+  for (const [house, rulerHouse] of [[1, 10], [2, 6]]) {
+    for (const voice of ["you", "Friend"]) {
+      const result = sourceRenderer.renderNatalEmptyHouse({ house, sign, primaryRuler: ruler, rulerHouse, voice }, {
+        ...renderOpts,
+        includeEmptyHouseBridge: true,
+      });
+      assert.equal(result.parts.length, 3, `${house}/${sign}/${voice}: bridge layer missing.`);
+      assert.doesNotMatch(result.parts[1], /\{\{/u, `${house}/${sign}/${voice}: unresolved bridge slot.`);
+      if (ruler === "moon" || ruler === "sun") {
+        assert.match(result.parts[1], new RegExp(`\\bthe ${ruler === "moon" ? "Moon" : "Sun"}\\b`, "u"));
+      } else {
+        assert.doesNotMatch(result.parts[1], new RegExp(`\\bthe ${ruler[0].toUpperCase()}${ruler.slice(1)}\\b`, "u"));
+      }
+      bridgeRenderCount += 1;
+    }
+  }
+}
+assert.equal(bridgeRenderCount, 48, "All 12 signs, both templates, and both voices must fill every bridge slot.");
+
+for (const missingTemplateKey of bridgeProposal.templates.map((template) => template.contentKey)) {
+  const degradedTemplates = {
+    ...templates,
+    templates: templates.templates.filter((template) => template.contentKey !== missingTemplateKey),
+  };
+  const degradedRenderer = browserSourceModule.createFallbackRenderer(degradedTemplates, effectiveRows);
+  const house = missingTemplateKey.endsWith("house-1") ? 1 : 2;
+  const degraded = degradedRenderer.renderNatalEmptyHouse({
+    house,
+    sign: "gemini",
+    primaryRuler: "mercury",
+    rulerHouse: house === 1 ? 10 : 6,
+    voice: "you",
+  }, { ...renderOpts, includeEmptyHouseBridge: true });
+  assert.equal(degraded.parts.length, 2, `${missingTemplateKey}: missing bridge must preserve sign and ruler layers.`);
+}
+
+assert.equal((appSource.match(/includeEmptyHouseBridge: true/gu) ?? []).length, 1, "Only the detail view may request the bridge layer.");
 
 for (let house = 1; house <= 12; house += 1) {
   assert.throws(
@@ -321,6 +421,11 @@ if (promoted) {
     assert.deepEqual(distRenderer.renderNatalEmptyHouse(facts), sourceResult, "Dist/source parity.");
     assert.deepEqual(renderNatalEmptyHouseNode(facts), sourceResult, "Node/source parity.");
   }
+  const bridgeFacts = { house: 2, sign: "cancer", primaryRuler: "moon", rulerHouse: 6, voice: "you" };
+  const bridgeOpts = { includeEmptyHouseBridge: true };
+  const sourceBridge = sourceRenderer.renderNatalEmptyHouse(bridgeFacts, bridgeOpts);
+  assert.deepEqual(distRenderer.renderNatalEmptyHouse(bridgeFacts, bridgeOpts), sourceBridge, "Bridge dist/source parity.");
+  assert.deepEqual(renderNatalEmptyHouseNode(bridgeFacts, bridgeOpts), sourceBridge, "Bridge Node/source parity.");
   assert.throws(
     () => renderNatalEmptyHouseNode({ house: 1, sign: "scorpio", primaryRuler: "mars", rulerHouse: 2, voice: "you" }),
     NodeRoleViolationError
@@ -335,4 +440,4 @@ if (promoted) {
   assert.equal(authored.distribution_state, "staged");
 }
 
-console.log(`empty-house V14 modern passed: 550 governed rows, 541 serving projections, ${renderCount} dual-voice renders, ${promoted ? "dist/browser/Node parity" : "Friend approval still gated"}`);
+console.log(`empty-house V14 modern passed: 550 governed rows, 541 serving projections, ${renderCount} dual-voice renders, ${bridgeRenderCount} bridge slot renders, ${promoted ? "dist/browser/Node parity" : "Friend approval still gated"}`);

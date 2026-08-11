@@ -6740,7 +6740,7 @@ function normalizeEmptyHouseDetailSurface({
       rulerSystem,
       sign: normalizeContentIdPart(sign),
       voice: context === "self" ? "you" : "they"
-    });
+    }, { includeEmptyHouseBridge: true });
     const body = readerFacingParagraphs(rendered.parts).join("\n\n");
     const section = normalizedEmptyHouseSection(
       "house-sign",
