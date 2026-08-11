@@ -104,6 +104,29 @@ def _fixed_points(natal) -> List[Position]:
     return points
 
 
+def _with_verified_natal_points(natal, overrides):
+    """Use explicitly supplied frozen-chart angle facts for report timing.
+
+    A rounded place label can recalculate an angle differently from the
+    already-verified natal chart. The override is part of the request's fact
+    contract; it is never inferred or hardcoded by the service.
+    """
+    if not overrides:
+        return natal
+    unsupported = set(overrides) - {"Ascendant", "Midheaven"}
+    if unsupported:
+        raise ValueError(f"Unsupported verified natal points: {', '.join(sorted(unsupported))}.")
+    angles = dict(natal.angles)
+    for name, longitude in overrides.items():
+        if not 0 <= longitude < 360:
+            raise ValueError(f"Verified natal longitude for {name} must be in [0, 360).")
+        original = angles.get(name)
+        if original is None:
+            raise ValueError(f"Natal chart does not contain {name}.")
+        angles[name] = make_position(name, original.glyph, original.theme, longitude, original.house, speed=0)
+    return natal.model_copy(update={"angles": angles})
+
+
 def _root_for_aspect(
     lower: float,
     upper: float,
@@ -650,6 +673,7 @@ def calculate_report_window(request: ReportWindowRequest) -> ReportWindowRespons
     natal = calculate_natal_chart(
         NatalChartRequest(subject=request.natalSubject, includeContentFacts=False)
     )
+    natal = _with_verified_natal_points(natal, request.natalPointLongitudes)
     profections = calculate_profections(
         ProfectionsRequest(
             natalSubject=request.natalSubject,
