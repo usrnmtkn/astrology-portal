@@ -10,7 +10,13 @@
 //
 // Selection is authored-or-v3-or-SOURCE_GAP. Never resurrect a legacy helper below this.
 
-import { SourceGapError, type HookRow, type TemplatesFile, type RowsFile } from "./renderFallback.browser";
+import {
+  SourceGapError,
+  type DailyGlanceVariantSet,
+  type HookRow,
+  type TemplatesFile,
+  type RowsFile
+} from "./renderFallback.browser";
 
 export interface AuthoredCard {
   contentKey: string;
@@ -239,9 +245,64 @@ export interface TransitRenderResult {
   articleMode?: "current" | "archive" | null;
   risingHoroscopes?: { risingSign: string; body: string }[];
   articleSections?: SkyArticleRenderedSection[];
+  variantId?: string;
 }
 export interface SynastryRenderResult extends TransitRenderResult { tag: string | null }
 export interface TransitLabelResult { label: string; window: string }
+
+const DAILY_GLANCE_READER_ELIGIBLE = new Set(["approved", "approved_reuse", "reviewed"]);
+
+function dailyGlanceHash(value: string) {
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash >>> 0;
+}
+
+function dailyGlanceDayNumber(dateKey?: string | null) {
+  if (!dateKey) return null;
+  const parsed = Date.parse(`${dateKey.slice(0, 10)}T00:00:00.000Z`);
+  return Number.isFinite(parsed) ? Math.floor(parsed / 86_400_000) : null;
+}
+
+export function selectDailyGlanceVariantSet({
+  variantSet,
+  primary,
+  dateKey,
+  contentKey,
+  userId,
+  previousVariantId,
+  allowUnreviewed = false
+}: {
+  variantSet?: DailyGlanceVariantSet;
+  primary: { headline: string; body: string };
+  dateKey?: string | null;
+  contentKey: string;
+  userId?: string | null;
+  previousVariantId?: string | null;
+  allowUnreviewed?: boolean;
+}) {
+  const fallback = { id: "primary", ...primary };
+  if (!variantSet || variantSet.pairing_policy !== "explicit_pairs_only") return fallback;
+  const eligible = (status: string) => allowUnreviewed || DAILY_GLANCE_READER_ELIGIBLE.has(status);
+  const headlines = new Map(variantSet.headlines.filter((item) => eligible(item.review_status)).map((item) => [item.id, item.text]));
+  const bodies = new Map(variantSet.bodies.filter((item) => eligible(item.review_status)).map((item) => [item.id, item.text]));
+  const pairs = variantSet.pairings
+    .filter((pairing) => eligible(pairing.review_status))
+    .map((pairing) => ({ id: pairing.id, headline: headlines.get(pairing.headline_id), body: bodies.get(pairing.body_id) }))
+    .filter((pair): pair is { id: string; headline: string; body: string } => Boolean(pair.headline && pair.body));
+  if (!pairs.some((pair) => pair.id === "primary")) pairs.unshift(fallback);
+  const dayNumber = dailyGlanceDayNumber(dateKey);
+  if (pairs.length === 1 || dayNumber === null) return pairs[0] ?? fallback;
+  const offset = dailyGlanceHash(`${contentKey}|${userId ?? "shared"}`) % pairs.length;
+  let index = ((dayNumber + offset) % pairs.length + pairs.length) % pairs.length;
+  if (previousVariantId && pairs[index]?.id === previousVariantId && pairs.length > 1) {
+    index = (index + 1) % pairs.length;
+  }
+  return pairs[index] ?? fallback;
+}
 
 type Ctx = Record<string, string | null | undefined>;
 
@@ -2362,17 +2423,25 @@ export function createTransitSynastryRenderer(
   // transiting Moon. Pass natal+aspect for the Moon's tightest applying aspect; pass house
   // (whole-sign house of the Moon) when no aspect is within orb. No astrology words render. ----
   const DAILY_GROUP: Record<string, string> = { conjunction: "conjunction", square: "square", opposition: "opposition", trine: "soft", sextile: "soft" };
-  function renderDailyGlance({ natal, aspect, house }: { natal?: string; aspect?: string; house?: number | null }): TransitRenderResult {
+  function renderDailyGlance({ natal, aspect, house, dateKey, userId, previousVariantId }: { natal?: string; aspect?: string; house?: number | null; dateKey?: string | null; userId?: string | null; previousVariantId?: string | null }): TransitRenderResult {
     if (natal && aspect) {
       const g = DAILY_GROUP[aspect] ?? aspect;
       const h = hooks.get(`fallback-hook/daily-headline/${g}/${natal}`)?.body_you;
       const b = hooks.get(`fallback-hook/daily-body/${g}/${natal}`)?.body_you;
-      if (h && b) return { headline: h, body: b, parts: [b], templateKey: "fallback-template/daily.glance" };
+      if (h && b) {
+        const contentKey = `${g}/${natal}`;
+        const selected = selectDailyGlanceVariantSet({ variantSet: rowsFile.dailyGlanceVariants?.keys[contentKey], primary: { headline: h, body: b }, dateKey, contentKey, userId, previousVariantId, allowUnreviewed });
+        return { headline: selected.headline, body: selected.body, parts: [selected.body], templateKey: "fallback-template/daily.glance", variantId: selected.id };
+      }
     }
     if (house) {
       const h = hooks.get(`fallback-hook/daily-headline/house/${house}`)?.body_you;
       const b = hooks.get(`fallback-hook/daily-body/house/${house}`)?.body_you;
-      if (h && b) return { headline: h, body: b, parts: [b], templateKey: "fallback-template/daily.glance" };
+      if (h && b) {
+        const contentKey = `house/${house}`;
+        const selected = selectDailyGlanceVariantSet({ variantSet: rowsFile.dailyGlanceVariants?.keys[contentKey], primary: { headline: h, body: b }, dateKey, contentKey, userId, previousVariantId, allowUnreviewed });
+        return { headline: selected.headline, body: selected.body, parts: [selected.body], templateKey: "fallback-template/daily.glance", variantId: selected.id };
+      }
     }
     throw new SourceGapError(`SOURCE_GAP: daily glance ${aspect ?? "no-aspect"}/${natal ?? house}`);
   }
