@@ -1,0 +1,520 @@
+{
+  "batchId": "mercury-placements-pilot-v1",
+  "authorization": "OWNER AUTHORIZATION, 2026-08-11: first supervised generation run. The CANDIDATE_WRITER is promoted for THIS BATCH ONLY; promotion does not persist past it and reverts automatically when the batch report is delivered.",
+  "calls": {
+    "count": 24,
+    "inputTokens": 209305,
+    "outputTokens": 39604,
+    "totalTokens": 248909,
+    "cachedInputTokens": 131098,
+    "reasoningTokens": 30978,
+    "byStage": {
+      "draft": 12,
+      "review": 12
+    }
+  },
+  "callLog": [
+    {
+      "stage": "draft",
+      "role": "CARD_WRITER_V3",
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "responseId": "resp_025c860800109eb6006a7ac435e6bc81a28983962676331d5d",
+      "startedAt": "2026-08-11T06:41:57.238Z",
+      "endedAt": "2026-08-11T06:42:47.084Z",
+      "instructionsSha256": "0f7db576d6d8918b1222938892dec7866e1e84902b04114ab397e4abccbbb935",
+      "usage": {
+        "inputTokens": 10945,
+        "outputTokens": 2494,
+        "totalTokens": 13439,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 2301
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "review",
+      "role": "REVIEWER",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "responseId": "resp_05d4bd9fb513340c006a7ac4673c20819d9aa566e59656734c",
+      "startedAt": "2026-08-11T06:42:47.087Z",
+      "endedAt": "2026-08-11T06:42:56.704Z",
+      "instructionsSha256": "0579cbdf5466fbca6af3216bda002dab4049f683579374108f4366cc3dde74e9",
+      "usage": {
+        "inputTokens": 6292,
+        "outputTokens": 793,
+        "totalTokens": 7085,
+        "cachedInputTokens": 0,
+        "reasoningTokens": 273
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "draft",
+      "role": "CARD_WRITER_V3",
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "responseId": "resp_06bf2879a4536afc006a7ac470f2a881a39db8728dcc0891cf",
+      "startedAt": "2026-08-11T06:42:56.710Z",
+      "endedAt": "2026-08-11T06:44:25.203Z",
+      "instructionsSha256": "0f7db576d6d8918b1222938892dec7866e1e84902b04114ab397e4abccbbb935",
+      "usage": {
+        "inputTokens": 11060,
+        "outputTokens": 5232,
+        "totalTokens": 16292,
+        "cachedInputTokens": 7033,
+        "reasoningTokens": 5070
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "review",
+      "role": "REVIEWER",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "responseId": "resp_0fbc5a505281d88b006a7ac4c954b8819c96e96c267d4c452c",
+      "startedAt": "2026-08-11T06:44:25.204Z",
+      "endedAt": "2026-08-11T06:44:31.875Z",
+      "instructionsSha256": "0579cbdf5466fbca6af3216bda002dab4049f683579374108f4366cc3dde74e9",
+      "usage": {
+        "inputTokens": 6301,
+        "outputTokens": 585,
+        "totalTokens": 6886,
+        "cachedInputTokens": 4885,
+        "reasoningTokens": 93
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "draft",
+      "role": "CARD_WRITER_V3",
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "responseId": "resp_0f61b08267a43ed2006a7ac4d0000481a2a5f9a7a5b884215e",
+      "startedAt": "2026-08-11T06:44:31.877Z",
+      "endedAt": "2026-08-11T06:45:22.018Z",
+      "instructionsSha256": "0f7db576d6d8918b1222938892dec7866e1e84902b04114ab397e4abccbbb935",
+      "usage": {
+        "inputTokens": 11024,
+        "outputTokens": 2616,
+        "totalTokens": 13640,
+        "cachedInputTokens": 7033,
+        "reasoningTokens": 2452
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "review",
+      "role": "REVIEWER",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "responseId": "resp_09b237753e136805006a7ac502298481a3809dbee9e5a9a616",
+      "startedAt": "2026-08-11T06:45:22.019Z",
+      "endedAt": "2026-08-11T06:45:31.266Z",
+      "instructionsSha256": "0579cbdf5466fbca6af3216bda002dab4049f683579374108f4366cc3dde74e9",
+      "usage": {
+        "inputTokens": 6306,
+        "outputTokens": 825,
+        "totalTokens": 7131,
+        "cachedInputTokens": 4885,
+        "reasoningTokens": 231
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "draft",
+      "role": "CARD_WRITER_V3",
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "responseId": "resp_052af931763986ae006a7ac50b6cb081928c46e7efd65db2dc",
+      "startedAt": "2026-08-11T06:45:31.267Z",
+      "endedAt": "2026-08-11T06:45:54.940Z",
+      "instructionsSha256": "0f7db576d6d8918b1222938892dec7866e1e84902b04114ab397e4abccbbb935",
+      "usage": {
+        "inputTokens": 11134,
+        "outputTokens": 1429,
+        "totalTokens": 12563,
+        "cachedInputTokens": 7033,
+        "reasoningTokens": 1235
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "review",
+      "role": "REVIEWER",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "responseId": "resp_032add5d36238e68006a7ac5231574819e861a88724f4e4d09",
+      "startedAt": "2026-08-11T06:45:54.941Z",
+      "endedAt": "2026-08-11T06:46:01.836Z",
+      "instructionsSha256": "0579cbdf5466fbca6af3216bda002dab4049f683579374108f4366cc3dde74e9",
+      "usage": {
+        "inputTokens": 6354,
+        "outputTokens": 663,
+        "totalTokens": 7017,
+        "cachedInputTokens": 4885,
+        "reasoningTokens": 120
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "draft",
+      "role": "CARD_WRITER_V3",
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "responseId": "resp_06acb7417382396b006a7ac52a113481a3aa8effa854fe6228",
+      "startedAt": "2026-08-11T06:46:01.839Z",
+      "endedAt": "2026-08-11T06:46:34.831Z",
+      "instructionsSha256": "0f7db576d6d8918b1222938892dec7866e1e84902b04114ab397e4abccbbb935",
+      "usage": {
+        "inputTokens": 11083,
+        "outputTokens": 1952,
+        "totalTokens": 13035,
+        "cachedInputTokens": 7033,
+        "reasoningTokens": 1777
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "review",
+      "role": "REVIEWER",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "responseId": "resp_0ac611bca2422203006a7ac54b003881a1b3e26e0a2e2d5c17",
+      "startedAt": "2026-08-11T06:46:34.833Z",
+      "endedAt": "2026-08-11T06:46:43.469Z",
+      "instructionsSha256": "0579cbdf5466fbca6af3216bda002dab4049f683579374108f4366cc3dde74e9",
+      "usage": {
+        "inputTokens": 6323,
+        "outputTokens": 797,
+        "totalTokens": 7120,
+        "cachedInputTokens": 4885,
+        "reasoningTokens": 298
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "draft",
+      "role": "CARD_WRITER_V3",
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "responseId": "resp_080a98ccaaccc7d4006a7ac5539c10819c9399f7ecf48acf08",
+      "startedAt": "2026-08-11T06:46:43.472Z",
+      "endedAt": "2026-08-11T06:46:56.679Z",
+      "instructionsSha256": "0f7db576d6d8918b1222938892dec7866e1e84902b04114ab397e4abccbbb935",
+      "usage": {
+        "inputTokens": 11007,
+        "outputTokens": 709,
+        "totalTokens": 11716,
+        "cachedInputTokens": 7033,
+        "reasoningTokens": 516
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "review",
+      "role": "REVIEWER",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "responseId": "resp_0f481c7eb74a827f006a7ac561006881a2984127d65e409f87",
+      "startedAt": "2026-08-11T06:46:56.681Z",
+      "endedAt": "2026-08-11T06:47:03.879Z",
+      "instructionsSha256": "0579cbdf5466fbca6af3216bda002dab4049f683579374108f4366cc3dde74e9",
+      "usage": {
+        "inputTokens": 6352,
+        "outputTokens": 621,
+        "totalTokens": 6973,
+        "cachedInputTokens": 4885,
+        "reasoningTokens": 104
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "draft",
+      "role": "CARD_WRITER_V3",
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "responseId": "resp_0cd9f8dafcf0030c006a7ac56816a48192920d3c18dd42226d",
+      "startedAt": "2026-08-11T06:47:03.884Z",
+      "endedAt": "2026-08-11T06:48:02.423Z",
+      "instructionsSha256": "0f7db576d6d8918b1222938892dec7866e1e84902b04114ab397e4abccbbb935",
+      "usage": {
+        "inputTokens": 11179,
+        "outputTokens": 2896,
+        "totalTokens": 14075,
+        "cachedInputTokens": 7033,
+        "reasoningTokens": 2681
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "review",
+      "role": "REVIEWER",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "responseId": "resp_0267734ae3300e81006a7ac5a2ad6481a08f1e332bc7e9f8cf",
+      "startedAt": "2026-08-11T06:48:02.425Z",
+      "endedAt": "2026-08-11T06:48:10.163Z",
+      "instructionsSha256": "0579cbdf5466fbca6af3216bda002dab4049f683579374108f4366cc3dde74e9",
+      "usage": {
+        "inputTokens": 6392,
+        "outputTokens": 622,
+        "totalTokens": 7014,
+        "cachedInputTokens": 4885,
+        "reasoningTokens": 121
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "draft",
+      "role": "CARD_WRITER_V3",
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "responseId": "resp_0f9dab65269726b4006a7ac5aa4ac48192a3308c94bbf61e7a",
+      "startedAt": "2026-08-11T06:48:10.167Z",
+      "endedAt": "2026-08-11T06:49:38.357Z",
+      "instructionsSha256": "0f7db576d6d8918b1222938892dec7866e1e84902b04114ab397e4abccbbb935",
+      "usage": {
+        "inputTokens": 11080,
+        "outputTokens": 4349,
+        "totalTokens": 15429,
+        "cachedInputTokens": 7033,
+        "reasoningTokens": 4142
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "review",
+      "role": "REVIEWER",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "responseId": "resp_0d009abdeef7f0c2006a7ac602c970819e9ea7a40e01475b61",
+      "startedAt": "2026-08-11T06:49:38.358Z",
+      "endedAt": "2026-08-11T06:49:44.927Z",
+      "instructionsSha256": "0579cbdf5466fbca6af3216bda002dab4049f683579374108f4366cc3dde74e9",
+      "usage": {
+        "inputTokens": 6382,
+        "outputTokens": 547,
+        "totalTokens": 6929,
+        "cachedInputTokens": 4885,
+        "reasoningTokens": 0
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "draft",
+      "role": "CARD_WRITER_V3",
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "responseId": "resp_0125a79f3e76f11a006a7ac6090ce4819db9ac105516ae27b9",
+      "startedAt": "2026-08-11T06:49:44.932Z",
+      "endedAt": "2026-08-11T06:50:22.627Z",
+      "instructionsSha256": "0f7db576d6d8918b1222938892dec7866e1e84902b04114ab397e4abccbbb935",
+      "usage": {
+        "inputTokens": 11190,
+        "outputTokens": 1743,
+        "totalTokens": 12933,
+        "cachedInputTokens": 7033,
+        "reasoningTokens": 1552
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "review",
+      "role": "REVIEWER",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "responseId": "resp_055942cf94880228006a7ac62ecafc819d9aa14a3590e5c8fe",
+      "startedAt": "2026-08-11T06:50:22.627Z",
+      "endedAt": "2026-08-11T06:50:30.399Z",
+      "instructionsSha256": "0579cbdf5466fbca6af3216bda002dab4049f683579374108f4366cc3dde74e9",
+      "usage": {
+        "inputTokens": 6370,
+        "outputTokens": 725,
+        "totalTokens": 7095,
+        "cachedInputTokens": 4885,
+        "reasoningTokens": 174
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "draft",
+      "role": "CARD_WRITER_V3",
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "responseId": "resp_017e1710bb7aab59006a7ac63688088192bb8ab9597252d17f",
+      "startedAt": "2026-08-11T06:50:30.401Z",
+      "endedAt": "2026-08-11T06:52:10.310Z",
+      "instructionsSha256": "0f7db576d6d8918b1222938892dec7866e1e84902b04114ab397e4abccbbb935",
+      "usage": {
+        "inputTokens": 11122,
+        "outputTokens": 5232,
+        "totalTokens": 16354,
+        "cachedInputTokens": 7033,
+        "reasoningTokens": 5060
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "review",
+      "role": "REVIEWER",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "responseId": "resp_084a18f680019666006a7ac69a702481a0a74ad660237be08c",
+      "startedAt": "2026-08-11T06:52:10.311Z",
+      "endedAt": "2026-08-11T06:52:16.466Z",
+      "instructionsSha256": "0579cbdf5466fbca6af3216bda002dab4049f683579374108f4366cc3dde74e9",
+      "usage": {
+        "inputTokens": 6347,
+        "outputTokens": 625,
+        "totalTokens": 6972,
+        "cachedInputTokens": 4885,
+        "reasoningTokens": 93
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "draft",
+      "role": "CARD_WRITER_V3",
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "responseId": "resp_02426ef193cf0b30006a7ac6a0986481a3bf492e1cd4880154",
+      "startedAt": "2026-08-11T06:52:16.467Z",
+      "endedAt": "2026-08-11T06:52:32.315Z",
+      "instructionsSha256": "0f7db576d6d8918b1222938892dec7866e1e84902b04114ab397e4abccbbb935",
+      "usage": {
+        "inputTokens": 11179,
+        "outputTokens": 694,
+        "totalTokens": 11873,
+        "cachedInputTokens": 7033,
+        "reasoningTokens": 512
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "review",
+      "role": "REVIEWER",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "responseId": "resp_0a95abcba0633e18006a7ac6b1d60081a3882ed63a4b478170",
+      "startedAt": "2026-08-11T06:52:32.316Z",
+      "endedAt": "2026-08-11T06:52:40.995Z",
+      "instructionsSha256": "0579cbdf5466fbca6af3216bda002dab4049f683579374108f4366cc3dde74e9",
+      "usage": {
+        "inputTokens": 6385,
+        "outputTokens": 655,
+        "totalTokens": 7040,
+        "cachedInputTokens": 4885,
+        "reasoningTokens": 92
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "draft",
+      "role": "CARD_WRITER_V3",
+      "requestedModel": "gpt-5.6-sol",
+      "actualModel": "gpt-5.6-sol",
+      "requestedReasoningEffort": "xhigh",
+      "actualReasoningEffort": "xhigh",
+      "responseId": "resp_09290165004d1156006a7ac6b91f2481a1bd50197845fbea2e",
+      "startedAt": "2026-08-11T06:52:40.996Z",
+      "endedAt": "2026-08-11T06:53:22.731Z",
+      "instructionsSha256": "0f7db576d6d8918b1222938892dec7866e1e84902b04114ab397e4abccbbb935",
+      "usage": {
+        "inputTokens": 11141,
+        "outputTokens": 2153,
+        "totalTokens": 13294,
+        "cachedInputTokens": 7033,
+        "reasoningTokens": 1977
+      },
+      "httpStatus": 200
+    },
+    {
+      "stage": "review",
+      "role": "REVIEWER",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "responseId": "resp_0088b48a24980b16006a7ac6e353b4819db4b9ca010d8b1759",
+      "startedAt": "2026-08-11T06:53:22.732Z",
+      "endedAt": "2026-08-11T06:53:32.427Z",
+      "instructionsSha256": "0579cbdf5466fbca6af3216bda002dab4049f683579374108f4366cc3dde74e9",
+      "usage": {
+        "inputTokens": 6357,
+        "outputTokens": 647,
+        "totalTokens": 7004,
+        "cachedInputTokens": 4885,
+        "reasoningTokens": 104
+      },
+      "httpStatus": 200
+    }
+  ],
+  "models": {
+    "writer": {
+      "laneId": "writer:sky-placement",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh"
+    },
+    "reviewer": {
+      "model": "gpt-5.6-terra",
+      "reasoningEffort": "medium"
+    }
+  },
+  "governance": {
+    "authorization": "OWNER AUTHORIZATION, 2026-08-11: first supervised generation run. The CANDIDATE_WRITER is promoted for THIS BATCH ONLY; promotion does not persist past it and reverts automatically when the batch report is delivered.",
+    "currentProductionWriterBefore": null,
+    "candidatePromotedForBatchOnly": true,
+    "candidatePromotionPersisted": false,
+    "candidatePromotionRevertedAtDelivery": true,
+    "contentStaged": false,
+    "contentServed": false,
+    "ownerApprovalInferred": false,
+    "maximumOutputStatus": "pipeline-review-passed"
+  }
+}
