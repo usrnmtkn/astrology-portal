@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "content-export-report-v1",
+  "result": "PASS",
+  "generatedOn": "2026-08-10",
+  "sourceCommit": "8e40a4be0c5fd044d138ed365ba8b8ed7c64e9dc",
+  "contentFingerprint": "9059513eb8981f30fa476a69d8947e0b958be5faa6fd604df85fa5960b313e1c",
+  "approvedProductionRecords": 8970,
+  "exportedRecords": 8970,
+  "missingRecords": 0,
+  "orphanedRecords": 0,
+  "wordingMismatches": 0,
+  "statusMismatches": 0,
+  "unresolvedGovernance": 0
+}

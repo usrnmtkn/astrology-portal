@@ -34,6 +34,7 @@ const browser = createFallbackRenderer(
 );
 
 const destinationPrefix = "fallback-hook/natal-aspect-lived/lilith/";
+const llMatrixV13Release = "ll-matrix-v13-owner-approved-runtime";
 const recordPrefix = `${reviewRoot}/records/`;
 const sha256 = (value) => crypto.createHash("sha256").update(value, "utf8").digest("hex");
 
@@ -64,6 +65,7 @@ assert.equal(lilithRows.length, 78, "Expected exactly 78 Lilith lived rows");
 const existingApprovedRows = source.hookRows.filter((row) => (
   row.review_status === "approved"
   && !row.contentKey?.startsWith(destinationPrefix)
+  && row.source_release !== llMatrixV13Release
 ));
 assert.equal(
   sha256(JSON.stringify(existingApprovedRows)),
