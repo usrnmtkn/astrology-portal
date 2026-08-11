@@ -431,6 +431,7 @@ export function SkyDetailArticle({
       (detail.plainBody && fallbackParagraphs.length > 0) ||
       displaySections.length > 0 ||
       fallbackParagraphs.length > 0 ||
+      detail.mechanicsCaption ||
       drilldown
   );
   const isAspectsOnlyArticle = hasAspectCard && !hasReadableBody;
