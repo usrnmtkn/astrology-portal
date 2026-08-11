@@ -282,8 +282,7 @@ export function renderNatalAspect(facts, opts = {}) {
   const voice = facts.voice === "you" ? "you" : "they";
   const exactLived =
     getReaderLivedRow(`fallback-hook/natal-aspect-lived/${planetA}/${aspect}/${planetB}`, voice, { allowUnreviewed })
-    ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${planetB}/${aspect}/${planetA}`, voice, { allowUnreviewed })
-    ?? getReaderLivedRow(`fallback-hook/aspect-lived/${aspect}`, voice, { allowUnreviewed });
+    ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${planetB}/${aspect}/${planetA}`, voice, { allowUnreviewed });
   if (exactLived) {
     return {
       headline: `${title(planetA)} ${aspect} ${title(planetB)}`,
@@ -294,10 +293,12 @@ export function renderNatalAspect(facts, opts = {}) {
     };
   }
   const group = ASPECT_GROUP[aspect];
+  const pair = group
+    ? getHook(`fallback-hook/aspect-pair/${planetA}/${planetB}/${group}`, voice, { allowUnreviewed })
+      ?? getHook(`fallback-hook/aspect-pair/${planetB}/${planetA}/${group}`, voice, { allowUnreviewed })
+    : null;
   if (!group) throw new SourceGapError(`SOURCE_GAP: natal aspect ${planetA}-${aspect}-${planetB}`);
-  const pair =
-    getHook(`fallback-hook/aspect-pair/${planetA}/${planetB}/${group}`, voice, { allowUnreviewed }) ??
-    getHook(`fallback-hook/aspect-pair/${planetB}/${planetA}/${group}`, voice, { allowUnreviewed });
+  if (!pair) throw new SourceGapError(`SOURCE_GAP: natal aspect pair ${planetA}-${aspect}-${planetB}`);
   const ctx = {
     possessive: facts.voice === "you" ? "Your" : `${facts.voice}'s`,
     planetATitle: title(planetA),
