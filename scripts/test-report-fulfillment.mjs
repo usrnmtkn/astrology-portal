@@ -79,6 +79,9 @@ for (const governedValue of [
 ]) assert.ok(validatorRecoveryMigration.includes(governedValue), `Recovery migration must pin ${governedValue}.`);
 assert.match(validatorRecoveryMigration, /authorization_token = existing_authorization/u,
   "The recovery migration must preserve the current one-use authorization identity.");
+assert.match(validatorRecoveryMigration,
+  /if not exists \([\s\S]*public\.user_reports[\s\S]*and not exists \([\s\S]*public\.report_fulfillment_jobs[\s\S]*then[\s\S]*return;/u,
+  "A clean database without either Production recovery row must apply the schema portion and skip only the report-specific recovery.");
 assert.doesNotThrow(() => assertReportTokenBudgets({
   authorizationTokenCount: 793_038,
   authorizationTokenBudget: 2_500_000,
