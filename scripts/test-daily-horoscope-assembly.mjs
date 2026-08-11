@@ -220,7 +220,17 @@ assert.doesNotMatch(
   "You transit timing must not read the chart setup form's one-time date."
 );
 assert.match(appSource, /renderTransitLabel\(\{/u);
-assert.match(appSource, /renderLunationHoroscope\(\{/u);
+assert.match(appSource, /renderLunationEventCard\(\{/u);
+assert.match(
+  appSource,
+  /renderLunationEventCard\(\{\s*eventDate: currentSky\.moonEvent\.occursAt,/u,
+  "The You-page lunation card must resolve against the calculated event date."
+);
+assert.match(
+  appSource,
+  /blendFallbackEnabled: String\(\s*import\.meta\.env\.VITE_ENABLE_LUNATION_BLEND_YOU_FALLBACK \?\? "false"\s*\)\.toLowerCase\(\) === "true"/u,
+  "The weekly-blend fallback must remain behind its explicit You-page feature gate."
+);
 assert.match(appSource, /qualifyingTransits: qualifyingDailyTransits\.map/u);
 assert.match(youPageSource, />Areas of Your Life</u);
 assert.match(youPageSource, />Behind this Forecast</u);
