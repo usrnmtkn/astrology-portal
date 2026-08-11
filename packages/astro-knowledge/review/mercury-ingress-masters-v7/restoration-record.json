@@ -1,0 +1,17 @@
+{
+  "program": "restore-mercury-placement-fallbacks-v1",
+  "recordedAt": "2026-08-11",
+  "status": "owner_directed_restore",
+  "ownerRuling": [
+    "what happened to the sky placements? I didn't approve this, and it reverted to a legacy fallback?",
+    "yes, proceed - restore"
+  ],
+  "restoredFromCommit": "af9a832e13a34398a8d8ad24e228e9049bba8d2f",
+  "restoredServingRows": 12,
+  "retiredUnapprovedVariants": 24,
+  "restoredRowsSha256": "bca940dedb4c91fbfd6542921937e9d077383928e1ca0abf7fce7dc2445d9daa",
+  "v7ServingAuthority": false,
+  "v7OwnerApproved": false,
+  "v7ReviewStatus": "needs_review",
+  "servingOrApprovalScopeOutsideMercuryChanged": false
+}
