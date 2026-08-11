@@ -16,6 +16,7 @@ type PricingConfig = {
   planningProfiles?: Record<string, {
     basis: string; units: number;
     operationsPerUnit: Array<{ model: string; stage: string; inputTokens: number; outputTokens: number }>;
+    operationsPerReport?: Array<{ model: string; stage: string; inputTokens: number; outputTokens: number }>;
   }>;
   models: Record<string, ModelRates>;
 };
@@ -46,11 +47,18 @@ export function estimateReportPlanningProfile(horizon: string) {
     const usage = { inputTokens: operation.inputTokens, outputTokens: operation.outputTokens, totalTokens: operation.inputTokens + operation.outputTokens };
     return { ...operation, totalTokens: usage.totalTokens, estimatedCostUsd: estimateReportModelCost(operation.model, usage) };
   });
+  const perReport = (profile.operationsPerReport ?? []).map((operation) => {
+    const usage = { inputTokens: operation.inputTokens, outputTokens: operation.outputTokens, totalTokens: operation.inputTokens + operation.outputTokens };
+    return { ...operation, totalTokens: usage.totalTokens, estimatedCostUsd: estimateReportModelCost(operation.model, usage) };
+  });
   return {
     basis: profile.basis, units: profile.units,
-    totalTokens: perUnit.reduce((sum, operation) => sum + operation.totalTokens, 0) * profile.units,
-    estimatedCostUsd: Number((perUnit.reduce((sum, operation) => sum + operation.estimatedCostUsd, 0) * profile.units).toFixed(6)),
-    operationsPerUnit: perUnit
+    totalTokens: perUnit.reduce((sum, operation) => sum + operation.totalTokens, 0) * profile.units
+      + perReport.reduce((sum, operation) => sum + operation.totalTokens, 0),
+    estimatedCostUsd: Number((perUnit.reduce((sum, operation) => sum + operation.estimatedCostUsd, 0) * profile.units
+      + perReport.reduce((sum, operation) => sum + operation.estimatedCostUsd, 0)).toFixed(6)),
+    operationsPerUnit: perUnit,
+    operationsPerReport: perReport
   };
 }
 

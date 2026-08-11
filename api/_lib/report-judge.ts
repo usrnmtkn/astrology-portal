@@ -82,6 +82,8 @@ export async function judgeReportUnit(input: {
       prompt.text,
       `CANONICAL_PROMPT\n${input.payload.canonicalOwnerPrompt.text}`,
       `LIVED_PROSE_STANDARD\n${input.payload.livedProseStandard.text}`,
+      `NO_CLEVERNESS_TAX_OWNER_RULING\n${input.payload.noClevernessRuling.text}`,
+      `OWNER_REVIEW_EVIDENCE\n${input.payload.ownerReviewEvidence.text}`,
       `PRODUCTION_LOCATION_CONTRACT\n${packet.locationContract}`,
       `COMPLETE_UNIT\n${packet.completeUnit}`,
       `UNIT_FACTS\n${JSON.stringify(packet.unitFacts)}`,
