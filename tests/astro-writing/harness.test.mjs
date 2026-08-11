@@ -186,7 +186,7 @@ assert.deepEqual(
 assert.equal(indexedServingKeys.size, approvedServingKeys.size);
 
 const emptyHouseV14ManifestPath = "packages/astro-knowledge/review/empty-house-v14/import-manifest.json";
-const emptyHouseV14ProjectionPath = "packages/astro-knowledge/review/empty-house-v14/serving-projection-v14-projection-4.json";
+const emptyHouseV14ProjectionPath = "packages/astro-knowledge/review/empty-house-v14/serving-projection-v14-projection-5.json";
 const emptyHouseV14Manifest = JSON.parse(read(emptyHouseV14ManifestPath));
 const emptyHouseV14Projection = JSON.parse(read(emptyHouseV14ProjectionPath));
 const emptyHouseV14Rows = JSON.parse(read(
@@ -215,11 +215,11 @@ function checkEmptyHouseV14(category, condition, message) {
   assert.ok(condition, message);
 }
 
-checkEmptyHouseV14("projection_manifest", emptyHouseV14Projection.version === "v14-projection-4", "Empty-house evidence must use projection 4.");
-checkEmptyHouseV14("projection_manifest", emptyHouseV14Manifest.serving_projection_contract === path.basename(emptyHouseV14ProjectionPath), "Import manifest must select the projection-4 contract.");
-checkEmptyHouseV14("projection_manifest", emptyHouseV14Projection.counts.serving_rows === 541, "Projection 4 must declare 541 serving rows.");
-checkEmptyHouseV14("projection_manifest", emptyHouseV14Projection.body_they_approval_payload_sha256 === "07e238f17f5d3941412cc9dcf273a87a9b05f996d3d1ae82b1c587f79aad7b1b", "Friend evidence must remain bound to the owner-approved digest.");
-checkEmptyHouseV14("projection_manifest", emptyHouseV14Manifest.friend_variants.status === "approved", "Projection-4 Friend variants must be approved.");
+checkEmptyHouseV14("projection_manifest", emptyHouseV14Projection.version === "v14-projection-5", "Empty-house evidence must use projection 5.");
+checkEmptyHouseV14("projection_manifest", emptyHouseV14Manifest.serving_projection_contract === path.basename(emptyHouseV14ProjectionPath), "Import manifest must select the projection-5 contract.");
+checkEmptyHouseV14("projection_manifest", emptyHouseV14Projection.counts.serving_rows === 541, "Projection 5 must declare 541 serving rows.");
+checkEmptyHouseV14("projection_manifest", emptyHouseV14Projection.body_they_approval_payload_sha256 === "6388f0d05e8bba16bce13f25b7faf052047ec0e3f64498595a4f993461c67811", "Friend evidence must remain bound to the owner-approved projection-5 digest.");
+checkEmptyHouseV14("projection_manifest", emptyHouseV14Manifest.friend_variants.status === "approved", "Projection-5 Friend variants must be approved.");
 checkEmptyHouseV14("serving_key_coverage", emptyHouseV14Rows.length === 541, "Serving source must contain 541 V14 rows.");
 for (const row of emptyHouseV14Rows) {
   const entries = emptyHouseV14ExamplesByKey.get(row.contentKey) ?? [];
@@ -234,11 +234,11 @@ for (const row of emptyHouseV14Rows) {
     checkEmptyHouseV14("governance", entry?.ownerApproved === true && entry?.authority === "serving-review-status-approved", `${row.contentKey}/${voice}: approval governance is incomplete.`);
     checkEmptyHouseV14(
       "provenance",
-      entry?.source === "empty-house-v14/projection-4"
+      entry?.source === "empty-house-v14/projection-5"
         && entry?.sourceManifest === emptyHouseV14ManifestPath
         && entry?.projectionContract === emptyHouseV14ProjectionPath
-        && entry?.projectionVersion === "v14-projection-4",
-      `${row.contentKey}/${voice}: projection-4 provenance is incomplete.`
+        && entry?.projectionVersion === "v14-projection-5",
+      `${row.contentKey}/${voice}: projection-5 provenance is incomplete.`
     );
     checkEmptyHouseV14(
       "register_safety",
