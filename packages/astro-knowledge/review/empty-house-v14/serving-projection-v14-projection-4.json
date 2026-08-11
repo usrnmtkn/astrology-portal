@@ -29,7 +29,7 @@
   "prior_body_they_digest_sha256": "74e0052ee3c3ce8660b22317b328ad46b01adb97a23e42e1ec48e4ad28f5568d",
   "body_they_approval_payload_sha256": "07e238f17f5d3941412cc9dcf273a87a9b05f996d3d1ae82b1c587f79aad7b1b",
   "body_they_status": "owner-approved exact wording (2026-08-10) for all 541 rows at payload SHA-256 07e238f17f5d3941412cc9dcf273a87a9b05f996d3d1ae82b1c587f79aad7b1b; includes 34 adopted corrections and 31 approved-as-is flag dispositions",
-  "judge_status": "pending advisory LLM judge run",
+  "judge_status": "COMPLETE 2026-08-10: 541/541 judged, 497 pass, 44 advisory, 0 mismatch_suspected; advisory only, approval unaffected",
   "resolution_order": [
     "house1 rising-ruler exact (sign+planet per active ruler system)",
     "planet_example exact",
@@ -88,5 +88,17 @@
       "fallback-hook/empty-house/rising-ruler/pisces/jupiter/11",
       "fallback-hook/empty-house/rising-ruler/pisces/jupiter/12"
     ]
-  }
+  },
+  "judge_results_file": "judge-results.json",
+  "judge_results_digest_sha256": "752d9a79447057bcec90f3a7b9011307561aa1694b37dd3174c1b8182ca7823e",
+  "judge_results_file_sha256": "d2c07c6295a5a9e5b8dd66a88447f0bd23f44806f14467957094d5ddf063af9a",
+  "judge_summary": {
+    "rows": 541,
+    "advisory_pass": 497,
+    "advisory_noted": 44,
+    "mismatch_suspected": 0,
+    "authority": "advisory_only_owner_exact_wording_approval_controls",
+    "editorial_backlog": "advisory-editorial-backlog.json"
+  },
+  "judge_verdicts_file": "serving-row-judge-verdicts.json"
 }
