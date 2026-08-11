@@ -1238,6 +1238,20 @@ function phrasePresent(sentence: string, phrase: string) {
   return new RegExp(`(^|[^a-z0-9])${escaped(phrase)}([^a-z0-9]|$)`, "iu").test(sentence);
 }
 
+function manifestationEnumerationSize(sentence: string) {
+  const clauseBoundary = /[;:]|,\s+(?=(?:but|so|yet|while|whereas|because|although|though|when|if|unless|since|after|before)\b|(?:i|you|we|they|he|she|it|this|that|these|those|the)\s+(?:am|is|are|was|were|may|might|can|could|will|would|should|must|has|have|had|do|does|did)\b)/iu;
+  let largest = 0;
+
+  for (const clause of sentence.split(clauseBoundary)) {
+    const commaItems = clause.split(/\s*,\s*/u).map((item) => item.trim()).filter(Boolean);
+    if (!commaItems.length) continue;
+    const finalItemParts = commaItems.at(-1)?.split(/\s+(?:and|or)\s+/iu).filter(Boolean).length ?? 1;
+    largest = Math.max(largest, commaItems.length + Math.max(0, finalItemParts - 1));
+  }
+
+  return largest;
+}
+
 function hedged(sentence: string) {
   return /\b(?:may|can|could|might)\b/iu.test(sentence);
 }
@@ -1474,7 +1488,8 @@ export function validateReportDraft(
     const blockSentences = sentences(block);
     let shortManifestationRun = 0;
     for (const [index, sentence] of blockSentences.entries()) {
-      const manifestations = manifestationRecords.flatMap((record) => record.possibleLivedManifestations)
+      const manifestationPhrases = manifestationRecords.flatMap((record) => record.possibleLivedManifestations);
+      const manifestations = manifestationPhrases
         .filter((manifestation) => phrasePresent(sentence, manifestation));
       const exclusions = manifestationRecords.flatMap((record) => record.doNotAssume)
         .filter((exclusion) => phrasePresent(sentence, exclusion));
@@ -1485,7 +1500,7 @@ export function validateReportDraft(
       if (exclusions.length > 0 && !framed && !/\b(?:not|never|without|avoid|do not)\b/iu.test(sentence)) {
         issues.push({ code: "do_not_assume", message: `DO NOT ASSUME item is asserted as fact: ${sentence}` });
       }
-      if (manifestations.length > 5) {
+      if (manifestations.length > 0 && manifestationEnumerationSize(sentence) > 5) {
         issues.push({ code: "menu_size", message: `Manifestation menu exceeds five items: ${sentence}` });
       }
       shortManifestationRun = manifestations.length > 0 && sentence.split(/\s+/u).length <= 12
