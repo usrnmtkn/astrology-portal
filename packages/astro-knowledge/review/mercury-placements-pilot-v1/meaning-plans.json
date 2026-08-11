@@ -1,0 +1,777 @@
+{
+  "aries": {
+    "object": "mercury",
+    "sign": "aries",
+    "objectFunction": "Mercury describes thought, language, questions, interpretation, learning, writing, conversation, and how information moves and becomes useful.",
+    "signMechanics": "Aries makes thinking and speech fast, direct, decisive, and impatient with delay.",
+    "coreTension": "A quick answer can move a conversation forward or arrive before the full question and the other answers have been heard.",
+    "likelyObservableBehaviors": [
+      "answers quickly",
+      "interrupts a slower explanation",
+      "names the point directly",
+      "decides from the first useful fact"
+    ],
+    "likelyConsequences": [
+      "the conversation moves quickly",
+      "missing information is discovered after the decision",
+      "someone else has to repeat what was interrupted"
+    ],
+    "allowedLivedDomains": [
+      "messages",
+      "conversation",
+      "meetings",
+      "decisions",
+      "plans",
+      "learning",
+      "work",
+      "technology",
+      "relationships",
+      "daily information"
+    ],
+    "prohibitedDomainAssumptions": [
+      "appearance or identity as a default domain"
+    ],
+    "risks": [
+      "impatience",
+      "verbal combat",
+      "deciding before listening"
+    ],
+    "stockTropeRisks": [
+      "generic domestic conflict",
+      "dinner-plan compromise",
+      "group-chat shorthand unless the scene is literally a group conversation"
+    ],
+    "unearnedMotives": [
+      "fear, trauma, or intent not established by observable behavior"
+    ],
+    "whatChanges": "the conversation moves quickly",
+    "constructiveExpression": "answers quickly",
+    "overcorrection": "impatience, verbal combat, deciding before listening",
+    "DO_NOT_ASSUME": [
+      "a natal personality profile",
+      "the sign's traditionally associated house",
+      "a single relationship, work, family, or money domain as the meaning of the sign",
+      "a live date, station, degree, or retrograde fact beyond {{exitDate}}"
+    ],
+    "governedEvidence": {
+      "planetarySource": "packages/astro-knowledge/data/planetary/mercury.json",
+      "placementFactSource": "packages/astro-knowledge/data/placements/sign/mercury-aries.json",
+      "v13MercurySignSourceIds": [
+        "ll-v13:placementmeanings:84:mercury-aries"
+      ],
+      "v13SignMechanicSourceIds": [
+        "ll-v13:placementmeanings:2:aries"
+      ],
+      "v13Use": "meaning-topics-only-no-narrative-reuse"
+    }
+  },
+  "taurus": {
+    "object": "mercury",
+    "sign": "taurus",
+    "objectFunction": "Mercury describes thought, language, questions, interpretation, learning, writing, conversation, and how information moves and becomes useful.",
+    "signMechanics": "Taurus makes thinking deliberate, concrete, consistent, and slow to replace an answer that has already proved useful.",
+    "coreTension": "Taking time can produce sound judgment, but a familiar conclusion can stay in place after the information has changed.",
+    "likelyObservableBehaviors": [
+      "waits before answering",
+      "checks new information against what has worked before",
+      "repeats a point until it is understood",
+      "keeps the same decision under review"
+    ],
+    "likelyConsequences": [
+      "words carry weight",
+      "decisions are harder to rush",
+      "an outdated answer can delay a necessary change"
+    ],
+    "allowedLivedDomains": [
+      "messages",
+      "conversation",
+      "meetings",
+      "decisions",
+      "plans",
+      "learning",
+      "work",
+      "technology",
+      "relationships",
+      "daily information"
+    ],
+    "prohibitedDomainAssumptions": [
+      "money, possessions, or income as a default domain"
+    ],
+    "risks": [
+      "fixed opinions",
+      "slow adaptation",
+      "treating familiarity as proof"
+    ],
+    "stockTropeRisks": [
+      "generic domestic conflict",
+      "dinner-plan compromise",
+      "group-chat shorthand unless the scene is literally a group conversation"
+    ],
+    "unearnedMotives": [
+      "fear, trauma, or intent not established by observable behavior"
+    ],
+    "whatChanges": "words carry weight",
+    "constructiveExpression": "waits before answering",
+    "overcorrection": "fixed opinions, slow adaptation, treating familiarity as proof",
+    "DO_NOT_ASSUME": [
+      "a natal personality profile",
+      "the sign's traditionally associated house",
+      "a single relationship, work, family, or money domain as the meaning of the sign",
+      "a live date, station, degree, or retrograde fact beyond {{exitDate}}"
+    ],
+    "governedEvidence": {
+      "planetarySource": "packages/astro-knowledge/data/planetary/mercury.json",
+      "placementFactSource": "packages/astro-knowledge/data/placements/sign/mercury-taurus.json",
+      "v13MercurySignSourceIds": [],
+      "v13SignMechanicSourceIds": [
+        "ll-v13:placementmeanings:3:taurus"
+      ],
+      "v13Use": "meaning-topics-only-no-narrative-reuse"
+    }
+  },
+  "gemini": {
+    "object": "mercury",
+    "sign": "gemini",
+    "objectFunction": "Mercury describes thought, language, questions, interpretation, learning, writing, conversation, and how information moves and becomes useful.",
+    "signMechanics": "Gemini makes thought quick, curious, comparative, verbal, and able to connect one piece of information to several others.",
+    "coreTension": "Range makes learning and explanation easier, but the next question can arrive before the current answer has been finished.",
+    "likelyObservableBehaviors": [
+      "asks several follow-up questions",
+      "connects separate facts quickly",
+      "changes an opinion when the information changes",
+      "moves between conversations and sources"
+    ],
+    "likelyConsequences": [
+      "information travels quickly",
+      "a complicated point becomes easier to explain",
+      "attention scatters before one thought is completed"
+    ],
+    "allowedLivedDomains": [
+      "messages",
+      "conversation",
+      "meetings",
+      "decisions",
+      "plans",
+      "learning",
+      "work",
+      "technology",
+      "relationships",
+      "daily information"
+    ],
+    "prohibitedDomainAssumptions": [
+      "siblings, neighborhood, or short travel as default domains"
+    ],
+    "risks": [
+      "scattered attention",
+      "overtalking",
+      "mistaking quickness for depth"
+    ],
+    "stockTropeRisks": [
+      "generic domestic conflict",
+      "dinner-plan compromise",
+      "group-chat shorthand unless the scene is literally a group conversation"
+    ],
+    "unearnedMotives": [
+      "fear, trauma, or intent not established by observable behavior"
+    ],
+    "whatChanges": "information travels quickly",
+    "constructiveExpression": "asks several follow-up questions",
+    "overcorrection": "scattered attention, overtalking, mistaking quickness for depth",
+    "DO_NOT_ASSUME": [
+      "a natal personality profile",
+      "the sign's traditionally associated house",
+      "a single relationship, work, family, or money domain as the meaning of the sign",
+      "a live date, station, degree, or retrograde fact beyond {{exitDate}}"
+    ],
+    "governedEvidence": {
+      "planetarySource": "packages/astro-knowledge/data/planetary/mercury.json",
+      "placementFactSource": "packages/astro-knowledge/data/placements/sign/mercury-gemini.json",
+      "v13MercurySignSourceIds": [
+        "ll-v13:placementmeanings:86:mercury-gemini"
+      ],
+      "v13SignMechanicSourceIds": [
+        "ll-v13:placementmeanings:4:gemini"
+      ],
+      "v13Use": "meaning-topics-only-no-narrative-reuse"
+    }
+  },
+  "cancer": {
+    "object": "mercury",
+    "sign": "cancer",
+    "objectFunction": "Mercury describes thought, language, questions, interpretation, learning, writing, conversation, and how information moves and becomes useful.",
+    "signMechanics": "Cancer makes thought attentive to memory, tone, emotional context, and what a message may mean beneath its literal words.",
+    "coreTension": "Remembering context can make communication more perceptive, but an old feeling can start writing the current answer.",
+    "likelyObservableBehaviors": [
+      "notices a change in tone",
+      "remembers how a similar conversation went",
+      "uses a story to explain what matters",
+      "waits to speak until the emotional context feels clear"
+    ],
+    "likelyConsequences": [
+      "subtext gets noticed",
+      "a message carries more history than its words",
+      "the present conversation can inherit an older reaction"
+    ],
+    "allowedLivedDomains": [
+      "messages",
+      "conversation",
+      "meetings",
+      "decisions",
+      "plans",
+      "learning",
+      "work",
+      "technology",
+      "relationships",
+      "daily information"
+    ],
+    "prohibitedDomainAssumptions": [
+      "home, family, childhood, or parenting as default domains"
+    ],
+    "risks": [
+      "indirectness",
+      "defensiveness",
+      "treating memory as current evidence"
+    ],
+    "stockTropeRisks": [
+      "generic domestic conflict",
+      "dinner-plan compromise",
+      "group-chat shorthand unless the scene is literally a group conversation"
+    ],
+    "unearnedMotives": [
+      "fear, trauma, or intent not established by observable behavior"
+    ],
+    "whatChanges": "subtext gets noticed",
+    "constructiveExpression": "notices a change in tone",
+    "overcorrection": "indirectness, defensiveness, treating memory as current evidence",
+    "DO_NOT_ASSUME": [
+      "a natal personality profile",
+      "the sign's traditionally associated house",
+      "a single relationship, work, family, or money domain as the meaning of the sign",
+      "a live date, station, degree, or retrograde fact beyond {{exitDate}}"
+    ],
+    "governedEvidence": {
+      "planetarySource": "packages/astro-knowledge/data/planetary/mercury.json",
+      "placementFactSource": "packages/astro-knowledge/data/placements/sign/mercury-cancer.json",
+      "v13MercurySignSourceIds": [],
+      "v13SignMechanicSourceIds": [
+        "ll-v13:placementmeanings:5:cancer"
+      ],
+      "v13Use": "meaning-topics-only-no-narrative-reuse"
+    }
+  },
+  "leo": {
+    "object": "mercury",
+    "sign": "leo",
+    "objectFunction": "Mercury describes thought, language, questions, interpretation, learning, writing, conversation, and how information moves and becomes useful.",
+    "signMechanics": "Leo makes speech personal, expressive, confident, and concerned with making the message memorable.",
+    "coreTension": "Conviction can make an idea easier to hear, but criticism of the idea can start sounding like criticism of the speaker.",
+    "likelyObservableBehaviors": [
+      "tells the story with emphasis",
+      "presents an idea with confidence",
+      "puts a personal point of view into the message",
+      "defends a statement after public criticism"
+    ],
+    "likelyConsequences": [
+      "the message is remembered",
+      "an audience understands why the point matters",
+      "pride can pull the exchange away from the original question"
+    ],
+    "allowedLivedDomains": [
+      "messages",
+      "conversation",
+      "meetings",
+      "decisions",
+      "plans",
+      "learning",
+      "work",
+      "technology",
+      "relationships",
+      "daily information"
+    ],
+    "prohibitedDomainAssumptions": [
+      "romance, children, performance, or hobbies as default domains"
+    ],
+    "risks": [
+      "exaggeration",
+      "taking disagreement personally",
+      "wanting applause more than understanding"
+    ],
+    "stockTropeRisks": [
+      "generic domestic conflict",
+      "dinner-plan compromise",
+      "group-chat shorthand unless the scene is literally a group conversation"
+    ],
+    "unearnedMotives": [
+      "fear, trauma, or intent not established by observable behavior"
+    ],
+    "whatChanges": "the message is remembered",
+    "constructiveExpression": "tells the story with emphasis",
+    "overcorrection": "exaggeration, taking disagreement personally, wanting applause more than understanding",
+    "DO_NOT_ASSUME": [
+      "a natal personality profile",
+      "the sign's traditionally associated house",
+      "a single relationship, work, family, or money domain as the meaning of the sign",
+      "a live date, station, degree, or retrograde fact beyond {{exitDate}}"
+    ],
+    "governedEvidence": {
+      "planetarySource": "packages/astro-knowledge/data/planetary/mercury.json",
+      "placementFactSource": "packages/astro-knowledge/data/placements/sign/mercury-leo.json",
+      "v13MercurySignSourceIds": [
+        "ll-v13:placementmeanings:88:mercury-leo"
+      ],
+      "v13SignMechanicSourceIds": [
+        "ll-v13:placementmeanings:6:leo"
+      ],
+      "v13Use": "meaning-topics-only-no-narrative-reuse"
+    }
+  },
+  "virgo": {
+    "object": "mercury",
+    "sign": "virgo",
+    "objectFunction": "Mercury describes thought, language, questions, interpretation, learning, writing, conversation, and how information moves and becomes useful.",
+    "signMechanics": "Virgo makes thought precise, analytical, discriminating, and focused on what can be corrected or made useful.",
+    "coreTension": "Careful checking can prevent a real mistake, but another correction can become a reason not to decide or send the answer.",
+    "likelyObservableBehaviors": [
+      "spots the missing detail",
+      "edits an explanation for clarity",
+      "checks a claim before repeating it",
+      "keeps revising after the point is already clear"
+    ],
+    "likelyConsequences": [
+      "errors are caught early",
+      "instructions become more usable",
+      "the late answer can create more confusion than the imperfect one"
+    ],
+    "allowedLivedDomains": [
+      "messages",
+      "conversation",
+      "meetings",
+      "decisions",
+      "plans",
+      "learning",
+      "work",
+      "technology",
+      "relationships",
+      "daily information"
+    ],
+    "prohibitedDomainAssumptions": [
+      "work, health, diet, or service as default domains"
+    ],
+    "risks": [
+      "overcriticism",
+      "worry",
+      "using detail as a shield against action"
+    ],
+    "stockTropeRisks": [
+      "generic domestic conflict",
+      "dinner-plan compromise",
+      "group-chat shorthand unless the scene is literally a group conversation"
+    ],
+    "unearnedMotives": [
+      "fear, trauma, or intent not established by observable behavior"
+    ],
+    "whatChanges": "errors are caught early",
+    "constructiveExpression": "spots the missing detail",
+    "overcorrection": "overcriticism, worry, using detail as a shield against action",
+    "DO_NOT_ASSUME": [
+      "a natal personality profile",
+      "the sign's traditionally associated house",
+      "a single relationship, work, family, or money domain as the meaning of the sign",
+      "a live date, station, degree, or retrograde fact beyond {{exitDate}}"
+    ],
+    "governedEvidence": {
+      "planetarySource": "packages/astro-knowledge/data/planetary/mercury.json",
+      "placementFactSource": "packages/astro-knowledge/data/placements/sign/mercury-virgo.json",
+      "v13MercurySignSourceIds": [],
+      "v13SignMechanicSourceIds": [
+        "ll-v13:placementmeanings:7:virgo"
+      ],
+      "v13Use": "meaning-topics-only-no-narrative-reuse"
+    }
+  },
+  "libra": {
+    "object": "mercury",
+    "sign": "libra",
+    "objectFunction": "Mercury describes thought, language, questions, interpretation, learning, writing, conversation, and how information moves and becomes useful.",
+    "signMechanics": "Libra makes thought comparative, dialogic, socially aware, and attentive to fairness in both wording and decisions.",
+    "coreTension": "Hearing more than one side can improve a decision, but waiting for agreement can leave the decision to whoever speaks first or loudest.",
+    "likelyObservableBehaviors": [
+      "compares two accounts",
+      "changes the wording so the point can be heard",
+      "asks who has been giving up more",
+      "waits to state a preference until everyone else has spoken"
+    ],
+    "likelyConsequences": [
+      "a disagreement becomes discussable",
+      "an unfair arrangement gets named",
+      "the speaker's own position can disappear from the conversation"
+    ],
+    "allowedLivedDomains": [
+      "messages",
+      "conversation",
+      "meetings",
+      "decisions",
+      "plans",
+      "learning",
+      "work",
+      "technology",
+      "relationships",
+      "daily information"
+    ],
+    "prohibitedDomainAssumptions": [
+      "dating, marriage, partnership, or couples as default domains"
+    ],
+    "risks": [
+      "indecision",
+      "approval-seeking",
+      "softening the truth until it loses its meaning"
+    ],
+    "stockTropeRisks": [
+      "generic domestic conflict",
+      "dinner-plan compromise",
+      "group-chat shorthand unless the scene is literally a group conversation"
+    ],
+    "unearnedMotives": [
+      "fear, trauma, or intent not established by observable behavior"
+    ],
+    "whatChanges": "a disagreement becomes discussable",
+    "constructiveExpression": "compares two accounts",
+    "overcorrection": "indecision, approval-seeking, softening the truth until it loses its meaning",
+    "DO_NOT_ASSUME": [
+      "a natal personality profile",
+      "the sign's traditionally associated house",
+      "a single relationship, work, family, or money domain as the meaning of the sign",
+      "a live date, station, degree, or retrograde fact beyond {{exitDate}}"
+    ],
+    "governedEvidence": {
+      "planetarySource": "packages/astro-knowledge/data/planetary/mercury.json",
+      "placementFactSource": "packages/astro-knowledge/data/placements/sign/mercury-libra.json",
+      "v13MercurySignSourceIds": [],
+      "v13SignMechanicSourceIds": [
+        "ll-v13:placementmeanings:8:libra"
+      ],
+      "v13Use": "meaning-topics-only-no-narrative-reuse"
+    }
+  },
+  "scorpio": {
+    "object": "mercury",
+    "sign": "scorpio",
+    "objectFunction": "Mercury describes thought, language, questions, interpretation, learning, writing, conversation, and how information moves and becomes useful.",
+    "signMechanics": "Scorpio makes thought investigative, private, persistent, and attentive to missing facts, withheld information, and power inside a conversation.",
+    "coreTension": "Looking past the first answer can expose what matters, but suspicion can keep demanding proof after the useful facts are already present.",
+    "likelyObservableBehaviors": [
+      "asks the question everyone avoided",
+      "notices a missing detail",
+      "keeps information private until trust is established",
+      "tests an answer against what was left unsaid"
+    ],
+    "likelyConsequences": [
+      "hidden information becomes discussable",
+      "a weak explanation stops holding",
+      "silence can become a way to control the exchange"
+    ],
+    "allowedLivedDomains": [
+      "messages",
+      "conversation",
+      "meetings",
+      "decisions",
+      "plans",
+      "learning",
+      "work",
+      "technology",
+      "relationships",
+      "daily information"
+    ],
+    "prohibitedDomainAssumptions": [
+      "debt, inheritance, taxes, or shared finances as default domains"
+    ],
+    "risks": [
+      "suspicion",
+      "secrecy",
+      "using information or silence as control"
+    ],
+    "stockTropeRisks": [
+      "generic domestic conflict",
+      "dinner-plan compromise",
+      "group-chat shorthand unless the scene is literally a group conversation"
+    ],
+    "unearnedMotives": [
+      "fear, trauma, or intent not established by observable behavior"
+    ],
+    "whatChanges": "hidden information becomes discussable",
+    "constructiveExpression": "asks the question everyone avoided",
+    "overcorrection": "suspicion, secrecy, using information or silence as control",
+    "DO_NOT_ASSUME": [
+      "a natal personality profile",
+      "the sign's traditionally associated house",
+      "a single relationship, work, family, or money domain as the meaning of the sign",
+      "a live date, station, degree, or retrograde fact beyond {{exitDate}}"
+    ],
+    "governedEvidence": {
+      "planetarySource": "packages/astro-knowledge/data/planetary/mercury.json",
+      "placementFactSource": "packages/astro-knowledge/data/placements/sign/mercury-scorpio.json",
+      "v13MercurySignSourceIds": [],
+      "v13SignMechanicSourceIds": [
+        "ll-v13:placementmeanings:9:scorpio"
+      ],
+      "v13Use": "meaning-topics-only-no-narrative-reuse"
+    }
+  },
+  "sagittarius": {
+    "object": "mercury",
+    "sign": "sagittarius",
+    "objectFunction": "Mercury describes thought, language, questions, interpretation, learning, writing, conversation, and how information moves and becomes useful.",
+    "signMechanics": "Sagittarius makes thought broad, candid, meaning-seeking, and willing to connect information to a larger belief or conclusion.",
+    "coreTension": "The larger point can make information useful, but confidence in the conclusion can outrun the details that would test it.",
+    "likelyObservableBehaviors": [
+      "states the larger point directly",
+      "connects one fact to a broader belief",
+      "explains why the information matters",
+      "repeats a claim before checking the detail"
+    ],
+    "likelyConsequences": [
+      "a complicated subject gains direction",
+      "an idea becomes easier to share",
+      "a belief can be treated as fact"
+    ],
+    "allowedLivedDomains": [
+      "messages",
+      "conversation",
+      "meetings",
+      "decisions",
+      "plans",
+      "learning",
+      "work",
+      "technology",
+      "relationships",
+      "daily information"
+    ],
+    "prohibitedDomainAssumptions": [
+      "travel, education, teachers, publishing, institutions, or law as default domains"
+    ],
+    "risks": [
+      "overstatement",
+      "bluntness",
+      "skipping details",
+      "mistaking conviction for evidence"
+    ],
+    "stockTropeRisks": [
+      "generic domestic conflict",
+      "dinner-plan compromise",
+      "group-chat shorthand unless the scene is literally a group conversation"
+    ],
+    "unearnedMotives": [
+      "fear, trauma, or intent not established by observable behavior"
+    ],
+    "whatChanges": "a complicated subject gains direction",
+    "constructiveExpression": "states the larger point directly",
+    "overcorrection": "overstatement, bluntness, skipping details, mistaking conviction for evidence",
+    "DO_NOT_ASSUME": [
+      "a natal personality profile",
+      "the sign's traditionally associated house",
+      "a single relationship, work, family, or money domain as the meaning of the sign",
+      "a live date, station, degree, or retrograde fact beyond {{exitDate}}"
+    ],
+    "governedEvidence": {
+      "planetarySource": "packages/astro-knowledge/data/planetary/mercury.json",
+      "placementFactSource": "packages/astro-knowledge/data/placements/sign/mercury-sagittarius.json",
+      "v13MercurySignSourceIds": [],
+      "v13SignMechanicSourceIds": [
+        "ll-v13:placementmeanings:10:sagittarius"
+      ],
+      "v13Use": "meaning-topics-only-no-narrative-reuse"
+    }
+  },
+  "capricorn": {
+    "object": "mercury",
+    "sign": "capricorn",
+    "objectFunction": "Mercury describes thought, language, questions, interpretation, learning, writing, conversation, and how information moves and becomes useful.",
+    "signMechanics": "Capricorn makes thought structured, strategic, consequence-aware, and focused on producing an answer that can be used over time.",
+    "coreTension": "Planning can make a decision durable, but the need for a complete answer can delay the plain sentence that is needed now.",
+    "likelyObservableBehaviors": [
+      "organizes information into steps",
+      "asks what the decision will require later",
+      "keeps an explanation concise",
+      "withholds an answer until every consequence has been considered"
+    ],
+    "likelyConsequences": [
+      "plans become usable",
+      "responsibilities are named clearly",
+      "silence can make a practical concern sound colder or more final than intended"
+    ],
+    "allowedLivedDomains": [
+      "messages",
+      "conversation",
+      "meetings",
+      "decisions",
+      "plans",
+      "learning",
+      "work",
+      "technology",
+      "relationships",
+      "daily information"
+    ],
+    "prohibitedDomainAssumptions": [
+      "career, bosses, promotions, titles, or corporate life as default domains"
+    ],
+    "risks": [
+      "rigidity",
+      "pessimism",
+      "withholding words until the exchange loses warmth"
+    ],
+    "stockTropeRisks": [
+      "generic domestic conflict",
+      "dinner-plan compromise",
+      "group-chat shorthand unless the scene is literally a group conversation"
+    ],
+    "unearnedMotives": [
+      "fear, trauma, or intent not established by observable behavior"
+    ],
+    "whatChanges": "plans become usable",
+    "constructiveExpression": "organizes information into steps",
+    "overcorrection": "rigidity, pessimism, withholding words until the exchange loses warmth",
+    "DO_NOT_ASSUME": [
+      "a natal personality profile",
+      "the sign's traditionally associated house",
+      "a single relationship, work, family, or money domain as the meaning of the sign",
+      "a live date, station, degree, or retrograde fact beyond {{exitDate}}"
+    ],
+    "governedEvidence": {
+      "planetarySource": "packages/astro-knowledge/data/planetary/mercury.json",
+      "placementFactSource": "packages/astro-knowledge/data/placements/sign/mercury-capricorn.json",
+      "v13MercurySignSourceIds": [],
+      "v13SignMechanicSourceIds": [
+        "ll-v13:placementmeanings:11:capricorn"
+      ],
+      "v13Use": "meaning-topics-only-no-narrative-reuse"
+    }
+  },
+  "aquarius": {
+    "object": "mercury",
+    "sign": "aquarius",
+    "objectFunction": "Mercury describes thought, language, questions, interpretation, learning, writing, conversation, and how information moves and becomes useful.",
+    "signMechanics": "Aquarius makes thought independent, system-aware, inventive, and willing to question the rule everyone else accepted.",
+    "coreTension": "A different way of seeing the system can solve a recurring problem, but the idea can become more important than the person who has to understand or use it.",
+    "likelyObservableBehaviors": [
+      "questions the default rule",
+      "spots a pattern across separate events",
+      "proposes an unfamiliar solution",
+      "explains the system instead of answering the immediate concern"
+    ],
+    "likelyConsequences": [
+      "an old process gets reconsidered",
+      "a new tool or method becomes possible",
+      "the recipient can feel left behind by an explanation that only makes sense to its author"
+    ],
+    "allowedLivedDomains": [
+      "messages",
+      "conversation",
+      "meetings",
+      "decisions",
+      "plans",
+      "learning",
+      "work",
+      "technology",
+      "relationships",
+      "daily information"
+    ],
+    "prohibitedDomainAssumptions": [
+      "friendships, groups, communities, committees, or networks as default domains"
+    ],
+    "risks": [
+      "contrarianism",
+      "emotional distance",
+      "valuing the idea more than the person receiving it"
+    ],
+    "stockTropeRisks": [
+      "generic domestic conflict",
+      "dinner-plan compromise",
+      "group-chat shorthand unless the scene is literally a group conversation"
+    ],
+    "unearnedMotives": [
+      "fear, trauma, or intent not established by observable behavior"
+    ],
+    "whatChanges": "an old process gets reconsidered",
+    "constructiveExpression": "questions the default rule",
+    "overcorrection": "contrarianism, emotional distance, valuing the idea more than the person receiving it",
+    "DO_NOT_ASSUME": [
+      "a natal personality profile",
+      "the sign's traditionally associated house",
+      "a single relationship, work, family, or money domain as the meaning of the sign",
+      "a live date, station, degree, or retrograde fact beyond {{exitDate}}"
+    ],
+    "governedEvidence": {
+      "planetarySource": "packages/astro-knowledge/data/planetary/mercury.json",
+      "placementFactSource": "packages/astro-knowledge/data/placements/sign/mercury-aquarius.json",
+      "v13MercurySignSourceIds": [],
+      "v13SignMechanicSourceIds": [],
+      "v13Use": "meaning-topics-only-no-narrative-reuse"
+    }
+  },
+  "pisces": {
+    "object": "mercury",
+    "sign": "pisces",
+    "objectFunction": "Mercury describes thought, language, questions, interpretation, learning, writing, conversation, and how information moves and becomes useful.",
+    "signMechanics": "Pisces makes thought associative, intuitive, imaginative, and sensitive to tone, image, feeling, and information that has not been stated directly.",
+    "coreTension": "An impression can notice what literal language missed, but another person still needs enough structure to follow how the answer was reached.",
+    "likelyObservableBehaviors": [
+      "notices what a message implies",
+      "finds the answer through an image or association",
+      "hears a change in tone",
+      "assumes an impression was understood without stating it"
+    ],
+    "likelyConsequences": [
+      "subtle information becomes useful",
+      "creative language finds the point",
+      "mixed signals grow when the reasoning stays private"
+    ],
+    "allowedLivedDomains": [
+      "messages",
+      "conversation",
+      "meetings",
+      "decisions",
+      "plans",
+      "learning",
+      "work",
+      "technology",
+      "relationships",
+      "daily information"
+    ],
+    "prohibitedDomainAssumptions": [
+      "retreat, isolation, institutions, or relationships as default domains"
+    ],
+    "risks": [
+      "confusion",
+      "avoidance",
+      "letting emotion blur the facts"
+    ],
+    "stockTropeRisks": [
+      "generic domestic conflict",
+      "dinner-plan compromise",
+      "group-chat shorthand unless the scene is literally a group conversation"
+    ],
+    "unearnedMotives": [
+      "fear, trauma, or intent not established by observable behavior"
+    ],
+    "whatChanges": "subtle information becomes useful",
+    "constructiveExpression": "notices what a message implies",
+    "overcorrection": "confusion, avoidance, letting emotion blur the facts",
+    "DO_NOT_ASSUME": [
+      "a natal personality profile",
+      "the sign's traditionally associated house",
+      "a single relationship, work, family, or money domain as the meaning of the sign",
+      "a live date, station, degree, or retrograde fact beyond {{exitDate}}"
+    ],
+    "governedEvidence": {
+      "planetarySource": "packages/astro-knowledge/data/planetary/mercury.json",
+      "placementFactSource": "packages/astro-knowledge/data/placements/sign/mercury-pisces.json",
+      "v13MercurySignSourceIds": [
+        "ll-v13:placementmeanings:95:mercury-pisces"
+      ],
+      "v13SignMechanicSourceIds": [
+        "ll-v13:placementmeanings:13:pisces"
+      ],
+      "v13Use": "meaning-topics-only-no-narrative-reuse"
+    }
+  }
+}
