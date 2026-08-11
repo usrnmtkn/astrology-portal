@@ -30,6 +30,7 @@ const {
   selfAuditPacketLint
 } = require("./daily-glance-self-audit-candidates.js");
 const { callOpenAIResponses } = require("../../../src/astro-writing/openAIResponses.cjs");
+const { loadWriterSceneContextForKey } = require("./daily-glance-scene-context.js");
 const {
   agreementSummary,
   appendPendingFlags,
@@ -46,7 +47,7 @@ const auditMarkdownPath = path.join(packageRoot, "review", `daily-glance-voice-a
 const auditJsonPath = path.join(packageRoot, "review", `daily-glance-voice-audit-${dateKey}.json`);
 const dodontMarkdownPath = path.join(packageRoot, "review", `dodont-seed-inventory-${dateKey}.md`);
 const candidateDir = path.join(packageRoot, "review", `daily-glance-voice-audit-${dateKey}-candidates`);
-const candidateConfigPath = path.join(packageRoot, "config", "daily-glance-writer-sol-xhigh-batch-3-self-audit-v1.json");
+const candidateConfigPath = path.join(packageRoot, "config", "daily-glance-writer-sol-xhigh-batch-3-self-audit-v2.json");
 const TARGET_CUES = Object.freeze({
   sun: "identity|role|public|private|recognition|approve|present|composure",
   moon: "mood|feeling|need|rest|care|schedule|comfort",
@@ -306,7 +307,7 @@ function candidateRank(left, right, operatingMode) {
     || (left.sample - right.sample);
 }
 
-async function generateBottomFive(report) {
+async function generateBottomFive(report, sceneContextDir) {
   const selectedKeys = report.rows.slice(0, 5).map((row) => row.key);
   const config = scheduledCandidateConfig(selectedKeys);
   const sourceRows = readJson(sourceRowsPath);
@@ -316,14 +317,17 @@ async function generateBottomFive(report) {
   const prepared = config.keys.map((target) => {
     const packet = buildPacket(target.key, config);
     const examples = approvedGoodExamples(target.key, sourceRows);
-    const modelInput = renderSelfAuditWriterInput(packet, config, examples);
+    const resolvedSceneContext = loadWriterSceneContextForKey(target.key, sceneContextDir);
+    const modelInput = renderSelfAuditWriterInput(packet, config, examples, resolvedSceneContext.packet);
     packet.selfAuditDirectivePath = config.selfAuditDirectivePath;
+    packet.resolvedSceneContextPath = path.relative(repoRoot, resolvedSceneContext.contextPath);
+    packet.resolvedSceneContext = resolvedSceneContext.packet;
     packet.selfAuditGoodExamples = examples.map((example) => ({
       key: example.key,
       headlineSourceId: example.headlineSourceId,
       bodySourceId: example.bodySourceId
     }));
-    const selfLint = selfAuditPacketLint(packet, modelInput, config, examples, currentPairs.get(target.key));
+    const selfLint = selfAuditPacketLint(packet, modelInput, config, examples, currentPairs.get(target.key), resolvedSceneContext.packet);
     if (!selfLint.passed) throw new Error(`Packet self-lint failed for ${target.key}; refusing to bill.`);
     packet.selfAuditModelInputSha256 = selfLint.modelInputSha256;
     packet.selfAuditLintRulesSha256 = selfLint.rulesSha256;
@@ -740,7 +744,9 @@ async function main() {
   process.stdout.write(`dodont=${path.relative(repoRoot, dodont.path)}\n`);
   process.stdout.write(`mode=${audit.operatingMode} scoreOnes=${audit.summary.scoreOnes} step2CostUsd=${audit.estimatedCostUsd}\n`);
   if (!reportOnly && !args.includes("--audit-only")) {
-    const candidates = await generateBottomFive(audit);
+    const sceneContextIndex = args.indexOf("--scene-context-dir");
+    const sceneContextDir = sceneContextIndex >= 0 ? args[sceneContextIndex + 1] : null;
+    const candidates = await generateBottomFive(audit, sceneContextDir);
     process.stdout.write(`candidates=${candidates.outputDirectory}\n`);
     process.stdout.write(`step4CostUsd=${candidates.totalCostUsd}\n`);
   }
