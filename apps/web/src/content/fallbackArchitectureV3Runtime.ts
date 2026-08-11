@@ -32,6 +32,11 @@ export const fallbackArchitectureV3PackageVersion = PACKAGE_VERSION;
 
 export type ReviewStatus = "approved" | "approved_reuse" | "reviewed" | string;
 
+export type StructuredApproval = {
+  approvalLevel?: string | null;
+  [key: string]: unknown;
+};
+
 export type AuthoredCard = {
   contentKey: string;
   content_role?: string | null;
@@ -648,6 +653,20 @@ export function fallbackV3SignRuler(sign: string) {
 
 export function transitV3AuthoredCardForContentKey(contentKey: string | null | undefined) {
   return contentKey ? transitAuthoredCardsByKey.get(contentKey) ?? null : null;
+}
+
+export function fallbackV3ApprovalLevelForContentKey(contentKey: string | null | undefined) {
+  if (!contentKey) return null;
+
+  const row = transitAuthoredCardsByKey.get(contentKey)
+    ?? hookRowsByKey.get(contentKey)
+    ?? vocabularyRowsByKey.get(contentKey);
+  const approval = row?.approval as StructuredApproval | null | undefined;
+  const approvalLevel = approval?.approvalLevel;
+
+  return typeof approvalLevel === "string" && approvalLevel.trim()
+    ? approvalLevel.trim()
+    : null;
 }
 
 export function transitV3SameBeatKeyForContentKey(contentKey: string | null | undefined) {
