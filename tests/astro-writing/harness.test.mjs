@@ -339,6 +339,12 @@ const reviewerClient = async ({ instructions }) => {
   reviewCount += 1;
   return reviewValue(reviewCount === 1 ? "REVISE" : "PASS");
 };
+writerClient.provider = "gemini";
+writerClient.model = "gemini-writer-fixture";
+writerClient.thinkingLevel = "high";
+reviewerClient.provider = "openai";
+reviewerClient.model = "gpt-judge-fixture";
+reviewerClient.reasoningEffort = "medium";
 const pipeline = await runWritingPipeline({
   meaningInput,
   examples: approvedExamples.filter((entry) => entry.family === "sky-placement" && entry.register === "collective").slice(0, 5),
@@ -353,8 +359,12 @@ assert.equal(pipeline.draft.hook, "Someone checks the claim before repeating it.
 assert.equal(pipeline.draft.lived, "A familiar answer keeps getting repeated after the facts change.", "Surgical revision must preserve successful fields.");
 assert.equal(pipeline.draft.ownerApproved, false, "Generated copy must never be labeled owner-approved.");
 assert.equal(pipeline.draft.reviewStatus, "needs_review");
+assert.equal(pipeline.draft.ownerStatus, "PENDING OWNER");
 assert.equal(pipeline.draft.approvalStatus, "owner-review-pending");
 assert.equal(pipeline.draft.generation_metadata.role, "CARD_WRITER_V3");
+assert.equal(pipeline.draft.generation_metadata.provider, "gemini");
+assert.equal(pipeline.draft.generation_metadata.model, "gemini-writer-fixture");
+assert.equal(pipeline.draft.generation_metadata.thinkingLevel, "high");
 assert.equal(pipeline.draft.generation_metadata.components.writer_prompt, CARD_WRITING_INSTRUCTIONS_VERSION);
 assert.equal(pipeline.report.automaticallyRevised, 1);
 assert.equal(pipeline.report.finalLintStatus, "PASS");

@@ -14,6 +14,14 @@ The proposed next run is 20 calls, no retries, over the frozen 12 gold and 8 pai
 
 Card judge v3.1 calibration completed on 2026-08-10 across preserved runs 2b and 2c: 12/12 owner-locked gold contracts and 8/8 paired negative contracts passed. Run 2c applied the owner-approved alternates ruling for `neg-gemini-advocacy`; run 2b remains byte-identical.
 
+## Offline model providers
+
+The batch draft runner and writing harness can select OpenAI or Gemini independently for the writer and judge. Existing configuration remains OpenAI by default (`gpt-5.6-sol` writer and `gpt-5.6-terra` judge). Set `models.writer.provider` or `models.judge.provider` to `gemini`; Gemini defaults to `gemini-3.6-flash`, and `model` plus `thinkingLevel` remain batch-configurable.
+
+Gemini uses the `v1beta/interactions` REST endpoint and every request forces `store: false`. Provider credentials are read only from `apps/web/.env.local`, are never included in request artifacts, and are not needed for `--dry-run`. Dry runs write the exact credential-free provider request body without sending it. A judge request is materialized when a preserved draft is available through `--reuse-draft`; otherwise the unbilled run stops after materializing the writer request because the judge input depends on the unwritten draft.
+
+All provider outputs remain `PENDING OWNER`. Draft artifacts and workbook candidate-history sidecars record provider and model provenance, and successful billed calls append a provider field to the existing cumulative billed-call log. Live OpenAI and Gemini runs execute outside the sandbox; CI uses mocked fetch only and makes no live model calls.
+
 ## Governance wall
 
 - The register-per-surface ruling is `owner_approved` and active in the harness only.
