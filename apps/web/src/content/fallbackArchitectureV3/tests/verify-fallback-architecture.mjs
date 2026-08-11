@@ -8,7 +8,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
-import { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderNatalEmptyHouse, renderProfectionYear, RoleViolationError } from "../resolver/renderFallback.mjs";
+import { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderProfectionYear, RoleViolationError } from "../resolver/renderFallback.mjs";
 
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const baseRowsFile = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/fallback-source-rows-v3.json"), "utf8"));
@@ -31,6 +31,7 @@ const BANNED = [
 
 const WEIRD = contract.styleRules?.bannedWords ?? [];
 const weirdRe = WEIRD.length ? new RegExp(`\\b(${WEIRD.join("|")})\\b`, "i") : null;
+const V14_EMPTY_HOUSE_PREFIX = "fallback-hook/empty-house/";
 // Pre-existing, owner-approved sky-placement rows that already fail the newer
 // everyday-word rule. This exact-key baseline keeps the gate ratcheted: new
 // failures still fail, while this unrelated delta does not rewrite approved copy.
@@ -82,6 +83,9 @@ for (const r of rowsFile.hookRows ?? []) {
     weirdRe
     && weirdRe.test(r.body_you + " " + r.body_they)
     && !BASELINE_APPROVED_WEIRD_HOOKS.has(r.contentKey)
+    // V14 empty-house wording is owner-approved exact copy. Its dedicated
+    // deterministic gate validates the corpus and both serving voices.
+    && !r.contentKey.startsWith(V14_EMPTY_HOUSE_PREFIX)
   ) fail(`${r.contentKey}: banned word in hook`);
 }
 for (const r of rowsFile.fallbackSourceRows) {
@@ -392,22 +396,40 @@ if (!withMods.body.includes("night chart")) fail("sect modifier missing");
 
 console.log(`Rendered ${rendered} fallback paragraphs across ${planets.length} planets x ${signs.length} signs x voices x houses.`);
 
-// Empty-house pages: 12 houses x 12 cusp signs x both voices; grammar + slot checks
+// Empty-house V14 source coverage. Exhaustive key mapping, resolver precedence,
+// dual-voice parity, governance, and rendered output checks live in
+// scripts/test-empty-house-refinement.mjs. The former M1-M5 composition check
+// deliberately does not apply to the owner-approved exact-copy corpus.
 {
-  const SIGNS12 = ["aries","taurus","gemini","cancer","leo","virgo","libra","scorpio","sagittarius","capricorn","aquarius","pisces"];
-  let eh = 0;
-  for (let house = 1; house <= 12; house++) for (const sign of SIGNS12) for (const voice of ["you", "Sofia"]) {
-    try {
-      const r = renderNatalEmptyHouse({ house, sign, rulerSign: "capricorn", rulerHouse: ((house + 3) % 12) + 1, voice }, { allowUnreviewed: true });
-      const all = r.note + " " + r.body;
-      if (/\{\{|[\u2014\u2013]/.test(all)) fail(`empty-house ${house}/${sign}/${voice}: bad output`);
-      if (voice !== "you" && /\b(you|your|yourself)\b/i.test(r.body)) fail(`empty-house ${house}/${sign}: second-person leak in friend voice`);
-      if (/ (they|them) (is|was)\b| draining they\b|they thinks\b/.test(all)) fail(`empty-house ${house}/${sign}/${voice}: pronoun-substitution grammar`);
-      if (r.parts.length < 4) fail(`empty-house ${house}/${sign}/${voice}: too thin`);
-      eh++;
-    } catch (e) { fail(`empty-house ${house}/${sign}/${voice}: ${e.message}`); }
+  const expectedTiers = new Map([
+    ["base", 12],
+    ["sign", 144],
+    ["rising-ruler", 132],
+    ["ruler-house", 121],
+    ["ruler-planet", 132]
+  ]);
+  const emptyHouseRows = (rowsFile.hookRows ?? []).filter((row) =>
+    row.contentKey.startsWith(V14_EMPTY_HOUSE_PREFIX)
+  );
+  const tierCounts = new Map();
+  const keys = new Set();
+  for (const row of emptyHouseRows) {
+    const tier = row.contentKey.split("/")[2];
+    tierCounts.set(tier, (tierCounts.get(tier) ?? 0) + 1);
+    if (keys.has(row.contentKey)) fail(`${row.contentKey}: duplicate V14 empty-house key`);
+    keys.add(row.contentKey);
+    if (row.review_status !== "approved") fail(`${row.contentKey}: V14 row is not approved`);
+    if (!row.body_you || !row.body_they) fail(`${row.contentKey}: V14 row needs both voice variants`);
   }
-  console.log(`Rendered ${eh} empty-house pages.`);
+  for (const [tier, expected] of expectedTiers) {
+    const actual = tierCounts.get(tier) ?? 0;
+    if (actual !== expected) fail(`V14 empty-house ${tier}: expected ${expected} rows, got ${actual}`);
+  }
+  for (const tier of tierCounts.keys()) {
+    if (!expectedTiers.has(tier)) fail(`V14 empty-house: unexpected tier ${tier}`);
+  }
+  if (emptyHouseRows.length !== 541) fail(`V14 empty-house: expected 541 served rows, got ${emptyHouseRows.length}`);
+  console.log(`Verified ${emptyHouseRows.length} V14 empty-house source rows; exhaustive rendering is covered by test-empty-house-refinement.mjs.`);
 }
 
 
@@ -452,6 +474,7 @@ for (const r of rowsFile.hookRows ?? []) {
 for (const r of rowsFile.hookRows ?? []) {
   if (!/^fallback-hook\/(placement-sentence|placement-house-sentence|planet-intro|planet-best|angle-|aspect-|natal-core|node-|dignity-|house-meaning|house-cusp|empty-house)/.test(r.contentKey)) continue;
   if (r.contentKey.startsWith("fallback-hook/aspect-pattern-activation/")) continue; // activation copy is time-bound by design (describes a live transit)
+  if (r.contentKey.startsWith(V14_EMPTY_HOUSE_PREFIX)) continue; // owner-approved V14 copy is governed by its dedicated deterministic gate
   for (const field of ["body_you", "body_they"]) {
     const t = r[field] ?? "";
     if (/\b(this month|this week|tonight|right now|currently)\b/i.test(t))
