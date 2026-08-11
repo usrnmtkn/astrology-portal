@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "recordType": "owner-candidate-verdict",
+  "recordedDate": "2026-08-11",
+  "authority": "explicit owner ruling in Codex chat",
+  "key": "conjunction/neptune",
+  "ownerVerdict": "took-candidate",
+  "selectedCandidate": 2,
+  "servingApproval": {
+    "headline": "You start fixing a problem no one has named.",
+    "body": "You notice your manager seems off and start rearranging the day's schedule before they explain what happened. You may treat that mood as your own, so you check every detail and push aside work that will be evaluated. You still do not know what happened. Before you change the schedule again, ask your manager what actually needs attention.",
+    "replacePreviousApprovedRowByteForByte": true
+  },
+  "rowSupersessions": [
+    {
+      "contentKey": "fallback-hook/daily-headline/conjunction/neptune",
+      "field": "body_you",
+      "previousValue": "Give yourself permission to turn the volume down on the world right now.",
+      "approvedValue": "You start fixing a problem no one has named."
+    },
+    {
+      "contentKey": "fallback-hook/daily-body/conjunction/neptune",
+      "field": "body_you",
+      "previousValue": "A song can undo you. An old memory can color the whole afternoon. Someone else's mood may follow you home before you realize you picked it up. Give yourself less noise, fewer opinions, and more time before making a hard decision. Write, make something, take a long shower, or let yourself stare out the window for a while. Not every feeling needs to be solved, but it does need to be experienced.",
+      "approvedValue": "You notice your manager seems off and start rearranging the day's schedule before they explain what happened. You may treat that mood as your own, so you check every detail and push aside work that will be evaluated. You still do not know what happened. Before you change the schedule again, ask your manager what actually needs attention."
+    }
+  ],
+  "compositionRuling": "Accepting candidate 2 is a one-instance acceptance of the composed-grant arc (form-explanation + manage-schedule + check-details producing action-before-clarification). It does not establish general composition doctrine; that question remains open and future candidates leaning on removed grants via composition still require case-by-case owner ruling.",
+  "candidates": [
+    {
+      "sample": 1,
+      "responseId": "resp_02cdc3f5d71d2558006a7ad026585c81a3adb79becbc9d3a39",
+      "headline": "You read a manager's mood as criticism of your work.",
+      "body": "You notice your manager's mood while managing the schedule and start checking every detail as if your work is being judged. You may feel responsible for correcting a problem before your manager has said there is one. You do not know yet. You keep checking the same details, leaving less time to manage the appointment that still needs your attention. Wait for your manager's explanation before changing the schedule.",
+      "disposition": "RETAIN_AS_REGISTER_EVIDENCE / DO_NOT_SERVE",
+      "serveEligible": false,
+      "promotionEligible": false,
+      "candidatePoolEligible": false
+    },
+    {
+      "sample": 2,
+      "responseId": "resp_092c89ac990d165c006a7ad0265564819fb427fc60b6aaceb4",
+      "headline": "You start fixing a problem no one has named.",
+      "body": "You notice your manager seems off and start rearranging the day's schedule before they explain what happened. You may treat that mood as your own, so you check every detail and push aside work that will be evaluated. You still do not know what happened. Before you change the schedule again, ask your manager what actually needs attention.",
+      "disposition": "OWNER_APPROVED_FOR_SERVING",
+      "serveEligible": true,
+      "promotionEligible": true,
+      "candidatePoolEligible": false
+    },
+    {
+      "sample": 3,
+      "responseId": "resp_0d94c1165a50c90b006a7ad026653481a2a7106e0420c7b189",
+      "headline": "You respond to an unexplained mood by doing extra work.",
+      "body": "You notice your manager's mood while managing the schedule and start treating it as a problem with your work. You may absorb the mood as your own, then lose time checking details instead of finishing the work your manager will evaluate. You still have no explanation. Only change the schedule after your manager explains what happened.",
+      "disposition": "RETAIN_AS_REGISTER_EVIDENCE / DO_NOT_SERVE",
+      "serveEligible": false,
+      "promotionEligible": false,
+      "candidatePoolEligible": false
+    }
+  ],
+  "runSummary": {
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "calls": 3,
+    "terraCalls": 0,
+    "lintClean": 3,
+    "estimatedCostUsd": 0.35387,
+    "totalTokens": 45510
+  }
+}
