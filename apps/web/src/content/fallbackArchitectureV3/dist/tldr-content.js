@@ -358,6 +358,45 @@ function skyPlacementKeyDates({
 function skyPlacementKeyDatesIntro(facts) {
   return String(facts.planet ?? "").trim().toLowerCase() === "lilith" && skyPlacementKeyDates(facts).length > 0 ? TRUE_LILITH_KEY_DATES_INTRO : null;
 }
+var DAILY_GLANCE_READER_ELIGIBLE = /* @__PURE__ */ new Set(["approved", "approved_reuse", "reviewed"]);
+function dailyGlanceHash(value) {
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619) >>> 0;
+  }
+  return hash >>> 0;
+}
+function dailyGlanceDayNumber(dateKey) {
+  if (!dateKey) return null;
+  const parsed = Date.parse(`${dateKey.slice(0, 10)}T00:00:00.000Z`);
+  return Number.isFinite(parsed) ? Math.floor(parsed / 864e5) : null;
+}
+function selectDailyGlanceVariantSet({
+  variantSet,
+  primary,
+  dateKey,
+  contentKey,
+  userId,
+  previousVariantId,
+  allowUnreviewed = false
+}) {
+  const fallback = { id: "primary", ...primary };
+  if (!variantSet || variantSet.pairing_policy !== "explicit_pairs_only") return fallback;
+  const eligible = (status) => allowUnreviewed || DAILY_GLANCE_READER_ELIGIBLE.has(status);
+  const headlines = new Map(variantSet.headlines.filter((item) => eligible(item.review_status)).map((item) => [item.id, item.text]));
+  const bodies = new Map(variantSet.bodies.filter((item) => eligible(item.review_status)).map((item) => [item.id, item.text]));
+  const pairs = variantSet.pairings.filter((pairing) => eligible(pairing.review_status)).map((pairing) => ({ id: pairing.id, headline: headlines.get(pairing.headline_id), body: bodies.get(pairing.body_id) })).filter((pair) => Boolean(pair.headline && pair.body));
+  if (!pairs.some((pair) => pair.id === "primary")) pairs.unshift(fallback);
+  const dayNumber = dailyGlanceDayNumber(dateKey);
+  if (pairs.length === 1 || dayNumber === null) return pairs[0] ?? fallback;
+  const offset = dailyGlanceHash(`${contentKey}|${userId ?? "shared"}`) % pairs.length;
+  let index = ((dayNumber + offset) % pairs.length + pairs.length) % pairs.length;
+  if (previousVariantId && pairs[index]?.id === previousVariantId && pairs.length > 1) {
+    index = (index + 1) % pairs.length;
+  }
+  return pairs[index] ?? fallback;
+}
 var FAST = /* @__PURE__ */ new Set(["moon", "mercury", "venus", "mars"]);
 var HEAVY = /* @__PURE__ */ new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 var ANGLES = /* @__PURE__ */ new Set(["ascendant", "midheaven", "descendant", "imum-coeli"]);
@@ -2087,17 +2126,25 @@ ${passHook}`;
     );
   }
   const DAILY_GROUP = { conjunction: "conjunction", square: "square", opposition: "opposition", trine: "soft", sextile: "soft" };
-  function renderDailyGlance({ natal, aspect, house }) {
+  function renderDailyGlance({ natal, aspect, house, dateKey, userId, previousVariantId }) {
     if (natal && aspect) {
       const g = DAILY_GROUP[aspect] ?? aspect;
       const h = hooks.get(`fallback-hook/daily-headline/${g}/${natal}`)?.body_you;
       const b = hooks.get(`fallback-hook/daily-body/${g}/${natal}`)?.body_you;
-      if (h && b) return { headline: h, body: b, parts: [b], templateKey: "fallback-template/daily.glance" };
+      if (h && b) {
+        const contentKey = `${g}/${natal}`;
+        const selected = selectDailyGlanceVariantSet({ variantSet: rowsFile.dailyGlanceVariants?.keys[contentKey], primary: { headline: h, body: b }, dateKey, contentKey, userId, previousVariantId, allowUnreviewed });
+        return { headline: selected.headline, body: selected.body, parts: [selected.body], templateKey: "fallback-template/daily.glance", variantId: selected.id };
+      }
     }
     if (house) {
       const h = hooks.get(`fallback-hook/daily-headline/house/${house}`)?.body_you;
       const b = hooks.get(`fallback-hook/daily-body/house/${house}`)?.body_you;
-      if (h && b) return { headline: h, body: b, parts: [b], templateKey: "fallback-template/daily.glance" };
+      if (h && b) {
+        const contentKey = `house/${house}`;
+        const selected = selectDailyGlanceVariantSet({ variantSet: rowsFile.dailyGlanceVariants?.keys[contentKey], primary: { headline: h, body: b }, dateKey, contentKey, userId, previousVariantId, allowUnreviewed });
+        return { headline: selected.headline, body: selected.body, parts: [selected.body], templateKey: "fallback-template/daily.glance", variantId: selected.id };
+      }
     }
     throw new SourceGapError(`SOURCE_GAP: daily glance ${aspect ?? "no-aspect"}/${natal ?? house}`);
   }
@@ -2332,7 +2379,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-11b";
+var PACKAGE_VERSION = "v3-2026-08-11c";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
@@ -2354,6 +2401,13 @@ function packageRowsByKey(rows) {
   }
   return [...candidates.values()].map((keyed) => [...keyed].reverse().find((row) => readerEligible.has(String(row.review_status ?? row.reviewStatus ?? "")))).filter((row) => Boolean(row)).sort((first, second) => first.contentKey.localeCompare(second.contentKey));
 }
+function packageDailyGlanceVariantRows(variants) {
+  return Object.entries(variants?.keys ?? {}).flatMap(([dailyKey, set]) => [
+    ...(set.headlines ?? []).filter((row) => row.id !== "primary").map((row) => ({ ...row, contentKey: `daily-glance-variant/${dailyKey}/headline/${row.id}` })),
+    ...(set.bodies ?? []).filter((row) => row.id !== "primary").map((row) => ({ ...row, contentKey: `daily-glance-variant/${dailyKey}/body/${row.id}` })),
+    ...(set.pairings ?? []).filter((row) => row.id !== "primary").map((row) => ({ ...row, contentKey: `daily-glance-variant/${dailyKey}/pairing/${row.id}` }))
+  ]);
+}
 function packageHash(value) {
   const input = JSON.stringify(stablePackageValue(value));
   const seeds = [2166136261, 2654435769, 2246822507, 3266489909];
@@ -2372,6 +2426,7 @@ function createPackageManifest(bundle, packageVersion = PACKAGE_VERSION) {
     ...packageRowsByKey(bundle.transitLib.authoredCards).map((row) => ({ bucket: "authored", row })),
     ...packageRowsByKey(bundle.rowsFile.hookRows ?? []).map((row) => ({ bucket: "hook", row })),
     ...packageRowsByKey(bundle.rowsFile.vocabularyRows ?? []).map((row) => ({ bucket: "vocabulary", row })),
+    ...packageRowsByKey(packageDailyGlanceVariantRows(bundle.rowsFile.dailyGlanceVariants)).map((row) => ({ bucket: "daily-glance-variant", row })),
     ...packageRowsByKey(bundle.templatesFile.templates).map((row) => ({ bucket: "template", row }))
   ];
   const keys = records.map(({ bucket, row }) => `${bucket}:${row.contentKey}`);
@@ -2395,6 +2450,7 @@ export {
   createTransitSynastryRenderer,
   friendVoiceFromReaderCopy,
   normalizeAspect,
+  selectDailyGlanceVariantSet,
   skyPlacementKeyDates,
   skyPlacementKeyDatesIntro
 };

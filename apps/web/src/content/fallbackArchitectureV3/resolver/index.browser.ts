@@ -10,7 +10,7 @@ export * from "./knowledgeMatrixV13.browser";
 // Version stamp: the app must surface this in its debug/about screen and the dashboard
 // admin must show it next to the import status, so the owner can verify at a glance
 // that the running app and the dashboard are on the current package.
-export const PACKAGE_VERSION = "v3-2026-08-11b";
+export const PACKAGE_VERSION = "v3-2026-08-11c";
 
 type PackageRow = {
   contentKey: string;
@@ -23,6 +23,13 @@ export type PackageManifestBundle = {
   rowsFile: {
     hookRows?: PackageRow[];
     vocabularyRows?: PackageRow[];
+    dailyGlanceVariants?: {
+      keys?: Record<string, {
+        headlines?: PackageRow[];
+        bodies?: PackageRow[];
+        pairings?: PackageRow[];
+      }>;
+    };
   };
 };
 
@@ -71,6 +78,14 @@ function packageRowsByKey(rows: PackageRow[]) {
     .sort((first, second) => first.contentKey.localeCompare(second.contentKey));
 }
 
+function packageDailyGlanceVariantRows(variants: PackageManifestBundle["rowsFile"]["dailyGlanceVariants"]) {
+  return Object.entries(variants?.keys ?? {}).flatMap(([dailyKey, set]) => [
+    ...(set.headlines ?? []).filter((row) => row.id !== "primary").map((row) => ({ ...row, contentKey: `daily-glance-variant/${dailyKey}/headline/${row.id}` })),
+    ...(set.bodies ?? []).filter((row) => row.id !== "primary").map((row) => ({ ...row, contentKey: `daily-glance-variant/${dailyKey}/body/${row.id}` })),
+    ...(set.pairings ?? []).filter((row) => row.id !== "primary").map((row) => ({ ...row, contentKey: `daily-glance-variant/${dailyKey}/pairing/${row.id}` }))
+  ]);
+}
+
 function packageHash(value: unknown) {
   const input = JSON.stringify(stablePackageValue(value));
   const seeds = [0x811c9dc5, 0x9e3779b9, 0x85ebca6b, 0xc2b2ae35];
@@ -96,6 +111,7 @@ export function createPackageManifest(
     ...packageRowsByKey(bundle.transitLib.authoredCards).map((row) => ({ bucket: "authored", row })),
     ...packageRowsByKey(bundle.rowsFile.hookRows ?? []).map((row) => ({ bucket: "hook", row })),
     ...packageRowsByKey(bundle.rowsFile.vocabularyRows ?? []).map((row) => ({ bucket: "vocabulary", row })),
+    ...packageRowsByKey(packageDailyGlanceVariantRows(bundle.rowsFile.dailyGlanceVariants)).map((row) => ({ bucket: "daily-glance-variant", row })),
     ...packageRowsByKey(bundle.templatesFile.templates).map((row) => ({ bucket: "template", row }))
   ];
   const keys = records.map(({ bucket, row }) => `${bucket}:${row.contentKey}`);
