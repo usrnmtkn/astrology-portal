@@ -891,7 +891,7 @@
   --aspect-row-copy-margin: var(--space-1);
   --aspect-row-copy-color: var(--card-body-color);
   --aspect-row-copy-size: var(--friend-row-description-size);
-  --aspect-row-copy-line: 1.45;
+  --aspect-row-copy-line: var(--aspect-card-body-line);
   --aspect-row-meta-width: 30px;
   --aspect-row-meta-size: var(--aspect-card-meta-size);
   --aspect-row-meta-weight: var(--aspect-card-meta-weight);
