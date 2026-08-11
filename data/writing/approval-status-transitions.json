@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "rendered-sample-approval-gate-v1",
+  "ownerRulingDate": "2026-08-11",
+  "approvalStatuses": [
+    "generated",
+    "pipeline-review-passed",
+    "owner-review-pending",
+    "owner-approved",
+    "owner-locked"
+  ],
+  "renderedSampleStatuses": [
+    "not-rendered",
+    "owner-review-pending",
+    "owner-approved"
+  ],
+  "transitions": [
+    {
+      "from": "not-rendered",
+      "to": "owner-review-pending",
+      "requires": [
+        "document_owner_approval",
+        "stable_sample_id",
+        "product_surface"
+      ]
+    },
+    {
+      "from": "owner-review-pending",
+      "to": "owner-approved",
+      "requires": [
+        "exact_rendered_sample_owner_ruling"
+      ]
+    }
+  ],
+  "capabilityRequirements": {
+    "drafting": [],
+    "staging": [
+      "document_owner_approval"
+    ],
+    "batch_generation": [
+      "rendered_sample_owner_approved"
+    ],
+    "serving": [
+      "rendered_sample_owner_approved"
+    ]
+  }
+}
