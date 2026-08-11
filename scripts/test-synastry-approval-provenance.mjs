@@ -220,6 +220,10 @@ assert.throws(
 
 const livedRows = source.hookRows.filter((row) => (
   livedPrefixes.some((prefix) => row.contentKey?.startsWith(prefix))
+  && (
+    row.approval?.recordPath?.startsWith(lived108ApprovalPrefix)
+    || row.approval?.recordPath?.startsWith(lilithLivedApprovalPrefix)
+  )
 ));
 const lived108Rows = livedRows.filter((row) => !row.contentKey.startsWith(lilithLivedPrefix));
 const lilithLivedRows = livedRows.filter((row) => row.contentKey.startsWith(lilithLivedPrefix));

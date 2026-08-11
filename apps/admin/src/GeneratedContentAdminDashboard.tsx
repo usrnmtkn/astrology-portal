@@ -1039,7 +1039,7 @@ function packageHookBody(row: Record<string, unknown>) {
   return "";
 }
 
-const fallbackHookDefinitions: FallbackHookDefinition[] = ([
+const fallbackHookDefinitions: FallbackHookDefinition[] = [...new Map(([
   ...bundledSkyCoreRowsV3.hookRows,
   ...bundledDeferredCoreRowsV3.hookRows
 ] as Array<Record<string, unknown>>)
@@ -1058,7 +1058,8 @@ const fallbackHookDefinitions: FallbackHookDefinition[] = ([
       }
     };
   })
-  .filter((definition) => Boolean(definition.key));
+  .filter((definition) => Boolean(definition.key))
+  .map((definition) => [definition.key, definition] as const)).values()];
 
 function rowTitle(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserGeneratedContentRow) {
   if ("content_key" in row) {

@@ -37,6 +37,10 @@ const templates = {
   ]
 };
 const natal = createFallbackRenderer(templates, rows);
+const interimNatal = createFallbackRenderer(templates, {
+  ...rows,
+  hookRows: rows.hookRows.filter((row) => row.source_release !== "ll-matrix-v13-owner-approved-runtime")
+});
 const sky = createTransitSynastryRenderer(transitLibrary, templates, rows);
 
 assert.equal(interim.vocabularyRows.length, 7);
@@ -57,12 +61,24 @@ const previewLeo = natal.renderNatalPlacement({
   sign: "leo",
   voice: "you"
 }, { allowUnreviewed: true });
-assert.match(liveLeo.body, /recognition and warmth/u);
-assert.doesNotMatch(liveLeo.body, /recognition and devotion/u);
+const v13Leo = baseRows.hookRows.find((row) => (
+  row.contentKey === "fallback-hook/sign-lived/leo"
+  && row.source_release === "ll-matrix-v13-owner-approved-runtime"
+));
+assert.ok(v13Leo, "The owner-approved V13 Leo row must be present.");
+assert.equal(liveLeo.body, v13Leo.body);
+assert.equal(previewLeo.body, v13Leo.body);
 assert.equal(liveLeo.templateKey, "fallback-template/natal.planet-in-sign");
-assert.match(previewLeo.body, /recognition and devotion/u);
-assert.match(previewLeo.body, /meaning you refuse and reclaim/u);
 assert.equal(previewLeo.templateKey, "fallback-template/natal.planet-in-sign/lilith");
+assert.equal(
+  interim.vocabularyRows.find((row) => row.contentKey === "fallback-vocab/sign-need/leo")?.body,
+  "recognition and devotion",
+  "The review-gated interim source row must remain byte-identical even when V13 wins serving precedence."
+);
+assert.match(
+  interim.templates.find((row) => row.contentKey === "fallback-template/natal.planet-in-sign/lilith")?.body ?? "",
+  /meaning you refuse and reclaim/u
+);
 
 const STOP_WORDS = new Set([
   "and", "the", "what", "with", "into", "from", "that", "this", "they", "them",
@@ -123,7 +139,7 @@ const firstFourWords = new Set();
 let renderCount = 0;
 for (const planet of planets) {
   for (const sign of baseRows.coverage.signs) {
-    const rendered = natal.renderNatalPlacement({
+    const rendered = interimNatal.renderNatalPlacement({
       planet,
       sign,
       voice: "you"
