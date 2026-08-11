@@ -53,12 +53,14 @@ type TransitEntry = {
     summary?: string;
     body?: string;
     approvedVia?: string;
+    calendarLeadIn?: "date-placements-collective-level";
   };
   status?: string;
 };
 
 export type ApprovedExactSkyAspectCopy = {
   body: string;
+  calendarLeadIn?: "date-placements-collective-level";
   contentId: string;
   sourceId: string;
   summary: string;
@@ -535,6 +537,9 @@ export function createDomainRegistry(bundleInput: unknown) {
     if (readerApproved && readerBody) {
       const exactCopy = {
         body: readerBody,
+        ...(transit.readerCopy?.calendarLeadIn
+          ? { calendarLeadIn: transit.readerCopy.calendarLeadIn }
+          : {}),
         contentId: currentSkyAspectContentId(transit.transiting, transit.aspect, transit.other),
         sourceId: transit.id,
         summary: readerSummary || readerBody
