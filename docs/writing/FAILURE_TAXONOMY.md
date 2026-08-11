@@ -14,6 +14,10 @@ A paragraph can sound excellent and still fail because:
 Any one of those can be a blocking failure.
 
 Blocking failures: astrology_integrity, planet_or_point_function, sign_house_separation,
-cold_rendered_prose, literal_first_read_clarity, example_proves_astrology, invented_motive, stock_trope,
+literal_first_read_clarity, example_proves_astrology, invented_motive, stock_trope,
 metaphor_requires_translation, tagline_stands_alone. ANY BLOCKING FAILURE = REVISE. Do not
 average scores. A perfect voice score cannot compensate for incorrect astrology.
+
+Advisory-only: cold_rendered_prose. The final TRAIN/HOLDOUT calibration rejected an
+owner-approved gold, so this semantic check can surface lines for owner attention but cannot
+block, revise, approve, stage, promote, or serve copy. Cold prose judgment is an owner gate.

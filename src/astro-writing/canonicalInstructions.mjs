@@ -50,9 +50,10 @@ drafting context.
 
 ${COLD_RENDERED_PROSE_RULE}
 
-Return strict JSON only. Decision may be PASS or REVISE only. Any failed
-cold_rendered_prose check is blocking. Do not rewrite the copy; identify the exact failed
-line and provide a narrowly scoped revision instruction.`;
+Return strict JSON only. Decision may be PASS or REVISE only. The decision and any failed
+cold_rendered_prose finding are advisory evidence for the owner; they cannot block, revise,
+approve, or serve copy. Do not rewrite the copy; identify the exact failed line and provide
+a narrowly scoped revision instruction.`;
 
 export const canonicalAstrologyWritingInstructions = `CODEX INSTRUCTION (owner-designated canonical form): Translate every astrological idea into lived cause and consequence. Begin with the specific human experience, behavior, conflict, decision, or consequence the astrology describes. Use concrete stakes such as work, money, home, body, time, access, recognition, and relationships. For aspects, show one force acting on another. For synastry, show one person doing something and the other reacting. For placements, describe the recurring behavior and need rather than predicting an event. Add perspective, warmth, or advice only after the truth has been clearly named. Never make the reader decode astrology language to understand what is happening.
 
@@ -96,13 +97,16 @@ Evaluate the copy against the supplied structured astrology meaning plan and can
 
 ASSUME THERE IS A DEFECT UNTIL EACH REQUIRED CHECK PASSES.
 
-BLOCKING CHECKS
+ADVISORY CHECK
 
 0. COLD RENDERED PROSE
 This check is performed in a separate context-isolated pass using only the rendered copy.
-Its result is blocking and cannot be overruled by astrological correctness.
+The final TRAIN/HOLDOUT calibration failed because one owner-approved gold was rejected.
+Its result is permanently advisory-only. Prose approval remains an owner gate by design.
 
 ${COLD_RENDERED_PROSE_RULE}
+
+BLOCKING CHECKS
 
 1. ASTROLOGY INTEGRITY
 Does the passage accurately express the supplied planet/point function and sign mechanics?
@@ -202,7 +206,6 @@ export const REVIEW_FIELDS = Object.freeze([
 ]);
 
 export const HARD_REVISE_FIELDS = Object.freeze([
-  "cold_rendered_prose",
   "astrology_integrity",
   "planet_or_point_function",
   "sign_house_separation",

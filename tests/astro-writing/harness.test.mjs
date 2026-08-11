@@ -133,9 +133,9 @@ assert.ok(
 assert.deepEqual(REVIEW_SCHEMA.properties.decision.enum, ["PASS", "REVISE"]);
 assert.deepEqual(COLD_REVIEW_SCHEMA.properties.decision.enum, ["PASS", "REVISE"]);
 assert.deepEqual(COLD_REVIEW_SCHEMA.properties.violations.items.properties.category.enum, ["cold_rendered_prose"]);
-assert.deepEqual(COLD_REVIEW_SCHEMA.properties.violations.items.properties.severity.enum, ["blocking"]);
+assert.deepEqual(COLD_REVIEW_SCHEMA.properties.violations.items.properties.severity.enum, ["nonblocking"]);
 assert.ok(REVIEW_FIELDS.includes("cold_rendered_prose"));
-assert.ok(HARD_REVISE_FIELDS.includes("cold_rendered_prose"));
+assert.ok(!HARD_REVISE_FIELDS.includes("cold_rendered_prose"));
 assert.ok(coldRenderedProseReviewInstructions.replace(/\s+/gu, " ").includes("Do not reward a sentence for being astrologically correct if it is awkward prose."));
 assert.ok(canonicalAstrologyReviewInstructions.includes(COLD_RENDERED_PROSE_RULE));
 assert.ok(canonicalAstrologyReviewInstructions.includes("DECISION CONTRACT: Return PASS or REVISE only. Never return FAIL."));
@@ -363,7 +363,7 @@ const coldReviewValue = (decision = "PASS") => ({
   decision,
   violations: decision === "PASS" ? [] : [{
     category: "cold_rendered_prose",
-    severity: "blocking",
+    severity: "nonblocking",
     location: "hook",
     text: "An opaque line.",
     reason: "The rendered prose requires translation.",
@@ -466,9 +466,9 @@ const coldFailureReview = await reviewDraft({
     return reviewValue("PASS");
   }
 });
-assert.equal(coldFailureReview.decision, "REVISE");
+assert.equal(coldFailureReview.decision, "PASS", "The permanently advisory cold check cannot block otherwise acceptable copy.");
 assert.equal(coldFailureReview.cold_rendered_prose.status, "FAIL");
-assert.ok(coldFailureReview.violations.some((entry) => entry.category === "cold_rendered_prose" && entry.severity === "blocking"));
+assert.ok(coldFailureReview.violations.some((entry) => entry.category === "cold_rendered_prose" && entry.severity === "nonblocking"));
 
 const initialApproval = generatedApprovalState();
 const documentApproved = applyOwnerApproval(markPipelineReady(initialApproval), {
@@ -500,11 +500,40 @@ assert.equal(coldFixtures.length, 13);
 assert.equal(coldFixtures.filter((entry) => entry.fixture_kind === "negative" && entry.expected === "REVISE").length, 12);
 assert.equal(coldFixtures.filter((entry) => entry.fixture_kind === "gold" && entry.expected === "PASS").length, 1);
 for (const fixture of coldFixtures) assert.equal(sha256(fixture.rendered_copy), fixture.rendered_copy_sha256);
+const coldRound2Train = jsonl("data/writing/cold-rendered-prose-round-2-train.jsonl");
+const coldRound2Holdout = jsonl("data/writing/cold-rendered-prose-round-2-holdout.jsonl");
+const coldRound2Briefing = read("packages/astro-knowledge/review/cold-rendered-prose-governance-v1/round-2-reviewer-briefing.md");
+assert.equal(coldRound2Train.length, 6);
+assert.equal(coldRound2Train.filter((entry) => entry.label === "FAIL").length, 4);
+assert.equal(coldRound2Train.filter((entry) => entry.label === "PASS").length, 2);
+assert.equal(coldRound2Holdout.filter((entry) => entry.fixture_kind === "holdout-negative").length, 8);
+assert.equal(coldRound2Holdout.filter((entry) => entry.fixture_kind === "holdout-gold").length, 2);
+assert.equal(coldRound2Holdout.filter((entry) => entry.fixture_kind === "borderline-probe").length, 3);
+for (const fixture of [...coldRound2Train, ...coldRound2Holdout]) {
+  assert.equal(sha256(fixture.rendered_copy), fixture.rendered_copy_sha256);
+}
+for (const fixture of coldRound2Holdout) {
+  assert.ok(!coldRound2Briefing.includes(fixture.fixture_id), `${fixture.fixture_id} leaked into the TRAIN briefing.`);
+  assert.ok(!coldRound2Briefing.includes(fixture.rendered_copy), `${fixture.fixture_id} full text leaked into the TRAIN briefing.`);
+  assert.ok(!coldRound2Train.some((training) => training.rendered_copy_sha256 === fixture.rendered_copy_sha256));
+}
 const coldCalibration = JSON.parse(read("packages/astro-knowledge/review/cold-rendered-prose-governance-v1/calibration-status.json"));
 const coldLiveEval = JSON.parse(read("packages/astro-knowledge/review/cold-rendered-prose-governance-v1/live-eval.json"));
+const coldRound2LiveEval = JSON.parse(read("packages/astro-knowledge/review/cold-rendered-prose-governance-v1/round-2-live-eval.json"));
 assert.equal(coldCalibration.trusted, false, "A failed cold-read calibration must remain untrusted.");
 assert.equal(coldCalibration.promotionAuthorized, false, "A failed cold-read calibration may not be promoted.");
-assert.deepEqual(coldCalibration.actual, coldLiveEval.actual);
+assert.equal(coldCalibration.mode, "permanently_advisory_only");
+assert.equal(coldCalibration.proseJudgmentAuthority, "owner");
+assert.equal(coldCalibration.furtherCalibrationAuthorized, false);
+assert.equal(coldLiveEval.status, "FAIL");
+assert.equal(coldRound2LiveEval.status, "FAIL");
+assert.equal(coldRound2LiveEval.actual.negativeRevise, 8);
+assert.equal(coldRound2LiveEval.actual.goldPass, 1);
+assert.equal(coldCalibration.finalRound.holdout.negativeRevise, coldRound2LiveEval.actual.negativeRevise);
+assert.equal(coldCalibration.finalRound.holdout.goldPass, coldRound2LiveEval.actual.goldPass);
+assert.equal(transitionContract.proseJudgment.authority, "owner");
+assert.equal(transitionContract.proseJudgment.semanticColdReview, "permanently_advisory_only");
+assert.equal(transitionContract.proseJudgment.semanticColdReviewMayAuthorizeTransition, false);
 
 const gold = jsonl("data/writing/owner-approved-examples.jsonl");
 const negatives = jsonl("data/writing/negative-regression-fixtures.jsonl");

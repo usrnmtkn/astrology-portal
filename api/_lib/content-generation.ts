@@ -5215,7 +5215,7 @@ async function reviewColdRenderedContentWithOpenAI({
   const review = JSON.parse(output) as ColdRenderedProseReview;
   if (!new Set(["PASS", "REVISE"]).has(review.decision)) throw new Error("OpenAI cold review returned an invalid PASS-or-REVISE decision.");
   if (!new Set(["PASS", "FAIL"]).has(review.cold_rendered_prose?.status)) throw new Error("OpenAI cold review omitted the blocking check.");
-  if (!Array.isArray(review.violations) || review.violations.some((item) => item.category !== "cold_rendered_prose" || item.severity !== "blocking")) {
+  if (!Array.isArray(review.violations) || review.violations.some((item) => item.category !== "cold_rendered_prose" || item.severity !== "nonblocking")) {
     throw new Error("OpenAI cold review returned an invalid violation contract.");
   }
   return review;
@@ -5279,7 +5279,7 @@ async function reviewGeneratedContentWithOpenAI({
   return {
     ...contextualReview,
     cold_rendered_prose: coldReview.cold_rendered_prose,
-    decision: coldReview.decision === "PASS" && contextualReview.decision === "PASS" ? "PASS" : "REVISE",
+    decision: contextualReview.decision,
     violations: [...coldReview.violations, ...contextualViolations]
   };
 }
