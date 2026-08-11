@@ -1,8 +1,8 @@
 # Content inventory/export parity
 
 - Result: **PASS**
-- Source commit: `0d429753688d5ce2e1893d087da5b8afd704b560`
-- Content fingerprint: `ecd5990dc597c14387c8cec80aaf4ad940aab02d0df1321d9af3ba8e3cad2af9`
+- Source commit: `8e40a4be0c5fd044d138ed365ba8b8ed7c64e9dc`
+- Content fingerprint: `9059513eb8981f30fa476a69d8947e0b958be5faa6fd604df85fa5960b313e1c`
 - Approved production records: 8970
 - Exported approved records: 8970
 - Missing from export: 0
