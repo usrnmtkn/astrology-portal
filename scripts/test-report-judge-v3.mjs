@@ -9,8 +9,12 @@ import { verifyReportFactLock } from "../api/_lib/report-fact-lock.ts";
 import { REPORT_JUDGE_CATEGORIES, judgeReportUnit, reportJudgeVerdict } from "../api/_lib/report-judge.ts";
 import { reportOwnerComparisonSet } from "../api/_lib/report-owner-comparison.ts";
 import {
+  loadActiveReportCritiquePrompt,
+  loadActiveReportJudgePrompt,
+  REPORT_CRITIQUE_BASELINE_PROMPT_PATH,
   REPORT_CRITIQUE_PROMPT_PATH,
   REPORT_CRITIQUE_PROMPT_VERSION,
+  REPORT_JUDGE_BASELINE_PROMPT_PATH,
   REPORT_JUDGE_PROMPT_PATH,
   REPORT_JUDGE_PROMPT_VERSION
 } from "../api/_lib/report-prompt-versions.ts";
@@ -27,8 +31,10 @@ if (process.argv.includes("--live")) throw new Error("Use calibrate-report-judge
 
 const manifest = JSON.parse(fs.readFileSync(new URL("./fixtures/report-judge-complete-unit-regressions-v3.json", import.meta.url), "utf8"));
 const facts = JSON.parse(fs.readFileSync(manifest.factsSourcePath, "utf8"));
-const judgeV3 = fs.readFileSync(REPORT_JUDGE_PROMPT_PATH, "utf8");
-const critiqueV3 = fs.readFileSync(REPORT_CRITIQUE_PROMPT_PATH, "utf8");
+const judgeV3 = fs.readFileSync(REPORT_JUDGE_BASELINE_PROMPT_PATH, "utf8");
+const critiqueV3 = fs.readFileSync(REPORT_CRITIQUE_BASELINE_PROMPT_PATH, "utf8");
+const judgeV32 = fs.readFileSync(REPORT_JUDGE_PROMPT_PATH, "utf8");
+const critiqueV5 = fs.readFileSync(REPORT_CRITIQUE_PROMPT_PATH, "utf8");
 const livedProseStandard = fs.readFileSync("tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md", "utf8");
 const archivedJudgeV2 = fs.readFileSync("tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V2-OWNER.md", "utf8");
 const archivedCritiqueV2 = fs.readFileSync("tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V2-OWNER.md", "utf8");
@@ -143,10 +149,10 @@ assert.deepEqual(manifest.proposedCalibrationCallBudget, {
 });
 assert.equal(new Set(manifest.pairs.map((pair) => pair.reportDomain)).size, 4);
 assert.ok(manifest.pairs.some((pair) => pair.reportDomain === "personal_health"));
-assert.equal(REPORT_JUDGE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3-OWNER.md");
-assert.equal(REPORT_CRITIQUE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V3-OWNER.md");
-assert.equal(REPORT_JUDGE_PROMPT_VERSION, "report-judge-rubric-v3.1");
-assert.equal(REPORT_CRITIQUE_PROMPT_VERSION, "report-critique-checklist-v3");
+assert.equal(REPORT_JUDGE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3.2-OWNER.md");
+assert.equal(REPORT_CRITIQUE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V5-OWNER.md");
+assert.equal(REPORT_JUDGE_PROMPT_VERSION, "report-judge-rubric-v3.2");
+assert.equal(REPORT_CRITIQUE_PROMPT_VERSION, "report-critique-checklist-v5");
 assert.match(archivedJudgeV2, /^\*\*Active in production:\*\* `false`$/mu);
 assert.match(archivedCritiqueV2, /^\*\*Active in production:\*\* `false`$/mu);
 assert.equal(REPORT_JUDGE_THRESHOLD, 0.85);
@@ -167,6 +173,28 @@ for (const [name, document] of [["judge", judgeV3], ["critique", critiqueV3]]) {
 assert.match(judgeV3, /^\*\*Version:\*\* `report-judge-rubric-v3\.1`$/mu);
 assert.match(judgeV3, /^\*\*Approved threshold:\*\* `0\.85`$/mu);
 assert.match(critiqueV3, /^\*\*Version:\*\* `report-critique-checklist-v3`$/mu);
+for (const [name, document, version, approvedSourceSha] of [
+  ["judge", judgeV32, "report-judge-rubric-v3.2", "bce4534c7f0f6a5689afbf3305fac73ff8b2024669b5639e776fa77efd5a1e5f"],
+  ["critique", critiqueV5, "report-critique-checklist-v5", "64f161623fb8f071056bb41b124626e502735a569cc880ba39e0c0932f15981f"]
+]) {
+  assert.match(document, /^\*\*Status:\*\* `owner_approved`$/mu, `${name} successor approval must be recorded.`);
+  assert.ok(document.includes("**Version:** `" + version + "`"));
+  assert.match(document, /^\*\*Active in production:\*\* `true`$/mu);
+  assert.match(document, /^\*\*Owner approved:\*\* `true`$/mu);
+  assert.match(document, /^\*\*Promotion authorized:\*\* `true`$/mu);
+  assert.ok(document.includes("**Approved source SHA-256:** `" + approvedSourceSha + "`"));
+}
+const activeJudgePrompt = loadActiveReportJudgePrompt();
+const activeCritiquePrompt = loadActiveReportCritiquePrompt();
+assert.deepEqual(activeJudgePrompt.sourcePaths, [REPORT_JUDGE_BASELINE_PROMPT_PATH, REPORT_JUDGE_PROMPT_PATH]);
+assert.match(activeJudgePrompt.text, /report-judge-rubric-v3\.1/u);
+assert.match(activeJudgePrompt.text, /report-judge-rubric-v3\.2/u);
+assert.deepEqual(activeCritiquePrompt.sourcePaths, [
+  REPORT_CRITIQUE_BASELINE_PROMPT_PATH,
+  REPORT_CRITIQUE_PROMPT_PATH
+]);
+assert.match(activeCritiquePrompt.text, /report-critique-checklist-v3/u);
+assert.match(activeCritiquePrompt.text, /report-critique-checklist-v5/u);
 assert.equal(calibrationRunTwo.status, "passed");
 assert.equal(calibrationRunTwo.completedCalls, 9);
 assert.deepEqual(calibrationRunTwo.failures, []);
