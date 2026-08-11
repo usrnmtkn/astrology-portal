@@ -1,13 +1,17 @@
-# Multi-horizon report generation prompt v2 draft
+# Multi-horizon report generation prompt v2
 
-**Status:** `needs_review`
-**Version:** `report-horizons-generation-v2-draft`
-**Owner approved:** `false`
-**Active in production:** `false`
-**Promotion authorized:** `false`
+**Status:** `owner_approved`
+**Version:** `report-horizons-generation-v2`
+**Approved:** 2026-08-11
+**Owner approved:** `true`
+**Active in production:** `true`
+**Promotion authorized:** `true`
+**Approved source SHA-256:** `358be6ddf05d9fe4e1c944878a8269809ec6e736ea53a6a014aefbb148bc77d7`
 **Baseline:** `TLDR-REPORT-HORIZONS-GENERATION-PROMPT-OWNER.md` (owner ruling 2026-08-09)
 **Amendment source:** Owner review of Production report 74951c07, 2026-08-11.
-**Governance:** Proposed canonical replacement. The approved baseline remains active until the owner approves this complete version explicitly.
+**Governance:** Owner-approved canonical replacement for General multi-horizon reports. V2 is active in production; any later revision requires a new version and fresh owner approval.
+
+> I explicitly approve Report judge rubric v3.2 at SHA-256 bce4534c7f0f6a5689afbf3305fac73ff8b2024669b5639e776fa77efd5a1e5f, Report critique checklist v5 at SHA-256 64f161623fb8f071056bb41b124626e502735a569cc880ba39e0c0932f15981f, and Multi-horizon report generation prompt v2 at SHA-256 358be6ddf05d9fe4e1c944878a8269809ec6e736ea53a6a014aefbb148bc77d7. I authorize activation in place of the current report judge, critique, and generation prompt. The judge threshold remains 0.85.
 
 ## Proposed v2 amendments
 

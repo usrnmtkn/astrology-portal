@@ -239,7 +239,7 @@ type ReportDomainConfiguration = {
 
 const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
   general: {
-    canonicalPromptPath: "tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-OWNER.md",
+    canonicalPromptPath: "tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-V2-OWNER.md",
     canonicalPromptOwnerApproved: true,
     voiceEvidencePath: "artifacts/marie-satori-year-ahead-2026-FINAL.md",
     generationStandardPath: GENERATION_STANDARD_PATH,

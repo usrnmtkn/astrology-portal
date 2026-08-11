@@ -1,14 +1,18 @@
-# Report fulfillment judge rubric v3.2 draft
+# Report fulfillment judge rubric v3.2
 
-**Status:** `needs_review`
-**Version:** `report-judge-rubric-v3.2-draft`
-**Owner approved:** `false`
-**Active in production:** `false`
-**Promotion authorized:** `false`
+**Status:** `owner_approved`
+**Version:** `report-judge-rubric-v3.2`
+**Approved:** 2026-08-11
+**Owner approved:** `true`
+**Active in production:** `true`
+**Promotion authorized:** `true`
+**Approved source SHA-256:** `bce4534c7f0f6a5689afbf3305fac73ff8b2024669b5639e776fa77efd5a1e5f`
 **Baseline:** `report-judge-rubric-v3.1`
-**Proposed threshold:** `0.85` (unchanged)
+**Approved threshold:** `0.85` (unchanged)
 **Amendment source:** Cold Rendered Prose Rule, owner ruling 2026-08-11.
-**Governance:** Proposed replacement. V3.1 remains active. This draft requires explicit SHA-pinned owner approval before activation.
+**Governance:** Owner-approved v3.2 amendment layered over the immutable v3.1 baseline. V3.2 and threshold 0.85 are active in production. Any later revision requires a new version and fresh owner approval.
+
+> I explicitly approve Report judge rubric v3.2 at SHA-256 bce4534c7f0f6a5689afbf3305fac73ff8b2024669b5639e776fa77efd5a1e5f, Report critique checklist v5 at SHA-256 64f161623fb8f071056bb41b124626e502735a569cc880ba39e0c0932f15981f, and Multi-horizon report generation prompt v2 at SHA-256 358be6ddf05d9fe4e1c944878a8269809ec6e736ea53a6a014aefbb148bc77d7. I authorize activation in place of the current report judge, critique, and generation prompt. The judge threshold remains 0.85.
 
 This draft preserves the v3.1 category scale, applicable-category overall formula, hard gates, output schema, comparison discipline, complete-unit calibration contract, and attribution-as-part-of-unit rule. It changes how the input is exposed and how prose categories are read.
 
@@ -70,6 +74,6 @@ Do not reward a sentence for being astrologically correct if it is awkward
 prose. Correct astrology expressed in unnatural language still fails the
 writing judge.
 
-## Activation wall
+## Activation record
 
-This draft is inactive. `TLDR-REPORT-JUDGE-RUBRIC-V3-OWNER.md` v3.1 remains the production judge until the owner approves the exact v3.2 SHA and separately authorizes activation.
+Activated as the production judge amendment over the immutable `TLDR-REPORT-JUDGE-RUBRIC-V3-OWNER.md` v3.1 baseline by the SHA-pinned owner authorization above.
