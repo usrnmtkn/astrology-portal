@@ -196,7 +196,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
   function renderNatalAspect(facts, opts2 = {}) {
     const voice = facts.voice === "you" ? "you" : "they";
     const aspect = facts.aspect;
-    const exactLived = getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetA}/${aspect}/${facts.planetB}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetB}/${aspect}/${facts.planetA}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/aspect-lived/${aspect}`, voice, opts2);
+    const exactLived = getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetA}/${aspect}/${facts.planetB}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetB}/${aspect}/${facts.planetA}`, voice, opts2);
     if (exactLived) {
       return {
         headline: `${title(facts.planetA)} ${aspect} ${title(facts.planetB)}`,
@@ -207,8 +207,9 @@ function createFallbackRenderer(templatesFile, rowsFile) {
       };
     }
     const group = ASPECT_GROUP[aspect];
+    const pair = group ? getHook(`fallback-hook/aspect-pair/${facts.planetA}/${facts.planetB}/${group}`, voice, opts2) ?? getHook(`fallback-hook/aspect-pair/${facts.planetB}/${facts.planetA}/${group}`, voice, opts2) : null;
     if (!group) throw new SourceGapError(`SOURCE_GAP: natal aspect ${facts.planetA}-${aspect}-${facts.planetB}`);
-    const pair = getHook(`fallback-hook/aspect-pair/${facts.planetA}/${facts.planetB}/${group}`, voice, opts2) ?? getHook(`fallback-hook/aspect-pair/${facts.planetB}/${facts.planetA}/${group}`, voice, opts2);
+    if (!pair) throw new SourceGapError(`SOURCE_GAP: natal aspect pair ${facts.planetA}-${aspect}-${facts.planetB}`);
     const ctx = {
       possessive: facts.voice === "you" ? "Your" : `${facts.voice}'s`,
       planetATitle: title(facts.planetA),
@@ -346,7 +347,7 @@ function normalizeAspect(input) {
     semisextile: "semisextile",
     "semi-sextile": "semisextile",
     "semi sextile": "semisextile",
-    nonagen: "nonagen"
+    nonagen: "semisextile"
   };
   return map[k] ?? null;
 }
@@ -2591,7 +2592,7 @@ function createKnowledgeMatrixV13Resolver(file) {
       const normalizedA = normalizeObject(planetA);
       const normalizedB = normalizeObject(planetB);
       const normalizedAspect = normalizeAspect2(aspect);
-      return readContentKey(`fallback-hook/natal-aspect-lived/${normalizedA}/${normalizedAspect}/${normalizedB}`) ?? readContentKey(`fallback-hook/natal-aspect-lived/${normalizedB}/${normalizedAspect}/${normalizedA}`) ?? readContentKey(`fallback-hook/aspect-lived/${normalizedAspect}`);
+      return readContentKey(`fallback-hook/natal-aspect-lived/${normalizedA}/${normalizedAspect}/${normalizedB}`) ?? readContentKey(`fallback-hook/natal-aspect-lived/${normalizedB}/${normalizedAspect}/${normalizedA}`);
     },
     renderWorkbookKey(key) {
       const row = byWorkbookKey.get(String(key).trim().toLowerCase());
@@ -2607,7 +2608,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-16a";
+var PACKAGE_VERSION = "v3-2026-08-20a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
