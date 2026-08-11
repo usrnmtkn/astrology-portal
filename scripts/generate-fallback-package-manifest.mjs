@@ -131,7 +131,9 @@ function skyPlacementOwnerApprovedReaderRows() {
   return {
     schemaVersion: 1,
     generatedFrom: "source-rows/sky-placement-owner-approved-fallbacks-v1.json",
-    rows: source.rows.map(({ body_you: _legacyBody, note: _note, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row)
+    rows: source.rows
+      .filter((row) => row.rendered_as_body_copy !== false)
+      .map(({ body_you: _legacyBody, note: _note, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row)
   };
 }
 
@@ -179,6 +181,7 @@ function isRelationshipAuthoredCard(row) {
 
 function fullReaderBundle() {
   const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
+  const dailyGlanceVariants = readJson("source-rows/daily-glance-variants-v1.json");
   const transitRows = readJson("source-rows/transit-synastry-rows-v1.json");
   const bondLanguage = readJson("source-rows/bond-language-pass-2.json");
   const lunationRows = readJson("source-rows/lunation-blend-units-v1.json");
@@ -229,7 +232,8 @@ function fullReaderBundle() {
         ...sourceRows.vocabularyRows,
         ...placementRows.vocabularyRows,
         ...skyArticleRows.vocabularyRows
-      ])
+      ]),
+      dailyGlanceVariants
     },
     templatesFile: {
       templates: latestReaderEligible([
@@ -242,6 +246,7 @@ function fullReaderBundle() {
 
 const manifest = createPackageManifest(fullReaderBundle(), PACKAGE_VERSION);
 const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
+const dailyGlanceVariants = readJson("source-rows/daily-glance-variants-v1.json");
 const transitRows = readJson("source-rows/transit-synastry-rows-v1.json");
 const pairDailyFrames = readJson("source-rows/pair-daily-frames-v1.json");
 const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");
@@ -266,7 +271,8 @@ const deferredCoreRows = {
     ...pairDailyFrames.rows,
     ...pairDailyClauses.rows
   ],
-  vocabularyRows: []
+  vocabularyRows: [],
+  dailyGlanceVariants
 };
 const emptyHouseRows = {
   hookRows: sourceRows.hookRows.filter(isEmptyHouseHook),
@@ -303,7 +309,8 @@ const coreReaderBundle = {
   templatesFile: completeReaderBundle.templatesFile,
   rowsFile: {
     hookRows: completeReaderBundle.rowsFile.hookRows.filter((row) => !skyPlacementKeySet.has(row.contentKey)),
-    vocabularyRows: completeReaderBundle.rowsFile.vocabularyRows
+    vocabularyRows: completeReaderBundle.rowsFile.vocabularyRows,
+    dailyGlanceVariants: completeReaderBundle.rowsFile.dailyGlanceVariants
   }
 };
 const skyPlacementReaderBundle = {
