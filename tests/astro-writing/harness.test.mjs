@@ -185,6 +185,73 @@ assert.deepEqual(
 );
 assert.equal(indexedServingKeys.size, approvedServingKeys.size);
 
+const emptyHouseV14ManifestPath = "packages/astro-knowledge/review/empty-house-v14/import-manifest.json";
+const emptyHouseV14ProjectionPath = "packages/astro-knowledge/review/empty-house-v14/serving-projection-v14-projection-4.json";
+const emptyHouseV14Manifest = JSON.parse(read(emptyHouseV14ManifestPath));
+const emptyHouseV14Projection = JSON.parse(read(emptyHouseV14ProjectionPath));
+const emptyHouseV14Rows = JSON.parse(read(
+  "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+)).hookRows
+  .filter((row) => row.contentKey.startsWith("fallback-hook/empty-house/"))
+  .sort((first, second) => first.contentKey.localeCompare(second.contentKey));
+const emptyHouseV14Examples = approvedExamples.filter((entry) => entry.family === "empty-house-v14");
+const emptyHouseV14ExamplesByKey = new Map();
+for (const entry of emptyHouseV14Examples) {
+  const entries = emptyHouseV14ExamplesByKey.get(entry.contentKey) ?? [];
+  entries.push(entry);
+  emptyHouseV14ExamplesByKey.set(entry.contentKey, entries);
+}
+const emptyHouseV14HarnessChecks = Object.fromEntries([
+  "projection_manifest",
+  "serving_key_coverage",
+  "dual_voice_coverage",
+  "exact_text_parity",
+  "governance",
+  "provenance",
+  "register_safety",
+].map((name) => [name, { passed: 0, failed: 0 }]));
+function checkEmptyHouseV14(category, condition, message) {
+  emptyHouseV14HarnessChecks[category][condition ? "passed" : "failed"] += 1;
+  assert.ok(condition, message);
+}
+
+checkEmptyHouseV14("projection_manifest", emptyHouseV14Projection.version === "v14-projection-4", "Empty-house evidence must use projection 4.");
+checkEmptyHouseV14("projection_manifest", emptyHouseV14Manifest.serving_projection_contract === path.basename(emptyHouseV14ProjectionPath), "Import manifest must select the projection-4 contract.");
+checkEmptyHouseV14("projection_manifest", emptyHouseV14Projection.counts.serving_rows === 541, "Projection 4 must declare 541 serving rows.");
+checkEmptyHouseV14("projection_manifest", emptyHouseV14Projection.body_they_approval_payload_sha256 === "07e238f17f5d3941412cc9dcf273a87a9b05f996d3d1ae82b1c587f79aad7b1b", "Friend evidence must remain bound to the owner-approved digest.");
+checkEmptyHouseV14("projection_manifest", emptyHouseV14Manifest.friend_variants.status === "approved", "Projection-4 Friend variants must be approved.");
+checkEmptyHouseV14("serving_key_coverage", emptyHouseV14Rows.length === 541, "Serving source must contain 541 V14 rows.");
+for (const row of emptyHouseV14Rows) {
+  const entries = emptyHouseV14ExamplesByKey.get(row.contentKey) ?? [];
+  checkEmptyHouseV14("serving_key_coverage", entries.length > 0, `${row.contentKey}: missing harness evidence.`);
+  checkEmptyHouseV14("dual_voice_coverage", entries.length === 2 && new Set(entries.map((entry) => entry.voice)).size === 2, `${row.contentKey}: harness evidence must contain You and Friend exactly once.`);
+  for (const [voice, bodyField, expectedRegister] of [
+    ["you", "body_you", "second_person"],
+    ["friend", "body_they", "friend"],
+  ]) {
+    const entry = entries.find((candidate) => candidate.voice === voice);
+    checkEmptyHouseV14("exact_text_parity", entry?.text === row[bodyField], `${row.contentKey}/${voice}: indexed text differs from the approved serving row.`);
+    checkEmptyHouseV14("governance", entry?.ownerApproved === true && entry?.authority === "serving-review-status-approved", `${row.contentKey}/${voice}: approval governance is incomplete.`);
+    checkEmptyHouseV14(
+      "provenance",
+      entry?.source === "empty-house-v14/projection-4"
+        && entry?.sourceManifest === emptyHouseV14ManifestPath
+        && entry?.projectionContract === emptyHouseV14ProjectionPath
+        && entry?.projectionVersion === "v14-projection-4",
+      `${row.contentKey}/${voice}: projection-4 provenance is incomplete.`
+    );
+    checkEmptyHouseV14(
+      "register_safety",
+      entry?.register === expectedRegister
+        && (voice !== "friend" || !/\b(?:you|your|yours|yourself)\b/iu.test(entry.text)),
+      `${row.contentKey}/${voice}: voice register mismatch.`
+    );
+  }
+}
+checkEmptyHouseV14("serving_key_coverage", emptyHouseV14ExamplesByKey.size === 541, "Harness index must not include extra empty-house keys.");
+checkEmptyHouseV14("dual_voice_coverage", emptyHouseV14Examples.length === 1082, "Harness index must contain 1,082 V14 voice entries.");
+assert.ok(Object.values(emptyHouseV14HarnessChecks).every((result) => result.failed === 0));
+
 for (const [sign, nouns] of Object.entries(HOUSE_BLEED_NOUNS)) {
   const legitimateExample = validateCopy(`One example involves ${nouns[0]}.`, {
     plan: { sign, house: null }
@@ -434,6 +501,11 @@ assert.ok(!apiGeneration.includes("previous_response_id"), "No call may rely on 
 console.log(JSON.stringify({
   corrections: corrections.length,
   ownerApprovedExamples: approvedExamples.length,
+  emptyHouseV14: {
+    servingKeys: emptyHouseV14Rows.length,
+    dualVoiceExamples: emptyHouseV14Examples.length,
+    checks: emptyHouseV14HarnessChecks,
+  },
   apiCallSites: directCallFiles.length,
   pipeline: pipeline.report,
   status: "PASS"
