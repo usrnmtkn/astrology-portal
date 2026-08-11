@@ -888,7 +888,7 @@ assert.doesNotMatch(
 );
 assert.match(
   `${signupView}\n${app}`,
-  /onSavePendingForm\(form\);[\s\S]*verifyPhoneSignInCode[\s\S]*onAuthenticated\(\{[\s\S]*provider: "phone"[\s\S]*createUserProfile\(form, provider, account\)/,
+  /onSavePendingForm\(submittedForm\);[\s\S]*verifyPhoneSignInCode[\s\S]*onAuthenticated\(\{[\s\S]*provider: "phone"[\s\S]*createUserProfile\(form, provider, account\)/,
   "Phone signup must defer profile details until code verification and preserve the phone provider."
 );
 assert.doesNotMatch(

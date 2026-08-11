@@ -16,7 +16,11 @@ import {
 import { reportSystemPromptVersions } from "./report-prompt-versions.js";
 import { callReportModel, type ReportModelCall } from "./report-model-client.js";
 import { estimateReportModelCost } from "./report-model-pricing.js";
-import { runReportWriterChain } from "./report-writer-chain.js";
+import {
+  reportValidationIssuesToNamedDefects,
+  reviseReportDraftForNamedDefects,
+  runReportWriterChain
+} from "./report-writer-chain.js";
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
 import { ReportBirthDataError, requireReportBirthProfile, type BirthProfile } from "./report-billing-window.js";
 import { reportUrl } from "./report-http.js";
@@ -56,6 +60,17 @@ export function reportFactsHash(facts: Record<string, unknown>) {
 
 function totalTokens(calls: Array<{ usage: { totalTokens: number } }>) {
   return calls.reduce((sum, call) => sum + call.usage.totalTokens, 0);
+}
+
+export function reportValidatorAttemptCap(
+  job: Pick<FulfillmentJobRow, "validator_attempt_overrides">,
+  unitId: string,
+  fallback: number
+) {
+  const configured = job.validator_attempt_overrides?.[unitId];
+  return typeof configured === "number" && Number.isInteger(configured) && configured >= 1
+    ? configured
+    : fallback;
 }
 
 function nowPatch(status: string) {
@@ -344,28 +359,37 @@ export async function processReportFulfillmentJob(input: {
     promptVersions.canonical = versions.canonical.version;
     promptVersions.critique = versions.critique.version;
     promptVersions.judge = versions.judge.version;
-    let feedback: string[] = [];
-    let draft: ReportDraft | null = null;
-    let acceptedChainTokens = 0;
-    let validatorResults: unknown[] = [];
-    for (let attempt = 0; attempt < config.validatorAttemptCap; attempt += 1) {
-      await input.store.updateReport(report.id, nowPatch("writing"));
-      await input.store.updateJob(input.job.id, { step: "writing" });
-      validatorAttempts += 1;
-      const chain = await runReportWriterChain({ payload, failureContext: feedback, callModel: authorizedCall });
-      await input.store.updateReport(report.id, nowPatch("validating"));
-      await input.store.updateJob(input.job.id, { step: "validating" });
-      const validation = validateReportDraft(chain.revised, payload);
-      const factLock = verifyReportFactLock(chain.revised, payload.frozenFacts);
-      validatorResults = [...validation, ...factLock.issues];
-      if (validatorResults.length === 0) {
-        draft = chain.revised;
-        acceptedChainTokens = totalTokens(chain.calls);
-        break;
+    const validatorAttemptCap = reportValidatorAttemptCap(input.job, unitId, config.validatorAttemptCap);
+    const validateWithNamedRevisions = async (initialDraft: ReportDraft, initialChainTokens: number) => {
+      let candidate = initialDraft;
+      let acceptedTokens = initialChainTokens;
+      let issues: Array<{ code: string; message: string; severity?: "error" | "warning"; value?: string }> = [];
+      for (let attempt = 0; attempt < validatorAttemptCap; attempt += 1) {
+        await input.store.updateReport(report.id, nowPatch("validating"));
+        await input.store.updateJob(input.job.id, { step: "validating" });
+        validatorAttempts += 1;
+        const validation = validateReportDraft(candidate, payload);
+        const factLock = verifyReportFactLock(candidate, payload.frozenFacts);
+        issues = [...validation, ...factLock.issues];
+        if (issues.length === 0) return { draft: candidate, acceptedTokens, issues };
+        if (attempt + 1 >= validatorAttemptCap) break;
+        const defects = reportValidationIssuesToNamedDefects(candidate, issues);
+        if (!defects.length) break;
+        await input.store.updateReport(report.id, nowPatch("writing"));
+        await input.store.updateJob(input.job.id, { step: "writing" });
+        const revision = await reviseReportDraftForNamedDefects({ payload, draft: candidate, defects, callModel: authorizedCall });
+        candidate = revision.revised;
+        acceptedTokens += totalTokens(revision.calls);
       }
-      feedback = validatorResults.map((issue) => JSON.stringify(issue));
-    }
-    if (!draft) throw new Error(`Validator attempt cap exhausted for ${unitId}: ${JSON.stringify(validatorResults)}`);
+      throw new Error(`Validator attempt cap exhausted for ${unitId}: ${JSON.stringify(issues)}`);
+    };
+    await input.store.updateReport(report.id, nowPatch("writing"));
+    await input.store.updateJob(input.job.id, { step: "writing" });
+    const initialChain = await runReportWriterChain({ payload, callModel: authorizedCall });
+    const initialValidation = await validateWithNamedRevisions(initialChain.revised, totalTokens(initialChain.calls));
+    let draft = initialValidation.draft;
+    let acceptedChainTokens = initialValidation.acceptedTokens;
+    let validatorResults: unknown[] = initialValidation.issues;
     await input.store.updateReport(report.id, nowPatch("judging"));
     await input.store.updateJob(input.job.id, { step: "judging" });
     let judged: Awaited<ReturnType<typeof judgeReportUnit>> | null = null;
@@ -380,13 +404,10 @@ export async function processReportFulfillmentJob(input: {
       await input.store.updateReport(report.id, nowPatch("writing"));
       await input.store.updateJob(input.job.id, { step: "writing" });
       const chain = await runReportWriterChain({ payload, failureContext: judged.result.findings.map((finding) => JSON.stringify(finding)), callModel: authorizedCall });
-      await input.store.updateReport(report.id, nowPatch("validating"));
-      await input.store.updateJob(input.job.id, { step: "validating" });
-      const validation = validateReportDraft(chain.revised, payload);
-      const factLock = verifyReportFactLock(chain.revised, payload.frozenFacts);
-      if (validation.length || !factLock.passed) throw new Error(`Judge-driven revision failed hard validators for ${unitId}.`);
-      draft = chain.revised;
-      acceptedChainTokens = totalTokens(chain.calls);
+      const judgeRevisionValidation = await validateWithNamedRevisions(chain.revised, totalTokens(chain.calls));
+      draft = judgeRevisionValidation.draft;
+      acceptedChainTokens = judgeRevisionValidation.acceptedTokens;
+      validatorResults = judgeRevisionValidation.issues;
     }
     if (!judged || judged.result.verdict !== "pass") throw new Error(`Judge attempt cap exhausted for ${unitId}.`);
     const sourceSnapshot: PassingUnitCacheEntry["sourceSnapshot"] = {
