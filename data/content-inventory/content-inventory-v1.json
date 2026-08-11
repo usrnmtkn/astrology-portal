@@ -1,7 +1,7 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "6674c19635a1832222306b69f67b08df7ffcbd38",
+  "sourceCommit": "2752ed4972f401105719d5049e41d955eb9d0ac5",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
   "contentFingerprint": "3d8a0792beceeb775132110eba70d031587909c78f9b7f8b6972a31b45052824",
   "recordCount": 9536,
