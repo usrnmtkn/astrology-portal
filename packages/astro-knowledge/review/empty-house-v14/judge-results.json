@@ -1,0 +1,2724 @@
+{
+ "package": "empty-house-v14 advisory judge results",
+ "run_date": "2026-08-10",
+ "scope": "body_you, all 541 serving rows",
+ "authority": "ADVISORY ONLY \u2014 owner approval of exact wording is controlling; no finding revokes approval",
+ "checks": [
+  "house_topic",
+  "sign_planet",
+  "structure",
+  "fatalism"
+ ],
+ "summary": {
+  "pass": 497,
+  "advisory": 44
+ },
+ "mismatch_suspected": 0,
+ "results": [
+  {
+   "corpus_key": "empty-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aries",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|taurus",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|gemini",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|cancer",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|leo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|virgo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|libra",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|scorpio",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|sagittarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|capricorn",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aquarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|pisces",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|aries",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|taurus",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|gemini",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|cancer",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|leo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|virgo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|libra",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|scorpio",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|sagittarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|capricorn",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|aquarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|pisces",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|aries",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|taurus",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|gemini",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|cancer",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|leo",
+   "verdict": "advisory",
+   "note": "redundant overlapping sentences suggest two drafts merged"
+  },
+  {
+   "corpus_key": "empty-3rd|virgo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|libra",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|scorpio",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|sagittarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|capricorn",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|aquarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|pisces",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|aries",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|taurus",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|gemini",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|cancer",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|leo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|virgo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|libra",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|scorpio",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|sagittarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|capricorn",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|aquarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|pisces",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|aries",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|taurus",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|gemini",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|cancer",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|leo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|virgo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|libra",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|scorpio",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|sagittarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|capricorn",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|aquarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|pisces",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|aries",
+   "verdict": "advisory",
+   "note": "traditional body-area/accident-likelihood reference (headaches, fevers, burns, accidents)"
+  },
+  {
+   "corpus_key": "empty-6th|taurus",
+   "verdict": "advisory",
+   "note": "traditional body-area reference (throat, ears, neck)"
+  },
+  {
+   "corpus_key": "empty-6th|gemini",
+   "verdict": "advisory",
+   "note": "traditional body-area reference (lungs, arms, shoulders, hands)"
+  },
+  {
+   "corpus_key": "empty-6th|cancer",
+   "verdict": "advisory",
+   "note": "traditional body-area reference (stomach sensitivity)"
+  },
+  {
+   "corpus_key": "empty-6th|leo",
+   "verdict": "advisory",
+   "note": "traditional body-area reference (heart, back)"
+  },
+  {
+   "corpus_key": "empty-6th|virgo",
+   "verdict": "advisory",
+   "note": "traditional health-routine/digestion reference"
+  },
+  {
+   "corpus_key": "empty-6th|libra",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|scorpio",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|sagittarius",
+   "verdict": "advisory",
+   "note": "traditional body-area reference (liver)"
+  },
+  {
+   "corpus_key": "empty-6th|capricorn",
+   "verdict": "advisory",
+   "note": "traditional body-area reference (bones, skin, knees, teeth)"
+  },
+  {
+   "corpus_key": "empty-6th|aquarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|pisces",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|aries",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|taurus",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|gemini",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|cancer",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|leo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|virgo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|libra",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|scorpio",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|sagittarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|capricorn",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|aquarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|pisces",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|aries",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|taurus",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|gemini",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|cancer",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|leo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|virgo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|libra",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|scorpio",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|sagittarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|capricorn",
+   "verdict": "advisory",
+   "note": "hedged longevity claim (\"may also live a long life\")"
+  },
+  {
+   "corpus_key": "empty-8th|aquarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|pisces",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|aries",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|taurus",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|gemini",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|cancer",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|leo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|virgo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|libra",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|scorpio",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|sagittarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|capricorn",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|aquarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|pisces",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|aries",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|taurus",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|gemini",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|cancer",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|leo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|virgo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|libra",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|scorpio",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|sagittarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|capricorn",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|aquarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|pisces",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|aries",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|taurus",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|gemini",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|cancer",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|leo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|virgo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|libra",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|scorpio",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|sagittarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|capricorn",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|aquarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|pisces",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|aries",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|taurus",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|gemini",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|cancer",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|leo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|virgo",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|libra",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|scorpio",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|sagittarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|capricorn",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|aquarius",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|pisces",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aries|mars-in-2nd",
+   "verdict": "advisory",
+   "note": "body-area reference (throat sensitivity, Taurean physical traits)"
+  },
+  {
+   "corpus_key": "empty-1st|aries|mars-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aries|mars-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aries|mars-in-5th",
+   "verdict": "advisory",
+   "note": "body-area reference (heart/back strain from overexertion)"
+  },
+  {
+   "corpus_key": "empty-1st|aries|mars-in-6th",
+   "verdict": "advisory",
+   "note": "body-area/injury reference (head injuries, workplace accidents)"
+  },
+  {
+   "corpus_key": "empty-1st|aries|mars-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aries|mars-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aries|mars-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aries|mars-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aries|mars-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aries|mars-in-12th",
+   "verdict": "advisory",
+   "note": "past-life claim (recent life in a male role)"
+  },
+  {
+   "corpus_key": "empty-1st|taurus|venus-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|taurus|venus-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|taurus|venus-in-4th",
+   "verdict": "advisory",
+   "note": "hedged event/timing prediction (inherit land or property later in life)"
+  },
+  {
+   "corpus_key": "empty-1st|taurus|venus-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|taurus|venus-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|taurus|venus-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|taurus|venus-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|taurus|venus-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|taurus|venus-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|taurus|venus-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|taurus|venus-in-12th",
+   "verdict": "advisory",
+   "note": "past-life claim (distinctly feminine role or tone)"
+  },
+  {
+   "corpus_key": "empty-1st|gemini|mercury-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|gemini|mercury-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|gemini|mercury-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|gemini|mercury-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|gemini|mercury-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|gemini|mercury-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|gemini|mercury-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|gemini|mercury-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|gemini|mercury-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|gemini|mercury-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|gemini|mercury-in-12th",
+   "verdict": "pass",
+   "note": "traditional 'nervous strain and self-undoing' phrasing, hedged"
+  },
+  {
+   "corpus_key": "empty-1st|cancer|moon-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|cancer|moon-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|cancer|moon-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|cancer|moon-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|cancer|moon-in-6th",
+   "verdict": "advisory",
+   "note": "body-area reference (stomach) plus health-fluctuation claim"
+  },
+  {
+   "corpus_key": "empty-1st|cancer|moon-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|cancer|moon-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|cancer|moon-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|cancer|moon-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|cancer|moon-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|cancer|moon-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|leo|sun-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|leo|sun-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|leo|sun-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|leo|sun-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|leo|sun-in-6th",
+   "verdict": "pass",
+   "note": "mildly repetitive 'useful and energized' phrasing"
+  },
+  {
+   "corpus_key": "empty-1st|leo|sun-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|leo|sun-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|leo|sun-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|leo|sun-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|leo|sun-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|leo|sun-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|virgo|mercury-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|virgo|mercury-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|virgo|mercury-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|virgo|mercury-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|virgo|mercury-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|virgo|mercury-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|virgo|mercury-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|virgo|mercury-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|virgo|mercury-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|virgo|mercury-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|virgo|mercury-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|libra|venus-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|libra|venus-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|libra|venus-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|libra|venus-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|libra|venus-in-6th",
+   "verdict": "advisory",
+   "note": "body-area reference (liver and kidneys)"
+  },
+  {
+   "corpus_key": "empty-1st|libra|venus-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|libra|venus-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|libra|venus-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|libra|venus-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|libra|venus-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|libra|venus-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|scorpio|pluto-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|scorpio|pluto-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|scorpio|pluto-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|scorpio|pluto-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|scorpio|pluto-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|scorpio|pluto-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|scorpio|pluto-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|scorpio|pluto-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|scorpio|pluto-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|scorpio|pluto-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|scorpio|pluto-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|sagittarius|jupiter-in-2nd",
+   "verdict": "advisory",
+   "note": "conditional clause 'especially with Capricorn on the 2nd' reads like leftover generic-source text in a fixed-rising row"
+  },
+  {
+   "corpus_key": "empty-1st|sagittarius|jupiter-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|sagittarius|jupiter-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|sagittarius|jupiter-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|sagittarius|jupiter-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|sagittarius|jupiter-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|sagittarius|jupiter-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|sagittarius|jupiter-in-9th",
+   "verdict": "advisory",
+   "note": "opening 'The ruler is in a house that amplifies...' is meta/annotation voice, unlike reader-facing prose of sibling rows"
+  },
+  {
+   "corpus_key": "empty-1st|sagittarius|jupiter-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|sagittarius|jupiter-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|sagittarius|jupiter-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|capricorn|saturn-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|capricorn|saturn-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|capricorn|saturn-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|capricorn|saturn-in-5th",
+   "verdict": "pass",
+   "note": "hedged 'fewer children' reference, traditional"
+  },
+  {
+   "corpus_key": "empty-1st|capricorn|saturn-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|capricorn|saturn-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|capricorn|saturn-in-8th",
+   "verdict": "advisory",
+   "note": "lifespan claim 'a long life is also possible' edges toward predicted-outcome territory; entry also notably shorter than siblings"
+  },
+  {
+   "corpus_key": "empty-1st|capricorn|saturn-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|capricorn|saturn-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|capricorn|saturn-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|capricorn|saturn-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aquarius|uranus-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aquarius|uranus-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aquarius|uranus-in-4th",
+   "verdict": "advisory",
+   "note": "'electrical accidents in the home' is a hedged accident/safety reference worth a human glance"
+  },
+  {
+   "corpus_key": "empty-1st|aquarius|uranus-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aquarius|uranus-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aquarius|uranus-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aquarius|uranus-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aquarius|uranus-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aquarius|uranus-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aquarius|uranus-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|aquarius|uranus-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-7th",
+   "verdict": "advisory",
+   "note": "hedged prediction of partner's chart signs (Virgo/Pisces)"
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|ruler-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|ruler-in-4th",
+   "verdict": "advisory",
+   "note": "hedged inheritance-from-parent reference"
+  },
+  {
+   "corpus_key": "empty-2nd|ruler-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|ruler-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|ruler-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|ruler-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|ruler-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|ruler-in-10th",
+   "verdict": "advisory",
+   "note": "hedged inheritance-through-parent reference"
+  },
+  {
+   "corpus_key": "empty-2nd|ruler-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|ruler-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|ruler-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|ruler-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|ruler-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|ruler-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|ruler-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|ruler-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|ruler-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|ruler-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|ruler-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|ruler-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|ruler-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|ruler-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|ruler-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|ruler-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|ruler-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|ruler-in-8th",
+   "verdict": "advisory",
+   "note": "end-of-life-at-home reference, hedged but worth a glance"
+  },
+  {
+   "corpus_key": "empty-4th|ruler-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|ruler-in-10th",
+   "verdict": "advisory",
+   "note": "abrupt 'Look at the resume...' sentence reads like a template remnant"
+  },
+  {
+   "corpus_key": "empty-4th|ruler-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|ruler-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|ruler-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|ruler-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|ruler-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|ruler-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|ruler-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|ruler-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|ruler-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|ruler-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|ruler-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|ruler-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|ruler-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|ruler-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|ruler-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|ruler-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|ruler-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|ruler-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|ruler-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|ruler-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|ruler-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|ruler-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|ruler-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|ruler-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|ruler-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|ruler-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|ruler-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|mars-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|venus-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|mercury-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|moon-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|sun-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|mercury-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|venus-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|pluto-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|jupiter-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|saturn-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-2nd|uranus-in-3rd",
+   "verdict": "advisory",
+   "note": "second sentence duplicates empty-2nd|ruler-in-3rd opening line"
+  },
+  {
+   "corpus_key": "empty-2nd|neptune-in-9th",
+   "verdict": "advisory",
+   "note": "reuses empty-2nd|ruler-in-9th phrasing nearly verbatim"
+  },
+  {
+   "corpus_key": "empty-3rd|mars-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|venus-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|mercury-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|moon-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|sun-in-6th",
+   "verdict": "advisory",
+   "note": "traditional body-area reference (heart, back)"
+  },
+  {
+   "corpus_key": "empty-3rd|mercury-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|venus-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|pluto-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|jupiter-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|saturn-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|uranus-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-3rd|neptune-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|mars-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|venus-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|mercury-in-10th",
+   "verdict": "pass",
+   "note": "mercury flavor faint but present (stories/editing)"
+  },
+  {
+   "corpus_key": "empty-4th|moon-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|sun-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|mercury-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|venus-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|pluto-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|jupiter-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|saturn-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|uranus-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-4th|neptune-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|mars-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|venus-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|mercury-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|moon-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|sun-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|mercury-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|venus-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|pluto-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|jupiter-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|saturn-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|uranus-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-5th|neptune-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|mars-in-2nd",
+   "verdict": "advisory",
+   "note": "body-area reference (neck/ears/throat) - traditional, mild"
+  },
+  {
+   "corpus_key": "empty-6th|venus-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|mercury-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|moon-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|sun-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|mercury-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|venus-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|pluto-in-11th",
+   "verdict": "advisory",
+   "note": "awkward final sentence ('It does not need to require you') with unclear antecedent"
+  },
+  {
+   "corpus_key": "empty-6th|jupiter-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|saturn-in-10th",
+   "verdict": "advisory",
+   "note": "timing reference (success after age thirty) - traditional, mild"
+  },
+  {
+   "corpus_key": "empty-6th|uranus-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-6th|neptune-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|mars-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|venus-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|mercury-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|moon-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|sun-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|mercury-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|venus-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|pluto-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|jupiter-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|saturn-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|uranus-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|neptune-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|ruler-in-8th",
+   "verdict": "advisory",
+   "note": "partner-death reference; conditional, not predicted, but worth a glance"
+  },
+  {
+   "corpus_key": "empty-7th|ruler-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|ruler-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|ruler-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|ruler-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|ruler-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|ruler-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|ruler-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|ruler-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|ruler-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-7th|ruler-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|mars-in-10th",
+   "verdict": "advisory",
+   "note": "advancement after another person's departure/death - conditional, worth a glance"
+  },
+  {
+   "corpus_key": "empty-8th|venus-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|mercury-in-1st",
+   "verdict": "advisory",
+   "note": "abrupt disconnected final sentence ('Personal effort can improve finances.')"
+  },
+  {
+   "corpus_key": "empty-8th|moon-in-9th",
+   "verdict": "pass",
+   "note": "8th-house (shared resources) thread present but thin"
+  },
+  {
+   "corpus_key": "empty-8th|sun-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|mercury-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|venus-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|pluto-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|jupiter-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|saturn-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|uranus-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|neptune-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|ruler-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|ruler-in-10th",
+   "verdict": "advisory",
+   "note": "verbatim sentence duplicated from empty-8th|mars-in-10th; abrupt final sentence"
+  },
+  {
+   "corpus_key": "empty-8th|ruler-in-11th",
+   "verdict": "advisory",
+   "note": "loss-of-a-friend reference - conditional, worth a glance"
+  },
+  {
+   "corpus_key": "empty-8th|ruler-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|ruler-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|ruler-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|ruler-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|ruler-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|ruler-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|ruler-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-8th|ruler-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|mars-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|venus-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|mercury-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|moon-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|sun-in-4th",
+   "verdict": "advisory",
+   "note": "filler-like sentence mid-entry ('This is the stuff that follows you home') reads like leftover essay copy"
+  },
+  {
+   "corpus_key": "empty-9th|mercury-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|venus-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|pluto-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|jupiter-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|saturn-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|uranus-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|neptune-in-6th",
+   "verdict": "advisory",
+   "note": "illness/infection/poisoning list is hedged but health-heavy; worth a glance"
+  },
+  {
+   "corpus_key": "empty-9th|ruler-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|ruler-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|ruler-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|ruler-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|ruler-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|ruler-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|ruler-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|ruler-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|ruler-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|ruler-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-9th|ruler-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|mars-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|venus-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|mercury-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|moon-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|sun-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|mercury-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|venus-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|pluto-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|jupiter-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|saturn-in-9th",
+   "verdict": "advisory",
+   "note": "'new belief begins as a booking confirmation' sentence reads as a stray insert; flow slightly disjointed"
+  },
+  {
+   "corpus_key": "empty-10th|uranus-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|neptune-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|ruler-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|ruler-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|ruler-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|ruler-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|ruler-in-3rd",
+   "verdict": "advisory",
+   "note": "sentence duplicated verbatim from empty-10th|mercury-in-3rd ('Public work often requires writing...')"
+  },
+  {
+   "corpus_key": "empty-10th|ruler-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|ruler-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|ruler-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|ruler-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|ruler-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-10th|ruler-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|mars-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|venus-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|mercury-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|moon-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|sun-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|mercury-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|venus-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|pluto-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|jupiter-in-8th",
+   "verdict": "advisory",
+   "note": "'gains... even a friend's death' is hedged and traditional but sensitive; worth a glance"
+  },
+  {
+   "corpus_key": "empty-11th|saturn-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|uranus-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|neptune-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|ruler-in-12th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|ruler-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|ruler-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|ruler-in-3rd",
+   "verdict": "advisory",
+   "note": "sentence duplicated verbatim from empty-11th|sun-in-3rd ('One message can make the introduction...')"
+  },
+  {
+   "corpus_key": "empty-11th|ruler-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|ruler-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|ruler-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|ruler-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|ruler-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|ruler-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-11th|ruler-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|mars-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|venus-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|mercury-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|moon-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|sun-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|mercury-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|venus-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|pluto-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|jupiter-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|saturn-in-11th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|uranus-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|neptune-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-1st",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-2nd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-3rd",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-4th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-5th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-6th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-7th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-8th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-9th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-10th",
+   "verdict": "pass",
+   "note": null
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-11th",
+   "verdict": "pass",
+   "note": null
+  }
+ ]
+}

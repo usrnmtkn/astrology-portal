@@ -104,6 +104,11 @@ assert.equal(
   "Existing approved rows must remain byte-identical to the pre-shipping snapshot.",
 );
 assert.equal(manifest.invariants.existingApprovedRowsChanged, 0);
+assert.match(
+  manifest.invariants.snapshotRepin,
+  /v3-2026-08-10c empty-house V14 promotion/u,
+  "The container snapshot re-pin must retain its package-version cause."
+);
 
 for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
   assert.equal(sha256(JSON.stringify(entry.payload)), entry.sha256, `${workbookKey}: payload hash mismatch`);

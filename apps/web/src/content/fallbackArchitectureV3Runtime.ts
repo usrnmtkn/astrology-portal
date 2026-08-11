@@ -436,11 +436,13 @@ export function loadFallbackArchitectureV3BundledSkyPlacementManifest() {
 
 const initialReaderBundle = readerEligibleBundle(snapshotBundle);
 let localDeferredReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let localEmptyHouseReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localRelationshipReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let deferredFallbackBundlePromise: Promise<boolean> | null = null;
+let emptyHouseFallbackBundlePromise: Promise<boolean> | null = null;
 let relationshipFallbackBundlePromise: Promise<boolean> | null = null;
 let skyPlacementFallbackBundlePromise: Promise<boolean> | null = null;
 export let fallbackRendererV3 = createAppFallbackRenderer(initialReaderBundle);
@@ -491,7 +493,8 @@ function mergeReaderBundles(
 
 function recomposeReaderBundle() {
   const localCoreWithDeferred = mergeReaderBundles(initialReaderBundle, localDeferredReaderBundle);
-  const localCoreWithRelationships = mergeReaderBundles(localCoreWithDeferred, localRelationshipReaderBundle);
+  const localCoreWithEmptyHouses = mergeReaderBundles(localCoreWithDeferred, localEmptyHouseReaderBundle);
+  const localCoreWithRelationships = mergeReaderBundles(localCoreWithEmptyHouses, localRelationshipReaderBundle);
   const core = dashboardCoreReaderBundle ?? localCoreWithRelationships;
   const placement = dashboardSkyPlacementReaderBundle ?? localSkyPlacementReaderBundle;
   activateReaderBundle(mergeReaderBundles(core, placement));
@@ -695,6 +698,33 @@ export async function loadDeferredFallbackArchitectureV3Bundle() {
     });
 
   return deferredFallbackBundlePromise;
+}
+
+export function isEmptyHouseFallbackArchitectureV3BundleLoaded() {
+  return Boolean(localEmptyHouseReaderBundle || dashboardCoreReaderBundle);
+}
+
+export async function loadEmptyHouseFallbackArchitectureV3Bundle() {
+  if (localEmptyHouseReaderBundle || dashboardCoreReaderBundle) {
+    return false;
+  }
+
+  emptyHouseFallbackBundlePromise ??= import("./fallbackArchitectureV3EmptyHouseBundle")
+    .then(({ emptyHouseFallbackArchitectureV3Bundle }) => {
+      if (localEmptyHouseReaderBundle || dashboardCoreReaderBundle) {
+        return false;
+      }
+
+      localEmptyHouseReaderBundle = readerEligibleBundle(emptyHouseFallbackArchitectureV3Bundle);
+      recomposeReaderBundle();
+      return true;
+    })
+    .catch((error) => {
+      emptyHouseFallbackBundlePromise = null;
+      throw error;
+    });
+
+  return emptyHouseFallbackBundlePromise;
 }
 
 export function isRelationshipFallbackArchitectureV3BundleLoaded() {
