@@ -118,6 +118,7 @@ for (const row of locked.rows) {
 const servingApprovedReviews = new Set(["approved", "approved_reuse", "reviewed"]);
 const priorApprovedRows = sourceRows.hookRows.filter((row) => (
   row.source_release !== "ll-matrix-v13-owner-approved-runtime"
+  && !row.contentKey.startsWith("fallback-hook/empty-house/")
   && servingApprovedReviews.has(row.review_status)
 ));
 assert.equal(

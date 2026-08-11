@@ -15,6 +15,7 @@ const outputPath = path.join(packageRoot, "bundled-manifest-v3.json");
 const summaryOutputPath = path.join(packageRoot, "bundled-manifest-summary-v3.json");
 const skyCoreOutputPath = path.join(packageRoot, "bundled-sky-core-rows-v3.json");
 const deferredCoreOutputPath = path.join(packageRoot, "bundled-deferred-core-rows-v3.json");
+const emptyHouseOutputPath = path.join(packageRoot, "bundled-empty-house-rows-v3.json");
 const transitCoreAuthoredOutputPath = path.join(packageRoot, "bundled-transit-core-authored-cards-v3.json");
 const relationshipAuthoredOutputPath = path.join(packageRoot, "bundled-relationship-authored-cards-v3.json");
 const skyAuthoredOutputPath = path.join(packageRoot, "bundled-sky-authored-cards-v3.json");
@@ -110,6 +111,10 @@ function isSkyPlacementDeferredHook(row) {
       contentKey.startsWith("fallback-hook/sky-placement-")
       && !contentKey.startsWith("fallback-hook/sky-placement-sign/")
     );
+}
+
+function isEmptyHouseHook(row) {
+  return String(row?.contentKey ?? "").startsWith("fallback-hook/empty-house/");
 }
 
 function isDistributionEligible(row) {
@@ -257,10 +262,14 @@ const skyCoreRows = {
 };
 const deferredCoreRows = {
   hookRows: [
-    ...sourceRows.hookRows.filter((row) => !isSkyCoreHook(row)),
+    ...sourceRows.hookRows.filter((row) => !isSkyCoreHook(row) && !isEmptyHouseHook(row)),
     ...pairDailyFrames.rows,
     ...pairDailyClauses.rows
   ],
+  vocabularyRows: []
+};
+const emptyHouseRows = {
+  hookRows: sourceRows.hookRows.filter(isEmptyHouseHook),
   vocabularyRows: []
 };
 const transitCoreAuthoredCards = {
@@ -327,6 +336,7 @@ const summary = {
 const serializedSummary = `${JSON.stringify(summary, null, 2)}\n`;
 const serializedSkyCore = `${JSON.stringify(skyCoreRows, null, 2)}\n`;
 const serializedDeferredCore = `${JSON.stringify(deferredCoreRows, null, 2)}\n`;
+const serializedEmptyHouse = `${JSON.stringify(emptyHouseRows, null, 2)}\n`;
 const serializedTransitCoreAuthored = `${JSON.stringify(transitCoreAuthoredCards, null, 2)}\n`;
 const serializedRelationshipAuthored = `${JSON.stringify(relationshipAuthoredCards, null, 2)}\n`;
 const serializedSkyAuthored = `${JSON.stringify(skyAuthoredCards, null, 2)}\n`;
@@ -341,6 +351,7 @@ if (checkOnly) {
   const existingSummary = fs.existsSync(summaryOutputPath) ? fs.readFileSync(summaryOutputPath, "utf8") : "";
   const existingSkyCore = fs.existsSync(skyCoreOutputPath) ? fs.readFileSync(skyCoreOutputPath, "utf8") : "";
   const existingDeferredCore = fs.existsSync(deferredCoreOutputPath) ? fs.readFileSync(deferredCoreOutputPath, "utf8") : "";
+  const existingEmptyHouse = fs.existsSync(emptyHouseOutputPath) ? fs.readFileSync(emptyHouseOutputPath, "utf8") : "";
   const existingTransitCoreAuthored = fs.existsSync(transitCoreAuthoredOutputPath) ? fs.readFileSync(transitCoreAuthoredOutputPath, "utf8") : "";
   const existingRelationshipAuthored = fs.existsSync(relationshipAuthoredOutputPath) ? fs.readFileSync(relationshipAuthoredOutputPath, "utf8") : "";
   const existingSkyAuthored = fs.existsSync(skyAuthoredOutputPath) ? fs.readFileSync(skyAuthoredOutputPath, "utf8") : "";
@@ -356,6 +367,7 @@ if (checkOnly) {
     || existingSummary !== serializedSummary
     || existingSkyCore !== serializedSkyCore
     || existingDeferredCore !== serializedDeferredCore
+    || existingEmptyHouse !== serializedEmptyHouse
     || existingTransitCoreAuthored !== serializedTransitCoreAuthored
     || existingRelationshipAuthored !== serializedRelationshipAuthored
     || existingSkyAuthored !== serializedSkyAuthored
@@ -374,6 +386,7 @@ if (checkOnly) {
   fs.writeFileSync(summaryOutputPath, serializedSummary);
   fs.writeFileSync(skyCoreOutputPath, serializedSkyCore);
   fs.writeFileSync(deferredCoreOutputPath, serializedDeferredCore);
+  fs.writeFileSync(emptyHouseOutputPath, serializedEmptyHouse);
   fs.writeFileSync(transitCoreAuthoredOutputPath, serializedTransitCoreAuthored);
   fs.writeFileSync(relationshipAuthoredOutputPath, serializedRelationshipAuthored);
   fs.writeFileSync(skyAuthoredOutputPath, serializedSkyAuthored);
@@ -385,6 +398,7 @@ if (checkOnly) {
   console.log(`Wrote ${path.relative(repoRoot, summaryOutputPath)}.`);
   console.log(`Wrote ${path.relative(repoRoot, skyCoreOutputPath)} (${skyCoreRows.hookRows.length} hooks, ${skyCoreRows.vocabularyRows.length} vocabulary rows).`);
   console.log(`Wrote ${path.relative(repoRoot, deferredCoreOutputPath)} (${deferredCoreRows.hookRows.length} hooks).`);
+  console.log(`Wrote ${path.relative(repoRoot, emptyHouseOutputPath)} (${emptyHouseRows.hookRows.length} hooks).`);
   console.log(`Wrote ${path.relative(repoRoot, transitCoreAuthoredOutputPath)} (${transitCoreAuthoredCards.authoredCards.length} authored cards).`);
   console.log(`Wrote ${path.relative(repoRoot, relationshipAuthoredOutputPath)} (${relationshipAuthoredCards.authoredCards.length} authored cards).`);
   console.log(`Wrote ${path.relative(repoRoot, skyAuthoredOutputPath)} (${skyAuthoredCards.authoredCards.length} authored cards).`);
