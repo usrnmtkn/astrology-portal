@@ -32,9 +32,13 @@ const accountingMigration = fs.readFileSync(new URL("../apps/web/supabase/migrat
 const birthTimeMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260810210000_birth_time_normalization.sql", import.meta.url), "utf8");
 const passingUnitCacheMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811010000_report_passing_unit_cache.sql", import.meta.url), "utf8");
 const authorizationTokenBudgetMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811120000_report_authorization_token_budget.sql", import.meta.url), "utf8");
+const deadlineWorkerRecoveryMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811130000_report_deadline_worker_recovery.sql", import.meta.url), "utf8");
 assert.match(authorizationTokenBudgetMigration, /74951c07-64fe-461d-ac49-e81858af3296/u, "The migration must carry the owner ruling for the exact Production report.");
 assert.match(authorizationTokenBudgetMigration, /token_budget_lifetime = 3000000/u, "The exact Production report must receive its owner-approved 3M lifetime backstop.");
 assert.match(authorizationTokenBudgetMigration, /set authorized_call_budget = 55,[\s\S]*authorized_token_budget = 1450000/u, "The current authorization must retain its approved 55-call and 1.45M-token budgets.");
+assert.match(deadlineWorkerRecoveryMigration, /call_number = 37[\s\S]*state = 'interrupted'/u, "The observed zero-token call 37 must be closed as interrupted.");
+assert.match(deadlineWorkerRecoveryMigration, /token_budget_lifetime = 4500000/u, "The exact Production report must receive its owner-approved 4.5M lifetime backstop.");
+assert.match(deadlineWorkerRecoveryMigration, /authorized_call_budget = 55[\s\S]*authorized_token_budget = 2500000/u, "The existing authorization must retain 55 calls while receiving the 2.5M scoped token budget.");
 await db.exec("begin");
 try {
   const userId = "00000000-0000-0000-0000-000000000001";
@@ -160,9 +164,59 @@ try {
   await assert.rejects(db.query("select public.begin_report_fulfillment_call($1, $2, 'openai', 'gpt-5.6-sol', 'fixture_extra')", [compJob.id, replacementToken]), /REPORT_CALL_AUTHORIZATION_REQUIRED/u);
   await db.exec("rollback to savepoint exhausted_budget");
   await db.exec("release savepoint exhausted_budget");
+
+  const recoveryEntitlementId = "9c751439-2038-43ee-9653-827ddd38828b";
+  const recoveryReportId = "74951c07-64fe-461d-ac49-e81858af3296";
+  const recoveryJobId = "1e6633f3-7ac3-4326-ba35-ae21474b45dd";
+  const recoveryAuthorizationToken = "00000000-0000-0000-0000-000000000097";
+  await db.query(`insert into public.report_entitlements
+    (id, user_id, product_key, report_domain, report_horizon, window_anchor, selected_start, period_start, period_end, requires_birth_time, status, source, purchased_at)
+    values ($1, $2, 'general_12m', 'general', '12_months', 'selected', '2026-02-18', '2026-02-18', '2027-02-17', true, 'active', 'comp', now())`, [recoveryEntitlementId, userId]);
+  const generatedRecoveryReport = (await db.query("select id from public.user_reports where entitlement_id = $1", [recoveryEntitlementId])).rows[0];
+  await db.query("delete from public.report_fulfillment_jobs where report_id = $1", [generatedRecoveryReport.id]);
+  await db.query(`update public.user_reports
+    set id = $1, fulfillment_status = 'writing', token_count_total = 2050321, token_budget_lifetime = 3000000
+    where id = $2`, [recoveryReportId, generatedRecoveryReport.id]);
+  await db.query(`insert into public.report_fulfillment_jobs
+    (id, report_id, entitlement_id, state, step, attempt, run_after, locked_at, locked_by,
+     authorization_token, authorized_call_budget, model_call_count, authorization_consumed_at,
+     authorization_call_count, authorized_token_budget, authorization_token_count)
+    values ($1, $2, $3, 'running', 'writing', 2, now(), '2026-08-11T06:10:48Z', 'report-worker-fixture',
+            $4, 55, 37, '2026-08-11T05:25:47Z', 15, 1450000, 793038)`,
+    [recoveryJobId, recoveryReportId, recoveryEntitlementId, recoveryAuthorizationToken]);
+  await db.query(`insert into public.report_model_calls
+    (report_id, job_id, call_number, authorization_token, provider, model, schema_name, state, created_at)
+    values ($1, $2, 37, $3, 'openai', 'gpt-5.6-sol', 'report_unit_draft', 'authorized', '2026-08-11T06:15:03Z')`,
+    [recoveryReportId, recoveryJobId, recoveryAuthorizationToken]);
+
+  await db.exec(deadlineWorkerRecoveryMigration);
+  const recoveredCall = (await db.query("select state, total_tokens, error, completed_at is not null as closed from public.report_model_calls where job_id = $1 and call_number = 37", [recoveryJobId])).rows[0];
+  assert.deepEqual({ state: recoveredCall.state, totalTokens: Number(recoveredCall.total_tokens), closed: recoveredCall.closed }, {
+    state: "interrupted", totalTokens: 0, closed: true
+  }, "The Production-shaped orphaned call must close without inventing usage.");
+  assert.match(recoveredCall.error, /^VERCEL_RUNTIME_TIMEOUT:/u);
+  assert.equal(Number((await db.query("select token_budget_lifetime from public.user_reports where id = $1", [recoveryReportId])).rows[0].token_budget_lifetime), 4_500_000);
+  const recoveredJob = (await db.query(`select state, step, locked_at, locked_by, last_error,
+    model_call_count, authorized_call_budget, authorization_call_count, authorized_token_budget, authorization_token_count
+    from public.report_fulfillment_jobs where id = $1`, [recoveryJobId])).rows[0];
+  assert.deepEqual({
+    state: recoveredJob.state,
+    step: recoveredJob.step,
+    lockedAt: recoveredJob.locked_at,
+    lockedBy: recoveredJob.locked_by,
+    lastError: recoveredJob.last_error,
+    modelCallCount: recoveredJob.model_call_count,
+    callBudget: recoveredJob.authorized_call_budget,
+    scopedCalls: recoveredJob.authorization_call_count,
+    tokenBudget: Number(recoveredJob.authorized_token_budget),
+    scopedTokens: Number(recoveredJob.authorization_token_count)
+  }, {
+    state: "queued", step: "writing", lockedAt: null, lockedBy: null, lastError: null,
+    modelCallCount: 37, callBudget: 55, scopedCalls: 15, tokenBudget: 2_500_000, scopedTokens: 793_038
+  }, "Recovery must preserve authorization identity and counters while only changing the owner-ruled budgets and queue state.");
   await db.exec("rollback");
 } catch (error) {
   await db.exec("rollback");
   throw error;
 }
-console.log("Report fulfillment migration passed: Stripe idempotency, comp grants without Stripe references, authorization parking, authorization-scoped call/token budgets, owner-adjustable lifetime backstop, durable object-shaped passing-unit cache, immutable call ledger/accounting, atomic call-budget exhaustion, birth-data parking, exclusive facts claim, and rollback.");
+console.log("Report fulfillment migration passed: Stripe idempotency, comp grants without Stripe references, authorization parking, authorization-scoped call/token budgets, owner-adjustable lifetime backstop, exact Production timeout recovery, durable object-shaped passing-unit cache, immutable call ledger/accounting, atomic call-budget exhaustion, birth-data parking, exclusive facts claim, and rollback.");
