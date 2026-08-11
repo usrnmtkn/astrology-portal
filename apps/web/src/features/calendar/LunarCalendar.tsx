@@ -23,6 +23,8 @@ import {
   fallbackV3HookBody,
   fallbackV3PlanetTopic,
   fallbackV3VocabularyBody,
+  KNOWLEDGE_MATRIX_V9_VERSION,
+  loadKnowledgeMatrixV9Runtime,
   SourceGapError as FallbackV3SourceGapError,
   transitSynastryFallbackRendererV3 as calendarFallbackRendererV3
 } from "../../content/fallbackArchitectureV3Runtime";
@@ -33,6 +35,10 @@ import { hasMapboxToken, searchCities, type CitySuggestion } from "../../service
 import { timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "../../services/timezones";
 import type { LocationInput } from "../../types";
 import { calendarEventGeneratedContentKeys } from "./calendarContentKeys";
+import {
+  resolveCalendarV9Transit,
+  type CalendarV9TransitResolver
+} from "./calendarV9Transit";
 import { calendarMoonContinuationText, calendarPhaseLabelForDay } from "./calendarPhaseLabel";
 import { lunarDayGeneratedContentKeys, resolveLunarDay } from "./lunarDayResolver";
 import type { LunarDay, LunarDayArcPoint } from "./lunarDayTypes";
@@ -1172,10 +1178,11 @@ function weeklyLunationArticleOpening(event: LunarCalendarEvent) {
   }
 }
 
-function normalizeCalendarEventSurface(
+export function normalizeCalendarEventSurface(
   event: LunarCalendarEvent,
   content: LiveGeneratedContent | null,
-  dateLine = "Today"
+  dateLine = "Today",
+  knowledgeMatrixV9?: CalendarV9TransitResolver | null
 ): NormalizedCalendarEventSurface {
   const generatedDescription = firstReaderFacingCopy([
     ...(event.type === "aspect" ? [] : [content?.summary]),
@@ -1199,6 +1206,23 @@ function normalizeCalendarEventSurface(
         tier: layer === "authored" ? "stored-source" : "v3-package",
         sourceKeys: [content.contentKey],
         body: generatedDescription
+      }]
+    };
+  }
+
+  const matrixResult = resolveCalendarV9Transit(event, knowledgeMatrixV9);
+
+  if (matrixResult && isReaderFacingCopy(matrixResult.body)) {
+    return {
+      surface: "calendar-event",
+      status: "partial",
+      sections: [{
+        slot: "description",
+        required: false,
+        layer: "fallback",
+        tier: matrixResult.sourceVersion,
+        sourceKeys: [matrixResult.contentKey],
+        body: matrixResult.body
       }]
     };
   }
@@ -1239,22 +1263,28 @@ function calendarCanonicalEventDateLine(event: LunarCalendarEvent, timeZone: str
 function calendarEventEditorialContent(
   event: LunarCalendarEvent,
   generatedContent: Map<string, LiveGeneratedContent> | undefined,
-  timeZone: string
+  timeZone: string,
+  knowledgeMatrixV9?: CalendarV9TransitResolver | null
 ): CalendarEditorialContent {
   const dateLine = calendarCanonicalEventDateLine(event, timeZone);
   const content = liveCalendarEventContent(generatedContent, event);
-  const normalized = normalizeCalendarEventSurface(event, content, dateLine);
+  const normalized = normalizeCalendarEventSurface(event, content, dateLine, knowledgeMatrixV9);
   const description = normalized.sections[0];
+  const isKnowledgeMatrixV9 = description?.tier === KNOWLEDGE_MATRIX_V9_VERSION;
   const headline = calendarEventTitleWithSign(event, calendarEventTitle(event, content));
   const fallbackContentKey = `generated/calendar-event/${event.type}/${event.id}`;
 
   return {
-    contentKey: description?.layer === "authored"
+    contentKey: isKnowledgeMatrixV9
+      ? description.sourceKeys[0] ?? fallbackContentKey
+      : description?.layer === "authored"
       ? description.sourceKeys[0] ?? `owner-approved/calendar-event/${event.id}`
       : description
         ? fallbackContentKey
         : `source-gap/calendar-event/${event.id}`,
-    contentSource: description?.layer === "authored" ? "owner_approved" : "generated_fallback",
+    contentSource: description?.layer === "authored" || isKnowledgeMatrixV9
+      ? "owner_approved"
+      : "generated_fallback",
     eventId: event.id,
     dateRange: {
       start: event.startsAt,
@@ -1265,8 +1295,14 @@ function calendarEventEditorialContent(
     provenance: {
       sourceId: description?.sourceKeys[0],
       generatedBy: description?.tier,
-      templateVersion: description?.layer === "fallback" ? "calendar-event-fallback.v3" : undefined,
-      reviewStatus: description?.layer === "authored" ? "reader-eligible" : "assembled-fallback"
+      templateVersion: isKnowledgeMatrixV9
+        ? KNOWLEDGE_MATRIX_V9_VERSION
+        : description?.layer === "fallback"
+          ? "calendar-event-fallback.v3"
+          : undefined,
+      reviewStatus: description?.layer === "authored" || isKnowledgeMatrixV9
+        ? "reader-eligible"
+        : "assembled-fallback"
     }
   };
 }
@@ -1625,7 +1661,24 @@ export function LunarCalendar({
   const [locationSuggestions, setLocationSuggestions] = useState<CitySuggestion[]>([]);
   const [pendingLocation, setPendingLocation] = useState<CitySuggestion | null>(null);
   const [locationSearchStatus, setLocationSearchStatus] = useState<LocationSearchStatus>("idle");
+  const [knowledgeMatrixV9, setKnowledgeMatrixV9] = useState<CalendarV9TransitResolver | null>(null);
   const monthDetailRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    void loadKnowledgeMatrixV9Runtime()
+      .then((resolver) => {
+        if (active) setKnowledgeMatrixV9(resolver);
+      })
+      .catch((error) => {
+        console.warn("Calendar V9 transit copy could not load; keeping the existing package fallback.", error);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -1966,7 +2019,8 @@ export function LunarCalendar({
         const editorial = calendarEventEditorialContent(
           event,
           generatedContent,
-          zone
+          zone,
+          knowledgeMatrixV9
         );
 
         return {
@@ -2094,7 +2148,7 @@ export function LunarCalendar({
         showGuidance
       };
     });
-  }, [calendar, generatedContent, selectedWeekDays, zone]);
+  }, [calendar, generatedContent, knowledgeMatrixV9, selectedWeekDays, zone]);
   const weeklyRangeLabel = formatWeeklyRange(selectedWeekDays, calendar?.timeZone ?? location.timeZone ?? "UTC");
   const selectedDate = selectedDay ? new Date(selectedDay.date) : new Date();
   const arcEvents = useMemo(() => {
@@ -2147,7 +2201,7 @@ export function LunarCalendar({
       // Use the same reviewed, sign-specific aspect content selected for Sky.
       // When that exact row is unavailable, preserve Calendar coverage with
       // the package renderer instead of leaving the write-up blank.
-      const editorial = calendarEventEditorialContent(event, generatedContent, zone);
+      const editorial = calendarEventEditorialContent(event, generatedContent, zone, knowledgeMatrixV9);
       const body = editorial.eventCopy ?? "";
 
       if (body) {
@@ -2157,7 +2211,7 @@ export function LunarCalendar({
     }
 
     return writeups;
-  }, [generatedContent, selectedDayTransits]);
+  }, [generatedContent, knowledgeMatrixV9, selectedDayTransits]);
   const selectedPrimaryLunation = selectedDay ? primaryLunationForDay(selectedDay) : undefined;
   const selectedDayPhase = selectedDay && calendar
     ? calendarPhaseLabelForDay(selectedDay, calendar.days)
@@ -2401,7 +2455,8 @@ export function LunarCalendar({
                   const editorial = calendarEventEditorialContent(
                     event,
                     generatedContent,
-                    zone
+                    zone,
+                    knowledgeMatrixV9
                   );
                   const eventTitle = editorial.headline ?? event.title;
                   const description = editorial.eventCopy ?? "";
@@ -2807,6 +2862,7 @@ export function LunarCalendar({
                     event={event}
                     generatedContent={generatedContent}
                     key={event.id}
+                    knowledgeMatrixV9={knowledgeMatrixV9}
                     onOpenTransit={onOpenTransit}
                     timeZone={zone}
                   />
@@ -3041,6 +3097,7 @@ export function LunarCalendar({
                     event={event}
                     generatedContent={generatedContent}
                     key={event.id}
+                    knowledgeMatrixV9={knowledgeMatrixV9}
                     onOpenTransit={onOpenTransit}
                     timeZone={zone}
                   />
@@ -3060,12 +3117,14 @@ function TransitCard({
   contentStatus,
   event,
   generatedContent,
+  knowledgeMatrixV9,
   onOpenTransit,
   timeZone
 }: {
   contentStatus: "idle" | "loading" | "ready";
   event: LunarCalendarEvent;
   generatedContent?: Map<string, LiveGeneratedContent>;
+  knowledgeMatrixV9?: CalendarV9TransitResolver | null;
   onOpenTransit?: (event: LunarCalendarEvent, description?: string) => void;
   timeZone: string;
 }) {
@@ -3073,7 +3132,8 @@ function TransitCard({
   const editorial = calendarEventEditorialContent(
     event,
     generatedContent,
-    timeZone
+    timeZone,
+    knowledgeMatrixV9
   );
   const title = editorial.headline ?? event.title;
   const description = editorial.eventCopy ?? "";
