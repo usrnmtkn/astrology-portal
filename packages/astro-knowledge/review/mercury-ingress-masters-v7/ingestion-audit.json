@@ -1,4 +1,10 @@
 {
+  "status": "superseded_owner_rejected_for_serving",
+  "servingAuthority": false,
+  "ownerApproved": false,
+  "reviewStatus": "needs_review",
+  "supersededAt": "2026-08-11",
+  "supersededReason": "The owner stated that the V7 serving payload was not approved and directed restoration of the previous owner-approved Mercury placement fallbacks.",
   "program": "mercury-masters-and-derivations",
   "step": 1,
   "recordedAt": "2026-08-11",

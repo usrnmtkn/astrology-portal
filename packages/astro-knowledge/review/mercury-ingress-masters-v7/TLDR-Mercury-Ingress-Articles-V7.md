@@ -1,21 +1,27 @@
 # Mercury through the signs
 ## Article-level ingress drafts, Aquarius-tone rewrite V7
 
+> SERVING STATUS (2026-08-11): `owner_rejected_for_serving`. The owner stated,
+> “I didn't approve this,” and directed Codex to restore the previously approved
+> Mercury placement fallbacks. The article bodies below are preserved unchanged
+> as unapproved review and derivation material only. They are not serving copy,
+> owner-approved generation evidence, or authority for a reader-facing payload.
+
 > REWRITE BASIS (2026-08-11): Full-file rewrite using the owner-revised Mercury in Aquarius section as the sentence-level and paragraph-level benchmark.
 >
 > EDITORIAL STANDARD: Strong thesis. Clear consequence. Lived language. Each section deepens one idea instead of stacking interchangeable examples. The astrology should show up through what people notice, say, miss, repeat, reconsider, or decide. No house-specific scene is invented.
 >
 > REGISTER: Current-sky / collective Mercury ingress.
 >
-> GOVERNANCE (updated 2026-08-11): OWNER RULINGS APPLIED. Signature anchor "X changes
+> HISTORICAL GOVERNANCE CLAIM (superseded 2026-08-11): Signature anchor "X changes
 > Mercury's Y" APPROVED, once per article at the mechanics opening, never repeated within an
 > article. Capricorn anchor is "terms" by owner wording. Vocabulary: misread/misreading,
 > mismatch, blanks, understandable KEPT by ruling; hijack, insufficiently, increments,
 > intentional-concealment constructions SWAPPED by owner surgery. Scope: these twelve are
-> the reader-facing Mercury ingress article masters, headings included, AND the upstream
-> source for the four-slot cards. The Aquarius primary hook's "you realize" is an explicit
-> owner-approved exception to the observational pronoun pattern. Owner approval of the
-> full file's exact wording: recorded on staging.
+> once described the twelve drafts as reader-facing Mercury ingress article masters and the
+> upstream source for four-slot cards. That serving interpretation is withdrawn. The Aquarius
+> primary hook's "you realize" is not an active Current Sky exception. No wording below is
+> approved for serving unless the owner later approves exact wording explicitly.
 
 ---
 
