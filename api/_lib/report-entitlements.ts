@@ -88,7 +88,10 @@ export async function authorizeReportGeneration(admin: SupabaseReportAdmin, inpu
     authorization_call_count: 0,
     authorized_token_budget: tokenBudget,
     authorization_token_count: 0,
-    authorization_consumed_at: null
+    authorization_consumed_at: null,
+    locked_at: null,
+    locked_by: null,
+    lease_expires_at: null
   });
   if (!jobs.length) throw new Error("The report is not paused at the authorization gate.");
   await admin.update("user_reports", `id=eq.${encodeURIComponent(input.reportId)}&fulfillment_status=eq.awaiting_authorization`, {
@@ -121,7 +124,10 @@ export async function revokeEntitlement(admin: SupabaseReportAdmin, input: {
     });
     await admin.update("report_fulfillment_jobs", `entitlement_id=eq.${row.id}`, {
       state: "cancelled",
-      last_error: `Entitlement ${input.reason}.`
+      last_error: `Entitlement ${input.reason}.`,
+      locked_at: null,
+      locked_by: null,
+      lease_expires_at: null
     });
   }
   return rows;

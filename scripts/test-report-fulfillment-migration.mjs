@@ -34,6 +34,7 @@ const passingUnitCacheMigration = fs.readFileSync(new URL("../apps/web/supabase/
 const authorizationTokenBudgetMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811120000_report_authorization_token_budget.sql", import.meta.url), "utf8");
 const deadlineWorkerRecoveryMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811130000_report_deadline_worker_recovery.sql", import.meta.url), "utf8");
 const validatorSpliceRecoveryMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811140000_report_validator_splice_recovery.sql", import.meta.url), "utf8");
+const workerDeadlineLeaseMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811150000_report_worker_deadline_leases.sql", import.meta.url), "utf8");
 assert.match(authorizationTokenBudgetMigration, /74951c07-64fe-461d-ac49-e81858af3296/u, "The migration must carry the owner ruling for the exact Production report.");
 assert.match(authorizationTokenBudgetMigration, /token_budget_lifetime = 3000000/u, "The exact Production report must receive its owner-approved 3M lifetime backstop.");
 assert.match(authorizationTokenBudgetMigration, /set authorized_call_budget = 55,[\s\S]*authorized_token_budget = 1450000/u, "The current authorization must retain its approved 55-call and 1.45M-token budgets.");
@@ -43,6 +44,8 @@ assert.match(deadlineWorkerRecoveryMigration, /authorized_call_budget = 55[\s\S]
 assert.match(validatorSpliceRecoveryMigration, /authorized_call_budget = 85[\s\S]*authorized_token_budget = 4000000/u, "The current authorization must extend to 85 calls and 4M scoped tokens.");
 assert.match(validatorSpliceRecoveryMigration, /token_budget_lifetime = 6000000/u, "The exact Production report must receive its owner-approved 6M lifetime backstop.");
 assert.match(validatorSpliceRecoveryMigration, /validator_attempt_overrides->>'summer' = '5'/u, "Only Summer receives the owner-approved five-attempt cap.");
+assert.match(workerDeadlineLeaseMigration, /interval '390 seconds'/u, "A worker lease must expire 90 seconds beyond Vercel's 300-second ceiling.");
+assert.match(workerDeadlineLeaseMigration, /WORKER_LEASE_EXPIRED: orphaned provider call interrupted during stale job reclaim\./u);
 await db.exec("begin");
 try {
   const userId = "00000000-0000-0000-0000-000000000001";
@@ -269,9 +272,84 @@ try {
     authorizationToken: recoveryAuthorizationToken, callBudget: 85, scopedCalls: 43,
     tokenBudget: 4000000, scopedTokens: 2081764, overrides: { summer: 5 }
   }, "Validator recovery must preserve the authorization identity, counters, accounting, and five persisted units.");
+
+  const strandedUserId = "00000000-0000-0000-0000-000000000010";
+  const strandedEntitlementId = "1b3bcbda-0000-4cab-ae2c-e59c81c52e8f";
+  const strandedReportId = "8b3e266e-286d-4ea7-a008-f60776e6b791";
+  const strandedJobId = "1b3bcbda-cb44-4cab-ae2c-e59c81c52e8f";
+  const strandedAuthorization = "00000000-0000-0000-0000-000000000096";
+  await db.query("insert into auth.users (id) values ($1)", [strandedUserId]);
+  await db.query(`insert into public.report_entitlements
+    (id, user_id, product_key, report_domain, report_horizon, window_anchor, selected_start,
+     period_start, period_end, requires_birth_time, status, source, purchased_at)
+    values ($1, $2, 'general_12m', 'general', '12_months', 'selected', '2026-02-18',
+            '2026-02-18', '2027-02-17', true, 'active', 'comp', now())`,
+  [strandedEntitlementId, strandedUserId]);
+  const generatedStrandedReport = (await db.query("select id from public.user_reports where entitlement_id = $1", [strandedEntitlementId])).rows[0];
+  await db.query("delete from public.report_fulfillment_jobs where report_id = $1", [generatedStrandedReport.id]);
+  await db.query(`update public.user_reports
+    set id = $1, fulfillment_status = 'writing', token_count_total = 1234680,
+        token_budget_lifetime = 2600000
+    where id = $2`, [strandedReportId, generatedStrandedReport.id]);
+  await db.query(`insert into public.report_fulfillment_jobs
+    (id, report_id, entitlement_id, state, step, attempt, run_after, locked_at, locked_by,
+     authorization_token, authorized_call_budget, model_call_count, authorization_consumed_at,
+     authorization_call_count, authorized_token_budget, authorization_token_count)
+    values ($1, $2, $3, 'running', 'writing', 1, '2026-08-11T21:18:44.596Z',
+            '2026-08-11T21:20:27.651752Z', 'report-worker-4-1786483227141',
+            $4, 100, 32, '2026-08-11T17:01:29.786445Z', 32, 2600000, 1234680)`,
+  [strandedJobId, strandedReportId, strandedEntitlementId, strandedAuthorization]);
+  await db.query(`insert into public.report_model_calls
+    (report_id, job_id, call_number, authorization_token, provider, model, schema_name, state, created_at)
+    values ($1, $2, 32, $3, 'openai', 'gpt-5.6-sol', 'report_unit_draft', 'authorized',
+            '2026-08-11T21:25:01.342913Z')`,
+  [strandedReportId, strandedJobId, strandedAuthorization]);
+
+  await db.exec(workerDeadlineLeaseMigration);
+  const leaseClaims = (await db.query("select * from public.claim_report_fulfillment_jobs('lease-recovery-worker', 25)")).rows;
+  assert.ok(leaseClaims.some((row) => row.id === strandedJobId), "The scheduled batch claim must reclaim the exact expired Production-shaped job.");
+  const interruptedCall = (await db.query(`select state, input_tokens, output_tokens, total_tokens,
+    estimated_cost_usd, response_id, error, completed_at is not null as closed
+    from public.report_model_calls where job_id = $1 and call_number = 32`, [strandedJobId])).rows[0];
+  assert.deepEqual({
+    state: interruptedCall.state,
+    inputTokens: Number(interruptedCall.input_tokens),
+    outputTokens: Number(interruptedCall.output_tokens),
+    totalTokens: Number(interruptedCall.total_tokens),
+    estimatedUsd: Number(interruptedCall.estimated_cost_usd),
+    responseId: interruptedCall.response_id,
+    closed: interruptedCall.closed
+  }, {
+    state: "interrupted", inputTokens: 0, outputTokens: 0, totalTokens: 0,
+    estimatedUsd: 0, responseId: null, closed: true
+  }, "Lease recovery must close orphaned call 32 without inventing accepted work or provider usage.");
+  assert.equal(interruptedCall.error, "WORKER_LEASE_EXPIRED: orphaned provider call interrupted during stale job reclaim.");
+  assert.equal(Number((await db.query("select token_count_total from public.user_reports where id = $1", [strandedReportId])).rows[0].token_count_total), 1234680,
+    "Zero-token lease recovery must leave the report's lifetime ledger total unchanged.");
+  const reclaimedJob = (await db.query(`select state, step, attempt, locked_by,
+    lease_expires_at > now() as lease_active, authorization_token, authorized_call_budget,
+    model_call_count, authorization_call_count, authorized_token_budget, authorization_token_count
+    from public.report_fulfillment_jobs where id = $1`, [strandedJobId])).rows[0];
+  assert.deepEqual({
+    state: reclaimedJob.state,
+    step: reclaimedJob.step,
+    attempt: reclaimedJob.attempt,
+    lockedBy: reclaimedJob.locked_by,
+    leaseActive: reclaimedJob.lease_active,
+    authorizationToken: reclaimedJob.authorization_token,
+    callBudget: reclaimedJob.authorized_call_budget,
+    lifetimeCalls: reclaimedJob.model_call_count,
+    scopedCalls: reclaimedJob.authorization_call_count,
+    tokenBudget: Number(reclaimedJob.authorized_token_budget),
+    scopedTokens: Number(reclaimedJob.authorization_token_count)
+  }, {
+    state: "running", step: "writing", attempt: 2, lockedBy: "lease-recovery-worker", leaseActive: true,
+    authorizationToken: strandedAuthorization, callBudget: 100, lifetimeCalls: 32, scopedCalls: 32,
+    tokenBudget: 2600000, scopedTokens: 1234680
+  }, "Reclaim must preserve report 8b3e266e's current authorization identity, counters, and ledger totals.");
   await db.exec("rollback");
 } catch (error) {
   await db.exec("rollback");
   throw error;
 }
-console.log("Report fulfillment migration passed: Stripe idempotency, comp grants without Stripe references, authorization parking, authorization-scoped call/token budgets, owner-adjustable lifetime backstop, exact Production timeout and Summer-validator recovery, durable object-shaped passing-unit cache, immutable call ledger/accounting, atomic call-budget exhaustion, birth-data parking, exclusive facts claim, and rollback.");
+console.log("Report fulfillment migration passed: Stripe idempotency, comp grants without Stripe references, authorization parking, authorization-scoped call/token budgets, owner-adjustable lifetime backstop, exact Production timeout/Summer-validator/call-32 lease recovery, durable object-shaped passing-unit cache, immutable call ledger/accounting, atomic call-budget exhaustion, birth-data parking, exclusive facts claim, and rollback.");

@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { createTldrAstroReportFactsClient, ReportCalculationApiClientError, type ReportChartSubject } from "./report-facts.js";
 import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
-import type { ReportFulfillmentStore, FulfillmentJobRow, FulfillmentReportRow } from "./report-fulfillment-store.ts";
+import type { ReportFulfillmentStore, FulfillmentJobRow, FulfillmentReportRow, ReportModelCallTimingRow } from "./report-fulfillment-store.ts";
 import { verifyReportFactLock } from "./report-fact-lock.js";
 import { judgeReportUnit, type ReportJudgeResult } from "./report-judge.js";
 import { createReportMailProvider, type ReportMailProvider } from "./report-mail.js";
@@ -111,9 +111,58 @@ export type ReportPersistenceRetryOptions = {
 
 export type ReportWorkerContinuationPolicy = {
   deadlineAtMs: number;
+  runtimeDeadlineAtMs?: number;
   maxNewUnits: number;
   now?: () => number;
 };
+
+export type ReportCallDurationEstimate = {
+  samples: number;
+  estimateMs: number;
+};
+
+export function reportCallDurationEstimates(
+  rows: ReportModelCallTimingRow[],
+  defaultEstimateMs: number
+): Record<string, ReportCallDurationEstimate> {
+  const estimates: Record<string, ReportCallDurationEstimate> = {};
+  for (const row of rows) {
+    const startedAt = Date.parse(row.created_at);
+    const completedAt = Date.parse(row.completed_at);
+    if (!row.schema_name || !Number.isFinite(startedAt) || !Number.isFinite(completedAt) || completedAt < startedAt) continue;
+    const durationMs = Math.max(1, completedAt - startedAt);
+    const current = estimates[row.schema_name];
+    estimates[row.schema_name] = {
+      samples: (current?.samples ?? 0) + 1,
+      // The longest completed observation is intentionally conservative. The
+      // separate safety margin absorbs additional provider/runtime variance.
+      estimateMs: Math.max(current?.estimateMs ?? 0, durationMs)
+    };
+  }
+  estimates.__default__ = { samples: 0, estimateMs: Math.max(1, defaultEstimateMs) };
+  return estimates;
+}
+
+export class ReportWorkerDeadlineYield extends Error {
+  constructor(
+    readonly schemaName: string,
+    readonly remainingMs: number,
+    readonly estimatedCallMs: number,
+    readonly safetyMarginMs: number
+  ) {
+    super(`REPORT_WORKER_DEADLINE_YIELD: ${schemaName} requires ${estimatedCallMs}+${safetyMarginMs}ms but only ${remainingMs}ms remain.`);
+    this.name = "ReportWorkerDeadlineYield";
+  }
+}
+
+function deadlineYieldFrom(error: unknown): ReportWorkerDeadlineYield | null {
+  let current: unknown = error;
+  for (let depth = 0; depth < 4 && current; depth += 1) {
+    if (current instanceof ReportWorkerDeadlineYield) return current;
+    current = current instanceof Error ? current.cause : null;
+  }
+  return null;
+}
 
 export class ReportPersistenceInfrastructureError extends Error {
   constructor(unitId: string, attempts: number, cause: unknown) {
@@ -216,7 +265,13 @@ export async function processReportFulfillmentJob(input: {
   const entitlement = await input.store.entitlement(input.job.entitlement_id);
   if (!report || !entitlement) throw new Error("Fulfillment job lost its report or entitlement.");
   if (entitlement.status !== "active") {
-    await input.store.updateJob(input.job.id, { state: "cancelled", last_error: `Entitlement is ${entitlement.status}.` });
+    await input.store.updateJob(input.job.id, {
+      state: "cancelled",
+      last_error: `Entitlement is ${entitlement.status}.`,
+      locked_at: null,
+      locked_by: null,
+      lease_expires_at: null
+    });
     return { status: "cancelled" };
   }
   if (!input.job.authorization_token || !input.job.authorized_call_budget || !input.job.authorized_token_budget) {
@@ -226,10 +281,44 @@ export async function processReportFulfillmentJob(input: {
   let authorizationTokenCount = input.job.authorization_token_count ?? 0;
   let estimatedCostTotal = report.token_spend_usd_estimate ?? 0;
   const providerCall = input.callModel ?? callReportModel;
+  const callClock = input.continuationPolicy?.now ?? Date.now;
+  const callDurationEstimates = reportCallDurationEstimates(
+    await input.store.callTimingHistory(input.job.id),
+    config.workerCallDurationDefaultMs
+  );
   let activeLedgerCallId: string | null = null;
+  let activeCallStartedAtMs: number | null = null;
+  let persistDeadlineYield: ((deadlineYield: ReportWorkerDeadlineYield) => Promise<void>) | null = null;
+  const observeCallDuration = (schemaName: string) => {
+    if (activeCallStartedAtMs === null) return;
+    const durationMs = Math.max(1, callClock() - activeCallStartedAtMs);
+    activeCallStartedAtMs = null;
+    const current = callDurationEstimates[schemaName];
+    callDurationEstimates[schemaName] = {
+      samples: (current?.samples ?? 0) + 1,
+      estimateMs: Math.max(current?.estimateMs ?? 0, durationMs)
+    };
+  };
   const authorizedCall: ReportModelCall = (modelInput) => providerCall({
     ...modelInput,
     beforeProviderCall: async (attempt) => {
+      if (input.continuationPolicy) {
+        const runtimeDeadlineAtMs = input.continuationPolicy.runtimeDeadlineAtMs ?? input.continuationPolicy.deadlineAtMs;
+        const remainingMs = Math.max(0, runtimeDeadlineAtMs - callClock());
+        const estimatedCallMs = (callDurationEstimates[attempt.schemaName] ?? callDurationEstimates.__default__).estimateMs;
+        if (remainingMs < estimatedCallMs + config.workerCallSafetyMarginMs) {
+          const deadlineYield = new ReportWorkerDeadlineYield(
+            attempt.schemaName,
+            remainingMs,
+            estimatedCallMs,
+            config.workerCallSafetyMarginMs
+          );
+          if (!persistDeadlineYield) throw deadlineYield;
+          await persistDeadlineYield(deadlineYield);
+          throw deadlineYield;
+        }
+      }
+      activeCallStartedAtMs = callClock();
       await modelInput.beforeProviderCall?.(attempt);
       // Missing pricing is configuration failure and must be discovered before
       // an authorization is consumed or a provider request is sent.
@@ -239,6 +328,7 @@ export async function processReportFulfillmentJob(input: {
     },
     afterProviderCall: async (attempt, result) => {
       await modelInput.afterProviderCall?.(attempt, result);
+      observeCallDuration(attempt.schemaName);
       if (!activeLedgerCallId) throw new Error("REPORT_CALL_LEDGER_MISSING: provider completed without an active ledger row.");
       const callId = activeLedgerCallId;
       activeLedgerCallId = null;
@@ -261,6 +351,7 @@ export async function processReportFulfillmentJob(input: {
     },
     onProviderCallError: async (attempt, error) => {
       await modelInput.onProviderCallError?.(attempt, error);
+      observeCallDuration(attempt.schemaName);
       if (!activeLedgerCallId) return;
       const callId = activeLedgerCallId;
       activeLedgerCallId = null;
@@ -305,13 +396,18 @@ export async function processReportFulfillmentJob(input: {
 
   const requeueForContinuation = async () => {
     const continuedAt = new Date((input.continuationPolicy?.now ?? Date.now)()).toISOString();
-    await input.store.updateReport(report.id, nowPatch("writing"));
+    await input.store.updateReport(report.id, {
+      ...nowPatch("writing"),
+      token_count_total: tokenCountTotal,
+      token_spend_usd_estimate: estimatedCostTotal
+    });
     await input.store.updateJob(input.job.id, {
       state: "queued",
       step: "writing",
       run_after: continuedAt,
       locked_at: null,
       locked_by: null,
+      lease_expires_at: null,
       last_error: null
     });
     return {
@@ -322,6 +418,10 @@ export async function processReportFulfillmentJob(input: {
       estimatedCostUsd: estimatedCostTotal,
       judgeScores
     };
+  };
+
+  persistDeadlineYield = async () => {
+    await requeueForContinuation();
   };
 
   const persistPassingUnit = async (entry: PassingUnitCacheEntry) => {
@@ -550,7 +650,7 @@ export async function processReportFulfillmentJob(input: {
     attempt_counts: { validator: validatorAttempts, judge: judgeAttempts, redundancy: redundancyAttempts },
     ...(config.autoPublishEnabled ? { delivered_at: new Date().toISOString() } : {})
   });
-  await input.store.updateJob(input.job.id, { state: "complete", step: "complete", locked_at: null, locked_by: null });
+  await input.store.updateJob(input.job.id, { state: "complete", step: "complete", locked_at: null, locked_by: null, lease_expires_at: null });
   if (config.autoPublishEnabled) {
     const combinationCount = await input.store.countCombination(report, promptVersions);
     const reason = combinationCount < config.firstCombinationAuditCount
@@ -609,6 +709,23 @@ export async function runReportFulfillmentBatch(input: {
     try {
       processed.push({ jobId: job.id, result: await processReportFulfillmentJob({ ...input, job }) });
     } catch (error) {
+      const deadlineYield = deadlineYieldFrom(error);
+      if (deadlineYield) {
+        processed.push({
+          jobId: job.id,
+          result: {
+            status: "queued",
+            continuation: true,
+            deadlineAdmission: {
+              schemaName: deadlineYield.schemaName,
+              remainingMs: deadlineYield.remainingMs,
+              estimatedCallMs: deadlineYield.estimatedCallMs,
+              safetyMarginMs: deadlineYield.safetyMarginMs
+            }
+          }
+        });
+        continue;
+      }
       const report = await input.store.report(job.report_id);
       const message = error instanceof Error ? error.message : "Unknown fulfillment failure.";
       const birthDataFailure = error instanceof ReportBirthDataError || /^BIRTH_DATA_(?:MISSING|INVALID):/u.test(message);
@@ -627,14 +744,15 @@ export async function runReportFulfillmentBatch(input: {
       }
       if (birthDataFailure) await input.store.updateEntitlement(job.entitlement_id, { status: "awaiting_birth_data" });
       await input.store.updateJob(job.id, birthDataFailure ? {
-        state: "paused", last_error: message, locked_at: null, locked_by: null
+        state: "paused", last_error: message, locked_at: null, locked_by: null, lease_expires_at: null
       } : retryable ? {
         state: "retry",
         run_after: new Date(Date.now() + Math.min(60_000, 2 ** job.attempt * 1_000)).toISOString(),
         last_error: message,
         locked_at: null,
-        locked_by: null
-      } : { state: "exception", last_error: message, locked_at: null, locked_by: null });
+        locked_by: null,
+        lease_expires_at: null
+      } : { state: "exception", last_error: message, locked_at: null, locked_by: null, lease_expires_at: null });
       processed.push({
         jobId: job.id,
         error: message,
