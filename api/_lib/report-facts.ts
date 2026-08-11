@@ -37,6 +37,8 @@ export type ReportChartSubject = {
   };
 };
 
+export type ReportNatalPointLongitudes = Partial<Record<"Ascendant" | "Midheaven", number>>;
+
 export type ComposeReportFactsInput = {
   userId: string;
   subjectId?: string | null;
@@ -46,6 +48,7 @@ export type ComposeReportFactsInput = {
   reportHorizon: ReportHorizon;
   start: string;
   end: string;
+  natalPointLongitudes?: ReportNatalPointLongitudes;
   regenerate?: boolean;
 };
 
@@ -59,6 +62,30 @@ export type ReportFactsAstroClient = {
   serviceVersion(): Promise<string>;
   reportWindow(input: Omit<ComposeReportFactsInput, "userId" | "subjectId" | "regenerate">): Promise<JsonObject>;
 };
+
+export function normalizeReportFactDates(value: JsonObject, timeZone = "UTC"): JsonObject {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone, year: "numeric", month: "2-digit", day: "2-digit"
+  });
+  const visit = (input: unknown): unknown => {
+    if (Array.isArray(input)) return input.map(visit);
+    if (!input || typeof input !== "object") return input;
+    const output: JsonObject = {};
+    for (const [key, child] of Object.entries(input as JsonObject)) {
+      output[key] = visit(child);
+      if ((/(?:At|Moment)$/u.test(key) || key === "startsAt" || key === "endsAt") && typeof child === "string") {
+        const timestamp = Date.parse(child);
+        if (Number.isFinite(timestamp)) {
+          const parts = formatter.formatToParts(new Date(timestamp));
+          const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((entry) => entry.type === type)?.value ?? "";
+          output[`${key}Date`] = `${part("year")}-${part("month")}-${part("day")}`;
+        }
+      }
+    }
+    return output;
+  };
+  return visit(value) as JsonObject;
+}
 
 export type ReportFactsDependencies = {
   envelopeStore: ReportEnvelopeStore;
@@ -145,7 +172,8 @@ export async function composeReportFacts(
       location: input.location,
       reportHorizon: input.reportHorizon,
       start: input.start,
-      end: input.end
+      end: input.end,
+      natalPointLongitudes: input.natalPointLongitudes
     })
   ]);
   if (facts.reportHorizon !== input.reportHorizon) {
@@ -268,8 +296,8 @@ export function createTldrAstroReportFactsClient({
       }
       return status.version;
     },
-    reportWindow(input) {
-      return request<JsonObject>("/timing/report-window", {
+    async reportWindow(input) {
+      const facts = await request<JsonObject>("/timing/report-window", {
         natalSubject: input.natalSubject,
         start: input.start,
         end: input.end,
@@ -281,8 +309,10 @@ export function createTldrAstroReportFactsClient({
           aspectProfile: "standard"
         },
         includeSolarReturn: input.reportHorizon === "12_months",
-        includeContentFacts: false
+        includeContentFacts: false,
+        natalPointLongitudes: input.natalPointLongitudes ?? {}
       });
+      return normalizeReportFactDates(facts, input.location.timeZone || "UTC");
     }
   };
 }
