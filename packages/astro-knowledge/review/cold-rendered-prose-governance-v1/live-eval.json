@@ -1,0 +1,604 @@
+{
+  "schemaVersion": "cold-rendered-prose-live-eval-v1",
+  "status": "FAIL",
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "high",
+  "authorizedCallCount": 13,
+  "callCount": 13,
+  "usage": {
+    "input_tokens": 12496,
+    "output_tokens": 9670,
+    "total_tokens": 22166,
+    "reasoning_tokens": 6380,
+    "cached_input_tokens": 0
+  },
+  "expected": {
+    "v7NegativeRevise": 12,
+    "sunLeoV3GoldPass": 1
+  },
+  "actual": {
+    "v7NegativeRevise": 8,
+    "sunLeoV3GoldPass": 0
+  },
+  "calibrationDelta": {
+    "priorGate": "The twelve V7 Mercury masters passed the prior gate before the owner rejected them on a cold rendered read.",
+    "newGate": "8/12 V7 pages rejected; 0/1 Sun-in-Leo V3 gold passed.",
+    "additionalCallsPerReviewedUnit": 1,
+    "contextIsolation": "The cold pass received rendered_copy only; no meaning plan, source note, astrology logic, intended meaning, or drafting context was sent."
+  },
+  "results": [
+    {
+      "fixtureId": "cold-negative-mercury-aries-v7",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "renderedCopySha256": "6a08e38a3ad1ce699f08af0f5a994c5be3f039466b51566b932bc09fd1a0626d",
+      "actualDecision": "PASS",
+      "actualStatus": "PASS",
+      "passed": false,
+      "reason": "The copy reads clearly and naturally from start to finish. Each section follows logically, uses concrete examples, and keeps the advice direct without relying on awkward or overly abstract phrasing.",
+      "violations": [],
+      "provider": {
+        "responseId": "resp_08b34d7a62fcee45006a7b49b69a7481a2bfb9af762d12ec95",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "high",
+        "usage": {
+          "input_tokens": 961,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 447,
+          "output_tokens_details": {
+            "reasoning_tokens": 371
+          },
+          "total_tokens": 1408
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-taurus-v7",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "renderedCopySha256": "440376fb47e509504017514dcf2a00d71835287201ce9df5b827ff5476d9ed28",
+      "actualDecision": "REVISE",
+      "actualStatus": "FAIL",
+      "passed": true,
+      "reason": "Several lines rely on unexplained astrological shorthand or vague references, and one sentence uses an abstract metaphor that makes the practical point harder to understand.",
+      "violations": [
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "First paragraph, first sentence",
+          "text": "Taurus changes Mercury’s standard.",
+          "reason": "Cold, this does not state a clear idea in ordinary language. A reader who does not already know how these terms relate has to infer what is changing and what “Mercury’s standard” means.",
+          "revision_instruction": "State the practical shift directly, without relying on the relationship between the two astrological terms to carry the meaning."
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Second section, first sentence",
+          "text": "This works well when a decision needs more than enthusiasm behind it.",
+          "reason": "“This” has no precise referent. It could mean the transit, the preceding questions, or a general approach, so the reader has to stop and resolve it.",
+          "revision_instruction": "Replace the vague referent with the specific approach or behavior being described."
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Second section, final sentence",
+          "text": "Mercury in Taurus is good at noticing the difference between an idea that sounds reassuring and one that can actually support the life built around it.",
+          "reason": "The phrase “support the life built around it” is abstract and strained. It is unclear how an idea supports a life, requiring the reader to translate the intended practical meaning.",
+          "revision_instruction": "Name the concrete practical test or consequence directly instead of using the “life built around it” metaphor."
+        }
+      ],
+      "provider": {
+        "responseId": "resp_070a48cae6a3f977006a7b49bd49488191842f4370b4553503",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "high",
+        "usage": {
+          "input_tokens": 959,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 886,
+          "output_tokens_details": {
+            "reasoning_tokens": 516
+          },
+          "total_tokens": 1845
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-gemini-v7",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "renderedCopySha256": "95db80398121f4e5a92a17932cb4f92ee30e773164ced2034afb992b82345af3",
+      "actualDecision": "REVISE",
+      "actualStatus": "FAIL",
+      "passed": true,
+      "reason": "Several lines use abstract or unnatural phrasing that makes the reader translate the meaning rather than receive it directly.",
+      "violations": [
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Heading: “Let the information move”",
+          "text": "Let the information move",
+          "reason": "This is too abstract to communicate a clear action or idea on first read. A reader has to infer what “information move” means in practice.",
+          "revision_instruction": "Replace the abstract phrase with a plain-language heading that names the behavior or benefit directly."
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "First paragraph, first sentence",
+          "text": "Gemini changes Mercury’s range.",
+          "reason": "“Changes Mercury’s range” is vague and sounds like astrology shorthand rather than normal reader-facing prose. The reader is not told what kind of range is changing.",
+          "revision_instruction": "State the specific change in plain language rather than referring broadly to Mercury’s “range.”"
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Second section heading",
+          "text": "Change your mind when the facts improve",
+          "reason": "Facts do not ordinarily “improve.” The intended idea is understandable, but the wording is unnatural and makes the reader pause.",
+          "revision_instruction": "Use everyday wording that refers to receiving better information, stronger evidence, or new facts."
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Second paragraph, final sentence",
+          "text": "Mercury in Gemini makes room for the possibility that better information should change what gets said next.",
+          "reason": "“Makes room for the possibility” is indirect and abstract, and “what gets said next” is awkwardly vague. The sentence takes a simple point and states it in a formal, roundabout way.",
+          "revision_instruction": "State directly that new or better information can change the conclusion or response."
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Third paragraph, third sentence",
+          "text": "The connection gets found, but nobody else understands it because the explanation skipped the middle.",
+          "reason": "“The connection gets found” is unnatural passive phrasing, and “skipped the middle” is compressed shorthand. The reader can infer the point, but a normal writer would name the missing steps in the explanation.",
+          "revision_instruction": "Use active, everyday language that says someone found a link but did not explain the steps connecting it to the conclusion."
+        }
+      ],
+      "provider": {
+        "responseId": "resp_0422b826186f42fe006a7b49c8801c81a391bede293594f764",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "high",
+        "usage": {
+          "input_tokens": 936,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 1036,
+          "output_tokens_details": {
+            "reasoning_tokens": 516
+          },
+          "total_tokens": 1972
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-cancer-v7",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "renderedCopySha256": "345ca2f2e746566588e4d0d98c4afae8256ab8a60bc603358add655c52291be6",
+      "actualDecision": "REVISE",
+      "actualStatus": "FAIL",
+      "passed": true,
+      "reason": "A few lines rely on vague or compressed phrasing that makes the reader pause to infer the intended meaning.",
+      "violations": [
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Paragraph beginning “Memory can catch what the literal wording misses”",
+          "text": "This works well when the important part of a conversation is not stated directly.",
+          "reason": "“This” has no clear, immediate referent. The reader has to infer whether it means Mercury in Cancer, memory, or the ability to notice subtext.",
+          "revision_instruction": "Replace “This” with a direct noun phrase that names the specific ability or situation being described."
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Paragraph beginning “The past can answer before the present does”",
+          "text": "The complication is letting recognition become proof.",
+          "reason": "“Recognition become proof” is compressed and abstract. A reader has to translate it into the more concrete idea of treating a familiar pattern or feeling as evidence that the same problem is happening again.",
+          "revision_instruction": "State directly that the problem is assuming a current pause or message means the same thing as a past one before checking the facts."
+        }
+      ],
+      "provider": {
+        "responseId": "resp_0a2be291b01ba156006a7b49d5c51481a3892641520ff0c95a",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "high",
+        "usage": {
+          "input_tokens": 953,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 789,
+          "output_tokens_details": {
+            "reasoning_tokens": 516
+          },
+          "total_tokens": 1742
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-leo-v7",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "renderedCopySha256": "8dd84691312511fa2a7d2f532a10866faef2e7d69c3733e73228656abfba63b2",
+      "actualDecision": "PASS",
+      "actualStatus": "PASS",
+      "passed": false,
+      "reason": "The copy reads clearly and naturally throughout. Each section develops the previous point without abrupt jumps, and the advice stays concrete enough to understand without decoding.",
+      "violations": [],
+      "provider": {
+        "responseId": "resp_02f38854c2e1102e006a7b49e1093081a3a8e293248d0db255",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "high",
+        "usage": {
+          "input_tokens": 951,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 904,
+          "output_tokens_details": {
+            "reasoning_tokens": 834
+          },
+          "total_tokens": 1855
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-virgo-v7",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "renderedCopySha256": "ab1d26e28b8100e64aa3ff746a6c82adb5e7b4e766c14a648bae6c4e573a3387",
+      "actualDecision": "PASS",
+      "actualStatus": "PASS",
+      "passed": false,
+      "reason": "The copy reads clearly on a first pass, uses direct everyday language, and moves naturally from identifying recurring problems to making useful corrections without getting stuck in perfectionism.",
+      "violations": [],
+      "provider": {
+        "responseId": "resp_03e88c04e34ce922006a7b49ef1a948191b4bd97b49079a53c",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "high",
+        "usage": {
+          "input_tokens": 972,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 310,
+          "output_tokens_details": {
+            "reasoning_tokens": 237
+          },
+          "total_tokens": 1282
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-libra-v7",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "renderedCopySha256": "f428416d907b2d6fd14d55fcb0c1806917f5edcdea57edfdb7c33ba47af536a9",
+      "actualDecision": "PASS",
+      "actualStatus": "PASS",
+      "passed": false,
+      "reason": "The copy reads clearly and naturally throughout. Each section follows logically, uses everyday language, and names concrete behaviors without requiring outside context.",
+      "violations": [],
+      "provider": {
+        "responseId": "resp_028189f626e04cc6006a7b49f43bd481928ccd1a0bc7ff0f90",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "high",
+        "usage": {
+          "input_tokens": 951,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 65,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 1016
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-scorpio-v7",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "renderedCopySha256": "5bb2946dd2ef486ade33cc9a4a65efcc9e957ba740f8ec98ab29c573fdf07188",
+      "actualDecision": "REVISE",
+      "actualStatus": "FAIL",
+      "passed": true,
+      "reason": "The opening explanatory paragraph uses abstract, personified phrasing that makes the reader translate the meaning into ordinary language.",
+      "violations": [
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Opening paragraph, sentences 1–2",
+          "text": "Scorpio changes Mercury’s method. Mercury becomes less interested in taking the first explanation at face value.",
+          "reason": "“Changes Mercury’s method” is abstract and unnatural, and “Mercury becomes less interested” personifies Mercury in a way that does not directly tell the reader what behavior is being described.",
+          "revision_instruction": "Replace the abstract, personified setup with a direct description of the reader’s tendency to question first explanations and look for missing information."
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Opening paragraph, sentence 3",
+          "text": "Attention goes toward what is missing, what changed, what was left unanswered, and what shows up when separate pieces of information are compared.",
+          "reason": "“Attention goes toward” sounds formal and assembled rather than like ordinary prose. The long list also makes the sentence feel indirect.",
+          "revision_instruction": "Use a more natural verb and state plainly what the reader is likely to notice or examine."
+        }
+      ],
+      "provider": {
+        "responseId": "resp_0e9f84c696961823006a7b49f61a1081a280ff2e4fd61c925f",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "high",
+        "usage": {
+          "input_tokens": 929,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 796,
+          "output_tokens_details": {
+            "reasoning_tokens": 516
+          },
+          "total_tokens": 1725
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-sagittarius-v7",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "renderedCopySha256": "371e81b484bb9a74d8c32a3c5f7a64ca08f095b632e829f5c535af57aab08c12",
+      "actualDecision": "REVISE",
+      "actualStatus": "FAIL",
+      "passed": true,
+      "reason": "Several lines rely on abstract or unclear phrasing that a reader cannot understand directly without supplying the missing connection.",
+      "violations": [
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Paragraph under “Name the larger point,” first sentence",
+          "text": "Sagittarius changes Mercury’s scale.",
+          "reason": "“Changes Mercury’s scale” is not clear in ordinary prose. A reader has to stop and work out what “scale” means here.",
+          "revision_instruction": "State directly what becomes broader or more big-picture, using concrete everyday language."
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Paragraph under “Give the information a direction,” final sentence",
+          "text": "The facts gain direction because people understand why they matter.",
+          "reason": "“Facts gain direction” is abstract and unnatural. Facts do not literally gain direction, so the reader must translate the phrase to understand the point.",
+          "revision_instruction": "Name the practical result in plain language, such as how understanding why the facts matter helps people use them or decide what to do."
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Heading before the final paragraph",
+          "text": "Check how much the facts really support",
+          "reason": "The heading leaves out what the facts are supposed to support. It reads as incomplete and forces the reader to supply the missing object.",
+          "revision_instruction": "Specify plainly what the facts should support, so the heading stands on its own."
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Final paragraph, first sentence",
+          "text": "While Mercury is in Sagittarius, make the connection and say the bigger point out loud.",
+          "reason": "“Make the connection” is vague. The sentence does not say which ideas or facts the reader should connect.",
+          "revision_instruction": "Identify the connection directly, such as connecting the details to the larger point or conclusion."
+        }
+      ],
+      "provider": {
+        "responseId": "resp_0d5f74e89ccfa9b4006a7b4a00b968819fb84b7e6bdd4c72b2",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "high",
+        "usage": {
+          "input_tokens": 924,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 926,
+          "output_tokens_details": {
+            "reasoning_tokens": 516
+          },
+          "total_tokens": 1850
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-capricorn-v7",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "renderedCopySha256": "cea70c216e89e41db9aaa48271ce439500a590cef232c86423d6c1f51cf85bcd",
+      "actualDecision": "REVISE",
+      "actualStatus": "FAIL",
+      "passed": true,
+      "reason": "Several lines use unclear or unnatural abstractions that make the reader pause to decode what is meant.",
+      "violations": [
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Opening sentence",
+          "text": "A serious plan needs a date, a responsibility, and an actual answer.",
+          "reason": "“A responsibility” is not a natural thing for a plan to need, and “an actual answer” does not say what question needs answering. The list sounds assembled rather than like ordinary prose.",
+          "revision_instruction": "State the needed planning elements in concrete, everyday terms, including who owns the task and what decision or response is needed."
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Section: Put the terms on the table, first sentence",
+          "text": "Capricorn changes Mercury’s terms.",
+          "reason": "“Changes Mercury’s terms” is unclear on a cold read. It is not evident whether “terms” means wording, conditions, or something else.",
+          "revision_instruction": "Replace the abstract “terms” phrasing with a direct statement of how the focus of communication changes."
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Section: Put the terms on the table, second sentence",
+          "text": "Possibility becomes less interesting than requirement.",
+          "reason": "The contrast is overly compressed and unnatural. “Requirement” is abstract and singular, leaving the reader to translate the intended behavior.",
+          "revision_instruction": "Name the practical shift directly in everyday language, contrasting open-ended ideas with what needs to be done or decided."
+        }
+      ],
+      "provider": {
+        "responseId": "resp_0db0964b1717f5b7006a7b4a0e2f2c819d931f8f124f46163e",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "high",
+        "usage": {
+          "input_tokens": 928,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 744,
+          "output_tokens_details": {
+            "reasoning_tokens": 398
+          },
+          "total_tokens": 1672
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-aquarius-v7",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "renderedCopySha256": "283d3fd9473083f1b54a80d8ce025919066d514ee69d433b741809dc87a73704",
+      "actualDecision": "REVISE",
+      "actualStatus": "FAIL",
+      "passed": true,
+      "reason": "One sentence opens with a vague referent that makes the reader infer which earlier idea it means.",
+      "violations": [
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "\"This works when individual fixes keep failing.\"",
+          "text": "This works when individual fixes keep failing.",
+          "reason": "\"This\" does not name the approach it refers to. The reader has to infer that it means looking for the larger pattern or questioning the rule.",
+          "revision_instruction": "Replace the vague opening referent with a direct name for the approach being described."
+        }
+      ],
+      "provider": {
+        "responseId": "resp_091f38bd82e9a2d3006a7b4a19056081a288700d2d8e827ef6",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "high",
+        "usage": {
+          "input_tokens": 1028,
+          "input_tokens_details": {
+            "cache_write_tokens": 1025,
+            "cached_tokens": 0
+          },
+          "output_tokens": 1183,
+          "output_tokens_details": {
+            "reasoning_tokens": 1034
+          },
+          "total_tokens": 2211
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-pisces-v7",
+      "fixtureKind": "negative",
+      "expected": "REVISE",
+      "renderedCopySha256": "71deacbb88557dc50581d15b9f965f04a4efdf8c3f3c66e220cbc2089f4c1878",
+      "actualDecision": "REVISE",
+      "actualStatus": "FAIL",
+      "passed": true,
+      "reason": "One sentence ends on an unclear claim: it does not say what about the explanation needs to change or why.",
+      "violations": [
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Paragraph under “A strong impression can still be incomplete,” final sentence",
+          "text": "The impression may contain real information while the explanation still needs to change.",
+          "reason": "“The explanation still needs to change” is vague. A reader has to infer whether the explanation needs more evidence, clearer wording, correction, or revision as new facts emerge.",
+          "revision_instruction": "State directly what remains unfinished about the explanation, using a concrete everyday term such as checking, clarifying, or revising it with more information."
+        }
+      ],
+      "provider": {
+        "responseId": "resp_094e6f7c89f6234f006a7b4a2a9a288192a27cacfdd04d5b24",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "high",
+        "usage": {
+          "input_tokens": 966,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 408,
+          "output_tokens_details": {
+            "reasoning_tokens": 228
+          },
+          "total_tokens": 1374
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-positive-sun-leo-v3",
+      "fixtureKind": "gold",
+      "expected": "PASS",
+      "renderedCopySha256": "74e7ef5ad4773446e7aa48c446c84f5b171178bb3b81f9f5cd2da68f60b941b1",
+      "actualDecision": "REVISE",
+      "actualStatus": "FAIL",
+      "passed": false,
+      "reason": "Several lines use unclear or strained phrasing that makes the reader infer the concrete meaning, especially around approval, identity, and the Leo-to-Virgo transition.",
+      "violations": [
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Paragraph 2, sentences 7–8",
+          "text": "Soon the work is no longer becoming more honest or more interesting. It is becoming easier to approve.",
+          "reason": "The work is described as \"becoming\" honest, interesting, and easier to approve, which is indirect and mechanically phrased. It is also unclear who is doing the approving.",
+          "revision_instruction": "Name the change in the creator's choices directly and clarify whose approval is being sought."
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Paragraph 3, sentence 5",
+          "text": "The version that gets rewarded can still be the wrong version to keep feeding.",
+          "reason": "\"Keep feeding\" is an unclear metaphor for maintaining or reinforcing an identity. A reader has to translate it to understand the point.",
+          "revision_instruction": "Replace the feeding metaphor with a direct, everyday description of continuing to perform or support an inauthentic version of oneself."
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Paragraph 4, sentence 4",
+          "text": "What we name during Leo season is what Virgo season will ask us to build.",
+          "reason": "It is unclear what \"we name\" refers to, and the phrase \"Virgo season will ask us to build\" is abstract and personifies the season rather than stating the practical connection.",
+          "revision_instruction": "Specify what is being named and state plainly how that choice connects to the work that follows."
+        },
+        {
+          "category": "cold_rendered_prose",
+          "severity": "blocking",
+          "location": "Paragraph 4, sentence 5",
+          "text": "The work worth carrying forward is the work we still mean when the spotlight is off.",
+          "reason": "\"The work we still mean\" is not a natural everyday phrase. The reader must infer that it means work they still believe in or stand behind without attention.",
+          "revision_instruction": "Use a more ordinary, direct phrase for continuing to believe in or stand behind the work without public attention."
+        }
+      ],
+      "provider": {
+        "responseId": "resp_0f5c8dc90c1527b6006a7b4a30b53c819eb2706b9c8290f607",
+        "responseModel": "gpt-5.6-terra",
+        "reasoningEffort": "high",
+        "usage": {
+          "input_tokens": 1038,
+          "input_tokens_details": {
+            "cache_write_tokens": 1035,
+            "cached_tokens": 0
+          },
+          "output_tokens": 1176,
+          "output_tokens_details": {
+            "reasoning_tokens": 698
+          },
+          "total_tokens": 2214
+        }
+      }
+    }
+  ]
+}

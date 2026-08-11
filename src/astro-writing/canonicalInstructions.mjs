@@ -7,7 +7,52 @@ import { buildCardWriterInstructions } from "./cardWritingStandard.mjs";
 
 export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v2-2026-08-09";
 export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v3-owner-standard-candidate-2026-08-09";
-export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v3-owner-gold-2026-08-09";
+export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v4-cold-rendered-prose-2026-08-11";
+
+export const COLD_RENDERED_PROSE_RULE = `Read the copy cold, rendered, and line by line as prose. Judge the final text exactly as a
+reader would encounter it in the product. Do not use the prompt, source notes, astrology
+logic, intended meaning, or drafting context to help the writing make sense.
+
+Every sentence must: make sense on the first read; flow naturally from the sentence before
+it; lead naturally into the sentence after it; use normal, everyday language; sound like
+something a human writer would actually say; state the intended meaning directly enough
+that the reader does not have to decode it.
+
+Prefer the ordinary word when it is more natural. Use work instead of labor unless labor is
+literally the subject. Do not choose a more formal, abstract, clever, or literary word just
+because it sounds elevated.
+
+A sentence fails if the judge has to stop and ask what it means, mentally translate it into
+simpler English, infer a missing connection, or rely on knowledge of the astrology to
+understand the prose.
+
+Also judge the paragraph as a whole. Flag: abrupt jumps between ideas; sentences that
+technically make sense alone but do not connect; vague referents such as it, this, that,
+the change when the reader may not know what they refer to; report-heavy transitions;
+clever compression; abstract summaries where the actual behavior could be named; repeated
+setup or explanation; sentences that sound assembled rather than written; unnecessarily
+formal vocabulary; a strong sentence followed by another sentence that explains the same
+point again.
+
+Cold-read test: after drafting, ignore what the writer intended and read only the rendered
+copy. If any line produces "Wait, what does that mean?", "Why are we suddenly talking about
+this?", or "A normal person would say this more simply," the line is not approved.
+
+Final judge instruction: Do not reward a sentence for being astrologically correct if it is
+awkward prose. Correct astrology expressed in unnatural language still fails the writing
+judge.`;
+
+export const coldRenderedProseReviewInstructions = `# COLD RENDERED PROSE GATE
+
+You are reviewing only the rendered reader-facing prose. You have not been given, and must
+not infer help from, a meaning plan, source notes, astrology logic, intended meaning, or
+drafting context.
+
+${COLD_RENDERED_PROSE_RULE}
+
+Return strict JSON only. Decision may be PASS or REVISE only. Any failed
+cold_rendered_prose check is blocking. Do not rewrite the copy; identify the exact failed
+line and provide a narrowly scoped revision instruction.`;
 
 export const canonicalAstrologyWritingInstructions = `CODEX INSTRUCTION (owner-designated canonical form): Translate every astrological idea into lived cause and consequence. Begin with the specific human experience, behavior, conflict, decision, or consequence the astrology describes. Use concrete stakes such as work, money, home, body, time, access, recognition, and relationships. For aspects, show one force acting on another. For synastry, show one person doing something and the other reacting. For placements, describe the recurring behavior and need rather than predicting an event. Add perspective, warmth, or advice only after the truth has been clearly named. Never make the reader decode astrology language to understand what is happening.
 
@@ -52,6 +97,12 @@ Evaluate the copy against the supplied structured astrology meaning plan and can
 ASSUME THERE IS A DEFECT UNTIL EACH REQUIRED CHECK PASSES.
 
 BLOCKING CHECKS
+
+0. COLD RENDERED PROSE
+This check is performed in a separate context-isolated pass using only the rendered copy.
+Its result is blocking and cannot be overruled by astrological correctness.
+
+${COLD_RENDERED_PROSE_RULE}
 
 1. ASTROLOGY INTEGRITY
 Does the passage accurately express the supplied planet/point function and sign mechanics?
@@ -131,6 +182,7 @@ DECISION CONTRACT: Return PASS or REVISE only. Never return FAIL.
 ${REVIEWER_GOLD_EXEMPLARS}`;
 
 export const REVIEW_FIELDS = Object.freeze([
+  "cold_rendered_prose",
   "astrology_integrity",
   "planet_or_point_function",
   "sign_house_separation",
@@ -150,6 +202,7 @@ export const REVIEW_FIELDS = Object.freeze([
 ]);
 
 export const HARD_REVISE_FIELDS = Object.freeze([
+  "cold_rendered_prose",
   "astrology_integrity",
   "planet_or_point_function",
   "sign_house_separation",
