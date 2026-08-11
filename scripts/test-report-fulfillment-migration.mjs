@@ -31,6 +31,10 @@ const compMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/2
 const accountingMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260810130000_report_call_accounting.sql", import.meta.url), "utf8");
 const birthTimeMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260810210000_birth_time_normalization.sql", import.meta.url), "utf8");
 const passingUnitCacheMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811010000_report_passing_unit_cache.sql", import.meta.url), "utf8");
+const authorizationTokenBudgetMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811120000_report_authorization_token_budget.sql", import.meta.url), "utf8");
+assert.match(authorizationTokenBudgetMigration, /74951c07-64fe-461d-ac49-e81858af3296/u, "The migration must carry the owner ruling for the exact Production report.");
+assert.match(authorizationTokenBudgetMigration, /token_budget_lifetime = 3000000/u, "The exact Production report must receive its owner-approved 3M lifetime backstop.");
+assert.match(authorizationTokenBudgetMigration, /set authorized_call_budget = 55,[\s\S]*authorized_token_budget = 1450000/u, "The current authorization must retain its approved 55-call and 1.45M-token budgets.");
 await db.exec("begin");
 try {
   const userId = "00000000-0000-0000-0000-000000000001";
@@ -126,8 +130,34 @@ try {
   assert.equal(secondCall.callNumber, 2);
   assert.equal((await db.query("select public.finish_report_fulfillment_call($1, 'error', 0, 0, 0, 0, 0, null, 'FIXTURE_ONLY') as finished", [secondCall.callId])).rows[0].finished, true);
   assert.equal((await db.query("select public.finish_report_fulfillment_call($1, 'error', 0, 0, 0, 0, 0, null, 'MUTATION') as finished", [secondCall.callId])).rows[0].finished, false, "A terminal ledger row must be immutable.");
+  await db.exec(authorizationTokenBudgetMigration);
+  const scoped = (await db.query("select model_call_count, authorization_call_count, authorized_call_budget, authorized_token_budget, authorization_token_count from public.report_fulfillment_jobs where id = $1", [compJob.id])).rows[0];
+  assert.deepEqual({
+    modelCallCount: scoped.model_call_count,
+    authorizationCallCount: scoped.authorization_call_count,
+    authorizedCallBudget: scoped.authorized_call_budget,
+    authorizedTokenBudget: Number(scoped.authorized_token_budget),
+    authorizationTokenCount: Number(scoped.authorization_token_count)
+  }, {
+    modelCallCount: 2,
+    authorizationCallCount: 2,
+    authorizedCallBudget: 2,
+    authorizedTokenBudget: 1_450_000,
+    authorizationTokenCount: 110
+  }, "The active authorization must count only its own calls and tokens while lifetime numbering remains intact.");
+  const replacementToken = "00000000-0000-0000-0000-000000000098";
+  await db.query(`update public.report_fulfillment_jobs
+    set authorization_token = $1, authorized_call_budget = 1, authorization_call_count = 0,
+        authorized_token_budget = 1450000, authorization_token_count = 0, authorization_consumed_at = null
+    where id = $2`, [replacementToken, compJob.id]);
+  const replacementCall = (await db.query("select public.begin_report_fulfillment_call($1, $2, 'openai', 'gpt-5.6-sol', 'fixture_replacement') as begun", [compJob.id, replacementToken])).rows[0].begun;
+  assert.equal(replacementCall.callNumber, 3, "A replacement authorization must retain lifetime ledger numbering.");
+  assert.equal(replacementCall.authorizationCallNumber, 1, "A replacement authorization receives a fresh scoped call counter.");
+  assert.equal((await db.query("select public.finish_report_fulfillment_call($1, 'complete', 5, 0, 0, 5, 0.00001, 'resp_replacement', null) as finished", [replacementCall.callId])).rows[0].finished, true);
+  assert.equal(Number((await db.query("select authorization_token_count from public.report_fulfillment_jobs where id = $1", [compJob.id])).rows[0].authorization_token_count), 5);
+  assert.equal(Number((await db.query("select token_count_total from public.user_reports where id = $1", [compReport.id])).rows[0].token_count_total), 115, "Lifetime accounting must retain prior-authorization spend.");
   await db.exec("savepoint exhausted_budget");
-  await assert.rejects(db.query("select public.begin_report_fulfillment_call($1, $2, 'openai', 'gpt-5.6-sol', 'fixture_extra')", [compJob.id, authorizationToken]), /REPORT_CALL_AUTHORIZATION_REQUIRED/u);
+  await assert.rejects(db.query("select public.begin_report_fulfillment_call($1, $2, 'openai', 'gpt-5.6-sol', 'fixture_extra')", [compJob.id, replacementToken]), /REPORT_CALL_AUTHORIZATION_REQUIRED/u);
   await db.exec("rollback to savepoint exhausted_budget");
   await db.exec("release savepoint exhausted_budget");
   await db.exec("rollback");
@@ -135,4 +165,4 @@ try {
   await db.exec("rollback");
   throw error;
 }
-console.log("Report fulfillment migration passed: Stripe idempotency, comp grants without Stripe references, authorization parking, durable object-shaped passing-unit cache, immutable call ledger/accounting, atomic call-budget exhaustion, birth-data parking, exclusive facts claim, and rollback.");
+console.log("Report fulfillment migration passed: Stripe idempotency, comp grants without Stripe references, authorization parking, authorization-scoped call/token budgets, owner-adjustable lifetime backstop, durable object-shaped passing-unit cache, immutable call ledger/accounting, atomic call-budget exhaustion, birth-data parking, exclusive facts claim, and rollback.");
