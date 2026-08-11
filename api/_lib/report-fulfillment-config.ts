@@ -77,7 +77,12 @@ export function reportFulfillmentConfig() {
     authorizationTokenBudget: integerEnv("REPORT_AUTHORIZATION_TOKEN_BUDGET", integerEnv("REPORT_TOKEN_BUDGET", 1_450_000, 1), 1),
     reportLifetimeTokenBudget: integerEnv("REPORT_LIFETIME_TOKEN_BUDGET", 1_450_000, 1),
     jobAttemptCap: integerEnv("REPORT_JOB_ATTEMPT_CAP", 5, 1),
-    workerBatchSize: integerEnv("REPORT_WORKER_BATCH_SIZE", 5, 1),
+    // Vercel terminates this function at 300 seconds. One report unit per
+    // invocation leaves the whole unit atomic while preventing the worker
+    // from beginning another unit too close to that hard ceiling.
+    workerBatchSize: integerEnv("REPORT_WORKER_BATCH_SIZE", 1, 1),
+    workerMaxNewUnitsPerCycle: integerEnv("REPORT_WORKER_MAX_NEW_UNITS_PER_CYCLE", 1, 1),
+    workerCycleDeadlineMs: integerEnv("REPORT_WORKER_CYCLE_DEADLINE_MS", 240_000, 30_000),
     workerPaused: process.env.REPORT_WORKER_PAUSED === "true",
     rulingVersion,
     autoPublishRequested: requestedAutoPublish,
