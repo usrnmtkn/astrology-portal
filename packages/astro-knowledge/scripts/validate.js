@@ -487,8 +487,15 @@ function validateManifestationSetFile(filePath, errors) {
   if (collection.kind !== "manifestation-set-collection") {
     errors.push(`${rel(filePath)}: kind must be manifestation-set-collection`);
   }
-  if (collection.review_status !== "needs_review") {
-    errors.push(`${rel(filePath)}: collection review_status must be needs_review`);
+  if (!["needs_review", "approved"].includes(collection.review_status)) {
+    errors.push(`${rel(filePath)}: collection review_status must be needs_review or approved`);
+  }
+  if (collection.review_status === "approved" && (
+    collection.approval?.status !== "owner_approved"
+    || typeof collection.approval?.approvedOn !== "string"
+    || typeof collection.approval?.sourcePath !== "string"
+  )) {
+    errors.push(`${rel(filePath)}: approved collections require owner approval provenance`);
   }
   if (!Array.isArray(collection.coverageDomains) || collection.coverageDomains.length === 0) {
     errors.push(`${rel(filePath)}: coverageDomains must be a non-empty array`);
@@ -511,15 +518,18 @@ function validateManifestationSetFile(filePath, errors) {
         errors.push(`${prefix}.${field} must be a non-empty array:string`);
       }
     }
-    if (record.review_status !== "needs_review") {
-      errors.push(`${prefix}.review_status must be needs_review`);
+    if (!["needs_review", "approved"].includes(record.review_status)) {
+      errors.push(`${prefix}.review_status must be needs_review or approved`);
     }
-    if (
-      !record.copyClaim
-      || record.copyClaim.text !== null
-      || record.copyClaim.review_status !== "needs_review"
-    ) {
-      errors.push(`${prefix}.copyClaim must remain null and needs_review`);
+    const needsReviewClaim = record.review_status === "needs_review"
+      && record.copyClaim?.text === null
+      && record.copyClaim?.review_status === "needs_review";
+    const approvedClaim = record.review_status === "approved"
+      && typeof record.copyClaim?.text === "string"
+      && record.copyClaim.text.trim().length > 0
+      && record.copyClaim?.review_status === "approved";
+    if (!needsReviewClaim && !approvedClaim) {
+      errors.push(`${prefix}.copyClaim status and text must match the record review status`);
     }
     if (typeof record.provenance !== "string") {
       errors.push(`${prefix}.provenance must be string`);
