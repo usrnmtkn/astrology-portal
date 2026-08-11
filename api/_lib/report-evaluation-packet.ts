@@ -2,6 +2,13 @@ import type { ReportDraft, ReportGenerationPayload } from "./report-generation.t
 import { REPORT_LABELED_NEGATIVE_EXAMPLES } from "./report-owner-comparison.js";
 
 type LocatedText = { location: string; text: string; heading: boolean };
+export type ReportUnitCoordinate = {
+  token: string;
+  location: string;
+  paragraphIndex: number;
+  sentenceStartIndex: number;
+  text: string;
+};
 
 function locatedText(draft: ReportDraft): LocatedText[] {
   return [
@@ -22,6 +29,10 @@ function paragraphs(value: string) {
   return value.split(/\n\s*\n/u).map((paragraph) => paragraph.trim()).filter(Boolean);
 }
 
+function sentenceCount(value: string) {
+  return value.match(/[^.!?]+[.!?]+|[^.!?]+$/gu)?.map((sentence) => sentence.trim()).filter(Boolean).length ?? 0;
+}
+
 function excludedFromMovementCount(value: string) {
   return /^(?:#{1,6}\s|\*{0,2}astrology\b|[-*]\s+(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\s+\d{1,2}\b|(?:WINTER|SPRING|SUMMER|AUTUMN)\s+\d{4}\b)/iu.test(value);
 }
@@ -32,10 +43,27 @@ export function reportDraftMovementApplicable(draft: ReportDraft) {
   return count >= 2;
 }
 
+export function reportUnitCoordinates(draft: ReportDraft): ReportUnitCoordinate[] {
+  return locatedText(draft).flatMap((field) => {
+    let sentenceStartIndex = 0;
+    return paragraphs(field.text).map((text, paragraphIndex) => {
+      const coordinate = {
+        token: `[LOCATION=${field.location}; PARAGRAPH_INDEX=${paragraphIndex}]`,
+        location: field.location,
+        paragraphIndex,
+        sentenceStartIndex,
+        text
+      };
+      sentenceStartIndex += sentenceCount(text);
+      return coordinate;
+    });
+  });
+}
+
 export function completeReportUnit(draft: ReportDraft) {
-  return locatedText(draft).flatMap((field) => paragraphs(field.text).map((text, paragraphIndex) => (
-    `[LOCATION=${field.location}; PARAGRAPH_INDEX=${paragraphIndex}]\n${text}`
-  ))).join("\n\n");
+  return reportUnitCoordinates(draft).map((coordinate) => (
+    `${coordinate.token}\n${coordinate.text}`
+  )).join("\n\n");
 }
 
 export function assertReportEvaluationPacketReady(payload: ReportGenerationPayload) {

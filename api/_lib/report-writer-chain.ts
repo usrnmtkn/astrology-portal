@@ -1,6 +1,9 @@
 import type { ReportDraft, ReportGenerationPayload, ReportValidationIssue } from "./report-generation.ts";
 import { reportPromptFromPayload, validateReportDraft } from "./report-generation.js";
-import { assertReportEvaluationPacketReady, completeReportUnit, reportEvaluationPacket, reportDraftMovementApplicable } from "./report-evaluation-packet.js";
+import {
+  assertReportEvaluationPacketReady, completeReportUnit, reportEvaluationPacket,
+  reportDraftMovementApplicable, reportUnitCoordinates
+} from "./report-evaluation-packet.js";
 import { verifyReportFactLock } from "./report-fact-lock.js";
 import { callReportModel, type ReportModelCall, type ReportModelUsage, writerModelTarget } from "./report-model-client.js";
 import { loadActiveReportCritiquePrompt } from "./report-prompt-versions.js";
@@ -37,6 +40,14 @@ export type ReportCritique = {
   result: "no_defects" | "defects";
   applicability: { interpretive_movement: "applicable" | "not_applicable"; reason: string };
   defects: ReportDefect[];
+};
+type ReportColdReadDefect = Omit<ReportDefect, "location" | "sentence_index" | "scope_start" | "scope_end"> & {
+  address_token: string;
+};
+type ReportColdReadCritique = {
+  result: "no_defects" | "defects";
+  applicability: { interpretive_movement: "applicable" | "not_applicable"; reason: string };
+  defects: ReportColdReadDefect[];
 };
 export type ReportWriterChainResult = {
   draft: ReportDraft;
@@ -94,6 +105,42 @@ const critiqueSchema = {
     } }
   }
 };
+
+function coldReadCritiqueSchema(draft: ReportDraft, movementApplicable: boolean) {
+  const addressTokens = reportUnitCoordinates(draft).map((coordinate) => coordinate.token);
+  if (!addressTokens.length) throw new ReportRevisionScopeError("Cold-read unit has no supplied address tokens.");
+  const categories = movementApplicable
+    ? [...REPORT_DEFECT_CATEGORIES]
+    : REPORT_DEFECT_CATEGORIES.filter((category) => category !== "interpretive_gap");
+  const movement = movementApplicable ? "applicable" : "not_applicable";
+  return {
+    type: "object", additionalProperties: false, required: ["result", "applicability", "defects"],
+    properties: {
+      result: { type: "string", enum: ["no_defects", "defects"] },
+      applicability: {
+        type: "object", additionalProperties: false,
+        required: ["interpretive_movement", "reason"],
+        properties: {
+          interpretive_movement: { type: "string", enum: [movement] },
+          reason: { type: "string" }
+        }
+      },
+      defects: {
+        type: "array",
+        items: {
+          type: "object", additionalProperties: false,
+          required: ["id", "category", "address_token", "quote", "evidence", "evidence_ids", "instruction"],
+          properties: {
+            id: { type: "string" }, category: { type: "string", enum: categories },
+            address_token: { type: "string", enum: addressTokens },
+            quote: { type: "string" }, evidence: { type: "string" },
+            evidence_ids: { type: "array", items: { type: "string" } }, instruction: { type: "string" }
+          }
+        }
+      }
+    }
+  };
+}
 
 const revisionPatchSchema = {
   type: "object", additionalProperties: false, required: ["replacements"],
@@ -297,6 +344,7 @@ export function reportValidationIssuesToNamedDefects(
  */
 export function mergeOverlappingReportDefects(draft: ReportDraft, defects: ReportDefect[]) {
   const fields = textFields(draft);
+  for (const defect of defects) assertReportDefectBounds(fields, defect);
   const sorted = [...defects].sort((a, b) => (
     a.location.localeCompare(b.location)
     || a.scope_start - b.scope_start
@@ -313,6 +361,9 @@ export function mergeOverlappingReportDefects(draft: ReportDraft, defects: Repor
   return groups.map((group) => {
     if (group.length === 1) return group[0];
     const location = group[0].location;
+    if (group.some((defect) => defect.location !== location)) {
+      throw new ReportRevisionScopeError("Named defects from different locations cannot share a merged replacement scope.");
+    }
     const scopeStart = Math.min(...group.map((defect) => defect.scope_start));
     const scopeEnd = Math.max(...group.map((defect) => defect.scope_end));
     const spans = sentenceSpans(fields.get(location) ?? "");
@@ -349,6 +400,73 @@ export class ReportRevisionScopeError extends Error {
     super(message);
     this.name = "ReportRevisionScopeError";
   }
+}
+
+function assertReportDefectBounds(fields: Map<string, string>, defect: ReportDefect) {
+  const value = fields.get(defect.location);
+  if (value === undefined) throw new ReportRevisionScopeError(`Replacement location '${defect.location}' is not present.`);
+  if (!Number.isInteger(defect.sentence_index) || !Number.isInteger(defect.scope_start) || !Number.isInteger(defect.scope_end)
+    || defect.scope_end < defect.scope_start || defect.sentence_index < defect.scope_start || defect.sentence_index > defect.scope_end) {
+    throw new ReportRevisionScopeError(`Invalid named scope for '${defect.id}'.`);
+  }
+  const spans = sentenceSpans(value);
+  if (!spans[defect.scope_start] || !spans[defect.scope_end]) {
+    throw new ReportRevisionScopeError(`Replacement '${defect.id}' references a sentence outside '${defect.location}'.`);
+  }
+}
+
+function quoteSentenceRange(value: string, quote: string) {
+  const expected = quote.trim();
+  const spans = sentenceSpans(value);
+  for (let start = 0; start < spans.length; start += 1) {
+    for (let end = start; end < spans.length; end += 1) {
+      if (value.slice(spans[start].start, spans[end].end).trim() === expected) return { start, end };
+    }
+  }
+  return null;
+}
+
+export function normalizeReportColdReadCritique(
+  draft: ReportDraft,
+  critique: ReportColdReadCritique,
+  movementApplicable = reportDraftMovementApplicable(draft)
+): ReportCritique {
+  const coordinates = new Map(reportUnitCoordinates(draft).map((coordinate) => [coordinate.token, coordinate]));
+  const defects: ReportDefect[] = [];
+  for (const finding of critique.defects) {
+    // The dynamic provider schema excludes this category. Suppression here is
+    // the fail-safe for mocks or providers that bypass structured validation.
+    if (!movementApplicable && finding.category === "interpretive_gap") continue;
+    const coordinate = coordinates.get(finding.address_token);
+    if (!coordinate) {
+      throw new ReportRevisionScopeError(`Cold-read address token '${finding.address_token}' was not supplied.`);
+    }
+    const localRange = quoteSentenceRange(coordinate.text, finding.quote);
+    if (!localRange) {
+      throw new ReportRevisionScopeError(`Cold-read quote for '${finding.id}' is not an exact sentence span at '${finding.address_token}'.`);
+    }
+    const scopeStart = coordinate.sentenceStartIndex + localRange.start;
+    const scopeEnd = coordinate.sentenceStartIndex + localRange.end;
+    defects.push({
+      id: finding.id,
+      category: finding.category,
+      location: coordinate.location,
+      sentence_index: scopeStart,
+      scope_start: scopeStart,
+      scope_end: scopeEnd,
+      quote: finding.quote,
+      evidence: finding.evidence,
+      evidence_ids: finding.evidence_ids,
+      instruction: finding.instruction
+    });
+  }
+  const applicability = {
+    interpretive_movement: movementApplicable ? "applicable" as const : "not_applicable" as const,
+    reason: movementApplicable
+      ? "The rendered unit contains at least two substantive prose paragraphs."
+      : "The rendered unit contains fewer than two substantive prose paragraphs."
+  };
+  return { result: defects.length ? "defects" : "no_defects", applicability, defects };
 }
 
 function setTextField(draft: ReportDraft, location: string, value: string) {
@@ -564,30 +682,25 @@ export async function runReportWriterChain(input: {
   // unit and the owner cold-prose ruling. Facts, prompts, comparison evidence,
   // validator output, and drafting context are excluded so none can rescue
   // prose that a reader cannot understand cold.
-  const coldResult = await callModel<ReportCritique>({
+  const coldMovementApplicable = reportDraftMovementApplicable(revised);
+  const coldCoordinates = reportUnitCoordinates(revised);
+  const coldResult = await callModel<ReportColdReadCritique>({
     ...target,
     prompt: [
       payload.coldProseRuling.text,
-      "Read only the rendered unit below. Return findings only; never rewrite. Route vague referents, assembled or formal language to unnatural_phrasing or owner_voice_drift; repeated setup or explanation-after-landing to density_violation; abrupt or disconnected movement to interpretive_gap. Use the smallest sentence scope that identifies the defect.",
+      "Read only the rendered unit below. Return findings only; never rewrite. Every finding must copy address_token exactly from one supplied [LOCATION=...; PARAGRAPH_INDEX=...] token. These tokens are coordinates, not prose or drafting context. Quote the exact smallest sentence span at that coordinate. Never invent, combine, paraphrase, or extend an address token.",
+      coldMovementApplicable
+        ? "Interpretive movement is applicable. Route abrupt or disconnected movement to interpretive_gap."
+        : "Interpretive movement is not applicable. Do not return interpretive_gap. Route an actual phrasing or density problem to its supported category; otherwise return no finding.",
+      "Route vague referents, assembled or formal language to unnatural_phrasing or owner_voice_drift; repeated setup or explanation-after-landing to density_violation.",
+      `SUPPLIED_ADDRESS_TOKENS\n${coldCoordinates.map((coordinate) => coordinate.token).join("\n")}`,
       `RENDERED_UNIT\n${completeReportUnit(revised)}`
     ].join("\n\n"),
     schemaName: "report_unit_cold_read",
-    schema: critiqueSchema
+    schema: coldReadCritiqueSchema(revised, coldMovementApplicable)
   });
   calls.push({ stage: "cold_read", model: coldResult.model, provider: coldResult.provider, usage: coldResult.usage });
-  const coldMovementApplicable = reportDraftMovementApplicable(revised);
-  const coldCritique: ReportCritique = {
-    ...coldResult.value,
-    applicability: {
-      interpretive_movement: coldMovementApplicable ? "applicable" : "not_applicable",
-      reason: coldMovementApplicable
-        ? "The rendered unit contains at least two substantive prose paragraphs."
-        : "The rendered unit contains fewer than two substantive prose paragraphs."
-    }
-  };
-  if (!coldMovementApplicable && coldCritique.defects.some((defect) => defect.category === "interpretive_gap")) {
-    throw new Error("Cold read returned interpretive_gap for a unit where interpretive movement is not applicable.");
-  }
+  const coldCritique = normalizeReportColdReadCritique(revised, coldResult.value, coldMovementApplicable);
   if (coldCritique.result !== "no_defects" && coldCritique.defects.length > 0) {
     const coldRevision = await reviseReportDraftForNamedDefects({
       payload, draft: revised, defects: coldCritique.defects, callModel, stage: "cold_revise"
