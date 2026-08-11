@@ -164,6 +164,18 @@ function pointToken(value: string) {
 
 const srOverlayEligibleTokens = new Set(SR_OVERLAY_ELIGIBLE_POINTS.map(pointToken));
 const slowTransitExcludedTargetTokens = new Set(SLOW_TRANSIT_EXCLUDED_TARGETS.map(pointToken));
+const CANONICAL_ANGLE_HOUSES = new Map<string, number>([
+  [pointToken("Midheaven"), 10],
+  [pointToken("Ascendant"), 1],
+  [pointToken("IC"), 4],
+  [pointToken("Descendant"), 7]
+]);
+
+function canonicalizeAngularFactorHouse(factor: ReportFactor): ReportFactor {
+  if (!factor.natalPoint) return factor;
+  const canonicalHouse = CANONICAL_ANGLE_HOUSES.get(pointToken(factor.natalPoint));
+  return canonicalHouse === undefined ? factor : { ...factor, house: canonicalHouse };
+}
 
 type FactorRuleMatch = {
   factorTypes?: ManifestationSetRecord["factorType"][];
@@ -883,7 +895,7 @@ export function reportFactors(facts: Record<string, unknown>) {
     ...solarReturnFactors(windowFacts),
     ...transitFactors(windowFacts),
     ...eclipseFactors(windowFacts)
-  ];
+  ].map(canonicalizeAngularFactorHouse);
   const seen = new Set<string>();
   return factors.filter((factor) => {
     const key = `${factor.id}:${factor.factorType}`;

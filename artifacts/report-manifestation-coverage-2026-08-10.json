@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "report-manifestation-coverage-v1",
+  "schemaVersion": "report-manifestation-coverage-v2",
   "auditedOn": "2026-08-10",
   "eligibilityRuling": "Eclipses enter report factor selection by conjunction to natal points and by natal house placement only. Soft eclipse aspects (sextile, trine, square to natal points as standalone factors, and non-conjunction oppositions) are excluded. Chiron, Black Moon Lilith, and the lunar Nodes are excluded as slow-transit targets and as SR-overlay factors in report factor selection. The SR-overlay grid covers Sun through Pluto in natal houses 1–12.",
   "universeDefinition": {
@@ -2715,7 +2715,9 @@
       "slow-transit-to-natal/uranus/trine/venus/9"
     ]
   },
-  "marieFixture": {
+  "fixtureDiagnostic": {
+    "authoritativeForProductionCoverage": false,
+    "note": "This checked-in fixture is an offline regression aid only. Production coverage claims require scripts/audit-production-report-coverage.mjs against the report's stored facts bundle.",
     "factorCount": 30,
     "resolvedCount": 30,
     "sourceGapCount": 0,

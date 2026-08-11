@@ -372,6 +372,75 @@ for (const factorId of [
 ]) {
   assert.ok(factors.some((factor) => factor.id === factorId), `${factorId} must remain eligible.`);
 }
+// Raw Production-shaped fact captured from report 74951c07 on 2026-08-10.
+// This deliberately does not use the checked-in Marie fixture: the Production
+// calculator reports the conjunction contact in quadrant house 9 even though
+// the contacted point is the Midheaven, whose canonical report house is 10.
+const rawProductionAngleFact = {
+  natal: {
+    positions: [],
+    angles: {
+      Midheaven: {
+        sign: "Aquarius",
+        glyph: "MC",
+        house: 9,
+        point: "Midheaven",
+        speed: null,
+        theme: "angle",
+        degree: 16,
+        minute: 34,
+        motion: "direct",
+        planet: "Midheaven",
+        longitude: 316.573051,
+        signGlyph: "♒",
+        retrograde: false,
+        declination: null,
+        degreeDecimal: 16.573051
+      }
+    }
+  },
+  lunarEvents: [{
+    id: "solar_eclipse-2027-02-06",
+    kind: "solar_eclipse",
+    sign: "Aquarius",
+    subtype: "annular",
+    occursAt: "2027-02-06T15:56:08Z",
+    longitude: 317.627113,
+    natalHouse: 9,
+    natalContacts: [
+      { orb: 3.3588, aspect: "square", natalHouse: 6, natalPoint: "Uranus" },
+      { orb: 2.5747, aspect: "sextile", natalHouse: 7, natalPoint: "Neptune" },
+      { orb: 1.3763, aspect: "trine", natalHouse: 5, natalPoint: "Pluto" },
+      { orb: 1.0541, aspect: "conjunction", natalHouse: 9, natalPoint: "Midheaven" }
+    ]
+  }],
+  profections: {},
+  solarReturn: {},
+  slowTransitArcs: []
+};
+const productionAngleFactors = reportFactors(rawProductionAngleFact);
+const productionMidheavenFactor = productionAngleFactors.find((factor) => factor.id === "solar_eclipse-2027-02-06-midheaven");
+assert.equal(productionMidheavenFactor?.house, 10);
+assert.equal(productionMidheavenFactor?.activationHouse, 9);
+assert.equal(resolveManifestationSets([productionMidheavenFactor]).resolved[0]?.record.id, "eclipse-on-midheaven-house-10");
+
+const canonicalAngleFactors = reportFactors({
+  profections: {},
+  solarReturn: {},
+  lunarEvents: [],
+  slowTransitArcs: [
+    { id: "angle-midheaven", transitPlanet: "Saturn", natalPoint: "Midheaven", natalHouse: 9, aspect: "square" },
+    { id: "angle-ascendant", transitPlanet: "Saturn", natalPoint: "Ascendant", natalHouse: 12, aspect: "square" },
+    { id: "angle-ic", transitPlanet: "Saturn", natalPoint: "IC", natalHouse: 3, aspect: "square" },
+    { id: "angle-descendant", transitPlanet: "Saturn", natalPoint: "Descendant", natalHouse: 6, aspect: "square" }
+  ]
+});
+assert.deepEqual(Object.fromEntries(canonicalAngleFactors.map((factor) => [factor.natalPoint, factor.house])), {
+  Midheaven: 10,
+  Ascendant: 1,
+  IC: 4,
+  Descendant: 7
+});
 const eligibilityFixture = reportFactors({
   profections: {},
   solarReturn: { analysis: { solarReturnToNatalOverlays: [
