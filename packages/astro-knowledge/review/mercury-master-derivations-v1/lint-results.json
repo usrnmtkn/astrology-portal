@@ -1,0 +1,814 @@
+[
+  {
+    "sign": "aries",
+    "astrology_integrity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "planet_or_point_function": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "sign_house_separation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "literal_first_read_clarity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "observable_behavior": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "example_proves_astrology": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "invented_motive": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "stock_trope": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "metaphor_requires_translation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "generic_self_help": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "clinical_shorthand": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "advocacy_register_drift": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "tagline_stands_alone": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "voice_match": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "register_consistency": {
+      "status": "FAIL",
+      "reason": "Collective copy contains second person."
+    },
+    "redundancy": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "decision": "REVISE",
+    "violations": [
+      {
+        "category": "register_consistency",
+        "severity": "nonblocking",
+        "location": "turn",
+        "text": "Say what you mean and make the first move when the facts are clear. Then keep listening. A fast answer is only useful if it does not create another round of cleanup.",
+        "reason": "Collective copy contains second person.",
+        "revision_instruction": "Correct only the failed turn material."
+      }
+    ],
+    "required_revisions": [
+      {
+        "field": "turn",
+        "instruction": "Correct only the failed turn material."
+      }
+    ]
+  },
+  {
+    "sign": "taurus",
+    "astrology_integrity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "planet_or_point_function": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "sign_house_separation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "literal_first_read_clarity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "observable_behavior": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "example_proves_astrology": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "invented_motive": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "stock_trope": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "metaphor_requires_translation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "generic_self_help": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "clinical_shorthand": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "advocacy_register_drift": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "tagline_stands_alone": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "voice_match": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "register_consistency": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "redundancy": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "decision": "PASS",
+    "violations": [],
+    "required_revisions": []
+  },
+  {
+    "sign": "gemini",
+    "astrology_integrity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "planet_or_point_function": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "sign_house_separation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "literal_first_read_clarity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "observable_behavior": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "example_proves_astrology": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "invented_motive": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "stock_trope": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "metaphor_requires_translation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "generic_self_help": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "clinical_shorthand": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "advocacy_register_drift": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "tagline_stands_alone": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "voice_match": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "register_consistency": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "redundancy": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "decision": "PASS",
+    "violations": [],
+    "required_revisions": []
+  },
+  {
+    "sign": "cancer",
+    "astrology_integrity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "planet_or_point_function": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "sign_house_separation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "literal_first_read_clarity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "observable_behavior": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "example_proves_astrology": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "invented_motive": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "stock_trope": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "metaphor_requires_translation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "generic_self_help": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "clinical_shorthand": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "advocacy_register_drift": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "tagline_stands_alone": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "voice_match": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "register_consistency": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "redundancy": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "decision": "PASS",
+    "violations": [],
+    "required_revisions": []
+  },
+  {
+    "sign": "leo",
+    "astrology_integrity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "planet_or_point_function": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "sign_house_separation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "literal_first_read_clarity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "observable_behavior": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "example_proves_astrology": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "invented_motive": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "stock_trope": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "metaphor_requires_translation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "generic_self_help": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "clinical_shorthand": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "advocacy_register_drift": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "tagline_stands_alone": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "voice_match": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "register_consistency": {
+      "status": "FAIL",
+      "reason": "Collective copy contains second person."
+    },
+    "redundancy": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "decision": "REVISE",
+    "violations": [
+      {
+        "category": "register_consistency",
+        "severity": "nonblocking",
+        "location": "turn",
+        "text": "Let your voice show and say what you actually believe. Make the message memorable. Then let useful feedback improve the idea without turning every correction into a judgment of the person who shared it.",
+        "reason": "Collective copy contains second person.",
+        "revision_instruction": "Correct only the failed turn material."
+      }
+    ],
+    "required_revisions": [
+      {
+        "field": "turn",
+        "instruction": "Correct only the failed turn material."
+      }
+    ]
+  },
+  {
+    "sign": "virgo",
+    "astrology_integrity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "planet_or_point_function": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "sign_house_separation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "literal_first_read_clarity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "observable_behavior": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "example_proves_astrology": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "invented_motive": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "stock_trope": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "metaphor_requires_translation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "generic_self_help": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "clinical_shorthand": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "advocacy_register_drift": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "tagline_stands_alone": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "voice_match": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "register_consistency": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "redundancy": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "decision": "PASS",
+    "violations": [],
+    "required_revisions": []
+  },
+  {
+    "sign": "libra",
+    "astrology_integrity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "planet_or_point_function": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "sign_house_separation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "literal_first_read_clarity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "observable_behavior": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "example_proves_astrology": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "invented_motive": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "stock_trope": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "metaphor_requires_translation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "generic_self_help": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "clinical_shorthand": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "advocacy_register_drift": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "tagline_stands_alone": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "voice_match": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "register_consistency": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "redundancy": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "decision": "PASS",
+    "violations": [],
+    "required_revisions": []
+  },
+  {
+    "sign": "scorpio",
+    "astrology_integrity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "planet_or_point_function": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "sign_house_separation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "literal_first_read_clarity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "observable_behavior": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "example_proves_astrology": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "invented_motive": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "stock_trope": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "metaphor_requires_translation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "generic_self_help": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "clinical_shorthand": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "advocacy_register_drift": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "tagline_stands_alone": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "voice_match": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "register_consistency": {
+      "status": "FAIL",
+      "reason": "reassurance"
+    },
+    "redundancy": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "decision": "REVISE",
+    "violations": [
+      {
+        "category": "banned_language",
+        "severity": "nonblocking",
+        "location": "lived",
+        "text": "One contradiction can undo hours of reassurance. The right follow-up question uncovers the detail everyone else missed. But a single mismatch can spark an elaborate theory that the facts never supported.",
+        "reason": "reassurance",
+        "revision_instruction": "Correct only the failed lived material."
+      }
+    ],
+    "required_revisions": [
+      {
+        "field": "lived",
+        "instruction": "Correct only the failed lived material."
+      }
+    ]
+  },
+  {
+    "sign": "sagittarius",
+    "astrology_integrity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "planet_or_point_function": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "sign_house_separation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "literal_first_read_clarity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "observable_behavior": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "example_proves_astrology": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "invented_motive": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "stock_trope": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "metaphor_requires_translation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "generic_self_help": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "clinical_shorthand": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "advocacy_register_drift": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "tagline_stands_alone": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "voice_match": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "register_consistency": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "redundancy": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "decision": "PASS",
+    "violations": [],
+    "required_revisions": []
+  },
+  {
+    "sign": "capricorn",
+    "astrology_integrity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "planet_or_point_function": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "sign_house_separation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "literal_first_read_clarity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "observable_behavior": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "example_proves_astrology": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "invented_motive": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "stock_trope": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "metaphor_requires_translation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "generic_self_help": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "clinical_shorthand": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "advocacy_register_drift": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "tagline_stands_alone": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "voice_match": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "register_consistency": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "redundancy": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "decision": "PASS",
+    "violations": [],
+    "required_revisions": []
+  },
+  {
+    "sign": "pisces",
+    "astrology_integrity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "planet_or_point_function": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "sign_house_separation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "literal_first_read_clarity": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "observable_behavior": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "example_proves_astrology": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "invented_motive": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "stock_trope": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "metaphor_requires_translation": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "generic_self_help": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "clinical_shorthand": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "advocacy_register_drift": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "tagline_stands_alone": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "voice_match": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "register_consistency": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "redundancy": {
+      "status": "PASS",
+      "reason": "No defect found for this check."
+    },
+    "decision": "PASS",
+    "violations": [],
+    "required_revisions": []
+  }
+]

@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "batchId": "mercury-master-derivations-v1",
+  "sourceMaster": "packages/astro-knowledge/review/mercury-ingress-masters-v7/TLDR-Mercury-Ingress-Articles-V7.md",
+  "mapping": {
+    "tagline": "the article's sharpest thesis or contradiction, usually the primary hook",
+    "hook": "the opening interpretive mechanism",
+    "lived": "the one strongest coherent situation, not a pile of examples",
+    "turn": "complication plus useful response; imperative allowed"
+  },
+  "governance": {
+    "status": "owner-selection-pending",
+    "reviewStatus": "needs_review",
+    "ownerApproved": false,
+    "promotionAuthorized": false,
+    "canonical": false,
+    "serving": false,
+    "newClaimsAllowed": false,
+    "newScenesAllowed": false,
+    "aquariusExcludedBecause": "The Aquarius card was already owner-derived on 2026-08-11 and is retained only as the mapping control."
+  },
+  "cards": [
+    {
+      "sign": "aries",
+      "card": {
+        "tagline": "The answer comes quickly. Make sure the rest of the question gets a chance to arrive.",
+        "hook": "Aries changes Mercury’s pace. Long explanations become harder to tolerate when the useful part can be said in one sentence. Questions get sharper. Replies come faster.",
+        "lived": "The first question gets answered so quickly that the second one barely registers. Then the decision has to be reopened because the detail that looked small was the part everything depended on.",
+        "turn": "Say what you mean and make the first move when the facts are clear. Then keep listening. A fast answer is only useful if it does not create another round of cleanup."
+      },
+      "masterExcerpts": {
+        "tagline": ["The answer comes quickly. Make sure the rest of the question gets a chance to arrive."],
+        "hook": ["Aries changes Mercury’s pace. Long explanations become harder to tolerate when the useful part can be said in one sentence. Questions get sharper. Replies come faster."],
+        "lived": ["You skim the instructions because the task looks familiar, interrupt because the ending seems obvious, or answer the first question so quickly that the second one barely registers. Then the decision has to be reopened because the detail that looked small was the part everything depended on."],
+        "turn": ["While Mercury is in Aries, say what you mean and make the first move when the facts are clear. Then keep listening. A fast answer is only useful if it does not create another round of cleanup."]
+      },
+      "operations": ["selected primary hook", "selected mechanics opening", "compressed one question-and-missed-detail sequence", "removed transit lead-in from useful response"]
+    },
+    {
+      "sign": "taurus",
+      "card": {
+        "tagline": "A reliable answer still has to survive new information.",
+        "hook": "Taurus changes Mercury’s standard. New information does not earn trust just because it is new. The question becomes more practical: Does this hold up? What will it cost? Can people rely on it a month from now?",
+        "lived": "The proposal gets compared with what has already worked, and the real expense matters more than the optimistic estimate. Then the familiar method stays in place because replacing it feels more disruptive than admitting it no longer fits.",
+        "turn": "Take enough time to know what can be relied on. Then notice when the evidence has actually changed. A thoughtful answer can still become outdated."
+      },
+      "masterExcerpts": {
+        "tagline": ["A reliable answer still has to survive new information."],
+        "hook": ["Taurus changes Mercury’s standard. New information does not earn trust just because it is new. The question becomes more practical: Does this hold up? What will it cost? Can people rely on it a month from now?"],
+        "lived": ["You compare the proposal with what has already worked, look at the real expense instead of the optimistic estimate, or wait until the terms are clear before agreeing.", "The familiar method stays in place because replacing it feels more disruptive than admitting it no longer fits."],
+        "turn": ["While Mercury is in Taurus, take enough time to know what can be relied on. Then notice when the evidence has actually changed. A thoughtful answer can still become outdated."]
+      },
+      "operations": ["selected primary hook", "selected mechanics opening", "compressed the proposal and outdated-method sequence", "removed transit lead-in from useful response"]
+    },
+    {
+      "sign": "gemini",
+      "card": {
+        "tagline": "One answer opens three more questions.",
+        "hook": "Gemini changes Mercury’s range. One fact rarely stays alone for long. A question leads to another source. Two separate conversations suddenly turn out to be about the same problem.",
+        "lived": "The connection gets found, but nobody else understands it because the explanation skipped the middle. By the end, there may be more facts on the table and less agreement about what any of them mean.",
+        "turn": "Follow the question that changes the answer. Share the source. Revise the conclusion when the evidence improves. Then finish the explanation before the next interesting idea pulls the conversation somewhere else."
+      },
+      "masterExcerpts": {
+        "tagline": ["One answer opens three more questions."],
+        "hook": ["Gemini changes Mercury’s range. One fact rarely stays alone for long. A question leads to another source. A side comment reveals the missing connection. Two separate conversations suddenly turn out to be about the same problem."],
+        "lived": ["The connection gets found, but nobody else understands it because the explanation skipped the middle. By the end, there may be more facts on the table and less agreement about what any of them mean."],
+        "turn": ["While Mercury is in Gemini, follow the question that changes the answer. Share the source. Revise the conclusion when the evidence improves. Then finish the explanation before the next interesting idea pulls the conversation somewhere else."]
+      },
+      "operations": ["selected primary hook", "compressed mechanics opening by removing one parallel example", "selected one unfinished-explanation sequence", "removed transit lead-in from useful response"]
+    },
+    {
+      "sign": "cancer",
+      "card": {
+        "tagline": "A familiar tone can bring the old conversation back before this one has had a chance to be different.",
+        "hook": "Cancer changes Mercury’s context. A sentence does not arrive alone. Tone matters. Timing matters. Who said it matters. The same five words can land very differently because of the promise that came before them or the argument nobody resolved.",
+        "lived": "A pause sounds like the last pause. A neutral message feels like the beginning of the old disagreement. The reply starts answering the history before the current conversation has spoken for itself.",
+        "turn": "Take the reaction seriously, then look at what is happening now. Memory is useful context. It should not get to decide the ending before the current conversation has spoken for itself."
+      },
+      "masterExcerpts": {
+        "tagline": ["A familiar tone can bring the old conversation back before this one has had a chance to be different."],
+        "hook": ["Cancer changes Mercury’s context. A sentence does not arrive alone. Tone matters. Timing matters. Who said it matters. The same five words can land very differently because of the promise that came before them, the argument nobody resolved, or the way this person usually sounds when something is wrong."],
+        "lived": ["A pause sounds like the last pause. A neutral message feels like the beginning of the old disagreement.", "Memory is useful context. It should not get to decide the ending before the current conversation has spoken for itself."],
+        "turn": ["While Mercury is in Cancer, take the reaction seriously, then look at what is happening now. Memory is useful context. It should not get to decide the ending before the current conversation has spoken for itself."]
+      },
+      "operations": ["selected alternative hook to preserve collective register", "compressed mechanics opening", "joined the repeated-message sequence to its stated consequence", "removed transit lead-in from useful response"]
+    },
+    {
+      "sign": "leo",
+      "card": {
+        "tagline": "A memorable message still has to survive the facts.",
+        "hook": "Leo changes Mercury’s delivery. Detached language loses some of its appeal. Ideas want personality behind them. A strong opinion, vivid story, or clear point of view can make the message easier to remember because the person saying it is visibly invested.",
+        "lived": "A correction to the idea starts to feel like a correction to the person. The discussion moves away from the evidence and toward who was embarrassed, interrupted, or not given enough credit. Being seen as right starts to matter more than finding out what is right.",
+        "turn": "Let your voice show and say what you actually believe. Make the message memorable. Then let useful feedback improve the idea without turning every correction into a judgment of the person who shared it."
+      },
+      "masterExcerpts": {
+        "tagline": ["A memorable message still has to survive the facts."],
+        "hook": ["Leo changes Mercury’s delivery. Detached language loses some of its appeal. Ideas want personality behind them. A strong opinion, vivid story, or clear point of view can make the message easier to remember because the person saying it is visibly invested."],
+        "lived": ["A correction to the idea starts to feel like a correction to the person. The discussion moves away from the evidence and toward who was embarrassed, interrupted, or not given enough credit. Once that happens, being seen as right can matter more than finding out what is right."],
+        "turn": ["While Mercury is in Leo, let your voice show and say what you actually believe. Make the message memorable. Then let useful feedback improve the idea without turning every correction into a judgment of you."]
+      },
+      "operations": ["selected alternative hook to preserve collective register", "selected mechanics opening", "selected one correction-becomes-personal sequence", "removed transit lead-in and collectivized the final object without adding a claim"]
+    },
+    {
+      "sign": "virgo",
+      "card": {
+        "tagline": "Find the part that keeps making everyone do the work twice.",
+        "hook": "Virgo changes Mercury’s focus. Attention moves toward the sentence everyone misreads, the number that does not match, the instruction that leaves out a step, or the routine that keeps creating the same mistake. The question is not simply what is wrong. It is where the process stopped working.",
+        "lived": "The draft stays open because one sentence could be cleaner. The answer waits because one more fact might matter. The work keeps getting a little better while the people waiting for it continue using the wrong version.",
+        "turn": "Correct the error that actually matters. Clarify the instruction people keep misreading. Check the number the decision depends on. Then send the useful version. The tiny flaw still visible does not deserve the same attention as the mistake that sends everyone back to the beginning."
+      },
+      "masterExcerpts": {
+        "tagline": ["Find the part that keeps making everyone do the work twice."],
+        "hook": ["Virgo changes Mercury’s focus. Attention moves toward the sentence everyone misreads, the number that does not match, the instruction that leaves out a step, or the routine that keeps creating the same mistake. The question is not simply what is wrong. It is where the process stopped working."],
+        "lived": ["The draft stays open because one sentence could be cleaner. The answer waits because one more fact might matter. The work keeps getting a little better while the people waiting for it continue using the wrong version."],
+        "turn": ["While Mercury is in Virgo, correct the error that actually matters. Clarify the instruction people keep misreading. Check the number the decision depends on. Then send the useful version. The tiny flaw you can still see does not deserve the same attention as the mistake that sends everyone back to the beginning."]
+      },
+      "operations": ["selected primary hook", "selected mechanics opening", "selected one delayed-draft sequence", "removed transit lead-in and explicit second person from useful response"]
+    },
+    {
+      "sign": "libra",
+      "card": {
+        "tagline": "A conversation is not balanced if the same person keeps doing all the adjusting.",
+        "hook": "Libra changes Mercury’s measure. The wording matters because the relationship between the people speaking matters. Attention moves toward fairness, tone, competing versions of events, and the point where keeping the peace begins to change the actual agreement.",
+        "lived": "The decision waits for one more opinion while the first proposal quietly becomes the default. A plan that sounded fair looks different once the same person keeps changing their time, preference, or expectations to make it work.",
+        "turn": "State a position clearly enough that it remains part of the decision. Fairness is not everybody leaving pleased. It is nobody being edited out of the agreement."
+      },
+      "masterExcerpts": {
+        "tagline": ["A conversation is not balanced if the same person keeps doing all the adjusting."],
+        "hook": ["Libra changes Mercury’s measure. The wording matters because the relationship between the people speaking matters. Attention moves toward fairness, tone, competing versions of events, and the point where keeping the peace begins to change the actual agreement."],
+        "lived": ["The decision waits for one more opinion while the first proposal quietly becomes the default. A plan that sounded fair looks different once the same person keeps changing their time, preference, or expectations to make it work."],
+        "turn": ["While Mercury is in Libra, listen carefully and make room for nuance. Then state your position clearly enough that it remains part of the decision. Fairness is not everybody leaving pleased. It is nobody being edited out of the agreement."]
+      },
+      "operations": ["selected primary hook", "selected mechanics opening", "selected one proposal-becomes-default sequence", "compressed useful response and removed explicit second person"]
+    },
+    {
+      "sign": "scorpio",
+      "card": {
+        "tagline": "The first explanation is not always the whole explanation.",
+        "hook": "Scorpio changes Mercury’s method. Attention goes toward what is missing, what changed, what was left unanswered, and what shows up when separate pieces of information are compared.",
+        "lived": "One contradiction can undo hours of reassurance. The right follow-up question uncovers the detail everyone else missed. But a single mismatch can spark an elaborate theory that the facts never supported.",
+        "turn": "Ask the harder question and compare the responses. Keep looking while the evidence is incomplete. Once the facts are sufficient, let them be enough."
+      },
+      "masterExcerpts": {
+        "tagline": ["The first explanation is not always the whole explanation."],
+        "hook": ["Scorpio changes Mercury’s method. Mercury becomes less interested in taking the first explanation at face value. Attention goes toward what is missing, what changed, what was left unanswered, and what shows up when separate pieces of information are compared."],
+        "lived": ["One contradiction can undo hours of reassurance. The right follow-up question often uncovers the detail everyone else missed.", "A single mismatch can spark an elaborate theory that the facts never supported."],
+        "turn": ["While Mercury is in Scorpio, ask the harder question and compare the responses. Keep looking while the evidence is incomplete. Once the facts are sufficient, let them be enough."]
+      },
+      "operations": ["selected primary hook", "compressed mechanics opening by removing its restatement", "joined the contradiction sequence to its overreach", "removed transit lead-in from useful response"]
+    },
+    {
+      "sign": "sagittarius",
+      "card": {
+        "tagline": "The big idea can arrive before the evidence is ready to support it.",
+        "hook": "Sagittarius changes Mercury’s scale. Individual facts become more interesting once they belong to a larger story. Attention moves toward meaning, direction, consequences, and the conclusion that explains why several separate updates matter together.",
+        "lived": "The conversation moves once somebody names what all the information adds up to. Then one example gets the weight of an entire argument, and a confident summary starts sounding settled before the supporting detail has been checked.",
+        "turn": "Make the connection and say the bigger point out loud. Then return to the evidence. The detail that complicates the story still counts, especially when it changes the conclusion."
+      },
+      "masterExcerpts": {
+        "tagline": ["The big idea can arrive before the evidence is ready to support it."],
+        "hook": ["Sagittarius changes Mercury’s scale. Individual facts become more interesting once they belong to a larger story. Attention moves toward meaning, direction, consequences, and the conclusion that explains why several separate updates matter together."],
+        "lived": ["The conversation can move once somebody names what all the information adds up to.", "The complication is giving one example the weight of an entire argument. A confident summary starts sounding settled before the supporting detail has been checked."],
+        "turn": ["While Mercury is in Sagittarius, make the connection and say the bigger point out loud. Then return to the evidence. The detail that complicates the story still counts, especially when it changes the conclusion."]
+      },
+      "operations": ["selected primary hook", "selected mechanics opening", "joined the larger-point sequence to its evidence failure", "removed transit lead-in from useful response"]
+    },
+    {
+      "sign": "capricorn",
+      "card": {
+        "tagline": "A serious plan needs a date, a responsibility, and an actual answer.",
+        "hook": "Capricorn changes Mercury’s terms. Possibility becomes less interesting than requirement. Attention moves toward deadlines, standards, responsibilities, approvals, sequence, limits, and the exact point where an idea becomes a commitment.",
+        "lived": "The reply stays in drafts while every possible consequence is considered. The person waiting cannot see the careful reasoning behind the delay. They only see that no answer came, and eventually they make a decision without it.",
+        "turn": "Be clear about the terms. Put the important part in writing. Name the limit before it becomes a problem. Careful thinking helps most when the answer arrives in time to be used."
+      },
+      "masterExcerpts": {
+        "tagline": ["A serious plan needs a date, a responsibility, and an actual answer."],
+        "hook": ["Capricorn changes Mercury’s terms. Possibility becomes less interesting than requirement. Attention moves toward deadlines, standards, responsibilities, approvals, sequence, limits, and the exact point where an idea becomes a commitment."],
+        "lived": ["The reply stays in drafts while every possible consequence is considered. The person waiting cannot see the careful reasoning behind the delay. They only see that no answer came, and eventually they make a decision without it."],
+        "turn": ["While Mercury is in Capricorn, be clear about the terms. Put the important part in writing. Name the limit before it becomes a problem. Careful thinking helps most when the answer arrives in time to be used."]
+      },
+      "operations": ["selected primary hook", "selected mechanics opening", "selected one late-reply sequence", "removed transit lead-in from useful response"]
+    },
+    {
+      "sign": "pisces",
+      "card": {
+        "tagline": "A feeling can be accurate without being the final answer.",
+        "hook": "Pisces changes Mercury’s way of gathering information. The literal sentence is only one part of the message. Attention moves toward tone, imagery, memory, hesitation, and emotional undercurrents.",
+        "lived": "The connection becomes obvious before the reasoning has fully formed. The explanation then skips the steps because the speaker assumes everybody else sees it too. The impression may contain real information while the explanation still needs to change.",
+        "turn": "Notice the impression before forcing a conclusion. Write it down. Ask the question that would confirm it. Find the words that make the connection understandable to somebody else. A feeling can be real without being the final answer."
+      },
+      "masterExcerpts": {
+        "tagline": ["A feeling can be accurate without being the final answer."],
+        "hook": ["Pisces changes Mercury’s way of gathering information. The literal sentence is only one part of the message. Attention moves toward tone, imagery, memory, hesitation, emotional undercurrents, and the connection that becomes obvious before the reasoning has fully formed."],
+        "lived": ["You understand the connection so quickly that you assume everybody else sees it too. The impression may contain real information while the explanation still needs to change."],
+        "turn": ["While Mercury is in Pisces, notice the impression before forcing a conclusion. Write it down. Ask the question that would confirm it. Find the words that make the connection understandable to somebody else. A feeling can be real without being the final answer."]
+      },
+      "operations": ["selected alternative hook to preserve collective register", "selected mechanics opening", "collectivized one impression-before-explanation sequence", "removed transit lead-in from useful response"]
+    }
+  ]
+}

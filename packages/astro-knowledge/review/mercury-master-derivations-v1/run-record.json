@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "batchId": "mercury-master-derivations-v1",
+  "authorizedScope": "Eleven Terra reviewer calls for Step 2; no writer or revision calls.",
+  "exportBoundary": {
+    "sent": [
+      "derived four-slot card",
+      "governed Mercury meaning plan"
+    ],
+    "notSent": [
+      "master excerpts",
+      "owner corrections",
+      "owner corpus text"
+    ]
+  },
+  "requestedModel": "gpt-5.6-terra",
+  "requestedReasoningEffort": "medium",
+  "callCount": 11,
+  "usage": {
+    "inputTokens": 55431,
+    "outputTokens": 11042,
+    "reasoningTokens": 3092,
+    "totalTokens": 66473
+  },
+  "calls": [
+    {
+      "sign": "aries",
+      "responseId": "resp_012ded927c84ebf4006a7b1f94cba8819da311d26fb3be87ee",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5012,
+        "input_tokens_details": {
+          "cache_write_tokens": 5009,
+          "cached_tokens": 0
+        },
+        "output_tokens": 507,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5519
+      }
+    },
+    {
+      "sign": "taurus",
+      "responseId": "resp_08981475bfde90a0006a7b1f9b66f4819eb40ae68fe3c254df",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5015,
+        "input_tokens_details": {
+          "cache_write_tokens": 766,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 1389,
+        "output_tokens_details": {
+          "reasoning_tokens": 516
+        },
+        "total_tokens": 6404
+      }
+    },
+    {
+      "sign": "gemini",
+      "responseId": "resp_096e73061ffebb5c006a7b1fad31348191a85383d22675be9c",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5032,
+        "input_tokens_details": {
+          "cache_write_tokens": 783,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 1345,
+        "output_tokens_details": {
+          "reasoning_tokens": 516
+        },
+        "total_tokens": 6377
+      }
+    },
+    {
+      "sign": "cancer",
+      "responseId": "resp_0b1ce53668f08a76006a7b1fbe4878819c9cdb2c5fa9709653",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5038,
+        "input_tokens_details": {
+          "cache_write_tokens": 789,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 931,
+        "output_tokens_details": {
+          "reasoning_tokens": 312
+        },
+        "total_tokens": 5969
+      }
+    },
+    {
+      "sign": "leo",
+      "responseId": "resp_09295c30ce0cdfcb006a7b1fc9d694819c901590eb7f6f9f26",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5066,
+        "input_tokens_details": {
+          "cache_write_tokens": 817,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 1632,
+        "output_tokens_details": {
+          "reasoning_tokens": 634
+        },
+        "total_tokens": 6698
+      }
+    },
+    {
+      "sign": "virgo",
+      "responseId": "resp_0230813b91730843006a7b1fde6b288192a3881eb00efefd54",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5062,
+        "input_tokens_details": {
+          "cache_write_tokens": 813,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 727,
+        "output_tokens_details": {
+          "reasoning_tokens": 188
+        },
+        "total_tokens": 5789
+      }
+    },
+    {
+      "sign": "libra",
+      "responseId": "resp_071e1d076f438f8f006a7b1fe7ee14819ea9af2205e41a2144",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5045,
+        "input_tokens_details": {
+          "cache_write_tokens": 796,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 540,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5585
+      }
+    },
+    {
+      "sign": "scorpio",
+      "responseId": "resp_0c00633f30d54eb0006a7b1ff03fc4819d9daa9a422785c217",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5016,
+        "input_tokens_details": {
+          "cache_write_tokens": 767,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 805,
+        "output_tokens_details": {
+          "reasoning_tokens": 289
+        },
+        "total_tokens": 5821
+      }
+    },
+    {
+      "sign": "sagittarius",
+      "responseId": "resp_0e97c2e3a666b0c9006a7b1ffa4b80819e821756b01d68b3c3",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5039,
+        "input_tokens_details": {
+          "cache_write_tokens": 790,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 526,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5565
+      }
+    },
+    {
+      "sign": "capricorn",
+      "responseId": "resp_079291dba07072b3006a7b2000e2f8819c8d5f6a3194ab4842",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5042,
+        "input_tokens_details": {
+          "cache_write_tokens": 793,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 1352,
+        "output_tokens_details": {
+          "reasoning_tokens": 516
+        },
+        "total_tokens": 6394
+      }
+    },
+    {
+      "sign": "pisces",
+      "responseId": "resp_04f687f87d0892f4006a7b2013d158819fb2c04468275d44f4",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5064,
+        "input_tokens_details": {
+          "cache_write_tokens": 815,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 1288,
+        "output_tokens_details": {
+          "reasoning_tokens": 121
+        },
+        "total_tokens": 6352
+      }
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "batchId": "mercury-master-derivations-v1",
+  "draftedCount": 11,
+  "lintPassed": 8,
+  "reviewerPassed": 3,
+  "humanReviewRequired": 8,
+  "automaticRevisions": 0,
+  "callCount": 11,
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "medium",
+  "usage": {
+    "inputTokens": 55431,
+    "outputTokens": 11042,
+    "reasoningTokens": 3092,
+    "totalTokens": 66473
+  },
+  "failureCategories": {
+    "generic_self_help": 4,
+    "register_consistency": 4,
+    "example_proves_astrology": 3,
+    "voice_match": 3,
+    "observable_behavior": 2,
+    "redundancy": 2,
+    "advocacy_register_drift": 1,
+    "banned_language": 1,
+    "invented_motive": 1,
+    "literal_first_read_clarity": 1,
+    "sign_house_separation": 1
+  },
+  "governance": {
+    "status": "owner-selection-pending",
+    "reviewStatus": "needs_review",
+    "ownerApproved": false,
+    "promotionAuthorized": false,
+    "canonical": false,
+    "serving": false,
+    "newClaimsAllowed": false,
+    "newScenesAllowed": false,
+    "aquariusExcludedBecause": "The Aquarius card was already owner-derived on 2026-08-11 and is retained only as the mapping control."
+  }
+}

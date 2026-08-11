@@ -1,0 +1,2118 @@
+[
+  {
+    "sign": "aries",
+    "contentKeyStem": "fallback-hook/sky-placement-{tagline|hook|lived|turn}/mercury/aries",
+    "lint": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "register_consistency": {
+        "status": "FAIL",
+        "reason": "Collective copy contains second person."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "decision": "REVISE",
+      "violations": [
+        {
+          "category": "register_consistency",
+          "severity": "nonblocking",
+          "location": "turn",
+          "text": "Say what you mean and make the first move when the facts are clear. Then keep listening. A fast answer is only useful if it does not create another round of cleanup.",
+          "reason": "Collective copy contains second person.",
+          "revision_instruction": "Correct only the failed turn material."
+        }
+      ],
+      "required_revisions": [
+        {
+          "field": "turn",
+          "instruction": "Correct only the failed turn material."
+        }
+      ]
+    },
+    "review": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Mercury is expressed through questions, replies, explanations, facts, and decisions; Aries is expressed as speed, directness, and impatience with delay."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The copy consistently centers information processing and communication rather than importing an unrelated Mercury function."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No house-derived life domain is used. The examples remain in conversation and decision-making."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. All lines are immediately understandable as literal descriptions of fast communication and overlooked information."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It names tolerating explanations less, answering quickly, missing a second question, reopening a decision, speaking directly, and listening."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The lived example directly shows the stated Mercury-in-Aries mechanism: a fast response advances the exchange but bypasses information needed for a sound decision."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No unsupported fear, trauma history, or private intent is assigned."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The copy avoids generic domestic, dating, workplace, and group-chat shorthand."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The wording is direct; 'the rest of the question gets a chance to arrive' is clear in context and does not obscure the meaning."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The turn gives a placement-specific instruction tied to clear facts, speed, and continued listening rather than generic advice."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No clinical terminology or diagnostic shorthand appears."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The collective, editorial register remains descriptive and practical rather than shifting into advocacy language."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The tagline independently communicates both the quick-answer tendency and the need to allow further information in."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The voice is sharp, readable, concrete, and mechanism-led."
+      },
+      "register_consistency": {
+        "status": "FAIL",
+        "reason": "Collective copy contains second person. The collective register is sustained across all four slots."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The repeated focus on speed develops from pace, to consequence, to calibration without needless restatement."
+      },
+      "decision": "REVISE",
+      "violations": [
+        {
+          "category": "register_consistency",
+          "severity": "nonblocking",
+          "location": "turn",
+          "text": "Say what you mean and make the first move when the facts are clear. Then keep listening. A fast answer is only useful if it does not create another round of cleanup.",
+          "reason": "Collective copy contains second person.",
+          "revision_instruction": "Correct only the failed turn material."
+        }
+      ],
+      "required_revisions": [
+        {
+          "field": "turn",
+          "instruction": "Correct only the failed turn material."
+        }
+      ]
+    },
+    "status": "human-review-required",
+    "provider": {
+      "responseId": "resp_012ded927c84ebf4006a7b1f94cba8819da311d26fb3be87ee",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5012,
+        "input_tokens_details": {
+          "cache_write_tokens": 5009,
+          "cached_tokens": 0
+        },
+        "output_tokens": 507,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5519
+      }
+    }
+  },
+  {
+    "sign": "taurus",
+    "contentKeyStem": "fallback-hook/sky-placement-{tagline|hook|lived|turn}/mercury/taurus",
+    "lint": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "register_consistency": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "decision": "PASS",
+      "violations": [],
+      "required_revisions": []
+    },
+    "review": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Mercury is kept on information, evaluation, and answers; Taurus is expressed as practical, deliberate testing and resistance to replacing a familiar method."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The draft consistently concerns how information is evaluated, trusted, discussed, and used in decisions."
+      },
+      "sign_house_separation": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. The hook and lived example repeatedly make cost and expense the concrete proof of Taurus. This starts defining the placement through Taurus's money-associated house domain rather than through Mercury's information-processing function."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The claims and sequence are directly understandable without decoding metaphor."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Comparing a proposal to prior results and retaining a familiar method are observable decision behaviors."
+      },
+      "example_proves_astrology": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. The proposal scene partly demonstrates checking new information against what worked before, but its repeated cost-and-expense framing makes the example read as generic financial caution rather than Mercury in Taurus's method of evaluating and updating information."
+      },
+      "invented_motive": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. \"Replacing it feels more disruptive than admitting it no longer fits\" assigns a specific aversion to disruption and admission rather than staying with the supported observable mechanism: a proven conclusion is slow to be replaced after the evidence changes."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The draft does not rely on a generic domestic, dating, therapy, or workplace-conflict trope."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No central metaphor requires translation into ordinary language."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The turn is concise and tied to the placement's stated tension between careful judgment and outdated conclusions."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The draft contains no clinical labels or diagnostic shorthand."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The register remains editorial and explanatory rather than shifting into advocacy language."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The tagline is literal, clear on its own, and accurately states the core tension."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The concise, direct phrasing matches the supplied TLDR Astro register."
+      },
+      "register_consistency": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The four slots maintain a consistent practical, explanatory tone."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The repeated contrast between reliability and changed evidence develops the core tension without unnecessary restatement."
+      },
+      "decision": "REVISE",
+      "violations": [
+        {
+          "category": "sign_house_separation",
+          "severity": "blocking",
+          "location": "hook and lived",
+          "text": "\"What will it cost?\" / \"the real expense matters more than the optimistic estimate\"",
+          "reason": "Cost and expense recur as the primary concrete evidence for Taurus, creating a money-domain cluster that the plan explicitly identifies as house bleed risk.",
+          "revision_instruction": "Replace the cost-and-expense framing with examples of Mercury activity: testing a claim against prior results, asking for specifics, reviewing a plan's assumptions, or noticing that updated information no longer supports the old answer."
+        },
+        {
+          "category": "example_proves_astrology",
+          "severity": "blocking",
+          "location": "lived",
+          "text": "\"The proposal gets compared with what has already worked, and the real expense matters more than the optimistic estimate.\"",
+          "reason": "The comparison supports Taurus's preference for proven information, but the financial-estimate detail makes the scene prove ordinary budget caution more strongly than Mercury's deliberate interpretation and slow updating.",
+          "revision_instruction": "Keep the comparison to prior evidence, but make the decisive detail an assumption, message, plan, or result that must be checked and reconsidered rather than an expense estimate."
+        },
+        {
+          "category": "invented_motive",
+          "severity": "blocking",
+          "location": "lived",
+          "text": "\"because replacing it feels more disruptive than admitting it no longer fits\"",
+          "reason": "This supplies a specific internal motive about disruption and admission instead of describing the supported behavior of holding onto a familiar answer after its evidence has changed.",
+          "revision_instruction": "State the observable pattern directly: the familiar method remains in use after new results show it no longer fits, without assigning an unearned emotional reason for the delay."
+        }
+      ],
+      "required_revisions": [
+        {
+          "field": "hook and lived",
+          "instruction": "Replace the cost-and-expense framing with examples of Mercury activity: testing a claim against prior results, asking for specifics, reviewing a plan's assumptions, or noticing that updated information no longer supports the old answer."
+        },
+        {
+          "field": "lived",
+          "instruction": "Keep the comparison to prior evidence, but make the decisive detail an assumption, message, plan, or result that must be checked and reconsidered rather than an expense estimate."
+        },
+        {
+          "field": "lived",
+          "instruction": "State the observable pattern directly: the familiar method remains in use after new results show it no longer fits, without assigning an unearned emotional reason for the delay."
+        }
+      ]
+    },
+    "status": "human-review-required",
+    "provider": {
+      "responseId": "resp_08981475bfde90a0006a7b1f9b66f4819eb40ae68fe3c254df",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5015,
+        "input_tokens_details": {
+          "cache_write_tokens": 766,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 1389,
+        "output_tokens_details": {
+          "reasoning_tokens": 516
+        },
+        "total_tokens": 6404
+      }
+    }
+  },
+  {
+    "sign": "gemini",
+    "contentKeyStem": "fallback-hook/sky-placement-{tagline|hook|lived|turn}/mercury/gemini",
+    "lint": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "register_consistency": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "decision": "PASS",
+      "violations": [],
+      "required_revisions": []
+    },
+    "review": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The draft accurately expresses Mercury as information, questions, interpretation, and explanation, with Gemini as quick, connective, and wide-ranging."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Questions, sources, facts, explanations, and conclusions keep the focus on Mercury's information-processing function."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The copy does not define Gemini through siblings, neighborhood, short travel, or another traditionally associated house domain."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The statements are immediately understandable: a fact prompts further inquiry, connections are made quickly, and the explanation can skip necessary steps."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Following sources, linking separate conversations, skipping explanatory steps, and accumulating facts without resolving meaning are observable information behaviors."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The skipped middle of an explanation and the multiplication of facts directly demonstrate Gemini-Mercury quick association outpacing sustained explanation."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No unsupported fear, trauma history, hidden intention, or fixed personality motive is assigned."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The draft avoids generic domestic, dating, workplace, and group-chat shorthand."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The minor figurative phrasing is readily understood and does not obscure the literal mechanism."
+      },
+      "generic_self_help": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. The turn shifts into a list of broadly applicable self-improvement instructions rather than interpreting the placement's specific tension through its consequences."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No clinical or diagnostic language appears."
+      },
+      "advocacy_register_drift": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. The imperative sequence in the turn—\"Follow,\" \"Share,\" \"Revise,\" and \"finish\"—moves from editorial astrology copy into direct coaching."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The tagline clearly conveys the placement's tendency for one inquiry to generate several more."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The language is concise, plainspoken, and centered on a recognizable lived mechanism."
+      },
+      "register_consistency": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. The card begins in an observational collective register but ends by directly instructing the reader, creating a register shift."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The four slots build from quick connection-making to its explanatory cost without materially repeating the same claim."
+      },
+      "decision": "REVISE",
+      "violations": [
+        {
+          "category": "generic_self_help",
+          "severity": "nonblocking",
+          "location": "turn",
+          "text": "Follow the question that changes the answer. Share the source. Revise the conclusion when the evidence improves.",
+          "reason": "These directives read as general advice and do not themselves illuminate the specific Mercury-in-Gemini tension of range and quick association outpacing completion.",
+          "revision_instruction": "Replace the directive list with an observational consequence or interpretive point showing how checking sources and completing the chain of reasoning addresses the placement's tendency to skip the middle."
+        },
+        {
+          "category": "advocacy_register_drift",
+          "severity": "nonblocking",
+          "location": "turn",
+          "text": "Follow the question that changes the answer. Share the source. Revise the conclusion when the evidence improves. Then finish the explanation before the next interesting idea pulls the conversation somewhere else.",
+          "reason": "Second-person-style imperatives turn the card into coaching rather than maintaining the placement-reading register used in the preceding slots.",
+          "revision_instruction": "Recast the turn as a plainspoken observation about what changes when the reasoning is shown and the current explanation is completed."
+        },
+        {
+          "category": "register_consistency",
+          "severity": "nonblocking",
+          "location": "turn",
+          "text": "Follow the question that changes the answer. Share the source. Revise the conclusion when the evidence improves.",
+          "reason": "The direct imperative voice is inconsistent with the earlier descriptive collective framing.",
+          "revision_instruction": "Maintain the same observational collective framing in the turn; avoid direct commands to the reader."
+        }
+      ],
+      "required_revisions": [
+        {
+          "field": "turn",
+          "instruction": "Replace the directive list with an observational consequence or interpretive point showing how checking sources and completing the chain of reasoning addresses the placement's tendency to skip the middle."
+        },
+        {
+          "field": "turn",
+          "instruction": "Recast the turn as a plainspoken observation about what changes when the reasoning is shown and the current explanation is completed."
+        },
+        {
+          "field": "turn",
+          "instruction": "Maintain the same observational collective framing in the turn; avoid direct commands to the reader."
+        }
+      ]
+    },
+    "status": "human-review-required",
+    "provider": {
+      "responseId": "resp_096e73061ffebb5c006a7b1fad31348191a85383d22675be9c",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5032,
+        "input_tokens_details": {
+          "cache_write_tokens": 783,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 1345,
+        "output_tokens_details": {
+          "reasoning_tokens": 516
+        },
+        "total_tokens": 6377
+      }
+    }
+  },
+  {
+    "sign": "cancer",
+    "contentKeyStem": "fallback-hook/sky-placement-{tagline|hook|lived|turn}/mercury/cancer",
+    "lint": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "register_consistency": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "decision": "PASS",
+      "violations": [],
+      "required_revisions": []
+    },
+    "review": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Mercury is expressed through how sentences, replies, tone, timing, and interpretation work; Cancer accurately adds memory and emotional context."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The copy keeps the focus on communication and interpretation rather than drifting into a general Cancer personality reading."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It does not define Cancer through home, family, childhood, parenting, or another associated house domain."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The central mechanism is immediately understandable: prior emotional context can shape how a present message is received."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It names recognizable experiences and actions: hearing meaning in a pause, reading a neutral message through prior conflict, and replying to history rather than the present exchange."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The examples demonstrate Mercury in Cancer specifically by showing interpretation of language and tone through remembered emotional context."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It does not assign unsupported fear, trauma, intent, or psychological backstory."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It avoids generic domestic, dating, workplace, or group-chat shorthand."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The figurative phrasing is supported by direct literal explanation and does not obscure the meaning."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The turn gives a specific corrective to the stated communication mechanism rather than generic wellness advice."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No clinical or diagnostic language is used."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The copy remains in an observational astrology register rather than shifting into advocacy language."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The tagline clearly states that a familiar tone can trigger an older conversational pattern before the present exchange is assessed."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The language is concise, concrete, and grounded in an identifiable interaction pattern."
+      },
+      "register_consistency": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The impersonal collective register remains consistent across all four slots."
+      },
+      "redundancy": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. The lived section and turn repeat the same closing formulation, \"before the current conversation has spoken for itself,\" which makes the turn restate rather than advance the point."
+      },
+      "decision": "REVISE",
+      "violations": [
+        {
+          "category": "redundancy",
+          "severity": "nonblocking",
+          "location": "lived and turn",
+          "text": "\"before the current conversation has spoken for itself\"",
+          "reason": "This exact phrase appears at the end of both sections, creating a noticeable repeated conclusion instead of giving the turn a distinct next step.",
+          "revision_instruction": "Keep the mechanism in the lived section, but replace one occurrence—preferably the turn's closing—with a distinct, literal formulation that advances the contrast between remembered context and present evidence."
+        }
+      ],
+      "required_revisions": [
+        {
+          "field": "lived and turn",
+          "instruction": "Keep the mechanism in the lived section, but replace one occurrence—preferably the turn's closing—with a distinct, literal formulation that advances the contrast between remembered context and present evidence."
+        }
+      ]
+    },
+    "status": "human-review-required",
+    "provider": {
+      "responseId": "resp_0b1ce53668f08a76006a7b1fbe4878819c9cdb2c5fa9709653",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5038,
+        "input_tokens_details": {
+          "cache_write_tokens": 789,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 931,
+        "output_tokens_details": {
+          "reasoning_tokens": 312
+        },
+        "total_tokens": 5969
+      }
+    }
+  },
+  {
+    "sign": "leo",
+    "contentKeyStem": "fallback-hook/sky-placement-{tagline|hook|lived|turn}/mercury/leo",
+    "lint": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "register_consistency": {
+        "status": "FAIL",
+        "reason": "Collective copy contains second person."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "decision": "REVISE",
+      "violations": [
+        {
+          "category": "register_consistency",
+          "severity": "nonblocking",
+          "location": "turn",
+          "text": "Let your voice show and say what you actually believe. Make the message memorable. Then let useful feedback improve the idea without turning every correction into a judgment of the person who shared it.",
+          "reason": "Collective copy contains second person.",
+          "revision_instruction": "Correct only the failed turn material."
+        }
+      ],
+      "required_revisions": [
+        {
+          "field": "turn",
+          "instruction": "Correct only the failed turn material."
+        }
+      ]
+    },
+    "review": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Mercury is kept on language, ideas, delivery, feedback, and evidence; Leo is expressed as personal, expressive, memorable communication and the stated pride/criticism tension."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The copy consistently concerns how information is presented, received, corrected, and made useful."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It does not define Leo through romance, children, hobbies, or performance domains."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The claims are immediately understandable without needing metaphor translation."
+      },
+      "observable_behavior": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. The lived slot primarily names internal interpretations and abstract shifts in a discussion rather than showing a person communicating, responding to feedback, or redirecting an exchange."
+      },
+      "example_proves_astrology": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. There is no concrete communication scene that demonstrates Mercury in Leo's expressive delivery becoming personally entangled with public correction."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The desire to be seen as right is supported by the supplied overcorrection and does not introduce unsupported fear, trauma, or hidden intent."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The draft avoids domestic, dating, therapy, workplace, and group-chat shorthand."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Phrases such as 'voice show' and 'survive the facts' are clear in context and do not obscure the literal point."
+      },
+      "generic_self_help": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. The turn becomes broad directive advice rather than showing the specific Mercury-in-Leo mechanism and its communicative consequence."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No clinical or diagnostic shorthand appears."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The copy does not shift into advocacy or institutional-policy language."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The tagline clearly conveys the tension between memorable delivery and factual scrutiny without the body."
+      },
+      "voice_match": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. The card is mostly generalized explanatory prose. It lacks the owner's characteristic concrete, socially legible example that lets the mechanism prove itself."
+      },
+      "register_consistency": {
+        "status": "FAIL",
+        "reason": "Collective copy contains second person. The draft moves from impersonal collective framing to direct second-person instruction in the turn."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The repeated distinction between personal investment and evidence develops the central tension rather than merely repeating it."
+      },
+      "decision": "REVISE",
+      "violations": [
+        {
+          "category": "register_consistency",
+          "severity": "nonblocking",
+          "location": "turn",
+          "text": "Let your voice show and say what you actually believe. Make the message memorable. Then let useful feedback improve the idea without turning every correction into a judgment of the person who shared it.",
+          "reason": "Collective copy contains second person.",
+          "revision_instruction": "Correct only the failed turn material."
+        },
+        {
+          "category": "observable_behavior",
+          "severity": "blocking",
+          "location": "lived",
+          "text": "A correction to the idea starts to feel like a correction to the person. The discussion moves away from the evidence and toward who was embarrassed, interrupted, or not given enough credit.",
+          "reason": "This describes a dynamic in abstract terms but does not show what someone says, does, defends, interrupts, or refuses when their idea is corrected.",
+          "revision_instruction": "Replace or supplement with a specific communication behavior that shows an expressive, personally invested message receiving correction and the exchange shifting away from the original evidence."
+        },
+        {
+          "category": "example_proves_astrology",
+          "severity": "blocking",
+          "location": "lived",
+          "text": "Being seen as right starts to matter more than finding out what is right.",
+          "reason": "This summarizes the supplied overcorrection but does not provide a lived example that demonstrates Mercury's communication function combined with Leo's personal, memorable delivery.",
+          "revision_instruction": "Add a narrowly concrete conversation, meeting, message, or public-feedback moment in which the speaker defends the delivery or status of their statement instead of engaging the correction."
+        },
+        {
+          "category": "generic_self_help",
+          "severity": "nonblocking",
+          "location": "turn",
+          "text": "Let your voice show and say what you actually believe. Make the message memorable.",
+          "reason": "These are broadly applicable directives and do not add a placement-specific consequence or decision point.",
+          "revision_instruction": "Keep the turn focused on the concrete choice between defending personal authority and returning to the evidence, rather than using general encouragement."
+        },
+        {
+          "category": "voice_match",
+          "severity": "nonblocking",
+          "location": "hook and lived",
+          "text": "Ideas want personality behind them. A correction to the idea starts to feel like a correction to the person.",
+          "reason": "The copy explains the mechanism at a distance instead of grounding it in an observable interpersonal moment, which weakens the owner's established sharp, concrete card voice.",
+          "revision_instruction": "Retain the concise explanation but anchor the card with at least one specific, ordinary communication action whose outcome makes the mechanism apparent."
+        },
+        {
+          "category": "register_consistency",
+          "severity": "nonblocking",
+          "location": "turn",
+          "text": "Let your voice show and say what you actually believe.",
+          "reason": "The body uses impersonal collective framing, while this sentence switches to direct second-person address.",
+          "revision_instruction": "Use the established collective or impersonal framing throughout the turn."
+        }
+      ],
+      "required_revisions": [
+        {
+          "field": "turn",
+          "instruction": "Correct only the failed turn material."
+        },
+        {
+          "field": "lived",
+          "instruction": "Replace or supplement with a specific communication behavior that shows an expressive, personally invested message receiving correction and the exchange shifting away from the original evidence."
+        },
+        {
+          "field": "lived",
+          "instruction": "Add a narrowly concrete conversation, meeting, message, or public-feedback moment in which the speaker defends the delivery or status of their statement instead of engaging the correction."
+        },
+        {
+          "field": "turn",
+          "instruction": "Keep the turn focused on the concrete choice between defending personal authority and returning to the evidence, rather than using general encouragement."
+        },
+        {
+          "field": "hook and lived",
+          "instruction": "Retain the concise explanation but anchor the card with at least one specific, ordinary communication action whose outcome makes the mechanism apparent."
+        },
+        {
+          "field": "turn",
+          "instruction": "Use the established collective or impersonal framing throughout the turn."
+        }
+      ]
+    },
+    "status": "human-review-required",
+    "provider": {
+      "responseId": "resp_09295c30ce0cdfcb006a7b1fc9d694819c901590eb7f6f9f26",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5066,
+        "input_tokens_details": {
+          "cache_write_tokens": 817,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 1632,
+        "output_tokens_details": {
+          "reasoning_tokens": 634
+        },
+        "total_tokens": 6698
+      }
+    }
+  },
+  {
+    "sign": "virgo",
+    "contentKeyStem": "fallback-hook/sky-placement-{tagline|hook|lived|turn}/mercury/virgo",
+    "lint": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "register_consistency": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "decision": "PASS",
+      "violations": [],
+      "required_revisions": []
+    },
+    "review": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Accurately presents Mercury in Virgo as attention to language, information, discrepancies, instructions, checking, and practical correction."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The copy stays within Mercury’s functions: sentences, numbers, instructions, facts, answers, and decisions."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It does not define Virgo through work, health, diet, or service. The brief references to process and routine illustrate error detection rather than importing a sixth-house life domain."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Each line is immediately understandable in ordinary language without needing metaphor translation."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It names concrete behaviors: noticing mismatched numbers, identifying missing steps, holding a draft open, delaying an answer, checking facts, and sending a usable version."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The examples directly demonstrate Mercury in Virgo’s mechanism: precision catches useful errors, while continued refinement delays communication or action."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No unsupported fear, trauma, intent, or personality motive is assigned."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The draft avoids generic domestic, dating, therapy, workplace, and group-chat shorthand."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Phrases such as 'sends everyone back to the beginning' are clear, concrete descriptions of the consequence of an unresolved error."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The turn gives specific prioritization guidance tied to the placement’s stated tension rather than generic encouragement."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No clinical labels or diagnostic shorthand appear."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The copy remains in an editorial explanatory register and does not shift into advocacy language."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The tagline clearly communicates the practical task of locating a recurring flaw that creates duplicated effort."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The language is direct, sharp, concrete, and consequence-focused in the accepted TLDR Astro register."
+      },
+      "register_consistency": {
+        "status": "PASS",
+        "reason": "No defect found for this check. All four slots maintain a consistent collective, practical, information-and-process-focused voice."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The hook identifies the pattern, the lived section shows its overcorrection, and the turn distinguishes consequential errors from minor imperfections."
+      },
+      "decision": "PASS",
+      "violations": [],
+      "required_revisions": []
+    },
+    "status": "pipeline-review-passed",
+    "provider": {
+      "responseId": "resp_0230813b91730843006a7b1fde6b288192a3881eb00efefd54",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5062,
+        "input_tokens_details": {
+          "cache_write_tokens": 813,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 727,
+        "output_tokens_details": {
+          "reasoning_tokens": 188
+        },
+        "total_tokens": 5789
+      }
+    }
+  },
+  {
+    "sign": "libra",
+    "contentKeyStem": "fallback-hook/sky-placement-{tagline|hook|lived|turn}/mercury/libra",
+    "lint": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "register_consistency": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "decision": "PASS",
+      "violations": [],
+      "required_revisions": []
+    },
+    "review": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Mercury is expressed through wording, conversation, competing accounts, interpretation of agreements, and decisions; Libra is expressed through comparison, fairness, tone, and the risk of consensus delaying a position."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The passage consistently centers Mercury functions: language, interpretation, conversation, and decision-making."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It does not define Libra through dating, marriage, or partnership. “Relationship between the people speaking” is used to describe conversational dynamics rather than a default life domain."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The claims are immediately understandable. “Edited out of the agreement” is clear in context as a person’s position being excluded from the decision."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It identifies observable patterns: waiting for another opinion, allowing the first proposal to become default, repeatedly changing time or preferences, and stating a position clearly."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The lived example demonstrates Libra-Mercury’s comparative deliberation and its overcorrection: continued consultation allows an apparently neutral proposal to become the default while one person repeatedly adjusts."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No unsupported fear, trauma history, or private intent is assigned."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The examples concern decision and conversational mechanics rather than generic domestic or relationship-conflict shorthand."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No metaphor obstructs literal comprehension."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The directive is specific to the stated Mercury-in-Libra mechanism: keeping one’s stated position present in a collectively made decision."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No clinical or diagnostic shorthand appears."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The collective register remains focused on communication and fairness without shifting into advocacy language."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The tagline clearly communicates an imbalance in conversational adjustment without requiring the body."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The tone is direct, grounded, and mechanism-led, with a concise usable closing distinction."
+      },
+      "register_consistency": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The collective, generalizing register is consistent across all four slots."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Each slot advances the mechanism: premise, explanation, observable consequence, and practical distinction."
+      },
+      "decision": "PASS",
+      "violations": [],
+      "required_revisions": []
+    },
+    "status": "pipeline-review-passed",
+    "provider": {
+      "responseId": "resp_071e1d076f438f8f006a7b1fe7ee14819ea9af2205e41a2144",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5045,
+        "input_tokens_details": {
+          "cache_write_tokens": 796,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 540,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5585
+      }
+    }
+  },
+  {
+    "sign": "scorpio",
+    "contentKeyStem": "fallback-hook/sky-placement-{tagline|hook|lived|turn}/mercury/scorpio",
+    "lint": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "register_consistency": {
+        "status": "FAIL",
+        "reason": "reassurance"
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "decision": "REVISE",
+      "violations": [
+        {
+          "category": "banned_language",
+          "severity": "nonblocking",
+          "location": "lived",
+          "text": "One contradiction can undo hours of reassurance. The right follow-up question uncovers the detail everyone else missed. But a single mismatch can spark an elaborate theory that the facts never supported.",
+          "reason": "reassurance",
+          "revision_instruction": "Correct only the failed lived material."
+        }
+      ],
+      "required_revisions": [
+        {
+          "field": "lived",
+          "instruction": "Correct only the failed lived material."
+        }
+      ]
+    },
+    "review": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Accurately presents Mercury as attention to information, questions, and interpretation, with Scorpio expressed through investigation, omissions, contradictions, privacy, and the risk of unsupported suspicion."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The copy stays centered on Mercury’s function: assessing explanations, asking follow-up questions, comparing information, and deciding when evidence is adequate."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It does not define Scorpio through eighth-house domains such as debt, inheritance, taxes, or shared finances."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The claims are direct and can be understood literally on a first read."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It names identifiable behaviors: noticing what is missing or unanswered, comparing information, asking a follow-up question, and continuing or ending an inquiry based on evidence."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The contradiction, missed detail, and escalation into an unsupported theory directly demonstrate Scorpio Mercury’s investigative strength and suspicious overcorrection."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No unsupported fear, trauma history, or private intent is assigned."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The examples avoid generic domestic, dating, workplace, and group-chat shorthand."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No central metaphor requires conversion into ordinary language."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The turn offers specific information-handling guidance tied to the placement’s stated tension rather than broad self-help advice."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The language does not rely on diagnostic or therapeutic labels."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The register remains explanatory and practical rather than shifting into advocacy language."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The tagline is complete, clear, and understandable without the body copy."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The copy is concise, direct, and mechanism-led, with a clear constructive expression and caution against overcorrection."
+      },
+      "register_consistency": {
+        "status": "FAIL",
+        "reason": "reassurance All four slots maintain the same clear collective-placement register."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Each slot advances the idea from method, to lived consequence, to practical limit without needless repetition."
+      },
+      "decision": "REVISE",
+      "violations": [
+        {
+          "category": "banned_language",
+          "severity": "nonblocking",
+          "location": "lived",
+          "text": "One contradiction can undo hours of reassurance. The right follow-up question uncovers the detail everyone else missed. But a single mismatch can spark an elaborate theory that the facts never supported.",
+          "reason": "reassurance",
+          "revision_instruction": "Correct only the failed lived material."
+        }
+      ],
+      "required_revisions": [
+        {
+          "field": "lived",
+          "instruction": "Correct only the failed lived material."
+        }
+      ]
+    },
+    "status": "human-review-required",
+    "provider": {
+      "responseId": "resp_0c00633f30d54eb0006a7b1ff03fc4819d9daa9a422785c217",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5016,
+        "input_tokens_details": {
+          "cache_write_tokens": 767,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 805,
+        "output_tokens_details": {
+          "reasoning_tokens": 289
+        },
+        "total_tokens": 5821
+      }
+    }
+  },
+  {
+    "sign": "sagittarius",
+    "contentKeyStem": "fallback-hook/sky-placement-{tagline|hook|lived|turn}/mercury/sagittarius",
+    "lint": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "register_consistency": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "decision": "PASS",
+      "violations": [],
+      "required_revisions": []
+    },
+    "review": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Accurately presents Mercury as information, interpretation, conversation, and conclusion-making, with Sagittarius broadening facts into meaning while risking conviction outrunning verification."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The copy remains centered on facts, updates, conversation, summaries, arguments, supporting detail, and evidence—clear Mercury functions."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It does not define Sagittarius through travel, education, publishing, law, or another associated-house domain."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. All four slots are directly understandable on a first read; the phrasing about information adding up and evidence supporting a claim is literal in context."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It names observable actions: naming the larger implication, giving one example too much weight, making a confident summary, checking supporting detail, and revisiting evidence."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The conversation example specifically demonstrates Sagittarius Mercury's move from separate information toward a broad conclusion, followed by overstatement before verification."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No unsupported fear, trauma, intention, or backstory is assigned."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The draft avoids generic domestic, dating, therapy, and workplace shorthand."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No opaque metaphor requires conversion into ordinary language."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The turn gives a mechanism-specific instruction tied to the stated risk: connect the information, then test the conclusion against details."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No clinical or diagnostic language appears."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The collective, explanatory editorial register is maintained without advocacy-language drift."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The tagline independently communicates the core tension between a broad conclusion and adequate evidence."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The voice is sharp, plain, explanatory, and grounded in information behavior rather than personality labeling."
+      },
+      "register_consistency": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Tagline, hook, lived section, and turn consistently use a collective placement-reading register."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The sections progress cleanly from mechanism, to lived expression, to correction without materially repeating the same sentence-level point."
+      },
+      "decision": "PASS",
+      "violations": [],
+      "required_revisions": []
+    },
+    "status": "pipeline-review-passed",
+    "provider": {
+      "responseId": "resp_0e97c2e3a666b0c9006a7b1ffa4b80819e821756b01d68b3c3",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5039,
+        "input_tokens_details": {
+          "cache_write_tokens": 790,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 526,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5565
+      }
+    }
+  },
+  {
+    "sign": "capricorn",
+    "contentKeyStem": "fallback-hook/sky-placement-{tagline|hook|lived|turn}/mercury/capricorn",
+    "lint": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "register_consistency": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "decision": "PASS",
+      "violations": [],
+      "required_revisions": []
+    },
+    "review": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The draft keeps Mercury on thought, replies, explanation, and information becoming usable, while Capricorn supplies structure, consequences, sequence, limits, and durable commitments."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The lived example is explicitly about a delayed reply, reasoning, and a decision made without the missing information, which fits Mercury's communication and interpretation function."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Responsibilities, standards, approvals, and commitments are used as consequence-aware organizing concepts, not as a default career, boss, title, or promotion narrative."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The central mechanism is clear on first read: considering every consequence delays an answer until it is no longer useful."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Drafting a reply, considering consequences, not sending an answer, and another person deciding without it are observable behaviors and consequences."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The delayed reply directly demonstrates Capricorn Mercury's need to account for consequences before committing to a usable answer."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The copy does not assign fear, trauma, or hidden intent; it stays with the visible pattern of careful consideration and delay."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The reply-in-drafts example is a specific communication mechanism rather than generic domestic, dating, therapy, or workplace shorthand."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Phrases such as an idea becoming a commitment are readily understandable in context and do not obscure the literal claim."
+      },
+      "generic_self_help": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. The turn shifts into broadly applicable instruction—\"Be clear,\" \"Put the important part in writing,\" and \"Name the limit\"—rather than closing through the specific Mercury-in-Capricorn mechanism of consequence-checking delaying a usable answer."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No clinical, diagnostic, or therapeutic shorthand is used."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The draft does not adopt advocacy or institutional-policy language."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The tagline communicates a complete, understandable claim about making plans actionable without relying on the body."
+      },
+      "voice_match": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. The hook is more abstract and technical than the canonical plainspoken, behavior-led register, particularly in the list of \"deadlines, standards, responsibilities, approvals, sequence, limits\" and the framing \"Capricorn changes Mercury’s terms.\""
+      },
+      "register_consistency": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The draft maintains a concise, direct explanatory register across all four slots."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The repeated focus on an answer arriving too late develops the stated tension rather than merely restating it."
+      },
+      "decision": "REVISE",
+      "violations": [
+        {
+          "category": "generic_self_help",
+          "severity": "blocking",
+          "location": "turn",
+          "text": "Be clear about the terms. Put the important part in writing. Name the limit before it becomes a problem.",
+          "reason": "These instructions could apply to nearly any communication issue and do not themselves demonstrate the placement's specific tension between complete consequence-checking and a timely usable answer.",
+          "revision_instruction": "Replace the generic directives with a concrete consequence or observation that stays tied to delayed, over-qualified, or withheld communication while every implication is being considered."
+        },
+        {
+          "category": "voice_match",
+          "severity": "nonblocking",
+          "location": "hook",
+          "text": "Capricorn changes Mercury’s terms. Possibility becomes less interesting than requirement. Attention moves toward deadlines, standards, responsibilities, approvals, sequence, limits, and the exact point where an idea becomes a commitment.",
+          "reason": "This is concept-heavy and list-driven rather than beginning from a recognizable communication behavior in the owner’s plainspoken, lived register.",
+          "revision_instruction": "Reduce the abstract framing and noun list; anchor the hook in one immediately recognizable act of organizing, qualifying, delaying, or committing to an answer."
+        }
+      ],
+      "required_revisions": [
+        {
+          "field": "turn",
+          "instruction": "Replace the generic directives with a concrete consequence or observation that stays tied to delayed, over-qualified, or withheld communication while every implication is being considered."
+        },
+        {
+          "field": "hook",
+          "instruction": "Reduce the abstract framing and noun list; anchor the hook in one immediately recognizable act of organizing, qualifying, delaying, or committing to an answer."
+        }
+      ]
+    },
+    "status": "human-review-required",
+    "provider": {
+      "responseId": "resp_079291dba07072b3006a7b2000e2f8819c8d5f6a3194ab4842",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5042,
+        "input_tokens_details": {
+          "cache_write_tokens": 793,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 1352,
+        "output_tokens_details": {
+          "reasoning_tokens": 516
+        },
+        "total_tokens": 6394
+      }
+    }
+  },
+  {
+    "sign": "pisces",
+    "contentKeyStem": "fallback-hook/sky-placement-{tagline|hook|lived|turn}/mercury/pisces",
+    "lint": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "literal_first_read_clarity": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "observable_behavior": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "example_proves_astrology": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "generic_self_help": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "voice_match": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "register_consistency": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "redundancy": {
+        "status": "PASS",
+        "reason": "No defect found for this check."
+      },
+      "decision": "PASS",
+      "violations": [],
+      "required_revisions": []
+    },
+    "review": {
+      "astrology_integrity": {
+        "status": "PASS",
+        "reason": "No defect found for this check. Mercury is kept on thought, interpretation, language, and information processing; Pisces is expressed through tone, imagery, association, and unstated emotional information."
+      },
+      "planet_or_point_function": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The draft consistently addresses how information is gathered, interpreted, explained, and made understandable."
+      },
+      "sign_house_separation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It does not default Pisces to retreat, isolation, institutions, or relationship-based meaning."
+      },
+      "literal_first_read_clarity": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. “The explanation still needs to change” is too unspecific to paraphrase as a concrete next action or communication problem."
+      },
+      "observable_behavior": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. The hook names attention patterns, but the card largely stays at the level of abstract process rather than showing someone noticing a tone shift, making an association, or leaving reasoning unstated in a real exchange."
+      },
+      "example_proves_astrology": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. “The connection becomes obvious” and “the explanation then skips the steps” state the mechanism without a lived information or conversation example that demonstrates Pisces-Mercury associative reasoning and private inference."
+      },
+      "invented_motive": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The draft does not assign fear, trauma, hidden intent, or other unsupported motives."
+      },
+      "stock_trope": {
+        "status": "PASS",
+        "reason": "No defect found for this check. It avoids domestic, dating, workplace, therapy, and group-chat shorthand."
+      },
+      "metaphor_requires_translation": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The figurative language is immediately understandable and does not obscure the literal claim."
+      },
+      "generic_self_help": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. “Notice the impression,” “Write it down,” “Ask the question,” and “Find the words” shifts the turn into generic communication advice rather than a specific consequence of the placement’s tension."
+      },
+      "clinical_shorthand": {
+        "status": "PASS",
+        "reason": "No defect found for this check. No clinical or therapeutic diagnostic shorthand is used."
+      },
+      "advocacy_register_drift": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The draft does not adopt an advocacy or campaign register."
+      },
+      "tagline_stands_alone": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The tagline is complete, literal, and understandable without the body."
+      },
+      "voice_match": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. The copy is more explanatory and instructional than the accepted TLDR Astro register. It lacks the sharper, socially legible lived consequence expected of the card format."
+      },
+      "register_consistency": {
+        "status": "PASS",
+        "reason": "No defect found for this check. The collective, general register remains consistent across all four slots."
+      },
+      "redundancy": {
+        "status": "FAIL",
+        "reason": "No defect found for this check. The tagline’s central claim is repeated almost verbatim as the final sentence of the turn, reducing the turn’s function as a distinct conclusion."
+      },
+      "decision": "REVISE",
+      "violations": [
+        {
+          "category": "literal_first_read_clarity",
+          "severity": "nonblocking",
+          "location": "lived",
+          "text": "The impression may contain real information while the explanation still needs to change.",
+          "reason": "“Needs to change” does not specify what must change: the wording, the missing reasoning, the conclusion, or the verification process.",
+          "revision_instruction": "Name the concrete communication gap: what is left unstated or what another person cannot follow."
+        },
+        {
+          "category": "observable_behavior",
+          "severity": "blocking",
+          "location": "hook and lived",
+          "text": "Attention moves toward tone, imagery, memory, hesitation, and emotional undercurrents. The connection becomes obvious before the reasoning has fully formed.",
+          "reason": "These lines describe internal processing in abstraction rather than an observable instance of Mercury handling information.",
+          "revision_instruction": "Add one concise, ordinary message, conversation, meeting, learning, or decision behavior that shows an implied meaning being noticed and the reasoning remaining private."
+        },
+        {
+          "category": "example_proves_astrology",
+          "severity": "blocking",
+          "location": "lived",
+          "text": "The connection becomes obvious before the reasoning has fully formed. The explanation then skips the steps because the speaker assumes everybody else sees it too.",
+          "reason": "The passage asserts the Pisces-Mercury mechanism but does not demonstrate it through a specific information exchange or interpretive action.",
+          "revision_instruction": "Replace or supplement the generalized assertion with an example where a person reads tone, connects an image or detail, reaches an answer associatively, and fails to state the bridge for others."
+        },
+        {
+          "category": "generic_self_help",
+          "severity": "blocking",
+          "location": "turn",
+          "text": "Notice the impression before forcing a conclusion. Write it down. Ask the question that would confirm it. Find the words that make the connection understandable to somebody else.",
+          "reason": "This is a sequence of broadly applicable self-help instructions, not a placement-specific turn grounded in the card’s communication consequence.",
+          "revision_instruction": "Make the turn explain the specific cost of treating an unstated impression as shared understanding, then give only guidance directly tied to making the inferred connection explicit or checking it."
+        },
+        {
+          "category": "voice_match",
+          "severity": "blocking",
+          "location": "entire card",
+          "text": "Pisces changes Mercury’s way of gathering information. The literal sentence is only one part of the message.",
+          "reason": "The card reads as an abstract explanatory mini-lesson. It needs a sharper lived scene and a more direct consequence to match the accepted TLDR Astro editorial voice.",
+          "revision_instruction": "Retain the Mercury-Pisces mechanism but compress exposition and prioritize a concrete, socially recognizable communication moment with a clear consequence."
+        },
+        {
+          "category": "redundancy",
+          "severity": "nonblocking",
+          "location": "tagline and final turn sentence",
+          "text": "A feeling can be accurate without being the final answer. / A feeling can be real without being the final answer.",
+          "reason": "The final sentence repeats the tagline’s idea instead of advancing the turn.",
+          "revision_instruction": "Keep the standalone tagline, but end the turn with a distinct placement-specific consequence or conclusion rather than a near-repeat."
+        }
+      ],
+      "required_revisions": [
+        {
+          "field": "lived",
+          "instruction": "Name the concrete communication gap: what is left unstated or what another person cannot follow."
+        },
+        {
+          "field": "hook and lived",
+          "instruction": "Add one concise, ordinary message, conversation, meeting, learning, or decision behavior that shows an implied meaning being noticed and the reasoning remaining private."
+        },
+        {
+          "field": "lived",
+          "instruction": "Replace or supplement the generalized assertion with an example where a person reads tone, connects an image or detail, reaches an answer associatively, and fails to state the bridge for others."
+        },
+        {
+          "field": "turn",
+          "instruction": "Make the turn explain the specific cost of treating an unstated impression as shared understanding, then give only guidance directly tied to making the inferred connection explicit or checking it."
+        },
+        {
+          "field": "entire card",
+          "instruction": "Retain the Mercury-Pisces mechanism but compress exposition and prioritize a concrete, socially recognizable communication moment with a clear consequence."
+        },
+        {
+          "field": "tagline and final turn sentence",
+          "instruction": "Keep the standalone tagline, but end the turn with a distinct placement-specific consequence or conclusion rather than a near-repeat."
+        }
+      ]
+    },
+    "status": "human-review-required",
+    "provider": {
+      "responseId": "resp_04f687f87d0892f4006a7b2013d158819fb2c04468275d44f4",
+      "requestedModel": "gpt-5.6-terra",
+      "actualModel": "gpt-5.6-terra",
+      "requestedReasoningEffort": "medium",
+      "actualReasoningEffort": "medium",
+      "usage": {
+        "input_tokens": 5064,
+        "input_tokens_details": {
+          "cache_write_tokens": 815,
+          "cached_tokens": 4246
+        },
+        "output_tokens": 1288,
+        "output_tokens_details": {
+          "reasoning_tokens": 121
+        },
+        "total_tokens": 6352
+      }
+    }
+  }
+]
