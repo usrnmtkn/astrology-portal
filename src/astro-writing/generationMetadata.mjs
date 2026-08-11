@@ -14,12 +14,14 @@ export const WRITING_COMPONENT_VERSIONS = Object.freeze({
   reviewer_prompt: CANONICAL_REVIEWER_INSTRUCTIONS_VERSION
 });
 
-export function writeGenerationMetadata({ role, model = null, reasoningEffort = null, sourceIds = [] } = {}) {
+export function writeGenerationMetadata({ role, provider = null, model = null, reasoningEffort = null, thinkingLevel = null, sourceIds = [] } = {}) {
   const cardCandidate = String(role ?? "").startsWith("CARD_");
   return {
     role: role ?? "WRITER",
+    provider,
     model,
     reasoningEffort,
+    thinkingLevel,
     components: {
       ...WRITING_COMPONENT_VERSIONS,
       ...(cardCandidate ? { writer_prompt: CARD_WRITING_INSTRUCTIONS_VERSION } : {})
