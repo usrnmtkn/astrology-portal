@@ -32,6 +32,7 @@ import {
 import { aspectGlyph, pointGlyph } from "../../components/charts/chartAssets";
 import type { InterChartAspectLine } from "../../components/charts/Wheels";
 import {
+  fallbackV3ApprovalLevelForContentKey,
   normalizeAspect as normalizeFallbackV3Aspect,
   SourceGapError as FallbackV3SourceGapError,
   transitSynastryFallbackRendererV3
@@ -73,6 +74,10 @@ import {
   isExplicitRomanticRelationship,
   normalizeRelationshipContextKey
 } from "../../services/relationshipContext";
+import {
+  exactOwnerApprovedTransitBody,
+  exactOwnerApprovedTransitSections
+} from "./transitDetailApproval";
 import type { PronounChoice } from "../../services/personReferences";
 import {
   contactsForBondTransitGroup,
@@ -1792,7 +1797,10 @@ export function ManualChartsPanel({
         houseLifeAreas[card.activation.house] ?? ""
       ].filter(Boolean).join(" · "),
       body: [],
-      sections: card.normalized.sections.map((section) => ({
+      sections: exactOwnerApprovedTransitSections(
+        card.normalized.sections,
+        fallbackV3ApprovalLevelForContentKey
+      ).map((section) => ({
         // The page-level title already names this house transit. Repeating the
         // resolver headline here creates a near-identical second title.
         heading: "",
@@ -1835,7 +1843,11 @@ export function ManualChartsPanel({
       title: card.headline,
       meta: [card.transitSign, card.timingRange].filter(Boolean).join(" · "),
       bodyBeforeSections: activatedConnectionSections.length > 0,
-      body: card.effectBody ? [card.effectBody] : [],
+      body: exactOwnerApprovedTransitBody(
+        card.effectBody,
+        card.effectContentKey,
+        fallbackV3ApprovalLevelForContentKey
+      ),
       sections: activatedConnectionSections.map((connection, index) => ({
         heading: index === 0 ? "What this activates" : "",
         sourceTag: connection.headline,
@@ -1916,7 +1928,10 @@ export function ManualChartsPanel({
         transit.natalPoint
       ].filter(Boolean).join(" · "),
       body: [],
-      sections: normalized.sections.map((section) => ({
+      sections: exactOwnerApprovedTransitSections(
+        normalized.sections,
+        fallbackV3ApprovalLevelForContentKey
+      ).map((section) => ({
         heading: "",
         body: section.body,
         sourceKeys: section.sourceKeys
