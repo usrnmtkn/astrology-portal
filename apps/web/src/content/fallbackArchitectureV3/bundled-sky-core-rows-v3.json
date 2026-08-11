@@ -15830,6 +15830,66 @@
       ]
     },
     {
+      "body": "identity and presence",
+      "notes": "Owner-approved full empty-house bridge jurisdiction.",
+      "contentKey": "fallback-vocab/empty-house-ruler-jurisdiction/1",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "money and what you value",
+      "notes": "Owner-approved full empty-house bridge jurisdiction.",
+      "contentKey": "fallback-vocab/empty-house-ruler-jurisdiction/2",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "communication and daily connections",
+      "notes": "Owner-approved full empty-house bridge jurisdiction.",
+      "contentKey": "fallback-vocab/empty-house-ruler-jurisdiction/3",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "home and family",
+      "notes": "Owner-approved full empty-house bridge jurisdiction.",
+      "contentKey": "fallback-vocab/empty-house-ruler-jurisdiction/4",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "creativity, romance, and play",
+      "notes": "Owner-approved full empty-house bridge jurisdiction.",
+      "contentKey": "fallback-vocab/empty-house-ruler-jurisdiction/5",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
       "body": "daily work, routines, and health",
       "notes": "Empty-house-only full ruler-house jurisdiction from the owner-final V3 worked example.",
       "contentKey": "fallback-vocab/empty-house-ruler-jurisdiction/6",
@@ -15837,6 +15897,222 @@
         "TLDR-Empty-House-Refinement-CODEX.md"
       ],
       "approved_via": "owner-final empty-house V3, 2026-07-29",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "partnership and commitment",
+      "notes": "Owner-approved full empty-house bridge jurisdiction.",
+      "contentKey": "fallback-vocab/empty-house-ruler-jurisdiction/7",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "shared money and deep trust",
+      "notes": "Owner-approved full empty-house bridge jurisdiction.",
+      "contentKey": "fallback-vocab/empty-house-ruler-jurisdiction/8",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "learning, travel, and belief",
+      "notes": "Owner-approved full empty-house bridge jurisdiction.",
+      "contentKey": "fallback-vocab/empty-house-ruler-jurisdiction/9",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "career and public reputation",
+      "notes": "Owner-approved full empty-house bridge jurisdiction.",
+      "contentKey": "fallback-vocab/empty-house-ruler-jurisdiction/10",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "friendship and the future",
+      "notes": "Owner-approved full empty-house bridge jurisdiction.",
+      "contentKey": "fallback-vocab/empty-house-ruler-jurisdiction/11",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "rest, solitude, and the inner world",
+      "notes": "Owner-approved full empty-house bridge jurisdiction.",
+      "contentKey": "fallback-vocab/empty-house-ruler-jurisdiction/12",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "identity",
+      "notes": "Owner-approved possessive-safe empty-house bridge topic.",
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/1",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "money",
+      "notes": "Owner-approved possessive-safe empty-house bridge topic.",
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/2",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "communication",
+      "notes": "Owner-approved possessive-safe empty-house bridge topic.",
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/3",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "home",
+      "notes": "Owner-approved possessive-safe empty-house bridge topic.",
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/4",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "pleasure",
+      "notes": "Owner-approved possessive-safe empty-house bridge topic.",
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/5",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "work and health",
+      "notes": "Owner-approved possessive-safe empty-house bridge topic.",
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/6",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "partnership",
+      "notes": "Owner-approved possessive-safe empty-house bridge topic.",
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/7",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "shared money",
+      "notes": "Owner-approved possessive-safe empty-house bridge topic.",
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/8",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "growth",
+      "notes": "Owner-approved possessive-safe empty-house bridge topic.",
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/9",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "career",
+      "notes": "Owner-approved possessive-safe empty-house bridge topic.",
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/10",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "friendship",
+      "notes": "Owner-approved possessive-safe empty-house bridge topic.",
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/11",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
+      "content_role": "vocabulary",
+      "grammar_frame": "noun_phrase",
+      "review_status": "approved"
+    },
+    {
+      "body": "inner life",
+      "notes": "Owner-approved possessive-safe empty-house bridge topic.",
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/12",
+      "source_keys": [
+        "packages/astro-knowledge/review/empty-house-v14/bridge-templates-proposal.json"
+      ],
+      "approved_via": "owner exact-wording approval 2026-08-11",
       "content_role": "vocabulary",
       "grammar_frame": "noun_phrase",
       "review_status": "approved"
