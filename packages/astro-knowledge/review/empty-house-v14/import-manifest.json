@@ -54,5 +54,19 @@
     "unresolved_flag_rows": 0,
     "status": "approved",
     "serving_blocked": false
-  }
+  },
+  "judge_status": "COMPLETE 2026-08-10: 541/541 judged, 497 pass, 44 advisory, 0 mismatch_suspected; advisory only, approval unaffected",
+  "judge_results_file": "judge-results.json",
+  "judge_results_digest_sha256": "752d9a79447057bcec90f3a7b9011307561aa1694b37dd3174c1b8182ca7823e",
+  "judge_results_file_sha256": "d2c07c6295a5a9e5b8dd66a88447f0bd23f44806f14467957094d5ddf063af9a",
+  "judge_summary": {
+    "rows": 541,
+    "advisory_pass": 497,
+    "advisory_noted": 44,
+    "mismatch_suspected": 0,
+    "authority": "advisory_only_owner_exact_wording_approval_controls",
+    "editorial_backlog": "advisory-editorial-backlog.json"
+  },
+  "supplied_judge_complete_manifest_sha256": "f2586c17d84f48d534bb8d15db1c8f7177e3f67820ca0adc2000cea4a5043dc5",
+  "judge_verdicts_file": "serving-row-judge-verdicts.json"
 }

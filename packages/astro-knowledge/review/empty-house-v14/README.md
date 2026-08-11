@@ -47,6 +47,22 @@ runtime. The approval record covers all 541 rows at the digest above; any byte
 change requires a new approval. `--promote` fails unless that record is complete
 and matches the generated payload.
 
+## Advisory judge close-out
+
+The advisory LLM judge completed all 541 `body_you` serving projections:
+497 `advisory_pass`, 44 `advisory_noted`, and zero `mismatch_suspected`.
+`judge-results.json` is bound to results digest
+`752d9a79447057bcec90f3a7b9011307561aa1694b37dd3174c1b8182ca7823e`.
+The row-level metadata overlay is `serving-row-judge-verdicts.json`; it does not
+modify serving source rows, bundles, or approved prose.
+
+The 44 notes are retained in `advisory-editorial-backlog.json` as an optional
+owner editorial backlog, not as defects against PR #145. The first candidates
+for any future owner revision are the leftover conditional in
+`empty-1st|sagittarius|jupiter-in-2nd` and the duplicated sentence shared by
+`empty-8th|mars-in-10th` and `empty-8th|ruler-in-10th`. Exact-wording approval
+remains controlling unless the owner elects to revise those rows.
+
 ## Superseded draft lineage
 
 The cleaned Gemini corpus is retained as reference-only lineage in
