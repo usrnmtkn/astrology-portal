@@ -308,9 +308,15 @@ function validateEntryFile(filePath, kind, errors) {
       }
     }
     for (const field of Object.keys(readerCopy)) {
-      if (!["summary", "body", "approvedVia"].includes(field)) {
+      if (!["summary", "body", "approvedVia", "calendarLeadIn"].includes(field)) {
         errors.push(`${rel(filePath)}: unexpected field readerCopy.${field}`);
       }
+    }
+    if (
+      readerCopy.calendarLeadIn !== undefined
+      && readerCopy.calendarLeadIn !== "date-placements-collective-level"
+    ) {
+      errors.push(`${rel(filePath)}: field readerCopy.calendarLeadIn has an unsupported value`);
     }
     if (json.status !== "LIVE") {
       errors.push(`${rel(filePath)}: readerCopy requires status LIVE`);

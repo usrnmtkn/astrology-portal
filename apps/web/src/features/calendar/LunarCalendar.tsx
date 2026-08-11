@@ -1272,6 +1272,7 @@ export function normalizeCalendarEventSurface(
       second,
       slots: {
         aspect: slugContentPart(event.aspect),
+        dateLine,
         planetA: first,
         planetATopic: fallbackV3PlanetTopic(first),
         planetB: second,
