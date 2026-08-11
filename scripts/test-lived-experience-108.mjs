@@ -46,6 +46,7 @@ const livedPrefixes = [
   "fallback-hook/placement-sign-lived/",
   "fallback-hook/planet-lived/",
 ];
+const llMatrixV13Release = "ll-matrix-v13-owner-approved-runtime";
 const signs = new Set([
   "aries", "taurus", "gemini", "cancer", "leo", "virgo",
   "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces",
@@ -69,11 +70,17 @@ function mappedKey(workbookKey) {
   throw new Error(`Ambiguous test mapping: ${workbookKey}`);
 }
 
-const rowsByKey = new Map(source.hookRows.map((row) => [row.contentKey, row]));
+const rowsByKey = new Map(source.hookRows
+  .filter((row) => row.source_release !== llMatrixV13Release)
+  .map((row) => [row.contentKey, row]));
+const llMatrixV13ByContentKey = new Map(source.hookRows
+  .filter((row) => row.source_release === llMatrixV13Release)
+  .map((row) => [row.contentKey, row]));
 const manifestByWorkbookKey = new Map(manifest.rows.map((row) => [row.workbookKey, row]));
 const livedRows = source.hookRows.filter((row) => (
   livedPrefixes.some((prefix) => row.contentKey.startsWith(prefix))
   && !row.contentKey.startsWith("fallback-hook/natal-aspect-lived/lilith/")
+  && row.source_release !== llMatrixV13Release
 ));
 assert.equal(livedRows.length, 108);
 assert.equal(packet.approvedAt, "2026-08-10");
@@ -89,6 +96,7 @@ assert.deepEqual(manifest.familyCounts, {
 const existingApprovedRows = source.hookRows.filter((row) => (
   row.review_status === "approved"
   && !livedPrefixes.some((prefix) => row.contentKey.startsWith(prefix))
+  && row.source_release !== llMatrixV13Release
 ));
 assert.equal(
   sha256(JSON.stringify(existingApprovedRows)),
@@ -139,14 +147,15 @@ for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
     const planetB = normalizeObject(rawB);
     const aspect = rawAspect === "inconjunct" ? "quincunx" : rawAspect;
     const expectedKey = mappedKey(workbookKey);
+    const expectedBody = llMatrixV13ByContentKey.get(expectedKey)?.body ?? entry.payload.body;
     for (const [label, render] of [
       ["node", renderNodeNatalAspect],
       ["browser", browser.renderNatalAspect],
     ]) {
       const forward = render({ planetA, planetB, aspect, voice: "you" });
       const reverse = render({ planetA: planetB, planetB: planetA, aspect, voice: "you" });
-      assert.equal(forward.body, entry.payload.body, `${label}:${workbookKey}: forward body mismatch`);
-      assert.equal(reverse.body, entry.payload.body, `${label}:${workbookKey}: reverse body mismatch`);
+      assert.equal(forward.body, expectedBody, `${label}:${workbookKey}: forward body mismatch`);
+      assert.equal(reverse.body, expectedBody, `${label}:${workbookKey}: reverse body mismatch`);
       assert.equal(forward.templateKey, expectedKey, `${label}:${workbookKey}: forward key mismatch`);
       assert.equal(reverse.templateKey, expectedKey, `${label}:${workbookKey}: reverse key mismatch`);
     }
@@ -156,12 +165,13 @@ for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
   if (parts.length === 2 && / house$/u.test(parts[1])) {
     const object = normalizeObject(parts[0]);
     const house = Number(parts[1].match(/^(1[0-2]|[1-9])(?:st|nd|rd|th) house$/u)?.[1]);
+    const expectedBody = llMatrixV13ByContentKey.get(mappedKey(workbookKey))?.body ?? entry.payload.body;
     for (const [label, render] of [
       ["node", renderNodeNatalPlacement],
       ["browser", browser.renderNatalPlacement],
     ]) {
       const result = render({ planet: object, sign: "aries", house, voice: "you" });
-      assert.equal(result.body, entry.payload.body, `${label}:${workbookKey}: house body mismatch`);
+      assert.equal(result.body, expectedBody, `${label}:${workbookKey}: house body mismatch`);
       assert.equal(result.templateKey, mappedKey(workbookKey));
     }
     continue;
@@ -169,12 +179,13 @@ for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
 
   if (parts.length === 2) {
     const [planet, sign] = parts;
+    const expectedBody = llMatrixV13ByContentKey.get(mappedKey(workbookKey))?.body ?? entry.payload.body;
     for (const [label, render] of [
       ["node", renderNodeNatalPlacement],
       ["browser", browser.renderNatalPlacement],
     ]) {
       const result = render({ planet, sign, voice: "you" });
-      assert.equal(result.parts[0], entry.payload.body, `${label}:${workbookKey}: sign body mismatch`);
+      assert.equal(result.parts[0], expectedBody, `${label}:${workbookKey}: sign body mismatch`);
     }
     continue;
   }
@@ -184,11 +195,22 @@ for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
     ["browser", browser.renderNatalPlacement],
   ]) {
     const result = render({ planet: "jupiter", sign: "sagittarius", voice: "you" });
-    assert.ok(result.parts[0].includes(entry.payload.body), `${label}:${workbookKey}: planet-lived body not selected`);
+    const genericSign = llMatrixV13ByContentKey.get("fallback-hook/sign-lived/sagittarius")?.body;
+    if (genericSign) {
+      assert.equal(result.parts[0], genericSign, `${label}:${workbookKey}: V13 generic sign must supersede the earlier planet fallback`);
+    } else {
+      const expectedBody = llMatrixV13ByContentKey.get(mappedKey(workbookKey))?.body ?? entry.payload.body;
+      assert.ok(
+        result.parts[0].replace(/\s+/gu, " ").includes(expectedBody.replace(/\s+/gu, " ")),
+        `${label}:${workbookKey}: planet-lived body not selected`,
+      );
+    }
   }
 }
 
-const quincunxFixture = packet.payloads["jupiter|inconjunct|ascendant"].payload.body;
+const quincunxKey = mappedKey("jupiter|inconjunct|ascendant");
+const quincunxFixture = llMatrixV13ByContentKey.get(quincunxKey)?.body
+  ?? packet.payloads["jupiter|inconjunct|ascendant"].payload.body;
 assert.throws(
   () => renderNodeNatalAspect({ planetA: "jupiter", planetB: "ascendant", aspect: "quincunx", voice: "Bird" }),
   NodeSourceGapError,

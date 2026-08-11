@@ -92,7 +92,7 @@ export interface EmptyHouseFacts {
   modernRuler?: string;
   voice?: Voice;
 }
-export interface AspectFacts { planetA: string; planetB: string; aspect: "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx"; voice: Voice }
+export interface AspectFacts { planetA: string; planetB: string; aspect: "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx" | "semisextile" | "nonagen"; voice: Voice }
 export interface RenderResult { headline: string; parts: string[]; body: string; templateKey: string; astroHint?: string }
 export interface RenderOpts { allowUnreviewed?: boolean }
 
@@ -169,7 +169,9 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     if (voice !== "you") return null;
     const row = hooks.get(key);
     if (!row) return null;
-    if (row.content_role !== "fallback_hook") throw new RoleViolationError(`Row ${key} is not a fallback_hook.`);
+    if (!["fallback_hook", "full_copy"].includes(row.content_role)) {
+      throw new RoleViolationError(`Row ${key} is not a reader-eligible exact-copy role.`);
+    }
     if (!opts.allowUnreviewed && !READER_ELIGIBLE.has(row.review_status)) return null;
     if (row.reader_only !== true || row.render_policy !== "reader-only-exact-lived-v1") {
       throw new RoleViolationError(`Row ${key} is not a reader-only exact lived row.`);
@@ -203,6 +205,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     const voice: "you" | "they" = facts.voice === "you" ? "you" : "they";
     const exactHouseLived = house
       ? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, opts)
+        ?? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, opts)
       : null;
     if (exactHouseLived) {
       return {
@@ -212,7 +215,8 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
         templateKey: exactHouseLived.contentKey,
       };
     }
-    const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts);
+    const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts)
+      ?? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, opts);
     const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
     const possessive = facts.voice === "you" ? "Your" : `${facts.voice}'s`;
     const ctx: Ctx = {
@@ -305,7 +309,8 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     const aspect = facts.aspect;
     const exactLived =
       getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetA}/${aspect}/${facts.planetB}`, voice, opts)
-      ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetB}/${aspect}/${facts.planetA}`, voice, opts);
+      ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetB}/${aspect}/${facts.planetA}`, voice, opts)
+      ?? getReaderLivedRow(`fallback-hook/aspect-lived/${aspect}`, voice, opts);
     if (exactLived) {
       return {
         headline: `${title(facts.planetA)} ${aspect} ${title(facts.planetB)}`,
@@ -469,17 +474,19 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
   return { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderNatalEmptyHouse, renderProfectionYear, renderHouseGlossary, renderAspectPattern };
 }
 
-/** Normalize app wording to the six canonical aspect ids ("conjunct" -> "conjunction", etc).
+/** Normalize app wording to the supported canonical aspect ids ("conjunct" -> "conjunction", etc).
  *  Inconjunct normalizes to the engine's canonical quincunx id. */
-export function normalizeAspect(input: string): "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx" | null {
+export function normalizeAspect(input: string): "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx" | "semisextile" | "nonagen" | null {
   const k = input.trim().toLowerCase();
-  const map: Record<string, "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx"> = {
+  const map: Record<string, "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx" | "semisextile" | "nonagen"> = {
     conjunction: "conjunction", conjunct: "conjunction", conj: "conjunction",
     square: "square", sq: "square",
     trine: "trine",
     sextile: "sextile", sext: "sextile",
     opposition: "opposition", opposite: "opposition", opposed: "opposition", oppose: "opposition",
     quincunx: "quincunx", inconjunct: "quincunx",
+    semisextile: "semisextile", "semi-sextile": "semisextile", "semi sextile": "semisextile",
+    nonagen: "nonagen",
   };
   return map[k] ?? null;
 }

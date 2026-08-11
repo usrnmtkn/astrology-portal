@@ -520,6 +520,55 @@ function knowledgeMatrixV9Entries() {
   return entries;
 }
 
+function llMatrixV13Entries() {
+  // Canonical LL natal matrix, owner-approved 2026-08-10. The locked file
+  // contains only governed rows and preserves workbook copy exactly. The
+  // discarded Gemini V12-to-V13 blind-edit path is not part of this build.
+  const file = path.join(writerRoot, "ll-matrix-v13", "knowledge-matrix-v13-owner-approved-locked.json");
+  if (!fs.existsSync(file)) return [];
+  const dataset = readJson(file);
+  if (
+    dataset.schema !== "tldrastro.knowledge-matrix.rows.v13"
+    || dataset.version !== "v13-direct-language-owner-approved"
+    || dataset.rows?.length !== 301
+  ) {
+    throw new Error("Canonical LL matrix V13 voice evidence is incomplete.");
+  }
+  return dataset.rows.map((row) => {
+    const parts = String(row.key).split("|");
+    const placement = row.sheet === "PlacementMeanings" ? parts[1] ?? "" : "";
+    const placementSlug = tokens(placement).join("-");
+    const planet = tokens(parts[0] || "").join("-");
+    const sign = SIGNS.includes(placementSlug) ? placementSlug : "";
+    const house = placement.match(/^(\d{1,2})(?:st|nd|rd|th) house$/u)?.[1] ?? "";
+    return baseEntry({
+      sourceId: `ll-v13:${row.sheet.toLowerCase()}:${row.workbookRow}:${tokens(row.key).join("-")}`,
+      text: row.copy,
+      sourcePath: relative(file),
+      author: "Owner-approved exact wording",
+      origin: "owner-approved-ll-matrix-v13",
+      surface: row.sheet === "AspectMeanings" ? "natal-aspect" : "natal-placement",
+      planet,
+      sign,
+      house,
+      articleBeat: "ll-delineation",
+      structuralFunction: row.sheet === "AspectMeanings"
+        ? `natal aspect delineation (${parts[1] || "aspect"} ${parts[2] || ""})`.trim()
+        : row.sheet === "NodesPhasesFortune"
+          ? "natal point delineation"
+          : "natal placement delineation",
+      authorityClass: "exact_owner_approved",
+      ownerApproved: true,
+      reviewStatus: "approved",
+      editorialStatus: row.governance,
+      canonical: true,
+      useAsPositiveVoiceEvidence: true,
+      useAsContextualEvidence: true,
+      provenance: `Canonical owner-approved LL matrix V13 row (2026-08-10), workbook ${dataset.sourceWorkbook}, ${row.sheet} row ${row.workbookRow}. Copy preserved exactly; Gemini blind-edit path discarded. Runtime payload ${row.payloadSha256}.`
+    });
+  });
+}
+
 function buildIndex() {
   const entries = [
     ...activeOwnerEntries(),
@@ -527,6 +576,7 @@ function buildIndex() {
     ...reviewCandidateEntries(),
     ...approvedFormatExemplarEntries(),
     ...knowledgeMatrixV9Entries(),
+    ...llMatrixV13Entries(),
     ...historicalEntries(),
     ...contrastiveEntries(),
     ...negativeEntries(),
