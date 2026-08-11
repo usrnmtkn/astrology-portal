@@ -268,3 +268,71 @@ Before accepting a unit, ask:
 
 The final target is not merely "specific." It is observed. The reader should recognize their Wednesday, their ten o'clock appointment, their commute, their text message, or the responsibility that somehow became five responsibilities before the prose tells them what any of it means.
 ```
+
+---
+
+## Owner amendment, 2026-08-09 (second ruling): astrology sentence → lived consequence
+
+**Status: owner ruling, engine-level, verbatim. Issued during review of two approved knowledge-matrix rows; the owner designated those two approved lines as calibration exemplars for this rule. Applies to ALL writing surfaces that consume this standard: report domains, knowledge-matrix voiced rows, sky placements, and horoscope copy. Additive to the standard above; where they overlap, this amendment sharpens the enforcement, it does not soften it.**
+
+Owner text verbatim:
+
+```text
+The two approved examples establish an important rule: once the astrology has been named, the prose should move forward into lived experience instead of translating the astrology again.
+
+The engine tuning I would carry forward is:
+
+* Astrology sentence → lived consequence. After the placement/aspect is established, the next sentence should usually show what somebody notices, does, avoids, changes, says, feels in their body, or has to deal with.
+* Do not explain the same mechanism twice. A sentence like "Saturn square Uranus creates tension between responsibility and freedom" should not be followed by another abstract sentence explaining responsibility versus freedom. Move to what happens because of it.
+* Watch interpretation-engine scaffolds. Especially repeated constructions such as "directs emotional pressure into", "the opportunity is", "the adjustment is", "the person has more room to", "the tension eases when", "this creates an opening for", and similar explanatory bridges. They can appear occasionally, but they should not become the default grammar.
+* Advice should emerge from the observation.
+Better: "By the time freedom starts looking like an emergency exit, the problem has usually been building for a while."
+Less effective: "The tension eases when responsibilities are handled deliberately."
+* Concrete means observable consequence, not decorative detail.
+"A problem gets fixed. The work gets organized." is concrete because it shows what 6th-house energy actually does. It does not need a random object or invented scene.
+* Let the contradiction carry the warmth.
+"The trouble starts when staying busy becomes a way to avoid the feeling." sounds human because it understands why the behavior works before showing where it stops working.
+* Do not automatically resolve the paragraph. Sometimes the sharpest ending is the consequence, contradiction, or realization rather than a coaching instruction.
+* Every sentence after the astrology has to earn new information. If it merely paraphrases the prior sentence in softer language, cut it or replace it with lived evidence.
+
+And I would add one explicit engine test:
+After the astrology sentence, ask: What becomes observable because this is true?
+If the next sentence answers the astrology again instead of answering that question, the engine should flag it for revision.
+```
+
+**Owner clarification, 2026-08-09 (same day):** the announcement construction "planet enters sign, attention turns to A, B, and C" is acceptable phrasing; variation is good. It is NOT a defect on its own. The defect arises only when (a) it is followed by a sentence that re-translates the astrology instead of showing a lived consequence, or (b) it becomes the only grammar across a batch. Judges must not flag this family as keyword-stack or scaffold merely for existing.
+
+**Owner amendment, 2026-08-10 (third ruling): the word "real" as generator filler.** Owner text verbatim:
+
+```text
+I want a rule against the over-use of the word "real". Real becomes a lazy ai-generator fill. Instead take time to construct a thoughtful sentence.
+"The opportunity becomes real when you are willing to learn." - "The opportunity becomes a lesson, when you are open to the experience to learn."
+```
+
+Enforcement (`real-filler` defect): constructions where "real" carries the transformation or intensity that a concrete noun should carry — "becomes real," "gets real," "feels real," "make it real," "the real work," "real progress" — are the primary targets. The fix is never a synonym swap; it is naming what the thing actually becomes (a lesson, a bill, a schedule, a conversation, a decision). "Real" used literally and sparingly (a real request, a real week) is acceptable; recurrence as a crutch is the defect. This extends the phrasebook's existing ban on "makes this feel real." Frequency rule: more than one "real" per unit, or any "becomes/gets/feels real" construction, triggers the flag.
+
+**Owner amendment, 2026-08-10 (fourth ruling): the reader should never have to translate the writing.** Owner text verbatim:
+
+```text
+The paragraph is trying to sound written instead of simply telling the reader what happens. "Fire," "target," "cleanup," and "charging toward" all force the reader to translate the sentence back into ordinary behavior.
+
+The rule should be stricter than the V12 audit was: the reader should never have to translate the writing. A concrete example is useful. A metaphor is only useful when it makes the meaning more obvious, not more literary. So phrases such as "the fire is not the problem," "find the shelf empty," "emotional weather," "holding the key," "the door opens," "the tide changes," or "give it a target" should all be treated as audit flags unless the sentence would be less clear without them.
+```
+
+Owner-approved calibration exemplar (Mars in Aries, exact wording):
+
+```text
+Mars in Aries tends to act quickly. You make the call, take the lead, start the workout, speak up, or deal with a problem as soon as you notice it. Waiting can be frustrating, especially when you already know what you want to do.
+
+That speed can help you take initiative, but it can also lead you to argue, take a risk, or make a decision before you have enough information. Not every situation needs an immediate response. Give yourself enough time to understand what is happening before you act.
+```
+
+Enforcement (`translation-required` defect): any figurative phrase the reader must decode back into behavior is a flag. The test is not "is it a metaphor" but "would the sentence be less clear without it." Rewrites replace the image with the ordinary behavior it stands for (make the call, argue, take a risk, commit to a plan). This is stricter than, and takes precedence over, earlier tolerance for grounded metaphor on natal-delineation and knowledge-matrix surfaces; the phrasebook's metaphor families remain available only where they pass the clarity test.
+
+### Enforcement notes (implementation, not owner prose)
+
+- **Critique checklist**: add the observability test as a named defect class, `astrology-restated`. The critique flags any sentence directly following an astrology-naming sentence that re-translates the mechanism instead of answering "what becomes observable because this is true?" The two owner-approved matrix rows serve as positive calibration; the "Saturn square Uranus" double-explanation serves as the negative exemplar.
+- **Scaffold constructions** ("directs emotional pressure into", "the opportunity is", "the adjustment is", "the person has more room to", "the tension eases when", "this creates an opening for"): warn-level, frequency-based, not a hard ban. One instance in a unit is acceptable; recurrence as default grammar is the defect (`scaffold-grammar`). Deterministic lint may count occurrences per unit and per batch; the judge decides whether density constitutes the defect.
+- **Closer rule**: extends standard point 10 — the reviser may not append a coaching instruction to a paragraph whose consequence, contradiction, or realization already ends it.
+- **New-information rule**: extends flatness question 7 — a sentence that paraphrases its predecessor in softer language is a defect (`soft-paraphrase`) even when it contains no banned vocabulary.
+

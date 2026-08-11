@@ -30,6 +30,7 @@
         "properties": {
           "factorType": {
             "enum": [
+              "eclipse-house-placement",
               "eclipse-on-natal-point",
               "slow-transit-to-natal",
               "return",
@@ -59,18 +60,28 @@
             "type": "object",
             "required": ["text", "review_status"],
             "properties": {
-              "text": { "type": "null" },
-              "review_status": { "const": "needs_review" }
+              "text": { "type": ["string", "null"] },
+              "review_status": { "enum": ["needs_review", "approved"] }
             },
             "additionalProperties": false
           },
           "provenance": { "type": "string" },
-          "review_status": { "const": "needs_review" }
+          "review_status": { "enum": ["needs_review", "approved"] }
         },
         "additionalProperties": false
       }
     },
-    "review_status": { "const": "needs_review" }
+    "approval": {
+      "type": "object",
+      "required": ["status", "approvedOn", "sourcePath"],
+      "properties": {
+        "status": { "const": "owner_approved" },
+        "approvedOn": { "type": "string", "format": "date" },
+        "sourcePath": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "review_status": { "enum": ["needs_review", "approved"] }
   },
   "additionalProperties": false
 }
