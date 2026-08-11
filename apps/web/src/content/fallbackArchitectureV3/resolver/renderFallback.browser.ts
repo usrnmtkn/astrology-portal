@@ -49,9 +49,14 @@ export interface HookRow {
   astroHint?: string;
   fact_line?: string;
   aspect_insert?: string;
+  primary_hook?: string;
+  opening_heading?: string;
   opening?: string;
+  tension_heading?: string;
   tension?: string;
+  development_heading?: string;
   development?: string;
+  close_heading?: string;
   close?: string;
   try_this?: string[];
   aspect_units?: Array<{

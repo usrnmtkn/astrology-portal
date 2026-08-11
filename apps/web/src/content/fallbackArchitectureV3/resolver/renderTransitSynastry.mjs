@@ -1443,6 +1443,16 @@ function renderContinuousSkyPlacement(signCopy, {
   const collective = [signCopy.opening, signCopy.tension, signCopy.development]
     .map((part) => fillKeep(part, ctx));
   const close = fillKeep(signCopy.close, ctx);
+  const masterHeadings = [
+    signCopy.opening_heading,
+    signCopy.tension_heading,
+    signCopy.development_heading,
+    signCopy.close_heading
+  ];
+  const rendersArticleMaster = typeof signCopy.primary_hook === "string"
+    && Boolean(signCopy.primary_hook.trim())
+    && masterHeadings.every((heading) => typeof heading === "string" && Boolean(heading.trim()));
+  const primaryHook = rendersArticleMaster ? fillKeep(signCopy.primary_hook, ctx) : null;
   const activeAspectMatch = events
     .filter((event) => (
       event.type === "aspect"
@@ -1478,11 +1488,19 @@ function renderContinuousSkyPlacement(signCopy, {
   }
 
   const parts = [factLine, ...collective, ...aspectParts, close];
-  const articleSections = [
-    { kind: "collective-read", heading: "", body: [factLine, ...collective].join("\n\n") },
-    ...(aspectSection ? [aspectSection] : []),
-    { kind: "exit-tone-shift", heading: "", body: close }
-  ];
+  const articleSections = rendersArticleMaster
+    ? [
+        { kind: "collective-read", heading: fillKeep(signCopy.opening_heading, ctx), body: [factLine, collective[0]].join("\n\n") },
+        { kind: "collective-read", heading: fillKeep(signCopy.tension_heading, ctx), body: collective[1] },
+        { kind: "collective-read", heading: fillKeep(signCopy.development_heading, ctx), body: collective[2] },
+        ...(aspectSection ? [aspectSection] : []),
+        { kind: "exit-tone-shift", heading: fillKeep(signCopy.close_heading, ctx), body: close }
+      ]
+    : [
+        { kind: "collective-read", heading: "", body: [factLine, ...collective].join("\n\n") },
+        ...(aspectSection ? [aspectSection] : []),
+        { kind: "exit-tone-shift", heading: "", body: close }
+      ];
   const renderedText = [
     `${title(planet)} in ${title(sign)}`,
     ...parts,
@@ -1515,7 +1533,7 @@ function renderContinuousSkyPlacement(signCopy, {
 
   return {
     headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
-    tagline: null,
+    tagline: primaryHook,
     closingCharge: null,
     keyDates: [],
     body: parts.join("\n\n"),
