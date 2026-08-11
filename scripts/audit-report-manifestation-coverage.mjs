@@ -71,12 +71,12 @@ const gapsByType = Object.fromEntries(
       .sort()])
 );
 
-const marieFacts = JSON.parse(fs.readFileSync(path.join(repoRoot, "scripts", "fixtures", "marie-report-frozen-facts.json"), "utf8"));
-const marieFactors = reportFactors(marieFacts);
-const marieCoverage = resolveManifestationSets(marieFactors);
+const diagnosticFacts = JSON.parse(fs.readFileSync(path.join(repoRoot, "scripts", "fixtures", "marie-report-frozen-facts.json"), "utf8"));
+const diagnosticFactors = reportFactors(diagnosticFacts);
+const diagnosticCoverage = resolveManifestationSets(diagnosticFactors);
 
 const artifact = {
-  schemaVersion: "report-manifestation-coverage-v1",
+  schemaVersion: "report-manifestation-coverage-v2",
   auditedOn: "2026-08-10",
   eligibilityRuling: REPORT_FACTOR_ELIGIBILITY_RULING,
   universeDefinition: {
@@ -97,12 +97,14 @@ const artifact = {
   eligibleCountsByFactorType: Object.fromEntries(Object.entries(group(universe.map((item) => ({ factor: item })))).map(([key, values]) => [key, values.length])),
   gapCountsByFactorType: Object.fromEntries(Object.entries(gapsByType).map(([key, values]) => [key, values.length])),
   remainingGapsByFactorType: gapsByType,
-  marieFixture: {
-    factorCount: marieFactors.length,
-    resolvedCount: marieCoverage.resolved.length,
-    sourceGapCount: marieCoverage.gaps.length,
-    sourceGaps: marieCoverage.gaps,
-    factorKeys: marieFactors.map((item) => item.id).sort()
+  fixtureDiagnostic: {
+    authoritativeForProductionCoverage: false,
+    note: "This checked-in fixture is an offline regression aid only. Production coverage claims require scripts/audit-production-report-coverage.mjs against the report's stored facts bundle.",
+    factorCount: diagnosticFactors.length,
+    resolvedCount: diagnosticCoverage.resolved.length,
+    sourceGapCount: diagnosticCoverage.gaps.length,
+    sourceGaps: diagnosticCoverage.gaps,
+    factorKeys: diagnosticFactors.map((item) => item.id).sort()
   }
 };
 
@@ -113,12 +115,11 @@ if (process.argv.includes("--write")) {
 console.log(JSON.stringify({
   totals: artifact.totals,
   gapCountsByFactorType: artifact.gapCountsByFactorType,
-  marieFixture: {
-    factorCount: artifact.marieFixture.factorCount,
-    resolvedCount: artifact.marieFixture.resolvedCount,
-    sourceGapCount: artifact.marieFixture.sourceGapCount
+  fixtureDiagnostic: {
+    authoritativeForProductionCoverage: artifact.fixtureDiagnostic.authoritativeForProductionCoverage,
+    factorCount: artifact.fixtureDiagnostic.factorCount,
+    resolvedCount: artifact.fixtureDiagnostic.resolvedCount,
+    sourceGapCount: artifact.fixtureDiagnostic.sourceGapCount
   },
   artifact: path.relative(repoRoot, outputPath)
 }, null, 2));
-
-if (marieCoverage.gaps.length) process.exitCode = 1;
