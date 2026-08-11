@@ -28,6 +28,8 @@ Concrete does not mean domain-specific. A bodily reaction, a decision, noticing 
 
 The writer does not choose where the astrology happens. The chart resolver does. The writer chooses how to express that licensed experience clearly and naturally.
 
+Licensed vocabulary may be paraphrased naturally; do not embed grant phrases verbatim.
+
 ## Form constraints
 
 - Headline: ≤ 12 words, declarative, states the truth plainly. Not a question, not an aphorism, not a command to notice or allow.

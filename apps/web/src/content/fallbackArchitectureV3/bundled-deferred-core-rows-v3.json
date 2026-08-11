@@ -15229,7 +15229,7 @@
       "contentKey": "fallback-hook/daily-headline/conjunction/neptune",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Give yourself permission to turn the volume down on the world right now.",
+      "body_you": "You start fixing a problem no one has named.",
       "body_they": "Give yourself permission to turn the volume down on the world right now.",
       "review_status": "approved",
       "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
@@ -15238,7 +15238,7 @@
       "contentKey": "fallback-hook/daily-body/conjunction/neptune",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "A song can undo you. An old memory can color the whole afternoon. Someone else's mood may follow you home before you realize you picked it up. Give yourself less noise, fewer opinions, and more time before making a hard decision. Write, make something, take a long shower, or let yourself stare out the window for a while. Not every feeling needs to be solved, but it does need to be experienced.",
+      "body_you": "You notice your manager seems off and start rearranging the day's schedule before they explain what happened. You may treat that mood as your own, so you check every detail and push aside work that will be evaluated. You still do not know what happened. Before you change the schedule again, ask your manager what actually needs attention.",
       "body_they": "A song can undo you. An old memory can color the whole afternoon. Someone else's mood may follow you home before you realize you picked it up. Give yourself less noise, fewer opinions, and more time before making a hard decision. Write, make something, take a long shower, or let yourself stare out the window for a while. Not every feeling needs to be solved, but it does need to be experienced.",
       "review_status": "approved",
       "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."

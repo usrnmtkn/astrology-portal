@@ -84,7 +84,8 @@
         "screenshot_line",
         "specificity"
       ],
-      "ownerVerdict": "pending"
+      "ownerVerdict": "took-candidate",
+      "ownerNote": "Candidate 2 was promoted through the governed serving path. Accepting candidate 2 is a one-instance acceptance of the composed-grant arc (form-explanation + manage-schedule + check-details producing action-before-clarification). It does not establish general composition doctrine; that question remains open and future candidates leaning on removed grants via composition still require case-by-case owner ruling."
     },
     {
       "auditDate": "2026-08-10",

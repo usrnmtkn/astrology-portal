@@ -20,6 +20,11 @@ const registry = JSON.parse(fs.readFileSync(new URL(
   "../packages/astro-knowledge/config/daily-glance-scene-licenses-v1.json",
   import.meta.url
 ), "utf8"));
+const writerDirective = fs.readFileSync(new URL(
+  "../packages/astro-knowledge/review/daily-glance-sol-writer-directive-v2.md",
+  import.meta.url
+), "utf8");
+assert.ok(writerDirective.includes("Licensed vocabulary may be paraphrased naturally; do not embed grant phrases verbatim."));
 
 const registryValidation = validateLicenseRegistry(registry);
 assert.deepEqual(registryValidation, { passed: true, errors: [], licenseCount: 4 });
@@ -225,6 +230,25 @@ const cleanCandidate = {
 const cleanLint = validateSpecificityCandidate(cleanCandidate, approvedPacket, { registry: approvedRegistry });
 assert.equal(cleanLint.passed, true, JSON.stringify(cleanLint.failures));
 
+const neptunePilotCandidates = [
+  {
+    headline: "You read a manager's mood as criticism of your work.",
+    body: "You notice your manager's mood while managing the schedule and start checking every detail as if your work is being judged. You may feel responsible for correcting a problem before your manager has said there is one. You do not know yet. You keep checking the same details, leaving less time to manage the appointment that still needs your attention. Wait for your manager's explanation before changing the schedule."
+  },
+  {
+    headline: "You start fixing a problem no one has named.",
+    body: "You notice your manager seems off and start rearranging the day's schedule before they explain what happened. You may treat that mood as your own, so you check every detail and push aside work that will be evaluated. You still do not know what happened. Before you change the schedule again, ask your manager what actually needs attention."
+  },
+  {
+    headline: "You respond to an unexplained mood by doing extra work.",
+    body: "You notice your manager's mood while managing the schedule and start treating it as a problem with your work. You may absorb the mood as your own, then lose time checking details instead of finishing the work your manager will evaluate. You still have no explanation. Only change the schedule after your manager explains what happened."
+  }
+];
+for (const candidate of neptunePilotCandidates) {
+  const result = validateSpecificityCandidate(candidate, approvedPacket, { registry: approvedRegistry });
+  assert.equal(result.passed, true, JSON.stringify(result.failures));
+}
+
 const unsupportedKnown = validateSpecificityCandidate({
   headline: "The presentation starts to look wrong.",
   body: "You reopen the slides before anyone identifies a problem.",
@@ -247,7 +271,7 @@ const unsupportedUnknown = validateSpecificityCandidate({
   specificityClaims: []
 }, approvedPacket, { registry: approvedRegistry });
 assert.equal(unsupportedUnknown.passed, false);
-assert.ok(unsupportedUnknown.unknownConcretePhrases.includes("quarterly"));
+assert.ok(unsupportedUnknown.unknownConcretePhrases.includes("deck"));
 
 const invalidApproval = structuredClone(registry);
 invalidApproval.licenses[0].approval.ownerApproved = false;

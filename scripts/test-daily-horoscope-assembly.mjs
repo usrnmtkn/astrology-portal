@@ -52,6 +52,12 @@ const approvedDailyGlances = [
     body: "A conversation about grief, anxiety, or old family history does not have to become a fight. You can say what affected you without explaining every detail or demanding an answer from anyone else. Tell someone you trust what happened and how it made you feel."
   },
   {
+    natal: "neptune",
+    aspect: "conjunction",
+    headline: "You start fixing a problem no one has named.",
+    body: "You notice your manager seems off and start rearranging the day's schedule before they explain what happened. You may treat that mood as your own, so you check every detail and push aside work that will be evaluated. You still do not know what happened. Before you change the schedule again, ask your manager what actually needs attention."
+  },
+  {
     natal: "north-node",
     aspect: "conjunction",
     headline: "You keep reopening the next step you said you were not ready for.",
