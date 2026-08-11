@@ -1,0 +1,4121 @@
+{
+  "id": "sr-overlay-manifestation-sets-v1",
+  "kind": "manifestation-set-collection",
+  "version": 1,
+  "coverageDomains": [
+    "self and body",
+    "money and resources",
+    "communication and local life",
+    "home and family",
+    "creativity and pleasure",
+    "work and health",
+    "relationships and agreements",
+    "shared resources and closure",
+    "study travel and publishing",
+    "career and public role",
+    "friends groups and plans",
+    "privacy rest and institutions"
+  ],
+  "records": {
+    "sr-overlay/sun/1": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 1,
+        "overlayPoint": "Sun"
+      },
+      "domain": [
+        "self-presentation",
+        "physical body",
+        "personal initiative",
+        "visibility",
+        "independent action",
+        "stamina"
+      ],
+      "possibleLivedManifestations": [
+        "A decision could get made alone this year that in other years would have waited for agreement",
+        "People who have not seen you in a while may comment that something about you reads differently",
+        "A physical undertaking, from a training block to a demanding schedule, can claim a real share of the year",
+        "Your name may end up attached to something publicly, on a roster, a byline, a door"
+      ],
+      "doNotAssume": [
+        "a deliberate appearance change",
+        "dissatisfaction with how life currently looks",
+        "that the person wants attention",
+        "a health problem or a health improvement",
+        "that independence means conflict with others"
+      ],
+      "copyClaim": {
+        "text": "This may be a year that starts with you rather than with circumstances. What you decide to begin, and how visibly you begin it, can set the tone for the following twelve months.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/sun/2": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 2,
+        "overlayPoint": "Sun"
+      },
+      "domain": [
+        "income",
+        "possessions",
+        "pricing of one's work",
+        "savings and debt",
+        "usable talents",
+        "financial decisions"
+      ],
+      "possibleLivedManifestations": [
+        "A raise request, rate change, or price revision may become unavoidable",
+        "Something owned for years could be sold, replaced, or finally put to use",
+        "An unpaid skill may start generating money, or a paid one may stop",
+        "A large purchase, or the decision not to make one, can dominate several months"
+      ],
+      "doNotAssume": [
+        "financial hardship or a windfall",
+        "that income comes from employment",
+        "materialism",
+        "that a purchase is planned",
+        "existing debt"
+      ],
+      "copyClaim": {
+        "text": "Questions of what your work is worth and what your things are for may keep resurfacing this year. A number that has stayed fixed for a long time could finally move.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/sun/3": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 3,
+        "overlayPoint": "Sun"
+      },
+      "domain": [
+        "daily communication",
+        "local territory",
+        "paperwork and messages",
+        "short trips",
+        "coursework",
+        "neighbors and relatives"
+      ],
+      "possibleLivedManifestations": [
+        "A document, application, or piece of writing may take far more of the year than expected",
+        "The same short route could get traveled dozens of times for a recurring commitment",
+        "A course, license exam, or structured block of study can anchor the calendar",
+        "Correspondence with a relative or neighbor may become a running thread of the year"
+      ],
+      "doNotAssume": [
+        "siblings or contact with them",
+        "academic enrollment",
+        "a talent or deficit in communicating",
+        "that local matters are minor matters",
+        "conflict with neighbors"
+      ],
+      "copyClaim": {
+        "text": "The year's central effort may be carried in messages, errands, and pages rather than in one big event. Something you write, file, or study this year could outlast the year itself.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/sun/4": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 4,
+        "overlayPoint": "Sun"
+      },
+      "domain": [
+        "dwelling",
+        "household logistics",
+        "family of origin",
+        "property questions",
+        "privacy",
+        "long-term base"
+      ],
+      "possibleLivedManifestations": [
+        "A lease, mortgage, repair, or move question may sit at the center of the year",
+        "A parent's situation or a family matter could require decisions with dates attached",
+        "Rooms may get emptied, renovated, or rearranged to match how life actually runs now",
+        "Where you will be living in five years can become a live question instead of a background one"
+      ],
+      "doNotAssume": [
+        "home ownership or renting",
+        "family conflict",
+        "that anyone else lives in the household",
+        "that a move happens",
+        "nostalgia or homesickness"
+      ],
+      "copyClaim": {
+        "text": "Where and how you are based may stop being background this year. A long-deferred question about the place you live or the people you come from could require an answer with a date on it.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/sun/5": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 5,
+        "overlayPoint": "Sun"
+      },
+      "domain": [
+        "creative output",
+        "recreation",
+        "romance",
+        "children in one's orbit",
+        "risk-taking",
+        "performance"
+      ],
+      "possibleLivedManifestations": [
+        "A creative project may move from private to shown: submitted, staged, posted, or sold",
+        "A hobby could absorb money and weekends at a scale that surprises you",
+        "A romance, or the deliberate pursuit of one, may occupy real attention",
+        "Time with a child in your life, your own or someone else's, can reshape the calendar",
+        "A calculated risk, from an audition to a speculative buy, could define the year in retrospect"
+      ],
+      "doNotAssume": [
+        "pregnancy or children",
+        "romantic involvement or its absence",
+        "artistic talent",
+        "gambling problems",
+        "that pleasure feels frivolous to this person"
+      ],
+      "copyClaim": {
+        "text": "Something made for its own sake may demand to be seen this year. A project, pastime, or attraction could move from the margins of the schedule to the middle of it.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/sun/6": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 6,
+        "overlayPoint": "Sun"
+      },
+      "domain": [
+        "workload",
+        "daily routines",
+        "body maintenance",
+        "skills refinement",
+        "service obligations",
+        "pets"
+      ],
+      "possibleLivedManifestations": [
+        "A workload may grow past what the current routine can absorb, forcing a redesign",
+        "A recurring appointment, from physical training to a standing shift, could structure the whole year",
+        "Checkups, dental work, or a maintenance regimen may finally get scheduled and kept",
+        "A pet, a dependent's schedule, or a colleague's absence can add duties nobody planned"
+      ],
+      "doNotAssume": [
+        "illness or a diagnosis",
+        "employment",
+        "that routines are currently broken",
+        "overwork",
+        "that duties of service are unwanted"
+      ],
+      "copyClaim": {
+        "text": "The year's main event may not look like an event at all: it can be the reorganization of ordinary days. How the workload is carried may matter more this year than what the work is.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/sun/7": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 7,
+        "overlayPoint": "Sun"
+      },
+      "domain": [
+        "one-to-one commitments",
+        "contracts",
+        "negotiation",
+        "shared decisions",
+        "counterparts and rivals",
+        "formal agreements"
+      ],
+      "possibleLivedManifestations": [
+        "A contract, agreement, or formal commitment may be signed, renegotiated, or ended",
+        "One particular person, ally or adversary, could feature in most of the year's big scenes",
+        "Decisions that used to be solo may now require a second signature or a second opinion",
+        "A dispute could reach mediation, or a collaboration could reach paper"
+      ],
+      "doNotAssume": [
+        "marriage, divorce, or partnership status",
+        "that the other party is romantic",
+        "conflict",
+        "dependence on others",
+        "that agreement is reached"
+      ],
+      "copyClaim": {
+        "text": "This year's headline may have two names on it. What gets agreed, contested, or signed with one other person could set terms that outlast the year.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/sun/8": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 8,
+        "overlayPoint": "Sun"
+      },
+      "domain": [
+        "shared finances",
+        "debts and settlements",
+        "other people's resources",
+        "taxes and estate paperwork",
+        "deep commitments",
+        "closures"
+      ],
+      "possibleLivedManifestations": [
+        "A loan, refinance, settlement, or tax matter may require months of attention",
+        "Money entangled with another person, a partner, an institution, an estate, could need untangling",
+        "Something long carried, a debt, a role, an arrangement, can be closed out for good",
+        "Paperwork about beneficiaries, insurance, or account access may finally get done"
+      ],
+      "doNotAssume": [
+        "a death or bereavement",
+        "an inheritance or windfall",
+        "financial crisis",
+        "a partner's income",
+        "secrecy or betrayal"
+      ],
+      "copyClaim": {
+        "text": "Resources you do not fully control may set this year's agenda: what is owed, shared, insured, or settled. Closing one long-running entanglement could free more than money.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/sun/9": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 9,
+        "overlayPoint": "Sun"
+      },
+      "domain": [
+        "formal study",
+        "long-distance travel",
+        "publishing",
+        "legal matters",
+        "foreign contacts",
+        "worldview"
+      ],
+      "possibleLivedManifestations": [
+        "A degree program, certification, or serious course of study could claim the year",
+        "A long trip may get planned, taken, or repeatedly rescheduled, and dominate conversation either way",
+        "Something written may head toward publication, or a legal question toward a filing",
+        "Contact with another country, a person, an employer, a language, can become a regular feature"
+      ],
+      "doNotAssume": [
+        "religious belief or its absence",
+        "enrollment in school",
+        "that travel occurs",
+        "legal trouble",
+        "education level or fluency"
+      ],
+      "copyClaim": {
+        "text": "The year may keep pulling attention past the usual radius: a course, a border, a court, a manuscript. What you believe by next year could differ from what you believe now.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/sun/10": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 10,
+        "overlayPoint": "Sun"
+      },
+      "domain": [
+        "occupation",
+        "public reputation",
+        "titles and credentials",
+        "long-term ambition",
+        "accountability",
+        "dealings with authority"
+      ],
+      "possibleLivedManifestations": [
+        "A title, credential, or public role could change hands, including yours",
+        "Work done quietly for years may suddenly get evaluated in the open",
+        "An authority, a board, a licensing body, a major client, can loom larger than usual",
+        "A decade-scale ambition may demand a concrete step this year: an application, a launch, a public claim"
+      ],
+      "doNotAssume": [
+        "employment or promotion",
+        "that career is the person's priority",
+        "success or failure",
+        "a boss or hierarchy",
+        "that reputation is in danger"
+      ],
+      "copyClaim": {
+        "text": "What you are known for may get tested in public this year. A submission, bid, or piece of visible work could return a verdict, and the verdict may redirect the next several years.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/sun/11": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 11,
+        "overlayPoint": "Sun"
+      },
+      "domain": [
+        "friendships",
+        "groups and associations",
+        "shared causes",
+        "long-range plans",
+        "networks",
+        "collective projects"
+      ],
+      "possibleLivedManifestations": [
+        "A group, a team, board, association, or circle of friends, may claim a leading share of the year",
+        "One friendship could deepen into an alliance, or quietly end",
+        "A long-range plan may get dated and budgeted instead of merely discussed",
+        "You could be asked to organize, chair, or front something collective"
+      ],
+      "doNotAssume": [
+        "a large social circle",
+        "loneliness",
+        "political involvement",
+        "that groups run harmoniously",
+        "that plans succeed"
+      ],
+      "copyClaim": {
+        "text": "Who stands with you may matter more than usual this year. A plan that has lived in conversation for years could acquire a date, a budget, and other people's names.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/sun/12": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 12,
+        "overlayPoint": "Sun"
+      },
+      "domain": [
+        "work done out of view",
+        "rest and retreat",
+        "institutions",
+        "unfinished business",
+        "confidential matters",
+        "preparation"
+      ],
+      "possibleLivedManifestations": [
+        "The year's most important work may happen with no audience: research, caretaking, recovery, drafting",
+        "Time in or around an institution, a hospital, archive, studio, retreat, or agency, could feature",
+        "Something from the past may resurface needing to be settled quietly",
+        "A deliberate withdrawal from one commitment can make room for what comes next year"
+      ],
+      "doNotAssume": [
+        "depression, isolation, or crisis",
+        "hospitalization",
+        "secrets kept against others",
+        "that solitude is unwanted",
+        "wrongdoing"
+      ],
+      "copyClaim": {
+        "text": "This may be a year measured by what happens off-stage. The results might not show until later, but the groundwork laid out of view could be the year's real product.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/moon/1": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 1,
+        "overlayPoint": "Moon"
+      },
+      "domain": [
+        "moods on display",
+        "immediate reactions",
+        "bodily rhythms",
+        "personal needs",
+        "day-to-day morale"
+      ],
+      "possibleLivedManifestations": [
+        "Feelings may sit closer to the surface this year, visible to others before you have named them",
+        "Appetite, sleep, and stamina could fluctuate with circumstances more than usual",
+        "People may bring you their troubles more often, reading you as approachable",
+        "What you need on a given day may change quickly, and the schedule may have to bend with it"
+      ],
+      "doNotAssume": [
+        "emotional instability",
+        "an appearance change",
+        "moodiness as a character trait",
+        "that visibility is wanted",
+        "a health issue"
+      ],
+      "copyClaim": {
+        "text": "This year your state may show. Days can differ sharply from one another, and the people around you may respond to that variability before you mention it.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/moon/2": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 2,
+        "overlayPoint": "Moon"
+      },
+      "domain": [
+        "money and mood",
+        "spending patterns",
+        "possessions with history",
+        "material comfort",
+        "financial security"
+      ],
+      "possibleLivedManifestations": [
+        "Spending may track feelings this year: comfort purchases in some months, tight holds in others",
+        "An object with history, inherited, gifted, long-kept, could ask to be repaired, passed on, or let go",
+        "Income or cash flow may fluctuate enough to be felt, even if the annual total holds",
+        "How safe the bank balance feels can drive decisions more than what it says"
+      ],
+      "doNotAssume": [
+        "financial trouble",
+        "impulsive spending",
+        "attachment to possessions as a flaw",
+        "a windfall",
+        "employment income"
+      ],
+      "copyClaim": {
+        "text": "Money may carry feeling this year, and feeling may carry money. The balance that matters could be less the one on the statement and more the sense of enough or not-enough that moves with it.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/moon/3": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 3,
+        "overlayPoint": "Moon"
+      },
+      "domain": [
+        "daily conversations",
+        "news intake",
+        "local rounds",
+        "relatives nearby",
+        "notes and messages"
+      ],
+      "possibleLivedManifestations": [
+        "Conversations may run more personal than usual: check-ins, confidences, worries traded over errands",
+        "A relative or neighbor could need regular contact, and the phone log may show it",
+        "News and feeds can affect mood enough that intake gets deliberately rationed",
+        "Short trips may multiply, the same few roads over and over, for reasons that matter"
+      ],
+      "doNotAssume": [
+        "siblings or contact with them",
+        "anxiety",
+        "gossip",
+        "a commute",
+        "that frequent contact is a burden"
+      ],
+      "copyClaim": {
+        "text": "The year's feelings may travel by message and errand rather than by event. Who you talk to weekly, and about what, could shift noticeably by year's end.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/moon/4": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 4,
+        "overlayPoint": "Moon"
+      },
+      "domain": [
+        "household atmosphere",
+        "family ties",
+        "domestic routines",
+        "dwelling comfort",
+        "roots and belonging"
+      ],
+      "possibleLivedManifestations": [
+        "Home may become where feelings get processed: more nights in, more meals cooked, more hosting, or deliberately none of it",
+        "A parent or elder could need more of your attention, or you more of theirs",
+        "Furniture may move, rooms may swap purposes, small comforts may get rebuilt piece by piece",
+        "Where you actually feel at home, this address or another, can become a live question"
+      ],
+      "doNotAssume": [
+        "home ownership",
+        "family conflict",
+        "living with others",
+        "a happy or unhappy childhood",
+        "a move"
+      ],
+      "copyClaim": {
+        "text": "The center of the year may sit at home rather than out in the world. Small domestic changes, who is around the table, how the rooms are used, can register more deeply than larger public ones.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/moon/5": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 5,
+        "overlayPoint": "Moon"
+      },
+      "domain": [
+        "pleasure and play",
+        "romance",
+        "children in one's orbit",
+        "creative moods",
+        "audiences"
+      ],
+      "possibleLivedManifestations": [
+        "What used to be entertaining may stop being so, and something new may take its place",
+        "A romance could run warm and cool by the month rather than holding one temperature",
+        "A child in your life, or the question of children, may pull on feelings this year",
+        "Creative output can come in floods and droughts rather than on schedule"
+      ],
+      "doNotAssume": [
+        "pregnancy or children",
+        "a romantic relationship",
+        "creative ambition",
+        "attention-seeking",
+        "that enjoyment is currently missing"
+      ],
+      "copyClaim": {
+        "text": "What delights you may be under revision this year. The heart could show up unevenly, strong some months and absent others, in romance, in play, in whatever you make.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/moon/6": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 6,
+        "overlayPoint": "Moon"
+      },
+      "domain": [
+        "daily rhythm",
+        "workplace atmosphere",
+        "body signals",
+        "caretaking duties",
+        "routines"
+      ],
+      "possibleLivedManifestations": [
+        "The body may report on the year honestly: sleep, digestion, and tension tracking the workload",
+        "Feelings about the daily grind could swing between contentment and the urge to overhaul everything",
+        "Someone or something, a colleague, a pet, a dependent, may need routine care from you",
+        "Small fixes to routine, meal times, commutes, desk setup, can carry outsized relief"
+      ],
+      "doNotAssume": [
+        "illness or a diagnosis",
+        "employment",
+        "exhaustion",
+        "dissatisfaction with work",
+        "that caretaking is resented"
+      ],
+      "copyClaim": {
+        "text": "This year the ordinary day may be where the feelings live. When the routine fits, everything may feel manageable; when it slips, the body could be the first to say so.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/moon/7": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 7,
+        "overlayPoint": "Moon"
+      },
+      "domain": [
+        "closeness with one other",
+        "give-and-take",
+        "others' needs",
+        "companionship",
+        "negotiated daily life"
+      ],
+      "possibleLivedManifestations": [
+        "One relationship, spouse, business partner, close friend, or adversary, may hold the year's emotional weight",
+        "You could find yourself the confidant, or needing one, more than usual",
+        "Another person's moods may set the household or office weather some weeks",
+        "The wish for company and the wish for space may alternate strongly"
+      ],
+      "doNotAssume": [
+        "partnership status, marriage, or divorce",
+        "that the other person is romantic",
+        "dependence",
+        "conflict",
+        "that companionship is missing"
+      ],
+      "copyClaim": {
+        "text": "How you feel this year may depend unusually much on one other person. Their good and bad weeks can become yours, and yours theirs, more than either of you plans.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/moon/8": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 8,
+        "overlayPoint": "Moon"
+      },
+      "domain": [
+        "shared money and feeling",
+        "trust",
+        "intimacy",
+        "closures",
+        "other people's hard passages"
+      ],
+      "possibleLivedManifestations": [
+        "A joint account, debt, or settlement could carry more feeling than its dollar amount explains",
+        "Someone close may go through a difficult stretch, and you may be the one steadying it",
+        "An old attachment, to a person, an arrangement, a version of yourself, may loosen its grip this year",
+        "Questions of who is trusted with what, keys, passwords, accounts, confidences, can come up repeatedly"
+      ],
+      "doNotAssume": [
+        "a death or inheritance",
+        "financial crisis",
+        "betrayal",
+        "a sexual relationship",
+        "that closures are losses"
+      ],
+      "copyClaim": {
+        "text": "The year's deep currents may run through what is shared: money, trust, grief, confidence. Something held tightly for a long time could be set down, and the setting down may be the event.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/moon/9": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 9,
+        "overlayPoint": "Moon"
+      },
+      "domain": [
+        "distant places",
+        "faraway people",
+        "convictions",
+        "long trips",
+        "teachings"
+      ],
+      "possibleLivedManifestations": [
+        "A place far away could exert a steady pull: planned trips, browsed listings, calls across time zones",
+        "A book, teacher, or course of study may land emotionally rather than just intellectually",
+        "A belief held since childhood could stop fitting, quietly, without a dramatic break",
+        "Dreams and hunches may run vivid, especially around travel or large decisions"
+      ],
+      "doNotAssume": [
+        "religious faith or its loss",
+        "that travel happens",
+        "enrollment in study",
+        "dissatisfaction with home",
+        "existing foreign ties"
+      ],
+      "copyClaim": {
+        "text": "Somewhere else, a place, a study, a way of seeing, may tug at the feelings all year. What convinces you could shift less by argument and more by what a trip, book, or teacher makes you feel.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/moon/10": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 10,
+        "overlayPoint": "Moon"
+      },
+      "domain": [
+        "work in public view",
+        "professional atmosphere",
+        "ambition and mood",
+        "visibility",
+        "standing with authority"
+      ],
+      "possibleLivedManifestations": [
+        "How visible commitments are going may set the mood at home more than usual, and vice versa",
+        "A private feeling could surface in a public moment, and the response may surprise you",
+        "Recognition, or its absence, can land harder this year than the same event would in another year",
+        "Dealings with the public, customers, audiences, committees, may run through the whole year"
+      ],
+      "doNotAssume": [
+        "employment or promotion",
+        "career ambition",
+        "public failure",
+        "a need for approval",
+        "a boss"
+      ],
+      "copyClaim": {
+        "text": "This year the public sphere and the private mood may share a wall. A good or bad stretch in visible commitments could follow you home in the evening, and home matters may walk out into daylight.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/moon/11": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 11,
+        "overlayPoint": "Moon"
+      },
+      "domain": [
+        "friendships",
+        "belonging",
+        "shared hopes",
+        "social calendar",
+        "communal support"
+      ],
+      "possibleLivedManifestations": [
+        "Friends may function as family this year: meals, favors, standing plans, hard conversations",
+        "A group could feel like home some months and like an obligation in others",
+        "One friendship may need real tending, through distance, a rough patch, or a renewal",
+        "A cause or club could take up evenings that used to be private"
+      ],
+      "doNotAssume": [
+        "many friends or few",
+        "loneliness",
+        "harmony within groups",
+        "that hopes go unmet",
+        "that social time is a burden"
+      ],
+      "copyClaim": {
+        "text": "Belonging may be the year's recurring feeling, present or missed. The circle around you could change composition, and by next year the standing plans may be with different people.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/moon/12": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 12,
+        "overlayPoint": "Moon"
+      },
+      "domain": [
+        "privacy",
+        "rest",
+        "unspoken feelings",
+        "memory",
+        "quiet service"
+      ],
+      "possibleLivedManifestations": [
+        "More may be felt than said this year, and the gap can be deliberate",
+        "Sleep and dreams could carry the year's processing; naps, retreats, and early nights may become policy",
+        "You may quietly carry something for someone else, care, cover, a confidence, without public credit",
+        "Old memories can surface at odd moments, asking to be re-filed rather than relived"
+      ],
+      "doNotAssume": [
+        "depression, isolation, or crisis",
+        "secrecy against others",
+        "loneliness",
+        "avoidance",
+        "that privacy signals trouble"
+      ],
+      "copyClaim": {
+        "text": "Much of this year's feeling may happen behind a closed door, by choice. What gets worked through in private, in rest, in memory, in unwitnessed care, may be the year's main emotional work.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mercury/1": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 1,
+        "overlayPoint": "Mercury"
+      },
+      "domain": [
+        "self-expression in speech",
+        "personal opinions",
+        "decisions about oneself",
+        "first impressions",
+        "pace of thought"
+      ],
+      "possibleLivedManifestations": [
+        "You may do noticeably more of the talking this year: pitches, introductions, explanations of yourself",
+        "Opinions could sharpen and get stated, in meetings, posts, or letters, where before they stayed private",
+        "Decisions about your own direction may pile up and demand quick handling",
+        "Restlessness can show in the calendar: more appointments, shorter stays"
+      ],
+      "doNotAssume": [
+        "an appearance change",
+        "extroversion",
+        "impulsiveness",
+        "nervousness",
+        "that speaking comes easily"
+      ],
+      "copyClaim": {
+        "text": "This year you may be the one holding both the pen and the microphone in your own story. What you say about yourself, in interviews, bios, introductions, or arguments, could get quoted back to you later.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mercury/2": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 2,
+        "overlayPoint": "Mercury"
+      },
+      "domain": [
+        "money talk",
+        "negotiation",
+        "invoices and budgets",
+        "pricing",
+        "financial records",
+        "fine print"
+      ],
+      "possibleLivedManifestations": [
+        "Rates, salaries, and prices may get discussed out loud this year instead of assumed",
+        "A spreadsheet, budget, or bookkeeping system could get built or overhauled",
+        "An idea may show it can earn: a skill taught, a service listed, words sold",
+        "Contracts and fine print may need actual reading, more than once"
+      ],
+      "doNotAssume": [
+        "financial trouble or a windfall",
+        "employment",
+        "negotiation skill",
+        "materialism",
+        "debt"
+      ],
+      "copyClaim": {
+        "text": "Money may become a topic this year rather than a background condition. Numbers could get written down, said out loud, and negotiated, and the writing down may be what changes them.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mercury/3": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 3,
+        "overlayPoint": "Mercury"
+      },
+      "domain": [
+        "correspondence",
+        "errands and short trips",
+        "coursework",
+        "neighborhood dealings",
+        "paperwork",
+        "daily information flow"
+      ],
+      "possibleLivedManifestations": [
+        "Message volume may spike: threads, calls, forms, follow-ups, all wanting answers this week",
+        "A class, workshop, or certification could slot into the calendar and stay there",
+        "A vehicle, transit pass, or set of local routes may matter more than usual",
+        "Dealings with a relative or neighbor could generate a paper trail: plans, permissions, logistics"
+      ],
+      "doNotAssume": [
+        "siblings",
+        "enrollment",
+        "a commute",
+        "writing talent",
+        "that busyness equals stress"
+      ],
+      "copyClaim": {
+        "text": "The year may run at message speed. Inboxes, errands, and short hops could carry most of the action, and keeping track may itself become one of the year's jobs.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mercury/4": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 4,
+        "overlayPoint": "Mercury"
+      },
+      "domain": [
+        "household paperwork",
+        "property records",
+        "family conversations",
+        "home workspace",
+        "domestic planning"
+      ],
+      "possibleLivedManifestations": [
+        "Leases, deeds, utility accounts, or insurance documents may need sorting this year",
+        "Conversations with family could turn practical: schedules, care plans, who handles what",
+        "A desk, corner, or spare room may become a workspace, or a workspace may move home",
+        "Old letters, photos, and files could get sorted, digitized, or finally thrown out"
+      ],
+      "doNotAssume": [
+        "home ownership",
+        "family conflict",
+        "living with others",
+        "remote work",
+        "a move"
+      ],
+      "copyClaim": {
+        "text": "The talking and the paperwork may point homeward this year. Household matters that ran on habit could suddenly require documents, decisions, and family members saying things out loud.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mercury/5": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 5,
+        "overlayPoint": "Mercury"
+      },
+      "domain": [
+        "creative projects",
+        "games and hobbies",
+        "flirtation and banter",
+        "children's questions",
+        "performances",
+        "playful learning"
+      ],
+      "possibleLivedManifestations": [
+        "A creative idea may demand drafting: a script, a pattern, a design, a song",
+        "Wordplay could carry a romance: messages, jokes, long talks that outlast the dates",
+        "A child in your orbit may need help with school, or teach you their games",
+        "A hobby can turn technical: rules studied, gear compared, forums joined"
+      ],
+      "doNotAssume": [
+        "pregnancy or children",
+        "a romance",
+        "artistic talent",
+        "gambling",
+        "abundant free time"
+      ],
+      "copyClaim": {
+        "text": "This year the play may be verbal. Whatever entertains you could get written, discussed, studied, or argued about, and the talking may become part of the fun.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mercury/6": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 6,
+        "overlayPoint": "Mercury"
+      },
+      "domain": [
+        "work processes",
+        "schedules and checklists",
+        "health information",
+        "tools and systems",
+        "coordination with coworkers"
+      ],
+      "possibleLivedManifestations": [
+        "Systems may get built this year: trackers, templates, checklists that outlive the tasks they were made for",
+        "Appointments, referrals, and results could generate their own stream of administration",
+        "You may become the one who explains the process, writes the manual, or trains the new person",
+        "Small inefficiencies, a double-booked hour, a broken tool, can become intolerable and get fixed"
+      ],
+      "doNotAssume": [
+        "illness or a diagnosis",
+        "employment",
+        "perfectionism",
+        "stress",
+        "coworkers"
+      ],
+      "copyClaim": {
+        "text": "The year's thinking may go into how things get done. Procedures could get written down, appointments tracked, and workflows argued over, and the person doing most of that may be you.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mercury/7": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 7,
+        "overlayPoint": "Mercury"
+      },
+      "domain": [
+        "negotiation",
+        "contracts",
+        "dialogue with one other",
+        "advice given and taken",
+        "disputes and mediation"
+      ],
+      "possibleLivedManifestations": [
+        "Agreements may live or die on wording this year: contracts drafted, terms revised, clauses contested",
+        "One ongoing conversation, with a partner, client, rival, or advisor, could run the entire year",
+        "You may be asked to speak for someone, or need someone to speak for you",
+        "A disagreement can turn into correspondence: emails, letters, filings"
+      ],
+      "doNotAssume": [
+        "marriage, divorce, or partnership status",
+        "conflict",
+        "a business partner",
+        "persuasiveness",
+        "that agreement is reached"
+      ],
+      "copyClaim": {
+        "text": "The important sentences this year may be spoken to one person or written into one document. What gets negotiated, worded, and signed between two parties could set the terms for much that follows.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mercury/8": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 8,
+        "overlayPoint": "Mercury"
+      },
+      "domain": [
+        "financial fine print",
+        "taxes and estates",
+        "research",
+        "confidential information",
+        "joint accounts",
+        "investigation"
+      ],
+      "possibleLivedManifestations": [
+        "Tax, insurance, estate, or loan paperwork may demand real study this year",
+        "A research question could take hold: records requested, archives searched, someone's story pieced together",
+        "Passwords, access, and account authority may need sorting out among the people who share them",
+        "A conversation long avoided, about money, about an ending, about what happens if, may finally get had"
+      ],
+      "doNotAssume": [
+        "a death or inheritance",
+        "financial crisis",
+        "secrecy",
+        "a partner's finances",
+        "wrongdoing uncovered"
+      ],
+      "copyClaim": {
+        "text": "This year's reading may be the kind with clauses and account numbers. Questions that live under the surface, what is owed, what is shared, what happens if, could get asked in plain words and answered on paper.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mercury/9": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 9,
+        "overlayPoint": "Mercury"
+      },
+      "domain": [
+        "study programs",
+        "publishing",
+        "languages",
+        "legal filings",
+        "long-distance communication",
+        "teaching"
+      ],
+      "possibleLivedManifestations": [
+        "A course of study could scale up: a syllabus, exams, a credential at the end",
+        "Writing may head for an audience beyond your circle: a submission, a blog, a talk, a thesis",
+        "A language class, app, or bilingual friendship can become a fixture of the week",
+        "Legal or academic paperwork, applications, appeals, registrations, may cross the desk repeatedly"
+      ],
+      "doNotAssume": [
+        "enrollment",
+        "travel",
+        "religious belief",
+        "fluency",
+        "legal trouble"
+      ],
+      "copyClaim": {
+        "text": "The words may travel farther than usual this year. What you study, write, or argue could reach people you have never met, across a border, a discipline, or a printing press.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mercury/10": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 10,
+        "overlayPoint": "Mercury"
+      },
+      "domain": [
+        "professional communication",
+        "public statements",
+        "applications and proposals",
+        "credentials",
+        "dealings with decision-makers"
+      ],
+      "possibleLivedManifestations": [
+        "Applications, proposals, and cover letters may become a genre you practice",
+        "You could be the one presenting: reports upward, statements outward, a talk with your name on the program",
+        "Something you write or say publicly may get repeated in rooms you are not in",
+        "A credential or exam could stand between you and a next step, and finally get scheduled"
+      ],
+      "doNotAssume": [
+        "employment or promotion",
+        "ambition",
+        "comfort with public speaking",
+        "a boss",
+        "a career change"
+      ],
+      "copyClaim": {
+        "text": "This year your words may do the climbing. A proposal, presentation, or public statement can carry your name into decisions made elsewhere, and the phrasing may matter as much as the work behind it.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mercury/11": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 11,
+        "overlayPoint": "Mercury"
+      },
+      "domain": [
+        "group communication",
+        "planning with others",
+        "networks",
+        "shared projects",
+        "introductions",
+        "collective decisions"
+      ],
+      "possibleLivedManifestations": [
+        "You may end up running the group chat, the agenda, or the minutes for something collective",
+        "Introductions could compound: one contact leading to three, a network assembling itself",
+        "A shared plan may get documented: budgets, timelines, who-does-what lists",
+        "Debates within a group, about direction, rules, or membership, can occupy real time"
+      ],
+      "doNotAssume": [
+        "many friends",
+        "membership in any group",
+        "social ease",
+        "political involvement",
+        "that plans succeed"
+      ],
+      "copyClaim": {
+        "text": "The year's ideas may arrive through other people and leave the same way. Conversations in groups, threads, meetings, gatherings, could decide things no single conversation would, and you may be the one keeping the record.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mercury/12": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 12,
+        "overlayPoint": "Mercury"
+      },
+      "domain": [
+        "private writing",
+        "unfinished drafts",
+        "research in solitude",
+        "confidential conversations",
+        "memory and review",
+        "unspoken thoughts"
+      ],
+      "possibleLivedManifestations": [
+        "A journal, draft, or private project may accumulate pages no one else sees yet",
+        "Some of the year's most important conversations could be confidential: with an advisor, a lawyer, a trusted friend",
+        "Research may go where records are closed or memories are fuzzy: archives, family history, old files",
+        "Thoughts may need sorting before speaking, and you could find yourself drafting even casual replies"
+      ],
+      "doNotAssume": [
+        "depression, isolation, or crisis",
+        "secrecy against others",
+        "repression",
+        "loneliness",
+        "that silence signals trouble"
+      ],
+      "copyClaim": {
+        "text": "Much of this year's thinking may stay off the record for a while. Drafts, private notes, and closed-door conversations could hold the real content, released only when they are ready, if at all.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/venus/1": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 1,
+        "overlayPoint": "Venus"
+      },
+      "domain": [
+        "appearance",
+        "clothing",
+        "first impressions",
+        "physical comfort",
+        "personal style",
+        "being approached",
+        "how the year opens"
+      ],
+      "possibleLivedManifestations": [
+        "A haircut, a new coat, or a different way of dressing may draw more comment than usual this year",
+        "People who barely know you may start conversations, extend invitations, or ask you along",
+        "Money may drift toward how you look and feel in your own skin, from shoes to a dentist visit",
+        "Saying yes to things purely for the pleasure of them may come easier than it has in a while"
+      ],
+      "doNotAssume": [
+        "attractiveness or a transformation",
+        "that new romance arrives",
+        "that the person wants attention",
+        "vanity or overspending",
+        "that ease means passivity"
+      ],
+      "copyClaim": {
+        "text": "This year people may come to you before you go to them. An invitation you did nothing to earn can land in the first month and set the tone.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/venus/2": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 2,
+        "overlayPoint": "Venus"
+      },
+      "domain": [
+        "income",
+        "purchases",
+        "possessions",
+        "prices",
+        "what gets kept",
+        "comfort spending",
+        "owning"
+      ],
+      "possibleLivedManifestations": [
+        "Money may arrive through something you enjoy doing, and leave just as easily on things that feel worth it",
+        "A purchase postponed for years, a couch, an instrument, a good mattress, may finally happen",
+        "What you will pay for and what you refuse to may say more than usual about what you value this year",
+        "Someone may hand you something for less, a discount, a hand-me-down, a fee quietly waived"
+      ],
+      "doNotAssume": [
+        "wealth or poverty",
+        "irresponsibility with money",
+        "that income rises",
+        "a specific purchase",
+        "that comfort is affordable"
+      ],
+      "copyClaim": {
+        "text": "The line between what you buy and what you value may get easier to see this year. One good purchase can settle an argument you have been having with yourself for a long time.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/venus/3": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 3,
+        "overlayPoint": "Venus"
+      },
+      "domain": [
+        "neighborhood",
+        "errands",
+        "siblings and relatives",
+        "messages",
+        "short trips",
+        "local places",
+        "everyday conversation"
+      ],
+      "possibleLivedManifestations": [
+        "A coffee shop, a corner store, or a regular route may become somewhere you actually like being",
+        "Texts and calls with a sibling, cousin, or neighbor may get warmer or more frequent",
+        "A short trip, a weekend within driving distance, may deliver more than it cost",
+        "Writing or talking may come out smoother this year, and people may tell you so"
+      ],
+      "doNotAssume": [
+        "that relations with relatives are good",
+        "that the person has siblings",
+        "a move",
+        "that every conversation goes well",
+        "that the neighborhood is pleasant"
+      ],
+      "copyClaim": {
+        "text": "The pleasant parts of this year may be small and close: the same street, the same few people, a drive under two hours. What is nearby can start doing the work a vacation usually does.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/venus/4": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 4,
+        "overlayPoint": "Venus"
+      },
+      "domain": [
+        "home",
+        "household",
+        "family of origin",
+        "rooms and furniture",
+        "hosting",
+        "private time",
+        "where the year is lived"
+      ],
+      "possibleLivedManifestations": [
+        "The place you live may absorb money and attention this year: paint, plants, a chair that finally fits the corner",
+        "Hosting may start happening, people at your table who were not there last year",
+        "Time with a parent or older relative may soften something long-standing",
+        "Staying in may beat going out often enough that you stop apologizing for it"
+      ],
+      "doNotAssume": [
+        "home ownership",
+        "a happy family",
+        "a move or renovation",
+        "that the household is shared",
+        "that home feels safe"
+      ],
+      "copyClaim": {
+        "text": "Home may become the year's favorite room. An evening in, with the place looking the way you want it, can start outbidding almost any invitation.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/venus/5": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 5,
+        "overlayPoint": "Venus"
+      },
+      "domain": [
+        "recreation",
+        "creative projects",
+        "dating",
+        "games and sports",
+        "children in one's life",
+        "afternoons off",
+        "what gets done for fun"
+      ],
+      "possibleLivedManifestations": [
+        "Something made for no reason, a song, a garden bed, a drawing, may take over more evenings than planned",
+        "Attention from someone, or your attention on someone, may color a whole season",
+        "A child in your life, yours or someone else's, may become a source of actual enjoyment rather than logistics",
+        "Tickets, hobbies, and games may claim a line in the budget they did not have last year"
+      ],
+      "doNotAssume": [
+        "pregnancy or children",
+        "that a romance arrives",
+        "that fun is affordable",
+        "gambling",
+        "talent"
+      ],
+      "copyClaim": {
+        "text": "The things done purely for pleasure may stop being the leftover hours this year. What you make or play at can end up being what the year is remembered for.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/venus/6": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 6,
+        "overlayPoint": "Venus"
+      },
+      "domain": [
+        "daily work",
+        "coworkers",
+        "routines",
+        "the body's upkeep",
+        "workplaces",
+        "small favors",
+        "schedules"
+      ],
+      "possibleLivedManifestations": [
+        "A coworker may turn into an actual friend, lunch that stops being obligatory",
+        "The middle of the day may get physically nicer: a better chair, a better route, better food at the desk",
+        "Appointments long postponed, dentist, haircut, eye exam, may finally get booked and even enjoyed",
+        "Doing small favors, and having them done for you, may become the texture of the year"
+      ],
+      "doNotAssume": [
+        "illness",
+        "that the person is employed",
+        "a workplace romance",
+        "that routines are stable",
+        "that work is enjoyable"
+      ],
+      "copyClaim": {
+        "text": "The unglamorous middle of the day may be where this year gets pleasant. A likable coworker or a bearable routine can change more of the week than a raise would.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/venus/7": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 7,
+        "overlayPoint": "Venus"
+      },
+      "domain": [
+        "one-to-one relationships",
+        "agreements",
+        "shared plans",
+        "negotiation",
+        "other people's terms",
+        "company kept"
+      ],
+      "possibleLivedManifestations": [
+        "One particular person, spouse, date, business partner, or close friend, may take up more of the calendar than anyone else",
+        "Negotiations of any kind, a contract, a custody schedule, a shared lease, may go smoother than expected",
+        "Someone may propose something, a trip, a venture, a next step, and the deciding may be yours",
+        "Even a separation or a formal ending may proceed with more civility than the situation predicted"
+      ],
+      "doNotAssume": [
+        "partnership status",
+        "marriage",
+        "a breakup",
+        "that the other person is romantic",
+        "that harmony holds"
+      ],
+      "copyClaim": {
+        "text": "The year may keep arranging itself in twos. Whoever ends up across the table, in love, business, or paperwork, could be easier to deal with than recent years suggested.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/venus/8": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 8,
+        "overlayPoint": "Venus"
+      },
+      "domain": [
+        "shared money",
+        "debts and loans",
+        "taxes and paperwork",
+        "other people's resources",
+        "intimacy",
+        "what is owed"
+      ],
+      "possibleLivedManifestations": [
+        "Money entangled with someone else, a loan, an insurance payout, a split bill, a refund, may resolve more agreeably than feared",
+        "Someone may extend credit, cosign, forgive a debt, or quietly cover something",
+        "Closeness with one person may deepen past where it usually stops",
+        "What a partner, family member, or institution controls may loosen in your favor"
+      ],
+      "doNotAssume": [
+        "a windfall",
+        "an inheritance",
+        "a death",
+        "a sexual relationship",
+        "that debts disappear"
+      ],
+      "copyClaim": {
+        "text": "The money and closeness you share with others may get less tense this year. A bill, a debt, or a difficult conversation can end better than the version you rehearsed.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/venus/9": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 9,
+        "overlayPoint": "Venus"
+      },
+      "domain": [
+        "long trips",
+        "study",
+        "foreign places and people",
+        "beliefs",
+        "courses",
+        "publishing and teaching",
+        "distant contacts"
+      ],
+      "possibleLivedManifestations": [
+        "A trip may get booked mostly for the pleasure of it, and pay off",
+        "A class, a language, or a course of study may turn out to be enjoyable rather than dutiful",
+        "Someone from another country, culture, or branch of the family may become a genuine pleasure to know",
+        "What you believe may drift toward what you love rather than what you fear"
+      ],
+      "doNotAssume": [
+        "that travel is affordable or possible",
+        "religious change",
+        "enrollment",
+        "that in-laws exist",
+        "that distance stays pleasant"
+      ],
+      "copyClaim": {
+        "text": "Distance may be kind to you this year. The far-off thing, a place, a subject, a person from somewhere else, could turn out to be the easiest company you keep.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/venus/10": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 10,
+        "overlayPoint": "Venus"
+      },
+      "domain": [
+        "work in public",
+        "reputation",
+        "titles",
+        "authority figures",
+        "what the name is attached to",
+        "being seen doing something"
+      ],
+      "possibleLivedManifestations": [
+        "Whatever you do where others can see, a job, a search, a volunteer role, a public project, may attract goodwill you did not engineer",
+        "A boss, client, committee, or gatekeeper may simply like you, and doors may loosen because of it",
+        "Your name may get attached to something pleasant: an event, a collaboration, a small honor",
+        "Presenting, hosting, or speaking for a group may go better than the nerves predicted"
+      ],
+      "doNotAssume": [
+        "employment",
+        "a promotion",
+        "fame",
+        "that superiors are fair",
+        "a career change"
+      ],
+      "copyClaim": {
+        "text": "Being liked may do real work for you this year. The person who decides things could decide in your favor for reasons that never appear on paper.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/venus/11": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 11,
+        "overlayPoint": "Venus"
+      },
+      "domain": [
+        "friendships",
+        "groups and clubs",
+        "invitations",
+        "shared plans",
+        "acquaintances",
+        "what is hoped for"
+      ],
+      "possibleLivedManifestations": [
+        "The circle may widen: a group, a team, a class, a chat that becomes a standing thing",
+        "A friendship may warm up several degrees, or a friendly acquaintance may cross over into actual friend",
+        "Invitations may outnumber free evenings for a stretch",
+        "A goal may attract helpers, people who offer before being asked"
+      ],
+      "doNotAssume": [
+        "popularity",
+        "that friends are trustworthy",
+        "that the person is social",
+        "romance with a friend",
+        "that groups welcome them"
+      ],
+      "copyClaim": {
+        "text": "The people around the edges of your life may move closer this year. One recurring plan, a game night, a group, a standing call, can quietly restock the whole social shelf.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/venus/12": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 12,
+        "overlayPoint": "Venus"
+      },
+      "domain": [
+        "solitude",
+        "rest",
+        "privacy",
+        "quiet help",
+        "institutions and back rooms",
+        "old affections",
+        "time alone that is chosen"
+      ],
+      "possibleLivedManifestations": [
+        "Time alone may stop feeling like a gap and start feeling like the good part",
+        "Kindness may arrive from offstage: a favor done quietly, help from someone who wants no credit",
+        "An old affection, a person or a pursuit from years ago, may resurface gently",
+        "What you enjoy most this year may be the things you never post or mention"
+      ],
+      "doNotAssume": [
+        "depression",
+        "an affair",
+        "unhealthy secrecy",
+        "isolation",
+        "that solitude is loneliness"
+      ],
+      "copyClaim": {
+        "text": "The best parts of this year may happen with no witnesses. What you keep to yourself, a habit, a fondness, an hour, can be the thing that carries the rest.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mars/1": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 1,
+        "overlayPoint": "Mars"
+      },
+      "domain": [
+        "initiative",
+        "the body in motion",
+        "assertion",
+        "pace",
+        "appetite for starting",
+        "how you come across"
+      ],
+      "possibleLivedManifestations": [
+        "You may start things, a regimen, a project, a confrontation, at a rate that surprises people who know you",
+        "The body may want to move: more walking, lifting, sport, or just less sitting still",
+        "Patience may run shorter, and small waits, slow websites, slow talkers, may grate more than usual",
+        "Minor mishaps, a stubbed toe, a burn at the stove, a fender tap, may cluster in the weeks you rush most"
+      ],
+      "doNotAssume": [
+        "an anger problem",
+        "aggression toward others",
+        "accidents",
+        "that the person is athletic",
+        "that conflict is guaranteed"
+      ],
+      "copyClaim": {
+        "text": "The year may run at a faster idle. Things you would normally think over for a month can get started by Friday, for better and sometimes for sooner-than-ready.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mars/2": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 2,
+        "overlayPoint": "Mars"
+      },
+      "domain": [
+        "earning",
+        "spending speed",
+        "financial decisions",
+        "possessions in use",
+        "tools and equipment",
+        "what money gets contested"
+      ],
+      "possibleLivedManifestations": [
+        "Money may move fast in both directions, earned by hustle, spent on impulse",
+        "A price, a bill, a fee, or a raise may become something you actually contest rather than absorb",
+        "A purchase may happen in an afternoon that once would have taken a season of research",
+        "Tools, equipment, or gear may absorb cash because the year keeps wanting to build something"
+      ],
+      "doNotAssume": [
+        "wealth or poverty",
+        "reckless spending",
+        "a raise or a loss",
+        "that money causes fights",
+        "an anger problem"
+      ],
+      "copyClaim": {
+        "text": "You may find yourself charging for things you used to give away, and arguing prices you used to just pay. Money can become something you push on this year instead of something that happens to you.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mars/3": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 3,
+        "overlayPoint": "Mars"
+      },
+      "domain": [
+        "communication",
+        "errands",
+        "driving",
+        "siblings and neighbors",
+        "short trips",
+        "paperwork in motion"
+      ],
+      "possibleLivedManifestations": [
+        "Emails, texts, and calls may come out faster and blunter than intended",
+        "A disagreement with a sibling, neighbor, or nearby relative may finally get said out loud",
+        "Driving may get more frequent and more impatient, and a ticket or a near-miss can be the year's tap on the shoulder",
+        "Errands, appointments, and paperwork may pile into a schedule that never quite sits still"
+      ],
+      "doNotAssume": [
+        "a car accident",
+        "a feud with relatives",
+        "that the person has siblings",
+        "that arguments are guaranteed",
+        "an anger problem"
+      ],
+      "copyClaim": {
+        "text": "Your sentences may arrive before your edit does this year. The same speed that clears the inbox by ten can start an argument by noon.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mars/4": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 4,
+        "overlayPoint": "Mars"
+      },
+      "domain": [
+        "home",
+        "household labor",
+        "repairs",
+        "family of origin",
+        "living arrangements",
+        "who does what at home"
+      ],
+      "possibleLivedManifestations": [
+        "The home may become a worksite: repairs, rearranging, boxes, a wall that finally gets painted or comes down",
+        "Friction may surface where you live, over chores, noise, space, or a parent's opinions",
+        "A decision about the living situation, staying, leaving, renovating, may move from someday to now",
+        "Old family arguments may reheat when everyone is under one roof"
+      ],
+      "doNotAssume": [
+        "a move",
+        "home ownership",
+        "that the household is shared",
+        "that family conflict is a given",
+        "an anger problem"
+      ],
+      "copyClaim": {
+        "text": "Whatever has been quietly wrong at home, the dripping thing, the crowded room, the unsaid thing, may stop being ignorable this year. Fixing it and fighting about it can arrive in the same week.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mars/5": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 5,
+        "overlayPoint": "Mars"
+      },
+      "domain": [
+        "recreation",
+        "competition",
+        "creative work",
+        "dating",
+        "children's activities",
+        "risk taken on purpose"
+      ],
+      "possibleLivedManifestations": [
+        "A hobby may turn competitive: a race entered, a league joined, a project with a deadline you set yourself",
+        "Pursuit may replace waiting in romantic matters, you asking rather than being asked",
+        "A child in your life may require real effort this year, practices, disputes, projects, and give some back",
+        "Stakes may creep into fun: money on the game, a bet, a bolder creative swing"
+      ],
+      "doNotAssume": [
+        "pregnancy or children",
+        "that a romance arrives",
+        "gambling",
+        "that competition turns hostile",
+        "an anger problem"
+      ],
+      "copyClaim": {
+        "text": "Play may stop being restful this year and start being something you want to win. The project or pastime you push hardest at can end up mattering more than several obligations.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mars/6": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 6,
+        "overlayPoint": "Mars"
+      },
+      "domain": [
+        "workload",
+        "coworkers",
+        "routines",
+        "the body at work",
+        "deadlines",
+        "pace of the day"
+      ],
+      "possibleLivedManifestations": [
+        "The workload may spike, or you may spike it yourself by taking on more than the role requires",
+        "Impatience with a coworker, client, or process may build until you say something",
+        "Exercise or physical work may finally get traction, and overdo it at least once",
+        "The daily schedule may compress: earlier starts, faster lunches, lists that actually get attacked"
+      ],
+      "doNotAssume": [
+        "illness",
+        "burnout",
+        "that the person is employed",
+        "that workplace conflict is a given",
+        "an anger problem"
+      ],
+      "copyClaim": {
+        "text": "The day-to-day may speed up before anything else does. You can get through more by Thursday than last year's whole week held, and be shorter with people while doing it.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mars/7": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 7,
+        "overlayPoint": "Mars"
+      },
+      "domain": [
+        "one-to-one dealings",
+        "negotiation",
+        "opposition",
+        "shared decisions",
+        "other people's demands",
+        "open disagreement"
+      ],
+      "possibleLivedManifestations": [
+        "The important other in your year, spouse, date, business partner, or opponent, may push, and you may push back",
+        "A negotiation, a divorce, a deal, a custody plan, or a contract may demand direct confrontation instead of polite drift",
+        "Someone forceful and fast-moving may enter the picture and set the tempo",
+        "Things long unsaid between two people may get said, at volume or finally in plain words"
+      ],
+      "doNotAssume": [
+        "partnership status",
+        "marriage or a breakup",
+        "that conflict turns destructive",
+        "abuse",
+        "an anger problem"
+      ],
+      "copyClaim": {
+        "text": "This year's arguments may come one person at a time, face to face. What gets said across the table can be rougher than usual and clearer than it has been in years.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mars/8": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 8,
+        "overlayPoint": "Mars"
+      },
+      "domain": [
+        "shared money",
+        "debts",
+        "taxes",
+        "other people's terms",
+        "deep disputes",
+        "what must be settled"
+      ],
+      "possibleLivedManifestations": [
+        "A joint account, a loan, an estate, or a tax matter may require actual fighting: calls, letters, deadlines, a lawyer's hour",
+        "You may dig into something, a mystery, a diagnosis, a contract's fine print, and refuse to stop before the bottom",
+        "What someone owes you, or what you owe, may move from unspoken to demanded",
+        "Intensity may enter where things used to be mild, desire and friction sharing the same rooms"
+      ],
+      "doNotAssume": [
+        "a death",
+        "a windfall",
+        "a sexual relationship",
+        "financial ruin",
+        "that disputes are guaranteed"
+      ],
+      "copyClaim": {
+        "text": "The tangled money and the tangled feelings may both come due this year. What you finally demand in writing can get further than what you spent years implying.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mars/9": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 9,
+        "overlayPoint": "Mars"
+      },
+      "domain": [
+        "convictions",
+        "travel",
+        "study",
+        "law and rules",
+        "publishing and teaching",
+        "plans at distance"
+      ],
+      "possibleLivedManifestations": [
+        "A belief may become something you argue for out loud, at dinner, online, in a meeting",
+        "A trip may get taken the hard way: booked late, moved fast, physically demanding, remembered best",
+        "A course, certification, or degree may get attacked in months instead of contemplated for years",
+        "A legal or bureaucratic matter, a permit, a visa, an appeal, may need sustained pushing"
+      ],
+      "doNotAssume": [
+        "a lawsuit",
+        "that travel happens",
+        "fanaticism",
+        "that arguments over belief are a given",
+        "an anger problem"
+      ],
+      "copyClaim": {
+        "text": "This year you may stop merely holding opinions and start defending them. The far-off plan, the trip, the degree, the case, may only move when you shove it.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mars/10": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 10,
+        "overlayPoint": "Mars"
+      },
+      "domain": [
+        "career moves",
+        "ambition",
+        "authority",
+        "public actions",
+        "responsibilities with your name on them",
+        "what gets attempted in view"
+      ],
+      "possibleLivedManifestations": [
+        "A move may get made in public: an application sent, a business registered, a promotion asked for out loud, a role stepped into or out of",
+        "Friction with a boss, board, client, or institution may sharpen into an actual standoff",
+        "The workload at the visible end of life may double because you volunteered for it",
+        "Ambition may stop being private, and people may find out what you are going for"
+      ],
+      "doNotAssume": [
+        "employment",
+        "promotion or firing",
+        "success or failure",
+        "that a standoff with authority is a given",
+        "an anger problem"
+      ],
+      "copyClaim": {
+        "text": "Whatever you have been meaning to attempt where people can see, this may be the year you actually swing. The risk is not the trying; it can be how visibly the trying happens.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mars/11": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 11,
+        "overlayPoint": "Mars"
+      },
+      "domain": [
+        "friendships",
+        "groups",
+        "shared causes",
+        "plans with others",
+        "group friction",
+        "who is actually on your side"
+      ],
+      "possibleLivedManifestations": [
+        "A group, a team, a committee, or a friend circle may become where the effort goes: organizing, recruiting, doing the unglamorous parts",
+        "A friendship may hit real friction, a loan, a flake, a political difference, and either toughen or end",
+        "A cause may get your hands this year, not just your signature",
+        "A forceful new person may join the circle and change its temperature"
+      ],
+      "doNotAssume": [
+        "a falling out",
+        "that the person belongs to groups",
+        "activism",
+        "that rivalry among friends is a given",
+        "an anger problem"
+      ],
+      "copyClaim": {
+        "text": "Friends may become coworkers of a sort this year, people you build or fight alongside. The group that gets your effort can also be where the year's sharpest argument happens.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/mars/12": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 12,
+        "overlayPoint": "Mars"
+      },
+      "domain": [
+        "private effort",
+        "what goes unsaid",
+        "behind-the-scenes work",
+        "old resentments",
+        "solitary projects",
+        "rest resisted"
+      ],
+      "possibleLivedManifestations": [
+        "Effort may go where nobody sees it: caretaking, a private project, work absorbed without credit",
+        "Irritation may build quietly, the kind that leaks out sideways at someone who did not cause it",
+        "An old grievance may resurface asking to be handled rather than reburied",
+        "Stamina may not match the calendar, hard-pushing weeks alternating with days that ask for none of it"
+      ],
+      "doNotAssume": [
+        "depression",
+        "secret enemies",
+        "an affair",
+        "illness",
+        "that resentment is guaranteed"
+      ],
+      "copyClaim": {
+        "text": "The hardest work of this year may be invisible to everyone but you. What gets swallowed in March can pick its own moment in September.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/jupiter/1": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 1,
+        "overlayPoint": "Jupiter"
+      },
+      "domain": [
+        "appetite",
+        "confidence",
+        "commitments taken on",
+        "visibility",
+        "plans announced",
+        "the body's stamina",
+        "yes"
+      ],
+      "possibleLivedManifestations": [
+        "Yes may become the default: more invitations accepted, more plans announced, more claimed than one calendar holds",
+        "Confidence may run ahead of preparation at least once, memorably",
+        "Appetite may increase in the plain sense: portions, purchases, promises",
+        "People may hand you bigger things because you look ready, before anyone checks that you are"
+      ],
+      "doNotAssume": [
+        "luck",
+        "guaranteed success",
+        "weight gain",
+        "arrogance",
+        "that confidence is justified"
+      ],
+      "copyClaim": {
+        "text": "This year you may say yes faster than you can deliver. The doors that open can be real; so can the number of them you try to walk through at once.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/jupiter/2": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 2,
+        "overlayPoint": "Jupiter"
+      },
+      "domain": [
+        "money in and out",
+        "purchases",
+        "upgrades and subscriptions",
+        "accumulation",
+        "generosity",
+        "financial confidence"
+      ],
+      "possibleLivedManifestations": [
+        "More money may come in, and more may go out, sometimes in that order, sometimes not",
+        "Purchases may scale up: the bigger size, the better model, the second one",
+        "Generosity may loosen the wallet: gifts, rounds, loans to friends, donations",
+        "Confidence about money may run ahead of the balance at least once this year"
+      ],
+      "doNotAssume": [
+        "wealth or poverty",
+        "a windfall",
+        "rising income",
+        "luck with money",
+        "guaranteed success"
+      ],
+      "copyClaim": {
+        "text": "Everything about money may get bigger this year, the earning, the spending, and the plans. The total at the bottom may or may not grow; the volume passing through it can.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/jupiter/3": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 3,
+        "overlayPoint": "Jupiter"
+      },
+      "domain": [
+        "messages",
+        "errands",
+        "local rounds",
+        "siblings and neighbors",
+        "short trips",
+        "things to read and say",
+        "schedule density"
+      ],
+      "possibleLivedManifestations": [
+        "The calendar of small things may double: more appointments, more calls, more trips across town",
+        "You may talk more this year, longer messages, more opinions offered, more explaining",
+        "Reading, courses, podcasts, and half-finished books may pile up faster than they finish",
+        "Dealings with siblings, cousins, and neighbors may multiply, more contact, not automatically more harmony"
+      ],
+      "doNotAssume": [
+        "good news arriving",
+        "harmony with relatives",
+        "that the person has siblings",
+        "luck",
+        "guaranteed success"
+      ],
+      "copyClaim": {
+        "text": "The small circuits of life, errands, messages, the same six streets, may get crowded this year. There can be more of everything nearby, including more than you meant to sign up for.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/jupiter/4": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 4,
+        "overlayPoint": "Jupiter"
+      },
+      "domain": [
+        "home",
+        "household size",
+        "family gatherings",
+        "space and storage",
+        "roots revisited",
+        "who stays over"
+      ],
+      "possibleLivedManifestations": [
+        "The household may swell: guests, a returning relative, a partner's things, a pet, more chairs needed",
+        "Space may run out, and a bigger place, a storage unit, or a serious purge may enter the conversation",
+        "Family occasions may grow in size and length, and land at your address",
+        "Money and effort may pour into the home at a scale past the original plan"
+      ],
+      "doNotAssume": [
+        "buying a home",
+        "an inheritance",
+        "a happy family",
+        "a move",
+        "luck or guaranteed success"
+      ],
+      "copyClaim": {
+        "text": "Home may be where this year expands first. More people, more stuff, more dinners, more square footage wanted; the walls can start feeling like a size too small.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/jupiter/5": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 5,
+        "overlayPoint": "Jupiter"
+      },
+      "domain": [
+        "recreation",
+        "creative output",
+        "dating volume",
+        "children's presence",
+        "entertainment spending",
+        "stakes and wagers"
+      ],
+      "possibleLivedManifestations": [
+        "The fun budget, money, hours, attention, may balloon: more tickets, more outings, more nights that run late",
+        "A creative project may grow past its container, the short thing becoming long, the hobby claiming a second job's worth of hours",
+        "Dating, where it applies, may become a matter of more: more interest, more options, more overlap than is manageable",
+        "Children in your life may occupy more of the year: more events, more expenses, more presence",
+        "A bet or speculation may tempt at a size earlier years would have laughed at"
+      ],
+      "doNotAssume": [
+        "pregnancy or children",
+        "that a romance arrives",
+        "gambling wins",
+        "that fun is affordable",
+        "luck or guaranteed success"
+      ],
+      "copyClaim": {
+        "text": "Whatever you do for pleasure may refuse to stay small this year. The hobby can outgrow its shelf, the night out can outgrow its budget, and one more can become the year's most-used phrase.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/jupiter/6": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 6,
+        "overlayPoint": "Jupiter"
+      },
+      "domain": [
+        "workload",
+        "duties",
+        "routines",
+        "the body's habits",
+        "helpfulness",
+        "appointments",
+        "what the day holds"
+      ],
+      "possibleLivedManifestations": [
+        "The workload may grow because you keep accepting: extra shifts, extra clients, extra people's problems",
+        "Routines may inflate, the simple habit becoming a regimen with equipment",
+        "Helpfulness may get oversubscribed, being the reliable one turning into a second unpaid job",
+        "Eating, snacking, and sitting may scale with the workload unless something else does first"
+      ],
+      "doNotAssume": [
+        "illness",
+        "weight gain",
+        "that the person is employed",
+        "that overwork is a given",
+        "luck or guaranteed success"
+      ],
+      "copyClaim": {
+        "text": "The daily list may grow one reasonable item at a time until it stops being reasonable. Being good at handling more can become the reason there keeps being more.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/jupiter/7": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 7,
+        "overlayPoint": "Jupiter"
+      },
+      "domain": [
+        "one-to-one dealings",
+        "commitments to others",
+        "other people's plans",
+        "agreements",
+        "shared undertakings",
+        "who wants things from you"
+      ],
+      "possibleLivedManifestations": [
+        "Other people may arrive with plans: proposals, offers, invitations to combine forces, romantic, commercial, or practical",
+        "One relationship may scale up, more time, more entanglement, more formality, at a pace someone else sets",
+        "The important other in your year may be expansive themselves: generous, ambitious, or simply a lot",
+        "Commitments to another person may stack until their size is only visible in total"
+      ],
+      "doNotAssume": [
+        "marriage",
+        "partnership status",
+        "a breakup",
+        "a beneficial partner",
+        "luck or guaranteed success"
+      ],
+      "copyClaim": {
+        "text": "Other people may want more of you this year, more time, more commitment, more of your name on shared things. Each ask can be flattering; the sum is what may need watching.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/jupiter/8": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 8,
+        "overlayPoint": "Jupiter"
+      },
+      "domain": [
+        "shared money",
+        "loans and credit",
+        "taxes",
+        "other people's resources",
+        "obligations at scale",
+        "what compounds"
+      ],
+      "possibleLivedManifestations": [
+        "The numbers entangled with others may grow: a bigger loan available, a larger tax bill, a joint expense that keeps expanding",
+        "Credit may get offered at sizes that flatter, a limit raised, a refinance pitched, a cosigner sought",
+        "A legacy, payout, settlement, or debt may take up more of the year than expected, in paperwork if nothing else",
+        "Closeness with one person may intensify past the usual stopping point"
+      ],
+      "doNotAssume": [
+        "a windfall",
+        "an inheritance",
+        "a death",
+        "a sexual relationship",
+        "luck or guaranteed success"
+      ],
+      "copyClaim": {
+        "text": "What you share with others, money, debts, obligations, closeness, may compound this year. The bigger number can be an opportunity or a liability, and it may take the whole year to know which.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/jupiter/9": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 9,
+        "overlayPoint": "Jupiter"
+      },
+      "domain": [
+        "travel",
+        "study",
+        "beliefs",
+        "foreign contact",
+        "publishing and teaching",
+        "plans at distance",
+        "big ideas"
+      ],
+      "possibleLivedManifestations": [
+        "The horizon may widen literally: a longer trip, a farther destination, more time away than any recent year",
+        "A course of study may expand, one class becoming a program, curiosity becoming a credential pursuit",
+        "Opinions may grow bolder and get aired to bigger rooms",
+        "Contact with other countries, languages, or worldviews may multiply, through people, work, or a screen"
+      ],
+      "doNotAssume": [
+        "international travel",
+        "enrollment",
+        "a change of religion",
+        "that the beliefs are correct",
+        "luck or guaranteed success"
+      ],
+      "copyClaim": {
+        "text": "The far-away may take up more room this year, places, subjects, ideas, people from elsewhere. The plan can grow faster than the budget, and the opinion faster than the evidence.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/jupiter/10": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 10,
+        "overlayPoint": "Jupiter"
+      },
+      "domain": [
+        "public role",
+        "responsibilities with your name on them",
+        "reputation",
+        "ambition's size",
+        "being counted on",
+        "the visible workload"
+      ],
+      "possibleLivedManifestations": [
+        "The visible role may expand: more responsibility, more people affected by your decisions, more meetings with your name on the invite",
+        "Opportunity may knock at scale, a bigger job, a bigger client, a bigger stage, sized past current capacity",
+        "Reputation may spread further than effort, more people knowing what you do than you know of them",
+        "Ambition may inflate until this year's goal is last year's five-year plan"
+      ],
+      "doNotAssume": [
+        "employment",
+        "a promotion",
+        "fame",
+        "luck",
+        "guaranteed success"
+      ],
+      "copyClaim": {
+        "text": "Whatever you are known for may get bigger this year, the role, the audience, the expectations. Growth at the visible end of life can look exactly like more work for quite a while before it looks like anything else.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/jupiter/11": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 11,
+        "overlayPoint": "Jupiter"
+      },
+      "domain": [
+        "friend count",
+        "groups joined",
+        "social calendar",
+        "collective plans",
+        "causes",
+        "goals said aloud"
+      ],
+      "possibleLivedManifestations": [
+        "The circle may simply grow: more names in the phone, more groups, more people who count you as a friend before you would say the same",
+        "The social calendar may overbook, three things one Saturday, none the next",
+        "A group project or cause may scale past its founders' plan and take your hours with it",
+        "Goals said out loud may attract volunteers, more help, and more opinions, than requested"
+      ],
+      "doNotAssume": [
+        "popularity",
+        "that friends are loyal",
+        "that the person is social",
+        "luck or guaranteed success",
+        "that groups are benevolent"
+      ],
+      "copyClaim": {
+        "text": "This year may add people faster than it adds time for them. A circle can double in size and still leave the question of who in it actually knows you.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/jupiter/12": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 12,
+        "overlayPoint": "Jupiter"
+      },
+      "domain": [
+        "inner life",
+        "time alone",
+        "what accumulates unseen",
+        "quiet generosity",
+        "the untold backlog",
+        "imagination",
+        "rest owed"
+      ],
+      "possibleLivedManifestations": [
+        "The inner life may get louder: more dreams remembered, more time in your own head, more imagined than executed",
+        "Help may arrive without a visible sender, a waived fee, a kind stranger, a problem that dissolves offstage",
+        "Quiet commitments may pile up, everything absorbed without mention, until the backlog is a second life",
+        "Plans may grow best in private this year, biggest while still unannounced"
+      ],
+      "doNotAssume": [
+        "depression",
+        "secrecy",
+        "an affair",
+        "invisible protection",
+        "luck or guaranteed success"
+      ],
+      "copyClaim": {
+        "text": "This year's growth may be the kind nobody sees, the plans, the reading, the absorbed troubles. What accumulates in private can be the largest thing you build, or just the heaviest thing you carry.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/saturn/1": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 1,
+        "overlayPoint": "Saturn"
+      },
+      "domain": [
+        "physical stamina",
+        "appearance",
+        "self-presentation",
+        "personal commitments",
+        "pacing",
+        "initiative"
+      ],
+      "possibleLivedManifestations": [
+        "The body may set the schedule this year, with recovery time that can no longer be skipped",
+        "A commitment made in your own name, not a shared one, may come due and require a year of showing up",
+        "Clothing, grooming, or bearing may shift toward what reads as serious, because the year may keep putting you in rooms where that matters",
+        "A start you have postponed can stop accepting postponement and acquire a date"
+      ],
+      "doNotAssume": [
+        "hardship or deprivation",
+        "illness or a health event",
+        "loneliness or social withdrawal",
+        "that the person feels older or diminished",
+        "low mood"
+      ],
+      "copyClaim": {
+        "text": "This year the first question may be what you can actually carry, asked of the body and the calendar before anyone else gets a say. What you agree to in your own name can stay agreed.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/saturn/2": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 2,
+        "overlayPoint": "Saturn"
+      },
+      "domain": [
+        "income",
+        "savings",
+        "possessions",
+        "pricing",
+        "owned equipment",
+        "financial obligations"
+      ],
+      "possibleLivedManifestations": [
+        "Money may arrive on a fixed schedule or stop arriving outside one, and the year can run on what is predictable rather than what is possible",
+        "A possession may need repair, insurance, or replacement money it has never needed before",
+        "What you charge, or what you accept, may get renegotiated once and then hold for the year",
+        "A savings target can turn from intention into standing arrangement, with an amount and a date"
+      ],
+      "doNotAssume": [
+        "poverty or financial hardship",
+        "debt",
+        "that income falls",
+        "stinginess",
+        "loneliness over money"
+      ],
+      "copyClaim": {
+        "text": "The number that matters this year may be the reliable one, not the best one. A thing you own can start costing what it always threatened to cost.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/saturn/3": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 3,
+        "overlayPoint": "Saturn"
+      },
+      "domain": [
+        "paperwork",
+        "daily communication",
+        "siblings and relatives",
+        "local errands",
+        "study",
+        "vehicles",
+        "written agreements"
+      ],
+      "possibleLivedManifestations": [
+        "Something said casually before may need to be put in writing this year, and the written version can be the one that counts",
+        "A sibling or relative arrangement may acquire a fixed schedule, a rota, or a defined share",
+        "A course of study can demand steady weekly hours rather than bursts",
+        "A car, a commute, or a regular route may impose its own maintenance calendar on the year"
+      ],
+      "doNotAssume": [
+        "estrangement from siblings",
+        "learning difficulty",
+        "isolation",
+        "bad news arriving",
+        "hardship in the family"
+      ],
+      "copyClaim": {
+        "text": "This year the casual channels may stop being enough. The version with a date and a signature can be the one everyone works from.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/saturn/4": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 4,
+        "overlayPoint": "Saturn"
+      },
+      "domain": [
+        "household",
+        "living arrangements",
+        "family obligations",
+        "property upkeep",
+        "domestic routines",
+        "private time"
+      ],
+      "possibleLivedManifestations": [
+        "A building may present its bill this year, in a roof, a boiler, a lease clause, or a structural report",
+        "Responsibility for a parent or an older relative may become scheduled rather than occasional",
+        "The household may need rules where it ran on habit, about money, chores, noise, or guests",
+        "Where you live may become a longer-term question with a deadline attached, renewing, buying, leaving, or staying on new terms"
+      ],
+      "doNotAssume": [
+        "home ownership or its absence",
+        "family estrangement",
+        "a move",
+        "grief or loss in the family",
+        "hardship or a burdensome household"
+      ],
+      "copyClaim": {
+        "text": "The place you live may ask to be maintained rather than merely inhabited this year. What the household needs from you can become specific.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/saturn/5": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 5,
+        "overlayPoint": "Saturn"
+      },
+      "domain": [
+        "creative work",
+        "recreation",
+        "romance",
+        "children in your life",
+        "performance",
+        "risk-taking",
+        "hobbies"
+      ],
+      "possibleLivedManifestations": [
+        "A creative project may stop tolerating being a someday project and demand regular hours or an end date",
+        "Pleasure may need scheduling to happen at all this year, and the scheduled kind can still count",
+        "A romance, new or long-standing, may reach a point where its terms get stated plainly",
+        "A child in your life, yours or not, may need structure from you more than entertainment",
+        "A gamble you would normally take may look different once you price it"
+      ],
+      "doNotAssume": [
+        "pregnancy or children",
+        "a joyless year",
+        "a romance ending",
+        "creative block",
+        "loneliness"
+      ],
+      "copyClaim": {
+        "text": "What you make for pleasure may start asking for the same discipline as what you make for pay. The fun that survives the year can be the fun you planned for.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/saturn/6": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 6,
+        "overlayPoint": "Saturn"
+      },
+      "domain": [
+        "workload",
+        "daily routines",
+        "health maintenance",
+        "schedules",
+        "service to others",
+        "working conditions",
+        "pets"
+      ],
+      "possibleLivedManifestations": [
+        "The workload may exceed the hours, and the year can force an explicit decision about what gets dropped",
+        "A health habit may move from advice to regimen, with checkups, refills, or physio on a calendar",
+        "The way work is done, employed, freelance, or unpaid, may get formalized through contracts, timesheets, or written procedures",
+        "An animal, a dependent, or a recurring duty may add a fixed daily block the day has to bend around"
+      ],
+      "doNotAssume": [
+        "illness or a diagnosis",
+        "overwork or exhaustion",
+        "job dissatisfaction",
+        "hardship",
+        "that the person is employed"
+      ],
+      "copyClaim": {
+        "text": "The routine may stop being background this year and become the thing under management. What gets done daily can matter more than what gets decided once.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/saturn/7": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 7,
+        "overlayPoint": "Saturn"
+      },
+      "domain": [
+        "partnership",
+        "one-to-one agreements",
+        "contracts",
+        "negotiation",
+        "clients and counterparts",
+        "shared undertakings"
+      ],
+      "possibleLivedManifestations": [
+        "A partnership, romantic or professional, may move from understanding to terms: who does what, who pays what, what happens if",
+        "A contract with one specific person or firm may dominate the year and repay careful reading",
+        "Someone reliable may matter more this year than someone exciting, in business or at home",
+        "A standing disagreement with one particular person can stop being avoidable and require a settled outcome"
+      ],
+      "doNotAssume": [
+        "partnership status",
+        "divorce or breakup",
+        "a cold or unhappy relationship",
+        "marriage occurring",
+        "loneliness"
+      ],
+      "copyClaim": {
+        "text": "The relationships that last the year may be the ones with clear terms. What was understood may need to be stated.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/saturn/8": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 8,
+        "overlayPoint": "Saturn"
+      },
+      "domain": [
+        "shared money",
+        "debts",
+        "taxes",
+        "insurance",
+        "joint obligations",
+        "other people's resources",
+        "long-term liabilities"
+      ],
+      "possibleLivedManifestations": [
+        "A debt, a tax matter, or an insurance question may set its own timetable this year and hold you to it",
+        "Money entangled with another person, a partner, a bank, an ex, a family pot, may need documentation where trust used to suffice",
+        "A payout, a loan approval, or a settlement can move slowly and reward the paperwork being right",
+        "What you owe or are owed may finally get a number, and the number can organize the year"
+      ],
+      "doNotAssume": [
+        "death or inheritance",
+        "financial ruin",
+        "divorce settlements",
+        "betrayal over money",
+        "hardship"
+      ],
+      "copyClaim": {
+        "text": "The money that is not only yours may come with a schedule this year. What was informal between you and someone else can need to survive being written down.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/saturn/9": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 9,
+        "overlayPoint": "Saturn"
+      },
+      "domain": [
+        "education",
+        "qualifications",
+        "travel",
+        "legal matters",
+        "publishing",
+        "belief and doctrine",
+        "teaching",
+        "foreign dealings"
+      ],
+      "possibleLivedManifestations": [
+        "A qualification may become the gate this year: a license, a degree, a certification the next step will not proceed without",
+        "A legal or bureaucratic process, a visa, a court date, an accreditation, may run on its timetable rather than yours",
+        "A long trip may require the slow kind of planning, or may get postponed by requirements rather than desire",
+        "A belief held loosely may get tested against evidence and keep only what holds"
+      ],
+      "doNotAssume": [
+        "a lawsuit",
+        "travel going wrong",
+        "loss of faith",
+        "academic failure",
+        "hardship abroad"
+      ],
+      "copyClaim": {
+        "text": "This year the far-off things may come with prerequisites. The trip, the degree, or the case can advance exactly as fast as the paperwork does.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/saturn/10": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 10,
+        "overlayPoint": "Saturn"
+      },
+      "domain": [
+        "career direction",
+        "public responsibilities",
+        "reputation",
+        "authority",
+        "long-term ambitions",
+        "standing in a field"
+      ],
+      "possibleLivedManifestations": [
+        "A responsibility with your name on it may arrive this year, in a job, a committee, a family, or a community, and the year may be graded on how it is carried",
+        "Advancement may come through endurance rather than a break: the person still standing can be the person chosen",
+        "A boss, board, regulator, or senior figure may hold you to a standard stated once and enforced all year",
+        "What you are building publicly may need foundations poured now that will not show for years"
+      ],
+      "doNotAssume": [
+        "employment or job loss",
+        "a promotion or demotion",
+        "conflict with a boss",
+        "public failure",
+        "hardship or thwarted ambition"
+      ],
+      "copyClaim": {
+        "text": "Whatever people can see you doing may get weighed this year, and the weighing can be fair. What holds up under it may be yours for a long time.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/saturn/11": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 11,
+        "overlayPoint": "Saturn"
+      },
+      "domain": [
+        "friendships",
+        "groups and associations",
+        "long-term goals",
+        "shared causes",
+        "networks",
+        "communal obligations"
+      ],
+      "possibleLivedManifestations": [
+        "A friendship may need a schedule to survive the year, and the ones that get one can outlast the ones that don't",
+        "A group, a club, a committee, a co-op, a cause, may hand you the unglamorous role that actually keeps it running",
+        "A long-term goal may get a realistic timeline this year, which can mean a longer one",
+        "The circle may get smaller and more reliable, by attrition or by choice"
+      ],
+      "doNotAssume": [
+        "loneliness or social isolation",
+        "losing friends",
+        "that goals fail",
+        "resentment of obligations",
+        "that a small circle is a deficiency"
+      ],
+      "copyClaim": {
+        "text": "The people who stay this year may be the ones you make standing arrangements with. A goal can stop being a wish the day it gets a date.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/saturn/12": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 12,
+        "overlayPoint": "Saturn"
+      },
+      "domain": [
+        "privacy",
+        "rest",
+        "unfinished business",
+        "solitary work",
+        "institutions",
+        "what is carried unseen",
+        "closure"
+      ],
+      "possibleLivedManifestations": [
+        "Work done where nobody watches, caregiving, drafting, recovering, maintaining, may take a fixed share of this year",
+        "An old obligation, a promise, a debt of any kind, an unfinished task, may resurface with a due date",
+        "Rest may have to be defended on the calendar like an appointment to happen at all",
+        "Dealings with an institution, an agency, an archive, a back office, may proceed slowly and by their rules"
+      ],
+      "doNotAssume": [
+        "depression",
+        "hospitalization",
+        "isolation or crisis",
+        "secret suffering",
+        "loneliness"
+      ],
+      "copyClaim": {
+        "text": "The unseen part of the year may be the load-bearing part. What you finish quietly now can be what the next year stands on.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/uranus/1": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 1,
+        "overlayPoint": "Uranus"
+      },
+      "domain": [
+        "self-presentation",
+        "appearance",
+        "personal direction",
+        "independence",
+        "daily identity",
+        "first moves"
+      ],
+      "possibleLivedManifestations": [
+        "How you look, dress, or introduce yourself may change this year, by decision or because the old version stops fitting the situations you are in",
+        "A role people rely on you to play may become optional, and declining it can suddenly be on the table",
+        "Plans made in your own name may get revised mid-year when conditions change under them",
+        "You may become the unpredictable variable in rooms that used to know what to expect from you"
+      ],
+      "doNotAssume": [
+        "rebellion",
+        "recklessness or accidents",
+        "an identity crisis",
+        "sudden disaster",
+        "that change is wanted"
+      ],
+      "copyClaim": {
+        "text": "The version of you people are used to may stop being the version that shows up. That can be a choice, and it can also just be what the year does.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/uranus/2": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 2,
+        "overlayPoint": "Uranus"
+      },
+      "domain": [
+        "income sources",
+        "money flow",
+        "possessions",
+        "valuables",
+        "earning methods",
+        "financial arrangements"
+      ],
+      "possibleLivedManifestations": [
+        "How money arrives may change this year: a source can stop, start, split, or switch form without much warning",
+        "A possession may exit your life or a new kind may enter it, sold, replaced, given away, or suddenly necessary",
+        "An earning method that did not exist for you last year, a platform, a side arrangement, a different trade, may become available",
+        "The budget may need rebuilding mid-year because the assumptions it rested on moved"
+      ],
+      "doNotAssume": [
+        "financial disaster",
+        "sudden loss of income",
+        "impulsive spending",
+        "a windfall",
+        "instability as ruin"
+      ],
+      "copyClaim": {
+        "text": "The money may not behave the way last year taught you to expect. The interesting question can be what becomes possible once it doesn't.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/uranus/3": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 3,
+        "overlayPoint": "Uranus"
+      },
+      "domain": [
+        "communication channels",
+        "neighborhood",
+        "relatives and siblings",
+        "daily routes",
+        "information",
+        "study",
+        "vehicles"
+      ],
+      "possibleLivedManifestations": [
+        "The daily route may change this year: a commute, a school run, a regular circuit can get rerouted by construction, a move nearby, or a new arrangement",
+        "How you send and receive information may switch, with new tools, new platforms, or a different first channel for the day",
+        "A sibling or relative may change circumstances in a way that changes yours: moving, marrying, arriving, needing different things",
+        "A subject you never planned to study may suddenly be the one you need"
+      ],
+      "doNotAssume": [
+        "family conflict",
+        "accidents in transit",
+        "bad news",
+        "a chaotic mind",
+        "relocation"
+      ],
+      "copyClaim": {
+        "text": "The errand-level layer of life may get rearranged this year. The route, the app, the neighbor, or the news from a relative can all be different by the next birthday.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/uranus/4": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 4,
+        "overlayPoint": "Uranus"
+      },
+      "domain": [
+        "living situation",
+        "household composition",
+        "domestic arrangements",
+        "family circumstances",
+        "home base",
+        "property matters"
+      ],
+      "possibleLivedManifestations": [
+        "Who lives where may change this year: someone can move in, move out, or the address itself can change, by plan or by circumstance",
+        "The home may get physically altered, through a renovation, a rearrangement, a room that changes function",
+        "A family member's changed situation, a retirement, a birth elsewhere, a new job, may reshuffle what home means for everyone",
+        "A domestic setup that has run the same way for years can stop working and need a new design"
+      ],
+      "doNotAssume": [
+        "home ownership or its absence",
+        "family estrangement",
+        "eviction or a forced move",
+        "household conflict",
+        "disaster at home"
+      ],
+      "copyClaim": {
+        "text": "Home may be the part of life that refuses to stay put this year. The arrangement that replaces the old one can fit better than the old one did.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/uranus/5": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 5,
+        "overlayPoint": "Uranus"
+      },
+      "domain": [
+        "creative work",
+        "recreation",
+        "romance",
+        "children in your life",
+        "self-expression",
+        "risk and play"
+      ],
+      "possibleLivedManifestations": [
+        "A creative interest may arrive from nowhere and take over the free hours, or a long-standing one may change medium entirely",
+        "A romance may begin, resume, or reconfigure in a way that ignores the usual sequence",
+        "A child in your life may change fast this year, a stage, a school, an interest, and need a different parent, relative, or mentor than last year",
+        "What counts as fun may flip: the reliable pleasure can go flat and an untried one can land"
+      ],
+      "doNotAssume": [
+        "pregnancy or children",
+        "a breakup or divorce",
+        "recklessness or accidents",
+        "a whirlwind affair",
+        "that novelty is wanted"
+      ],
+      "copyClaim": {
+        "text": "What delights you may not be on last year's list. The hobby, the person, or the project that gets the year's best hours can be one you had not met when the year began.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/uranus/6": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 6,
+        "overlayPoint": "Uranus"
+      },
+      "domain": [
+        "work routines",
+        "schedules",
+        "working conditions",
+        "health habits",
+        "tools and methods",
+        "daily obligations"
+      ],
+      "possibleLivedManifestations": [
+        "The shape of the working day may change this year, in hours, location, tools, or the work itself, employed, freelance, or unpaid",
+        "A method you have used forever can get replaced, by new software, new rules, or a better idea, and the changeover may be the year's real project",
+        "The body may respond differently to the old routine, and a schedule that worked for years may need redesign",
+        "An interruption to the routine, a reorganization, a new dependent, a new manager, may force improvisation that outlives the interruption"
+      ],
+      "doNotAssume": [
+        "illness or a diagnosis",
+        "job loss",
+        "workplace accidents",
+        "exhaustion",
+        "that disruption is unwelcome"
+      ],
+      "copyClaim": {
+        "text": "The routine may be the thing that changes this year, not the thing you can count on. Some of what gets improvised under pressure can turn out to be the better system.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/uranus/7": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 7,
+        "overlayPoint": "Uranus"
+      },
+      "domain": [
+        "partnership",
+        "one-to-one dealings",
+        "agreements",
+        "counterparts",
+        "negotiation",
+        "close alliances"
+      ],
+      "possibleLivedManifestations": [
+        "A partner, a spouse, a business partner, a close counterpart, may change this year in ways that change the deal: a new job, a new conviction, new needs",
+        "Someone unexpected may become significant: a client, an ally, or a person from a context that never produced allies before",
+        "Terms that ran on autopilot may come up for renegotiation because the conditions around them moved",
+        "The other party's plans can arrive as a surprise, and how you respond to them may set the year"
+      ],
+      "doNotAssume": [
+        "partnership status",
+        "divorce or separation",
+        "betrayal",
+        "a new relationship beginning",
+        "conflict"
+      ],
+      "copyClaim": {
+        "text": "The other person may not hold still this year. The agreement that survives can be the one flexible enough to be rewritten while still running.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/uranus/8": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 8,
+        "overlayPoint": "Uranus"
+      },
+      "domain": [
+        "shared money",
+        "debts",
+        "financial entanglements",
+        "joint arrangements",
+        "intimacy",
+        "other people's resources"
+      ],
+      "possibleLivedManifestations": [
+        "A financial arrangement involving someone else, a loan, a lease, a joint account, a family pot, may change terms this year, sometimes without your vote",
+        "Money can arrive or depart through channels you did not plan: a refund, a rate change, a policy shift, a settlement that moves suddenly after standing still",
+        "What you and an intimate other have not said about money or closeness may surface abruptly and be sayable at last",
+        "An institution holding something of yours, a bank, an insurer, an employer plan, may change its rules and force a decision"
+      ],
+      "doNotAssume": [
+        "death or inheritance",
+        "financial betrayal",
+        "divorce settlements",
+        "sudden ruin",
+        "a windfall"
+      ],
+      "copyClaim": {
+        "text": "The entangled money may be the moving part this year. A term you thought was fixed can turn out to have been fixed only until someone changed it.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/uranus/9": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 9,
+        "overlayPoint": "Uranus"
+      },
+      "domain": [
+        "belief",
+        "education",
+        "travel",
+        "legal frameworks",
+        "publishing",
+        "foreign connections",
+        "big-picture plans"
+      ],
+      "possibleLivedManifestations": [
+        "A belief that organized your decisions may stop fitting the evidence this year, and the replacement can arrive fast once it does",
+        "Travel may materialize on short notice, or a planned route may be redrawn by outside conditions",
+        "A course, credential, or field of study may open up that was closed or nonexistent before",
+        "A rule change, legal, institutional, or regulatory, may alter a plan that assumed the rules were stable"
+      ],
+      "doNotAssume": [
+        "a crisis of faith",
+        "a lawsuit",
+        "travel disasters",
+        "emigration",
+        "dropping out"
+      ],
+      "copyClaim": {
+        "text": "The map may get redrawn this year: the beliefs, the rules, or the itinerary. What you would have sworn at the start can be up for revision by the middle.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/uranus/10": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 10,
+        "overlayPoint": "Uranus"
+      },
+      "domain": [
+        "career direction",
+        "public role",
+        "reputation",
+        "field conditions",
+        "authority",
+        "visible achievements"
+      ],
+      "possibleLivedManifestations": [
+        "The field itself may shift this year, in technology, funding, leadership, or demand, and reposition everyone in it, including you",
+        "A public role can change abruptly: a reorganization, a new title, a dissolved department, an offer from a direction nobody watched",
+        "The direction that looked settled may fork, and a branch you never considered can become the live option",
+        "Someone in authority may change, and the new regime can want different things than the old one"
+      ],
+      "doNotAssume": [
+        "employment or job loss",
+        "a firing or sudden promotion",
+        "career as the person's central concern",
+        "public scandal",
+        "that change is resisted"
+      ],
+      "copyClaim": {
+        "text": "The ladder may get moved while you are on it this year. Where it lands can be somewhere you would not have thought to lean it.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/uranus/11": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 11,
+        "overlayPoint": "Uranus"
+      },
+      "domain": [
+        "friendships",
+        "groups",
+        "networks",
+        "goals",
+        "causes",
+        "affiliations",
+        "collective projects"
+      ],
+      "possibleLivedManifestations": [
+        "The circle may turn over this year: new people can arrive through new contexts while long-standing ties go quiet, and neither has to be anyone's fault",
+        "A group you belong to, a team, a congregation, an online community, a cause, may split, merge, or change direction under you",
+        "A goal set years ago may be discovered to be obsolete, and the replacement can be set mid-year rather than at the start",
+        "One new acquaintance can reroute plans that were considered settled"
+      ],
+      "doNotAssume": [
+        "losing friends",
+        "social conflict or sudden ruptures",
+        "radicalization",
+        "isolation",
+        "that old ties end badly"
+      ],
+      "copyClaim": {
+        "text": "The people around a life can change faster than the life does. This year the roster may be the variable, and the plans can move with it.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/uranus/12": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 12,
+        "overlayPoint": "Uranus"
+      },
+      "domain": [
+        "privacy",
+        "inner life",
+        "rest",
+        "behind-the-scenes work",
+        "old patterns",
+        "solitude",
+        "what runs unexamined"
+      ],
+      "possibleLivedManifestations": [
+        "A pattern that ran unexamined for years may become suddenly visible this year, and visible can mean optional",
+        "The private hours may change shape: solitude can arrive unplanned or vanish, and what you do with the unseen part of the day may need reinvention",
+        "Something long parked in the background, a box unopened, a file unread, a conversation with yourself, may force its moment at an odd time",
+        "Help can arrive from an unexpected quarter precisely when nothing public shows anything is needed"
+      ],
+      "doNotAssume": [
+        "depression or crisis",
+        "hospitalization",
+        "isolation",
+        "secrets coming out badly",
+        "sleep problems"
+      ],
+      "copyClaim": {
+        "text": "The rearranging may happen offstage this year. What quietly stops fitting on the inside can matter more than anything visible on the outside.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/neptune/1": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 1,
+        "overlayPoint": "Neptune"
+      },
+      "domain": [
+        "self-presentation",
+        "direction",
+        "appearance",
+        "personal plans",
+        "how others read you",
+        "imagination"
+      ],
+      "possibleLivedManifestations": [
+        "People may read you loosely this year, projecting what they need onto you, and correcting the record can take deliberate effort",
+        "The year's direction may stay soft-focus longer than usual, with plans that firm up late, and some of the drift can be productive",
+        "How you want to look and live may be led by an image before there is a plan to match it",
+        "You may absorb the mood of the room more than usual, which can be a gift in some rooms and a cost in others"
+      ],
+      "doNotAssume": [
+        "confusion or aimlessness",
+        "deception by or of the person",
+        "escapism",
+        "weak will",
+        "illness"
+      ],
+      "copyClaim": {
+        "text": "You may be a little harder to pin down this year, to others and to yourself. Not every blur needs fixing, but the ones that cost you may be worth naming.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/neptune/2": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 2,
+        "overlayPoint": "Neptune"
+      },
+      "domain": [
+        "income",
+        "money management",
+        "possessions",
+        "valuation",
+        "financial expectations",
+        "resources"
+      ],
+      "possibleLivedManifestations": [
+        "Money may resist exact accounting this year: totals that shift, income that varies, an arrangement where nobody quite knows who owes what",
+        "Something may be bought or kept for what it means rather than what it does, and the meaning can be worth it or not",
+        "An expected sum, a payment, a grant, a sale, a share, may stay indefinite for months, and plans may have to run on ranges instead of numbers",
+        "What a skill or possession of yours is worth may be genuinely unclear this year, priced high by one party and low by another"
+      ],
+      "doNotAssume": [
+        "fraud or being cheated",
+        "financial loss",
+        "irresponsibility with money",
+        "poverty",
+        "a windfall"
+      ],
+      "copyClaim": {
+        "text": "The figures may stay approximate longer than you would like this year. The arrangement worth trusting can be the one that survives being written down.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/neptune/3": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 3,
+        "overlayPoint": "Neptune"
+      },
+      "domain": [
+        "communication",
+        "information",
+        "relatives and neighbors",
+        "daily reading",
+        "study",
+        "messages",
+        "local life"
+      ],
+      "possibleLivedManifestations": [
+        "Messages may travel imperfectly this year: things heard as promised that were only floated, plans that everyone remembers differently",
+        "A relative or neighbor may be understood more by intuition than by what they actually say, and checking can prevent a year of acting on a guess",
+        "Reading, listening, or study may drift toward the imaginative, fiction, images, music, the unprovable, and feed practical work in indirect ways",
+        "Paperwork and details may need a second pass this year, not from carelessness but because ambiguity keeps slipping in upstream"
+      ],
+      "doNotAssume": [
+        "lies being told",
+        "learning problems",
+        "family misunderstanding as conflict",
+        "scattered thinking",
+        "bad faith"
+      ],
+      "copyClaim": {
+        "text": "What was actually said and what was heard may diverge more than usual this year. The habit worth having can be repeating the plan back before acting on it.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/neptune/4": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 4,
+        "overlayPoint": "Neptune"
+      },
+      "domain": [
+        "home life",
+        "household atmosphere",
+        "family history",
+        "living plans",
+        "roots",
+        "private refuge"
+      ],
+      "possibleLivedManifestations": [
+        "The home may be measured against an imagined one this year, a remembered house, a picture, a someday place, and the comparison can drive real decisions",
+        "Housing plans may stay unsettled for months, waiting on other people's decisions, approvals, or a picture that keeps changing",
+        "A family story may turn out to have a softer relationship with the facts than assumed, and the fuller version can land this year",
+        "The household mood may pass between members more easily than usual: one person's week can become everyone's week"
+      ],
+      "doNotAssume": [
+        "home ownership or its absence",
+        "family estrangement",
+        "a hidden family secret",
+        "deception within the family",
+        "a move"
+      ],
+      "copyClaim": {
+        "text": "Home may be partly a picture this year, and the picture can be doing real work. It may help to know which decisions serve the house you have and which serve the one you imagine.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/neptune/5": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 5,
+        "overlayPoint": "Neptune"
+      },
+      "domain": [
+        "creative work",
+        "romance",
+        "children in your life",
+        "pleasure",
+        "performance",
+        "imagination at play"
+      ],
+      "possibleLivedManifestations": [
+        "Creative work may be the year's best channel, with material arriving faster than craft can process it and ideas that feel received rather than built",
+        "A romance may run ahead of the evidence: the person imagined and the person present can diverge, and the year may reveal which one was being courted",
+        "A child in your life may need imagination met more than rules enforced this year, or may be idealized in ways worth noticing",
+        "A pleasure may work partly because it dissolves the week, film, music, water, dancing, and the dissolving can be the point"
+      ],
+      "doNotAssume": [
+        "pregnancy or children",
+        "a doomed romance",
+        "being deceived by a lover",
+        "escapism or addiction",
+        "creative genius"
+      ],
+      "copyClaim": {
+        "text": "The heart may lead the evidence this year. That can produce the best work you have made and the most flattering portrait you have ever painted of another person, sometimes in the same month.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/neptune/6": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 6,
+        "overlayPoint": "Neptune"
+      },
+      "domain": [
+        "daily work",
+        "routines",
+        "workload limits",
+        "health habits",
+        "service",
+        "working atmosphere"
+      ],
+      "possibleLivedManifestations": [
+        "The edges of the job may blur this year: tasks without owners can drift toward you, and the description may match the day less and less, employed or not",
+        "A routine may be sustained by what it means rather than what it produces, and noticing which is which can free real hours",
+        "The body may report vaguely this year, tired without a clean cause, better without one either, and respond to gentler adjustments rather than dramatic ones",
+        "Work done in service of someone or something can carry the year's meaning, even when it carries none of its pay"
+      ],
+      "doNotAssume": [
+        "illness or a diagnosis",
+        "hypochondria",
+        "being exploited at work",
+        "addiction",
+        "chronic fatigue"
+      ],
+      "copyClaim": {
+        "text": "The line between your job and everything else may go soft this year. Some of what leaks across it can be meaning, and some can be unpaid work wearing meaning's coat.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/neptune/7": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 7,
+        "overlayPoint": "Neptune"
+      },
+      "domain": [
+        "partnership",
+        "close counterparts",
+        "expectations of others",
+        "agreements",
+        "one-to-one trust"
+      ],
+      "possibleLivedManifestations": [
+        "The other person, a spouse, a partner, a collaborator, an adversary, may be seen this year partly through what you hope they are, and events can slowly develop the actual photograph",
+        "An agreement may run on assumed terms nobody wrote down, and the gap can surface at an inconvenient moment",
+        "Someone may cast you as their answer, rescuer, muse, or fix, and the casting can flatter before it costs",
+        "Compassion for one particular person may be the year's real work, including the version of compassion that includes limits"
+      ],
+      "doNotAssume": [
+        "partnership status",
+        "divorce",
+        "betrayal or deception by a partner",
+        "a rescue dynamic",
+        "a fated meeting"
+      ],
+      "copyClaim": {
+        "text": "This year you may deal with the person you hope they are before you deal with the person they are. The gap can be small. It can be worth measuring anyway.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/neptune/8": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 8,
+        "overlayPoint": "Neptune"
+      },
+      "domain": [
+        "shared money",
+        "entangled finances",
+        "trust",
+        "intimacy",
+        "joint obligations",
+        "what others hold of yours"
+      ],
+      "possibleLivedManifestations": [
+        "Money shared with anyone, a partner, a family, an institution, may resist clarity this year: statements that raise questions, terms nobody fully remembers agreeing to",
+        "A settlement, payout, or approval may stay pending long enough to become an atmosphere, and plans may need to work around the pending",
+        "Closeness may deepen through what is finally said rather than what is done, and some of the year's intimacy can be confessional",
+        "What you would actually do without a given cushion, a policy, a pension, a person's support, may become a live question this year, asked calmly or not"
+      ],
+      "doNotAssume": [
+        "death or inheritance",
+        "fraud",
+        "financial ruin",
+        "betrayal by a partner",
+        "addiction"
+      ],
+      "copyClaim": {
+        "text": "The money that involves other people may stay hazy longer than you would like this year. Asking the exact question can feel indelicate and can also be the kindest thing anyone does for the arrangement.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/neptune/9": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 9,
+        "overlayPoint": "Neptune"
+      },
+      "domain": [
+        "belief",
+        "meaning",
+        "education",
+        "travel",
+        "law",
+        "teachers and doctrines",
+        "the long view"
+      ],
+      "possibleLivedManifestations": [
+        "A belief, framework, or teacher may be adopted this year on hope first, with verification arriving later, and the order can matter",
+        "A plan for study, travel, or relocation may live vividly in imagination while its logistics stay unbuilt, and the year can be spent deciding which it is",
+        "A place, real or read about, may become the year's organizing image, the somewhere-else that current decisions get measured against",
+        "A legal or official matter may hinge on interpretation this year, with the same facts reading two ways to two parties"
+      ],
+      "doNotAssume": [
+        "a cult or fanaticism",
+        "being deceived by a teacher",
+        "a lost court case",
+        "a canceled trip",
+        "loss of faith"
+      ],
+      "copyClaim": {
+        "text": "Something may get believed before it gets confirmed this year. The belief can be the best thing that happens to you, and it can still be worth knowing what would count as evidence.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/neptune/10": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 10,
+        "overlayPoint": "Neptune"
+      },
+      "domain": [
+        "public role",
+        "reputation",
+        "career direction",
+        "visible ambitions",
+        "how the work is perceived"
+      ],
+      "possibleLivedManifestations": [
+        "What you are known for may drift from what you actually do this year, and the public version can develop independently of your input",
+        "A vocational image, the work you would be doing in the ideal life, may exert real pull on actual decisions, employed or not",
+        "Recognition may arrive in a form that is hard to bank: admiration without offers, credit that is warm but vague",
+        "The direction may stay honestly undefined for a stretch this year, and holding the question open can beat forcing a premature answer"
+      ],
+      "doNotAssume": [
+        "employment or job loss",
+        "scandal or deception",
+        "a career founded on illusion",
+        "failure",
+        "fame"
+      ],
+      "copyClaim": {
+        "text": "The reputation may be painted in watercolor this year, a little different at every viewing. What you actually do can be the only pigment you control.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/neptune/11": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 11,
+        "overlayPoint": "Neptune"
+      },
+      "domain": [
+        "friendships",
+        "groups",
+        "causes",
+        "shared ideals",
+        "networks",
+        "collective hopes",
+        "goals"
+      ],
+      "possibleLivedManifestations": [
+        "A group or cause may be joined for what it stands for this year, with what it actually does becoming clear only from inside",
+        "A friend may be idealized, or may idealize you, and the friendship can run on the flattering versions for a while",
+        "A long-held goal may reveal itself as someone else's goal absorbed years ago, and the discovery can be quietly freeing",
+        "The network may include people known mostly through screens and stories this year, and the imagined versions can be firmer than the evidence"
+      ],
+      "doNotAssume": [
+        "false friends or deception",
+        "being used by a group",
+        "disillusionment",
+        "abandoned goals",
+        "naive belonging"
+      ],
+      "copyClaim": {
+        "text": "The company kept this year may be chosen partly on hope. Some of the hopes can be right, and it may take the year to learn which.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/neptune/12": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 12,
+        "overlayPoint": "Neptune"
+      },
+      "domain": [
+        "solitude",
+        "inner life",
+        "rest",
+        "imagination",
+        "what is carried privately",
+        "unfinished feelings",
+        "quiet service"
+      ],
+      "possibleLivedManifestations": [
+        "The inner life may be louder than the outer one this year: dreams, moods, and old scenes replaying with new captions",
+        "Time alone may become genuinely productive this year, of art, of resolution, of nothing that needs defending, and the year may keep supplying it",
+        "Something carried privately for years may soften this year without any event forcing it, forgiven or simply set down",
+        "Help may be given or received anonymously this year, and the uncredited kind can be the most durable"
+      ],
+      "doNotAssume": [
+        "depression",
+        "hospitalization",
+        "isolation or crisis",
+        "escapism or addiction",
+        "secret suffering"
+      ],
+      "copyClaim": {
+        "text": "The most important weather this year may be interior. Nothing has to show on the outside for a great deal to be settled.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/pluto/1": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 1,
+        "overlayPoint": "Pluto"
+      },
+      "domain": [
+        "personal authority",
+        "self-direction",
+        "presence",
+        "autonomy",
+        "access to you",
+        "resolve"
+      ],
+      "possibleLivedManifestations": [
+        "How much access people get to you may become a managed question this year: who can call, who gets the real answer, who gets the polite one",
+        "Your presence may land heavier than intended this year, with offhand remarks treated as rulings",
+        "A situation may make plain who actually decides things in your life, and the answer can prompt a repossession",
+        "Something about how you operate may be retired this year, deliberately, because it has started costing more than it earns"
+      ],
+      "doNotAssume": [
+        "a power struggle",
+        "coercion or abuse",
+        "a crisis",
+        "a personality overhaul",
+        "ruthlessness"
+      ],
+      "copyClaim": {
+        "text": "This year it may matter, visibly, who is actually steering your life. If the answer is not you in some area, that area can become the year's project.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/pluto/2": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 2,
+        "overlayPoint": "Pluto"
+      },
+      "domain": [
+        "income",
+        "financial control",
+        "possessions",
+        "ownership",
+        "leverage",
+        "pricing",
+        "reserves"
+      ],
+      "possibleLivedManifestations": [
+        "Who controls your money may become the live question this year: an employer, a platform, a landlord, a family arrangement, and reducing that control can become the goal",
+        "A possession or resource may turn strategic: the spare room, the paid-off car, the skill only you have, suddenly worth something to someone",
+        "What you will and will not do for money may get tested by one specific offer this year",
+        "Financial dependence in either direction, yours on someone or someone's on you, may come up for renegotiation"
+      ],
+      "doNotAssume": [
+        "financial ruin or a windfall",
+        "greed",
+        "exploitation or abuse",
+        "a power struggle over money",
+        "debt"
+      ],
+      "copyClaim": {
+        "text": "Money may behave as leverage this year, yours or someone else's. Knowing exactly what you own, owe, and can walk away from can change how every negotiation goes.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/pluto/3": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 3,
+        "overlayPoint": "Pluto"
+      },
+      "domain": [
+        "consequential conversations",
+        "information",
+        "relatives and neighbors",
+        "agreements in words",
+        "disclosure",
+        "research"
+      ],
+      "possibleLivedManifestations": [
+        "Words may carry consequence this year: a sentence in a message, a meeting, or a family kitchen can settle something that stays settled",
+        "Information may become currency around you, who knew first, who was not told, and your own disclosures may get more deliberate",
+        "One conversation with a sibling or relative may be the year's real event, long deferred and finally had",
+        "What you research may go deep rather than wide this year: one subject, pursued until it gives up its structure"
+      ],
+      "doNotAssume": [
+        "family rupture",
+        "manipulation",
+        "secrets kept against the person",
+        "gossip or betrayal",
+        "quarrels"
+      ],
+      "copyClaim": {
+        "text": "This year certain sentences may be permanent. The ones you choose to say, and the ones you decide not to, can both do a year's worth of work.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/pluto/4": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 4,
+        "overlayPoint": "Pluto"
+      },
+      "domain": [
+        "home ground",
+        "family arrangements",
+        "household authority",
+        "foundations",
+        "property decisions",
+        "private territory"
+      ],
+      "possibleLivedManifestations": [
+        "Who holds authority at home may get named this year, over the space, the money, the decisions, the thermostat, and naming it can change it",
+        "A family pattern that has run for generations may become visible in your own behavior, and visible can be the first condition for optional",
+        "A property or living-arrangement decision may carry unusual weight this year, hard to reverse and worth treating that way",
+        "The home may become the place where the year's most consequential conversations happen"
+      ],
+      "doNotAssume": [
+        "home ownership or its absence",
+        "family estrangement",
+        "abuse or a controlling household",
+        "buried trauma surfacing",
+        "eviction"
+      ],
+      "copyClaim": {
+        "text": "The deepest negotiations this year may happen at home, over things that look small and are not. What gets settled there can outlast everything settled elsewhere.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/pluto/5": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 5,
+        "overlayPoint": "Pluto"
+      },
+      "domain": [
+        "creative stakes",
+        "romance",
+        "children in your life",
+        "pleasure",
+        "self-expression",
+        "risk for joy"
+      ],
+      "possibleLivedManifestations": [
+        "A creative project may become consequential this year: shown, sold, judged, or defended, no longer private practice",
+        "A romance may run at higher stakes than usual, with exclusivity, honesty, or the future becoming explicit topics early",
+        "A child in your life may test authority this year, and the terms you set or refuse to set can matter for years",
+        "What you do for pleasure may reveal what you are willing to risk for it, money, image, or comfort, and the reveal can be useful"
+      ],
+      "doNotAssume": [
+        "pregnancy or children",
+        "obsession or jealousy",
+        "a destructive affair",
+        "betrayal",
+        "gambling losses"
+      ],
+      "copyClaim": {
+        "text": "Play may stop being weightless this year. The things done for love, of a person, a craft, a thrill, can start producing consequences that deserve the respect usually reserved for work.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/pluto/6": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 6,
+        "overlayPoint": "Pluto"
+      },
+      "domain": [
+        "control of your time",
+        "daily obligations",
+        "routines",
+        "health decisions",
+        "workload terms",
+        "working conditions"
+      ],
+      "possibleLivedManifestations": [
+        "Who controls your time may become the year's central fact: a manager, a client, a dependent, a rota, and renegotiating that control can become the year's project, employed or not",
+        "A routine may get rebuilt from the foundation this year rather than adjusted, because adjusting has stopped working",
+        "One duty may reveal itself as load-bearing: the task that, done or dropped, changes everything downstream",
+        "A health decision may be approached with unusual seriousness this year, researched, decided, and executed rather than drifted into"
+      ],
+      "doNotAssume": [
+        "illness or a diagnosis",
+        "abusive or tyrannical conditions",
+        "exhaustion",
+        "job loss",
+        "obsessive habits"
+      ],
+      "copyClaim": {
+        "text": "The schedule may be where the power lives this year. Whoever writes yours, including you, can be deciding more than the hours.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/pluto/7": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 7,
+        "overlayPoint": "Pluto"
+      },
+      "domain": [
+        "partnership terms",
+        "one-to-one leverage",
+        "agreements",
+        "counterparts",
+        "loyalty",
+        "negotiation"
+      ],
+      "possibleLivedManifestations": [
+        "The real terms of a partnership, who decides, who adapts, who can leave, may surface this year, in marriage, business, or a standing alliance",
+        "One counterpart may hold something you need this year, a signature, a key, a yes, and the dealing can show you how you handle depending on someone",
+        "An agreement may get renegotiated from actual positions rather than polite ones, and the honest version can hold better than the pleasant one did",
+        "A relationship may consolidate this year: fewer counterparts, deeper terms, more at stake with each"
+      ],
+      "doNotAssume": [
+        "partnership status",
+        "divorce",
+        "a controlling partner",
+        "betrayal",
+        "a battle of wills"
+      ],
+      "copyClaim": {
+        "text": "This year the pleasant version of the arrangement may give way to the true one. The true one can be better. It can also require saying things out loud.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/pluto/8": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 8,
+        "overlayPoint": "Pluto"
+      },
+      "domain": [
+        "shared resources",
+        "debts and obligations",
+        "access",
+        "trust",
+        "joint finances",
+        "what others control of yours"
+      ],
+      "possibleLivedManifestations": [
+        "Access may be the year's theme: who can see the accounts, who holds the passwords, whose signature releases the funds, and the answers may get revised",
+        "A debt or obligation, financial or personal, may get confronted at its full size this year and dealt with rather than carried",
+        "An intimate trust may deepen through something risked deliberately, told, shared, or signed over",
+        "An institution's hold on something of yours, a pension, a policy, a record, may come under your active management for the first time"
+      ],
+      "doNotAssume": [
+        "death or inheritance",
+        "betrayal",
+        "financial abuse",
+        "divorce settlements",
+        "ruin"
+      ],
+      "copyClaim": {
+        "text": "What other people hold of yours may come into focus this year: money, information, keys of every kind. Taking inventory can be uncomfortable and can also be the year's most durable move.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/pluto/9": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 9,
+        "overlayPoint": "Pluto"
+      },
+      "domain": [
+        "convictions",
+        "education",
+        "law",
+        "publishing",
+        "consequential travel",
+        "doctrine",
+        "intellectual authority"
+      ],
+      "possibleLivedManifestations": [
+        "A conviction may get tested at full pressure this year, in a courtroom, a classroom, a pulpit, or an argument that matters, and what survives can be held differently afterward",
+        "A course of study may stop being hobby-depth: a credential pursued seriously, a subject engaged until it changes how you argue",
+        "A legal, academic, or institutional decision may carry real consequence this year, and preparation can be the whole difference",
+        "Who counts as an authority for you may change this year: a teacher outgrown, a framework retired, a new source trusted after scrutiny"
+      ],
+      "doNotAssume": [
+        "a lawsuit",
+        "fanaticism",
+        "a crisis of faith",
+        "abuse of authority",
+        "dogmatism"
+      ],
+      "copyClaim": {
+        "text": "Beliefs may get load-tested this year rather than browsed. The ones still standing at the end can be the ones you actually use.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/pluto/10": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 10,
+        "overlayPoint": "Pluto"
+      },
+      "domain": [
+        "career stakes",
+        "authority",
+        "public consequence",
+        "reputation",
+        "ambition",
+        "standing with power"
+      ],
+      "possibleLivedManifestations": [
+        "Dealings with power may define the public year, with a boss, a board, a regulator, a market, and your position relative to it may change in one direction or the other",
+        "What you are building publicly may start producing consequences beyond you: people depending on it, money moving because of it, decisions waiting on yours",
+        "An ambition may stop being deniable this year, to yourself first, and pursuing it openly can cost less than managing it secretly did",
+        "A reputation may concentrate: known for one consequential thing rather than several mild ones"
+      ],
+      "doNotAssume": [
+        "employment or job loss",
+        "a power grab or betrayal",
+        "downfall or scandal",
+        "ruthless ambition",
+        "a promotion"
+      ],
+      "copyClaim": {
+        "text": "The stakes attached to being seen may rise this year. What you do where people can watch can start to count in ways it didn't, for you and for the people downstream of you.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/pluto/11": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 11,
+        "overlayPoint": "Pluto"
+      },
+      "domain": [
+        "alliances",
+        "group influence",
+        "networks",
+        "collective goals",
+        "loyalty among friends",
+        "shared undertakings"
+      ],
+      "possibleLivedManifestations": [
+        "Influence inside a group may become visible this year: who actually decides, who is consulted, who finds out afterward, and your own position in that order may shift",
+        "A friendship may get tested by something real, money, a secret, a request that costs, and the ones that pass can move into a different category",
+        "A shared undertaking may need someone to hold the difficult role, treasurer, enforcer, the one who says no, and it may be you",
+        "The network may consolidate this year: fewer affiliations, held harder, chosen for what they can actually do"
+      ],
+      "doNotAssume": [
+        "betrayal by friends",
+        "group power struggles",
+        "manipulation",
+        "lost friendships",
+        "cliques"
+      ],
+      "copyClaim": {
+        "text": "Friendship may get weighed this year, not for warmth but for load. The ones that can carry something real may be the ones that organize the next several years.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    },
+    "sr-overlay/pluto/12": {
+      "factorType": "sr-overlay",
+      "match": {
+        "house": 12,
+        "overlayPoint": "Pluto"
+      },
+      "domain": [
+        "private reckonings",
+        "what is carried unseen",
+        "old obligations",
+        "solitude",
+        "background institutions",
+        "release"
+      ],
+      "possibleLivedManifestations": [
+        "Something carried privately, a resentment, a promise, an old version of events, may get deliberately examined this year and either kept on purpose or put down on purpose",
+        "Influence may run quietly this year: the consequential things you do may be the ones with no audience",
+        "A background matter, an archive, a legal record, an old account, a case file, may need attention this year, and closing it can close more than paperwork",
+        "What has power over you from the past may lose it this year, not through an event but through a decision made alone"
+      ],
+      "doNotAssume": [
+        "depression",
+        "hospitalization",
+        "isolation or crisis",
+        "buried trauma or abuse",
+        "secret enemies"
+      ],
+      "copyClaim": {
+        "text": "The heaviest lifting this year may be invisible. What gets set down in private can change what you can carry in public.",
+        "review_status": "approved"
+      },
+      "provenance": "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
+      "review_status": "approved"
+    }
+  },
+  "approval": {
+    "status": "owner_approved",
+    "approvedOn": "2026-08-10",
+    "sourcePath": "tldr-astro-phrasebank/TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md"
+  },
+  "review_status": "approved"
+}
