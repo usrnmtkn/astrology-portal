@@ -3,7 +3,7 @@ import { reportPromptFromPayload, validateReportDraft } from "./report-generatio
 import { assertReportEvaluationPacketReady, completeReportUnit, reportEvaluationPacket, reportDraftMovementApplicable } from "./report-evaluation-packet.js";
 import { verifyReportFactLock } from "./report-fact-lock.js";
 import { callReportModel, type ReportModelCall, type ReportModelUsage, writerModelTarget } from "./report-model-client.js";
-import { loadVersionedReportPrompt, REPORT_CRITIQUE_PROMPT_PATH } from "./report-prompt-versions.js";
+import { loadActiveReportCritiquePrompt } from "./report-prompt-versions.js";
 import { scopeReportPayloadToUnit } from "./report-unit-scope.js";
 
 export const REPORT_DEFECT_CATEGORIES = [
@@ -499,7 +499,7 @@ export async function runReportWriterChain(input: {
   // Fail closed before draft generation: a packet missing owner comparisons
   // must never consume a billed provider call.
   assertReportEvaluationPacketReady(payload);
-  const critiquePrompt = loadVersionedReportPrompt(REPORT_CRITIQUE_PROMPT_PATH);
+  const critiquePrompt = loadActiveReportCritiquePrompt();
   const calls: ReportWriterChainResult["calls"] = [];
   const draftResult = await callModel<ReportDraft>({
     ...target,

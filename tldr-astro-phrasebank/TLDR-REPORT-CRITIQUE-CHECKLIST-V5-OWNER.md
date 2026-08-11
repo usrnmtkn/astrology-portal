@@ -1,13 +1,17 @@
-# Report critique checklist v5 draft
+# Report critique checklist v5
 
-**Status:** `needs_review`
-**Version:** `report-critique-checklist-v5-draft`
-**Owner approved:** `false`
-**Active in production:** `false`
-**Promotion authorized:** `false`
+**Status:** `owner_approved`
+**Version:** `report-critique-checklist-v5`
+**Approved:** 2026-08-11
+**Owner approved:** `true`
+**Active in production:** `true`
+**Promotion authorized:** `true`
+**Approved source SHA-256:** `64f161623fb8f071056bb41b124626e502735a569cc880ba39e0c0932f15981f`
 **Baseline:** `report-critique-checklist-v4-draft`
 **Amendment source:** Cold Rendered Prose Rule, owner ruling 2026-08-11.
-**Governance:** Proposed replacement. V3 remains active. This draft requires explicit SHA-pinned owner approval before activation.
+**Governance:** Owner-approved v5 successor layered over the immutable v3 baseline. The v4 draft remains inactive. V5 is active in production. Any later revision requires a new version and fresh owner approval.
+
+> I explicitly approve Report judge rubric v3.2 at SHA-256 bce4534c7f0f6a5689afbf3305fac73ff8b2024669b5639e776fa77efd5a1e5f, Report critique checklist v5 at SHA-256 64f161623fb8f071056bb41b124626e502735a569cc880ba39e0c0932f15981f, and Multi-horizon report generation prompt v2 at SHA-256 358be6ddf05d9fe4e1c944878a8269809ec6e736ea53a6a014aefbb148bc77d7. I authorize activation in place of the current report judge, critique, and generation prompt. The judge threshold remains 0.85.
 
 The critique returns findings only. Each finding uses an existing governed defect category, the smallest exact location and sentence scope, a quote, evidence, and a bounded correction instruction. It never writes replacement prose.
 
@@ -66,6 +70,6 @@ Before returning `no_defects`, ignore what the writer intended and read only the
 
 The v4 structured-output contract remains unchanged: `result`, movement `applicability`, and `defects`, with each defect carrying `id`, `category`, `location`, `sentence_index`, inclusive `scope_start` and `scope_end`, `quote`, `evidence`, `evidence_ids`, and `instruction`. The revise call may change only named scopes.
 
-## Activation wall
+## Activation record
 
-This draft is inactive. The production critique remains `TLDR-REPORT-CRITIQUE-CHECKLIST-V3-OWNER.md` until the owner approves the exact replacement SHA and separately authorizes activation.
+Activated as the production critique successor over the immutable `TLDR-REPORT-CRITIQUE-CHECKLIST-V3-OWNER.md` baseline by the SHA-pinned owner authorization above. The v4 draft remains inactive.
