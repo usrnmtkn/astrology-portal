@@ -8,6 +8,10 @@ import { fileURLToPath } from "node:url";
 import {
   buildMeaningPlan,
   buildCardWriterInstructions,
+  applyOwnerApproval,
+  applyRenderedSampleApproval,
+  assertBatchGenerationAuthorized,
+  assertServingAuthorized,
   CARD_WRITER_SEVEN_PASS_LOOP,
   CARD_WRITING_INSTRUCTIONS_VERSION,
   cardCritiqueChecklist,
@@ -16,8 +20,11 @@ import {
   candidateCardAstrologyWritingInstructions,
   CANDIDATE_WRITER,
   CANONICAL_REVIEWER_INSTRUCTIONS_VERSION,
+  COLD_RENDERED_PROSE_RULE,
+  COLD_REVIEW_SCHEMA,
   canonicalAstrologyReviewInstructions,
   canonicalAstrologyWritingInstructions,
+  coldRenderedProseReviewInstructions,
   CURRENT_PRODUCTION_WRITER,
   evaluateLilithVerticalSlice,
   extractNeutralExternalMeaning,
@@ -25,11 +32,14 @@ import {
   HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS,
   HOUSE_BLEED_NOUNS,
   MEANING_PLAN_SCHEMA,
+  generatedApprovalState,
+  markPipelineReady,
   promoteCandidateWriter,
   REVIEW_SCHEMA,
   REVIEW_FIELDS,
   reviewDraft,
   runWritingPipeline,
+  stageRenderedSample,
   validateWriterPromotion,
   validateCopy
 } from "../../src/astro-writing/index.mjs";
@@ -64,6 +74,7 @@ assert.ok(rubric.includes("STAGE 6: DETERMINISTIC VALIDATION"));
 assert.ok(read("docs/writing/EDITORIAL-GATE-REVIEWER-PROMPT.md").includes("ASSUME THERE IS A DEFECT UNTIL EACH REQUIRED CHECK PASSES."));
 assert.ok(read("docs/writing/SOURCE_GOVERNANCE.md").includes("That is derivative laundering."));
 assert.ok(read("docs/writing/OWNER_APPROVAL_GOVERNANCE.md").includes("Only an explicit owner ruling may set:"));
+assert.ok(read("docs/writing/OWNER_APPROVAL_GOVERNANCE.md").includes("approval-status-transitions.json"));
 const implementationReport = read("packages/astro-knowledge/review/writing-harness-v2/implementation-report.md");
 for (let item = 1; item <= 17; item += 1) assert.ok(implementationReport.includes(`## ${item}.`), `Implementation report must contain item ${item}.`);
 assert.ok(read("AGENTS.md").includes("skills/tldr-astro-writer/SKILL.md"));
@@ -108,6 +119,8 @@ assert.equal(cjs.default.canonicalAstrologyWritingInstructions, canonicalAstrolo
 assert.equal(cjs.default.candidateCardAstrologyWritingInstructions, candidateCardAstrologyWritingInstructions);
 assert.equal(cjs.default.canonicalAstrologyReviewInstructions, canonicalAstrologyReviewInstructions);
 assert.equal(cjs.default.CANONICAL_REVIEWER_INSTRUCTIONS_VERSION, CANONICAL_REVIEWER_INSTRUCTIONS_VERSION);
+assert.equal(cjs.default.COLD_RENDERED_PROSE_RULE, COLD_RENDERED_PROSE_RULE);
+assert.equal(cjs.default.coldRenderedProseReviewInstructions, coldRenderedProseReviewInstructions);
 const ownerCodexInstruction = ownerDoctrine.slice(ownerDoctrine.indexOf("CODEX INSTRUCTION (owner-designated canonical form):")).trim();
 assert.ok(
   canonicalAstrologyWritingInstructions.replace(/\s+/gu, " ").startsWith(ownerCodexInstruction.replace(/\s+/gu, " ")),
@@ -118,6 +131,13 @@ assert.ok(
   "Canonical API instructions must retain the verbatim owner-designated doctrine."
 );
 assert.deepEqual(REVIEW_SCHEMA.properties.decision.enum, ["PASS", "REVISE"]);
+assert.deepEqual(COLD_REVIEW_SCHEMA.properties.decision.enum, ["PASS", "REVISE"]);
+assert.deepEqual(COLD_REVIEW_SCHEMA.properties.violations.items.properties.category.enum, ["cold_rendered_prose"]);
+assert.deepEqual(COLD_REVIEW_SCHEMA.properties.violations.items.properties.severity.enum, ["nonblocking"]);
+assert.ok(REVIEW_FIELDS.includes("cold_rendered_prose"));
+assert.ok(!HARD_REVISE_FIELDS.includes("cold_rendered_prose"));
+assert.ok(coldRenderedProseReviewInstructions.replace(/\s+/gu, " ").includes("Do not reward a sentence for being astrologically correct if it is awkward prose."));
+assert.ok(canonicalAstrologyReviewInstructions.includes(COLD_RENDERED_PROSE_RULE));
 assert.ok(canonicalAstrologyReviewInstructions.includes("DECISION CONTRACT: Return PASS or REVISE only. Never return FAIL."));
 for (const sign of ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]) {
   assert.ok(canonicalAstrologyReviewInstructions.includes(`## gold-lilith-${sign}-v5: PASS`), `Reviewer instructions must include the locked ${sign} PASS exemplar.`);
@@ -295,7 +315,8 @@ for (const leaked of [
   assert.ok(result.violations.some((entry) => entry.category === "shared_ban"), `Reader-facing guard leakage must fail: ${leaked}`);
 }
 
-let reviewCount = 0;
+let contextualReviewCount = 0;
+let coldReviewCount = 0;
 const writerClient = async ({ stage, instructions, input }) => {
   assert.equal(instructions, cardWriterInstructions);
   assert.ok(instructions.includes(cardStandard));
@@ -334,10 +355,34 @@ const reviewValue = (decision) => ({
     revision_instruction: "Name the action."
   }] : []
 });
-const reviewerClient = async ({ instructions }) => {
+const coldReviewValue = (decision = "PASS") => ({
+  cold_rendered_prose: {
+    status: decision === "PASS" ? "PASS" : "FAIL",
+    reason: decision === "PASS" ? "The rendered prose makes sense cold." : "The rendered prose requires translation."
+  },
+  decision,
+  violations: decision === "PASS" ? [] : [{
+    category: "cold_rendered_prose",
+    severity: "nonblocking",
+    location: "hook",
+    text: "An opaque line.",
+    reason: "The rendered prose requires translation.",
+    revision_instruction: "State the meaning in ordinary language."
+  }]
+});
+const reviewerClient = async ({ stage, instructions, input }) => {
+  if (stage === "cold-review") {
+    assert.equal(instructions, coldRenderedProseReviewInstructions);
+    const parsed = JSON.parse(input);
+    assert.deepEqual(Object.keys(parsed), ["rendered_copy"], "Cold review must receive rendered prose only.");
+    assert.equal(typeof parsed.rendered_copy, "string");
+    coldReviewCount += 1;
+    return coldReviewValue("PASS");
+  }
+  assert.equal(stage, "review");
   assert.equal(instructions, canonicalAstrologyReviewInstructions);
-  reviewCount += 1;
-  return reviewValue(reviewCount === 1 ? "REVISE" : "PASS");
+  contextualReviewCount += 1;
+  return reviewValue(contextualReviewCount === 1 ? "REVISE" : "PASS");
 };
 writerClient.provider = "gemini";
 writerClient.model = "gemini-writer-fixture";
@@ -368,6 +413,8 @@ assert.equal(pipeline.draft.generation_metadata.thinkingLevel, "high");
 assert.equal(pipeline.draft.generation_metadata.components.writer_prompt, CARD_WRITING_INSTRUCTIONS_VERSION);
 assert.equal(pipeline.report.automaticallyRevised, 1);
 assert.equal(pipeline.report.finalLintStatus, "PASS");
+assert.equal(coldReviewCount, 2, "Every draft and revision must receive its own context-isolated cold read.");
+assert.equal(contextualReviewCount, 2);
 
 for (const field of HARD_REVISE_FIELDS) assert.ok(REVIEW_FIELDS.includes(field));
 
@@ -380,21 +427,113 @@ const inconsistentReviewer = await reviewDraft({
   },
   plan,
   context: { examples: [], corrections: [] },
-  modelClient: async () => ({
-    ...reviewValue("PASS"),
-    voice_match: { status: "FAIL", reason: "The sentence does not match the owner register." },
-    decision: "PASS",
-    violations: [{
-      category: "voice_match",
-      severity: "nonblocking",
-      location: "hook",
-      text: "The answer changes after the facts do.",
-      reason: "The sentence does not match the owner register.",
-      revision_instruction: "Restore the owner register."
-    }]
-  })
+  modelClient: async ({ stage, input }) => {
+    if (stage === "cold-review") {
+      assert.deepEqual(Object.keys(JSON.parse(input)), ["rendered_copy"]);
+      return coldReviewValue("PASS");
+    }
+    return {
+      ...reviewValue("PASS"),
+      voice_match: { status: "FAIL", reason: "The sentence does not match the owner register." },
+      decision: "PASS",
+      violations: [{
+        category: "voice_match",
+        severity: "nonblocking",
+        location: "hook",
+        text: "The answer changes after the facts do.",
+        reason: "The sentence does not match the owner register.",
+        revision_instruction: "Restore the owner register."
+      }]
+    };
+  }
 });
 assert.equal(inconsistentReviewer.decision, "REVISE", "Any reviewer field marked REVISE must block PASS.");
+
+const coldFailureReview = await reviewDraft({
+  draft: {
+    tagline: "A clear tension",
+    hook: "The mechanism speaks through the answer.",
+    lived: "A familiar claim gets repeated until someone checks the source.",
+    turn: "Certainty can matter and still need evidence."
+  },
+  plan,
+  context: { examples: [], corrections: [] },
+  modelClient: async ({ stage, input }) => {
+    if (stage === "cold-review") {
+      assert.deepEqual(Object.keys(JSON.parse(input)), ["rendered_copy"]);
+      return coldReviewValue("REVISE");
+    }
+    return reviewValue("PASS");
+  }
+});
+assert.equal(coldFailureReview.decision, "PASS", "The permanently advisory cold check cannot block otherwise acceptable copy.");
+assert.equal(coldFailureReview.cold_rendered_prose.status, "FAIL");
+assert.ok(coldFailureReview.violations.some((entry) => entry.category === "cold_rendered_prose" && entry.severity === "nonblocking"));
+
+const initialApproval = generatedApprovalState();
+const documentApproved = applyOwnerApproval(markPipelineReady(initialApproval), {
+  status: "owner-approved",
+  exactOwnerRuling: "I approve the exact document wording."
+});
+assert.equal(documentApproved.batchGenerationAuthorized, false);
+assert.equal(documentApproved.servingAuthorized, false);
+assert.throws(() => assertBatchGenerationAuthorized(documentApproved), /RENDERED_SAMPLE_OWNER_APPROVAL_REQUIRED/);
+assert.throws(() => assertServingAuthorized(documentApproved), /RENDERED_SAMPLE_OWNER_APPROVAL_REQUIRED/);
+const renderedPending = stageRenderedSample(documentApproved, {
+  sampleId: "rendered-sample-1",
+  surface: "sky-placement"
+});
+assert.equal(renderedPending.renderedSampleStatus, "owner-review-pending");
+assert.throws(() => assertServingAuthorized(renderedPending), /RENDERED_SAMPLE_OWNER_APPROVAL_REQUIRED/);
+const renderedApproved = applyRenderedSampleApproval(renderedPending, {
+  sampleId: "rendered-sample-1",
+  exactOwnerRuling: "I approve this fully rendered product sample."
+});
+assert.equal(assertBatchGenerationAuthorized(renderedApproved), true);
+assert.equal(assertServingAuthorized(renderedApproved), true);
+const transitionContract = JSON.parse(read("data/writing/approval-status-transitions.json"));
+assert.deepEqual(transitionContract.capabilityRequirements.batch_generation, ["rendered_sample_owner_approved"]);
+assert.deepEqual(transitionContract.capabilityRequirements.serving, ["rendered_sample_owner_approved"]);
+
+const coldFixtures = jsonl("data/writing/cold-rendered-prose-fixtures.jsonl");
+assert.equal(coldFixtures.length, 13);
+assert.equal(coldFixtures.filter((entry) => entry.fixture_kind === "negative" && entry.expected === "REVISE").length, 12);
+assert.equal(coldFixtures.filter((entry) => entry.fixture_kind === "gold" && entry.expected === "PASS").length, 1);
+for (const fixture of coldFixtures) assert.equal(sha256(fixture.rendered_copy), fixture.rendered_copy_sha256);
+const coldRound2Train = jsonl("data/writing/cold-rendered-prose-round-2-train.jsonl");
+const coldRound2Holdout = jsonl("data/writing/cold-rendered-prose-round-2-holdout.jsonl");
+const coldRound2Briefing = read("packages/astro-knowledge/review/cold-rendered-prose-governance-v1/round-2-reviewer-briefing.md");
+assert.equal(coldRound2Train.length, 6);
+assert.equal(coldRound2Train.filter((entry) => entry.label === "FAIL").length, 4);
+assert.equal(coldRound2Train.filter((entry) => entry.label === "PASS").length, 2);
+assert.equal(coldRound2Holdout.filter((entry) => entry.fixture_kind === "holdout-negative").length, 8);
+assert.equal(coldRound2Holdout.filter((entry) => entry.fixture_kind === "holdout-gold").length, 2);
+assert.equal(coldRound2Holdout.filter((entry) => entry.fixture_kind === "borderline-probe").length, 3);
+for (const fixture of [...coldRound2Train, ...coldRound2Holdout]) {
+  assert.equal(sha256(fixture.rendered_copy), fixture.rendered_copy_sha256);
+}
+for (const fixture of coldRound2Holdout) {
+  assert.ok(!coldRound2Briefing.includes(fixture.fixture_id), `${fixture.fixture_id} leaked into the TRAIN briefing.`);
+  assert.ok(!coldRound2Briefing.includes(fixture.rendered_copy), `${fixture.fixture_id} full text leaked into the TRAIN briefing.`);
+  assert.ok(!coldRound2Train.some((training) => training.rendered_copy_sha256 === fixture.rendered_copy_sha256));
+}
+const coldCalibration = JSON.parse(read("packages/astro-knowledge/review/cold-rendered-prose-governance-v1/calibration-status.json"));
+const coldLiveEval = JSON.parse(read("packages/astro-knowledge/review/cold-rendered-prose-governance-v1/live-eval.json"));
+const coldRound2LiveEval = JSON.parse(read("packages/astro-knowledge/review/cold-rendered-prose-governance-v1/round-2-live-eval.json"));
+assert.equal(coldCalibration.trusted, false, "A failed cold-read calibration must remain untrusted.");
+assert.equal(coldCalibration.promotionAuthorized, false, "A failed cold-read calibration may not be promoted.");
+assert.equal(coldCalibration.mode, "permanently_advisory_only");
+assert.equal(coldCalibration.proseJudgmentAuthority, "owner");
+assert.equal(coldCalibration.furtherCalibrationAuthorized, false);
+assert.equal(coldLiveEval.status, "FAIL");
+assert.equal(coldRound2LiveEval.status, "FAIL");
+assert.equal(coldRound2LiveEval.actual.negativeRevise, 8);
+assert.equal(coldRound2LiveEval.actual.goldPass, 1);
+assert.equal(coldCalibration.finalRound.holdout.negativeRevise, coldRound2LiveEval.actual.negativeRevise);
+assert.equal(coldCalibration.finalRound.holdout.goldPass, coldRound2LiveEval.actual.goldPass);
+assert.equal(transitionContract.proseJudgment.authority, "owner");
+assert.equal(transitionContract.proseJudgment.semanticColdReview, "permanently_advisory_only");
+assert.equal(transitionContract.proseJudgment.semanticColdReviewMayAuthorizeTransition, false);
 
 const gold = jsonl("data/writing/owner-approved-examples.jsonl");
 const negatives = jsonl("data/writing/negative-regression-fixtures.jsonl");
@@ -485,6 +624,7 @@ assert.equal(instructionsForRole("CARD_REVISER_V3"), candidateCardAstrologyWriti
 assert.ok(instructionsForRole("CARD_WRITER_V3").includes(cardStandard), "Every candidate CARD_WRITER_V3 call must load the card standard verbatim.");
 assert.ok(instructionsForRole("CARD_REVISER_V3").includes(cardStandard), "Every candidate CARD_REVISER_V3 call must load the card standard verbatim.");
 assert.equal(instructionsForRole("REVIEWER"), canonicalAstrologyReviewInstructions);
+assert.equal(instructionsForRole("COLD_REVIEWER"), coldRenderedProseReviewInstructions);
 let capturedWrapperBody = null;
 await callOpenAIResponses({
   apiKey: "test-key",
@@ -503,6 +643,8 @@ await assert.rejects(() => callOpenAIResponses({
 }), /previous-response instruction persistence/iu);
 const apiGeneration = read("api/_lib/content-generation.ts");
 assert.ok(apiGeneration.includes("reviewGeneratedContentWithOpenAI"), "Application generation must run a separate review pass.");
+assert.ok(apiGeneration.includes('role: "COLD_REVIEWER"'), "Application generation must run the isolated cold-rendered-prose pass.");
+assert.ok(apiGeneration.includes("renderedGeneratedCopy(draft)"), "The cold pass must receive rendered copy rather than drafting context.");
 assert.ok(apiGeneration.includes("data/writing/OWNER_APPROVED_EXAMPLES.jsonl"), "Application generation must retrieve from canonical owner-approved evidence.");
 assert.ok(!apiGeneration.includes('status: "in.(LIVE,REVIEWED)"'), "Generic generated LIVE/REVIEWED rows must not be treated as owner voice.");
 assert.ok(apiGeneration.includes('status: "DRAFT"'), "Generated application prose must remain DRAFT until owner approval.");
