@@ -32,8 +32,19 @@
     "returnMoment": "2026-02-18T01:59:11Z",
     "analysis": {
       "solarReturnToNatalOverlays": [
+        { "point": "Sun", "house": 9 },
+        { "point": "Moon", "house": 10 },
+        { "point": "Mercury", "house": 10 },
         { "point": "Venus", "house": 10 },
-        { "point": "Ascendant", "house": 5 }
+        { "point": "Mars", "house": 9 },
+        { "point": "Jupiter", "house": 2 },
+        { "point": "Saturn", "house": 11 },
+        { "point": "Uranus", "house": 12 },
+        { "point": "Neptune", "house": 11 },
+        { "point": "Pluto", "house": 9 },
+        { "point": "North Node", "house": 10 },
+        { "point": "Chiron", "house": 11 },
+        { "point": "Lilith", "house": 6 }
       ]
     }
   },

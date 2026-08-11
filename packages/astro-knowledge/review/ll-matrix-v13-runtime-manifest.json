@@ -1,0 +1,2454 @@
+{
+  "schema": "tldrastro.ll-matrix-v13-runtime-ingestion",
+  "version": 2,
+  "releaseId": "ll-matrix-v13-owner-approved-runtime",
+  "approvedAt": "2026-08-10",
+  "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "937549e74eb8e68f8c7e884db6789aeaa79368e53dba5b6ef1c4be697dddb41c",
+  "lockedRows": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
+  "lockedRowsSha256": "9ca15c189f5ba7622e1376e4b6a1c67e0f131db5b0d6badcfee452341850aeb9",
+  "publicLockedRows": "apps/web/public/content/knowledge-matrix-v13/v13-direct-language-owner-approved/knowledge-matrix-v13-owner-approved-locked.json",
+  "sourceRows": 1014,
+  "ownerApprovedRows": 301,
+  "excludedUnapprovedRows": 713,
+  "clarityStrictV13Rows": 195,
+  "approvedSheetCounts": {
+    "PlacementMeanings": 113,
+    "AspectMeanings": 165,
+    "NodesPhasesFortune": 23
+  },
+  "governanceCounts": {
+    "owner-approved-v13-direct-language": 194,
+    "owner-lived-experience-ll-v9-owner-approved": 106,
+    "owner-approved-clarity-fix-ll-v12": 1
+  },
+  "runtimeFamilyCounts": {
+    "house-lived": 6,
+    "natal-aspect-generic-lived": 2,
+    "natal-aspect-lived": 163,
+    "natal-moon-phase-lived": 1,
+    "placement-house-lived": 55,
+    "placement-sign-lived": 56,
+    "planet-lived": 7,
+    "sign-lived": 11
+  },
+  "uniqueServingContentKeys": 301,
+  "fallbackSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+  "precedence": "V13 rows append after earlier LL rows; the existing latest-eligible resolver rule makes the exact V13 key canonical.",
+  "invariants": {
+    "existingApprovedRowsChanged": 0,
+    "existingApprovedRowsSha256": "2a3582a520163bfebad1b2f74f0fff2beade8ef987e184f6d8af52ff8ab721e0",
+    "sourceExportSha256": "a85593bdfb90b136054768bfa9c3c4dbaabe5aee103f2ba371f2d42161c1cd03",
+    "approvedPayloadSha256": "6004f25177da5aec8412223fbdaa229a5aba03fccaee02605fbdcacece212904"
+  },
+  "rows": [
+    {
+      "workbookKey": "aries",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 2,
+      "contentKey": "fallback-hook/sign-lived/aries",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "9a5a48e3f68f6729d8372c31884f727734d1a579cbaf2ddd8b9d4d87ddf40cc9"
+    },
+    {
+      "workbookKey": "taurus",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 3,
+      "contentKey": "fallback-hook/sign-lived/taurus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "96b1c40c4725d318ee9527853523500ce5bd89ffbebcb779a3ffe93c58e8a0a3"
+    },
+    {
+      "workbookKey": "gemini",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 4,
+      "contentKey": "fallback-hook/sign-lived/gemini",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "2f1ef5f9f7070f5ecceb0bf18565a5108fd209658459a9f9829ad532c902d6a7"
+    },
+    {
+      "workbookKey": "cancer",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 5,
+      "contentKey": "fallback-hook/sign-lived/cancer",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "705817fac05f7dd2bb66d64d10c9a93c1dab2e68dbf5b311f48acdd708a6cfdf"
+    },
+    {
+      "workbookKey": "leo",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 6,
+      "contentKey": "fallback-hook/sign-lived/leo",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "b8e333b49a928fbe84f12f56ae4d92d4b09d9b484c4038d9d7a1d579cc4af443"
+    },
+    {
+      "workbookKey": "virgo",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 7,
+      "contentKey": "fallback-hook/sign-lived/virgo",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "268bcd5e225d020e52325cfdb6df6322701a9fd9d7add4dcfee6fa1b52c733e4"
+    },
+    {
+      "workbookKey": "libra",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 8,
+      "contentKey": "fallback-hook/sign-lived/libra",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "a35740c7927350c10f327bcd6a408d183c9408fda10bc60f4c93ef5c5f8df57b"
+    },
+    {
+      "workbookKey": "scorpio",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 9,
+      "contentKey": "fallback-hook/sign-lived/scorpio",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "ef0ceb63660ff0f2bc3d080a39c76275585e2fbfe3b50b662668d4d45ebc14ae"
+    },
+    {
+      "workbookKey": "sagittarius",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 10,
+      "contentKey": "fallback-hook/sign-lived/sagittarius",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "ebb7b8bcb132961b651374c821c37c204fcb47fa08583776cc73d1b487b71ad9"
+    },
+    {
+      "workbookKey": "capricorn",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 11,
+      "contentKey": "fallback-hook/sign-lived/capricorn",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "d146d24e974389a407d0a6013fa019153c5b46643f06e99fcd47801095f0ee7e"
+    },
+    {
+      "workbookKey": "pisces",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 13,
+      "contentKey": "fallback-hook/sign-lived/pisces",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "5bd540525edf42e309cf8993690061b3b04253e1911975b2cfde7abd50f15dd9"
+    },
+    {
+      "workbookKey": "mars",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 14,
+      "contentKey": "fallback-hook/planet-lived/mars",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "75b0d74d3771f6001a7c5827dd292f0a16aad6ee4e1b92e08bff8eb956b705ea"
+    },
+    {
+      "workbookKey": "moon",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 17,
+      "contentKey": "fallback-hook/planet-lived/moon",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "e1f857bef949cc5e36096a4f292e53bb9ab05f29a6fb93f4ae8f6eafdef9ca4e"
+    },
+    {
+      "workbookKey": "pluto",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 19,
+      "contentKey": "fallback-hook/planet-lived/pluto",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "c6ed4c32046c56cb3c37a2b491583ad84d68680088877af0d066dcf10a423993"
+    },
+    {
+      "workbookKey": "jupiter",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 20,
+      "contentKey": "fallback-hook/planet-lived/jupiter",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "58be1ec1b4c83e608f47837e795ccd5423beb34877623ac6e415fad2287869b9"
+    },
+    {
+      "workbookKey": "saturn",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 21,
+      "contentKey": "fallback-hook/planet-lived/saturn",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "be6250a1ba0b23efdf9c58c6284fc7a65c2b69c8b8db317e533f5bb1fc8652e6"
+    },
+    {
+      "workbookKey": "uranus",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 22,
+      "contentKey": "fallback-hook/planet-lived/uranus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "33df6f900e8044b65fdd57ab3eca19fd8e9aafa16b97a2d7344bda0ba1e5f437"
+    },
+    {
+      "workbookKey": "neptune",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 23,
+      "contentKey": "fallback-hook/planet-lived/neptune",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "6551900de61db800fd9128d929dc7f659a2e8ae8811a40a79cf3dd48e8b614f3"
+    },
+    {
+      "workbookKey": "1st house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 24,
+      "contentKey": "fallback-hook/house-lived/1",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "4f6ed4dd430e20db1a947363090367585ecc43c3d241299a78f5ae94938dab2c"
+    },
+    {
+      "workbookKey": "4th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 27,
+      "contentKey": "fallback-hook/house-lived/4",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "44603ac2a7fff538a00c3077e0f9584b5a756cc3027e131fb695d9fbcb767f77"
+    },
+    {
+      "workbookKey": "5th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 28,
+      "contentKey": "fallback-hook/house-lived/5",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "b48248f1d3b1147c1f527c18b78ecd36dcf2a067e4211a963288823b99bd989a"
+    },
+    {
+      "workbookKey": "6th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 29,
+      "contentKey": "fallback-hook/house-lived/6",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "fe03732f11f011f28853fcdd4e063a34935ad5eb587536ce38501d416db2e1b7"
+    },
+    {
+      "workbookKey": "10th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 33,
+      "contentKey": "fallback-hook/house-lived/10",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "a9588b891ef76cba2d646704ce6edf6745b65ed456a164453ba2585d7f2f993a"
+    },
+    {
+      "workbookKey": "12th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 35,
+      "contentKey": "fallback-hook/house-lived/12",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "c1bff1a866d484549911a030c828b43d266d4d4f5335265937c7d96a862dda50"
+    },
+    {
+      "workbookKey": "mars|aries",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 36,
+      "contentKey": "fallback-hook/placement-sign-lived/mars/aries",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "214e0b38f97b77135bdb1bdf3d98e50f421f38c21361ed289d0ee07af7f33cd2"
+    },
+    {
+      "workbookKey": "mars|taurus",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 37,
+      "contentKey": "fallback-hook/placement-sign-lived/mars/taurus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "4133416d57af3a7f343d4f49cddc44c9164bff96782bfd4abd9ea00bbcc03ae2"
+    },
+    {
+      "workbookKey": "mars|gemini",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 38,
+      "contentKey": "fallback-hook/placement-sign-lived/mars/gemini",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "19d067a666be76931323e3dbd6cade75c7aa17b51eee3e8986a515575835a5c4"
+    },
+    {
+      "workbookKey": "mars|cancer",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 39,
+      "contentKey": "fallback-hook/placement-sign-lived/mars/cancer",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "7b25c86dba97b961701568045daba7bc62ed12378f6a97eda685d49b30ccf2cc"
+    },
+    {
+      "workbookKey": "mars|leo",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 40,
+      "contentKey": "fallback-hook/placement-sign-lived/mars/leo",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "ddc6e1b7e35da54d558605f4bbc16f4cba31b13f718717965a3b1218e324f26c"
+    },
+    {
+      "workbookKey": "mars|virgo",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 41,
+      "contentKey": "fallback-hook/placement-sign-lived/mars/virgo",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "57d782e20b523098156db170f76e58207b03b2880db88304c763b2d588c99ff3"
+    },
+    {
+      "workbookKey": "mars|libra",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 42,
+      "contentKey": "fallback-hook/placement-sign-lived/mars/libra",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "9f753362f90e924c40703af7ff995b09264d043c5d888047e7513cca0a90f96f"
+    },
+    {
+      "workbookKey": "mars|capricorn",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 45,
+      "contentKey": "fallback-hook/placement-sign-lived/mars/capricorn",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "966b2d8ea12d1daf2568c3b8f573c6ff18c72657d93a89d673a9dcb31c3cc977"
+    },
+    {
+      "workbookKey": "mars|pisces",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 47,
+      "contentKey": "fallback-hook/placement-sign-lived/mars/pisces",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "04fc4ed7a1752475d4044d33729417fb4aca755970dee8e74c15f4a91b42970a"
+    },
+    {
+      "workbookKey": "mars|1st house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 48,
+      "contentKey": "fallback-hook/placement-house-lived/mars/1",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "4de76a80eb2e996bd6940adde83a9a90285e4164b7354eb54aa1daeb03e0563d"
+    },
+    {
+      "workbookKey": "mars|2nd house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 49,
+      "contentKey": "fallback-hook/placement-house-lived/mars/2",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "f7699f79e81fbd077f0ba4f230c343949130688e13b2af672eae113f634e48a1"
+    },
+    {
+      "workbookKey": "mars|3rd house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 50,
+      "contentKey": "fallback-hook/placement-house-lived/mars/3",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "e6acff18d03677e1c41208dde2e5f27261496c980c82375d0f787e7afc88e9b0"
+    },
+    {
+      "workbookKey": "mars|4th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 51,
+      "contentKey": "fallback-hook/placement-house-lived/mars/4",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "e8d802efc49a7f0a7b8d327165fcffd53ae5d17f41bf98266bf1e3442943a4f6"
+    },
+    {
+      "workbookKey": "mars|5th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 52,
+      "contentKey": "fallback-hook/placement-house-lived/mars/5",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "1b5a6b8fcdc3f1bcac52787a6e7ce0caf68a9a2005ef0ab4d2c562d9805a88c4"
+    },
+    {
+      "workbookKey": "mars|6th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 53,
+      "contentKey": "fallback-hook/placement-house-lived/mars/6",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "a1eef396cd69c2ebae72ad488e6223f67fc5f850230d6757aac2d106fe7448e6"
+    },
+    {
+      "workbookKey": "mars|10th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 57,
+      "contentKey": "fallback-hook/placement-house-lived/mars/10",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "f1d6e8ec7740b542749c56009e6fea9c0739b7617b976fd91bcc27a0185c91ab"
+    },
+    {
+      "workbookKey": "mars|12th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 59,
+      "contentKey": "fallback-hook/placement-house-lived/mars/12",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "4c3ea10e23c5289b90eaa54c1d1227a38bf44359fb2e940ac8d7d2348ba98d79"
+    },
+    {
+      "workbookKey": "venus|taurus",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 61,
+      "contentKey": "fallback-hook/placement-sign-lived/venus/taurus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "f8eab88ee81a437da33eaa0908fbc0cabbb2144fa209da6f332d4d9a21bb9d32"
+    },
+    {
+      "workbookKey": "venus|gemini",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 62,
+      "contentKey": "fallback-hook/placement-sign-lived/venus/gemini",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "2cadc4b24b727bfbacc3466366aff353184f138b70169693f44eaecbc2b41d3b"
+    },
+    {
+      "workbookKey": "venus|leo",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 64,
+      "contentKey": "fallback-hook/placement-sign-lived/venus/leo",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "f91fa19329809ea0932095fa21dfb60ea1a14487dd712b5ad7f21351fa4e49cf"
+    },
+    {
+      "workbookKey": "venus|virgo",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 65,
+      "contentKey": "fallback-hook/placement-sign-lived/venus/virgo",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "10f46c112451e3ffe435935d14fe13fe5c49f020b3150e273eced449d3c67ab4"
+    },
+    {
+      "workbookKey": "venus|libra",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 66,
+      "contentKey": "fallback-hook/placement-sign-lived/venus/libra",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "b34d30d31ac46f10d847904cf89df14ecf1818a432ae5708b5a355354f364f36"
+    },
+    {
+      "workbookKey": "venus|sagittarius",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 68,
+      "contentKey": "fallback-hook/placement-sign-lived/venus/sagittarius",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "26129ee5c44be3948ed16422d74337ebd7356fe907e1c0fc6d491db05ea05a29"
+    },
+    {
+      "workbookKey": "venus|capricorn",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 69,
+      "contentKey": "fallback-hook/placement-sign-lived/venus/capricorn",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "1e72b9b136d3af0336a9855b2ef348c46655609539ab240031f25257828c7c16"
+    },
+    {
+      "workbookKey": "venus|1st house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 72,
+      "contentKey": "fallback-hook/placement-house-lived/venus/1",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "025fd68e4b6dd912c59fdd2692f90d0befd825b3faefb4c97a0dad08600785f5"
+    },
+    {
+      "workbookKey": "venus|5th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 76,
+      "contentKey": "fallback-hook/placement-house-lived/venus/5",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "aa65f4ec84203e3faff9f1ff16d90d4093bb34c21815eb75765ac2ac51dbe654"
+    },
+    {
+      "workbookKey": "venus|7th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 78,
+      "contentKey": "fallback-hook/placement-house-lived/venus/7",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "8fa3de49ab042b73512947c1a3ccc1d35789baa033c6ec704e61b6a3a97b6b03"
+    },
+    {
+      "workbookKey": "venus|11th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 82,
+      "contentKey": "fallback-hook/placement-house-lived/venus/11",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "42c12ccb7f8c2f71c316437286ac97a54bbfcb8749476b54f13e9397375180fc"
+    },
+    {
+      "workbookKey": "venus|12th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 83,
+      "contentKey": "fallback-hook/placement-house-lived/venus/12",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "7f1eca7cef9614ff0bc87da194cf8d3f5cf45553e316a92148bc3e0dcb178f78"
+    },
+    {
+      "workbookKey": "mercury|aries",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 84,
+      "contentKey": "fallback-hook/placement-sign-lived/mercury/aries",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "fde02aa95bd0ad5eb30c44be26cf3f4cc1d202390d1e1f034d6c8592b12ee692"
+    },
+    {
+      "workbookKey": "mercury|gemini",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 86,
+      "contentKey": "fallback-hook/placement-sign-lived/mercury/gemini",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "57d50af419aa992af1b1eeac31b68c28b3acd2f549c44651266f6055b0c3fad8"
+    },
+    {
+      "workbookKey": "mercury|leo",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 88,
+      "contentKey": "fallback-hook/placement-sign-lived/mercury/leo",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "3db7b0291c1c2d523f1c398952770678bae78ed6cbeb954ed21fb54aafab7468"
+    },
+    {
+      "workbookKey": "mercury|pisces",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 95,
+      "contentKey": "fallback-hook/placement-sign-lived/mercury/pisces",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "c150c34bc71c4a8fae1ef62d779cac69d1244f59331f1cc5c90def6a8bc3fcce"
+    },
+    {
+      "workbookKey": "mercury|6th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 101,
+      "contentKey": "fallback-hook/placement-house-lived/mercury/6",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "18f0792bf4aa63ebfde73be58616da89fcbf9a2e822a5366e7b4e5e45f858f96"
+    },
+    {
+      "workbookKey": "mercury|11th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 106,
+      "contentKey": "fallback-hook/placement-house-lived/mercury/11",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "2fe922402b7b108a0af4da24cbcaf2c97093a964e857469b99daa9d078aa0900"
+    },
+    {
+      "workbookKey": "mercury|12th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 107,
+      "contentKey": "fallback-hook/placement-house-lived/mercury/12",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "baf2deb293fa466200522957bb55157657e8dec03205bbd6547d8cc11a28002e"
+    },
+    {
+      "workbookKey": "moon|aries",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 108,
+      "contentKey": "fallback-hook/placement-sign-lived/moon/aries",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "851778e4b8b20fc3ef342900de44b0686f476f3db09ffd8f232474b9b14aba17"
+    },
+    {
+      "workbookKey": "moon|gemini",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 110,
+      "contentKey": "fallback-hook/placement-sign-lived/moon/gemini",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "e40d6d2c500b9871f1ee4a808a759bdc357af6506f4294822cc2003d0bb17de9"
+    },
+    {
+      "workbookKey": "moon|cancer",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 111,
+      "contentKey": "fallback-hook/placement-sign-lived/moon/cancer",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "6ccb639ec74e6aefd91db8208018deff5e810b7289ba0b1cd77e775ed943269c"
+    },
+    {
+      "workbookKey": "moon|virgo",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 113,
+      "contentKey": "fallback-hook/placement-sign-lived/moon/virgo",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "133437cc3cc6016666cfb54895b2ae3a974e3905c1426feebe27c538caf87f5f"
+    },
+    {
+      "workbookKey": "moon|scorpio",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 115,
+      "contentKey": "fallback-hook/placement-sign-lived/moon/scorpio",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "80f76d6c24948dd8e7b0e4573027e21f5f4f5314dc9a8c6dd93c070ae65e50e1"
+    },
+    {
+      "workbookKey": "moon|sagittarius",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 116,
+      "contentKey": "fallback-hook/placement-sign-lived/moon/sagittarius",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "a10a2ddf8b097d9e07ab75cfbc3a47206d4d39be236cb75c27c8315782f688b2"
+    },
+    {
+      "workbookKey": "moon|aquarius",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 118,
+      "contentKey": "fallback-hook/placement-sign-lived/moon/aquarius",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "5c613438bad93508a933db4ab42bced80cf25ff58af8fc9dd6e466dc48f0edaf"
+    },
+    {
+      "workbookKey": "moon|pisces",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 119,
+      "contentKey": "fallback-hook/placement-sign-lived/moon/pisces",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "6100f07913a0744877e1d97a976b99aaf1325778ca9c8f16d3a18968be57701a"
+    },
+    {
+      "workbookKey": "moon|5th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 124,
+      "contentKey": "fallback-hook/placement-house-lived/moon/5",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "b4c9890382594f3ae3a66f00f85cd74c52a176e521c9920e2833511f45e5127c"
+    },
+    {
+      "workbookKey": "moon|6th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 125,
+      "contentKey": "fallback-hook/placement-house-lived/moon/6",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "d715876993b6f41914121844c80fa98a5fb8431264437783bff6e57bd6d9c70c"
+    },
+    {
+      "workbookKey": "moon|9th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 128,
+      "contentKey": "fallback-hook/placement-house-lived/moon/9",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "dd3fa4535c0f478cc3c421bff7895868791fb46920c35c1f8c18480ebc2cccb8"
+    },
+    {
+      "workbookKey": "moon|10th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 129,
+      "contentKey": "fallback-hook/placement-house-lived/moon/10",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "6c09b3ec5978e2175cde34ca476a39142023a9d682234bea0fe88f880a5188a0"
+    },
+    {
+      "workbookKey": "sun|5th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 136,
+      "contentKey": "fallback-hook/placement-house-lived/sun/5",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "649876660b567523907a12dc96f678e87a6e89e25d4826371cf9f74196c06da3"
+    },
+    {
+      "workbookKey": "sun|8th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 139,
+      "contentKey": "fallback-hook/placement-house-lived/sun/8",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "673afd010bce46cc90ea6cd91a6b511143c70ec39583587dcd8816cde24bb5a1"
+    },
+    {
+      "workbookKey": "pluto|taurus",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 145,
+      "contentKey": "fallback-hook/placement-sign-lived/pluto/taurus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "60248e7b01c9e1ae648cb0801a1a741bf753d9ee42dde838a3eaf729f17b3f2f"
+    },
+    {
+      "workbookKey": "pluto|virgo",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 149,
+      "contentKey": "fallback-hook/placement-sign-lived/pluto/virgo",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "ec5d61e8e1341ac41f304748df5ca7477cd4531e3021b00b2e4e7b5a99017b45"
+    },
+    {
+      "workbookKey": "pluto|scorpio",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 151,
+      "contentKey": "fallback-hook/placement-sign-lived/pluto/scorpio",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "2d18f171ab2cd28b2d170e2c909cb685074a6c58ef5a96200ef52590153f7608"
+    },
+    {
+      "workbookKey": "pluto|3rd house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 158,
+      "contentKey": "fallback-hook/placement-house-lived/pluto/3",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "140a39e12d062d32fe72086ab849d5354fc863f84b8993deaf26b43471118e1f"
+    },
+    {
+      "workbookKey": "pluto|5th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 160,
+      "contentKey": "fallback-hook/placement-house-lived/pluto/5",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "7e815996d6e0aa3494070c4959648d683add963abc64398bd9321d66bb54b5fe"
+    },
+    {
+      "workbookKey": "pluto|6th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 161,
+      "contentKey": "fallback-hook/placement-house-lived/pluto/6",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "31fe7629fea51428cf3281519a14f55570119af3141defdb1174c5564c90c924"
+    },
+    {
+      "workbookKey": "pluto|7th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 162,
+      "contentKey": "fallback-hook/placement-house-lived/pluto/7",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "85164e0baf64c7cb4c52dc67113c897ddb98db96736a3792935cf28085a21aef"
+    },
+    {
+      "workbookKey": "pluto|9th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 164,
+      "contentKey": "fallback-hook/placement-house-lived/pluto/9",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "56449b00ba2a3768c7cc801e6a373c586fc6d7b0aa79efdaa7b8e998e08fa9a1"
+    },
+    {
+      "workbookKey": "pluto|12th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 167,
+      "contentKey": "fallback-hook/placement-house-lived/pluto/12",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "12791a29a387f6d2dd4debd111c06b99f73d81fe714f4e0c8975c174bf52f22f"
+    },
+    {
+      "workbookKey": "jupiter|aries",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 168,
+      "contentKey": "fallback-hook/placement-sign-lived/jupiter/aries",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "a4c51b07cdd938e8e39b3fe6a56a7231e9453fee39f5892d22f96a456ce05f2c"
+    },
+    {
+      "workbookKey": "jupiter|gemini",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 170,
+      "contentKey": "fallback-hook/placement-sign-lived/jupiter/gemini",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "e22897f3624ca5d8e672fd51d98cb459d4c4f1d398ebae6b8c718f34cb51555d"
+    },
+    {
+      "workbookKey": "jupiter|libra",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 174,
+      "contentKey": "fallback-hook/placement-sign-lived/jupiter/libra",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "86717cb4488ec6301829c123276366d73e05e3ad39c5e7956156b6e25dbfb57d"
+    },
+    {
+      "workbookKey": "jupiter|capricorn",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 177,
+      "contentKey": "fallback-hook/placement-sign-lived/jupiter/capricorn",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "38eaa061d7610af2475bdded30136f3242dc0e135e3b9b1ca07384b0ec1dd9bb"
+    },
+    {
+      "workbookKey": "jupiter|2nd house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 181,
+      "contentKey": "fallback-hook/placement-house-lived/jupiter/2",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "e76edba045e59acc0ef46bc0945325e47d0be9f1048e9786a57c2b22b9f54888"
+    },
+    {
+      "workbookKey": "jupiter|9th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 188,
+      "contentKey": "fallback-hook/placement-house-lived/jupiter/9",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "a073b21e9b331f4373cf7fdcb0e48f9693f856cdb3a02818424ab8ee387976c0"
+    },
+    {
+      "workbookKey": "jupiter|10th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 189,
+      "contentKey": "fallback-hook/placement-house-lived/jupiter/10",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "cede511ee86b0a354975482f9af62074a331a513096197037989c75a39f27eaa"
+    },
+    {
+      "workbookKey": "jupiter|11th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 190,
+      "contentKey": "fallback-hook/placement-house-lived/jupiter/11",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "35fca8c1c7a9168af0ba66ca9805992a7fa1def632082424625846bb094dec80"
+    },
+    {
+      "workbookKey": "jupiter|12th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 191,
+      "contentKey": "fallback-hook/placement-house-lived/jupiter/12",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "44571e85af0d1b3bde7feec0d23c85c1c07a23384e0456e13ce7194f50250a32"
+    },
+    {
+      "workbookKey": "saturn|taurus",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 193,
+      "contentKey": "fallback-hook/placement-sign-lived/saturn/taurus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "2955db660e1097cf9f57c0519566e6aa72d287156bd3b46512d7b312d6a534e6"
+    },
+    {
+      "workbookKey": "saturn|gemini",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 194,
+      "contentKey": "fallback-hook/placement-sign-lived/saturn/gemini",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "46e84f170ccde99566e446e8954fc117dbbbde4cac6618f6cf69d230a8328a76"
+    },
+    {
+      "workbookKey": "saturn|sagittarius",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 200,
+      "contentKey": "fallback-hook/placement-sign-lived/saturn/sagittarius",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "18fef1587718d69804d2cefe162529a5c3778325130edad2752ee085d41b5bd9"
+    },
+    {
+      "workbookKey": "saturn|3rd house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 206,
+      "contentKey": "fallback-hook/placement-house-lived/saturn/3",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "acfb21eeb3c1be288cf3dd97ad061ec2bac1d2f17577cf72027f0cfb4757accf"
+    },
+    {
+      "workbookKey": "saturn|6th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 209,
+      "contentKey": "fallback-hook/placement-house-lived/saturn/6",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "86e2eb5c2a7b9808f756f262a8dbf49b1a94908468899a465b4bc5b50bfa6a98"
+    },
+    {
+      "workbookKey": "saturn|8th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 211,
+      "contentKey": "fallback-hook/placement-house-lived/saturn/8",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "27d1036602d5bf7aef01b2002f5c85fd050a070d4d817d7a52896570b06e45aa"
+    },
+    {
+      "workbookKey": "uranus|aries",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 216,
+      "contentKey": "fallback-hook/placement-sign-lived/uranus/aries",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "20b6d0a91d91140d320540fe9ee7ece5379e8afd7b90fc4452028fd5293b228a"
+    },
+    {
+      "workbookKey": "uranus|gemini",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 218,
+      "contentKey": "fallback-hook/placement-sign-lived/uranus/gemini",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "8aff7af1deeca0bbc947d596207d831f57218944c427129c4c3e71bfc0c654a1"
+    },
+    {
+      "workbookKey": "uranus|sagittarius",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 224,
+      "contentKey": "fallback-hook/placement-sign-lived/uranus/sagittarius",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "f32a235b81970c8f41bb4ed11180422ea8c0a961b10d86adb6ce9c1b00db99f0"
+    },
+    {
+      "workbookKey": "uranus|10th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 237,
+      "contentKey": "fallback-hook/placement-house-lived/uranus/10",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "8576e0561f2f4c97a7975b978113d0d4e7911bf83d8b73b3459e5544516c8499"
+    },
+    {
+      "workbookKey": "neptune|aries",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 240,
+      "contentKey": "fallback-hook/placement-sign-lived/neptune/aries",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "0200cd9e0e104728f759213c508dfd86f669afab57c26dc273fee6129b697661"
+    },
+    {
+      "workbookKey": "neptune|taurus",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 241,
+      "contentKey": "fallback-hook/placement-sign-lived/neptune/taurus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "18e6c81df717e00e23e5538dd36568d9a189667d389a56053f721c3800a59f4b"
+    },
+    {
+      "workbookKey": "neptune|gemini",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 242,
+      "contentKey": "fallback-hook/placement-sign-lived/neptune/gemini",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "c42c31e8305d792c7abd9490fe6f6eddf58a10935a599f96787947ba7b5fdd68"
+    },
+    {
+      "workbookKey": "neptune|leo",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 244,
+      "contentKey": "fallback-hook/placement-sign-lived/neptune/leo",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "6c5a91044cf0e014a08086bc90e7cc7cbf784ed3a02eb7a3fd2a7afd62f6a628"
+    },
+    {
+      "workbookKey": "neptune|scorpio",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 247,
+      "contentKey": "fallback-hook/placement-sign-lived/neptune/scorpio",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "9f37e91237131ff0ad1b0d6051425c0d6f6e2a4280a8fb65898ceb8d1b38be7b"
+    },
+    {
+      "workbookKey": "neptune|2nd house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 253,
+      "contentKey": "fallback-hook/placement-house-lived/neptune/2",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "3c31cd7a5a6fc18d1937914080d96e7e2ff7e7cdff17667a3a4970f9a32e58c4"
+    },
+    {
+      "workbookKey": "neptune|5th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 256,
+      "contentKey": "fallback-hook/placement-house-lived/neptune/5",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "ce14bb832dd32be2e85f12120b299e7d18b7b75a1f300cc677c21bff2b06521f"
+    },
+    {
+      "workbookKey": "neptune|8th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 259,
+      "contentKey": "fallback-hook/placement-house-lived/neptune/8",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "f3c0152560a313ef752d1d84995afc9b10c51984677df7e7d010f9cfeef962ae"
+    },
+    {
+      "workbookKey": "neptune|9th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 260,
+      "contentKey": "fallback-hook/placement-house-lived/neptune/9",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "854d12afd13e37eef8e35ace665bf66de9b4c34e5dfd615db9df41a320c3f32a"
+    },
+    {
+      "workbookKey": "neptune|11th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 262,
+      "contentKey": "fallback-hook/placement-house-lived/neptune/11",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "adad3e961a54a4a527cbb389b247ff1fa3cd907a32d23af8e2fb3cfc07a2f8e7"
+    },
+    {
+      "workbookKey": "neptune|12th house",
+      "sourceSheet": "PlacementMeanings",
+      "workbookRow": 263,
+      "contentKey": "fallback-hook/placement-house-lived/neptune/12",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "69c484d1c151b04586c37a3d53b70ee2f264f44021585a6f3cf5ad49d5836e9f"
+    },
+    {
+      "workbookKey": "sextile",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 4,
+      "contentKey": "fallback-hook/aspect-lived/sextile",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "9732895af526f9a8a3509483239e3ba1dc806d8e14cfdbf756caa5fcba356d21"
+    },
+    {
+      "workbookKey": "inconjunct",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 7,
+      "contentKey": "fallback-hook/aspect-lived/quincunx",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "fe77e93b0cc96b23a6912520b7d595604944f414bb5db9d052e2b5232170fbca"
+    },
+    {
+      "workbookKey": "sun|nonagen|moon",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 10,
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/nonagen/moon",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "4225ad0c48c3a09c593b08db7049c673fb6199f461e9f1a020e665d5e9458f6a"
+    },
+    {
+      "workbookKey": "sun|square|moon",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 12,
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/square/moon",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "ff45f07a72e47daffc64e0b88ecf1b2578fd43f4146593fe1e5ae01827a40991"
+    },
+    {
+      "workbookKey": "sun|inconjunct|moon",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 14,
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/moon",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "f852700fc506d884703497064e4e1f33ddfec191a0b628afb8998156d9610e91"
+    },
+    {
+      "workbookKey": "sun|conjunction|venus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 17,
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/conjunction/venus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "c228a8044bdbf4cb639adce66b27291066d5599fd920807a2d898ba3ba950043"
+    },
+    {
+      "workbookKey": "sun|nonagen|venus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 18,
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/nonagen/venus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "6ab4a6838a8388934510a0808f7af45d6084425862e3145c458d710e565d080f"
+    },
+    {
+      "workbookKey": "sun|inconjunct|mars",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 24,
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/mars",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "4a57823918b3271cbd294e16ee2cd1f0d74877c6c09126f65369b54f462ef312"
+    },
+    {
+      "workbookKey": "sun|inconjunct|uranus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 45,
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/uranus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "073e0d8bbbd912abf390eaf3e77676d82a34ec0d0fad5fbe0b8162a415f303f6"
+    },
+    {
+      "workbookKey": "sun|sextile|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 49,
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/sextile/neptune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "940c58478c6245111e8cf9cedca2cbbe22816b726f62f8d939a47de001af714b"
+    },
+    {
+      "workbookKey": "sun|inconjunct|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 52,
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/neptune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "83f5d760670e4e6530c8f3c35f676b8cc971ffe343e2cb30970627faf7669f82"
+    },
+    {
+      "workbookKey": "sun|inconjunct|part_of_fortune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 66,
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/part-of-fortune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "8a8eb2d9c8631731dd253dbdc480a47c4eb13e3c5d18429c6be9ae53f811ece5"
+    },
+    {
+      "workbookKey": "sun|opposition|part_of_fortune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 67,
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/opposition/part-of-fortune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "46d59cb6d4400327257b7bfda61c00dde5572b2ece36111770221de0781d1870"
+    },
+    {
+      "workbookKey": "sun|inconjunct|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 73,
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/north-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "ffeb679692ab58b27a957cd0a6ce5f619686517b5d73337f5c30396f295c2605"
+    },
+    {
+      "workbookKey": "sun|inconjunct|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 80,
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/quincunx/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "1e28e01647e0b407d48158be249cf51c4a396adef27e22607ae2978d1d41994f"
+    },
+    {
+      "workbookKey": "moon|inconjunct|venus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 94,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/venus",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "e3ed3d662247fc73ad2d1691ec1fbad8f911013a2ce888a1d952249cb4f0af86"
+    },
+    {
+      "workbookKey": "moon|conjunction|mars",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 96,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/mars",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "0c10306eaee2717d02f90ed0de29c93d39725594acb32bf7b380d62878c573f3"
+    },
+    {
+      "workbookKey": "moon|sextile|mars",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 98,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/sextile/mars",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "8036cf2c67dfcba04b18b7dfa31c03b4ef84df5fb022021c6c3ee89a8162ce2b"
+    },
+    {
+      "workbookKey": "moon|square|mars",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 99,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/square/mars",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "ac588e87324a1cf4945ff1d6d82ab291a076b36cb18e515d80854789c9d83f99"
+    },
+    {
+      "workbookKey": "moon|inconjunct|mars",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 101,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/mars",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "d5c909ae10af01aadfd3674d3056a41444bf2b94d9034d261e20ae9d23b8ef3b"
+    },
+    {
+      "workbookKey": "moon|conjunction|jupiter",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 103,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/jupiter",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "c9aa0fd8dc5f867f2c57c354bd893e65a5fe54a1dd407aa785b8f2c60969d6a5"
+    },
+    {
+      "workbookKey": "moon|sextile|saturn",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 112,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/sextile/saturn",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "180826a8b4cc0efcc7ce68709bd41d2337654c0369cb359ee27faebb679a47f6"
+    },
+    {
+      "workbookKey": "moon|inconjunct|saturn",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 115,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/saturn",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "e9aab49d36f8cad7b109ec9300bee09a4640ed4085ad8edd49f352588b685598"
+    },
+    {
+      "workbookKey": "moon|opposition|saturn",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 116,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/saturn",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "5fc4f989b5f21d29e802723e0b5b6a7508b4b5b1291a44116d071cb3e2a3223c"
+    },
+    {
+      "workbookKey": "moon|inconjunct|uranus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 122,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/uranus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "9fbf57e78fefac51b178d292e360739bfa9a8eb82e845509afc023605c64ce9b"
+    },
+    {
+      "workbookKey": "moon|conjunction|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 124,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/neptune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "3cf02a4b7f45af532795981bf1a3cdcad2e598af85a010c514d87fcf5ea94c68"
+    },
+    {
+      "workbookKey": "moon|sextile|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 126,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/sextile/neptune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "3df54cc964a2dba9770d94b67d2067b275e01bd9931a5894e1b4db6db06636aa"
+    },
+    {
+      "workbookKey": "moon|inconjunct|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 129,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/neptune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "4484e5cab2927f992d49afd258a4c807edb324cc65ae567d43c7a6d25c9db646"
+    },
+    {
+      "workbookKey": "moon|square|pluto",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 134,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/square/pluto",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "dec82fc287dad1ba110d9d9ff92f6ead618c9bdff6f1a050ec56db58cda82ec4"
+    },
+    {
+      "workbookKey": "moon|opposition|pluto",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 137,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/pluto",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "aa9c7f31ad0b02e880d35226934184bb729d187da79a17381e928bc78ace38c5"
+    },
+    {
+      "workbookKey": "moon|opposition|part_of_fortune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 144,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/part-of-fortune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "59a16bff005d949e4b4049eb56b125dd4029a74d6d7fec6787df1b6ba8bd05ab"
+    },
+    {
+      "workbookKey": "moon|inconjunct|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 150,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/north-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "ce4eccb49e36ba0456dd7d1224ae7209254ad890f60b52217c0e86db8da376b6"
+    },
+    {
+      "workbookKey": "moon|inconjunct|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 157,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/quincunx/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "56b52c07b43c96c853ff09d25a0b9fedc5720b7690a741a48b895be3ab5c654d"
+    },
+    {
+      "workbookKey": "mercury|sextile|mars",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 164,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/sextile/mars",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "fd5d93875b6d398f42127febccffaecf9f1f7cd0cd18c4a6595d484eeb62652b"
+    },
+    {
+      "workbookKey": "mercury|inconjunct|mars",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 167,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/mars",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "1d8b5599b25762c6b8d689dbb2b92eeeed69d39dcc29c637703dc97fea17f6e9"
+    },
+    {
+      "workbookKey": "mercury|nonagen|jupiter",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 170,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/nonagen/jupiter",
+      "governance": "owner-approved-clarity-fix-ll-v12",
+      "payloadSha256": "f5ee4a9335e1ea02fb7686015a275f6d265bc7335246b0374dd108169cba86e4"
+    },
+    {
+      "workbookKey": "mercury|square|jupiter",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 172,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/square/jupiter",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "9f406f5998838ec790cadd83a6cea62285e20ebce0a8ce494cf4668b2072596d"
+    },
+    {
+      "workbookKey": "mercury|inconjunct|jupiter",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 174,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/jupiter",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "9dbc3af173ea354b631cd378107a23133e3f2b490fbd921e497bcdc445602efb"
+    },
+    {
+      "workbookKey": "mercury|inconjunct|saturn",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 181,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/saturn",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "1db985bb37a2fd512a2555c1abf3012c9a28fb382edea92233d39452c1c39808"
+    },
+    {
+      "workbookKey": "mercury|square|uranus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 186,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/square/uranus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "1b668ec39a50ce3549551fd214541138d5b7b1816463670d4349c33b89ab42cd"
+    },
+    {
+      "workbookKey": "mercury|inconjunct|uranus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 188,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/uranus",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "ffd111a883df1253b289fe1212b47657a7eb1d63777202be03ccbaf8975cfa27"
+    },
+    {
+      "workbookKey": "mercury|nonagen|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 191,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/nonagen/neptune",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "c78845c211490f9ab61d036d8b7f7a15d9305a396fae18ef39dd8f366a083b81"
+    },
+    {
+      "workbookKey": "mercury|square|pluto",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 200,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/square/pluto",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "ce4d977f817f3b0c85420746ab68c2b6c646f4c84264107bc4eab9a1d3596d51"
+    },
+    {
+      "workbookKey": "mercury|inconjunct|pluto",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 202,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/pluto",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "9eccc99c12438240e61066805b074b1f63dbf246da44fcbd6e59ff2930f1e596"
+    },
+    {
+      "workbookKey": "mercury|inconjunct|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 216,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/north-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "45d2e7f6ece6032e979b9944715bc670b0ec3e007837ee0b0897c8e0e99f41fe"
+    },
+    {
+      "workbookKey": "mercury|sextile|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 220,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/sextile/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "7203e23638c7c6be82d45fb07034d646a96cf4afe8d204c2fe6b08872294789b"
+    },
+    {
+      "workbookKey": "mercury|inconjunct|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 223,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "588950c7f993f9657798a7666e552cbb0369f6caa580af713f77c38c44242165"
+    },
+    {
+      "workbookKey": "venus|conjunction|mars",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 225,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/conjunction/mars",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "e117142e836cb5cb701b457b74d22a27cca06ccdda0aa1632b7dddcb515cf742"
+    },
+    {
+      "workbookKey": "venus|square|mars",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 228,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/square/mars",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "fa6e8fde3b079aa888851d0a8e2a19b3057968e650c3662e613d87babde5e043"
+    },
+    {
+      "workbookKey": "venus|inconjunct|mars",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 230,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/mars",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "eb91d34c91969a97169c44d32af716fb220ecc060da00a9dc68495a186e6e782"
+    },
+    {
+      "workbookKey": "venus|inconjunct|jupiter",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 237,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/jupiter",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "136116a41a6b0bb29c64b1fa971c8184c2d9566748a1439c64548c79225eb3dc"
+    },
+    {
+      "workbookKey": "venus|square|saturn",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 242,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/square/saturn",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "340a7a892f41bfeaa026048fc96ea5371a14291adb0021b1400457e6fcb77c55"
+    },
+    {
+      "workbookKey": "venus|inconjunct|saturn",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 244,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/saturn",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "e6259f98323ccd36da978b27b81d884564486ccf07a13ce8bac6502483dbc9f6"
+    },
+    {
+      "workbookKey": "venus|opposition|saturn",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 245,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/opposition/saturn",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "95f60722377ea371773a63092df570641ca9e1c3e924a3fd522834b71cd5870e"
+    },
+    {
+      "workbookKey": "venus|conjunction|uranus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 246,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/conjunction/uranus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "f937e6892fc1c363a679468860ca6223e0f8dcc96fdf976fa7824656b91b53f6"
+    },
+    {
+      "workbookKey": "venus|inconjunct|uranus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 251,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/uranus",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "6b088df7c503263304e1c0a703a71cfdd795d37294c841009720d56d3b551306"
+    },
+    {
+      "workbookKey": "venus|conjunction|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 253,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/conjunction/neptune",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "3b86e030c164e08c816fdb6f53a1759c994d825381116fc0cf1183bdee34dc5c"
+    },
+    {
+      "workbookKey": "venus|inconjunct|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 258,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/neptune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "3a40ad0811c54568536cccefc1e667b0be697f7968cc801014a856db9e8d22ec"
+    },
+    {
+      "workbookKey": "venus|opposition|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 259,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/opposition/neptune",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "8a2c3f106fa4e976b37445996d6398232f4bcfc96277a98cdd6339f6bc758a6f"
+    },
+    {
+      "workbookKey": "venus|conjunction|pluto",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 260,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/conjunction/pluto",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "a49df223b56031f9cd44d32436d185db54830884ead850b30fe969807dd4695b"
+    },
+    {
+      "workbookKey": "venus|sextile|pluto",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 262,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/sextile/pluto",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "4e0ce1d2218c8c4f893a49bd8ebda0e209ce1396afa8ced636cf03d3dec5031a"
+    },
+    {
+      "workbookKey": "venus|sextile|part_of_fortune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 269,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/sextile/part-of-fortune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "dad10bbbb8fa8e5ccb5e0e64360fba8fd2af89a88fd1287ed4fd2e606ea98c11"
+    },
+    {
+      "workbookKey": "venus|inconjunct|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 279,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/north-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "318d6432d32ab047b6458e3c00044dbceec5b5c4588096300ef77968c64a0adf"
+    },
+    {
+      "workbookKey": "venus|inconjunct|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 286,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "e065c27a9261e11aa4b24dbbf9bc34d816c1009bb9289a82cc54911b026d215d"
+    },
+    {
+      "workbookKey": "mars|conjunction|jupiter",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 288,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/conjunction/jupiter",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "8afe1a9aee2c900195c3456098b1da97cc89af6e88fd8d9d09a1dce30cbb1623"
+    },
+    {
+      "workbookKey": "mars|sextile|jupiter",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 290,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/sextile/jupiter",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "e6d2a601beab59c5af3ae0e4ff7fadad182cd3bc6fc80efaf744e69c55858a2e"
+    },
+    {
+      "workbookKey": "mars|square|jupiter",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 291,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/square/jupiter",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "ab234d4b91537d1b5d32172d5b0fc27095783eac5d1e749ceb32531b668f2ed5"
+    },
+    {
+      "workbookKey": "mars|inconjunct|jupiter",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 293,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/jupiter",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "d09e0691503e0481cc32209587515eb6e172518502cc7ef607f5cab1340adf54"
+    },
+    {
+      "workbookKey": "mars|opposition|jupiter",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 294,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/opposition/jupiter",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "196807fcb189dcddffd4163e4f5a185e462f3697c9088218688209aaf5ad24f4"
+    },
+    {
+      "workbookKey": "mars|conjunction|saturn",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 295,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/conjunction/saturn",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "e02a00028af9c16e2b096ec11f54e870749961ceaca07f171695ba00dff22a5e"
+    },
+    {
+      "workbookKey": "mars|inconjunct|saturn",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 300,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/saturn",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "2dc9a89b597744eb7c2329c2c921b5fd48e7b31ae86b65259217159990ff0af0"
+    },
+    {
+      "workbookKey": "mars|opposition|saturn",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 301,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/opposition/saturn",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "c04f3b3880a1519dfc83356c29a4f920e1b5dfeccf6b56b348918b5f022668d4"
+    },
+    {
+      "workbookKey": "mars|conjunction|uranus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 302,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/conjunction/uranus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "b9d7200081f64f46f69beefad39f2982815ce4e2ac9c8988b51b9e0e5204b5f2"
+    },
+    {
+      "workbookKey": "mars|square|uranus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 305,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/square/uranus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "3dd607b7ec52ffa3683eb05bb4cc2e1a0fce0f42d7036379d9a879da2baf43d5"
+    },
+    {
+      "workbookKey": "mars|inconjunct|uranus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 307,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/uranus",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "84ada8ecb40b86c31528431038d73d2b25413bc21d7e8856da63fd4120ef317a"
+    },
+    {
+      "workbookKey": "mars|opposition|uranus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 308,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/opposition/uranus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "84c5394e3919d0f51a789037e4954fb3524340f9dea34e25c9f046292f19f803"
+    },
+    {
+      "workbookKey": "mars|trine|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 313,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/trine/neptune",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "be79f27fdd3e530a50b64c2afd98cf8fb6d94134f2a3bef84c15b41cd063d7fa"
+    },
+    {
+      "workbookKey": "mars|inconjunct|pluto",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 321,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/pluto",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "06b7dbb25bfa330c33ce6d476ef8b0546428477a80473fd91a0794526d363f16"
+    },
+    {
+      "workbookKey": "mars|opposition|pluto",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 322,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/opposition/pluto",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "01784e6d950a34a80cabb491e5f8d153c1741b2e8669ddcfbc1d13c2242e5468"
+    },
+    {
+      "workbookKey": "jupiter|square|saturn",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 328,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/square/saturn",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "e92d8bf313e5d79c39ea9c12c65717ba195cd7df6b27be52523c31074db764f4"
+    },
+    {
+      "workbookKey": "jupiter|trine|saturn",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 329,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/trine/saturn",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "fd6c2f3f94ae9cb894e6913dec1e8eca18f761046f508345bb390897baa57149"
+    },
+    {
+      "workbookKey": "jupiter|inconjunct|saturn",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 330,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/saturn",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "f450ade497cab4bc1b207ad7933dfb099c450bed5512dec1c2d8d5c996424066"
+    },
+    {
+      "workbookKey": "jupiter|square|uranus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 335,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/square/uranus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "398bca63d953ff0127232aa8b96752d1d853ce3fe364276b1f394a24b998c953"
+    },
+    {
+      "workbookKey": "jupiter|inconjunct|uranus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 337,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/uranus",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "a4082da74af2a0bd3268aeac9078a78be4838bdf7ff1a5d1d6c9bb1b8cc45c5c"
+    },
+    {
+      "workbookKey": "jupiter|inconjunct|pluto",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 351,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/pluto",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "2892b82896e8ff3a970495f7ce9f129c7f783d3a788ee0e3914463f4d00c5f7c"
+    },
+    {
+      "workbookKey": "jupiter|opposition|pluto",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 352,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/opposition/pluto",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "d5acd1cfed59c7e99915917fdda37c94f07b3f50712861b58366a201acd257fa"
+    },
+    {
+      "workbookKey": "saturn|square|uranus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 356,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/uranus",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "772e2bd58c19cbcf2628dabdccfe35c703070311ea9ed78b937d72d95d98816a"
+    },
+    {
+      "workbookKey": "saturn|inconjunct|uranus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 358,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/uranus",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "e2a96cb938ef6ee6044016af90370b166b4ffa747671febe62f65f01fe5c80e7"
+    },
+    {
+      "workbookKey": "saturn|opposition|uranus",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 359,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/opposition/uranus",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "54794627aac49471cd6271d9ba625d96bf0b751b992e981db202741a7f951412"
+    },
+    {
+      "workbookKey": "saturn|conjunction|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 360,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/conjunction/neptune",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "719f98781637a823e8f51ba2efcf6d4843c11c99dbe4dd849ff37d4a4ed52b36"
+    },
+    {
+      "workbookKey": "saturn|trine|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 364,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/trine/neptune",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "95942b8a79088ef4b27048bc59cc631a8b3f5e18c3fab1d9a14dc7441c5e4c6d"
+    },
+    {
+      "workbookKey": "saturn|inconjunct|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 365,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/neptune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "11877cdd9c496e7dcbd31ebb85119a4dede5a14cdd39e22e143d60a0b2335ca7"
+    },
+    {
+      "workbookKey": "saturn|opposition|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 366,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/opposition/neptune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "1b597cf1676b1489ab75db092d7484e9eab0f1b0870094e5fba8d41b710b86b7"
+    },
+    {
+      "workbookKey": "saturn|inconjunct|pluto",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 372,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/pluto",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "280c1ce094bb7ff7ce9ddc494a4dc1e1ccbeed6795fbd7bb80a0e9d4950d5c7e"
+    },
+    {
+      "workbookKey": "uranus|semisextile|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 375,
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/semisextile/neptune",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "2e0ed58aa628c2e8852405f965e744150eb809158bbdd4d31cc16379c9a292fd"
+    },
+    {
+      "workbookKey": "uranus|sextile|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 376,
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/sextile/neptune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "0197c34cfb7048ed8f95cf521355b4c59cbcaacb5206ad34c3d488caab39e918"
+    },
+    {
+      "workbookKey": "uranus|inconjunct|neptune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 379,
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/neptune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "32a1abb3adecaf13e8b8b42af4e1b960d1933b908b68b40daa9e65061ebc21fe"
+    },
+    {
+      "workbookKey": "uranus|square|pluto",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 384,
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/square/pluto",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "40d9d44b86478f7582b95e728cf0a2baa56f9de05504b3f7cba15eadacc7c640"
+    },
+    {
+      "workbookKey": "uranus|inconjunct|pluto",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 386,
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/pluto",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "38c30c0f84cec82f604a7fa12b224568bb9819e2d51e6efacace7138ea1fc2d4"
+    },
+    {
+      "workbookKey": "mars|sextile|part_of_fortune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 391,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/sextile/part-of-fortune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "98b207bd2f910317372d8f82175e2699a7ecb4dec4adfdb730fb3c6369789b7f"
+    },
+    {
+      "workbookKey": "mars|sextile|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 398,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/sextile/north-node",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "cd1a8faf057270708b48482d5b3bdc3ef4b0e2aa95f0b9a95a0b46ac59022c47"
+    },
+    {
+      "workbookKey": "mars|inconjunct|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 401,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/north-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "e54402863d61be0c54eb2c2761259e0ec506efe3b07d7edd1c00f4b9f06f8da5"
+    },
+    {
+      "workbookKey": "mars|sextile|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 405,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/sextile/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "186a12bca816f8a35900c4e0af27ecee005af7ffd7de1562891e46d6593f55c7"
+    },
+    {
+      "workbookKey": "mars|inconjunct|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 408,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "abb595e4abf6c4345366be59c3ded692e7ba28477b6acea4d47b83eb0c58f654"
+    },
+    {
+      "workbookKey": "jupiter|sextile|part_of_fortune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 412,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/sextile/part-of-fortune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "8a09be1d95d0fbb8b6e3848b4c3aebb169c56903fd7081816ab23bac54cbb180"
+    },
+    {
+      "workbookKey": "jupiter|conjunction|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 417,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/conjunction/north-node",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "c323adea9c4f7e8ca7f0c6cb62eadf2c3d49e916c50318e5a419a066712360ca"
+    },
+    {
+      "workbookKey": "jupiter|semisextile|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 418,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/semisextile/north-node",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "2e5a06c17ef39ad866249c920512afae7c13a8a3dc0507f2c1d75cea44a868c5"
+    },
+    {
+      "workbookKey": "jupiter|sextile|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 419,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/sextile/north-node",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "a10a27f25fef86ff6515a220135e853c5dc55f257376fefaccf97277adf79cdf"
+    },
+    {
+      "workbookKey": "jupiter|trine|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 421,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/trine/north-node",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "f733aa6e83bfde7a88806a45e26ada381e890bf81cd1b29a23f1284b130ef5d0"
+    },
+    {
+      "workbookKey": "jupiter|inconjunct|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 422,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/north-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "2bb1fbbc5ce36893965bbd3e4b89156bf833f5dcf001c35af2a31719fd663088"
+    },
+    {
+      "workbookKey": "jupiter|opposition|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 423,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/opposition/north-node",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "d838a0e6841d8df9d5e1aa1b428f410f57c342455b648c17375575c96e43fa17"
+    },
+    {
+      "workbookKey": "jupiter|sextile|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 426,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/sextile/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "dce33047455ced2e9f042b81111d5f00699004011b7739368d369717cbb6b4fc"
+    },
+    {
+      "workbookKey": "jupiter|inconjunct|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 429,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "9295957590a422f7c1bf78ffd03f00aba970d5b01db311c3b67f49a49617cb00"
+    },
+    {
+      "workbookKey": "saturn|sextile|part_of_fortune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 433,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/sextile/part-of-fortune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "1e26b2583cc213ea4fce39c3ef70ae35b507ce1278bf56d474d92099b26d28e6"
+    },
+    {
+      "workbookKey": "saturn|square|part_of_fortune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 434,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/part-of-fortune",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "65ce3f7ee9d8037eb05db9110feea3bde99449bf33bc93a345f8fedab5ca7f3d"
+    },
+    {
+      "workbookKey": "saturn|trine|part_of_fortune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 435,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/trine/part-of-fortune",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "c2d881e49145169c05392a933e987fc14ca37fa19fdb491e806e5bb745f575dc"
+    },
+    {
+      "workbookKey": "saturn|opposition|part_of_fortune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 437,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/opposition/part-of-fortune",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "92d4c01c231a291194f4f80be07419c3cd083be4e28154999e97cf88c6ea146b"
+    },
+    {
+      "workbookKey": "saturn|inconjunct|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 443,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/north-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "8ddcde71d069cb291faa63b94f2692a6794914ec35ee46bdd8747d343c8903c2"
+    },
+    {
+      "workbookKey": "saturn|sextile|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 447,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/sextile/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "e26ed72d65d722375f5ff2459696f7d56cb4cddc60f0a14b1ff6616595a904eb"
+    },
+    {
+      "workbookKey": "saturn|inconjunct|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 450,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "2b0d82c01c7668540b7501dc73e37eb65d5f6317134128b9bf05b9c3e8c835a1"
+    },
+    {
+      "workbookKey": "uranus|sextile|part_of_fortune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 454,
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/sextile/part-of-fortune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "a01588e455150cb4a888249928efc60d6a490a25036961cb19bfb358476a9d91"
+    },
+    {
+      "workbookKey": "uranus|inconjunct|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 464,
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/north-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "a67128e93e6f3ed3d33cf7d2ba0707d7a4c55912875282bf5ed69229cc06acd3"
+    },
+    {
+      "workbookKey": "uranus|sextile|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 468,
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/sextile/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "72ed09430b4fe7209bc36ef1bb5e2e7cf893bd7610803738d742920cb4f8feef"
+    },
+    {
+      "workbookKey": "uranus|inconjunct|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 471,
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "468a82049eaafdb73d264bfe266320353eec046a8d72149d8b09e6ae6ba92aef"
+    },
+    {
+      "workbookKey": "uranus|opposition|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 472,
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/opposition/south-node",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "4e39194408cf6c71a89ea322e98ec9e9a7836f8b96123d2a6a2c33a4113bb7bf"
+    },
+    {
+      "workbookKey": "neptune|semisextile|part_of_fortune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 474,
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/semisextile/part-of-fortune",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "b46635df14077bb30e0080a3c683578b76ecfeb6c2179e6c70ca73ee155f50bc"
+    },
+    {
+      "workbookKey": "neptune|sextile|part_of_fortune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 475,
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/sextile/part-of-fortune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "42f6f602098ff3b2155cc4eb2c743f31cf5e09199c8532722f3aca25c0063e4f"
+    },
+    {
+      "workbookKey": "neptune|inconjunct|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 485,
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/quincunx/north-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "afc4ae0c3d1bbaee128dcff8f490517aef60da5d03673e84b71141e81baf8508"
+    },
+    {
+      "workbookKey": "neptune|sextile|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 489,
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/sextile/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "fc90e401a7f3c34c7f89fd047d18e9c612310765941644fd539f1fe0629be7fd"
+    },
+    {
+      "workbookKey": "neptune|square|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 490,
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/square/south-node",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "61bc2662c55df1341a78a4d1beea0bad0b1656a669a3395bc61d3939668c06f7"
+    },
+    {
+      "workbookKey": "neptune|inconjunct|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 492,
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/quincunx/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "652549f847bf8ae2995ccccfd8b094e895c40a3d554a89c5cd1a7cf55b3a6061"
+    },
+    {
+      "workbookKey": "pluto|sextile|part_of_fortune",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 496,
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/sextile/part-of-fortune",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "a8df50b6994f2272a0cdaed52161280aaf7037cd9ef8decf3f686332035a963e"
+    },
+    {
+      "workbookKey": "pluto|inconjunct|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 506,
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/quincunx/north-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "afa879ca5f13234c431e967af8474cd1317ca24cd9d8607b416adb540903bc28"
+    },
+    {
+      "workbookKey": "pluto|opposition|north_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 507,
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/opposition/north-node",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "78c99397db837dda8039710ea50005e9aa1b75866b4344d78e0cb8daed577f19"
+    },
+    {
+      "workbookKey": "pluto|sextile|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 510,
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/sextile/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "b30af0897a60e2d3901d95906a168a589ff4e50f2cd2757b3047e0ee5c396b9f"
+    },
+    {
+      "workbookKey": "pluto|inconjunct|south_node",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 513,
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/quincunx/south-node",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "7ddc608d521d89379f3d32cc2bfe08ae66dc225b8da0d80eadf148105e999b1e"
+    },
+    {
+      "workbookKey": "sun|semisextile|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 516,
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/semisextile/ascendant",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "f0c855b04dd7a5f797f775f11a61a74ef5fe24b4b34f4575df096e1e3ae35ee9"
+    },
+    {
+      "workbookKey": "sun|opposition|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 521,
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/opposition/ascendant",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "56820c6885706a24b15cec9c7746a5458cbd15bcca0dbdedc1b5f0001c4741c4"
+    },
+    {
+      "workbookKey": "moon|opposition|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 528,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/ascendant",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "456f587c8047f5cf798dffd4028720f7e2d96f2fdf9fdb9839e4ed238d136263"
+    },
+    {
+      "workbookKey": "mercury|inconjunct|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 534,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/quincunx/ascendant",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "55140b0ee3ba3f67dc9e3ef084c96ab306f06275b990ffba1e839f502b75615e"
+    },
+    {
+      "workbookKey": "mars|inconjunct|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 548,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/ascendant",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "8002f859e8e49fc44a1a141e417fbab343b961425cd39fee59fa6a7c556699db"
+    },
+    {
+      "workbookKey": "jupiter|inconjunct|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 555,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/ascendant",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "3fb277220a3cf476dba67e6d780d5a9ddd50a4fe10e47c966d94d4bc354bc99f"
+    },
+    {
+      "workbookKey": "jupiter|opposition|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 556,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/opposition/ascendant",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "6302c531615c8a5640f84e8fd12a143adb85fadfff1363cdc8132978a61115d7"
+    },
+    {
+      "workbookKey": "saturn|inconjunct|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 562,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/quincunx/ascendant",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "8b5279f4edfb0efe632f455ffde9788ce46bfcfd309eddce2818ae11264513b5"
+    },
+    {
+      "workbookKey": "neptune|inconjunct|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 576,
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/quincunx/ascendant",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "36fcd0982357a4cbf4c6f4668ea7020f411ec380605efa444d650683ed9b7d3f"
+    },
+    {
+      "workbookKey": "neptune|opposition|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 577,
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/opposition/ascendant",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "4b03f33ab8a6077c4ce3bd5857d9a66739839ef370c7b54cb7e0c0439d4aab59"
+    },
+    {
+      "workbookKey": "pluto|square|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 581,
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/square/ascendant",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "3100e35443ddec812cf91354579df9543d550132cf69f54f6c0a72e4d677f4df"
+    },
+    {
+      "workbookKey": "pluto|inconjunct|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 583,
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/quincunx/ascendant",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "7a9fec5c112ed4c38fd74041331822f9e0cc1d5762b96768b6a06f3a6f24addb"
+    },
+    {
+      "workbookKey": "part_of_fortune|conjunction|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 585,
+      "contentKey": "fallback-hook/natal-aspect-lived/part-of-fortune/conjunction/ascendant",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "6c5e0e8ddcb56d27b684306a3f46da57c552e4cf28b984fc6406aecff4a8ebe3"
+    },
+    {
+      "workbookKey": "north_node|semisextile|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 593,
+      "contentKey": "fallback-hook/natal-aspect-lived/north-node/semisextile/ascendant",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "0fe5fccf1799e6ff53616268709b6ef13c8f20a1b675019ffb228d43322f3f1f"
+    },
+    {
+      "workbookKey": "north_node|sextile|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 594,
+      "contentKey": "fallback-hook/natal-aspect-lived/north-node/sextile/ascendant",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "d91c63bace1bf279accf083d6749122ec59703e64e531e0d04488627732632da"
+    },
+    {
+      "workbookKey": "south_node|square|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 602,
+      "contentKey": "fallback-hook/natal-aspect-lived/south-node/square/ascendant",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "10db1fec9ca1761b958e76c71326a365040c64e165b34b7b2765bbaf807c5924"
+    },
+    {
+      "workbookKey": "south_node|inconjunct|ascendant",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 604,
+      "contentKey": "fallback-hook/natal-aspect-lived/south-node/quincunx/ascendant",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "8d86de22b16df99b4d49aeca0665d7a0bb68fda6547c497a5fc4ceba25e4a9dd"
+    },
+    {
+      "workbookKey": "moon|opposition|midheaven",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 619,
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/midheaven",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "1215eab782ca3577d7c194b01434da184f57412969c00730eb9bf5d6ce5086e2"
+    },
+    {
+      "workbookKey": "mercury|opposition|midheaven",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 626,
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/opposition/midheaven",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "7f16f6d787947793511e9cdb36c39aacd598494f526a1fbeb1d59ce2ee6a59bf"
+    },
+    {
+      "workbookKey": "venus|inconjunct|midheaven",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 632,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/quincunx/midheaven",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "e3dec2407857c1adbaeea36bd6c8e40c0eacb6f7c13722508e8f8b0105beb611"
+    },
+    {
+      "workbookKey": "venus|opposition|midheaven",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 633,
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/opposition/midheaven",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "8740c87cb5994182ada8b27e8d214a97f327e296663dce30b45cb3e992b14b17"
+    },
+    {
+      "workbookKey": "mars|semisextile|midheaven",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 635,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/semisextile/midheaven",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "e3bdf0c198f38d3378804781ff21a792e533a17c058347a10f940d17810a7efd"
+    },
+    {
+      "workbookKey": "mars|sextile|midheaven",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 636,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/sextile/midheaven",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "79063c960938d657cc94a48036b4cb3d34c005a9c8f418154e36cdebd3142f89"
+    },
+    {
+      "workbookKey": "mars|inconjunct|midheaven",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 639,
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/midheaven",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "0a8d13153e3806c07a665904d278453d6c78c85f26fd0a3918838aa5a7c4366d"
+    },
+    {
+      "workbookKey": "jupiter|inconjunct|midheaven",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 646,
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/quincunx/midheaven",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "8eed49cdb38bbc7b98e7890617da38e4c4e541ffa3f1e1a816b0e948777c50b7"
+    },
+    {
+      "workbookKey": "saturn|opposition|midheaven",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 654,
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/opposition/midheaven",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "ad9a13baf1e7f21fbf6230a23b45c4dd07f0fa24a3b89c8a49037f664c153aee"
+    },
+    {
+      "workbookKey": "uranus|inconjunct|midheaven",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 660,
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/quincunx/midheaven",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "6b505b559012f4935f23d0f0df6d0ab5a24e651cdb0c5e3886854dd496fea5f2"
+    },
+    {
+      "workbookKey": "pluto|conjunction|midheaven",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 669,
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/conjunction/midheaven",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "3c4fe606568862ebe2d59142abde9d1a2a55552f1e6b3a60f1c533153d26406d"
+    },
+    {
+      "workbookKey": "south_node|opposition|midheaven",
+      "sourceSheet": "AspectMeanings",
+      "workbookRow": 696,
+      "contentKey": "fallback-hook/natal-aspect-lived/south-node/opposition/midheaven",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "9da996e021196e2516b7e292904e342ea0c6c74f79b4c97c97cd8cb9743d185f"
+    },
+    {
+      "workbookKey": "balsamic-moon",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 9,
+      "contentKey": "fallback-hook/natal-moon-phase-lived/balsamic",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "a3860ff3dfd4efbe9a360de5a573e3084fc59f260d70a89a9f08e67edf48ee8f"
+    },
+    {
+      "workbookKey": "part-of-fortune|4th house",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 14,
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/4",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "3e3f1974e6cf33979b2ac9b1c6fc3f588ab4cc9a98d85aa78cdbccb9aceaf96d"
+    },
+    {
+      "workbookKey": "part-of-fortune|5th house",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 15,
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/5",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "566499c11025ba5d3f44792449fc14ddeaaef9849ed8ee172e73ac2663fb0862"
+    },
+    {
+      "workbookKey": "part-of-fortune|6th house",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 16,
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/6",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "11b12f2e9cab5d0d1d3874432a609c5bdbc0de9052fe5d191fdf49c492ed7dff"
+    },
+    {
+      "workbookKey": "part-of-fortune|7th house",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 17,
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/7",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "dac47c6b3bd186ec3e5cc34a8ac591cbcfc5ba9c0e02c84c6053efd5cb98a791"
+    },
+    {
+      "workbookKey": "part-of-fortune|8th house",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 18,
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/8",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "b9898d4c1cd07ecd2e7a89716281e1ea2f6fda7886b113108f4c7e0eddce2975"
+    },
+    {
+      "workbookKey": "part-of-fortune|9th house",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 19,
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/9",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "8c37e25bbffe706f71848fed4433d3ba8c61383cc465763016fbfd3457850e4e"
+    },
+    {
+      "workbookKey": "part-of-fortune|10th house",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 20,
+      "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/10",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "de874b604f9b6af5fca7285bb035a4ce89acc8b05059d3ae3b3d1cba20c4263a"
+    },
+    {
+      "workbookKey": "part-of-fortune|aries",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 23,
+      "contentKey": "fallback-hook/placement-sign-lived/part-of-fortune/aries",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "4635a6500f6c01190cbef7c9741fbb4a2d3c84718ff91caf3ebf3aebb4c65b7a"
+    },
+    {
+      "workbookKey": "part-of-fortune|gemini",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 25,
+      "contentKey": "fallback-hook/placement-sign-lived/part-of-fortune/gemini",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "b181125a5e6b70559b8d0d12c2fe04ed6570b647f93ff8a2e2ee095416ab3fbf"
+    },
+    {
+      "workbookKey": "part-of-fortune|cancer",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 26,
+      "contentKey": "fallback-hook/placement-sign-lived/part-of-fortune/cancer",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "14d64e706bb04506f4231d6a8b1f66a606977f3a610449bd42b4dfc6a213d44d"
+    },
+    {
+      "workbookKey": "part-of-fortune|leo",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 27,
+      "contentKey": "fallback-hook/placement-sign-lived/part-of-fortune/leo",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "2b3ac890031be88dfe804115d4612d210cc9a20df83b696d891cb8aa47b5a14f"
+    },
+    {
+      "workbookKey": "part-of-fortune|libra",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 29,
+      "contentKey": "fallback-hook/placement-sign-lived/part-of-fortune/libra",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "7799b0a1cd60e23352d7c0ef1aec5735482ff972bdedd6439c72b26aa79cc329"
+    },
+    {
+      "workbookKey": "part-of-fortune|scorpio",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 30,
+      "contentKey": "fallback-hook/placement-sign-lived/part-of-fortune/scorpio",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "ce23dbdde956bc19a574cdced2853a05369729d707aefa37478b8b67b551b85e"
+    },
+    {
+      "workbookKey": "part-of-fortune|sagittarius",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 31,
+      "contentKey": "fallback-hook/placement-sign-lived/part-of-fortune/sagittarius",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "aff02db0f811cfa9528dacba110466b1a485c8d3229c325ec782f3020ce3ba54"
+    },
+    {
+      "workbookKey": "part-of-fortune|aquarius",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 33,
+      "contentKey": "fallback-hook/placement-sign-lived/part-of-fortune/aquarius",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "4bb2950e778fef5f725ccd1187bfc02b7baf78395fcf9ce25dc6d0e51a9ec8c5"
+    },
+    {
+      "workbookKey": "part-of-fortune|pisces",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 34,
+      "contentKey": "fallback-hook/placement-sign-lived/part-of-fortune/pisces",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "50002b0510cd80649e5cfbab8779094a533bb85b82ab2c1cf8a2d789461a8387"
+    },
+    {
+      "workbookKey": "north-node|3rd house",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 37,
+      "contentKey": "fallback-hook/placement-house-lived/north-node/3",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "f1b086b21382dfed80ce55f24816734232268f3dcaa5ce43e841facfff8fcb70"
+    },
+    {
+      "workbookKey": "north-node|6th house",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 40,
+      "contentKey": "fallback-hook/placement-house-lived/north-node/6",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "1092def6a81e0fe0c7bbc05e1c3f5137cccfffd014091ee18c2409d6584c93d7"
+    },
+    {
+      "workbookKey": "north-node|9th house",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 43,
+      "contentKey": "fallback-hook/placement-house-lived/north-node/9",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "9fa51e1c762466c084c69558d7fd608edf2d6779fa4495665c01926ec220b112"
+    },
+    {
+      "workbookKey": "north-node|10th house",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 44,
+      "contentKey": "fallback-hook/placement-house-lived/north-node/10",
+      "governance": "owner-lived-experience-ll-v9-owner-approved",
+      "payloadSha256": "894cb2aadd63b3300be47d032d52e81e091d408c13c7becdf0d5ee6b76bbf867"
+    },
+    {
+      "workbookKey": "north-node|12th house",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 46,
+      "contentKey": "fallback-hook/placement-house-lived/north-node/12",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "46e35598df5127af9041f9ffc78b432be387cdcd50106bc129b452f6e52e2500"
+    },
+    {
+      "workbookKey": "north-node|capricorn",
+      "sourceSheet": "NodesPhasesFortune",
+      "workbookRow": 56,
+      "contentKey": "fallback-hook/placement-sign-lived/north-node/capricorn",
+      "governance": "owner-approved-v13-direct-language",
+      "payloadSha256": "765f2c9ec818f1095053a0a0fa9a6502b9c987452637cf4149c2a56a4adf81bc"
+    }
+  ]
+}

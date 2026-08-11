@@ -1,0 +1,16 @@
+{
+  "schema": "tldrastro.knowledge-matrix-v9-governance-delta-build-report",
+  "version": "v9-owner-approved-governance-delta",
+  "workbook_sha256_match": true,
+  "transit_copy_digest_match": true,
+  "house_experience_digest_match": true,
+  "governance_owner_approved_rows": 3485,
+  "delta_transit_rows": 609,
+  "delta_house_rows": 424,
+  "delta_total_rows": 1033,
+  "existing_v8_files_modified": 0,
+  "wording_changes": 0,
+  "warning_count": 0,
+  "warnings": [],
+  "build_passed": true
+}

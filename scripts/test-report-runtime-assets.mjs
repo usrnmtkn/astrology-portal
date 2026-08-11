@@ -19,6 +19,8 @@ const exactRuntimeAssets = [
   "artifacts/marie-satori-work-money-2026-owner-v1.md",
   "artifacts/marie-satori-year-ahead-2026-FINAL.md",
   "config/report-model-pricing-v1.json",
+  "packages/astro-knowledge/data/manifestation-sets/owner-reference-gaps-v1.json",
+  "packages/astro-knowledge/data/manifestation-sets/sr-overlays-v1.json",
   "packages/astro-knowledge/data/manifestation-sets/year-ahead-v1.json",
   "tldr-astro-phrasebank/TLDR-LOVE-CONNECTION-DEEPDIVE-GENERATION-PROMPT-OWNER.md",
   "tldr-astro-phrasebank/TLDR-PERSONAL-HEALTH-DEEPDIVE-GENERATION-PROMPT-OWNER.md",

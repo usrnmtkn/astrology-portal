@@ -14,12 +14,20 @@ import { createFallbackRenderer, createPackageManifest, createTransitSynastryRen
 
 export { normalizeAspect, SourceGapError };
 export {
-  KNOWLEDGE_MATRIX_V8_BASE_PATH,
-  KNOWLEDGE_MATRIX_V8_VERSION,
-  loadKnowledgeMatrixV8Runtime,
-  renderKnowledgeMatrixV8HouseActivation,
-  renderKnowledgeMatrixV8TransitMeaning
-} from "./knowledgeMatrixV8Runtime";
+  KNOWLEDGE_MATRIX_V9_BASE_PATH,
+  KNOWLEDGE_MATRIX_V9_VERSION,
+  loadKnowledgeMatrixV9Runtime,
+  renderKnowledgeMatrixV9HouseActivation,
+  renderKnowledgeMatrixV9TransitMeaning
+} from "./knowledgeMatrixV9Runtime";
+export {
+  KNOWLEDGE_MATRIX_V13_BASE_PATH,
+  KNOWLEDGE_MATRIX_V13_VERSION,
+  loadKnowledgeMatrixV13Runtime,
+  renderKnowledgeMatrixV13NatalAspect,
+  renderKnowledgeMatrixV13Placement,
+  renderKnowledgeMatrixV13WorkbookKey
+} from "./knowledgeMatrixV13Runtime";
 export const fallbackArchitectureV3PackageVersion = PACKAGE_VERSION;
 
 export type ReviewStatus = "approved" | "approved_reuse" | "reviewed" | string;
@@ -169,7 +177,7 @@ export type AngleFacts = {
 export type AspectFacts = {
   planetA: string;
   planetB: string;
-  aspect: "conjunction" | "opposition" | "square" | "trine" | "sextile" | "quincunx";
+  aspect: "conjunction" | "opposition" | "square" | "trine" | "sextile" | "quincunx" | "semisextile" | "nonagen";
   voice?: "you" | string;
   [key: string]: unknown;
 };

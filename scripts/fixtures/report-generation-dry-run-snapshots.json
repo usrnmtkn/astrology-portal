@@ -10,8 +10,8 @@
         "key-dates"
       ]
     },
-    "factorCount": 4,
-    "resolvedCount": 4,
+    "factorCount": 5,
+    "resolvedCount": 5,
     "sourceGapCount": 0
   },
   "4_months": {
@@ -26,8 +26,8 @@
         "closing-synthesis"
       ]
     },
-    "factorCount": 8,
-    "resolvedCount": 8,
+    "factorCount": 9,
+    "resolvedCount": 9,
     "sourceGapCount": 0
   },
   "6_months": {
@@ -43,8 +43,8 @@
         "review"
       ]
     },
-    "factorCount": 10,
-    "resolvedCount": 10,
+    "factorCount": 11,
+    "resolvedCount": 11,
     "sourceGapCount": 0
   },
   "12_months": {
@@ -66,9 +66,9 @@
         "winter-next"
       ]
     },
-    "factorCount": 19,
-    "resolvedCount": 18,
-    "sourceGapCount": 1
+    "factorCount": 30,
+    "resolvedCount": 30,
+    "sourceGapCount": 0
   },
   "work_money_12_months": {
     "unit": {
