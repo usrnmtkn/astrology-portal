@@ -15,8 +15,8 @@ assert.strictEqual(report.blockingTier.failed, 10);
 assert.strictEqual(Number(report.blockingTier.passRate.toFixed(6)), 0.852941);
 
 const tiers = new Map(report.ruleStats.map((rule) => [rule.id, rule.tier]));
+assert.strictEqual(tiers.has("OWNER-TEST-specificity"), false);
 for (const id of [
-  "OWNER-TEST-specificity",
   "OWNER-TEST-screenshot",
   "B1-L3+L4-headline-group-grammar",
   "OWNER-DIRECTIVE-short-blunt-line",
@@ -48,7 +48,7 @@ assert.deepStrictEqual(report.blockingTier.failingCards, [
 
 const batchTiers = new Map(report.batch.checks.map((check) => [check.id, check.tier]));
 assert.strictEqual(batchTiers.get("DG-R1-recurring-sentence-frame"), "advisory");
-assert.strictEqual(batchTiers.get("OWNER-TEST-specificity-batch"), "advisory");
+assert.strictEqual(batchTiers.has("OWNER-TEST-specificity-batch"), false);
 assert.strictEqual(batchTiers.get("batch-output-count"), "blocking");
 assert.strictEqual(batchTiers.get("DG-R7-opener-variety"), "blocking");
 

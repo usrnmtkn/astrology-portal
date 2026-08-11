@@ -25,6 +25,7 @@ const {
   selfAuditPacketLint
 } = require("./daily-glance-self-audit-candidates.js");
 const { callOpenAIResponses } = require("../../../src/astro-writing/openAIResponses.cjs");
+const { loadWriterSceneContextForKey } = require("./daily-glance-scene-context.js");
 
 const packageRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(packageRoot, "..", "..");
@@ -51,6 +52,13 @@ function parseKeys(args) {
   const keys = args[index + 1].split(",").map((key) => key.trim()).filter(Boolean);
   if (!keys.length || new Set(keys).size !== keys.length) throw new Error("--keys must contain unique non-empty keys.");
   return keys;
+}
+
+function valueAfter(args, flag) {
+  const index = args.indexOf(flag);
+  if (index < 0) return null;
+  if (!args[index + 1]) throw new Error(`${flag} requires a value.`);
+  return args[index + 1];
 }
 
 function summarizeResults(results) {
@@ -127,10 +135,15 @@ async function main() {
   if (args.includes("--terra")) throw new Error("Terra is prohibited in the writer-only pilot.");
   const keys = parseKeys(args);
   const config = scheduledCandidateConfig(keys);
+  const sceneContextDir = valueAfter(args, "--scene-context-dir");
   if (config.candidateSamplesPerKey !== 3) throw new Error(`Pilot requires exactly 3 independent calls per key; config has ${config.candidateSamplesPerKey}.`);
   if (config.routing.model !== "gpt-5.6-sol" || config.routing.reasoningEffort !== "xhigh" || config.routing.terraEnabled !== false) {
     throw new Error("Pilot routing must be gpt-5.6-sol xhigh with Terra disabled.");
   }
+  if (!config.sceneContextGate?.required || !config.sceneContextGate?.requiresExplicitOwnerLicenseApproval || !config.sceneContextGate?.requiresResolvedChartContext) {
+    throw new Error("Active writer config must enforce the owner-ruled scene-context gate.");
+  }
+  const sceneContexts = new Map(keys.map((key) => [key, loadWriterSceneContextForKey(key, sceneContextDir)]));
   loadLocalEnv();
   if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured.");
 
@@ -141,10 +154,13 @@ async function main() {
   const prepared = config.keys.map((target) => {
     const packet = buildPacket(target.key, config);
     const examples = approvedGoodExamples(target.key, sourceRows);
-    const modelInput = renderSelfAuditWriterInput(packet, config, examples);
+    const resolvedSceneContext = sceneContexts.get(target.key);
+    const modelInput = renderSelfAuditWriterInput(packet, config, examples, resolvedSceneContext.packet);
     packet.selfAuditDirectivePath = config.selfAuditDirectivePath;
+    packet.resolvedSceneContextPath = path.relative(repoRoot, resolvedSceneContext.contextPath);
+    packet.resolvedSceneContext = resolvedSceneContext.packet;
     packet.selfAuditGoodExamples = examples.map((example) => ({ key: example.key, headlineSourceId: example.headlineSourceId, bodySourceId: example.bodySourceId }));
-    const lint = selfAuditPacketLint(packet, modelInput, config, examples, currentPairs.get(target.key));
+    const lint = selfAuditPacketLint(packet, modelInput, config, examples, currentPairs.get(target.key), resolvedSceneContext.packet);
     if (!lint.passed) throw new Error(`Packet self-lint failed for ${target.key}; refusing to bill.`);
     packet.selfAuditModelInputSha256 = lint.modelInputSha256;
     packet.selfAuditLintRulesSha256 = lint.rulesSha256;
@@ -216,4 +232,4 @@ if (require.main === module) {
   main().catch((error) => { console.error(error.stack || error.message); process.exit(1); });
 }
 
-module.exports = { DEFAULT_KEYS, parseKeys, renderMarkdown, summarizeResults };
+module.exports = { DEFAULT_KEYS, parseKeys, renderMarkdown, summarizeResults, valueAfter };

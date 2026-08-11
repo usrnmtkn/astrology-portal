@@ -110,6 +110,42 @@ export type DailyGlanceSelection =
   | { kind: "aspect"; natal: string; aspect: DailyGlanceAspectType; orb: number }
   | { kind: "house"; house: number };
 
+export type DailyGlanceAspectGroup = "conjunction" | "square" | "opposition" | "soft";
+
+export type DailyGlanceChartContext =
+  | {
+      kind: "aspect";
+      transitPlanet: "moon";
+      transitSign: string;
+      transitHouse: number | null;
+      natalPoint: string;
+      natalSign: string | null;
+      natalHouse: number | null;
+      aspect: DailyGlanceAspectType;
+      aspectGroup: DailyGlanceAspectGroup;
+      orb: number;
+      housesReliable: boolean;
+    }
+  | {
+      kind: "house";
+      transitPlanet: "moon";
+      transitSign: string;
+      transitHouse: number;
+      housesReliable: true;
+    };
+
+const dailyGlanceAspectGroups: Record<DailyGlanceAspectType, DailyGlanceAspectGroup> = {
+  conjunction: "conjunction",
+  opposition: "opposition",
+  square: "square",
+  sextile: "soft",
+  trine: "soft"
+};
+
+function validDailyGlanceHouse(value: unknown): value is number {
+  return typeof value === "number" && Number.isInteger(value) && value >= 1 && value <= 12;
+}
+
 function forwardAngularDistance(from: number, to: number) {
   return normalizedAngle(to - from);
 }
@@ -193,6 +229,57 @@ export function selectDailyGlanceDriver(
     maxOrb,
     1
   )[0] ?? null;
+}
+
+/**
+ * Resolves the calculation-owned facts used by the non-serving Daily Glance
+ * scene compiler. The existing serving selector remains unchanged.
+ *
+ * House facts are deliberately removed when the caller cannot attest that
+ * birth-time-dependent houses are reliable. In that state an aspect may still
+ * resolve, but a house-only result fails closed instead of licensing a guessed
+ * life domain.
+ */
+export function selectDailyGlanceChartContext(
+  moon: { longitude?: number; sign: string; house?: number | null },
+  natalTargets: Array<{ planet: string; longitude?: number; sign?: string | null; house?: number | null }>,
+  fallbackHouse: number | null,
+  housesReliable: boolean,
+  maxOrb = 5
+): DailyGlanceChartContext | null {
+  if (typeof moon.longitude !== "number" || !Number.isFinite(moon.longitude)) {
+    return null;
+  }
+
+  const driver = selectDailyGlanceDriver(moon.longitude, natalTargets, fallbackHouse, maxOrb);
+  if (!driver) return null;
+
+  if (driver.kind === "house") {
+    return housesReliable && validDailyGlanceHouse(driver.house)
+      ? {
+          kind: "house",
+          transitPlanet: "moon",
+          transitSign: moon.sign,
+          transitHouse: driver.house,
+          housesReliable: true
+        }
+      : null;
+  }
+
+  const target = natalTargets.find((entry) => entry.planet.trim().toLowerCase() === driver.natal.trim().toLowerCase());
+  return {
+    kind: "aspect",
+    transitPlanet: "moon",
+    transitSign: moon.sign,
+    transitHouse: housesReliable && validDailyGlanceHouse(fallbackHouse) ? fallbackHouse : null,
+    natalPoint: driver.natal,
+    natalSign: target?.sign?.trim() || null,
+    natalHouse: housesReliable && validDailyGlanceHouse(target?.house) ? target.house : null,
+    aspect: driver.aspect,
+    aspectGroup: dailyGlanceAspectGroups[driver.aspect],
+    orb: driver.orb,
+    housesReliable
+  };
 }
 
 export function zodiacSignForLongitude(longitude: number) {

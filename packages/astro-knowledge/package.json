@@ -158,9 +158,11 @@
     "audit:daily-glance-voice": "node scripts/audit-daily-glance-voice.js",
     "audit:daily-glance-sol-pilot": "node scripts/run-daily-glance-self-audit-pilot.js",
     "audit:daily-glance-serving-lint": "node scripts/audit-daily-glance-serving-lint.js",
+    "compile:daily-glance-scene-context": "node scripts/compile-daily-glance-scene-context.js",
     "audit:record-verdict": "node scripts/record-daily-glance-audit-verdict.js",
     "test:daily-glance-voice-audit": "node scripts/test-daily-glance-voice-audit.js",
     "test:daily-glance-lint-recalibration": "node scripts/test-daily-glance-lint-recalibration.js",
+    "test:daily-glance-scene-context": "node --experimental-strip-types ../../scripts/test-daily-glance-scene-context.mjs",
     "test:daily-glance-verdict-ledger": "node scripts/test-daily-glance-verdict-ledger.js",
     "write:daily-glance-batch-3:judged": "node scripts/run-daily-glance-judged.js --authorize-live --config config/daily-glance-writer-sol-xhigh-batch-3-v2.json --out review/daily-glance-batch-3-judged --samples 4",
     "judge:daily-glance:rejudge": "node scripts/judge-daily-glance.js --rejudge review/daily-glance-batch-3-judged"
