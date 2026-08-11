@@ -1,4 +1,4 @@
-// resolver/renderFallback.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -62,7 +62,9 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     if (voice !== "you") return null;
     const row = hooks.get(key);
     if (!row) return null;
-    if (row.content_role !== "fallback_hook") throw new RoleViolationError(`Row ${key} is not a fallback_hook.`);
+    if (!["fallback_hook", "full_copy"].includes(row.content_role)) {
+      throw new RoleViolationError(`Row ${key} is not a reader-eligible exact-copy role.`);
+    }
     if (!opts2.allowUnreviewed && !READER_ELIGIBLE.has(row.review_status)) return null;
     if (row.reader_only !== true || row.render_policy !== "reader-only-exact-lived-v1") {
       throw new RoleViolationError(`Row ${key} is not a reader-only exact lived row.`);
@@ -93,7 +95,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
   function renderNatalPlacement(facts, opts2 = {}) {
     const { planet, sign, house } = facts;
     const voice = facts.voice === "you" ? "you" : "they";
-    const exactHouseLived = house ? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, opts2) : null;
+    const exactHouseLived = house ? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, opts2) : null;
     if (exactHouseLived) {
       return {
         headline: `${title(planet)} in the ${ordinal(house)} house`,
@@ -102,7 +104,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
         templateKey: exactHouseLived.contentKey
       };
     }
-    const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts2);
+    const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, opts2);
     const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
     const possessive = facts.voice === "you" ? "Your" : `${facts.voice}'s`;
     const ctx = {
@@ -184,7 +186,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
   function renderNatalAspect(facts, opts2 = {}) {
     const voice = facts.voice === "you" ? "you" : "they";
     const aspect = facts.aspect;
-    const exactLived = getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetA}/${aspect}/${facts.planetB}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetB}/${aspect}/${facts.planetA}`, voice, opts2);
+    const exactLived = getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetA}/${aspect}/${facts.planetB}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetB}/${aspect}/${facts.planetA}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/aspect-lived/${aspect}`, voice, opts2);
     if (exactLived) {
       return {
         headline: `${title(facts.planetA)} ${aspect} ${title(facts.planetB)}`,
@@ -333,12 +335,16 @@ function normalizeAspect(input) {
     opposed: "opposition",
     oppose: "opposition",
     quincunx: "quincunx",
-    inconjunct: "quincunx"
+    inconjunct: "quincunx",
+    semisextile: "semisextile",
+    "semi-sextile": "semisextile",
+    "semi sextile": "semisextile",
+    nonagen: "nonagen"
   };
   return map[k] ?? null;
 }
 
-// resolver/renderTransitSynastry.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
 var TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
 function skyPlacementKeyDates({
   planet,
@@ -2153,7 +2159,7 @@ ${passHook}`;
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
-// resolver/knowledgeMatrixV9.browser.ts
+// apps/web/src/content/fallbackArchitectureV3/resolver/knowledgeMatrixV9.browser.ts
 var EXCLUDED_PREFIX = "[EXCLUDE FROM FALLBACK]";
 var OWNER_APPROVED = "owner-approved";
 function normalizedKeyPart(value) {
@@ -2254,8 +2260,100 @@ function createKnowledgeMatrixV9Resolver(manifest, rowsFile, buildReport) {
   });
 }
 
-// resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-10e";
+// apps/web/src/content/fallbackArchitectureV3/resolver/knowledgeMatrixV13.browser.ts
+var ALLOWED_GOVERNANCE = [
+  "owner-approved-v13-direct-language",
+  "owner-lived-experience-ll-v9-owner-approved",
+  "owner-approved-clarity-fix-ll-v12"
+];
+function normalizeObject(value) {
+  return String(value ?? "").trim().toLowerCase().replaceAll("_", "-").replace(/\s+/gu, "-");
+}
+function normalizeAspect2(value) {
+  const aspect = normalizeObject(value);
+  return aspect === "inconjunct" ? "quincunx" : aspect;
+}
+function toResult(row, sourceVersion) {
+  return {
+    body: row.copy,
+    contentKey: row.contentKey,
+    governance: row.governance,
+    payloadSha256: row.payloadSha256,
+    sourceVersion,
+    workbookRow: row.workbookRow
+  };
+}
+function assertExactSchema2(file) {
+  if (file.schema !== "tldrastro.knowledge-matrix.rows.v13" || file.version !== "v13-direct-language-owner-approved" || file.approvedAt !== "2026-08-10" || file.governance.authorityField !== "ownerApproved" || file.governance.requiredValue !== true || file.counts.sourceRows !== 1014 || file.counts.ownerApprovedRows !== 301 || file.counts.excludedUnapprovedRows !== 713 || file.counts.clarityStrictV13Rows !== 195 || file.rows.length !== 301) {
+    throw new Error("Knowledge matrix V13 is not the canonical owner-approved package.");
+  }
+  if (JSON.stringify(file.counts.bySheet) !== JSON.stringify({
+    PlacementMeanings: 113,
+    AspectMeanings: 165,
+    NodesPhasesFortune: 23
+  }) || JSON.stringify(file.counts.byGovernance) !== JSON.stringify({
+    "owner-approved-v13-direct-language": 194,
+    "owner-lived-experience-ll-v9-owner-approved": 106,
+    "owner-approved-clarity-fix-ll-v12": 1
+  })) {
+    throw new Error("Knowledge matrix V13 owner-approved counts do not match the canonical workbook.");
+  }
+  if (!file.governance.discardedPath.includes("Gemini") || !file.governance.discardedPath.includes("blind-edit")) {
+    throw new Error("Knowledge matrix V13 does not preserve the discarded-path governance ruling.");
+  }
+}
+function createKnowledgeMatrixV13Resolver(file) {
+  assertExactSchema2(file);
+  const byContentKey = /* @__PURE__ */ new Map();
+  const byWorkbookKey = /* @__PURE__ */ new Map();
+  for (const row of file.rows) {
+    if (row.ownerApproved !== true || row.authorship !== "owner_authored" || !ALLOWED_GOVERNANCE.includes(row.governance) || !row.copy || !row.contentKey || !/^[a-f0-9]{64}$/u.test(row.payloadSha256) || row.workbookProvenance.path !== file.sourceWorkbook || row.workbookProvenance.sheet !== row.sheet || row.workbookRow < 2) {
+      throw new Error(`Knowledge matrix V13 row is incomplete or unauthorized: ${row.sheet}/${row.key}`);
+    }
+    if (byContentKey.has(row.contentKey) || byWorkbookKey.has(row.key)) {
+      throw new Error(`Knowledge matrix V13 duplicate key: ${row.contentKey}`);
+    }
+    byContentKey.set(row.contentKey, row);
+    byWorkbookKey.set(row.key, row);
+  }
+  if (byContentKey.size !== file.counts.ownerApprovedRows) {
+    throw new Error("Knowledge matrix V13 unique runtime-key count mismatch.");
+  }
+  const readContentKey = (contentKey) => {
+    const row = byContentKey.get(contentKey);
+    return row ? toResult(row, file.version) : null;
+  };
+  return Object.freeze({
+    renderContentKey: readContentKey,
+    renderNatalPlacement({ planet, sign, house }) {
+      const normalizedPlanet = normalizeObject(planet);
+      const normalizedSign = normalizeObject(sign);
+      if (house) {
+        return readContentKey(`fallback-hook/placement-house-lived/${normalizedPlanet}/${house}`) ?? readContentKey(`fallback-hook/house-lived/${house}`);
+      }
+      return readContentKey(`fallback-hook/placement-sign-lived/${normalizedPlanet}/${normalizedSign}`) ?? readContentKey(`fallback-hook/sign-lived/${normalizedSign}`) ?? readContentKey(`fallback-hook/planet-lived/${normalizedPlanet}`);
+    },
+    renderNatalAspect({ planetA, aspect, planetB }) {
+      const normalizedA = normalizeObject(planetA);
+      const normalizedB = normalizeObject(planetB);
+      const normalizedAspect = normalizeAspect2(aspect);
+      return readContentKey(`fallback-hook/natal-aspect-lived/${normalizedA}/${normalizedAspect}/${normalizedB}`) ?? readContentKey(`fallback-hook/natal-aspect-lived/${normalizedB}/${normalizedAspect}/${normalizedA}`) ?? readContentKey(`fallback-hook/aspect-lived/${normalizedAspect}`);
+    },
+    renderWorkbookKey(key) {
+      const row = byWorkbookKey.get(String(key).trim().toLowerCase());
+      return row ? toResult(row, file.version) : null;
+    },
+    counts: Object.freeze({
+      ownerApprovedRows: file.rows.length,
+      placementRows: file.rows.filter((row) => row.sheet === "PlacementMeanings").length,
+      aspectRows: file.rows.filter((row) => row.sheet === "AspectMeanings").length,
+      pointRows: file.rows.filter((row) => row.sheet === "NodesPhasesFortune").length
+    })
+  });
+}
+
+// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
+var PACKAGE_VERSION = "v3-2026-08-10f";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
@@ -2312,6 +2410,7 @@ export {
   SourceGapError,
   TRUE_LILITH_KEY_DATES_INTRO,
   createFallbackRenderer,
+  createKnowledgeMatrixV13Resolver,
   createKnowledgeMatrixV9Resolver,
   createPackageManifest,
   createTransitSynastryRenderer,
