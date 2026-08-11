@@ -1,0 +1,251 @@
+{
+  "schema": "tldrastro.empty-house.advisory-editorial-backlog.v1",
+  "status": "owner_optional_future_editorial_review",
+  "scope": "44 advisory body_you rows from the completed V14 projection-4 judge run",
+  "authority": "Editorial backlog only. These findings do not alter exact-wording approval, serving status, or PR #145 readiness.",
+  "source": {
+    "file": "judge-results.json",
+    "results_digest_sha256": "752d9a79447057bcec90f3a7b9011307561aa1694b37dd3174c1b8182ca7823e",
+    "results_file_sha256": "d2c07c6295a5a9e5b8dd66a88447f0bd23f44806f14467957094d5ddf063af9a"
+  },
+  "counts": {
+    "rows": 44,
+    "first_candidates": 3
+  },
+  "first_candidates": [
+    {
+      "corpus_key": "empty-1st|sagittarius|jupiter-in-2nd",
+      "note": "conditional clause 'especially with Capricorn on the 2nd' reads like leftover generic-source text in a fixed-rising row"
+    },
+    {
+      "corpus_key": "empty-8th|mars-in-10th",
+      "note": "advancement after another person's departure/death - conditional, worth a glance"
+    },
+    {
+      "corpus_key": "empty-8th|ruler-in-10th",
+      "note": "verbatim sentence duplicated from empty-8th|mars-in-10th; abrupt final sentence"
+    }
+  ],
+  "rows": [
+    {
+      "corpus_key": "empty-3rd|leo",
+      "note": "redundant overlapping sentences suggest two drafts merged",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-6th|aries",
+      "note": "traditional body-area/accident-likelihood reference (headaches, fevers, burns, accidents)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-6th|taurus",
+      "note": "traditional body-area reference (throat, ears, neck)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-6th|gemini",
+      "note": "traditional body-area reference (lungs, arms, shoulders, hands)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-6th|cancer",
+      "note": "traditional body-area reference (stomach sensitivity)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-6th|leo",
+      "note": "traditional body-area reference (heart, back)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-6th|virgo",
+      "note": "traditional health-routine/digestion reference",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-6th|sagittarius",
+      "note": "traditional body-area reference (liver)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-6th|capricorn",
+      "note": "traditional body-area reference (bones, skin, knees, teeth)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-8th|capricorn",
+      "note": "hedged longevity claim (\"may also live a long life\")",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-1st|aries|mars-in-2nd",
+      "note": "body-area reference (throat sensitivity, Taurean physical traits)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-1st|aries|mars-in-5th",
+      "note": "body-area reference (heart/back strain from overexertion)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-1st|aries|mars-in-6th",
+      "note": "body-area/injury reference (head injuries, workplace accidents)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-1st|aries|mars-in-12th",
+      "note": "past-life claim (recent life in a male role)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-1st|taurus|venus-in-4th",
+      "note": "hedged event/timing prediction (inherit land or property later in life)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-1st|taurus|venus-in-12th",
+      "note": "past-life claim (distinctly feminine role or tone)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-1st|cancer|moon-in-6th",
+      "note": "body-area reference (stomach) plus health-fluctuation claim",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-1st|libra|venus-in-6th",
+      "note": "body-area reference (liver and kidneys)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-1st|sagittarius|jupiter-in-2nd",
+      "note": "conditional clause 'especially with Capricorn on the 2nd' reads like leftover generic-source text in a fixed-rising row",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-1st|sagittarius|jupiter-in-9th",
+      "note": "opening 'The ruler is in a house that amplifies...' is meta/annotation voice, unlike reader-facing prose of sibling rows",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-1st|capricorn|saturn-in-8th",
+      "note": "lifespan claim 'a long life is also possible' edges toward predicted-outcome territory; entry also notably shorter than siblings",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-1st|aquarius|uranus-in-4th",
+      "note": "'electrical accidents in the home' is a hedged accident/safety reference worth a human glance",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-1st|pisces|neptune-in-7th",
+      "note": "hedged prediction of partner's chart signs (Virgo/Pisces)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-2nd|ruler-in-4th",
+      "note": "hedged inheritance-from-parent reference",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-2nd|ruler-in-10th",
+      "note": "hedged inheritance-through-parent reference",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-4th|ruler-in-8th",
+      "note": "end-of-life-at-home reference, hedged but worth a glance",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-4th|ruler-in-10th",
+      "note": "abrupt 'Look at the resume...' sentence reads like a template remnant",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-2nd|uranus-in-3rd",
+      "note": "second sentence duplicates empty-2nd|ruler-in-3rd opening line",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-2nd|neptune-in-9th",
+      "note": "reuses empty-2nd|ruler-in-9th phrasing nearly verbatim",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-3rd|sun-in-6th",
+      "note": "traditional body-area reference (heart, back)",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-6th|mars-in-2nd",
+      "note": "body-area reference (neck/ears/throat) - traditional, mild",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-6th|pluto-in-11th",
+      "note": "awkward final sentence ('It does not need to require you') with unclear antecedent",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-6th|saturn-in-10th",
+      "note": "timing reference (success after age thirty) - traditional, mild",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-7th|ruler-in-8th",
+      "note": "partner-death reference; conditional, not predicted, but worth a glance",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-8th|mars-in-10th",
+      "note": "advancement after another person's departure/death - conditional, worth a glance",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-8th|mercury-in-1st",
+      "note": "abrupt disconnected final sentence ('Personal effort can improve finances.')",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-8th|ruler-in-10th",
+      "note": "verbatim sentence duplicated from empty-8th|mars-in-10th; abrupt final sentence",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-8th|ruler-in-11th",
+      "note": "loss-of-a-friend reference - conditional, worth a glance",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-9th|sun-in-4th",
+      "note": "filler-like sentence mid-entry ('This is the stuff that follows you home') reads like leftover essay copy",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-9th|neptune-in-6th",
+      "note": "illness/infection/poisoning list is hedged but health-heavy; worth a glance",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-10th|saturn-in-9th",
+      "note": "'new belief begins as a booking confirmation' sentence reads as a stray insert; flow slightly disjointed",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-10th|ruler-in-3rd",
+      "note": "sentence duplicated verbatim from empty-10th|mercury-in-3rd ('Public work often requires writing...')",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-11th|jupiter-in-8th",
+      "note": "'gains... even a friend's death' is hedged and traditional but sensitive; worth a glance",
+      "status": "owner_optional_future_review"
+    },
+    {
+      "corpus_key": "empty-11th|ruler-in-3rd",
+      "note": "sentence duplicated verbatim from empty-11th|sun-in-3rd ('One message can make the introduction...')",
+      "status": "owner_optional_future_review"
+    }
+  ]
+}
