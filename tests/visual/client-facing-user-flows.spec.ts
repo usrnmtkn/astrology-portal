@@ -1199,6 +1199,10 @@ test.describe("client-facing user flow case studies", () => {
     await friendHouseTransitCard.click();
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Friend house-transit detail");
+    await expect(
+      page.locator(".sky-detail-section"),
+      "Untraced house-transit explanation stays hidden on the detail surface"
+    ).toHaveCount(0);
     await page.getByRole("button", { name: "Close detail" }).click();
     await expect(page.getByRole("tab", { name: "Transits" })).toHaveAttribute("aria-selected", "true");
 
@@ -1207,6 +1211,15 @@ test.describe("client-facing user flow case studies", () => {
     const orbLabel = ((await transitCard.locator(".updates-aspect-row__orb").innerText()) ?? "").trim();
     expect(transitCardText.split(rangeLabel).length - 1, "Transit date range appears once").toBe(1);
     expect(transitCardText.split(orbLabel).length - 1, "Transit orb appears once").toBe(1);
+    await transitCard.click();
+    await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
+    await expect(page.getByLabel("What this looks like in space")).toBeVisible();
+    await expect(
+      page.locator(".sky-detail-section:not(.sky-aspect-mechanics)"),
+      "Untraced personal-transit explanation stays hidden while the mechanics remain"
+    ).toHaveCount(0);
+    await page.getByRole("button", { name: "Close detail" }).click();
+    await expect(page.getByRole("tab", { name: "Transits" })).toHaveAttribute("aria-selected", "true");
 
     await selectFriendDetailTab(page, "Synastry");
     await expectRelationshipWheelGeometry(page, "Nikki synastry chart wheel");
