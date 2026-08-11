@@ -23,12 +23,15 @@ await build({
     contents: `
       export {
         fallbackArchitectureV3BundledManifestSummary,
+        fallbackRendererV3,
         fallbackV3DignityLine,
         fallbackV3PlacementSentence,
         isDeferredFallbackArchitectureV3BundleLoaded,
+        isEmptyHouseFallbackArchitectureV3BundleLoaded,
         isRelationshipFallbackArchitectureV3BundleLoaded,
         loadFallbackArchitectureV3BundledManifest,
         loadDeferredFallbackArchitectureV3Bundle,
+        loadEmptyHouseFallbackArchitectureV3Bundle,
         loadRelationshipFallbackArchitectureV3Bundle,
         transitSynastryFallbackRendererV3
       } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
@@ -78,6 +81,7 @@ const bundledKeyCount = runtime.fallbackArchitectureV3BundledManifestSummary.key
 assert.ok(bundledKeyCount > 0, "The bundled fallback summary must report its generated key count.");
 assert.equal((await runtime.loadFallbackArchitectureV3BundledManifest()).keys.length, bundledKeyCount);
 assert.equal(runtime.isDeferredFallbackArchitectureV3BundleLoaded(), false);
+assert.equal(runtime.isEmptyHouseFallbackArchitectureV3BundleLoaded(), false);
 assert.equal(runtime.isRelationshipFallbackArchitectureV3BundleLoaded(), false);
 assert.ok(skyBefore.body, "Sky fallback copy must be available before the transit bundle loads.");
 assert.ok(skyPlacementBefore.body && skySeasonBefore.body && skyLunationBefore.body);
@@ -100,9 +104,51 @@ assert.throws(
   /SOURCE_GAP/u,
   "Personal-transit rendering must remain unavailable until its domain bundle loads."
 );
+assert.throws(
+  () => runtime.fallbackRendererV3.renderNatalEmptyHouse({
+    house: 1,
+    sign: "pisces",
+    rulerHouse: 12,
+    rulerSystem: "modern",
+    voice: "Friend"
+  }),
+  /SOURCE_GAP/u,
+  "Empty-house V14 copy must remain unavailable until its dedicated bundle loads."
+);
 
 assert.equal(await runtime.loadDeferredFallbackArchitectureV3Bundle(), true);
 assert.equal(runtime.isDeferredFallbackArchitectureV3BundleLoaded(), true);
+assert.equal(runtime.isEmptyHouseFallbackArchitectureV3BundleLoaded(), false);
+assert.throws(
+  () => runtime.fallbackRendererV3.renderNatalEmptyHouse({
+    house: 1,
+    sign: "pisces",
+    rulerHouse: 12,
+    rulerSystem: "modern",
+    voice: "Friend"
+  }),
+  /SOURCE_GAP/u,
+  "The transit/natal deferred bundle must not duplicate the empty-house corpus."
+);
+
+assert.equal(await runtime.loadEmptyHouseFallbackArchitectureV3Bundle(), true);
+assert.equal(runtime.isEmptyHouseFallbackArchitectureV3BundleLoaded(), true);
+const emptyHouseAfter = runtime.fallbackRendererV3.renderNatalEmptyHouse({
+  house: 1,
+  sign: "pisces",
+  rulerHouse: 12,
+  rulerSystem: "modern",
+  voice: "Friend"
+});
+assert.equal(emptyHouseAfter.parts.length, 2);
+assert.match(emptyHouseAfter.parts[0], /highly responsive to the atmosphere around them/u);
+assert.match(emptyHouseAfter.parts[1], /Intuition, dreams, and solitude can become an enormous private world/u);
+assert.deepEqual(emptyHouseAfter.sourceKeys, [
+  "fallback-hook/empty-house/base/1",
+  "fallback-hook/empty-house/sign/1/pisces",
+  "fallback-hook/empty-house/rising-ruler/pisces/neptune/12"
+]);
+assert.equal(await runtime.loadEmptyHouseFallbackArchitectureV3Bundle(), false);
 
 const skyAfter = runtime.transitSynastryFallbackRendererV3.renderSkyAspectCard(skyFacts);
 const skyPlacementAfter = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement({

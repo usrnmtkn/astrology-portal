@@ -174,6 +174,9 @@ export default defineConfig(({ mode }) => {
             if (id.includes("fallbackArchitectureV3/bundled-deferred-core-rows-v3.json")) {
               return "fallback-content-deferred-core";
             }
+            if (id.includes("fallbackArchitectureV3/bundled-empty-house-rows-v3.json")) {
+              return "fallback-content-empty-house";
+            }
             if (id.includes("fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json")) {
               return "fallback-content-transit";
             }
