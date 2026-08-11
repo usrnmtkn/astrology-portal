@@ -173,7 +173,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-11e");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-11f");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -724,7 +724,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const openFriendHouseTransitDetail[\s\S]*?sections: card\.normalized\.sections\.map\(\(section\) => \(\{[\s\S]*?heading: "",/u,
+  /const openFriendHouseTransitDetail[\s\S]*?sections: exactOwnerApprovedTransitSections\([\s\S]*?card\.normalized\.sections,[\s\S]*?\)\.map\(\(section\) => \(\{[\s\S]*?heading: "",/u,
   "Friend house-transit details must not repeat the resolver headline below the page title."
 );
 assert.match(
@@ -759,7 +759,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const openBondTransitDetail[\s\S]*?body: card\.effectBody \? \[card\.effectBody\] : \[\][\s\S]*?heading: index === 0 \? "What this activates"/u,
+  /const openBondTransitDetail[\s\S]*?body: exactOwnerApprovedTransitBody\([\s\S]*?card\.effectBody,[\s\S]*?card\.effectContentKey,[\s\S]*?\)[\s\S]*?heading: index === 0 \? "What this activates"/u,
   "Connection-transit detail views must show the effect once and expand the activated synastry connections."
 );
 assert.ok(
@@ -774,8 +774,8 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const openFriendTransitDetail[\s\S]*?sections: normalized\.sections\.map\(\(section\) => \(\{[\s\S]*?body: section\.body/u,
-  "Friend personal-transit detail views must retain the full normalized write-up."
+  /const openFriendTransitDetail[\s\S]*?sections: exactOwnerApprovedTransitSections\([\s\S]*?normalized\.sections,[\s\S]*?\)\.map\(\(section\) => \(\{[\s\S]*?body: section\.body/u,
+  "Friend personal-transit detail views must retain only exact-owner-approved normalized write-ups."
 );
 assert.match(
   aspectStylesSource,
@@ -931,9 +931,9 @@ try {
     },
     rowsFile: {
       hookRows: [
+        ...bondLanguagePass2.rows,
         ...sourceRows.hookRows,
         ...lunationBlendRows.hookRows,
-        ...bondLanguagePass2.rows,
         ...skyArticleRows.hookRows,
         ...skyAspectPhrasebook.hookRows,
         ...skyPlanetFrames.rows,
@@ -980,17 +980,25 @@ try {
 
   for (const row of bondLanguagePass2.rows) {
     const materializedRow = materializedByKey.get(row.contentKey);
+    const canonicalRow = sourceRows.hookRows.find((candidate) => candidate.contentKey === row.contentKey);
     assert.ok(materializedRow, `${row.contentKey} must materialize exactly once.`);
     assert.equal(
       materializedRow.body,
-      row.body_you,
-      `${row.contentKey} must expose the staged pass-2 candidate for review.`
+      canonicalRow?.body_you ?? row.body_you,
+      `${row.contentKey} must expose the latest governed bond row.`
     );
     assert.equal(
       materializedRow.source_snapshot.review_status,
-      "reviewed",
-      `${row.contentKey} must carry its reviewed state into the dashboard mirror.`
+      canonicalRow?.review_status ?? "reviewed",
+      `${row.contentKey} must carry its latest governed state into the dashboard mirror.`
     );
+    if (canonicalRow?.approval?.approvalLevel === "exact_owner_approved") {
+      assert.equal(
+        materializedRow.sections.packageRecord.approval.approvalLevel,
+        "exact_owner_approved",
+        `${row.contentKey} must retain exact-owner provenance in the dashboard mirror.`
+      );
+    }
   }
 
   for (const row of skySignCopySun.rows) {

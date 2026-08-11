@@ -214,9 +214,9 @@ function fullReaderBundle() {
     },
     rowsFile: {
       hookRows: latestReaderEligible([
+        ...bondLanguage.rows,
         ...sourceRows.hookRows,
         ...lunationRows.hookRows,
-        ...bondLanguage.rows,
         ...pairDailyFrames.rows,
         ...pairDailyClauses.rows,
         ...skyArticleRows.hookRows,

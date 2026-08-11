@@ -21,7 +21,7 @@
     "communication",
     "spirituality/faith",
     "privacy/withdrawal",
-    "grief/closure",
+    "closure/private processing",
     "public recognition"
   ],
   "records": {
@@ -31,6 +31,9 @@
       "domain": [
         "private work",
         "closure",
+        "grief when an emotionally significant ending supports it",
+        "release",
+        "mourning what has run its course",
         "unfinished obligations",
         "rest",
         "reduced availability",
@@ -42,6 +45,10 @@
         "finishing a private project",
         "reducing a recurring commitment",
         "ending an old role",
+        "releasing a role that can no longer organize the week",
+        "grieving an identity or responsibility when its ending matters emotionally",
+        "mourning an emotionally significant ending even when it is wanted or necessary",
+        "stepping back before the replacement is visible",
         "preparing an application or launch before announcement",
         "closing paperwork",
         "needing more uninterrupted time"
@@ -52,10 +59,11 @@
         "illness",
         "secret relationship",
         "failure",
+        "bereavement",
         "withdrawal from public life"
       ],
       "copyClaim": { "text": null, "review_status": "needs_review" },
-      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md",
+      "provenance": "artifacts/marie-satori-year-ahead-2026-manifestation-sets-v1.md; owner doctrine amendment 2026-08-11",
       "review_status": "needs_review"
     },
     "sr-overlay-venus-house-10": {

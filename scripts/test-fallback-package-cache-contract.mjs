@@ -18,7 +18,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-11e");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-11f");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
@@ -162,11 +162,11 @@ const expectedManifest = createPackageManifest({
   },
   rowsFile: {
     hookRows: latestEligible([
+      ...bondLanguagePass2.rows,
       ...sourceRows.hookRows,
       ...pairDailyFrames.rows,
       ...pairDailyClauses.rows,
       ...lunationRows.hookRows,
-      ...bondLanguagePass2.rows,
       ...skyArticleRows.hookRows,
       ...skyAspectPhrasebook.hookRows,
       ...skyPlanetFrames.rows,
@@ -220,11 +220,11 @@ const expectedCoreManifest = createPackageManifest({
   },
   rowsFile: {
     hookRows: latestEligible([
+      ...bondLanguagePass2.rows,
       ...sourceRows.hookRows,
       ...pairDailyFrames.rows,
       ...pairDailyClauses.rows,
       ...lunationRows.hookRows,
-      ...bondLanguagePass2.rows,
       ...skyArticleRows.hookRows,
       ...skyAspectPhrasebook.hookRows,
       ...skyPlanetFrames.rows,

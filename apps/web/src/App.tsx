@@ -7521,6 +7521,7 @@ function normalizeTransitHouseSurface(
             ...(layer === "fallback"
               ? [
                   "fallback-template/transit.house",
+                  `fallback-hook/transit-effect-house/${normalizeContentIdPart(transit.transitPlanet)}`,
                   `fallback-vocab/house-topic/${house}`
                 ]
               : [])

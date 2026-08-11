@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import { REPORT_AUTOMATION_RULING_PATH, REPORT_AUTOMATION_RULING_VERSION, REPORT_SKUS, reportBillingMode, reportCallEstimate, reportFulfillmentConfig, reportSku } from "../api/_lib/report-fulfillment-config.ts";
-import { assertReportTokenBudgets, processReportFulfillmentJob, ReportPersistenceInfrastructureError, reportValidatorAttemptCap, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
+import { assertReportTokenBudgets, processReportFulfillmentJob, ReportAssemblyRegenerationRequired, ReportPersistenceInfrastructureError, reportValidatorAttemptCap, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
 import { createReportFulfillmentStore } from "../api/_lib/report-fulfillment-store.ts";
 import { ReportBirthDataError, birthProfileFromPersistedData } from "../api/_lib/report-billing-window.ts";
 import { ReportCalculationApiClientError } from "../api/_lib/report-facts.ts";
@@ -43,8 +43,15 @@ assert.ok(skuCatalog.skus.every((sku) => sku.price_cents === 0 && sku.stripe_pro
 assert.equal(reportSku("general_1_month").key, "general_1m", "Legacy entitlement keys must resolve to the compact catalog key.");
 assert.equal(birthProfileFromPersistedData({ profile: { charts: [{
   birthDate: "1979-02-18", birthTime: "11:20 aM",
-  birthLocation: { label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" }
+  birthLocation: { label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" },
+  natalChart: { ascendantLongitude: 71.15, midheavenLongitude: 316.6 }
 }] } }).birthTime, "11:20", "Fulfillment must normalize legacy human birth times before any calculation payload.");
+assert.deepEqual(birthProfileFromPersistedData({ profile: { charts: [{
+  birthDate: "1979-02-18", birthTime: "11:20",
+  birthLocation: { label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" },
+  natalChart: { ascendantLongitude: 71.15, midheavenLongitude: 316.6 }
+}] } }).natalPointLongitudes, { Ascendant: 71.15, Midheaven: 316.6 },
+"Fulfillment must carry verified stored natal angles into the single report calculation source.");
 delete process.env.REPORT_BILLING_MODE;
 assert.equal(reportBillingMode(), "free_test");
 process.env.REPORT_BILLING_MODE = "stripe";
@@ -53,9 +60,11 @@ delete process.env.REPORT_BILLING_MODE;
 
 process.env.REPORT_AUTO_PUBLISH = "true";
 delete process.env.REPORT_AUTOMATION_OWNER_RULING_VERSION;
-assert.equal(reportCallEstimate("12_months").expectedCallBudget, 44);
+assert.equal(reportCallEstimate("12_months").redundancyPassCalls, 1);
+assert.equal(reportCallEstimate("12_months").coldReadCalls, 11);
+assert.equal(reportCallEstimate("12_months").expectedCallBudget, 56);
 assert.equal(reportCallEstimate("12_months").safetyMarginCalls, 11);
-assert.equal(reportCallEstimate("12_months").recommendedCallBudget, 55);
+assert.equal(reportCallEstimate("12_months").recommendedCallBudget, 67);
 assert.equal(reportFulfillmentConfig().authorizationTokenBudget, 1_450_000);
 assert.equal(reportFulfillmentConfig().reportLifetimeTokenBudget, 1_450_000);
 assert.equal(reportFulfillmentConfig().workerBatchSize, 1, "The 300-second worker may claim only one report per invocation.");
@@ -102,7 +111,9 @@ assert.throws(() => assertReportTokenBudgets({
 }), /Report lifetime token budget exceeded/u);
 assert.equal(reportModelPricing().version, "2026-08-10");
 assert.equal(estimateReportModelCost("gpt-5.6-sol", { inputTokens: 1_000_000, outputTokens: 0, totalTokens: 1_000_000 }), 5);
-assert.equal(estimateReportPlanningProfile("12_months").estimatedCostUsd, 6.3415);
+assert.equal(estimateReportPlanningProfile("12_months").totalTokens, 1_222_200);
+assert.equal(estimateReportPlanningProfile("12_months").estimatedCostUsd, 6.9805);
+assert.equal(estimateReportPlanningProfile("12_months").operationsPerReport[0].stage, "assembled_redundancy");
 delete process.env.REPORT_JUDGE_THRESHOLD;
 assert.equal(reportFulfillmentConfig().judgeThreshold, 0.85, "V3.1 must default to the owner-approved 0.85 threshold.");
 assert.equal(reportFulfillmentConfig().autoPublishEnabled, false, "Auto-publish requires the owner ruling version as well as its feature flag.");
@@ -262,17 +273,23 @@ const spliceChainDefects = [
 const spliceChainSchemas = [];
 const spliceChain = await runReportWriterChain({ payload: spliceChainPayload, callModel: async (input) => {
   spliceChainSchemas.push(input.schemaName);
+  if (input.schemaName === "report_unit_cold_read") {
+    assert.match(input.prompt, /RENDERED_UNIT/u);
+    assert.doesNotMatch(input.prompt, /UNIT_FACTS|CANONICAL_PROMPT|OWNER_COMPARISON_SET|VALIDATOR_RESULTS/u);
+  }
   const value = input.schemaName === "report_unit_draft" ? spliceChainDraft
     : input.schemaName === "report_unit_critique" ? { result: "defects", applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" }, defects: spliceChainDefects }
+      : input.schemaName === "report_unit_cold_read" ? { result: "no_defects", applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" }, defects: [] }
       : { replacements: [
         { defect_id: "chain-body", location: "body", scope_start: 0, scope_end: 0, replacement: "FIXTURE_ONLY_REPLACED." },
         { defect_id: "chain-timing", location: "timing", scope_start: 0, scope_end: 0, replacement: "FIXTURE_ONLY_NEW_TIMING." }
       ] };
   return { value, model: input.model, provider: input.provider, usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } };
 } });
-assert.deepEqual(spliceChainSchemas, ["report_unit_draft", "report_unit_critique", "report_unit_revision_spans"], "All named defects must be revised in one span-only call.");
+assert.deepEqual(spliceChainSchemas, ["report_unit_draft", "report_unit_critique", "report_unit_revision_spans", "report_unit_cold_read"], "All named defects must be revised in one span-only call before the final cold read.");
 assert.equal(spliceChain.revised.body, "FIXTURE_ONLY_REPLACED. FIXTURE_ONLY_SECOND.");
 assert.equal(spliceChain.revised.summary, spliceChainDraft.summary, "The writer chain must keep unnamed text byte-identical.");
+assert.equal(spliceChain.coldCritique.result, "no_defects");
 assert.equal(verifyReportFactLock({ ...draft, body: "March 3 is traceable." }, frozen).passed, true);
 assert.equal(verifyReportFactLock({ ...draft, body: "March 31 is not traceable." }, frozen).passed, false);
 assert.equal(verifyReportFactLock({ ...draft, body: "MAR 3 · FIXTURE_ONLY · FIXTURE_ONLY. · *A lunar eclipse falls on your natal Saturn.*" }, frozen).passed, true);
@@ -471,7 +488,15 @@ function createMemoryStore() {
     async releaseFactsClaim(report) { facts.delete(`claim:${report.user_id}:${report.report_horizon}:${report.period_start}`); },
     async saveFacts(report, bundle) { facts.set(`${report.user_id}:${report.report_horizon}:${report.period_start}`, bundle); },
     async unit(reportId, unitId) { return units.get(`${reportId}:${unitId}`) ?? null; },
-    async saveUnit(report, unitId, value, sourceSnapshot) { units.set(`${report.id}:${unitId}`, { id: `${report.id}:${unitId}`, body: value.body, sections: value.sections, source_snapshot: sourceSnapshot }); },
+    async saveUnit(report, unitId, value, sourceSnapshot) { units.set(`${report.id}:${unitId}`, {
+      id: `${report.id}:${unitId}`,
+      content_key: `report:${report.id}:${unitId}`,
+      headline: value.headline ?? "",
+      summary: value.summary ?? "",
+      body: value.body ?? "",
+      sections: value.sections ?? [],
+      source_snapshot: sourceSnapshot
+    }); },
     async unitRows(reportId) { return [...units.entries()].filter(([key]) => key.startsWith(`${reportId}:`)).map(([, value]) => value); },
     async countCombination() { return 0; }, async queueAudit() {}, async recordDelivery() {}
   };
@@ -488,6 +513,21 @@ assert.equal(reportJudgeVerdict({ ...passingJudgeScores, natural_language: 2 }, 
 const shortUnitScores = { ...passingJudgeScores, interpretive_movement: null };
 assert.equal(reportJudgeOverall(shortUnitScores, false), 1);
 assert.equal(reportJudgeVerdict(shortUnitScores, 0.85, false), "pass", "Movement is excluded when a short unit marks it not applicable.");
+function fixtureUnitDraft(unitId) {
+  const unitFingerprint = crypto.createHash("sha256").update(unitId).digest("hex").slice(0, 10).toUpperCase();
+  return {
+    headline: `FIXTURE_ONLY ${unitFingerprint} HEADLINE.`,
+    tldr: `FIXTURE_ONLY ${unitFingerprint} TLDR.`,
+    summary: `FIXTURE_ONLY ${unitFingerprint} SUMMARY.`,
+    body: `FIXTURE_ONLY ${unitFingerprint} BODY.`,
+    action: `FIXTURE_ONLY ${unitFingerprint} ACTION.`,
+    timing: `FIXTURE_ONLY ${unitFingerprint} TIMING.`,
+    sections: unitId === "key-dates" ? [{
+      heading: "FIXTURE_ONLY SEASON",
+      body: "FEB 18 · FIXTURE_ONLY TITLE · A supported event may require an answer. · FIXTURE_ONLY attribution."
+    }] : []
+  };
+}
 function modelCallWithCrash(crashAt = Infinity) {
   let calls = 0;
   const call = async (input) => {
@@ -506,12 +546,22 @@ function modelCallWithCrash(crashAt = Infinity) {
       assert.match(input.prompt, /LIVED_PROSE_STANDARD[\s\S]*FLATNESS \/ LIVED PROSE[\s\S]*COMPLETE_UNIT[\s\S]*UNIT_FACTS[\s\S]*OWNER_COMPARISON_SET/u);
       assert.match(input.prompt, /Never return flatness or lived_prose as a defect category\./u);
     }
+    if (input.schemaName === "report_unit_cold_read") {
+      assert.match(input.prompt, /RENDERED_UNIT/u);
+      assert.doesNotMatch(input.prompt, /UNIT_FACTS|CANONICAL_PROMPT|OWNER_COMPARISON_SET|VALIDATOR_RESULTS/u,
+        "The final cold read must receive rendered prose only, never context that can rescue it.");
+    }
+    const unitId = /"unitId":\s*"([^"]+)"/u.exec(input.prompt)?.[1] ?? "fixture-unit";
+    const uniqueDraft = fixtureUnitDraft(unitId);
     const result = {
-      value: input.schemaName === "report_unit_critique" ? {
+      value: input.schemaName === "report_unit_critique" || input.schemaName === "report_unit_cold_read" ? {
         result: "no_defects",
         applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
         defects: []
-      } : structuredClone(modelDraft),
+      } : input.schemaName === "report_redundancy_pass" ? {
+        result: "no_findings",
+        findings: []
+      } : uniqueDraft,
       model: input.model, provider: input.provider,
       usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }
     };
@@ -732,7 +782,7 @@ assert.equal(deadlineResult.status, "queued", "A deadline-aware cycle must yield
 assert.equal(deadlineResult.continuation, true);
 assert.equal(deadlineStore.units.size, 1, "The current unit must be fully persisted before the worker yields.");
 assert.ok(deadlineStore.units.has("deadline-report:overview"));
-assert.equal(deadlineModel.count(), 2, "Yielding at a unit boundary must not add or interrupt provider calls.");
+assert.equal(deadlineModel.count(), 3, "Yielding at a unit boundary must include the closing cold read and must not add or interrupt calls after persistence.");
 assert.deepEqual({
   state: deadlineStore.jobs.get(deadlineJob.id).state,
   step: deadlineStore.jobs.get(deadlineJob.id).step,
@@ -768,7 +818,7 @@ const validatorRepairModel = async (input) => {
       ...modelDraft,
       body: "You may submit an application. You may revise an application. You may discuss an application. You may replace an application."
     };
-  } else if (input.schemaName === "report_unit_critique") {
+  } else if (input.schemaName === "report_unit_critique" || input.schemaName === "report_unit_cold_read") {
     value = { result: "no_defects", applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" }, defects: [] };
   } else {
     assert.match(input.prompt, /validator-1-1-lexical_budget/u);
@@ -791,7 +841,7 @@ const validatorRepairResult = await processReportFulfillmentJob({
   continuationPolicy: { deadlineAtMs: 240_000, maxNewUnits: 1, now: () => 120_000 }
 });
 assert.equal(validatorRepairResult.status, "queued");
-assert.deepEqual(validatorRepairSchemas, ["report_unit_draft", "report_unit_critique", "report_unit_revision_spans"],
+assert.deepEqual(validatorRepairSchemas, ["report_unit_draft", "report_unit_critique", "report_unit_cold_read", "report_unit_revision_spans"],
   "A deterministic validator failure must re-enter as one named splice, never a second whole-unit draft.");
 assert.match(validatorRepairStore.units.get("validator-repair-report:overview").body, /replace a proposal/u);
 assert.doesNotMatch(validatorRepairStore.units.get("validator-repair-report:overview").body, /replace an application/u);
@@ -835,12 +885,105 @@ const resumeReport = {
 };
 resumeStore.reports.set(resumeReport.id, resumeReport);
 resumeStore.entitlements.set("resume-ent", { id: "resume-ent", user_id: "resume-user", status: "active", product_key: "general_1m" });
-const crashCall = modelCallWithCrash(3);
+const crashCall = modelCallWithCrash(4);
 await assert.rejects(processReportFulfillmentJob({ job: authorizedJob({ id: "resume-job", report_id: resumeReport.id, entitlement_id: "resume-ent", state: "running", step: "writing", attempt: 1 }), store: resumeStore, calculateFacts, callModel: crashCall, judgeCall }), /FIXTURE_ONLY_CRASH/u);
 assert.ok(resumeStore.units.has("resume-report:overview"));
 const resumeCall = modelCallWithCrash();
 await processReportFulfillmentJob({ job: authorizedJob({ id: "resume-job", report_id: resumeReport.id, entitlement_id: "resume-ent", state: "running", step: "writing", attempt: 2 }), store: resumeStore, calculateFacts, callModel: resumeCall, judgeCall });
-assert.equal(resumeCall.count(), 6, "Resume must skip the completed unit and make two writer calls for each of three remaining units.");
+assert.equal(resumeCall.count(), 10, "Resume must skip the completed unit, make draft, critique, and cold-read calls for each of three remaining units, and run one report-level redundancy pass.");
+
+function assemblyReadyReport(id) {
+  return {
+    ...structuredClone(resumeReport),
+    id,
+    facts: factsForHorizon("1_month"),
+    facts_engine: "FIXTURE_ONLY_ENGINE",
+    facts_hash: "FIXTURE_ONLY_FACTS_HASH",
+    fulfillment_status: "validating",
+    token_count: 0,
+    token_count_total: 0,
+    token_spend_usd_estimate: 0,
+    attempt_counts: { validator: 0, judge: 0 }
+  };
+}
+
+async function seedAssemblyUnits(targetStore, report, bodyByUnit = {}) {
+  for (const [index, unitId] of ["overview", "what-matters-most", "domain:main", "key-dates"].entries()) {
+    const marker = `${index + 1}${index + 1}${index + 1}`;
+    await targetStore.saveUnit(report, unitId, {
+      headline: `FIXTURE ${marker} HEADING.`,
+      tldr: `FIXTURE ${marker} TLDR.`,
+      summary: `A distinct summary belongs to marker ${marker}.`,
+      body: bodyByUnit[unitId] ?? `A distinct body consequence belongs to marker ${marker}.`,
+      action: `A distinct action belongs to marker ${marker}.`,
+      timing: `A distinct timing note belongs to marker ${marker}.`,
+      sections: unitId === "key-dates" ? [{
+        heading: "FIXTURE KEY DATES",
+        body: "FEB 18 · FIXTURE TITLE · A supported event may require an answer. · FIXTURE attribution."
+      }] : []
+    }, {
+      fulfillmentPassed: true,
+      validatorResults: [],
+      judge: { scores: passingJudgeScores, overall: 1, verdict: "pass", findings: [] },
+      promptVersions: { judge: "report-judge-v3.1" },
+      factsHash: report.facts_hash,
+      attemptCounts: { validator: 1, judge: 1 }
+    });
+  }
+}
+
+const structuralStore = createMemoryStore();
+const structuralReport = assemblyReadyReport("structural-report");
+structuralStore.reports.set(structuralReport.id, structuralReport);
+structuralStore.entitlements.set("structural-ent", { id: "structural-ent", user_id: structuralReport.user_id, status: "active", product_key: "general_1m" });
+const repeatedClose = "The same closing sentence must not appear in two report units.";
+await seedAssemblyUnits(structuralStore, structuralReport, { overview: repeatedClose, "what-matters-most": repeatedClose });
+const structuralModel = modelCallWithCrash();
+await assert.rejects(processReportFulfillmentJob({
+  job: authorizedJob({ id: "structural-job", report_id: structuralReport.id, entitlement_id: "structural-ent", state: "running", step: "validating", attempt: 1 }),
+  store: structuralStore, calculateFacts, callModel: structuralModel, judgeCall
+}), (error) => error instanceof ReportAssemblyRegenerationRequired && error.issues.some((entry) => entry.code === "repeated_exact_sentence"));
+assert.equal(structuralModel.count(), 0, "Deterministic assembly defects must fail before a report-level provider call.");
+assert.equal(structuralStore.units.get("structural-report:overview").source_snapshot.fulfillmentPassed, true);
+assert.equal(structuralStore.units.get("structural-report:what-matters-most").source_snapshot.fulfillmentPassed, false,
+  "Only the implicated repeated unit should re-enter its writer chain.");
+assert.notEqual(structuralStore.reports.get(structuralReport.id).fulfillment_status, "needs_review");
+
+const redundancyStore = createMemoryStore();
+const redundancyReport = assemblyReadyReport("redundancy-report");
+redundancyStore.reports.set(redundancyReport.id, redundancyReport);
+redundancyStore.entitlements.set("redundancy-ent", { id: "redundancy-ent", user_id: redundancyReport.user_id, status: "active", product_key: "general_1m" });
+await seedAssemblyUnits(redundancyStore, redundancyReport);
+let redundancyProviderCalls = 0;
+const redundancyFindingCall = async (input) => {
+  redundancyProviderCalls += 1;
+  const attempt = { provider: input.provider, model: input.model, schemaName: input.schemaName };
+  await input.beforeProviderCall?.(attempt);
+  assert.equal(input.schemaName, "report_redundancy_pass");
+  const quote = "A distinct body consequence belongs to marker 222.";
+  const result = {
+    value: {
+      result: "findings",
+      findings: [{
+        id: "fixture-semantic-repeat", category: "semantic_duplication", unit_id: "what-matters-most",
+        related_unit_ids: ["overview"], location: "body", sentence_index: 0, scope_start: 0, scope_end: 0,
+        quote, evidence: "FIXTURE_ONLY supported comparison evidence.", instruction: "FIXTURE_ONLY regenerate the named unit without repeating the overview job."
+      }]
+    },
+    model: input.model, provider: input.provider,
+    usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }
+  };
+  await input.afterProviderCall?.(attempt, result);
+  return result;
+};
+await assert.rejects(processReportFulfillmentJob({
+  job: authorizedJob({ id: "redundancy-job", report_id: redundancyReport.id, entitlement_id: "redundancy-ent", state: "running", step: "validating", attempt: 1 }),
+  store: redundancyStore, calculateFacts, callModel: redundancyFindingCall, judgeCall
+}), (error) => error instanceof ReportAssemblyRegenerationRequired && error.issues.some((entry) => entry.code === "report_semantic_duplication"));
+assert.equal(redundancyProviderCalls, 1, "The report-level pass is one findings-only provider call.");
+assert.equal(redundancyStore.units.get("redundancy-report:what-matters-most").source_snapshot.fulfillmentPassed, false);
+assert.equal(redundancyStore.reports.get(redundancyReport.id).token_count, 2, "Accepted report-level evaluation tokens must remain accounted when a named unit is requeued.");
+assert.notEqual(redundancyStore.reports.get(redundancyReport.id).fulfillment_status, "needs_review");
 
 const persistenceStore = createMemoryStore();
 const persistenceReport = {
@@ -892,7 +1035,7 @@ const persistenceFailure = await runReportFulfillmentBatch({
   judgeCall: countedPersistenceJudge,
   persistenceRetry: { attempts: 3, baseDelayMs: 10, sleep: async (milliseconds) => { persistenceDelays.push(milliseconds); } }
 });
-assert.equal(firstPersistenceModel.count(), 2, "The gated overview must be billed exactly once before its persistence failure.");
+assert.equal(firstPersistenceModel.count(), 3, "The gated overview, including its cold read, must be billed exactly once before its persistence failure.");
 assert.equal(persistenceJudgeCalls, 1);
 assert.deepEqual(persistenceDelays, [10, 20], "Persistence writes must use bounded exponential backoff.");
 assert.equal(persistenceFailure.processed[0].retryable, true);
@@ -901,7 +1044,7 @@ assert.match(persistenceFailure.processed[0].error, /^REPORT_INFRASTRUCTURE_ERRO
 assert.equal(persistenceStore.jobs.get(persistenceJob.id).state, "retry");
 const cachedOverview = persistenceStore.jobs.get(persistenceJob.id).passing_unit_cache.overview;
 assert.equal(cachedOverview.schema, "report-passing-unit-cache.v1");
-assert.deepEqual(cachedOverview.draft, modelDraft, "The exact passing text must be durable in job state before the unit write.");
+assert.deepEqual(cachedOverview.draft, fixtureUnitDraft("overview"), "The exact passing text must be durable in job state before the unit write.");
 assert.deepEqual(cachedOverview.sourceSnapshot.judge.scores, passingJudgeScores, "The passing judge scores must be durable in job state.");
 
 const secondPersistenceModel = modelCallWithCrash();
@@ -920,11 +1063,13 @@ const persistenceResume = await runReportFulfillmentBatch({
   persistenceRetry: { attempts: 3, baseDelayMs: 10, sleep: async () => {} }
 });
 assert.equal(persistenceResume.processed[0].result.status, "needs_review");
-assert.equal(secondPersistenceModel.count(), 6, "The retry must persist cached overview work without re-entering its writer chain, then generate only three remaining units.");
-assert.equal(firstPersistenceModel.count() + secondPersistenceModel.count(), 8, "Infrastructure retry must not add any writer calls above the clean four-unit path.");
+assert.equal(secondPersistenceModel.count(), 10, "The retry must persist cached overview work without re-entering its writer chain, generate only three remaining units with cold reads, and run one report-level redundancy pass.");
+assert.equal(firstPersistenceModel.count() + secondPersistenceModel.count(), 13, "Infrastructure retry must not add any calls above the clean four-unit path plus cold reads and its report-level redundancy pass.");
 assert.equal(persistenceJudgeCalls, 4, "Infrastructure retry must not re-bill the cached overview judge.");
 assert.deepEqual(persistenceStore.jobs.get(persistenceJob.id).passing_unit_cache, {}, "A cached unit clears only after its write and report accounting succeed.");
 assert.deepEqual(persistenceStore.units.get("persistence-report:overview").source_snapshot.judge.scores, passingJudgeScores);
+assert.equal(persistenceStore.units.get("persistence-report:overview").source_snapshot.writerReviews[0].coldCritique.result, "no_defects",
+  "Persisted review evidence must include the context-free closing pass.");
 
 const retryStore = createMemoryStore();
 retryStore.claimJobs = async () => [authorizedJob({ id: "retry-job", report_id: "retry-report", entitlement_id: "retry-ent", state: "running", step: "writing", attempt: 1 })];
