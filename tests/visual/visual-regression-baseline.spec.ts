@@ -229,6 +229,9 @@ test.describe("visual regression baseline", () => {
       await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible({
         timeout: routeReadyTimeoutMs
       });
+      await expect(page.getByText("Houses: Whole Sign", { exact: true })).toBeVisible({
+        timeout: routeReadyTimeoutMs
+      });
     });
     await expect(page).toHaveScreenshot("client-sky-desktop-light.png", screenshotOptions);
 
