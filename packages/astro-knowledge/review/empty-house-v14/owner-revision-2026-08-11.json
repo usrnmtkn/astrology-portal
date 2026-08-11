@@ -1,0 +1,13 @@
+{
+  "note": "Owner-authored revision to shipped V14 content. Apply to serving rows, regenerate bundles, update approval record digests.",
+  "rows": [
+    {
+      "corpus_key": "empty-2nd|cancer",
+      "contentKey": "fallback-hook/empty-house/sign/2/cancer",
+      "body_you": "You tie money closely to home and family. You may spend generously on the people you care for, feel protective of what you own, or make financial decisions partly from instinct. Family can help or complicate the money story. When your mood changes, your spending usually follows, which can make your money situation unpredictable.",
+      "body_they": "They tie money closely to home and family. They may spend generously on the people they care for, feel protective of what they own, or make financial decisions partly from instinct. Family can help or complicate the money story. When their mood changes, their spending usually follows, which can make their money situation unpredictable."
+    }
+  ],
+  "new_body_you_digest_sha256": "ca3d554e9b0992f4ed6c51be6de1774d9bb69612f5ee577429247a8aca199846",
+  "new_body_they_digest_sha256": "d3947881987c858352a206f963eacc2f2148bd179b2b3ccbd116f5917bfa8a94"
+}

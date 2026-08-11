@@ -15,6 +15,7 @@ const importManifestPath = path.join(reviewRoot, "import-manifest.json");
 const projection3FlagsPath = path.join(reviewRoot, "body-they-flagged-for-owner.json");
 const projection4CorrectionsPath = path.join(reviewRoot, "body-they-corrections.json");
 const projection4DecisionAidPath = path.join(reviewRoot, "body-they-decision-aid.json");
+const ownerRevisionPath = path.join(reviewRoot, "owner-revision-2026-08-11.json");
 const authoredInputPath = path.join(
   repoRoot,
   "apps/web/src/content/fallbackArchitectureV3/authored-inputs/empty-house-v14-modern-v1.json"
@@ -175,6 +176,7 @@ const canonical = JSON.parse(canonicalBytes);
 const projection3Flags = JSON.parse(fs.readFileSync(projection3FlagsPath, "utf8"));
 const projection4Corrections = JSON.parse(fs.readFileSync(projection4CorrectionsPath, "utf8"));
 const projection4DecisionAid = JSON.parse(fs.readFileSync(projection4DecisionAidPath, "utf8"));
+const ownerRevision = JSON.parse(fs.readFileSync(ownerRevisionPath, "utf8"));
 if (projection3Flags.source_body_they_digest_sha256 !== projection3BodyTheyDigest) {
   throw new Error("Projection-3 Friend review flags do not match the supplied body_they digest.");
 }
@@ -191,6 +193,13 @@ const correctionByKey = new Map(projection4Corrections.rows.map((row) => [row.co
 const decisionByKey = new Map(projection4DecisionAid.rows.map((row) => [row.corpus_key, row]));
 if (correctionByKey.size !== 34 || decisionByKey.size !== 65) {
   throw new Error("Projection-4 correction and decision-aid keys must be unique.");
+}
+if (ownerRevision.rows?.length !== 1) {
+  throw new Error("Projection-5 must contain exactly one owner-authored revision.");
+}
+const ownerRevisionByKey = new Map(ownerRevision.rows.map((row) => [row.corpus_key, row]));
+if (ownerRevisionByKey.size !== 1) {
+  throw new Error("Projection-5 owner revision keys must be unique.");
 }
 const correctionDecisions = projection4DecisionAid.rows.filter((row) => row.verdict === "corrected_wording_proposed");
 const approvedAsIsDecisions = projection4DecisionAid.rows.filter((row) => row.verdict === "approve_as_is");
@@ -241,15 +250,28 @@ for (const entry of canonical.entries) {
   }
 }
 
-const readerEntries = canonical.entries.filter((entry) => entry.category !== "principle");
+const readerEntries = canonical.entries
+  .filter((entry) => entry.category !== "principle")
+  .map((entry) => {
+    const revision = ownerRevisionByKey.get(entry.key);
+    if (!revision) return entry;
+    if (revision.contentKey !== contentKey(entry)) {
+      throw new Error(`${entry.key}: owner revision contentKey does not match the serving projection.`);
+    }
+    return { ...entry, copy_you: revision.body_you, owner_revision: "owner-revision-2026-08-11.json" };
+  });
 const friendRows = readerEntries.map((entry) => {
   const draftedBodyThey = toTheyVoice(entry.copy_you, entry.key);
+  const ownerRevisionRow = ownerRevisionByKey.get(entry.key);
   const correction = correctionByKey.get(entry.key);
   const decision = decisionByKey.get(entry.key);
   if (decision && decision.body_they_drafted !== draftedBodyThey) {
     throw new Error(`${entry.key}: projection-4 decision aid does not match the deterministic draft.`);
   }
-  const bodyThey = correction?.body_they ?? draftedBodyThey;
+  const bodyThey = ownerRevisionRow?.body_they ?? correction?.body_they ?? draftedBodyThey;
+  if (ownerRevisionRow && draftedBodyThey !== ownerRevisionRow.body_they) {
+    throw new Error(`${entry.key}: owner-authored Friend revision does not match deterministic voice adaptation.`);
+  }
   const originalFlag = projection3Flags.flags[entry.key] ?? null;
   const bodyTheyFlag = correction
     ? `corrected wording adopted by owner 2026-08-10 (was: ${originalFlag})`
@@ -280,7 +302,7 @@ const dispositionCounts = {
 };
 const friendReview = {
   schema: "tldrastro.empty-house.friend-variants-review.v1",
-  version: "empty-house-v14-modern-friend-review-projection-4-2026-08-10",
+  version: "empty-house-v14-modern-friend-review-projection-5-2026-08-11",
   source_version: canonical.version,
   source_rows_sha256: sha256(canonicalBytes),
   prior_projection_body_they_digest_sha256: projection3BodyTheyDigest,
@@ -310,7 +332,9 @@ const authoredRows = readerEntries.map((entry, index) => ({
     `empty-house-v14/${entry.source_sheet}/${entry.source_row}`,
     `AR/page/${entry.page_ref}`,
   ],
-  approved_via: canonical.governance,
+  approved_via: entry.owner_revision
+    ? `${canonical.governance}; owner-authored exact wording 2026-08-11 (${entry.owner_revision})`
+    : canonical.governance,
   governance: canonical.governance,
   version: canonical.version,
   judge_verdict: "pending",
@@ -333,10 +357,18 @@ const authoredRows = readerEntries.map((entry, index) => ({
   body_you_sha256: sha256(entry.copy_you),
   body_they_sha256: friendRows[index].body_they_sha256,
   friend_variant_review: "packages/astro-knowledge/review/empty-house-v14/empty-house-v14-friend-variants-review.json",
+  ...(entry.owner_revision ? {
+    owner_revision: {
+      recordPath: `packages/astro-knowledge/review/empty-house-v14/${entry.owner_revision}`,
+      approvedAt: "2026-08-11",
+      bodyYouDigestSha256: ownerRevision.new_body_you_digest_sha256,
+      bodyTheyDigestSha256: ownerRevision.new_body_they_digest_sha256,
+    },
+  } : {}),
 }));
 const authoredInput = {
   schema: "tldrastro.empty-house.authored-input.v14-modern-v1",
-  version: "empty-house-v14-modern-v1",
+  version: "empty-house-v14-modern-v1-projection-5",
   source_version: canonical.version,
   source_rows_sha256: sha256(canonicalBytes),
   prior_projection_body_they_digest_sha256: projection3BodyTheyDigest,

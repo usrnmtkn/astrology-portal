@@ -393,14 +393,36 @@ export function renderNatalEmptyHouse(facts, opts = {}) {
     throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign}/${ruler}-in-${rulerHouse} (${v})`);
   }
 
-  const parts = [signBody, rulerBody];
+  const bridgeTemplateKey = house === 1
+    ? "fallback-hook/empty-house/bridge-template/house-1"
+    : "fallback-hook/empty-house/bridge-template/standard";
+  const topicMKey = `fallback-vocab/empty-house-ruler-jurisdiction/${rulerHouse}`;
+  const topicNKey = `fallback-vocab/empty-house-bridge-topic-short/${house}`;
+  const bridgeTemplate = opts.includeEmptyHouseBridge ? findTemplate(bridgeTemplateKey, opts) : null;
+  const topicM = bridgeTemplate ? getVocab(topicMKey, opts) : null;
+  const topicN = house === 1 ? null : (bridgeTemplate ? getVocab(topicNKey, opts) : null);
+  const planet = ruler === "sun" || ruler === "moon" ? `the ${title(ruler)}` : title(ruler);
+  const bridge = bridgeTemplate && topicM && (house === 1 || topicN)
+    ? renderTemplate(bridgeTemplate, {
+      houseN: ordinal(house),
+      sign: title(sign),
+      planet,
+      houseM: ordinal(rulerHouse),
+      topicN,
+      topicM,
+    }, `empty house bridge ${house}/${sign}/${ruler}-in-${rulerHouse}`, v)
+    : null;
+  const parts = [signBody, ...(bridge ? [bridge] : []), rulerBody];
+  const bridgeSourceKeys = bridge
+    ? [bridgeTemplateKey, ...(house === 1 ? [] : [topicNKey]), topicMKey]
+    : [];
   return {
     headline: `${ordinal(house)} House`,
     note,
     body: parts.join("\n\n"),
     parts,
     templateKey: "fallback-template/natal.empty-house-v14",
-    sourceKeys: [baseKey, signKey, rulerKey],
+    sourceKeys: [baseKey, signKey, ...bridgeSourceKeys, rulerKey],
   };
 }
 
