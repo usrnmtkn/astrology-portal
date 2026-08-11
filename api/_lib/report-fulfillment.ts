@@ -174,10 +174,11 @@ export async function processReportFulfillmentJob(input: {
     await input.store.updateJob(input.job.id, { state: "cancelled", last_error: `Entitlement is ${entitlement.status}.` });
     return { status: "cancelled" };
   }
-  if (!input.job.authorization_token || !input.job.authorized_call_budget) {
+  if (!input.job.authorization_token || !input.job.authorized_call_budget || !input.job.authorized_token_budget) {
     throw new Error("REPORT_CALL_AUTHORIZATION_REQUIRED: fulfillment has no owner-issued call budget.");
   }
   let tokenCountTotal = report.token_count_total ?? 0;
+  let authorizationTokenCount = input.job.authorization_token_count ?? 0;
   let estimatedCostTotal = report.token_spend_usd_estimate ?? 0;
   const providerCall = input.callModel ?? callReportModel;
   let activeLedgerCallId: string | null = null;
@@ -203,10 +204,15 @@ export async function processReportFulfillmentJob(input: {
         estimatedCostUsd, responseId: result.responseId
       });
       tokenCountTotal += result.usage.totalTokens;
+      authorizationTokenCount += result.usage.totalTokens;
       estimatedCostTotal = Number((estimatedCostTotal + estimatedCostUsd).toFixed(6));
-      if (tokenCountTotal > config.tokenBudget) {
-        throw new Error(`Report total token budget exceeded (${tokenCountTotal}/${config.tokenBudget}).`);
-      }
+      const lifetimeTokenBudget = report.token_budget_lifetime ?? config.reportLifetimeTokenBudget;
+      assertReportTokenBudgets({
+        authorizationTokenCount,
+        authorizationTokenBudget: input.job.authorized_token_budget,
+        lifetimeTokenCount: tokenCountTotal,
+        lifetimeTokenBudget
+      });
     },
     onProviderCallError: async (attempt, error) => {
       await modelInput.onProviderCallError?.(attempt, error);
@@ -396,6 +402,20 @@ export async function processReportFulfillmentJob(input: {
     }
   }
   return { status: publicationStatus, tokenCount, tokenCountTotal, estimatedCostUsd: estimatedCostTotal, judgeScores };
+}
+
+export function assertReportTokenBudgets(input: {
+  authorizationTokenCount: number;
+  authorizationTokenBudget: number;
+  lifetimeTokenCount: number;
+  lifetimeTokenBudget: number;
+}) {
+  if (input.authorizationTokenCount > input.authorizationTokenBudget) {
+    throw new Error(`Authorization token budget exceeded (${input.authorizationTokenCount}/${input.authorizationTokenBudget}).`);
+  }
+  if (input.lifetimeTokenCount > input.lifetimeTokenBudget) {
+    throw new Error(`Report lifetime token budget exceeded (${input.lifetimeTokenCount}/${input.lifetimeTokenBudget}).`);
+  }
 }
 
 export async function runReportFulfillmentBatch(input: {
