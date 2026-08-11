@@ -2255,7 +2255,7 @@ function createKnowledgeMatrixV9Resolver(manifest, rowsFile, buildReport) {
 }
 
 // resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-10d";
+var PACKAGE_VERSION = "v3-2026-08-10e";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
