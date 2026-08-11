@@ -137,6 +137,10 @@ const relationshipFallbackSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3RelationshipBundle.ts"),
   "utf8"
 );
+const emptyHouseFallbackSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3EmptyHouseBundle.ts"),
+  "utf8"
+);
 const deferredSkyPlacementSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3SkyPlacementBundle.ts"),
   "utf8"
@@ -175,6 +179,7 @@ assert.match(viteSource, /fallback-content-transit/u, "Transit fallback content 
 assert.match(viteSource, /fallback-content-sky/u, "Sky fallback content must have a stable cache chunk.");
 assert.match(viteSource, /fallback-content-sky-core/u, "The eager Sky source partition must have a stable cache chunk.");
 assert.match(viteSource, /fallback-content-deferred-core/u, "The deferred natal and relationship source partition must have a stable cache chunk.");
+assert.match(viteSource, /fallback-content-empty-house/u, "Empty-house content must have a stable on-demand cache chunk.");
 assert.match(viteSource, /fallback-content-sky-placement/u, "The on-demand Sky Placement source partition must have a stable cache chunk.");
 assert.match(
   viteSource,
@@ -218,6 +223,16 @@ assert.match(
   /import\("\.\/fallbackArchitectureV3SkyPlacementBundle"\)/u,
   "Sky Placement article content must remain behind a dynamic runtime boundary."
 );
+assert.match(
+  fallbackRuntimeSource,
+  /import\("\.\/fallbackArchitectureV3EmptyHouseBundle"\)/u,
+  "Empty-house natal content must remain behind a dynamic runtime boundary."
+);
+assert.match(
+  appSource,
+  /if \(mode !== "profile" && mode !== "friends"\)[\s\S]{0,400}loadEmptyHouseFallbackArchitectureV3Bundle\(\)/u,
+  "Empty-house content must load for You and Friends without changing Sky startup timing."
+);
 assert.doesNotMatch(
   fallbackRuntimeSource,
   /^import .*source-rows\/sky-(?:planet-frames|placement-inventories|sign-copy).*\.json/mu,
@@ -227,6 +242,11 @@ assert.match(
   deferredSkyPlacementSource,
   /bundled-sky-placement-rows-v3\.json/u,
   "The Sky Placement route partition must use its generated package slice."
+);
+assert.match(
+  emptyHouseFallbackSource,
+  /bundled-empty-house-rows-v3\.json/u,
+  "The Empty House route partition must use its generated package slice."
 );
 assert.doesNotMatch(
   fallbackRuntimeSource,

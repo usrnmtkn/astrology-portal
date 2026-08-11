@@ -56,6 +56,7 @@ import {
   installFallbackArchitectureV3Bundle,
   installSkyPlacementFallbackArchitectureV3Bundle,
   loadDeferredFallbackArchitectureV3Bundle,
+  loadEmptyHouseFallbackArchitectureV3Bundle,
   loadRelationshipFallbackArchitectureV3Bundle,
   loadSkyPlacementFallbackArchitectureV3Bundle,
   fallbackArchitectureV3PackageVersion,
@@ -2037,6 +2038,28 @@ const lunarMeanDailyMotion = 13.176358;
 const traditionalSignRulers: Record<string, string> = Object.fromEntries(
   zodiacSigns.map((sign) => [sign, fallbackV3SignRuler(sign)])
 );
+type EmptyHouseRulerSystem = "modern" | "traditional";
+// Surface-local launch setting. The owner-authored traditional house-1 rows
+// will make the second option fully servable in the next additive phase.
+const activeEmptyHouseRulerSystem: EmptyHouseRulerSystem = "modern";
+const emptyHouseV14ModernSignRulers: Record<string, string> = {
+  Aries: "Mars",
+  Taurus: "Venus",
+  Gemini: "Mercury",
+  Cancer: "Moon",
+  Leo: "Sun",
+  Virgo: "Mercury",
+  Libra: "Venus",
+  Scorpio: "Pluto",
+  Sagittarius: "Jupiter",
+  Capricorn: "Saturn",
+  Aquarius: "Uranus",
+  Pisces: "Neptune"
+};
+const emptyHouseSignRulersBySystem: Record<EmptyHouseRulerSystem, Record<string, string>> = {
+  modern: emptyHouseV14ModernSignRulers,
+  traditional: traditionalSignRulers
+};
 
 function getInitialAccountIntent(): AuthMode {
   try {
@@ -6564,28 +6587,10 @@ function emptyHouseContext(
   natalSky: SkySnapshot | null
 ) {
   const sign = natalSky?.ascendant ? signAtWholeSignHouse(natalSky.ascendant, house) : "";
-  const ruler = sign ? traditionalSignRulers[sign] ?? "" : "";
+  const ruler = sign ? emptyHouseSignRulersBySystem[activeEmptyHouseRulerSystem][sign] ?? "" : "";
   const rulerPosition = ruler ? natalSky?.positions.find((candidate) => candidate.planet === ruler) ?? null : null;
 
-  return { sign, ruler, rulerPosition };
-}
-
-function emptyHouseRulerOccurrence(
-  house: number,
-  natalSky: SkySnapshot | null,
-  emptyHouses: number[] = [house]
-) {
-  const currentRuler = emptyHouseContext(house, natalSky).ruler;
-
-  if (!currentRuler) {
-    return 1;
-  }
-
-  return emptyHouses
-    .filter((candidate) => candidate <= house)
-    .sort((first, second) => first - second)
-    .filter((candidate) => emptyHouseContext(candidate, natalSky).ruler === currentRuler)
-    .length || 1;
+  return { sign, ruler, rulerPosition, rulerSystem: activeEmptyHouseRulerSystem };
 }
 
 type EmptyHouseSlot = "card-summary" | "house-sign" | "ruler-guide" | "ruler-placement" | "activation" | "hint";
@@ -6633,7 +6638,8 @@ function normalizeEmptyHouseCardSurface(
 ): NormalizedEmptyHouseArticle {
   void ownerName;
   void ownerPronouns;
-  const { sign, ruler, rulerPosition } = emptyHouseContext(house, natalSky);
+  void emptyHouses;
+  const { sign, ruler, rulerPosition, rulerSystem } = emptyHouseContext(house, natalSky);
   let rendered: ReturnType<typeof fallbackRendererV3.renderNatalEmptyHouse>;
 
   try {
@@ -6641,8 +6647,7 @@ function normalizeEmptyHouseCardSurface(
       house,
       primaryRuler: normalizeContentIdPart(ruler),
       rulerHouse: rulerPosition?.house,
-      rulerOccurrence: emptyHouseRulerOccurrence(house, natalSky, emptyHouses),
-      rulerSign: normalizeContentIdPart(rulerPosition?.sign ?? ""),
+      rulerSystem,
       sign: normalizeContentIdPart(sign),
       voice: context === "self" ? "you" : "they"
     });
@@ -6667,6 +6672,7 @@ function normalizeEmptyHouseCardSurface(
     [
       "tldrastro-fallback-architecture-v3",
       rendered.templateKey,
+      ...(rendered.sourceKeys ?? []),
       `empty-house.${house}`,
       sign ? `empty-house.sign.${normalizeContentIdPart(sign)}` : "",
       ruler ? `empty-house.ruler.${normalizeContentIdPart(ruler)}` : "",
@@ -6701,7 +6707,7 @@ function normalizeEmptyHouseDetailSurface({
   natalSky,
   ownerAwareParagraph,
   ruler,
-  rulerOccurrence,
+  rulerSystem,
   rulerPosition,
   sign
 }: {
@@ -6711,7 +6717,7 @@ function normalizeEmptyHouseDetailSurface({
   natalSky: SkySnapshot | null;
   ownerAwareParagraph: (value: string) => string;
   ruler: string;
-  rulerOccurrence: number;
+  rulerSystem: EmptyHouseRulerSystem;
   rulerPosition: PlanetPosition | null;
   sign: string;
 }): NormalizedEmptyHouseArticle {
@@ -6731,8 +6737,7 @@ function normalizeEmptyHouseDetailSurface({
       house,
       primaryRuler: normalizeContentIdPart(ruler),
       rulerHouse: rulerPosition?.house,
-      rulerOccurrence,
-      rulerSign: normalizeContentIdPart(rulerPosition?.sign ?? ""),
+      rulerSystem,
       sign: normalizeContentIdPart(sign),
       voice: context === "self" ? "you" : "they"
     });
@@ -6744,6 +6749,7 @@ function normalizeEmptyHouseDetailSurface({
       [
         "tldrastro-fallback-architecture-v3",
         rendered.templateKey,
+        ...(rendered.sourceKeys ?? []),
         ...sourceBase
       ],
       true
@@ -6777,7 +6783,8 @@ function emptyHouseDetailArticle(
   ownerPronouns?: PronounChoice | null,
   emptyHouses?: number[]
 ): YouTransitArticle {
-  const { sign, ruler, rulerPosition } = emptyHouseContext(house, natalSky);
+  void emptyHouses;
+  const { sign, ruler, rulerPosition, rulerSystem } = emptyHouseContext(house, natalSky);
   const title = emptyHouseTitle(house, natalSky);
   const compositionContext = context === "friend" && ownerName ? "self" : context;
   const ownerAwareParagraph = (value: string) =>
@@ -6791,7 +6798,7 @@ function emptyHouseDetailArticle(
     natalSky,
     ownerAwareParagraph,
     ruler,
-    rulerOccurrence: emptyHouseRulerOccurrence(house, natalSky, emptyHouses),
+    rulerSystem,
     rulerPosition,
     sign
   });
@@ -10828,6 +10835,30 @@ export function App() {
     storePortalMode(nextMode);
     setMode(nextMode);
   }
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (mode !== "profile" && mode !== "friends") {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    loadEmptyHouseFallbackArchitectureV3Bundle()
+      .then((installed) => {
+        if (installed && !cancelled) {
+          setFallbackArchitectureV3Version((version) => version + 1);
+        }
+      })
+      .catch((error) => {
+        console.warn("Empty-house fallbacks failed to load; natal empty-house copy remains unavailable.", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mode]);
 
   useEffect(() => {
     let cancelled = false;

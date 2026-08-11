@@ -115,9 +115,6 @@ function fixArticles(text) {
 const title = (s) => s.split("-").map((p) => p[0].toUpperCase() + p.slice(1)).join(" ");
 const OPPOSITE_SIGN = { aries: "libra", taurus: "scorpio", gemini: "sagittarius", cancer: "capricorn", leo: "aquarius", virgo: "pisces", libra: "aries", scorpio: "taurus", sagittarius: "gemini", capricorn: "cancer", aquarius: "leo", pisces: "virgo" };
 const ORD = { 1: "1st", 2: "2nd", 3: "3rd" };
-// V3 M2 mapping: house 2 must use A. The remaining modulo buckets continue
-// alphabetically from there so selection stays stable without randomness.
-const EMPTY_HOUSE_RULER_VARIANT = { 2: "a", 3: "b", 4: "c", 5: "d", 0: "e", 1: "f" };
 const ordinal = (n) => ORD[n] ?? `${n}th`;
 
 function renderTemplate(template, ctx, gapLabel, voice = "you") {
@@ -327,6 +324,8 @@ export function normalizeAspect(input) {
 // close, all dual-voice by construction (voice param; never pronoun substitution). Replaces
 // the legacy app helper that produced "quietly draining they" / "how they thinks". ----
 const SIGN_RULER = { aries: "mars", taurus: "venus", gemini: "mercury", cancer: "moon", leo: "sun", virgo: "mercury", libra: "venus", scorpio: "mars", sagittarius: "jupiter", capricorn: "saturn", aquarius: "saturn", pisces: "jupiter" };
+const EMPTY_HOUSE_V14_MODERN_RULER = { aries: "mars", taurus: "venus", gemini: "mercury", cancer: "moon", leo: "sun", virgo: "mercury", libra: "venus", scorpio: "pluto", sagittarius: "jupiter", capricorn: "saturn", aquarius: "uranus", pisces: "neptune" };
+const EMPTY_HOUSE_RULERS = { modern: EMPTY_HOUSE_V14_MODERN_RULER, traditional: SIGN_RULER };
 
 // ---- Aspect patterns (T-square, Grand Cross, Grand Trine, Kite, Yod, Mystic Rectangle):
 // natal pattern card + activation card. Replaces the astro-knowledge copy entries; the
@@ -362,73 +361,47 @@ export function renderHouseGlossary({ house, voice = "you" }) {
 }
 
 export function renderNatalEmptyHouse(facts, opts = {}) {
-  // facts: { house, sign, rulerSign, rulerHouse, primaryRuler?, rulerOccurrence?, voice }.
-  // Legacy ruler and modernRuler fields are intentionally ignored.
-  const { house, sign, rulerSign, rulerHouse, voice = "you" } = facts;
+  // V14 dual-system contract. Phase 1 launches with modern; traditional
+  // house-1 rows remain SOURCE_GAP until their owner-authored layer lands.
+  // facts: { house, sign, rulerHouse, primaryRuler?, rulerSystem?, voice }.
+  const { house, sign, rulerHouse, voice = "you" } = facts;
   const v = voice === "you" ? "you" : "they";
-  const ruler = facts.primaryRuler ?? SIGN_RULER[sign];
-  const houseTopic = getVocab(`fallback-vocab/house-topic/${house}`, opts);
-  const rulerHouseJurisdiction = rulerHouse
-    ? getVocab(`fallback-vocab/empty-house-ruler-jurisdiction/${rulerHouse}`, opts)
-      ?? (v === "they" ? getVocab(`fallback-vocab/house-jurisdiction-they/${rulerHouse}`, opts) : null)
-      ?? getVocab(`fallback-vocab/house-jurisdiction/${rulerHouse}`, opts)
-    : null;
-  const emptyHouseRulerTopic = rulerHouse
-    ? getVocab(`fallback-vocab/empty-house-ruler-topic/${rulerHouse}`, opts)
-    : null;
-  const rulerHouseTopic = emptyHouseRulerTopic
-    ?? (rulerHouse ? getVocab(`fallback-vocab/house-topic/${rulerHouse}`, opts) : null);
-  const cusp = getHook(`fallback-hook/house-cusp/${sign}`, v, opts);
-  const rulerVariant = EMPTY_HOUSE_RULER_VARIANT[house % 6];
-  const rulerFrame = getHook(`fallback-hook/empty-house-ruler-v3/${rulerVariant}`, v, opts)
-    ?? getHook("fallback-hook/empty-house-ruler", v, opts);
-  const placementFrame = getHook("fallback-hook/empty-house-placement", v, opts);
-  const bridgeLead = getHook(`fallback-hook/empty-house-bridge/${house}`, v, opts);
-  const closeFrame = getHook("fallback-hook/empty-house-close", v, opts);
-  const note = getHook("fallback-hook/empty-house-explainer", v, opts);
-  const placementLine = rulerSign
-    ? getHook(`fallback-hook/ruler-method/${ruler}/${rulerSign}`, v, opts)
-    : null;
-  if (!houseTopic || !rulerHouseJurisdiction || !rulerHouseTopic || !cusp || !rulerFrame || !placementFrame || !bridgeLead || !closeFrame || !placementLine || !rulerSign || !rulerHouse) {
+  const rulerSystem = facts.rulerSystem ?? "modern";
+  const rulerMap = EMPTY_HOUSE_RULERS[rulerSystem];
+  if (!rulerMap) throw new RoleViolationError(`Unknown empty-house ruler system: ${rulerSystem}.`);
+  const ruler = rulerMap[sign];
+  if (!Number.isInteger(house) || house < 1 || house > 12 || !ruler || !Number.isInteger(rulerHouse) || rulerHouse < 1 || rulerHouse > 12 || rulerHouse === house) {
     throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
   }
-  const REF = { sun: "the Sun", moon: "the Moon" };
-  const rulerRef = REF[ruler] ?? title(ruler);
-  const rulerPossessive = rulerRef.endsWith("s") ? `${rulerRef}'` : `${rulerRef}'s`;
-  const ctx = {
-    houseOrdinal: ordinal(house), houseTopic, signTitle: title(sign),
-    rulerRef, rulerRefCap: rulerRef.replace(/^./, (char) => char.toUpperCase()), rulerTitle: title(ruler),
-    rulerPossessive,
-    rulerSignTitle: rulerSign ? title(rulerSign) : null,
-    rulerHouseOrdinal: rulerHouse ? ordinal(rulerHouse) : null,
-    rulerHouseJurisdiction,
-    rulerHouseTopic,
-    placementLine,
+  if (facts.primaryRuler && facts.primaryRuler !== ruler) {
+    throw new RoleViolationError(`Empty-house V14 ${rulerSystem} system requires ruler ${ruler} for ${sign}; received ${facts.primaryRuler}.`);
+  }
+
+  const baseKey = `fallback-hook/empty-house/base/${house}`;
+  const signKey = `fallback-hook/empty-house/sign/${house}/${sign}`;
+  const specificRulerKey = house === 1
+    ? `fallback-hook/empty-house/rising-ruler/${sign}/${ruler}/${rulerHouse}`
+    : `fallback-hook/empty-house/ruler-planet/${house}/${ruler}/${rulerHouse}`;
+  const genericRulerKey = `fallback-hook/empty-house/ruler-house/${house}/${rulerHouse}`;
+  const note = getHook(baseKey, v, opts);
+  const signBody = getHook(signKey, v, opts);
+  const specificRulerBody = getHook(specificRulerKey, v, opts);
+  const rulerKey = specificRulerBody ? specificRulerKey : genericRulerKey;
+  const rulerBody = specificRulerBody ?? (house === 1 ? null : getHook(genericRulerKey, v, opts));
+
+  if (!note || !signBody || !rulerBody) {
+    throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign}/${ruler}-in-${rulerHouse} (${v})`);
+  }
+
+  const parts = [signBody, rulerBody];
+  return {
+    headline: `${ordinal(house)} House`,
+    note,
+    body: parts.join("\n\n"),
+    parts,
+    templateKey: "fallback-template/natal.empty-house-v14",
+    sourceKeys: [baseKey, signKey, rulerKey],
   };
-  const repeatedRuler = (facts.rulerOccurrence ?? 1) > 1;
-  const emptyHousePossessive = v === "you" ? "your" : "their";
-  const rulerHouseTopicRef = emptyHouseRulerTopic
-    ? `${emptyHousePossessive} ${rulerHouseTopic}`
-    : rulerHouseTopic;
-  const m1 = mustache(cusp, ctx).replace(
-    `on the ${ordinal(house)} house`,
-    `on ${emptyHousePossessive} ${ordinal(house)} house`
-  );
-  const m4 = repeatedRuler
-    ? `Because ${title(sign)} is also ruled by ${rulerRef}, the same pattern applies: ${bridgeLead.replace(/^./, (char) => char.toLowerCase())} through the way ${v === "you" ? "you" : "they"} handle ${rulerHouseTopicRef}.`
-    : `Because of this, ${bridgeLead.replace(/^./, (char) => char.toLowerCase())} through the way ${v === "you" ? "you" : "they"} handle ${rulerHouseTopicRef}.`;
-  const paras = [
-    m1,
-    mustache(rulerFrame, ctx),
-    ...(repeatedRuler ? [] : [mustache(placementFrame, ctx)]),
-    m4,
-    mustache(closeFrame, ctx)
-  ];
-  const cleaned = paras.map((p) => fixArticles(p).replace(/\s{2,}/g, " ").trim());
-  for (const p of cleaned) if (/\{\{/.test(p)) throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} unresolved slot`);
-  const body = cleaned.join(" ");
-  if (/[—]|--/u.test(body)) throw new RoleViolationError(`Empty-house punctuation gate failed for ${house}/${sign}.`);
-  return { headline: `${ordinal(house)} House`, note, body, parts: cleaned, templateKey: "fallback-template/natal.empty-house" };
 }
 
 // Profection-year line (annual profections): per-person section for Friends Circle
