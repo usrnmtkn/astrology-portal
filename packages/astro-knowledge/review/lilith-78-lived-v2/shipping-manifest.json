@@ -29,10 +29,10 @@
     "south-node": 6
   },
   "invariants": {
-    "existingApprovedRowsSha256": "64e5ce77cefdb4009c682796aacd56e5a1fd2977a98e582a78179552167a29bf",
+    "existingApprovedRowsSha256": "1f8af66c0f364ed32b10ef5a6f128324deacde493e2d9c735aef21990ac3fea7",
     "existingApprovedRowsChanged": 0,
     "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
-    "snapshotRepin": "Container-only re-pin after the v3-2026-08-10c empty-house V14 promotion added approved rows; all 78 governed family rows remain byte-identical to their row-level approval payloads and records."
+    "snapshotRepin": "Container-only re-pin after the v3-2026-08-10c empty-house V14 promotion added approved rows and the 2026-08-11 V13 duplicate-contentKey repair removed 108 documented superseded rows; all 78 governed family rows remain byte-identical to their row-level approval payloads and records."
   },
   "rows": [
     {
