@@ -30,60 +30,62 @@ function main() {
   ));
   assert(index.entries.filter((entry) => entry.authorityClass === "ai_candidate_unreviewed").every((entry) => !entry.useAsPositiveVoiceEvidence));
   assert(index.entries.filter((entry) => entry.authorityClass === "third_party_source").every((entry) => !entry.useAsPositiveVoiceEvidence));
-  const knowledgeMatrixTransit = require(path.join(
+  const knowledgeMatrix = require(path.join(
     packageRoot,
     "voice",
     "tldr-astro",
     "marie-satori-writer",
-    "knowledge-matrix-v8",
-    "transit-meanings-v8-owner-approved-locked.json"
-  ));
-  const knowledgeMatrixHouses = require(path.join(
-    packageRoot,
-    "voice",
-    "tldr-astro",
-    "marie-satori-writer",
-    "knowledge-matrix-v8",
-    "house-activations-v8-owner-approved-locked.json"
+    "knowledge-matrix-v9",
+    "knowledge-matrix-v9-owner-approved-rows.json"
   ));
   const knowledgeMatrixEntries = index.entries.filter((entry) => (
-    entry.origin === "owner-approved-knowledge-matrix-v8"
+    entry.origin === "owner-approved-knowledge-matrix-v9"
   ));
   const knowledgeMatrixSourceCopy = [
-    ...Object.values(knowledgeMatrixTransit.entries).map((entry) => entry.copy),
-    ...Object.values(knowledgeMatrixHouses.entries).flatMap((entry) => (
-      Object.values(entry.events).map((event) => event.copy)
-    ))
+    ...knowledgeMatrix.transit_meanings.map((entry) => entry.Copy),
+    ...knowledgeMatrix.house_activations.map((entry) => entry.Experience)
   ].sort();
-  assert.strictEqual(knowledgeMatrixEntries.length, 1311);
+  assert.strictEqual(knowledgeMatrixEntries.length, 3485);
   assert.strictEqual(
     knowledgeMatrixEntries.filter((entry) => entry.articleBeat === "knowledge-matrix-transit").length,
-    318
+    1117
   );
   assert.strictEqual(
     knowledgeMatrixEntries.filter((entry) => entry.articleBeat === "knowledge-matrix-house").length,
-    993
+    2368
   );
   assert.deepStrictEqual(knowledgeMatrixEntries.map((entry) => entry.text).sort(), knowledgeMatrixSourceCopy);
   assert(knowledgeMatrixEntries.every((entry) => (
     entry.authorityClass === "exact_owner_approved"
     && entry.ownerApproved === true
     && entry.reviewStatus === "approved"
-    && entry.editorialStatus === "owner-approved-v8-locked"
-    && entry.useAsPositiveVoiceEvidence === true
-    && entry.useAsContextualEvidence === true
+    && entry.editorialStatus === "owner-approved-v9-governance-labeled"
+    && entry.governance === "owner-approved"
+    && typeof entry.judgeLineage === "string"
+    && Number.isInteger(entry.workbookSourceRow)
     && entry.surface === "sky-placement"
   )));
-  assert(knowledgeMatrixEntries
-    .filter((entry) => entry.sourceId.includes("black-moon-lilith"))
-    .every((entry) => entry.planet === "lilith"));
   assert.strictEqual(
-    knowledgeMatrixEntries.find((entry) => entry.sourceId === "kmv8-transit:black-moon-lilith-any-station")?.sign,
+    knowledgeMatrixEntries.filter((entry) => entry.text.startsWith("[EXCLUDE FROM FALLBACK]")).length,
+    12
+  );
+  assert(knowledgeMatrixEntries
+    .filter((entry) => entry.text.startsWith("[EXCLUDE FROM FALLBACK]"))
+    .every((entry) => entry.useAsPositiveVoiceEvidence === false && entry.useAsContextualEvidence === false));
+  assert(knowledgeMatrixEntries
+    .filter((entry) => !entry.text.startsWith("[EXCLUDE FROM FALLBACK]"))
+    .every((entry) => entry.useAsPositiveVoiceEvidence === true && entry.useAsContextualEvidence === true));
+  assert.strictEqual(
+    knowledgeMatrixEntries.find((entry) => entry.sourceId === "kmv9-transit-row-2")?.planet,
+    "lilith"
+  );
+  assert.strictEqual(
+    knowledgeMatrixEntries.find((entry) => entry.sourceId === "kmv9-transit-row-2")?.sign,
     ""
   );
-  assert.strictEqual(index.entries.length, 5220);
-  assert.strictEqual(index.summary.positiveVoiceEvidenceCount, 4735);
-  assert.strictEqual(index.summary.bySurface["sky-placement"], 1642);
+  assert.strictEqual(index.entries.length, 7394);
+  assert.strictEqual(index.summary.positiveVoiceEvidenceCount, 6897);
+  assert.strictEqual(index.summary.bySurface["sky-placement"], 3816);
   const calibrationV3 = index.entries.filter((entry) => entry.sourceId.startsWith("sky-placement-uranus-cancer-collective-owner-approval-candidate-v3:"));
   assert(calibrationV3.length >= 5);
   assert(calibrationV3.every((entry) => entry.authorityClass === "exact_owner_approved" && entry.ownerApproved && !entry.useAsPositiveVoiceEvidence));

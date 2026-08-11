@@ -149,7 +149,11 @@ const approvedExamples = jsonl("data/writing/OWNER_APPROVED_EXAMPLES.jsonl");
 assert.ok(approvedExamples.length > 6000, "Owner-approved evidence seed must cover the serving package and locked matrix tier.");
 assert.ok(approvedExamples.every((entry) => entry.ownerApproved === true && entry.family && entry.register));
 assert.ok(approvedExamples.some((entry) => entry.authority === "serving-review-status-approved"));
-assert.ok(approvedExamples.some((entry) => entry.authority === "owner-approved-v8-locked"));
+assert.ok(approvedExamples.some((entry) => (
+  entry.authority === "owner-approved-v9-governance-labeled"
+  && entry.governance === "owner-approved"
+  && typeof entry.judgeLineage === "string"
+)));
 const fallbackRoot = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
 const servingKeys = new Set(
   JSON.parse(fs.readFileSync(path.join(fallbackRoot, "bundled-manifest-v3.json"), "utf8"))

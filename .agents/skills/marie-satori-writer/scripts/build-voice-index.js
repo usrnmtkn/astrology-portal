@@ -78,7 +78,7 @@ function beatFromHeading(heading) {
   return "body";
 }
 
-function baseEntry({ sourceId, text, sourcePath, author, origin, surface, planet = "", sign = "", house = "", articleBeat, structuralFunction, authorityClass, ownerAuthored, ownerApproved, reviewStatus, editorialStatus, canonical, useAsPositiveVoiceEvidence, useAsContextualEvidence = false, useAsNegativeEvidence, failureTags = [], provenance }) {
+function baseEntry({ sourceId, text, sourcePath, author, origin, surface, planet = "", sign = "", house = "", articleBeat, structuralFunction, authorityClass, ownerAuthored, ownerApproved, reviewStatus, editorialStatus, canonical, useAsPositiveVoiceEvidence, useAsContextualEvidence = false, useAsNegativeEvidence, failureTags = [], provenance, governance, judgeLineage, workbookSourceRow }) {
   return {
     sourceId,
     text,
@@ -103,6 +103,9 @@ function baseEntry({ sourceId, text, sourcePath, author, origin, surface, planet
     failureTags,
     factUseAuthorized: false,
     provenance,
+    ...(governance ? { governance } : {}),
+    ...(judgeLineage ? { judgeLineage } : {}),
+    ...(workbookSourceRow ? { workbookSourceRow } : {}),
     sourceSha256: sha256(text)
   };
 }
@@ -442,13 +445,12 @@ function thirdPartyEntries() {
   }));
 }
 
-function knowledgeMatrixV8Entries() {
-  // Owner-approved, locked knowledge matrix (v8, 2026-08-09). The owner
-  // authorized this copy as judge and writer evidence for sky placements and
-  // horoscopes. Copy is preserved exactly per the import manifest
-  // (rewrite_or_clean_copy: false); runtime serving remains a separately
-  // governed path and is not granted merely by inclusion in this index.
-  const matrixRoot = path.join(writerRoot, "knowledge-matrix-v8");
+function knowledgeMatrixV9Entries() {
+  // Governance-labeled canonical matrix (v9, 2026-08-09). Governance is the
+  // current authority layer; Judge remains historical editing/review lineage.
+  // Copy and Experience are preserved exactly. Existing render exclusions
+  // remain fail-closed and v9 is never changed in place; changes become v10.
+  const matrixRoot = path.join(writerRoot, "knowledge-matrix-v9");
   if (!fs.existsSync(matrixRoot)) return [];
   const normalizePlanet = (value) => {
     const slug = tokens([String(value || "")].join(" ")).join("-");
@@ -461,51 +463,59 @@ function knowledgeMatrixV8Entries() {
   };
   const policy = {
     author: "Owner-approved exact wording",
-    origin: "owner-approved-knowledge-matrix-v8",
+    origin: "owner-approved-knowledge-matrix-v9",
     authorityClass: "exact_owner_approved",
     ownerApproved: true,
     reviewStatus: "approved",
-    editorialStatus: "owner-approved-v8-locked",
-    canonical: false,
+    editorialStatus: "owner-approved-v9-governance-labeled",
+    canonical: true,
     useAsPositiveVoiceEvidence: true,
     useAsContextualEvidence: true,
-    provenance: "Owner-approved v8 locked knowledge matrix (2026-08-09). Judge and writer evidence for sky placements and horoscopes. Copy preserved exactly; production serving promotion remains a separate governed step."
+    provenance: "Canonical owner-approved v9 governance-labeled knowledge matrix (2026-08-09). Governance is current authority; Judge is historical lineage. Copy preserved exactly. Any change becomes v10 and returns to the owner."
   };
   const entries = [];
-  const transitFile = path.join(matrixRoot, "transit-meanings-v8-owner-approved-locked.json");
-  const transitRows = readJson(transitFile).entries || {};
-  for (const [key, row] of Object.entries(transitRows)) {
-    if (!row?.copy || row.copy.startsWith("[EXCLUDE FROM FALLBACK]")) continue;
+  const rowsFile = path.join(matrixRoot, "knowledge-matrix-v9-owner-approved-rows.json");
+  const matrix = readJson(rowsFile);
+  for (const row of matrix.transit_meanings || []) {
+    if (!row?.Copy || row.Governance !== "owner-approved") continue;
+    const excluded = row.Copy.startsWith("[EXCLUDE FROM FALLBACK]");
     entries.push(baseEntry({
-      sourceId: `kmv8-transit:${tokens(key).join("-")}`,
-      text: row.copy,
-      sourcePath: relative(transitFile),
+      ...policy,
+      sourceId: `kmv9-transit-row-${row.source_row}`,
+      text: row.Copy,
+      sourcePath: relative(rowsFile),
       surface: "sky-placement",
-      planet: normalizePlanet(row.planet),
-      sign: normalizeSign(row.transit_sign),
+      planet: normalizePlanet(row.Planet),
+      sign: normalizeSign(row.Sign),
       articleBeat: "knowledge-matrix-transit",
-      structuralFunction: `knowledge matrix transit meaning (${row.event_type || "ingress"})`,
-      ...policy
+      structuralFunction: `knowledge matrix transit meaning (${row.Event || "ingress"})`,
+      governance: row.Governance,
+      judgeLineage: row.Judge || "",
+      workbookSourceRow: row.source_row,
+      useAsPositiveVoiceEvidence: !excluded,
+      useAsContextualEvidence: !excluded
     }));
   }
-  const houseFile = path.join(matrixRoot, "house-activations-v8-owner-approved-locked.json");
-  const houseRows = readJson(houseFile).entries || {};
-  for (const [key, row] of Object.entries(houseRows)) {
-    for (const [eventType, event] of Object.entries(row?.events || {})) {
-      if (!event?.copy || event.copy.startsWith("[EXCLUDE FROM FALLBACK]")) continue;
-      entries.push(baseEntry({
-        sourceId: `kmv8-house:${tokens(key).join("-")}:${tokens(eventType).join("-")}`,
-        text: event.copy,
-        sourcePath: relative(houseFile),
-        surface: "sky-placement",
-        planet: normalizePlanet(row.transit_planet),
-        sign: normalizeSign(row.transit_sign),
-        house: row.house ? String(row.house) : "",
-        articleBeat: "knowledge-matrix-house",
-        structuralFunction: `knowledge matrix house activation (${row.rising_sign || "unknown"} rising, ${eventType})`,
-        ...policy
-      }));
-    }
+  for (const row of matrix.house_activations || []) {
+    if (!row?.Experience || row.Governance !== "owner-approved") continue;
+    const excluded = row.Experience.startsWith("[EXCLUDE FROM FALLBACK]");
+    entries.push(baseEntry({
+      ...policy,
+      sourceId: `kmv9-house-row-${row.source_row}`,
+      text: row.Experience,
+      sourcePath: relative(rowsFile),
+      surface: "sky-placement",
+      planet: normalizePlanet(row.Planet),
+      sign: normalizeSign(row["Transit sign"]),
+      house: row.House ? String(row.House) : "",
+      articleBeat: "knowledge-matrix-house",
+      structuralFunction: `knowledge matrix house activation (${row["Rising sign"] || "unknown"} rising, ${row.Event || "ingress"})`,
+      governance: row.Governance,
+      judgeLineage: row.Judge || "",
+      workbookSourceRow: row.source_row,
+      useAsPositiveVoiceEvidence: !excluded,
+      useAsContextualEvidence: !excluded
+    }));
   }
   return entries;
 }
@@ -516,7 +526,7 @@ function buildIndex() {
     ...ownerCorpusEntries(),
     ...reviewCandidateEntries(),
     ...approvedFormatExemplarEntries(),
-    ...knowledgeMatrixV8Entries(),
+    ...knowledgeMatrixV9Entries(),
     ...historicalEntries(),
     ...contrastiveEntries(),
     ...negativeEntries(),
