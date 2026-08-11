@@ -33,12 +33,16 @@ const birthTimeMigration = fs.readFileSync(new URL("../apps/web/supabase/migrati
 const passingUnitCacheMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811010000_report_passing_unit_cache.sql", import.meta.url), "utf8");
 const authorizationTokenBudgetMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811120000_report_authorization_token_budget.sql", import.meta.url), "utf8");
 const deadlineWorkerRecoveryMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811130000_report_deadline_worker_recovery.sql", import.meta.url), "utf8");
+const validatorSpliceRecoveryMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811140000_report_validator_splice_recovery.sql", import.meta.url), "utf8");
 assert.match(authorizationTokenBudgetMigration, /74951c07-64fe-461d-ac49-e81858af3296/u, "The migration must carry the owner ruling for the exact Production report.");
 assert.match(authorizationTokenBudgetMigration, /token_budget_lifetime = 3000000/u, "The exact Production report must receive its owner-approved 3M lifetime backstop.");
 assert.match(authorizationTokenBudgetMigration, /set authorized_call_budget = 55,[\s\S]*authorized_token_budget = 1450000/u, "The current authorization must retain its approved 55-call and 1.45M-token budgets.");
 assert.match(deadlineWorkerRecoveryMigration, /call_number = 37[\s\S]*state = 'interrupted'/u, "The observed zero-token call 37 must be closed as interrupted.");
 assert.match(deadlineWorkerRecoveryMigration, /token_budget_lifetime = 4500000/u, "The exact Production report must receive its owner-approved 4.5M lifetime backstop.");
 assert.match(deadlineWorkerRecoveryMigration, /authorized_call_budget = 55[\s\S]*authorized_token_budget = 2500000/u, "The existing authorization must retain 55 calls while receiving the 2.5M scoped token budget.");
+assert.match(validatorSpliceRecoveryMigration, /authorized_call_budget = 85[\s\S]*authorized_token_budget = 4000000/u, "The current authorization must extend to 85 calls and 4M scoped tokens.");
+assert.match(validatorSpliceRecoveryMigration, /token_budget_lifetime = 6000000/u, "The exact Production report must receive its owner-approved 6M lifetime backstop.");
+assert.match(validatorSpliceRecoveryMigration, /validator_attempt_overrides->>'summer' = '5'/u, "Only Summer receives the owner-approved five-attempt cap.");
 await db.exec("begin");
 try {
   const userId = "00000000-0000-0000-0000-000000000001";
@@ -214,9 +218,60 @@ try {
     state: "queued", step: "writing", lockedAt: null, lockedBy: null, lastError: null,
     modelCallCount: 37, callBudget: 55, scopedCalls: 15, tokenBudget: 2_500_000, scopedTokens: 793_038
   }, "Recovery must preserve authorization identity and counters while only changing the owner-ruled budgets and queue state.");
+
+  await db.exec(`create table public.user_generated_interpretations (
+    content_key text not null, subject_type text not null, subject_id text not null,
+    source_snapshot jsonb not null default '{}'::jsonb
+  )`);
+  for (const unitId of ["overview", "year-theme", "domain:main", "winter-current", "spring"]) {
+    await db.query(`insert into public.user_generated_interpretations
+      (content_key, subject_type, subject_id, source_snapshot)
+      values ($1, 'report_unit', $2, '{"fulfillmentPassed":true}'::jsonb)`,
+    [`report:${recoveryReportId}:${unitId}`, recoveryReportId]);
+  }
+  await db.query(`update public.user_reports
+    set fulfillment_status = 'exception', token_count = 879475,
+        token_count_total = 3339047, token_budget_lifetime = 4500000
+    where id = $1`, [recoveryReportId]);
+  await db.query(`update public.report_fulfillment_jobs
+    set state = 'exception', step = 'validating', attempt = 7,
+        model_call_count = 65, authorized_call_budget = 55,
+        authorization_call_count = 43, authorized_token_budget = 2500000,
+        authorization_token_count = 2081764,
+        last_error = 'Validator attempt cap exhausted for summer: FIXTURE_ONLY'
+    where id = $1`, [recoveryJobId]);
+  await db.exec(validatorSpliceRecoveryMigration);
+  const validatorRecoveryReport = (await db.query(`select fulfillment_status, token_count, token_count_total, token_budget_lifetime
+    from public.user_reports where id = $1`, [recoveryReportId])).rows[0];
+  assert.deepEqual({
+    status: validatorRecoveryReport.fulfillment_status,
+    acceptedTokens: Number(validatorRecoveryReport.token_count),
+    totalTokens: Number(validatorRecoveryReport.token_count_total),
+    lifetimeCap: Number(validatorRecoveryReport.token_budget_lifetime)
+  }, { status: "writing", acceptedTokens: 879475, totalTokens: 3339047, lifetimeCap: 6000000 });
+  const validatorRecoveryJob = (await db.query(`select state, step, attempt, model_call_count,
+    authorization_token, authorized_call_budget, authorization_call_count,
+    authorized_token_budget, authorization_token_count, validator_attempt_overrides
+    from public.report_fulfillment_jobs where id = $1`, [recoveryJobId])).rows[0];
+  assert.deepEqual({
+    state: validatorRecoveryJob.state,
+    step: validatorRecoveryJob.step,
+    attempt: validatorRecoveryJob.attempt,
+    modelCallCount: validatorRecoveryJob.model_call_count,
+    authorizationToken: validatorRecoveryJob.authorization_token,
+    callBudget: validatorRecoveryJob.authorized_call_budget,
+    scopedCalls: validatorRecoveryJob.authorization_call_count,
+    tokenBudget: Number(validatorRecoveryJob.authorized_token_budget),
+    scopedTokens: Number(validatorRecoveryJob.authorization_token_count),
+    overrides: validatorRecoveryJob.validator_attempt_overrides
+  }, {
+    state: "queued", step: "writing", attempt: 7, modelCallCount: 65,
+    authorizationToken: recoveryAuthorizationToken, callBudget: 85, scopedCalls: 43,
+    tokenBudget: 4000000, scopedTokens: 2081764, overrides: { summer: 5 }
+  }, "Validator recovery must preserve the authorization identity, counters, accounting, and five persisted units.");
   await db.exec("rollback");
 } catch (error) {
   await db.exec("rollback");
   throw error;
 }
-console.log("Report fulfillment migration passed: Stripe idempotency, comp grants without Stripe references, authorization parking, authorization-scoped call/token budgets, owner-adjustable lifetime backstop, exact Production timeout recovery, durable object-shaped passing-unit cache, immutable call ledger/accounting, atomic call-budget exhaustion, birth-data parking, exclusive facts claim, and rollback.");
+console.log("Report fulfillment migration passed: Stripe idempotency, comp grants without Stripe references, authorization parking, authorization-scoped call/token budgets, owner-adjustable lifetime backstop, exact Production timeout and Summer-validator recovery, durable object-shaped passing-unit cache, immutable call ledger/accounting, atomic call-budget exhaustion, birth-data parking, exclusive facts claim, and rollback.");

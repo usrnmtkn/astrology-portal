@@ -1,4 +1,4 @@
-import type { ReportDraft, ReportGenerationPayload } from "./report-generation.ts";
+import type { ReportDraft, ReportGenerationPayload, ReportValidationIssue } from "./report-generation.ts";
 import { reportPromptFromPayload, validateReportDraft } from "./report-generation.js";
 import { assertReportEvaluationPacketReady, completeReportUnit, reportEvaluationPacket, reportDraftMovementApplicable } from "./report-evaluation-packet.js";
 import { verifyReportFactLock } from "./report-fact-lock.js";
@@ -55,6 +55,8 @@ export type ReportRevisionReplacement = {
 };
 
 export type ReportRevisionPatch = { replacements: ReportRevisionReplacement[] };
+
+type MechanicalValidationIssue = ReportValidationIssue & { value?: string };
 
 const draftSchema = {
   type: "object",
@@ -150,6 +152,172 @@ function textFields(draft: ReportDraft) {
       [`sections.${index}.body`, section.body ?? ""] as [string, string]
     ])
   ]);
+}
+
+function issueCategory(code: string): ReportDefectCategory {
+  if (/untraceable|next_year|saturn_return/iu.test(code)) return "factual_traceability";
+  if (/menu_size|lexical_budget|isolated_one_liners|status_branching/iu.test(code)) return "density_violation";
+  if (/possibility_language|do_not_assume|invention|specificity/iu.test(code)) return "astrology_chronology";
+  return "unnatural_phrasing";
+}
+
+function mechanicalInstruction(issue: MechanicalValidationIssue, noun?: string) {
+  switch (issue.code) {
+    case "menu_size":
+      return "Reduce the quoted sentence to at most five items. Preserve its fact, attribution, and possibility framing.";
+    case "lexical_budget":
+      return `Replace the over-budget noun '${noun ?? "the repeated noun"}' in the quoted sentence with a precise context-fitting alternative. Preserve the fact and meaning.`;
+    case "possibility_language":
+      return "Add may, can, could, or might to the quoted sentence so the manifestation remains a possibility rather than an asserted event.";
+    case "do_not_assume":
+      return "Remove the unsupported assumption from the quoted sentence or recast it as a chart-earned possibility without inventing reader circumstances.";
+    case "em_dash":
+      return "Replace the em dash in the quoted sentence with permitted punctuation without changing its meaning.";
+    case "whether":
+      return "Rewrite the quoted sentence without the word whether while preserving its branches and meaning.";
+    case "astrologer_persona":
+      return "Remove the astrologer persona from the quoted sentence and state the supported interpretation directly.";
+    case "writer_note_leakage":
+    case "internal_scaffold_leakage":
+      return "Remove the internal writer-facing language from the quoted sentence and preserve only reader-facing meaning.";
+    case "generic_advice":
+      return "Replace the generic advice in the quoted sentence with one situated, observable consequence already supported by the unit facts.";
+    case "money_abstraction":
+      return "Translate the abstraction in the quoted sentence into rate, hours, expenses, scope, payment timing, or another supported concrete financial term.";
+    case "love_banned_vocabulary":
+    case "personal_health_banned_advice":
+      return "Replace the banned phrase in the quoted sentence with status-neutral, chart-earned language.";
+    case "status_branching":
+      return "Replace the relationship-status branch in the quoted sentence with one status-neutral formulation.";
+    case "sex_invention":
+    case "personal_health_medical_invention":
+    case "personal_health_spirituality_invention":
+      return "Remove the unsupported condition from the quoted sentence; do not substitute a different invented condition.";
+    case "personal_health_moralizing":
+      return "Remove the reward-or-deserving frame from the quoted sentence while preserving the practical capacity point.";
+    case "untraceable_date":
+    case "untraceable_degree":
+    case "untraceable_attribution":
+      return "Remove or replace the untraceable claim in the quoted sentence using only a value present in the scoped frozen facts.";
+    case "next_year_in_current_review":
+      return "Remove the next-year event from the current-year review sentence without moving or inventing another event.";
+    case "saturn_return_non_return_year":
+      return "Remove the Saturn Return claim from the quoted sentence while preserving only aspects present in the scoped facts.";
+    case "deep_dive_key_date_format":
+      return "Rewrite only the quoted key-date line as DATE · TITLE · one sentence · attribution, with no category tag.";
+    default:
+      return `Correct only the deterministic '${issue.code}' failure in the quoted sentence: ${issue.message}`;
+  }
+}
+
+function normalizedNeedle(value: string) {
+  return value.trim().replace(/^['"“”]|['"“”]$/gu, "").replace(/[.]+$/u, "").toLowerCase();
+}
+
+function locatedSentences(draft: ReportDraft, needle?: string) {
+  const normalized = needle ? normalizedNeedle(needle) : "";
+  const matches: Array<{ location: string; sentenceIndex: number; quote: string }> = [];
+  for (const [location, value] of textFields(draft)) {
+    for (const [sentenceIndex, span] of sentenceSpans(value).entries()) {
+      if (!normalized || span.text.toLowerCase().includes(normalized)) {
+        matches.push({ location, sentenceIndex, quote: span.text });
+      }
+    }
+  }
+  return matches;
+}
+
+function issueNeedle(issue: MechanicalValidationIssue) {
+  if (issue.value) return issue.value;
+  const afterColon = issue.message.includes(": ") ? issue.message.slice(issue.message.lastIndexOf(": ") + 2) : "";
+  if (afterColon && afterColon.split(/\s+/u).length > 1) return afterColon;
+  const phrase = /(?:contains|language|terms?|condition|item|fact):\s*([^.]*)/iu.exec(issue.message)?.[1];
+  return phrase?.trim() || afterColon || "";
+}
+
+/**
+ * Converts deterministic validator and fact-lock findings into sentence-scoped
+ * defects. These are fed to the same splice-only revision call as critique
+ * defects; they never trigger whole-unit regeneration.
+ */
+export function reportValidationIssuesToNamedDefects(
+  draft: ReportDraft,
+  issues: MechanicalValidationIssue[],
+  signatureNounCap = 3
+) {
+  const defects: ReportDefect[] = [];
+  for (const [issueIndex, issue] of issues.entries()) {
+    if (issue.code === "lexical_budget") {
+      const noun = issue.message.match(/^(.+?) exceeds the configured lexical budget\./u)?.[1]?.trim() ?? "";
+      const occurrences = noun ? locatedSentences(draft, noun) : [];
+      const excess = occurrences.slice(signatureNounCap);
+      for (const [matchIndex, match] of (excess.length ? excess : occurrences.slice(-1)).entries()) {
+        defects.push({
+          id: `validator-${issueIndex + 1}-${matchIndex + 1}-${issue.code}`,
+          category: issueCategory(issue.code), location: match.location,
+          sentence_index: match.sentenceIndex, scope_start: match.sentenceIndex, scope_end: match.sentenceIndex,
+          quote: match.quote, evidence: issue.message, evidence_ids: [],
+          instruction: mechanicalInstruction(issue, noun)
+        });
+      }
+      continue;
+    }
+    const matches = locatedSentences(draft, issueNeedle(issue));
+    const match = matches[0] ?? locatedSentences(draft)[0];
+    if (!match) continue;
+    defects.push({
+      id: `validator-${issueIndex + 1}-1-${issue.code}`,
+      category: issueCategory(issue.code), location: match.location,
+      sentence_index: match.sentenceIndex, scope_start: match.sentenceIndex, scope_end: match.sentenceIndex,
+      quote: match.quote, evidence: issue.message, evidence_ids: [],
+      instruction: mechanicalInstruction(issue)
+    });
+  }
+  return defects;
+}
+
+/**
+ * Critiques may independently identify the same sentence or intersecting
+ * sentence ranges. Merge those ranges transitively before asking for prose so
+ * the provider returns one replacement with every applicable instruction.
+ */
+export function mergeOverlappingReportDefects(draft: ReportDraft, defects: ReportDefect[]) {
+  const fields = textFields(draft);
+  const sorted = [...defects].sort((a, b) => (
+    a.location.localeCompare(b.location)
+    || a.scope_start - b.scope_start
+    || a.scope_end - b.scope_end
+    || a.id.localeCompare(b.id)
+  ));
+  const groups: ReportDefect[][] = [];
+  for (const defect of sorted) {
+    const current = groups.at(-1);
+    const currentEnd = current ? Math.max(...current.map((entry) => entry.scope_end)) : -1;
+    if (current && current[0].location === defect.location && defect.scope_start <= currentEnd) current.push(defect);
+    else groups.push([defect]);
+  }
+  return groups.map((group) => {
+    if (group.length === 1) return group[0];
+    const location = group[0].location;
+    const scopeStart = Math.min(...group.map((defect) => defect.scope_start));
+    const scopeEnd = Math.max(...group.map((defect) => defect.scope_end));
+    const spans = sentenceSpans(fields.get(location) ?? "");
+    const first = spans[scopeStart];
+    const last = spans[scopeEnd];
+    if (!first || !last) throw new ReportRevisionScopeError(`Merged replacement scope is outside '${location}'.`);
+    return {
+      id: `merged:${group.map((defect) => defect.id).join("+")}`,
+      category: group[0].category,
+      location,
+      sentence_index: Math.min(...group.map((defect) => defect.sentence_index)),
+      scope_start: scopeStart,
+      scope_end: scopeEnd,
+      quote: (fields.get(location) ?? "").slice(first.start, last.end),
+      evidence: group.map((defect) => `[${defect.id}:${defect.category}] ${defect.evidence}`).join("\n"),
+      evidence_ids: [...new Set(group.flatMap((defect) => defect.evidence_ids))],
+      instruction: group.map((defect) => `[${defect.id}:${defect.category}] ${defect.instruction}`).join("\n")
+    } satisfies ReportDefect;
+  });
 }
 
 export class ReportStopRuleError extends Error {
@@ -273,6 +441,38 @@ export function enforceReportRevisionStopRule(draft: ReportDraft, revised: Repor
   return revised;
 }
 
+export async function reviseReportDraftForNamedDefects(input: {
+  payload: ReportGenerationPayload;
+  draft: ReportDraft;
+  defects: ReportDefect[];
+  callModel?: ReportModelCall;
+}) {
+  const callModel = input.callModel ?? callReportModel;
+  const target = writerModelTarget();
+  const payload = scopeReportPayloadToUnit(input.payload);
+  assertReportEvaluationPacketReady(payload);
+  const defects = mergeOverlappingReportDefects(input.draft, input.defects);
+  if (!defects.length) return { revised: input.draft, defects, calls: [] as ReportWriterChainResult["calls"] };
+  const reviseResult = await callModel<ReportRevisionPatch>({
+    ...target,
+    prompt: [
+      "Return replacement spans only. Do not return or regenerate the complete unit.",
+      "Overlapping named defects have already been merged deterministically. Return exactly one replacement for every supplied scope in this single response. Copy defect_id, location, scope_start, and scope_end exactly. The combined instruction on a merged scope is atomic: satisfy every listed instruction in its one replacement. Any changed location/index token is rejected as scope spill.",
+      "The complete unit is read-only context. Text outside named spans is structurally unavailable for revision.",
+      `COMPLETE_UNIT_READ_ONLY\n${completeReportUnit(input.draft)}`,
+      `NAMED_DEFECTS_AND_INSTRUCTIONS\n${JSON.stringify(defects)}`,
+      `CANONICAL_OWNER_RULING\n${payload.canonicalOwnerPrompt.text}`,
+      `LIVED_PROSE_OWNER_RULING\n${payload.livedProseStandard.text}`
+    ].join("\n\n"),
+    schemaName: "report_unit_revision_spans",
+    schema: revisionPatchSchema
+  });
+  const calls: ReportWriterChainResult["calls"] = [{
+    stage: "revise", model: reviseResult.model, provider: reviseResult.provider, usage: reviseResult.usage
+  }];
+  return { revised: spliceReportRevision(input.draft, defects, reviseResult.value), defects, calls };
+}
+
 export async function runReportWriterChain(input: {
   payload: ReportGenerationPayload;
   failureContext?: string[];
@@ -339,21 +539,7 @@ export async function runReportWriterChain(input: {
   if (critique.result === "no_defects" || critique.defects.length === 0) {
     return { draft: draftResult.value, critique: { ...critique, result: "no_defects", defects: [] }, revised: draftResult.value, calls, promptVersion: critiquePrompt.version };
   }
-  const reviseResult = await callModel<ReportRevisionPatch>({
-    ...target,
-    prompt: [
-      "Return replacement spans only. Do not return or regenerate the complete unit.",
-      "Return exactly one replacement for every named defect in this single response. Copy defect_id, location, scope_start, and scope_end exactly. Replacement text is inserted only inside that supplied range. Any changed location/index token is rejected as scope spill.",
-      "The complete unit is read-only context. Text outside named spans is structurally unavailable for revision.",
-      `COMPLETE_UNIT_READ_ONLY\n${completeReportUnit(draftResult.value)}`,
-      `NAMED_DEFECTS_AND_INSTRUCTIONS\n${JSON.stringify(critique.defects)}`,
-      `CANONICAL_OWNER_RULING\n${payload.canonicalOwnerPrompt.text}`,
-      `LIVED_PROSE_OWNER_RULING\n${payload.livedProseStandard.text}`
-    ].join("\n\n"),
-    schemaName: "report_unit_revision_spans",
-    schema: revisionPatchSchema
-  });
-  calls.push({ stage: "revise", model: reviseResult.model, provider: reviseResult.provider, usage: reviseResult.usage });
-  const revised = spliceReportRevision(draftResult.value, critique.defects, reviseResult.value);
-  return { draft: draftResult.value, critique, revised, calls, promptVersion: critiquePrompt.version };
+  const revision = await reviseReportDraftForNamedDefects({ payload, draft: draftResult.value, defects: critique.defects, callModel });
+  calls.push(...revision.calls);
+  return { draft: draftResult.value, critique, revised: revision.revised, calls, promptVersion: critiquePrompt.version };
 }

@@ -6,6 +6,7 @@ export type FulfillmentJobRow = {
   authorization_token: string | null; authorized_call_budget: number | null; model_call_count: number;
   authorization_call_count: number; authorized_token_budget: number | null; authorization_token_count: number;
   passing_unit_cache?: Record<string, unknown>;
+  validator_attempt_overrides?: Record<string, unknown>;
 };
 export type FulfillmentReportRow = {
   id: string; user_id: string; subject_id: string | null; report_domain: ReportDomain; report_horizon: ReportHorizon;
