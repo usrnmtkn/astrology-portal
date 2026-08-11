@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import { REPORT_AUTOMATION_RULING_PATH, REPORT_AUTOMATION_RULING_VERSION, REPORT_SKUS, reportBillingMode, reportCallEstimate, reportFulfillmentConfig, reportSku } from "../api/_lib/report-fulfillment-config.ts";
-import { assertReportTokenBudgets, processReportFulfillmentJob, ReportPersistenceInfrastructureError, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
+import { assertReportTokenBudgets, processReportFulfillmentJob, ReportPersistenceInfrastructureError, reportValidatorAttemptCap, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
 import { createReportFulfillmentStore } from "../api/_lib/report-fulfillment-store.ts";
 import { ReportBirthDataError, birthProfileFromPersistedData } from "../api/_lib/report-billing-window.ts";
 import { ReportCalculationApiClientError } from "../api/_lib/report-facts.ts";
@@ -17,7 +17,8 @@ import { verifyStripeWebhookSignature } from "../api/_lib/stripe-report-billing.
 import { assembleReportGenerationPayload } from "../api/_lib/report-generation.ts";
 import {
   enforceReportRevisionStopRule, ReportRevisionScopeError, ReportStopRuleError,
-  runReportWriterChain, spliceReportRevision
+  mergeOverlappingReportDefects, reportValidationIssuesToNamedDefects,
+  reviseReportDraftForNamedDefects, runReportWriterChain, spliceReportRevision
 } from "../api/_lib/report-writer-chain.ts";
 
 process.env.REPORT_AUTO_PUBLISH = "false";
@@ -60,6 +61,27 @@ assert.equal(reportFulfillmentConfig().reportLifetimeTokenBudget, 1_450_000);
 assert.equal(reportFulfillmentConfig().workerBatchSize, 1, "The 300-second worker may claim only one report per invocation.");
 assert.equal(reportFulfillmentConfig().workerMaxNewUnitsPerCycle, 1, "A worker cycle must finish and persist one new unit before yielding.");
 assert.equal(reportFulfillmentConfig().workerCycleDeadlineMs, 240_000, "The worker must reserve 60 seconds before Vercel's hard timeout.");
+assert.equal(reportValidatorAttemptCap({ validator_attempt_overrides: { summer: 5 } }, "summer", 3), 5,
+  "Report 74951c07's Summer override must add two attempts to the governed cap of three.");
+assert.equal(reportValidatorAttemptCap({ validator_attempt_overrides: { summer: 5 } }, "spring", 3), 3,
+  "The Summer recovery override must not alter any other unit.");
+const validatorRecoveryMigration = fs.readFileSync(new URL(
+  "../apps/web/supabase/migrations/20260811140000_report_validator_splice_recovery.sql",
+  import.meta.url
+), "utf8");
+for (const governedValue of [
+  "authorized_call_budget = 85",
+  "authorized_token_budget = 4000000",
+  "token_budget_lifetime = 6000000",
+  "authorization_call_count = 43",
+  "authorization_token_count = 2081764",
+  "validator_attempt_overrides->>'summer' = '5'"
+]) assert.ok(validatorRecoveryMigration.includes(governedValue), `Recovery migration must pin ${governedValue}.`);
+assert.match(validatorRecoveryMigration, /authorization_token = existing_authorization/u,
+  "The recovery migration must preserve the current one-use authorization identity.");
+assert.match(validatorRecoveryMigration,
+  /if not exists \([\s\S]*public\.user_reports[\s\S]*and not exists \([\s\S]*public\.report_fulfillment_jobs[\s\S]*then[\s\S]*return;/u,
+  "A clean database without either Production recovery row must apply the schema portion and skip only the report-specific recovery.");
 assert.doesNotThrow(() => assertReportTokenBudgets({
   authorizationTokenCount: 793_038,
   authorizationTokenBudget: 2_500_000,
@@ -128,6 +150,60 @@ assert.throws(() => spliceReportRevision(spliceInput, spliceDefects, { replaceme
   { defect_id: "splice-timing", location: "timing", scope_start: 0, scope_end: 0, replacement: "REPLACED_TIMING." }
 ] }), ReportRevisionScopeError, "A changed location/index token must be rejected as scope spill.");
 
+const summerOverlapDraft = {
+  ...draft,
+  body: "SUMMER_FIRST. SUMMER_SHARED. SUMMER_THIRD. SUMMER_UNNAMED."
+};
+const summerOverlapDefects = [
+  { id: "defect-2", category: "density_violation", location: "body", sentence_index: 0, scope_start: 0, scope_end: 1, quote: "SUMMER_FIRST. SUMMER_SHARED.", evidence: "FIXTURE_ONLY_MENU", evidence_ids: [], instruction: "Reduce to at most five items." },
+  { id: "defect-3", category: "owner_voice_drift", location: "body", sentence_index: 1, scope_start: 1, scope_end: 2, quote: "SUMMER_SHARED. SUMMER_THIRD.", evidence: "FIXTURE_ONLY_VOICE", evidence_ids: ["FIXTURE_ONLY_OWNER"], instruction: "Restore the supported owner register." }
+];
+const mergedSummerDefects = mergeOverlappingReportDefects(summerOverlapDraft, summerOverlapDefects);
+assert.equal(mergedSummerDefects.length, 1, "Summer's defect-3 overlap must become one deterministic replacement scope.");
+assert.deepEqual({
+  id: mergedSummerDefects[0].id,
+  location: mergedSummerDefects[0].location,
+  start: mergedSummerDefects[0].scope_start,
+  end: mergedSummerDefects[0].scope_end,
+  quote: mergedSummerDefects[0].quote
+}, {
+  id: "merged:defect-2+defect-3",
+  location: "body",
+  start: 0,
+  end: 2,
+  quote: "SUMMER_FIRST. SUMMER_SHARED. SUMMER_THIRD."
+});
+assert.match(mergedSummerDefects[0].instruction, /defect-2:density_violation[\s\S]*defect-3:owner_voice_drift/u,
+  "The merged Summer scope must carry both original instructions.");
+const summerOverlapSpliced = spliceReportRevision(summerOverlapDraft, mergedSummerDefects, { replacements: [{
+  defect_id: "merged:defect-2+defect-3", location: "body", scope_start: 0, scope_end: 2,
+  replacement: "SUMMER_COMBINED_REPLACEMENT."
+}] });
+assert.equal(summerOverlapSpliced.body, "SUMMER_COMBINED_REPLACEMENT. SUMMER_UNNAMED.",
+  "The merged replacement must leave Summer's unnamed sentence byte-identical.");
+
+const productionSummerDraft = {
+  headline: "An application may be pending.",
+  tldr: "An application may need an answer.",
+  summary: "An application may move this season.",
+  body: "The August 12 solar eclipse falls in your third house, so an announcement, application, piece of writing, class, contract, conversation, or decision may need an answer from someone else. A class, contract, announcement, or piece of writing may need clearer terms before it moves forward.",
+  action: "", timing: "", sections: []
+};
+const productionSummerIssues = [
+  { code: "lexical_budget", message: "application exceeds the configured lexical budget." },
+  { code: "menu_size", message: "Manifestation menu exceeds five items: The August 12 solar eclipse falls in your third house, so an announcement, application, piece of writing, class, contract, conversation, or decision may need an answer from someone else." },
+  { code: "menu_size", message: "Manifestation menu exceeds five items: A class, contract, announcement, or piece of writing may need clearer terms before it moves forward." }
+];
+const productionSummerValidatorDefects = reportValidationIssuesToNamedDefects(productionSummerDraft, productionSummerIssues);
+assert.equal(productionSummerValidatorDefects.length, 3);
+assert.ok(productionSummerValidatorDefects.every((defect) => defect.quote && productionSummerDraft.body.includes(defect.quote)),
+  "Every Summer validator finding must quote and scope an actual sentence from the failed unit.");
+assert.match(productionSummerValidatorDefects.find((defect) => defect.id.includes("lexical_budget")).instruction, /Replace the over-budget noun 'application'/u);
+assert.ok(productionSummerValidatorDefects.filter((defect) => defect.id.includes("menu_size"))
+  .every((defect) => defect.instruction.startsWith("Reduce the quoted sentence to at most five items.")));
+assert.equal(mergeOverlappingReportDefects(productionSummerDraft, productionSummerValidatorDefects).length, 2,
+  "The lexical and menu findings on Summer's first sentence must share one replacement; the second sentence remains separately scoped.");
+
 assert.throws(() => enforceReportRevisionStopRule(spliceReplay.draft, spliceReplay.failedWholeUnitRevision, spliceReplay.defects), ReportStopRuleError,
   "Run 1's whole-unit revision must preserve the recorded old stop-rule failure.");
 const replaySpliced = spliceReportRevision(spliceReplay.draft, spliceReplay.defects, { replacements: [
@@ -153,6 +229,27 @@ assert.equal(missingComparisonProviderCalls, 0, "Missing owner comparisons must 
 const spliceChainPayload = assembleReportGenerationPayload({
   reportId: "fixture-splice-chain", reportDomain: "general", reportHorizon: "12_months", unitId: "overview", frozenFacts: frozen
 });
+const summerOverlapSchemas = [];
+const summerOverlapRevision = await reviseReportDraftForNamedDefects({
+  payload: spliceChainPayload,
+  draft: summerOverlapDraft,
+  defects: summerOverlapDefects,
+  callModel: async (input) => {
+    summerOverlapSchemas.push(input.schemaName);
+    assert.match(input.prompt, /merged:defect-2\+defect-3/u);
+    assert.match(input.prompt, /Reduce to at most five items\.[\s\S]*Restore the supported owner register\./u);
+    return {
+      value: { replacements: [{
+        defect_id: "merged:defect-2+defect-3", location: "body", scope_start: 0, scope_end: 2,
+        replacement: "SUMMER_COMBINED_REPLACEMENT."
+      }] },
+      model: input.model, provider: input.provider,
+      usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }
+    };
+  }
+});
+assert.deepEqual(summerOverlapSchemas, ["report_unit_revision_spans"], "Merged defects must cost one splice call, not one call per finding.");
+assert.equal(summerOverlapRevision.revised.body, "SUMMER_COMBINED_REPLACEMENT. SUMMER_UNNAMED.");
 const spliceChainDraft = {
   headline: "FIXTURE_ONLY_HEADLINE.", tldr: "FIXTURE_ONLY_TLDR.", summary: "FIXTURE_ONLY_SUMMARY.",
   body: "FIXTURE_ONLY_FIRST. FIXTURE_ONLY_SECOND.", action: "FIXTURE_ONLY_ACTION.",
@@ -643,6 +740,61 @@ assert.deepEqual({
   lockedBy: deadlineStore.jobs.get(deadlineJob.id).locked_by,
   lastError: deadlineStore.jobs.get(deadlineJob.id).last_error
 }, { state: "queued", step: "writing", lockedAt: null, lockedBy: null, lastError: null }, "The persisted job must be immediately claimable by the next scheduled cycle.");
+
+const validatorRepairStore = createMemoryStore();
+const validatorRepairReport = {
+  ...structuredClone(deadlineReport),
+  id: "validator-repair-report",
+  user_id: "validator-repair-user",
+  fulfillment_status: "queued"
+};
+const validatorRepairJob = authorizedJob({
+  id: "validator-repair-job", report_id: validatorRepairReport.id, entitlement_id: "validator-repair-ent",
+  state: "running", step: "writing", attempt: 1
+});
+validatorRepairStore.reports.set(validatorRepairReport.id, validatorRepairReport);
+validatorRepairStore.entitlements.set("validator-repair-ent", {
+  id: "validator-repair-ent", user_id: validatorRepairReport.user_id, status: "active", product_key: "general_1m"
+});
+validatorRepairStore.jobs.set(validatorRepairJob.id, structuredClone(validatorRepairJob));
+const validatorRepairSchemas = [];
+const validatorRepairModel = async (input) => {
+  const attempt = { provider: input.provider, model: input.model, schemaName: input.schemaName };
+  validatorRepairSchemas.push(input.schemaName);
+  await input.beforeProviderCall?.(attempt);
+  let value;
+  if (input.schemaName === "report_unit_draft") {
+    value = {
+      ...modelDraft,
+      body: "You may submit an application. You may revise an application. You may discuss an application. You may replace an application."
+    };
+  } else if (input.schemaName === "report_unit_critique") {
+    value = { result: "no_defects", applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" }, defects: [] };
+  } else {
+    assert.match(input.prompt, /validator-1-1-lexical_budget/u);
+    assert.match(input.prompt, /Replace the over-budget noun 'application'/u);
+    value = { replacements: [{
+      defect_id: "validator-1-1-lexical_budget", location: "body", scope_start: 3, scope_end: 3,
+      replacement: "You may replace a proposal."
+    }] };
+  }
+  const result = { value, model: input.model, provider: input.provider, usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } };
+  await input.afterProviderCall?.(attempt, result);
+  return result;
+};
+const validatorRepairResult = await processReportFulfillmentJob({
+  job: validatorRepairJob,
+  store: validatorRepairStore,
+  calculateFacts,
+  callModel: validatorRepairModel,
+  judgeCall,
+  continuationPolicy: { deadlineAtMs: 240_000, maxNewUnits: 1, now: () => 120_000 }
+});
+assert.equal(validatorRepairResult.status, "queued");
+assert.deepEqual(validatorRepairSchemas, ["report_unit_draft", "report_unit_critique", "report_unit_revision_spans"],
+  "A deterministic validator failure must re-enter as one named splice, never a second whole-unit draft.");
+assert.match(validatorRepairStore.units.get("validator-repair-report:overview").body, /replace a proposal/u);
+assert.doesNotMatch(validatorRepairStore.units.get("validator-repair-report:overview").body, /replace an application/u);
 
 const concurrentStore = createMemoryStore();
 const concurrentBase = {
