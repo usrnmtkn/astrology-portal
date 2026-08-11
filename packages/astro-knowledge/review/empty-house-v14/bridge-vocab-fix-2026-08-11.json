@@ -1,0 +1,28 @@
+{
+  "note": "Owner-approved wording fix (2026-08-11) for four bridge topic-short vocab rows in PR #181. Replaces machine-style identifiers with natural phrases. No other rows change.",
+  "authority": "owner selection in conversation 2026-08-11",
+  "rows": [
+    {
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/6",
+      "body": "work and health"
+    },
+    {
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/8",
+      "body": "shared money"
+    },
+    {
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/9",
+      "body": "growth"
+    },
+    {
+      "contentKey": "fallback-vocab/empty-house-bridge-topic-short/12",
+      "body": "inner life"
+    }
+  ],
+  "example_renders_after_fix": [
+    "That is why your work and health story keeps running through partnership and commitment.",
+    "That is why your shared money story keeps running through career and public reputation.",
+    "That is why your growth story keeps running through communication and daily connections.",
+    "That is why your inner life story keeps running through friendship and the future."
+  ]
+}
