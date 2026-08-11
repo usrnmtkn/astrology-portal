@@ -57,23 +57,26 @@ assert.equal(reportCallEstimate("12_months").safetyMarginCalls, 11);
 assert.equal(reportCallEstimate("12_months").recommendedCallBudget, 55);
 assert.equal(reportFulfillmentConfig().authorizationTokenBudget, 1_450_000);
 assert.equal(reportFulfillmentConfig().reportLifetimeTokenBudget, 1_450_000);
+assert.equal(reportFulfillmentConfig().workerBatchSize, 1, "The 300-second worker may claim only one report per invocation.");
+assert.equal(reportFulfillmentConfig().workerMaxNewUnitsPerCycle, 1, "A worker cycle must finish and persist one new unit before yielding.");
+assert.equal(reportFulfillmentConfig().workerCycleDeadlineMs, 240_000, "The worker must reserve 60 seconds before Vercel's hard timeout.");
 assert.doesNotThrow(() => assertReportTokenBudgets({
-  authorizationTokenCount: 249_787,
-  authorizationTokenBudget: 1_450_000,
-  lifetimeTokenCount: 1_507_070,
-  lifetimeTokenBudget: 3_000_000
-}), "Report 74951c07's exact Production ledger state must pass under its current authorization and owner-raised lifetime cap.");
+  authorizationTokenCount: 793_038,
+  authorizationTokenBudget: 2_500_000,
+  lifetimeTokenCount: 2_050_321,
+  lifetimeTokenBudget: 4_500_000
+}), "Report 74951c07's exact post-timeout ledger state must pass under the owner-raised scoped and lifetime budgets.");
 assert.throws(() => assertReportTokenBudgets({
-  authorizationTokenCount: 1_450_001,
-  authorizationTokenBudget: 1_450_000,
-  lifetimeTokenCount: 2_707_284,
-  lifetimeTokenBudget: 3_000_000
+  authorizationTokenCount: 2_500_001,
+  authorizationTokenBudget: 2_500_000,
+  lifetimeTokenCount: 3_757_284,
+  lifetimeTokenBudget: 4_500_000
 }), /Authorization token budget exceeded/u);
 assert.throws(() => assertReportTokenBudgets({
-  authorizationTokenCount: 249_787,
-  authorizationTokenBudget: 1_450_000,
-  lifetimeTokenCount: 3_000_001,
-  lifetimeTokenBudget: 3_000_000
+  authorizationTokenCount: 793_038,
+  authorizationTokenBudget: 2_500_000,
+  lifetimeTokenCount: 4_500_001,
+  lifetimeTokenBudget: 4_500_000
 }), /Report lifetime token budget exceeded/u);
 assert.equal(reportModelPricing().version, "2026-08-10");
 assert.equal(estimateReportModelCost("gpt-5.6-sol", { inputTokens: 1_000_000, outputTokens: 0, totalTokens: 1_000_000 }), 5);
@@ -605,6 +608,42 @@ await runReportFulfillmentBatch({
 });
 assert.deepEqual(claimedImmediateJob, { workerId: "authorize-doorbell", jobId: "authorized-job-id" }, "Authorize pickup must target the newly authorized job.");
 
+const deadlineStore = createMemoryStore();
+const deadlineReport = {
+  id: "deadline-report", user_id: "deadline-user", subject_id: null, report_domain: "general", report_horizon: "1_month",
+  period_start: frozen.startsAt.slice(0, 10), period_end: "2026-03-18", facts: {}, facts_engine: "pending", facts_hash: null,
+  fulfillment_status: "queued", prompt_versions: {}, token_count: 0, token_count_total: 0,
+  attempt_counts: { validator: 0, judge: 0 }, failure_history: [], status: "draft"
+};
+const deadlineJob = authorizedJob({
+  id: "deadline-job", report_id: deadlineReport.id, entitlement_id: "deadline-ent",
+  state: "running", step: "writing", attempt: 1, locked_at: "2026-08-11T06:10:48Z", locked_by: "fixture-worker"
+});
+deadlineStore.reports.set(deadlineReport.id, deadlineReport);
+deadlineStore.entitlements.set("deadline-ent", { id: "deadline-ent", user_id: "deadline-user", status: "active", product_key: "general_1m" });
+deadlineStore.jobs.set(deadlineJob.id, structuredClone(deadlineJob));
+const deadlineModel = modelCallWithCrash();
+const deadlineResult = await processReportFulfillmentJob({
+  job: deadlineJob,
+  store: deadlineStore,
+  calculateFacts,
+  callModel: deadlineModel,
+  judgeCall,
+  continuationPolicy: { deadlineAtMs: 240_000, maxNewUnits: 1, now: () => 120_000 }
+});
+assert.equal(deadlineResult.status, "queued", "A deadline-aware cycle must yield instead of starting a second incomplete unit.");
+assert.equal(deadlineResult.continuation, true);
+assert.equal(deadlineStore.units.size, 1, "The current unit must be fully persisted before the worker yields.");
+assert.ok(deadlineStore.units.has("deadline-report:overview"));
+assert.equal(deadlineModel.count(), 2, "Yielding at a unit boundary must not add or interrupt provider calls.");
+assert.deepEqual({
+  state: deadlineStore.jobs.get(deadlineJob.id).state,
+  step: deadlineStore.jobs.get(deadlineJob.id).step,
+  lockedAt: deadlineStore.jobs.get(deadlineJob.id).locked_at,
+  lockedBy: deadlineStore.jobs.get(deadlineJob.id).locked_by,
+  lastError: deadlineStore.jobs.get(deadlineJob.id).last_error
+}, { state: "queued", step: "writing", lockedAt: null, lockedBy: null, lastError: null }, "The persisted job must be immediately claimable by the next scheduled cycle.");
+
 const concurrentStore = createMemoryStore();
 const concurrentBase = {
   user_id: "concurrent-user", subject_id: null, report_horizon: "1_month",
@@ -771,4 +810,4 @@ assert.ok(webhookSource.includes('reportBillingMode() === "free_test"'));
 const stripeSetupSource = fs.readFileSync(new URL("./setup-stripe-report-products.mjs", import.meta.url), "utf8");
 assert.ok(stripeSetupSource.indexOf('reportBillingMode() !== "stripe"') < stripeSetupSource.indexOf("for (const sku"));
 
-console.log("Report fulfillment passed: 16-key free-test catalog, Stripe fail-closed mode, direct comp grant/revoke, per-call authorization, Production-shaped unit upsert, durable passing-unit cache, persistence backoff without re-billing, mocked generation/judge/manual-release/log-only-delivery E2E, shared facts, crash resume, retry queue, and no-edit admin contract.");
+console.log("Report fulfillment passed: 16-key free-test catalog, Stripe fail-closed mode, direct comp grant/revoke, per-call authorization, deadline-aware one-unit worker continuation, Production-shaped unit upsert, durable passing-unit cache, persistence backoff without re-billing, mocked generation/judge/manual-release/log-only-delivery E2E, shared facts, crash resume, retry queue, and no-edit admin contract.");

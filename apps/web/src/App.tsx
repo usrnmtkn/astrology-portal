@@ -172,6 +172,10 @@ import {
 } from "./services/generatedContent";
 import { loadSharedGeneratedContent } from "./services/sharedGeneratedContentCache";
 import { resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
+import {
+  resolveApprovedExactSkyAspectCopy,
+  selectSkyAspectCopyByPrecedence
+} from "./services/skyAspectRouting";
 import { skyAspectDateRange, skyAspectNarrativeTimingLines, timingGroupLabel } from "./services/skyAspectTiming";
 import { natalTransitGeometry, natalTransitWindowDays } from "./services/natalTransitGeometry";
 import { isEligibleTransitReturn } from "./services/transitReturns";
@@ -4168,30 +4172,23 @@ function approvedExactSkyAspectWritingSection(
     return null;
   }
 
-  const copy = registry.approvedExactSkyAspectCopy?.(aspect.from, aspect.type, aspect.to);
-
-  if (!copy) {
-    return null;
-  }
-
-  const body = interpolateTemplateString(copy.body, skyAspectTemplateSlots(aspect, positions), {
-    contentKey: copy.contentId,
-    field: "body"
+  const resolved = resolveApprovedExactSkyAspectCopy({
+    aspect: aspect.type,
+    first: aspect.from,
+    heading: skyAspectDisplayTitle(aspect),
+    lookup: registry.approvedExactSkyAspectCopy,
+    second: aspect.to,
+    slots: skyAspectTemplateSlots(aspect, positions)
   });
-  const paragraphs = readerFacingParagraphs([body]);
 
-  if (paragraphs.length === 0) {
+  if (!resolved) {
     return null;
   }
 
   return {
     slot: "meaning",
     required: true,
-    layer: "authored",
-    tier: "approved-exact-sky-aspect-v1",
-    sourceKeys: [copy.contentId, `packages/astro-knowledge/data/transits/${copy.sourceId}.json`],
-    heading: skyAspectDisplayTitle(aspect),
-    body: paragraphs.join("\n\n")
+    ...resolved
   };
 }
 
@@ -4309,27 +4306,18 @@ function normalizeSkyAspectSurface(
   generatedAt?: string
 ): NormalizedSkyAspectArticle {
   const signAwareSection = reviewedSkyAspectWritingSection(aspect, positions, "sign-aware");
-  const authoredSection = signAwareSection ? null : approvedExactSkyAspectWritingSection(aspect, positions);
-  const reviewedSection = signAwareSection || authoredSection
-    ? null
-    : reviewedSkyAspectWritingSection(aspect, positions, "generic");
-  const generatedSection = signAwareSection || authoredSection || reviewedSection
-    ? null
-    : generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt);
-  const fallbackSection = signAwareSection || authoredSection || reviewedSection || generatedSection
-    ? null
-    : fallbackSkyAspectWritingSection(aspect, positions);
-  const sections = signAwareSection
-    ? [signAwareSection]
-    : authoredSection
-      ? [authoredSection]
-      : reviewedSection
-        ? [reviewedSection]
-        : generatedSection
-          ? [generatedSection]
-          : fallbackSection
-            ? [fallbackSection]
-            : [];
+  const authoredSection = approvedExactSkyAspectWritingSection(aspect, positions);
+  const reviewedSection = reviewedSkyAspectWritingSection(aspect, positions, "generic");
+  const generatedSection = generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt);
+  const fallbackSection = fallbackSkyAspectWritingSection(aspect, positions);
+  const selectedSection = selectSkyAspectCopyByPrecedence({
+    signSpecific: signAwareSection,
+    exact: authoredSection,
+    phrasebook: reviewedSection,
+    generated: generatedSection,
+    fallback: fallbackSection
+  });
+  const sections = selectedSection ? [selectedSection] : [];
 
   return {
     surface: "sky-aspect",
