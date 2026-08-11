@@ -31,3 +31,10 @@ or
 owner-locked
 
 Never silently rewrite owner-locked copy.
+
+## Rendered-sample transition gate (owner-authored, 2026-08-11)
+
+The executable transition contract is `data/writing/approval-status-transitions.json`.
+Document-level approval can advance wording to `owner-approved` or `owner-locked`, but both
+`batch_generation` and `serving` remain false until the exact staged product sample advances
+from `owner-review-pending` to `owner-approved` through an explicit owner ruling.

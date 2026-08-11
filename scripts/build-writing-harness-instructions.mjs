@@ -7,9 +7,11 @@ import {
   CANONICAL_REVIEWER_INSTRUCTIONS_VERSION,
   CANONICAL_WRITING_INSTRUCTIONS_VERSION,
   CARD_WRITING_INSTRUCTIONS_VERSION,
+  COLD_RENDERED_PROSE_RULE,
   candidateCardAstrologyWritingInstructions,
   canonicalAstrologyReviewInstructions,
   canonicalAstrologyWritingInstructions,
+  coldRenderedProseReviewInstructions,
   HARD_REVISE_FIELDS,
   REVIEW_FIELDS
 } from "../src/astro-writing/canonicalInstructions.mjs";
@@ -19,9 +21,11 @@ const payload = {
   CANONICAL_REVIEWER_INSTRUCTIONS_VERSION,
   CANONICAL_WRITING_INSTRUCTIONS_VERSION,
   CARD_WRITING_INSTRUCTIONS_VERSION,
+  COLD_RENDERED_PROSE_RULE,
   candidateCardAstrologyWritingInstructions,
   canonicalAstrologyReviewInstructions,
   canonicalAstrologyWritingInstructions,
+  coldRenderedProseReviewInstructions,
   HARD_REVISE_FIELDS,
   REVIEW_FIELDS
 };

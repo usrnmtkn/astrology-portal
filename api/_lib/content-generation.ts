@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { contentGenerationProvider } from "./provider-config.js";
 import { REVIEW_FIELDS } from "../../src/astro-writing/canonicalInstructions.mjs";
-import { REVIEW_SCHEMA } from "../../src/astro-writing/reviewDraft.mjs";
+import { COLD_REVIEW_SCHEMA, REVIEW_SCHEMA } from "../../src/astro-writing/reviewDraft.mjs";
 import { MEANING_PLAN_SCHEMA } from "../../src/astro-writing/resolveAstrology.mjs";
 import { generatedApprovalState, markPipelineReady } from "../../src/astro-writing/approvalGovernance.mjs";
 import { writeGenerationMetadata } from "../../src/astro-writing/generationMetadata.mjs";
@@ -61,6 +61,12 @@ export type StoredGeneratedContent = GeneratedContent & {
   approvalHistory?: string[];
   ownerApproved?: boolean;
   ownerLocked?: boolean;
+  renderedSampleStatus?: "not-rendered" | "owner-review-pending" | "owner-approved";
+  renderedSampleOwnerApproved?: boolean;
+  renderedSampleId?: string;
+  renderedSampleSurface?: string;
+  batchGenerationAuthorized?: boolean;
+  servingAuthorized?: boolean;
   generation_metadata?: ReturnType<typeof writeGenerationMetadata>;
 };
 
@@ -5154,6 +5160,67 @@ type CanonicalReview = Record<string, CanonicalReviewCheck> & {
   violations: CanonicalReviewViolation[];
 };
 
+type ColdRenderedProseReview = {
+  cold_rendered_prose: CanonicalReviewCheck;
+  decision: "PASS" | "REVISE";
+  violations: CanonicalReviewViolation[];
+};
+
+function renderedGeneratedCopy(draft: GeneratedContent) {
+  return [
+    draft.headline,
+    draft.tldr,
+    draft.summary,
+    draft.body,
+    ...(draft.sections ?? []).flatMap((section) => [section.heading, section.body]),
+    draft.action,
+    draft.timing
+  ].filter((value): value is string => typeof value === "string" && value.trim().length > 0).join("\n\n");
+}
+
+async function reviewColdRenderedContentWithOpenAI({
+  apiKey,
+  draft
+}: {
+  apiKey: string;
+  draft: GeneratedContent;
+}): Promise<ColdRenderedProseReview> {
+  const model = process.env.OPENAI_REVIEW_MODEL ?? process.env.OPENAI_JUDGE_MODEL ?? "gpt-5.6-terra";
+  const { response, payload } = await callOpenAIResponses({
+    apiKey,
+    role: "COLD_REVIEWER",
+    request: {
+      model,
+      input: JSON.stringify({ rendered_copy: renderedGeneratedCopy(draft) }),
+      reasoning: { effort: process.env.OPENAI_REVIEW_REASONING_EFFORT ?? "medium" },
+      max_output_tokens: 2500,
+      text: {
+        format: {
+          type: "json_schema",
+          name: "tldr_astro_cold_rendered_prose_review",
+          strict: true,
+          schema: COLD_REVIEW_SCHEMA
+        }
+      }
+    }
+  });
+  const typedPayload = payload as {
+    output_text?: string;
+    output?: Array<{ content?: Array<{ text?: string }> }>;
+    error?: { message?: string };
+  };
+  if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI cold review failed with ${response.status}.`);
+  const output = responseOutputText(typedPayload);
+  if (!output) throw new Error("OpenAI cold review did not include a verdict.");
+  const review = JSON.parse(output) as ColdRenderedProseReview;
+  if (!new Set(["PASS", "REVISE"]).has(review.decision)) throw new Error("OpenAI cold review returned an invalid PASS-or-REVISE decision.");
+  if (!new Set(["PASS", "FAIL"]).has(review.cold_rendered_prose?.status)) throw new Error("OpenAI cold review omitted the blocking check.");
+  if (!Array.isArray(review.violations) || review.violations.some((item) => item.category !== "cold_rendered_prose" || item.severity !== "blocking")) {
+    throw new Error("OpenAI cold review returned an invalid violation contract.");
+  }
+  return review;
+}
+
 async function reviewGeneratedContentWithOpenAI({
   apiKey,
   draft,
@@ -5165,6 +5232,7 @@ async function reviewGeneratedContentWithOpenAI({
   input: GenerateContentInput;
   meaningPlan: Record<string, unknown>;
 }): Promise<CanonicalReview> {
+  const coldReview = await reviewColdRenderedContentWithOpenAI({ apiKey, draft });
   const model = process.env.OPENAI_REVIEW_MODEL ?? process.env.OPENAI_JUDGE_MODEL ?? "gpt-5.6-terra";
   const { response, payload } = await callOpenAIResponses({
     apiKey,
@@ -5200,14 +5268,20 @@ async function reviewGeneratedContentWithOpenAI({
   if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI review failed with ${response.status}.`);
   const output = responseOutputText(typedPayload);
   if (!output) throw new Error("OpenAI review did not include a verdict.");
-  const review = JSON.parse(output) as CanonicalReview;
-  if (!["PASS", "REVISE"].includes(review.decision)) throw new Error("OpenAI review returned an invalid PASS-or-REVISE decision.");
+  const contextualReview = JSON.parse(output) as CanonicalReview;
+  if (!["PASS", "REVISE"].includes(contextualReview.decision)) throw new Error("OpenAI review returned an invalid PASS-or-REVISE decision.");
   for (const field of REVIEW_FIELDS) {
-    if (!["PASS", "FAIL"].includes(review[field]?.status) || typeof review[field]?.reason !== "string") {
+    if (!["PASS", "FAIL"].includes(contextualReview[field]?.status) || typeof contextualReview[field]?.reason !== "string") {
       throw new Error(`OpenAI review omitted strict result for ${field}.`);
     }
   }
-  return review;
+  const contextualViolations = contextualReview.violations.filter((item) => item.category !== "cold_rendered_prose");
+  return {
+    ...contextualReview,
+    cold_rendered_prose: coldReview.cold_rendered_prose,
+    decision: coldReview.decision === "PASS" && contextualReview.decision === "PASS" ? "PASS" : "REVISE",
+    violations: [...coldReview.violations, ...contextualViolations]
+  };
 }
 
 async function planGeneratedContentWithOpenAI({
