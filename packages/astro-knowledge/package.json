@@ -87,6 +87,7 @@
     "check:marie-writer-index": "node ../../.agents/skills/owner-author-writer/scripts/build-voice-index.js --check",
     "test:marie-writer": "node scripts/test-owner-author-writer.js",
     "test:sky-placement-structural-slots": "node scripts/test-sky-placement-structural-slots.js",
+    "test:lunation-horoscope-template": "node ../../scripts/test-lunation-horoscope-template-v1.mjs",
     "build:marie-editorial-policy": "node scripts/compile-owner-author-editorial-decisions.js",
     "check:marie-editorial-policy": "node scripts/compile-owner-author-editorial-decisions.js --check",
     "test:marie-editorial-policy": "node scripts/test-owner-author-editorial-decisions.js",
