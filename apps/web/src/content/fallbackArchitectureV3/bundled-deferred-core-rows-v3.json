@@ -39516,7 +39516,7 @@
         "headlines": [
           {
             "id": "primary",
-            "text": "Give yourself permission to turn the volume down on the world right now.",
+            "text": "You start fixing a problem no one has named.",
             "review_status": "approved",
             "provenance": {
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -39527,7 +39527,7 @@
         "bodies": [
           {
             "id": "primary",
-            "text": "A song can undo you. An old memory can color the whole afternoon. Someone else's mood may follow you home before you realize you picked it up. Give yourself less noise, fewer opinions, and more time before making a hard decision. Write, make something, take a long shower, or let yourself stare out the window for a while. Not every feeling needs to be solved, but it does need to be experienced.",
+            "text": "You notice your manager seems off and start rearranging the day's schedule before they explain what happened. You may treat that mood as your own, so you check every detail and push aside work that will be evaluated. You still do not know what happened. Before you change the schedule again, ask your manager what actually needs attention.",
             "review_status": "approved",
             "provenance": {
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
