@@ -1,8 +1,10 @@
 # Empty-house V14 modern-ruler package
 
-Status: V14 `body_you` and all 541 projection-4 Friend variants are
-owner-approved exact wording. The Friend approval is bound to SHA-256
-`07e238f17f5d3941412cc9dcf273a87a9b05f996d3d1ae82b1c587f79aad7b1b`.
+Status: V14 `body_you` and all 541 projection-5 Friend variants are
+owner-approved exact wording. Projection 5 applies the owner's 2026-08-11
+revision to `empty-2nd|cancer` in both voices. The resulting Friend approval
+payload is bound to SHA-256
+`6388f0d05e8bba16bce13f25b7faf052047ec0e3f64498595a4f993461c67811`.
 
 ## Canonical source
 
@@ -22,7 +24,7 @@ a surface-local ruler-system setting, so modern and traditional planet-bearing
 keys can coexist without changing the app-wide rulership contract. The 33
 traditional house-1 rows remain an owner-authoring backlog; requesting one of
 those cells returns `SOURCE_GAP` until that additive layer lands.
-`serving-projection-v14-projection-4.json` records all 33 pre-assigned keys.
+`serving-projection-v14-projection-5.json` records all 33 pre-assigned keys.
 
 ## Serving precedence
 
@@ -39,13 +41,24 @@ than duplicates its generic fallback.
 
 ## Friend review
 
-Projection 4 applies the owner's 34 selected corrections over the deterministic
+Projection 4 applied the owner's 34 selected corrections over the deterministic
 plural-they draft. `body-they-decision-aid.json` records the complete flag
 disposition: 34 corrected rows and 31 rows approved as-is, with zero unresolved
 flags. The importer reproduces those exact bytes and never rewrites pronouns at
 runtime. The approval record covers all 541 rows at the digest above; any byte
-change requires a new approval. `--promote` fails unless that record is complete
+change requires a new approval. Projection 5 adds the separately approved
+`owner-revision-2026-08-11.json` overlay. `--promote` fails unless the combined
+payload record is complete
 and matches the generated payload.
+
+## Detail-view bridge layer
+
+The owner-approved bridge templates connect the sign and ruler-placement
+paragraphs in the detail view only. Cards still use the sign paragraph alone.
+The exact supplied wording is retained in `bridge-templates-proposal.json`, and
+`bridge-template-approval-record.json` records the 2026-08-11 approval. If the
+bridge template or its topic vocabulary is unavailable, the renderer preserves
+the sign and ruler paragraphs instead of failing the empty-house surface.
 
 ## Advisory judge close-out
 

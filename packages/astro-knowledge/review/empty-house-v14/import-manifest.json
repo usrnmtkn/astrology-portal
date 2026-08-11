@@ -2,7 +2,7 @@
   "schema": "tldrastro.empty-house.import.v14",
   "version": "v14-owner-approved-full-workbook-2026-08-10",
   "source_of_truth": "source/TLDR-AR-EMPTY-HOUSES-MATRIX-V14-OWNER-APPROVED.xlsx",
-  "serving_projection_contract": "serving-projection-v14-projection-4.json",
+  "serving_projection_contract": "serving-projection-v14-projection-5.json",
   "source_sha256": "bbfdc02f6a5684d75dd7ec348e1f62d2e38f7e0487e495e50f9fa626660e4334",
   "canonical_rows": {
     "file": "empty-house-v14-owner-approved-rows.json",
@@ -44,7 +44,7 @@
   },
   "friend_variants": {
     "file": "empty-house-v14-friend-variants-review.json",
-    "payload_sha256": "07e238f17f5d3941412cc9dcf273a87a9b05f996d3d1ae82b1c587f79aad7b1b",
+    "payload_sha256": "6388f0d05e8bba16bce13f25b7faf052047ec0e3f64498595a4f993461c67811",
     "prior_projection_digest_sha256": "74e0052ee3c3ce8660b22317b328ad46b01adb97a23e42e1ec48e4ad28f5568d",
     "flag_metadata": "body-they-flagged-for-owner.json",
     "corrections": "body-they-corrections.json",
@@ -68,5 +68,19 @@
     "editorial_backlog": "advisory-editorial-backlog.json"
   },
   "supplied_judge_complete_manifest_sha256": "f2586c17d84f48d534bb8d15db1c8f7177e3f67820ca0adc2000cea4a5043dc5",
-  "judge_verdicts_file": "serving-row-judge-verdicts.json"
+  "judge_verdicts_file": "serving-row-judge-verdicts.json",
+  "owner_revisions": {
+    "version": "v14-projection-5",
+    "file": "owner-revision-2026-08-11.json",
+    "rows": 1,
+    "body_you_digest_sha256": "ca3d554e9b0992f4ed6c51be6de1774d9bb69612f5ee577429247a8aca199846",
+    "body_they_digest_sha256": "d3947881987c858352a206f963eacc2f2148bd179b2b3ccbd116f5917bfa8a94",
+    "authority": "owner-authored exact wording 2026-08-11; no further review gate"
+  },
+  "bridge_layer": {
+    "proposal": "bridge-templates-proposal.json",
+    "approval": "bridge-template-approval-record.json",
+    "status": "approved",
+    "render_scope": "detail_view_only"
+  }
 }

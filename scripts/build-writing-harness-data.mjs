@@ -53,7 +53,7 @@ const manifest = readJson("bundled-manifest-v3.json");
 const servingKeys = new Set(manifest.keys.map((key) => key.slice(key.indexOf(":") + 1)));
 const emptyHousePrefix = "fallback-hook/empty-house/";
 const emptyHouseImportManifestPath = "packages/astro-knowledge/review/empty-house-v14/import-manifest.json";
-const emptyHouseProjectionPath = "packages/astro-knowledge/review/empty-house-v14/serving-projection-v14-projection-4.json";
+const emptyHouseProjectionPath = "packages/astro-knowledge/review/empty-house-v14/serving-projection-v14-projection-5.json";
 const emptyHouseImportManifest = readRepoJson(emptyHouseImportManifestPath);
 const emptyHouseProjection = readRepoJson(emptyHouseProjectionPath);
 
@@ -101,7 +101,9 @@ function registerFor(row) {
 }
 
 const servingApproved = allCandidates
-  .filter((row) => servingKeys.has(row.contentKey) && !row.contentKey.startsWith(emptyHousePrefix))
+  .filter((row) => servingKeys.has(row.contentKey) && (
+    !row.contentKey.startsWith(emptyHousePrefix) || row.content_role === "template"
+  ))
   .map((row) => ({
     id: `serving:${row.contentKey}`,
     contentKey: row.contentKey,
@@ -113,9 +115,9 @@ const servingApproved = allCandidates
     source: "fallbackArchitectureV3"
   }));
 
-if (emptyHouseProjection.version !== "v14-projection-4") throw new Error("Empty-house harness evidence must use projection 4.");
+if (emptyHouseProjection.version !== "v14-projection-5") throw new Error("Empty-house harness evidence must use projection 5.");
 if (emptyHouseImportManifest.serving_projection_contract !== path.basename(emptyHouseProjectionPath)) {
-  throw new Error("Empty-house import manifest does not point to the projection-4 contract.");
+  throw new Error("Empty-house import manifest does not point to the projection-5 contract.");
 }
 const emptyHouseRows = latestOwnerApproved(
   source.hookRows.filter((row) => row.contentKey.startsWith(emptyHousePrefix))
@@ -133,7 +135,7 @@ const emptyHouseV14Approved = emptyHouseRows.flatMap((row) => ([
     text: row.body_you,
     ownerApproved: true,
     authority: "serving-review-status-approved",
-    source: "empty-house-v14/projection-4",
+    source: "empty-house-v14/projection-5",
     sourceManifest: emptyHouseImportManifestPath,
     projectionContract: emptyHouseProjectionPath,
     projectionVersion: emptyHouseProjection.version,
@@ -147,7 +149,7 @@ const emptyHouseV14Approved = emptyHouseRows.flatMap((row) => ([
     text: row.body_they,
     ownerApproved: true,
     authority: "serving-review-status-approved",
-    source: "empty-house-v14/projection-4",
+    source: "empty-house-v14/projection-5",
     sourceManifest: emptyHouseImportManifestPath,
     projectionContract: emptyHouseProjectionPath,
     projectionVersion: emptyHouseProjection.version,
