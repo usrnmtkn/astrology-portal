@@ -2,13 +2,14 @@
   "$extends": "daily-glance-writer-sol-xhigh-batch-3-v2.json",
   "schemaVersion": 1,
   "configId": "daily-glance-writer-sol-xhigh-batch-3-self-audit-v1",
-  "packetVersion": "daily-glance-writer-packet-v8:self-audit-bottom-five+owner-sol-directive+same-group-golds+key-facts+external-lint",
-  "promptVersion": "daily-glance-writer-v8:owner-sol-directive-one-per-call",
-  "status": "owner-authorized-self-audit-2026-08-10",
+  "packetVersion": "daily-glance-writer-packet-v9:self-audit+serving-calibrated-tiered-lint",
+  "promptVersion": "daily-glance-writer-v9:owner-sol-directive+tiered-lint",
+  "status": "owner-authorized-lint-recalibration-2026-08-10",
   "authorities": [
     "packages/astro-knowledge/review/daily-glance-sol-directive-pilot-authorization-2026-08-10.md",
     "packages/astro-knowledge/review/daily-glance-judge-calibration-set-v1.json",
-    "packages/astro-knowledge/review/daily-glance-sol-writer-directive-v1.md"
+    "packages/astro-knowledge/review/daily-glance-sol-writer-directive-v1.md",
+    "packages/astro-knowledge/review/daily-glance-writer-lint-recalibration-2026-08-10.md"
   ],
   "selfAuditDirectivePath": "packages/astro-knowledge/review/daily-glance-sol-writer-directive-v1.md",
   "candidateSamplesPerKey": 3,

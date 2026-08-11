@@ -1,0 +1,450 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-08-10",
+  "policyId": "daily-glance-writer-lint-policy-v2:serving-68-calibrated",
+  "sourceRowsPath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+  "sourceRowsSha256": "86428d40552aae031109911d08b040286dde2ccd63ac32c19e1c834ff284430e",
+  "servingPairs": 68,
+  "approvedPairs": 68,
+  "threshold": 0.1,
+  "ruleStats": [
+    {
+      "id": "P4-headline-one-declarative-sentence",
+      "failures": 1,
+      "failureRate": 0.014705882352941176,
+      "tier": "blocking"
+    },
+    {
+      "id": "P4-headline-word-count",
+      "failures": 0,
+      "failureRate": 0,
+      "tier": "blocking"
+    },
+    {
+      "id": "P4-body-sentence-count",
+      "failures": 9,
+      "failureRate": 0.1323529411764706,
+      "tier": "advisory"
+    },
+    {
+      "id": "P4-body-word-count",
+      "failures": 15,
+      "failureRate": 0.22058823529411764,
+      "tier": "advisory"
+    },
+    {
+      "id": "P4-one-final-instruction",
+      "failures": 18,
+      "failureRate": 0.2647058823529412,
+      "tier": "advisory"
+    },
+    {
+      "id": "P4-body-supports-without-repeating",
+      "failures": 0,
+      "failureRate": 0,
+      "tier": "blocking"
+    },
+    {
+      "id": "global+VC-016+DG+SM-output-bans",
+      "failures": 20,
+      "failureRate": 0.29411764705882354,
+      "tier": "advisory"
+    },
+    {
+      "id": "DG-R2-register",
+      "failures": 28,
+      "failureRate": 0.4117647058823529,
+      "tier": "advisory"
+    },
+    {
+      "id": "DG-R3-no-slogan-or-restatement-closer",
+      "failures": 0,
+      "failureRate": 0,
+      "tier": "blocking"
+    },
+    {
+      "id": "DG-R4-no-outcome-promise",
+      "failures": 1,
+      "failureRate": 0.014705882352941176,
+      "tier": "blocking"
+    },
+    {
+      "id": "DG-R7-varied-opener",
+      "failures": 1,
+      "failureRate": 0.014705882352941176,
+      "tier": "blocking"
+    },
+    {
+      "id": "DG-R9-enumerated-instruction-allowed",
+      "failures": 0,
+      "failureRate": 0,
+      "tier": "blocking"
+    },
+    {
+      "id": "B1-L1-time-anchor-max-once",
+      "failures": 0,
+      "failureRate": 0,
+      "tier": "blocking"
+    },
+    {
+      "id": "B1-L2-may-inner-states-only",
+      "failures": 16,
+      "failureRate": 0.23529411764705882,
+      "tier": "advisory"
+    },
+    {
+      "id": "B1-L3+L4-headline-group-grammar",
+      "failures": 35,
+      "failureRate": 0.5147058823529411,
+      "tier": "advisory"
+    },
+    {
+      "id": "SM-DG-2-no-diagnostic-history",
+      "failures": 0,
+      "failureRate": 0,
+      "tier": "blocking"
+    },
+    {
+      "id": "DG-R11-unhedged-headline",
+      "failures": 0,
+      "failureRate": 0,
+      "tier": "blocking"
+    },
+    {
+      "id": "DG-R12-no-time-anchor-opener",
+      "failures": 3,
+      "failureRate": 0.04411764705882353,
+      "tier": "blocking"
+    },
+    {
+      "id": "DG-R13-may-max-once",
+      "failures": 2,
+      "failureRate": 0.029411764705882353,
+      "tier": "blocking"
+    },
+    {
+      "id": "DG-R14-scene-not-biographical",
+      "failures": 0,
+      "failureRate": 0,
+      "tier": "blocking"
+    },
+    {
+      "id": "DG-R15-action-repairs-moment",
+      "failures": 0,
+      "failureRate": 0,
+      "tier": "blocking"
+    },
+    {
+      "id": "DG-R16-owner-reserved-construction",
+      "failures": 2,
+      "failureRate": 0.029411764705882353,
+      "tier": "blocking"
+    },
+    {
+      "id": "DG-R17-quoted-dialogue-max-one",
+      "failures": 2,
+      "failureRate": 0.029411764705882353,
+      "tier": "blocking"
+    },
+    {
+      "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+      "failures": 0,
+      "failureRate": 0,
+      "tier": "blocking"
+    },
+    {
+      "id": "OWNER-DIRECTIVE-short-blunt-line",
+      "failures": 31,
+      "failureRate": 0.45588235294117646,
+      "tier": "advisory"
+    },
+    {
+      "id": "OWNER-TEST-specificity",
+      "failures": 67,
+      "failureRate": 0.9852941176470589,
+      "tier": "advisory"
+    },
+    {
+      "id": "OWNER-TEST-morning-read",
+      "failures": 15,
+      "failureRate": 0.22058823529411764,
+      "tier": "advisory"
+    },
+    {
+      "id": "OWNER-TEST-screenshot",
+      "failures": 37,
+      "failureRate": 0.5441176470588235,
+      "tier": "advisory"
+    }
+  ],
+  "blockingTier": {
+    "passed": 58,
+    "failed": 10,
+    "passRate": 0.8529411764705882,
+    "failingCards": [
+      {
+        "key": "conjunction/chiron",
+        "failedRules": [
+          "DG-R17-quoted-dialogue-max-one"
+        ]
+      },
+      {
+        "key": "conjunction/pluto",
+        "failedRules": [
+          "DG-R13-may-max-once"
+        ]
+      },
+      {
+        "key": "opposition/pluto",
+        "failedRules": [
+          "DG-R17-quoted-dialogue-max-one"
+        ]
+      },
+      {
+        "key": "opposition/uranus",
+        "failedRules": [
+          "P4-headline-one-declarative-sentence"
+        ]
+      },
+      {
+        "key": "soft/mars",
+        "failedRules": [
+          "DG-R7-varied-opener",
+          "DG-R12-no-time-anchor-opener",
+          "DG-R16-owner-reserved-construction"
+        ]
+      },
+      {
+        "key": "soft/north-node",
+        "failedRules": [
+          "DG-R4-no-outcome-promise"
+        ]
+      },
+      {
+        "key": "soft/pluto",
+        "failedRules": [
+          "DG-R16-owner-reserved-construction"
+        ]
+      },
+      {
+        "key": "soft/south-node",
+        "failedRules": [
+          "DG-R13-may-max-once"
+        ]
+      },
+      {
+        "key": "square/lilith",
+        "failedRules": [
+          "DG-R12-no-time-anchor-opener"
+        ]
+      },
+      {
+        "key": "square/mercury",
+        "failedRules": [
+          "DG-R12-no-time-anchor-opener"
+        ]
+      }
+    ]
+  },
+  "batch": {
+    "passed": false,
+    "allChecksPassed": false,
+    "checks": [
+      {
+        "id": "batch-output-count",
+        "passed": true,
+        "details": "68/68 outputs",
+        "tier": "blocking",
+        "advisory": false
+      },
+      {
+        "id": "DG-R1-recurring-sentence-frame",
+        "passed": false,
+        "details": [
+          {
+            "frame": "you do not",
+            "keys": [
+              "conjunction/moon",
+              "house/10",
+              "house/9",
+              "house/9",
+              "opposition/south-node"
+            ]
+          },
+          {
+            "frame": "you're allowed to",
+            "keys": [
+              "conjunction/uranus",
+              "house/5",
+              "soft/lilith",
+              "soft/uranus",
+              "square/uranus"
+            ]
+          },
+          {
+            "frame": "you don't need",
+            "keys": [
+              "conjunction/venus",
+              "soft/sun",
+              "square/mercury"
+            ]
+          },
+          {
+            "frame": "pay attention to",
+            "keys": [
+              "conjunction/venus",
+              "house/6",
+              "opposition/north-node",
+              "square/lilith"
+            ]
+          },
+          {
+            "frame": "you don't have",
+            "keys": [
+              "house/5",
+              "house/8",
+              "opposition/chiron",
+              "soft/chiron",
+              "soft/sun",
+              "square/uranus"
+            ]
+          }
+        ],
+        "tier": "advisory",
+        "advisory": true
+      },
+      {
+        "id": "DG-R7-opener-variety",
+        "passed": false,
+        "details": [
+          {
+            "frame": "you may",
+            "keys": [
+              "conjunction/mars",
+              "square/moon",
+              "square/pluto"
+            ]
+          },
+          {
+            "frame": "you are",
+            "keys": [
+              "conjunction/mercury",
+              "soft/chiron"
+            ]
+          },
+          {
+            "frame": "you open",
+            "keys": [
+              "conjunction/uranus",
+              "soft/saturn"
+            ]
+          },
+          {
+            "frame": "pay attention",
+            "keys": [
+              "house/6",
+              "square/lilith"
+            ]
+          },
+          {
+            "frame": "someone asks",
+            "keys": [
+              "opposition/south-node",
+              "opposition/sun"
+            ]
+          },
+          {
+            "frame": "you send",
+            "keys": [
+              "soft/jupiter",
+              "square/venus"
+            ]
+          }
+        ],
+        "tier": "blocking",
+        "advisory": false
+      },
+      {
+        "id": "OWNER-TEST-specificity-batch",
+        "passed": false,
+        "tier": "advisory",
+        "advisory": true,
+        "details": {
+          "failedCount": 67,
+          "failedKeys": [
+            "conjunction/chiron",
+            "conjunction/jupiter",
+            "conjunction/lilith",
+            "conjunction/mars",
+            "conjunction/mercury",
+            "conjunction/moon",
+            "conjunction/neptune",
+            "conjunction/north-node",
+            "conjunction/pluto",
+            "conjunction/saturn",
+            "conjunction/south-node",
+            "conjunction/sun",
+            "conjunction/uranus",
+            "conjunction/venus",
+            "house/1",
+            "house/10",
+            "house/11",
+            "house/12",
+            "house/2",
+            "house/3",
+            "house/4",
+            "house/5",
+            "house/7",
+            "house/8",
+            "house/9",
+            "opposition/chiron",
+            "opposition/jupiter",
+            "opposition/lilith",
+            "opposition/mars",
+            "opposition/mercury",
+            "opposition/moon",
+            "opposition/neptune",
+            "opposition/north-node",
+            "opposition/pluto",
+            "opposition/saturn",
+            "opposition/south-node",
+            "opposition/sun",
+            "opposition/uranus",
+            "opposition/venus",
+            "soft/chiron",
+            "soft/jupiter",
+            "soft/lilith",
+            "soft/mars",
+            "soft/mercury",
+            "soft/moon",
+            "soft/neptune",
+            "soft/north-node",
+            "soft/pluto",
+            "soft/saturn",
+            "soft/south-node",
+            "soft/sun",
+            "soft/uranus",
+            "soft/venus",
+            "square/chiron",
+            "square/jupiter",
+            "square/lilith",
+            "square/mars",
+            "square/mercury",
+            "square/moon",
+            "square/neptune",
+            "square/north-node",
+            "square/pluto",
+            "square/saturn",
+            "square/south-node",
+            "square/sun",
+            "square/uranus",
+            "square/venus"
+          ]
+        }
+      }
+    ]
+  },
+  "modelCalls": 0,
+  "servingChanges": 0,
+  "reviewStatusChanges": 0
+}
