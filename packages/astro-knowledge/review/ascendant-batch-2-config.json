@@ -4,8 +4,8 @@
   "outputDir": "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1",
   "expectedCalls": { "writer": 6, "judge": 6, "total": 12 },
   "models": {
-    "writer": { "model": "gpt-5.6-sol", "reasoningEffort": "xhigh", "maxOutputTokens": 12000 },
-    "judge": { "model": "gpt-5.6-terra", "reasoningEffort": "low", "maxOutputTokens": 4000 }
+    "writer": { "provider": "openai", "model": "gpt-5.6-sol", "reasoningEffort": "xhigh", "maxOutputTokens": 12000 },
+    "judge": { "provider": "openai", "model": "gpt-5.6-terra", "reasoningEffort": "low", "maxOutputTokens": 4000 }
   },
   "targets": [
     { "id": "neptune-ascendant-conjunction", "planet": "neptune", "aspectLabel": "conjunction", "entryFile": "packages/astro-knowledge/data/synastry/aspects/A-neptune_B-ascendant_conjunction.json", "expectedMode": "matched" },
