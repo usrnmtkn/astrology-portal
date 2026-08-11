@@ -7,7 +7,7 @@ You are writing replacement copy for one daily-glance card in a horoscope produc
 - `{{TRANSIT_KEY}}` — e.g. `square/uranus`, `house/8`
 - `{{TRANSIT_MECHANISM}}` — one-paragraph description of what this transit specifically does
 - `{{GOOD_EXAMPLES}}` — owner-approved cards. Match their register exactly.
-- `{{LINT_RULES}}` — the deterministic lint spec, verbatim. These are hard gates: a candidate that fails any rule is discarded unread, regardless of quality.
+- `{{LINT_RULES}}` — the deterministic lint spec, verbatim. Blocking failures discard the candidate; advisory failures are reported without blocking it.
 
 ## The job
 
@@ -50,4 +50,4 @@ Return exactly this JSON, nothing else:
 
 - Best-of-three = three independent calls with this directive; do not request three candidates in one call.
 - Packet excludes current serving copy, judge reports, and rejected prose per governed-lane rules; the seven constraints above are the abstract translation of the audit's failed dimensions.
-- Deterministic lint runs externally on each output and its results are attached to the packet. Model self-reports are not lint evidence. Per OV-033, lint-failing outputs are discarded, not revised.
+- Deterministic lint runs externally on each output and its results are attached to the packet. Model self-reports are not lint evidence. Per OV-033, outputs with blocking lint failures are discarded, not revised; advisory failures remain visible but do not discard an otherwise lint-clean output.

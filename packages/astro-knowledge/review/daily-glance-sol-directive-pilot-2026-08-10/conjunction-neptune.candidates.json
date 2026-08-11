@@ -1,0 +1,815 @@
+{
+  "schemaVersion": 1,
+  "key": "conjunction/neptune",
+  "status": "UNAPPROVED",
+  "terraCalls": 0,
+  "winnersSelected": 0,
+  "candidates": [
+    {
+      "sample": 1,
+      "approvalStatus": "UNAPPROVED",
+      "lintDisposition": "DISCARDED_LINT_FAILURE",
+      "candidate": {
+        "transit_key": "conjunction/neptune",
+        "headline": "One worried message becomes an hour of rewriting.",
+        "body": "You read a coworker's message saying they feel uneasy about the presentation, then immediately reopen the slides you already finished. You may read their worry as evidence that you missed something and imagine errors no one has actually found. You lose your open hour rewriting approved work. Ask them to name one specific concern before you change a single slide.",
+        "screenshot_line": "You may read their worry as evidence that you missed something and imagine errors no one has actually found.",
+        "portability_check": "It fits this pairing because you fuse another person's stated worry with imagined errors and act before checking either."
+      },
+      "raw": "{\"transit_key\":\"conjunction/neptune\",\"headline\":\"One worried message becomes an hour of rewriting.\",\"body\":\"You read a coworker's message saying they feel uneasy about the presentation, then immediately reopen the slides you already finished. You may read their worry as evidence that you missed something and imagine errors no one has actually found. You lose your open hour rewriting approved work. Ask them to name one specific concern before you change a single slide.\",\"screenshot_line\":\"You may read their worry as evidence that you missed something and imagine errors no one has actually found.\",\"portability_check\":\"It fits this pairing because you fuse another person's stated worry with imagined errors and act before checking either.\"}",
+      "parseError": null,
+      "lint": {
+        "schemaVersion": 1,
+        "key": "conjunction/neptune",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "8 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "4 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "60 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Ask them to name one specific concern before you change a single slide."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": false,
+            "details": {
+              "saturationCue": false,
+              "target": "neptune"
+            }
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": false,
+            "details": [
+              "may read their worry as evidence that you missed something and i"
+            ]
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": true,
+            "details": {
+              "originalConjunctionGrammar": true,
+              "otherGrammar": false,
+              "softGrammar": false,
+              "squareGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You lose your open hour rewriting approved work."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "conjunction/neptune",
+                "matches": [],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "soft/chiron",
+                "square/uranus",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": false,
+            "details": "No candidate body line detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-output-schema",
+            "passed": true,
+            "details": "conjunction/neptune"
+          },
+          {
+            "id": "SOL-DIRECTIVE-headline",
+            "passed": true,
+            "details": "8 words; 1 sentence(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-body",
+            "passed": true,
+            "details": "60 words; 4 sentences"
+          },
+          {
+            "id": "SOL-DIRECTIVE-one-situation",
+            "passed": true,
+            "details": "No mechanical menu-of-scenes pattern detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-formula",
+            "passed": true,
+            "details": "No prohibited opener detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-hedging",
+            "passed": true,
+            "details": "1 may/might/perhaps usage(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-screenshot",
+            "passed": true,
+            "details": "Exact body sentence supplied."
+          },
+          {
+            "id": "SOL-DIRECTIVE-portability",
+            "passed": true,
+            "details": "19 words; 1 sentence(s)"
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 8,
+          "headlineSentences": 1,
+          "bodyWords": 60,
+          "bodySentences": 4,
+          "instructions": 1,
+          "timeAnchors": 0,
+          "mayUsages": 1,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 0
+        },
+        "directiveCounts": {
+          "hedgeCount": 1,
+          "screenshotSentences": 1,
+          "portabilitySentences": 1
+        }
+      },
+      "provider": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_0066e556199cc758006a7a37aa53f881a0a46c8f5ed9a8d8a1",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 7557,
+          "cachedInputTokens": 7554,
+          "cacheWriteTokens": 0,
+          "outputTokens": 2214,
+          "reasoningTokens": 2070,
+          "totalTokens": 9771
+        },
+        "estimatedCostUsd": 0.070212
+      },
+      "terraJudged": false,
+      "revisionsMade": 0
+    },
+    {
+      "sample": 2,
+      "approvalStatus": "UNAPPROVED",
+      "lintDisposition": "DISCARDED_LINT_FAILURE",
+      "candidate": {
+        "transit_key": "conjunction/neptune",
+        "headline": "You act before you know which feeling is yours.",
+        "body": "You replay a friend's worried voice note about tonight's plan and cancel the reservation before deciding if you share their concern. You may feel their unease so strongly that you treat every missing detail as proof the plan will go badly. You lose the table. Ask the restaurant to restore the reservation unless you can name your own reason for staying home.",
+        "screenshot_line": "You may feel their unease so strongly that you treat every missing detail as proof the plan will go badly.",
+        "portability_check": "Only this key centers on feeling a friend's worry, imagining failure, and canceling before identifying your own response."
+      },
+      "raw": "{\n  \"transit_key\": \"conjunction/neptune\",\n  \"headline\": \"You act before you know which feeling is yours.\",\n  \"body\": \"You replay a friend's worried voice note about tonight's plan and cancel the reservation before deciding if you share their concern. You may feel their unease so strongly that you treat every missing detail as proof the plan will go badly. You lose the table. Ask the restaurant to restore the reservation unless you can name your own reason for staying home.\",\n  \"screenshot_line\": \"You may feel their unease so strongly that you treat every missing detail as proof the plan will go badly.\",\n  \"portability_check\": \"Only this key centers on feeling a friend's worry, imagining failure, and canceling before identifying your own response.\"\n}",
+      "parseError": null,
+      "lint": {
+        "schemaVersion": 1,
+        "key": "conjunction/neptune",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "9 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "4 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "62 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Ask the restaurant to restore the reservation unless you can name your own reason for staying home."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": true,
+            "details": {
+              "saturationCue": true,
+              "target": "neptune"
+            }
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": [
+              "tonight"
+            ]
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": true,
+            "details": "Every may clause is an inner state, or may is absent."
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": true,
+            "details": {
+              "originalConjunctionGrammar": true,
+              "otherGrammar": false,
+              "softGrammar": false,
+              "squareGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": false,
+            "details": [
+              "tonight"
+            ]
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": "No quoted-dialogue line used."
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "No quoted-dialogue judgment needed."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You lose the table."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "conjunction/neptune",
+                "matches": [],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "soft/chiron",
+                "square/uranus",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": false,
+            "details": "No candidate body line detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-output-schema",
+            "passed": true,
+            "details": "conjunction/neptune"
+          },
+          {
+            "id": "SOL-DIRECTIVE-headline",
+            "passed": true,
+            "details": "9 words; 1 sentence(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-body",
+            "passed": true,
+            "details": "62 words; 4 sentences"
+          },
+          {
+            "id": "SOL-DIRECTIVE-one-situation",
+            "passed": true,
+            "details": "No mechanical menu-of-scenes pattern detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-formula",
+            "passed": true,
+            "details": "No prohibited opener detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-hedging",
+            "passed": true,
+            "details": "1 may/might/perhaps usage(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-screenshot",
+            "passed": true,
+            "details": "Exact body sentence supplied."
+          },
+          {
+            "id": "SOL-DIRECTIVE-portability",
+            "passed": true,
+            "details": "18 words; 1 sentence(s)"
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 9,
+          "headlineSentences": 1,
+          "bodyWords": 62,
+          "bodySentences": 4,
+          "instructions": 1,
+          "timeAnchors": 1,
+          "mayUsages": 1,
+          "quotedDialogueLines": 0,
+          "screenshotCandidateLines": 0
+        },
+        "directiveCounts": {
+          "hedgeCount": 1,
+          "screenshotSentences": 1,
+          "portabilitySentences": 1
+        }
+      },
+      "provider": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_0d8c5674c3fca3b2006a7a37aa5eb8819e9e50b7d4f181b14c",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 7557,
+          "cachedInputTokens": 0,
+          "cacheWriteTokens": 7554,
+          "outputTokens": 5862,
+          "reasoningTokens": 5696,
+          "totalTokens": 13419
+        },
+        "estimatedCostUsd": 0.223087
+      },
+      "terraJudged": false,
+      "revisionsMade": 0
+    },
+    {
+      "sample": 3,
+      "approvalStatus": "UNAPPROVED",
+      "lintDisposition": "DISCARDED_LINT_FAILURE",
+      "candidate": {
+        "transit_key": "conjunction/neptune",
+        "headline": "You treat one person's worry as a final verdict.",
+        "body": "You hear a coworker say, \"I'm worried about tomorrow's presentation,\" and picture the whole project failing before they name one problem. You may feel their worry as your own, so you lose your only free hour rebuilding slides they never asked you to change. You are solving an imagined failure. Ask them to name the exact slide that needs work before you replace another one.",
+        "screenshot_line": "You may feel their worry as your own, so you lose your only free hour rebuilding slides they never asked you to change.",
+        "portability_check": "It fits only when another person's stated worry fuses with imagined failure and prompts unnecessary work."
+      },
+      "raw": "{\"transit_key\":\"conjunction/neptune\",\"headline\":\"You treat one person's worry as a final verdict.\",\"body\":\"You hear a coworker say, \\\"I'm worried about tomorrow's presentation,\\\" and picture the whole project failing before they name one problem. You may feel their worry as your own, so you lose your only free hour rebuilding slides they never asked you to change. You are solving an imagined failure. Ask them to name the exact slide that needs work before you replace another one.\",\"screenshot_line\":\"You may feel their worry as your own, so you lose your only free hour rebuilding slides they never asked you to change.\",\"portability_check\":\"It fits only when another person's stated worry fuses with imagined failure and prompts unnecessary work.\"}",
+      "parseError": null,
+      "lint": {
+        "schemaVersion": 1,
+        "key": "conjunction/neptune",
+        "passed": false,
+        "immutableRawOutput": true,
+        "revisionsMade": 0,
+        "ownerPlacementApproval": {
+          "required": false
+        },
+        "checks": [
+          {
+            "id": "P4-headline-one-declarative-sentence",
+            "passed": true,
+            "details": "1 sentence(s)"
+          },
+          {
+            "id": "P4-headline-word-count",
+            "passed": true,
+            "details": "9 words"
+          },
+          {
+            "id": "P4-body-sentence-count",
+            "passed": true,
+            "details": "4 sentences"
+          },
+          {
+            "id": "P4-body-word-count",
+            "passed": true,
+            "details": "65 words"
+          },
+          {
+            "id": "P4-one-final-instruction",
+            "passed": true,
+            "details": "skeleton=consequence-close; instruction optional per D2-3; 1 detected instruction(s); final sentence: Ask them to name the exact slide that needs work before you replace another one."
+          },
+          {
+            "id": "P4-body-supports-without-repeating",
+            "passed": true,
+            "details": "Body does not repeat the full headline."
+          },
+          {
+            "id": "global+VC-016+DG+SM-output-bans",
+            "passed": true,
+            "details": "No prohibited match."
+          },
+          {
+            "id": "DG-R2-register",
+            "passed": true,
+            "details": {
+              "saturationCue": true,
+              "target": "neptune"
+            }
+          },
+          {
+            "id": "DG-R3-no-slogan-or-restatement-closer",
+            "passed": true,
+            "details": "No known slogan or full-headline restatement detected."
+          },
+          {
+            "id": "DG-R4-no-outcome-promise",
+            "passed": true,
+            "details": "No deterministic outcome promise detected."
+          },
+          {
+            "id": "DG-R7-varied-opener",
+            "passed": true,
+            "details": "Body uses a non-fixed opener."
+          },
+          {
+            "id": "DG-R9-enumerated-instruction-allowed",
+            "passed": true,
+            "details": "No enumerated one-X/one-Y instruction present."
+          },
+          {
+            "id": "B1-L1-time-anchor-max-once",
+            "passed": true,
+            "details": "No time-anchor phrase used."
+          },
+          {
+            "id": "B1-L2-may-inner-states-only",
+            "passed": true,
+            "details": "Every may clause is an inner state, or may is absent."
+          },
+          {
+            "id": "B1-L3+L4-headline-group-grammar",
+            "passed": true,
+            "details": {
+              "originalConjunctionGrammar": true,
+              "otherGrammar": false,
+              "softGrammar": false,
+              "squareGrammar": false
+            }
+          },
+          {
+            "id": "SM-DG-2-no-diagnostic-history",
+            "passed": true,
+            "details": "No diagnostic reader-history frame detected."
+          },
+          {
+            "id": "DG-R11-unhedged-headline",
+            "passed": true,
+            "details": "Headline makes an unhedged claim."
+          },
+          {
+            "id": "DG-R12-no-time-anchor-opener",
+            "passed": true,
+            "details": "Body opens inside the scene."
+          },
+          {
+            "id": "DG-R13-may-max-once",
+            "passed": true,
+            "details": "1 may usage(s)"
+          },
+          {
+            "id": "DG-R14-scene-not-biographical",
+            "passed": true,
+            "details": "No biographical anchor detected."
+          },
+          {
+            "id": "DG-R15-action-repairs-moment",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R16-owner-reserved-construction",
+            "passed": true,
+            "details": []
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-max-one",
+            "passed": true,
+            "details": [
+              "You hear a coworker say, \"I'm worried about tomorrow's presentation,\" and picture the whole project failing before they name one problem."
+            ]
+          },
+          {
+            "id": "DG-R17-quoted-dialogue-earns-place-advisory",
+            "passed": true,
+            "advisory": true,
+            "details": "One quoted-dialogue line used; owner review determines whether it earns its place."
+          },
+          {
+            "id": "OWNER-DIRECTIVE-short-blunt-line",
+            "passed": true,
+            "details": [
+              "You are solving an imagined failure."
+            ]
+          },
+          {
+            "id": "OWNER-TEST-specificity",
+            "passed": false,
+            "advisory": false,
+            "details": {
+              "own": {
+                "key": "conjunction/neptune",
+                "matches": [],
+                "required": 2,
+                "passed": false
+              },
+              "comparisonScope": [
+                "soft/chiron",
+                "square/uranus",
+                "conjunction/pluto"
+              ],
+              "swappableTo": [],
+              "advisorySwappableTo": []
+            }
+          },
+          {
+            "id": "OWNER-TEST-morning-read",
+            "passed": true,
+            "details": "Every body sentence is 28 words or fewer and avoids semicolons/parentheses."
+          },
+          {
+            "id": "OWNER-TEST-screenshot",
+            "passed": false,
+            "details": "No candidate body line detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-output-schema",
+            "passed": true,
+            "details": "conjunction/neptune"
+          },
+          {
+            "id": "SOL-DIRECTIVE-headline",
+            "passed": true,
+            "details": "9 words; 1 sentence(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-body",
+            "passed": true,
+            "details": "65 words; 4 sentences"
+          },
+          {
+            "id": "SOL-DIRECTIVE-one-situation",
+            "passed": true,
+            "details": "No mechanical menu-of-scenes pattern detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-formula",
+            "passed": true,
+            "details": "No prohibited opener detected."
+          },
+          {
+            "id": "SOL-DIRECTIVE-hedging",
+            "passed": true,
+            "details": "1 may/might/perhaps usage(s)"
+          },
+          {
+            "id": "SOL-DIRECTIVE-screenshot",
+            "passed": true,
+            "details": "Exact body sentence supplied."
+          },
+          {
+            "id": "SOL-DIRECTIVE-portability",
+            "passed": true,
+            "details": "16 words; 1 sentence(s)"
+          }
+        ],
+        "findings": [],
+        "counts": {
+          "headlineWords": 9,
+          "headlineSentences": 1,
+          "bodyWords": 65,
+          "bodySentences": 4,
+          "instructions": 1,
+          "timeAnchors": 0,
+          "mayUsages": 1,
+          "quotedDialogueLines": 1,
+          "screenshotCandidateLines": 0
+        },
+        "directiveCounts": {
+          "hedgeCount": 1,
+          "screenshotSentences": 1,
+          "portabilitySentences": 1
+        }
+      },
+      "provider": {
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "responseId": "resp_013935e916813e9d006a7a37aa5e14819f8825212d12d72c70",
+        "status": "completed",
+        "usage": {
+          "inputTokens": 7557,
+          "cachedInputTokens": 0,
+          "cacheWriteTokens": 7554,
+          "outputTokens": 3781,
+          "reasoningTokens": 3624,
+          "totalTokens": 11338
+        },
+        "estimatedCostUsd": 0.160658
+      },
+      "terraJudged": false,
+      "revisionsMade": 0
+    }
+  ]
+}
