@@ -22,6 +22,17 @@ declare
   target_job_id constant uuid := '1e6633f3-7ac3-4326-ba35-ae21474b45dd';
   existing_authorization uuid;
 begin
+  -- A clean database has no Production report to recover. Schema creation must
+  -- remain portable, while any partially present or changed Production state
+  -- still reaches the exact-state assertions below and fails closed.
+  if not exists (
+    select 1 from public.user_reports where id = target_report_id
+  ) and not exists (
+    select 1 from public.report_fulfillment_jobs where id = target_job_id
+  ) then
+    return;
+  end if;
+
   select authorization_token into existing_authorization
   from public.report_fulfillment_jobs
   where id = target_job_id
