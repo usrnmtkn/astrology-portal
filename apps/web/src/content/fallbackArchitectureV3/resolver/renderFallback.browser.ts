@@ -49,9 +49,14 @@ export interface HookRow {
   astroHint?: string;
   fact_line?: string;
   aspect_insert?: string;
+  primary_hook?: string;
+  opening_heading?: string;
   opening?: string;
+  tension_heading?: string;
   tension?: string;
+  development_heading?: string;
   development?: string;
+  close_heading?: string;
   close?: string;
   try_this?: string[];
   aspect_units?: Array<{
@@ -69,7 +74,36 @@ export interface HookRow {
   }>;
 }
 export interface TemplatesFile { templates: TemplateRow[] }
-export interface RowsFile { vocabularyRows: VocabRow[]; hookRows?: HookRow[] }
+export interface DailyGlanceVariantText {
+  id: string;
+  text: string;
+  review_status: string;
+  provenance?: Record<string, string>;
+}
+export interface DailyGlanceVariantPairing {
+  id: string;
+  headline_id: string;
+  body_id: string;
+  review_status: string;
+  provenance?: Record<string, string>;
+}
+export interface DailyGlanceVariantSet {
+  pairing_policy: "explicit_pairs_only";
+  headlines: DailyGlanceVariantText[];
+  bodies: DailyGlanceVariantText[];
+  pairings: DailyGlanceVariantPairing[];
+}
+export interface DailyGlanceVariantsFile {
+  schema: "tldrastro-daily-glance-variants-v1";
+  version: string;
+  note?: string;
+  keys: Record<string, DailyGlanceVariantSet>;
+}
+export interface RowsFile {
+  vocabularyRows: VocabRow[];
+  hookRows?: HookRow[];
+  dailyGlanceVariants?: DailyGlanceVariantsFile;
+}
 
 export interface PlacementFacts {
   planet: string; sign: string; house?: number | null; voice: Voice;

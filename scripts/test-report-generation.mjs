@@ -532,6 +532,10 @@ assert.ok(codes({ body: "job application." }).includes("possibility_language"));
 assert.ok(!codes({ body: "FIXTURE_ONLY may. job application." }).includes("possibility_language"));
 assert.ok(codes({ body: "application application application application" }).includes("lexical_budget"));
 assert.ok(codes({ body: "job application, client request, collaboration, contract, grant, project terms." }).includes("menu_size"));
+assert.ok(!codes({ body: "In a collaboration, it may be the deadline or final say." }).includes("menu_size"),
+  "Autumn's two-item alternative must not accumulate overlapping doctrine phrases into a menu.");
+assert.ok(codes({ body: "The August 12 solar eclipse falls in your third house, so an announcement, application, piece of writing, class, contract, conversation, or decision may need an answer from someone else." }).includes("menu_size"),
+  "Summer's original seven-item enumeration must still exceed the unchanged five-item cap.");
 assert.ok(codes({ body: "Saturn Return FIXTURE_ONLY." }).includes("saturn_return_non_return_year"));
 for (const phrase of ["this report", "this section is about", "the question becomes", "the point is", "what matters here is", "this distinction matters", "enters this report"]) {
   assert.ok(codes({ body: `FIXTURE_ONLY ${phrase} FIXTURE_ONLY.` }).includes("writer_note_leakage"));

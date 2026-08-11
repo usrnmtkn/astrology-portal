@@ -361,16 +361,18 @@ export function ManualChartsPanel({
     currentSky: SkySnapshot,
     natalSky: SkySnapshot,
     ownerName: string,
-    ownerPronouns?: PronounChoice | null
+    ownerPronouns?: PronounChoice | null,
+    userId?: string | null
   ): FriendDailyForecastView | null {
     const driver = dailyGlanceDriver(currentSky, natalSky);
 
     if (!driver) return null;
 
     try {
+      const dateKey = currentSky.generatedAt.slice(0, 10);
       const rendered = driver.kind === "aspect"
-        ? transitSynastryFallbackRendererV3.renderDailyGlance({ natal: driver.natal, aspect: driver.aspect })
-        : transitSynastryFallbackRendererV3.renderDailyGlance({ house: driver.house });
+        ? transitSynastryFallbackRendererV3.renderDailyGlance({ natal: driver.natal, aspect: driver.aspect, dateKey, userId })
+        : transitSynastryFallbackRendererV3.renderDailyGlance({ house: driver.house, dateKey, userId });
       const ownerAwareCopy = createNatalGeneratedCopyForOwnerConverter(ownerName, "person", ownerPronouns);
       const headline = ownerAwareCopy(rendered.headline ?? "");
       const body = repairSingularOwnerVerbAgreement(
@@ -1188,7 +1190,8 @@ export function ManualChartsPanel({
           currentSky,
           selectedChart.natalChart,
           selectedChart.displayName,
-          selectedChart.pronouns
+          selectedChart.pronouns,
+          selectedChart.id
         )
       : null
   ), [currentSky, selectedChart, selectedChartIsEvent]);
