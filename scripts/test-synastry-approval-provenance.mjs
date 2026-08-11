@@ -30,6 +30,10 @@ const lilithLivedPayloadsPath = path.join(
   repoRoot,
   "packages/astro-knowledge/review/lilith-78-lived-v2/lilith-78-lived-payloads.json",
 );
+const v13RepairPath = path.join(
+  repoRoot,
+  "packages/astro-knowledge/review/v13-duplicate-contentkey-repair-2026-08-11.json",
+);
 const batchApprovalPrefixes = [
   "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/",
   "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/",
@@ -103,6 +107,7 @@ function exactServingPayload(row) {
 const sourceText = fs.readFileSync(sourcePath, "utf8");
 const source = JSON.parse(sourceText);
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+const v13Repair = JSON.parse(fs.readFileSync(v13RepairPath, "utf8"));
 const lilithLivedPayloads = JSON.parse(fs.readFileSync(lilithLivedPayloadsPath, "utf8"));
 const lilithLivedPayloadsByContentKey = new Map(
   Object.entries(lilithLivedPayloads.payloads ?? {}).map(([workbookKey, entry]) => {
@@ -225,11 +230,17 @@ const livedRows = source.hookRows.filter((row) => (
     || row.approval?.recordPath?.startsWith(lilithLivedApprovalPrefix)
   )
 ));
-const lived108Rows = livedRows.filter((row) => !row.contentKey.startsWith(lilithLivedPrefix));
 const lilithLivedRows = livedRows.filter((row) => row.contentKey.startsWith(lilithLivedPrefix));
-assert.equal(lived108Rows.length, 108, "Expected 108 original lived-experience serving rows");
+const sourceRowsByKey = new Map(source.hookRows.map((row) => [row.contentKey, row]));
+const lived108Rows = v13Repair.entries.map((entry) => sourceRowsByKey.get(entry.contentKey)).filter(Boolean);
+assert.equal(lived108Rows.length, 108, "Expected 108 V13-superseded lived-experience serving rows");
+for (const [index, row] of lived108Rows.entries()) {
+  const disposition = v13Repair.entries[index];
+  assert.equal(row.source_release, "ll-matrix-v13-owner-approved-runtime");
+  assert.equal(sha256(JSON.stringify(row)), disposition.kept.rowSha256, `${row.contentKey}: V13 repair provenance drifted`);
+}
 assert.equal(lilithLivedRows.length, 78, "Expected 78 Lilith lived-experience serving rows");
-assert.equal(livedRows.length, 186, "Expected 186 total lived-experience serving rows");
+assert.equal(lived108Rows.length + lilithLivedRows.length, 186, "Expected 186 total lived-experience serving rows");
 
 function assertExactLivedApproval(row) {
   const isLilith = row.contentKey.startsWith(lilithLivedPrefix);
@@ -288,9 +299,9 @@ function assertExactLivedApproval(row) {
   );
 }
 
-for (const row of livedRows) assertExactLivedApproval(row);
+for (const row of lilithLivedRows) assertExactLivedApproval(row);
 assert.throws(
-  () => assertExactLivedApproval({ ...livedRows[0], body: `${livedRows[0].body} changed` }),
+  () => assertExactLivedApproval({ ...lilithLivedRows[0], body: `${lilithLivedRows[0].body} changed` }),
   /lived body differs from exact record/u,
   "Lived provenance gate must fail closed when approved body text changes.",
 );
