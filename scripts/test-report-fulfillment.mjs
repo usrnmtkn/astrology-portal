@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import { REPORT_AUTOMATION_RULING_PATH, REPORT_AUTOMATION_RULING_VERSION, REPORT_SKUS, reportBillingMode, reportCallEstimate, reportFulfillmentConfig, reportSku } from "../api/_lib/report-fulfillment-config.ts";
-import { processReportFulfillmentJob, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
+import { processReportFulfillmentJob, ReportPersistenceInfrastructureError, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
+import { createReportFulfillmentStore } from "../api/_lib/report-fulfillment-store.ts";
 import { ReportBirthDataError, birthProfileFromPersistedData } from "../api/_lib/report-billing-window.ts";
 import { ReportCalculationApiClientError } from "../api/_lib/report-facts.ts";
 import { REPORT_JUDGE_CATEGORIES, reportJudgeOverall, reportJudgeVerdict } from "../api/_lib/report-judge.ts";
@@ -244,13 +245,78 @@ function factsForHorizon(horizon) {
   return result;
 }
 
+const productionShapedUnitWrites = [];
+const productionShapedStore = createReportFulfillmentStore({
+  async insert(table, row, options) {
+    productionShapedUnitWrites.push({ table, row, options });
+    return [{ id: "9188ad58-5a3b-4b6d-9474-b2ff67279ec9", ...row }];
+  }
+});
+await productionShapedStore.saveUnit({
+  id: "74951c07-64fe-461d-ac49-e81858af3296",
+  user_id: "97965306-21fd-481a-8bf2-7d271ab76c8b",
+  subject_id: null,
+  report_domain: "general",
+  report_horizon: "12_months",
+  period_start: "2026-02-18",
+  period_end: "2027-02-17",
+  facts: { schema: "tldrastro.report-facts.v1", source: "FIXTURE_ONLY_PRODUCTION_SHAPE" },
+  facts_engine: "tldrastro-api@FIXTURE_ONLY",
+  facts_hash: "FIXTURE_ONLY_FACTS_HASH",
+  fulfillment_status: "judging",
+  prompt_versions: {},
+  token_count: 0,
+  token_count_total: 0,
+  token_spend_usd_estimate: 0,
+  attempt_counts: { validator: 0, judge: 0 },
+  failure_history: []
+}, "overview", {
+  headline: "FIXTURE_ONLY_HEADLINE.",
+  tldr: "FIXTURE_ONLY_TLDR.",
+  summary: "FIXTURE_ONLY_SUMMARY.",
+  body: "FIXTURE_ONLY_BODY.",
+  action: "FIXTURE_ONLY_ACTION.",
+  timing: "FIXTURE_ONLY_TIMING.",
+  sections: []
+}, {
+  fulfillmentPassed: true,
+  validatorResults: [],
+  judge: { scores: Object.fromEntries(REPORT_JUDGE_CATEGORIES.map((category) => [category, 4])), overall: 1, verdict: "pass", findings: [] },
+  promptVersions: { judge: "report-judge-v3.1" },
+  factsHash: "FIXTURE_ONLY_FACTS_HASH",
+  attemptCounts: { validator: 1, judge: 1 }
+});
+assert.equal(productionShapedUnitWrites.length, 1);
+assert.equal(productionShapedUnitWrites[0].table, "user_generated_interpretations");
+assert.equal(
+  productionShapedUnitWrites[0].options.onConflict,
+  "user_id,subject_type,subject_id,content_key,target_date,mode",
+  "The report-unit upsert must name the governed Production unique constraint exactly."
+);
+assert.deepEqual({
+  user_id: productionShapedUnitWrites[0].row.user_id,
+  subject_type: productionShapedUnitWrites[0].row.subject_type,
+  subject_id: productionShapedUnitWrites[0].row.subject_id,
+  content_key: productionShapedUnitWrites[0].row.content_key,
+  target_date: productionShapedUnitWrites[0].row.target_date,
+  mode: productionShapedUnitWrites[0].row.mode
+}, {
+  user_id: "97965306-21fd-481a-8bf2-7d271ab76c8b",
+  subject_type: "report_unit",
+  subject_id: "74951c07-64fe-461d-ac49-e81858af3296",
+  content_key: "report:74951c07-64fe-461d-ac49-e81858af3296:overview",
+  target_date: "2026-02-18",
+  mode: "report"
+}, "The regression write must retain the full Production-shaped conflict identity.");
+
 function createMemoryStore() {
   const reports = new Map();
   const entitlements = new Map();
   const units = new Map();
   const facts = new Map();
+  const jobs = new Map();
   return {
-    reports, entitlements, units, facts,
+    reports, entitlements, units, facts, jobs,
     async claimJobs() { return []; },
     async claimJob() { return []; },
     async workerPaused() { return false; },
@@ -258,7 +324,11 @@ function createMemoryStore() {
     async entitlement(id) { return entitlements.get(id) ?? null; },
     async updateReport(id, patch) { Object.assign(reports.get(id), patch); },
     async updateEntitlement(id, patch) { Object.assign(entitlements.get(id), patch); },
-    async updateJob() {},
+    async updateJob(id, patch) {
+      const current = jobs.get(id) ?? {};
+      Object.assign(current, structuredClone(patch));
+      jobs.set(id, current);
+    },
     async beginAuthorizedCall(jobId, token, attempt) {
       if (token !== "fixture-authorization") throw new Error("REPORT_CALL_AUTHORIZATION_REQUIRED");
       const key = `calls:${jobId}`;
@@ -550,6 +620,90 @@ const resumeCall = modelCallWithCrash();
 await processReportFulfillmentJob({ job: authorizedJob({ id: "resume-job", report_id: resumeReport.id, entitlement_id: "resume-ent", state: "running", step: "writing", attempt: 2 }), store: resumeStore, calculateFacts, callModel: resumeCall, judgeCall });
 assert.equal(resumeCall.count(), 6, "Resume must skip the completed unit and make two writer calls for each of three remaining units.");
 
+const persistenceStore = createMemoryStore();
+const persistenceReport = {
+  ...structuredClone(resumeReport),
+  id: "persistence-report",
+  user_id: "persistence-user",
+  fulfillment_status: "queued",
+  failure_history: []
+};
+const persistenceJob = authorizedJob({
+  id: "persistence-job",
+  report_id: persistenceReport.id,
+  entitlement_id: "persistence-ent",
+  state: "running",
+  step: "writing",
+  attempt: 1,
+  passing_unit_cache: {}
+});
+persistenceStore.reports.set(persistenceReport.id, persistenceReport);
+persistenceStore.entitlements.set("persistence-ent", {
+  id: "persistence-ent",
+  user_id: "persistence-user",
+  status: "active",
+  product_key: "general_1m"
+});
+persistenceStore.jobs.set(persistenceJob.id, structuredClone(persistenceJob));
+const memorySaveUnit = persistenceStore.saveUnit.bind(persistenceStore);
+let persistenceWrites = 0;
+persistenceStore.saveUnit = async (...args) => {
+  persistenceWrites += 1;
+  if (args[1] === "overview" && persistenceWrites <= 3) {
+    throw new Error("Supabase production-shaped write returned 503.");
+  }
+  return memorySaveUnit(...args);
+};
+const persistenceDelays = [];
+const firstPersistenceModel = modelCallWithCrash();
+let persistenceJudgeCalls = 0;
+const countedPersistenceJudge = async (...args) => {
+  persistenceJudgeCalls += 1;
+  return judgeCall(...args);
+};
+persistenceStore.claimJobs = async () => [structuredClone(persistenceJob)];
+const persistenceFailure = await runReportFulfillmentBatch({
+  workerId: "persistence-worker-1",
+  store: persistenceStore,
+  calculateFacts,
+  callModel: firstPersistenceModel,
+  judgeCall: countedPersistenceJudge,
+  persistenceRetry: { attempts: 3, baseDelayMs: 10, sleep: async (milliseconds) => { persistenceDelays.push(milliseconds); } }
+});
+assert.equal(firstPersistenceModel.count(), 2, "The gated overview must be billed exactly once before its persistence failure.");
+assert.equal(persistenceJudgeCalls, 1);
+assert.deepEqual(persistenceDelays, [10, 20], "Persistence writes must use bounded exponential backoff.");
+assert.equal(persistenceFailure.processed[0].retryable, true);
+assert.equal(persistenceFailure.processed[0].failureClass, "infrastructure_persistence");
+assert.match(persistenceFailure.processed[0].error, /^REPORT_INFRASTRUCTURE_ERROR: persistence failed for gated unit overview/u);
+assert.equal(persistenceStore.jobs.get(persistenceJob.id).state, "retry");
+const cachedOverview = persistenceStore.jobs.get(persistenceJob.id).passing_unit_cache.overview;
+assert.equal(cachedOverview.schema, "report-passing-unit-cache.v1");
+assert.deepEqual(cachedOverview.draft, modelDraft, "The exact passing text must be durable in job state before the unit write.");
+assert.deepEqual(cachedOverview.sourceSnapshot.judge.scores, passingJudgeScores, "The passing judge scores must be durable in job state.");
+
+const secondPersistenceModel = modelCallWithCrash();
+persistenceStore.claimJobs = async () => [{
+  ...structuredClone(persistenceJob),
+  ...structuredClone(persistenceStore.jobs.get(persistenceJob.id)),
+  state: "running",
+  attempt: 2
+}];
+const persistenceResume = await runReportFulfillmentBatch({
+  workerId: "persistence-worker-2",
+  store: persistenceStore,
+  calculateFacts,
+  callModel: secondPersistenceModel,
+  judgeCall: countedPersistenceJudge,
+  persistenceRetry: { attempts: 3, baseDelayMs: 10, sleep: async () => {} }
+});
+assert.equal(persistenceResume.processed[0].result.status, "needs_review");
+assert.equal(secondPersistenceModel.count(), 6, "The retry must persist cached overview work without re-entering its writer chain, then generate only three remaining units.");
+assert.equal(firstPersistenceModel.count() + secondPersistenceModel.count(), 8, "Infrastructure retry must not add any writer calls above the clean four-unit path.");
+assert.equal(persistenceJudgeCalls, 4, "Infrastructure retry must not re-bill the cached overview judge.");
+assert.deepEqual(persistenceStore.jobs.get(persistenceJob.id).passing_unit_cache, {}, "A cached unit clears only after its write and report accounting succeed.");
+assert.deepEqual(persistenceStore.units.get("persistence-report:overview").source_snapshot.judge.scores, passingJudgeScores);
+
 const retryStore = createMemoryStore();
 retryStore.claimJobs = async () => [authorizedJob({ id: "retry-job", report_id: "retry-report", entitlement_id: "retry-ent", state: "running", step: "writing", attempt: 1 })];
 retryStore.reports.set("retry-report", { ...structuredClone(resumeReport), id: "retry-report", fulfillment_status: "writing" });
@@ -585,4 +739,4 @@ assert.ok(webhookSource.includes('reportBillingMode() === "free_test"'));
 const stripeSetupSource = fs.readFileSync(new URL("./setup-stripe-report-products.mjs", import.meta.url), "utf8");
 assert.ok(stripeSetupSource.indexOf('reportBillingMode() !== "stripe"') < stripeSetupSource.indexOf("for (const sku"));
 
-console.log("Report fulfillment passed: 16-key free-test catalog, Stripe fail-closed mode, direct comp grant/revoke, per-call authorization, mocked generation/judge/manual-release/log-only-delivery E2E, shared facts, crash resume, retry queue, and no-edit admin contract.");
+console.log("Report fulfillment passed: 16-key free-test catalog, Stripe fail-closed mode, direct comp grant/revoke, per-call authorization, Production-shaped unit upsert, durable passing-unit cache, persistence backoff without re-billing, mocked generation/judge/manual-release/log-only-delivery E2E, shared facts, crash resume, retry queue, and no-edit admin contract.");

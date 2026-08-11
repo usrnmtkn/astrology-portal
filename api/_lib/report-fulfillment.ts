@@ -66,6 +66,65 @@ function failures(existing: unknown[], stage: string, values: unknown) {
   return [...existing, { stage, at: new Date().toISOString(), values }];
 }
 
+type PassingUnitCacheEntry = {
+  schema: "report-passing-unit-cache.v1";
+  unitId: string;
+  draft: ReportDraft;
+  sourceSnapshot: {
+    fulfillmentPassed: true;
+    validatorResults: unknown[];
+    judge: ReportJudgeResult;
+    promptVersions: Record<string, unknown>;
+    factsHash: string | null;
+    attemptCounts: { validator: number; judge: number };
+  };
+  reportTokenCountAfter: number;
+};
+
+export type ReportPersistenceRetryOptions = {
+  attempts?: number;
+  baseDelayMs?: number;
+  sleep?: (milliseconds: number) => Promise<void>;
+};
+
+export class ReportPersistenceInfrastructureError extends Error {
+  constructor(unitId: string, attempts: number, cause: unknown) {
+    const message = cause instanceof Error ? cause.message : String(cause);
+    super(`REPORT_INFRASTRUCTURE_ERROR: persistence failed for gated unit ${unitId} after ${attempts} attempts: ${message}`);
+    this.name = "ReportPersistenceInfrastructureError";
+  }
+}
+
+function parsedPassingUnitCache(value: unknown): Record<string, PassingUnitCacheEntry> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  return Object.fromEntries(Object.entries(value as Record<string, unknown>).filter(([, entry]) => (
+    entry && typeof entry === "object"
+    && (entry as { schema?: unknown }).schema === "report-passing-unit-cache.v1"
+    && typeof (entry as { unitId?: unknown }).unitId === "string"
+  ))) as Record<string, PassingUnitCacheEntry>;
+}
+
+async function withPersistenceBackoff(
+  unitId: string,
+  operation: () => Promise<void>,
+  options: ReportPersistenceRetryOptions = {}
+) {
+  const attempts = Math.max(1, options.attempts ?? 3);
+  const baseDelayMs = Math.max(0, options.baseDelayMs ?? 250);
+  const sleep = options.sleep ?? ((milliseconds: number) => new Promise<void>((resolve) => setTimeout(resolve, milliseconds)));
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      await operation();
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt < attempts) await sleep(baseDelayMs * 2 ** (attempt - 1));
+    }
+  }
+  throw new ReportPersistenceInfrastructureError(unitId, attempts, lastError);
+}
+
 export function createReportFactsCalculator(admin: SupabaseReportAdmin = createSupabaseReportAdmin()): ReportFactsCalculator {
   const client = createTldrAstroReportFactsClient();
   const preparedBirthProfiles = new Map<string, BirthProfile>();
@@ -105,6 +164,7 @@ export async function processReportFulfillmentJob(input: {
   judgeCall?: ReportJudgeCall;
   mail?: ReportMailProvider;
   random?: () => number;
+  persistenceRetry?: ReportPersistenceRetryOptions;
 }) {
   const config = reportFulfillmentConfig();
   const report = await input.store.report(input.job.report_id);
@@ -188,8 +248,42 @@ export async function processReportFulfillmentJob(input: {
   const validatorSummary: Array<{ unitId: string; passed: true; issues: unknown[] }> = [];
   let validatorAttempts = report.attempt_counts?.validator ?? 0;
   let judgeAttempts = report.attempt_counts?.judge ?? 0;
+  const passingUnitCache = parsedPassingUnitCache(input.job.passing_unit_cache);
+
+  const persistPassingUnit = async (entry: PassingUnitCacheEntry) => {
+    const nextTokenCount = Math.max(tokenCount, entry.reportTokenCountAfter);
+    const nextValidatorAttempts = Math.max(validatorAttempts, entry.sourceSnapshot.attemptCounts.validator);
+    const nextJudgeAttempts = Math.max(judgeAttempts, entry.sourceSnapshot.attemptCounts.judge);
+    const remainingCache = { ...passingUnitCache };
+    delete remainingCache[entry.unitId];
+    await withPersistenceBackoff(entry.unitId, async () => {
+      await input.store.saveUnit(report, entry.unitId, entry.draft, entry.sourceSnapshot);
+      await input.store.updateReport(report.id, {
+        token_count: nextTokenCount,
+        attempt_counts: { validator: nextValidatorAttempts, judge: nextJudgeAttempts }
+      });
+      await input.store.updateJob(input.job.id, { passing_unit_cache: remainingCache });
+    }, input.persistenceRetry);
+    tokenCount = nextTokenCount;
+    validatorAttempts = nextValidatorAttempts;
+    judgeAttempts = nextJudgeAttempts;
+    delete passingUnitCache[entry.unitId];
+    validatorSummary.push({
+      unitId: entry.unitId,
+      passed: true,
+      issues: Array.isArray(entry.sourceSnapshot.validatorResults) ? entry.sourceSnapshot.validatorResults : []
+    });
+    judgeScores.push({ unitId: entry.unitId, result: entry.sourceSnapshot.judge });
+    Object.assign(promptVersions, entry.sourceSnapshot.promptVersions);
+  };
 
   for (const unitId of fulfillmentUnitIds(report.report_domain, report.report_horizon)) {
+    const cachedPassingUnit = passingUnitCache[unitId];
+    if (cachedPassingUnit) {
+      await input.store.updateJob(input.job.id, { step: "delivery" });
+      await persistPassingUnit(cachedPassingUnit);
+      continue;
+    }
     const existing = await input.store.unit(report.id, unitId);
     if (existing?.source_snapshot?.fulfillmentPassed === true) {
       const snapshot = existing.source_snapshot;
@@ -231,7 +325,6 @@ export async function processReportFulfillmentJob(input: {
       feedback = validatorResults.map((issue) => JSON.stringify(issue));
     }
     if (!draft) throw new Error(`Validator attempt cap exhausted for ${unitId}: ${JSON.stringify(validatorResults)}`);
-    validatorSummary.push({ unitId, passed: true, issues: [] });
     await input.store.updateReport(report.id, nowPatch("judging"));
     await input.store.updateJob(input.job.id, { step: "judging" });
     let judged: Awaited<ReturnType<typeof judgeReportUnit>> | null = null;
@@ -255,16 +348,22 @@ export async function processReportFulfillmentJob(input: {
       acceptedChainTokens = totalTokens(chain.calls);
     }
     if (!judged || judged.result.verdict !== "pass") throw new Error(`Judge attempt cap exhausted for ${unitId}.`);
-    tokenCount += acceptedChainTokens + acceptedJudgeTokens;
-    judgeScores.push({ unitId, result: judged.result });
-    await input.store.saveUnit(report, unitId, draft, {
+    const sourceSnapshot: PassingUnitCacheEntry["sourceSnapshot"] = {
       fulfillmentPassed: true, validatorResults, judge: judged.result, promptVersions,
       factsHash: report.facts_hash, attemptCounts: { validator: validatorAttempts, judge: judgeAttempts }
-    });
-    await input.store.updateReport(report.id, {
-      token_count: tokenCount,
-      attempt_counts: { validator: validatorAttempts, judge: judgeAttempts }
-    });
+    };
+    const passingUnit: PassingUnitCacheEntry = {
+      schema: "report-passing-unit-cache.v1",
+      unitId,
+      draft,
+      sourceSnapshot,
+      reportTokenCountAfter: tokenCount + acceptedChainTokens + acceptedJudgeTokens
+    };
+    passingUnitCache[unitId] = passingUnit;
+    await withPersistenceBackoff(unitId, async () => {
+      await input.store.updateJob(input.job.id, { step: "delivery", passing_unit_cache: passingUnitCache });
+    }, input.persistenceRetry);
+    await persistPassingUnit(passingUnit);
   }
 
   const publicationStatus = config.autoPublishEnabled ? "live" : "needs_review";
@@ -307,6 +406,7 @@ export async function runReportFulfillmentBatch(input: {
   judgeCall?: ReportJudgeCall;
   mail?: ReportMailProvider;
   jobId?: string;
+  persistenceRetry?: ReportPersistenceRetryOptions;
 }) {
   const config = reportFulfillmentConfig();
   if (config.workerPaused || await input.store.workerPaused()) return { paused: true, processed: [] };
@@ -322,8 +422,11 @@ export async function runReportFulfillmentBatch(input: {
       const message = error instanceof Error ? error.message : "Unknown fulfillment failure.";
       const birthDataFailure = error instanceof ReportBirthDataError || /^BIRTH_DATA_(?:MISSING|INVALID):/u.test(message);
       const clientFailure = error instanceof ReportCalculationApiClientError || /^CALCULATION_API_CLIENT_ERROR:/u.test(message);
+      const persistenceInfrastructureFailure = error instanceof ReportPersistenceInfrastructureError || /^REPORT_INFRASTRUCTURE_ERROR: persistence/u.test(message);
       const terminal = birthDataFailure || clientFailure || /REPORT_CALL_AUTHORIZATION_REQUIRED|REPORT_DOMAIN_PROMPT_PENDING|CALCULATION_API_PREFLIGHT_FAILED|SOURCE_GAP|attempt cap exhausted|token budget exceeded|birth data is unavailable|lost its report or entitlement|facts bundle/iu.test(message);
-      const retryable = message.startsWith("FACTS_PENDING:") || (!terminal && job.attempt < config.jobAttemptCap);
+      const retryable = persistenceInfrastructureFailure
+        ? job.attempt < config.jobAttemptCap
+        : message.startsWith("FACTS_PENDING:") || (!terminal && job.attempt < config.jobAttemptCap);
       if (report) {
         await input.store.updateReport(report.id, {
           ...nowPatch(birthDataFailure ? "awaiting_birth_data" : retryable ? report.fulfillment_status : "exception"),
@@ -340,7 +443,12 @@ export async function runReportFulfillmentBatch(input: {
         locked_at: null,
         locked_by: null
       } : { state: "exception", last_error: message, locked_at: null, locked_by: null });
-      processed.push({ jobId: job.id, error: message, retryable });
+      processed.push({
+        jobId: job.id,
+        error: message,
+        retryable,
+        failureClass: persistenceInfrastructureFailure ? "infrastructure_persistence" : birthDataFailure ? "birth_data" : clientFailure ? "calculation_client" : "runtime"
+      });
     }
   }
   return { paused: false, processed };

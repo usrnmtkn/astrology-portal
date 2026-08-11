@@ -30,6 +30,7 @@ const personalHealthMigration = fs.readFileSync(new URL("../apps/web/supabase/mi
 const compMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260810120000_comp_report_entitlements.sql", import.meta.url), "utf8");
 const accountingMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260810130000_report_call_accounting.sql", import.meta.url), "utf8");
 const birthTimeMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260810210000_birth_time_normalization.sql", import.meta.url), "utf8");
+const passingUnitCacheMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811010000_report_passing_unit_cache.sql", import.meta.url), "utf8");
 await db.exec("begin");
 try {
   const userId = "00000000-0000-0000-0000-000000000001";
@@ -45,6 +46,7 @@ try {
     { name: "Unknown", birthTime: "Time unknown" }
   ] } })]);
   await db.exec(birthTimeMigration);
+  await db.exec(passingUnitCacheMigration);
   const normalizedCharts = (await db.query("select data -> 'profile' -> 'charts' as charts from public.user_profiles where user_id = $1", [userId])).rows[0].charts;
   assert.deepEqual(normalizedCharts.map((chart) => chart.birthTime), ["11:20", "11:20", "11:20", "21:05", "Time unknown"]);
   await db.exec("savepoint invalid_birth_time");
@@ -90,6 +92,14 @@ try {
   assert.equal(compReport.fulfillment_status, "awaiting_authorization");
   const compJob = (await db.query("select id, state from public.report_fulfillment_jobs where entitlement_id = $1", [compId])).rows[0];
   assert.equal(compJob.state, "paused");
+  assert.deepEqual((await db.query("select passing_unit_cache from public.report_fulfillment_jobs where id = $1", [compJob.id])).rows[0].passing_unit_cache, {});
+  await db.query("update public.report_fulfillment_jobs set passing_unit_cache = $2::jsonb where id = $1", [compJob.id, JSON.stringify({ overview: { schema: "report-passing-unit-cache.v1", body: "FIXTURE_ONLY" } })]);
+  assert.equal((await db.query("select passing_unit_cache -> 'overview' ->> 'body' as body from public.report_fulfillment_jobs where id = $1", [compJob.id])).rows[0].body, "FIXTURE_ONLY");
+  await db.exec("savepoint invalid_passing_unit_cache");
+  await assert.rejects(db.query("update public.report_fulfillment_jobs set passing_unit_cache = '[]'::jsonb where id = $1", [compJob.id]));
+  await db.exec("rollback to savepoint invalid_passing_unit_cache");
+  await db.exec("release savepoint invalid_passing_unit_cache");
+  await db.query("update public.report_fulfillment_jobs set passing_unit_cache = '{}'::jsonb where id = $1", [compJob.id]);
   await db.query("update public.report_fulfillment_jobs set state = 'queued' where id = $1", [compJob.id]);
   const immediateClaim = (await db.query("select * from public.claim_report_fulfillment_job('authorize-worker', $1)", [compJob.id])).rows[0];
   assert.equal(immediateClaim.id, compJob.id);
@@ -125,4 +135,4 @@ try {
   await db.exec("rollback");
   throw error;
 }
-console.log("Report fulfillment migration passed: Stripe idempotency, comp grants without Stripe references, authorization parking, immutable call ledger/accounting, atomic call-budget exhaustion, birth-data parking, exclusive facts claim, and rollback.");
+console.log("Report fulfillment migration passed: Stripe idempotency, comp grants without Stripe references, authorization parking, durable object-shaped passing-unit cache, immutable call ledger/accounting, atomic call-budget exhaustion, birth-data parking, exclusive facts claim, and rollback.");
