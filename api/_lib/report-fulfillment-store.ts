@@ -3,6 +3,7 @@ import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
 export type FulfillmentJobRow = {
   id: string; report_id: string; entitlement_id: string; state: string; step: string; attempt: number;
+  locked_at?: string | null; locked_by?: string | null; lease_expires_at?: string | null;
   authorization_token: string | null; authorized_call_budget: number | null; model_call_count: number;
   authorization_call_count: number; authorized_token_budget: number | null; authorization_token_count: number;
   passing_unit_cache?: Record<string, unknown>;
@@ -20,6 +21,12 @@ export type FulfillmentEntitlementRow = {
   id: string; user_id: string; status: string; product_key: string; period_start: string; period_end: string; requires_birth_time?: boolean;
 };
 
+export type ReportModelCallTimingRow = {
+  schema_name: string;
+  created_at: string;
+  completed_at: string;
+};
+
 export type ReportFulfillmentStore = {
   claimJobs(workerId: string, limit: number): Promise<FulfillmentJobRow[]>;
   claimJob(workerId: string, jobId: string): Promise<FulfillmentJobRow[]>;
@@ -34,6 +41,7 @@ export type ReportFulfillmentStore = {
     state: "complete" | "error" | "interrupted"; inputTokens?: number; cachedInputTokens?: number; outputTokens?: number;
     totalTokens?: number; estimatedCostUsd?: number; responseId?: string; error?: string;
   }): Promise<boolean>;
+  callTimingHistory(jobId: string): Promise<ReportModelCallTimingRow[]>;
   reusableFacts(report: FulfillmentReportRow): Promise<{ facts: Record<string, unknown>; facts_hash: string; facts_engine: string } | null>;
   claimFacts(report: FulfillmentReportRow, workerId: string): Promise<boolean>;
   releaseFactsClaim(report: FulfillmentReportRow): Promise<void>;
@@ -88,6 +96,7 @@ export function createReportFulfillmentStore(admin = createSupabaseReportAdmin()
         })
       });
     },
+    callTimingHistory: (jobId) => admin.request(`report_model_calls?job_id=eq.${encodeURIComponent(jobId)}&state=eq.complete&completed_at=not.is.null&select=schema_name,created_at,completed_at&order=call_number.asc`),
     reusableFacts: (report) => admin.selectOne("report_facts_bundles", new URLSearchParams({
       user_id: `eq.${report.user_id}`, subject_id: report.subject_id ? `eq.${report.subject_id}` : "is.null",
       report_horizon: `eq.${report.report_horizon}`, period_start: `eq.${report.period_start}`, period_end: `eq.${report.period_end}`,
