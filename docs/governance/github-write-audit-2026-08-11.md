@@ -124,3 +124,19 @@ Codex must not modify branch protection or repository settings for this project.
 actions in the owner's own browser session are outside that restriction. Codex must report
 future GitHub blockers using the exact API or CLI response, with inference explicitly
 identified as inference.
+
+## Owner correction: fixed restoration baseline
+
+Owner ruling, 2026-08-11: the recorded `main` review-protection baseline is fixed at:
+
+- `required_approving_review_count: 1`
+- `dismiss_stale_reviews: false`
+- `require_code_owner_reviews: false`
+- `require_last_push_approval: false`
+
+The earlier practice of restoring protection to whatever values were found at the beginning
+of a cycle is retired because it can preserve drift. When the owner explicitly authorizes a
+protection cycle for a specific PR, the cycle must restore these four baseline values and
+then run `npm run github:protection-cycle:verify`. A mismatch is a failed cycle and must be
+reported immediately. This is not standing authorization to change branch protection; the
+existing per-PR owner-authorization requirement remains in force.
