@@ -34,6 +34,12 @@ const fallbackSourceRowsV3 = JSON.parse(readFileSync(
 )) as {
   hookRows: Array<{ contentKey: string; body_you?: string }>;
 };
+const skyAspectPhrasebook = JSON.parse(readFileSync(
+  path.resolve("apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json"),
+  "utf8"
+)) as {
+  hookRows: Array<{ contentKey: string; body_you?: string }>;
+};
 const mercuryAscendantHardSource = fallbackSourceRowsV3.hookRows.find(
   (row) => row.contentKey === "fallback-hook/synastry-pair/mercury/ascendant/hard"
 );
@@ -1667,16 +1673,21 @@ test.describe("client-facing user flow case studies", () => {
     expect(rejected, "The shared selector rejects a row that fails the Sky judge boundary").toBeNull();
   });
 
-  test("Calendar Day and Month reuse the approved Sky aspect write-up", async ({ page }) => {
+  test("Calendar Day and Month preserve the approved sign-specific Sky aspect override", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
-    const sharedAspectContentKey = "sky.aspect.venus.square.mars.virgo.gemini";
-    const sharedAspectBody = "One approved Sky write-up appears unchanged in Calendar Day and Month.";
+    const generatedAspectContentKey = "sky.aspect.venus.square.mars.virgo.gemini";
+    const signSpecificContentKey = "fallback-hook/sky-aspect-sign/venus/virgo/square/mars/gemini";
+    const signSpecificBody = skyAspectPhrasebook.hookRows.find(
+      ({ contentKey }) => contentKey === signSpecificContentKey
+    )?.body_you;
+
+    expect(signSpecificBody).toBeTruthy();
 
     await seedClientState(page, {
       now: "2026-07-30T12:00:00.000Z",
       generatedInterpretations: [{
         id: "calendar-sky-aspect-row",
-        content_key: sharedAspectContentKey,
+        content_key: generatedAspectContentKey,
         surface: "sky",
         mode: "article",
         status: "LIVE",
@@ -1699,7 +1710,7 @@ test.describe("client-facing user flow case studies", () => {
         },
         headline: "Venus square Mars",
         summary: null,
-        body: sharedAspectBody,
+        body: "This generated row must remain behind the approved sign-specific Sky override.",
         sections: {},
         block_type: "sky_aspect",
         flags: [],
@@ -1717,15 +1728,13 @@ test.describe("client-facing user flow case studies", () => {
       name: /Full Moon\. Moon in Aquarius\. Venus square Mars/
     });
     await aspectDay.click();
-    await expect(
-      selectedDay.locator(`.lunar-selected-card__daily-event[data-content-key="${sharedAspectContentKey}"]`)
-    ).toBeVisible({ timeout: 15_000 });
-    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(sharedAspectBody);
+    await expect(selectedDay.getByRole("button", { name: "Venus square Mars" })).toBeVisible({ timeout: 15_000 });
+    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(signSpecificBody ?? "");
 
     const monthTab = page.getByRole("tab", { name: "Month", exact: true });
     await monthTab.click();
     await expect(monthTab).toHaveAttribute("aria-selected", "true");
-    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(sharedAspectBody);
+    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(signSpecificBody ?? "");
     await expect(selectedDay).not.toContainText("and for the collective");
     await assertNoClientErrors();
   });
