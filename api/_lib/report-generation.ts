@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { reportOwnerComparisonSet, type ReportOwnerComparisonPassage } from "./report-owner-comparison.js";
-import { REPORT_NO_CLEVERNESS_RULING_PATH, REPORT_OWNER_REVIEW_EVIDENCE_PATH } from "./report-prompt-versions.js";
+import { REPORT_COLD_PROSE_RULE_PATH, REPORT_NO_CLEVERNESS_RULING_PATH, REPORT_OWNER_REVIEW_EVIDENCE_PATH } from "./report-prompt-versions.js";
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
 export type { ReportDomain, ReportHorizon } from "./report-types.ts";
@@ -91,6 +91,10 @@ export type ReportGenerationPayload = {
     text: string;
   };
   ownerReviewEvidence: {
+    sourcePath: string;
+    text: string;
+  };
+  coldProseRuling: {
     sourcePath: string;
     text: string;
   };
@@ -1149,6 +1153,10 @@ export function assembleReportGenerationPayload(
       sourcePath: REPORT_OWNER_REVIEW_EVIDENCE_PATH,
       text: readRepoText(REPORT_OWNER_REVIEW_EVIDENCE_PATH)
     },
+    coldProseRuling: {
+      sourcePath: REPORT_COLD_PROSE_RULE_PATH,
+      text: readRepoText(REPORT_COLD_PROSE_RULE_PATH)
+    },
     sharedInvariants: [...SHARED_INVARIANTS],
     domainRelevanceModel: reportDomainRelevanceModel(input.reportDomain),
     frozenFacts: JSON.parse(JSON.stringify(input.frozenFacts)) as Record<string, unknown>,
@@ -1189,12 +1197,13 @@ It must never appear in reader-facing report output, headings, metadata, attribu
 Its purpose is to force reasoning before prose, not to create visible report structure.`;
 
 export function reportPromptFromPayload(payload: ReportGenerationPayload) {
-  const { canonicalOwnerPrompt, livedProseStandard, noClevernessRuling, ownerReviewEvidence, ...taskPayload } = payload;
+  const { canonicalOwnerPrompt, livedProseStandard, noClevernessRuling, ownerReviewEvidence, coldProseRuling, ...taskPayload } = payload;
   return [
     canonicalOwnerPrompt.text,
     `LIVED_PROSE_STANDARD\n${livedProseStandard.text}`,
     `NO_CLEVERNESS_TAX_OWNER_RULING\n${noClevernessRuling.text}`,
     `OWNER_REVIEW_EVIDENCE\n${ownerReviewEvidence.text}`,
+    `COLD_RENDERED_PROSE_OWNER_RULING\n${coldProseRuling.text}`,
     INTERNAL_LIVED_PROSE_SCAFFOLD,
     `REPORT_GENERATION_PAYLOAD\n${JSON.stringify(taskPayload, null, 2)}`
   ].join("\n\n");

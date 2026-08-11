@@ -26,6 +26,7 @@ const exactRuntimeAssets = [
   "tldr-astro-phrasebank/TLDR-PERSONAL-HEALTH-DEEPDIVE-GENERATION-PROMPT-OWNER.md",
   "tldr-astro-phrasebank/TLDR-REPORT-AUTOMATED-FULFILLMENT-RULING-OWNER.md",
   "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V3-OWNER.md",
+  "tldr-astro-phrasebank/TLDR-REPORT-COLD-PROSE-RULE-OWNER.md",
   "tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-OWNER.md",
   "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3-OWNER.md",
   "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md",

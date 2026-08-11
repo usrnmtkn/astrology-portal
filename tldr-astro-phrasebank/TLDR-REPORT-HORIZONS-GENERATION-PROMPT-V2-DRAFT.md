@@ -25,6 +25,10 @@ These rules supersede conflicting examples or compression signals in the baselin
 
 State the astrological mechanism confidently. Reserve may, can, could, and might for event manifestations. The possibility-language validator applies to manifestations, not mechanism statements or attribution.
 
+### Exact-date integrity
+
+Every prose date must come from the normalized `*Date` field adjacent to its exact timestamp in the frozen facts bundle. Those fields are produced once by the calculation adapter using the report location timezone. Never derive a date by slicing an ISO timestamp, applying another timezone, rounding a transit, or copying a date from voice evidence.
+
 ### Manifestation carry-forward
 
 Name the possibility space once, such as proposal, application, publication, or course. Later sections refer to the work, the decision, or the opportunity. Never carry one example forward as if it were the established storyline.
@@ -52,21 +56,47 @@ Rhetorical micro-quotes remain allowed. There is no quote lint. Reports remain i
 
 Capacity and overcommitment passages name both the astrological mechanism and the concrete cost. They never become generic balance advice.
 
-Owner-authored evidence: "Jupiter makes every offer, invitation, or collaboration look easy and expansive on paper. But your 6th house Moon governs your physical body, your daily routines, and your actual health. Overcommitting here does not happen because you made a bad choice; it happens because Jupiter makes a genuinely good opportunity look weightless."
+Rejected calibration: do not claim that Jupiter makes every offer easy, weightless, or risk-free. That over-psychologizes the planet.
 
-### Eclipse-arc continuity
+Approved mechanism wording: "Each new opportunity can look manageable by itself. The Moon in the 6th shows the total daily cost once they are added together."
 
-When eclipses form a sequence on one story, state the continuity explicitly. The later eclipse resolves the earlier development rather than beginning an unrelated event.
+Owner-authored late-August evidence: "Late August is where all the new communication starts competing with your actual daily capacity. Jupiter squares your 6th-house Moon on August 27, after months of expanding writing, conversations, invitations, and opportunities. Overcommitting doesn't always happen because of bad choices. It often happens when you say yes to good things..." The August 28 eclipse then advances the story: "The next day, a lunar eclipse falls near Mercury in your 10th house. Now the communication itself matters publicly."
 
-Owner-authored evidence: "By February 2027, the project you first put into circulation during the August eclipses reaches its final decision point."
+### Storyline continuity versus same-event claims
+
+A repeated transit may continue the same literal issue. A thematic echo between different transits may continue the same storyline, but the model must not claim it is definitely the same event. The October 20 and February 5 Jupiter-Mars passes may describe the same issue returning. The August eclipses and February 6 eclipse continue one 3rd/9th-axis communication storyline, never certainly one project.
+
+Owner-authored evidence: "By February, the communication story that opened during the August eclipses reaches another turning point... It may be the same project, but it does not have to be."
 
 ### Twelfth-house profection treatment
 
-A twelfth-house year includes closure, grief, release, and mourning what has run its course, as well as preparation. Chart-earned manifestations include releasing roles, stepping back, and the quiet loss before a new twelve-year cycle. Do not import "protect your energy" without a separate explicit owner exception.
+Use this calibrated doctrine verbatim: "A 12th-house profection makes endings, withdrawal, private processing, closure, and reduced participation more available as major themes. When an ending matters emotionally, grief or mourning may be part of the experience, even when the ending is wanted or necessary."
+
+Do not teach that a 12th-house profection is intrinsically about grief. Owner-authored evidence: "At 47, you are in the final profection year before the cycle returns to your 1st house... Some endings are practical... Others are more emotional. You can know that a chapter is over and still miss the person you were inside it."
 
 ### Involuntary-change wording
 
-"No longer can have your week organized around it" is distinct from "no longer want." Preserve the can/want distinction so functional limits are not rewritten as preferences. Use the version supported by the facts and lived circumstance.
+"No longer can have your week organized around it" is distinct from "no longer want." Preserve the can/want distinction so functional limits are not rewritten as preferences. Natural owner wording: "You can still be fully capable of doing a job and realize you can't keep organizing your week around it." Use `extra work`, never `extra labor`.
+
+### Four-step generation rule
+
+Never jump from aspect to event. Before drafting, reason in this order:
+
+1. Name what the planet does: Jupiter expands, Saturn limits or structures, Uranus disrupts or changes.
+2. Name where it happens through the house functions.
+3. Name what the aspect does to the two functions: a square creates friction, excess, or a problem; a trine allows easier cooperation; an opposition creates competing demands across an axis.
+4. Choose one or two ordinary manifestations only. Never choose six, and never reuse the same two throughout the report.
+
+This reasoning is internal and must not leak as a visible scaffold.
+
+### Menu narrowing
+
+- March 4th-house eclipse: at most two branches, one physical/home and one responsibility/care; explain the mechanism once.
+- Jupiter-Pluto: control is earned; credit, access, and final authority are not guaranteed themes.
+- Jupiter opposite Mars: lead with the 3rd/9th axis, communication versus larger plans, travel, publishing, timing, or convictions. Money and credit are less derived and must not lead.
+- Jupiter trine Neptune: a trip, collaboration, or shared project is plausible. A date is too specific without separate relationship support.
+- Do not use leaving a group as a flagship 12th-house example.
+- Chiron contacts are secondary callbacks, never their own chapter.
 
 ## Approved v1 baseline retained for review diff
 
@@ -867,4 +897,3 @@ Do not rewrite strong copy merely to create variation.
 Do not add a domain because the report feels too short.
 Do not run another stylistic pass without a named defect.
 ```
-

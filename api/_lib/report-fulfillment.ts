@@ -28,7 +28,7 @@ import {
   runReportWriterChain
 } from "./report-writer-chain.js";
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
-import { ReportBirthDataError, requireReportBirthProfile, type BirthProfile } from "./report-billing-window.js";
+import { natalPointLongitudesFromChart, ReportBirthDataError, requireReportBirthProfile, type BirthProfile } from "./report-billing-window.js";
 import { reportUrl } from "./report-http.js";
 
 const unitsByHorizon = {
@@ -168,8 +168,14 @@ export function createReportFactsCalculator(admin: SupabaseReportAdmin = createS
   const prepareBirthProfile = async (report: FulfillmentReportRow, requiresBirthTime: boolean) => {
     const profileRow = await admin.selectOne<{ data: unknown }>("user_profiles", new URLSearchParams({ user_id: `eq.${report.user_id}`, select: "data" }));
     const birth = requireReportBirthProfile(profileRow?.data, requiresBirthTime);
-    preparedBirthProfiles.set(report.id, birth);
-    return birth;
+    const socialProfile = await admin.selectOne<{ natal_chart?: unknown }>("social_profiles", new URLSearchParams({ user_id: `eq.${report.user_id}`, select: "natal_chart" }));
+    const socialAngles = natalPointLongitudesFromChart(socialProfile?.natal_chart);
+    const prepared = {
+      ...birth,
+      natalPointLongitudes: Object.keys(socialAngles).length ? socialAngles : birth.natalPointLongitudes
+    };
+    preparedBirthProfiles.set(report.id, prepared);
+    return prepared;
   };
   const calculate: ReportFactsCalculator = async (report) => {
     const birth = preparedBirthProfiles.get(report.id) ?? await prepareBirthProfile(report, true);
@@ -182,7 +188,7 @@ export function createReportFactsCalculator(admin: SupabaseReportAdmin = createS
     };
     const [version, facts] = await Promise.all([
       client.serviceVersion(),
-      client.reportWindow({ natalSubject, location: birth.birthLocation, reportDomain: report.report_domain, reportHorizon: report.report_horizon, start: report.period_start, end: report.period_end })
+      client.reportWindow({ natalSubject, location: birth.birthLocation, reportDomain: report.report_domain, reportHorizon: report.report_horizon, start: report.period_start, end: report.period_end, natalPointLongitudes: birth.natalPointLongitudes })
     ]);
     return { facts, facts_engine: `tldrastro-api@${version}` };
   };
@@ -378,6 +384,7 @@ export async function processReportFulfillmentJob(input: {
     promptVersions.judge = versions.judge.version;
     promptVersions.noCleverness = versions.noCleverness.version;
     promptVersions.ownerReviewEvidence = versions.ownerReviewEvidence.version;
+    promptVersions.coldProse = versions.coldProse.version;
     const validatorAttemptCap = reportValidatorAttemptCap(input.job, unitId, config.validatorAttemptCap);
     const validateWithNamedRevisions = async (initialDraft: ReportDraft, initialChainTokens: number) => {
       let candidate = initialDraft;

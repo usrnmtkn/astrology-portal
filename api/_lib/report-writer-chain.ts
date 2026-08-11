@@ -42,7 +42,8 @@ export type ReportWriterChainResult = {
   draft: ReportDraft;
   critique: ReportCritique;
   revised: ReportDraft;
-  calls: Array<{ stage: "draft" | "critique" | "revise"; model: string; provider: string; usage: ReportModelUsage }>;
+  coldCritique: ReportCritique;
+  calls: Array<{ stage: "draft" | "critique" | "revise" | "cold_read" | "cold_revise"; model: string; provider: string; usage: ReportModelUsage }>;
   promptVersion: string;
 };
 
@@ -459,6 +460,7 @@ export async function reviseReportDraftForNamedDefects(input: {
   draft: ReportDraft;
   defects: ReportDefect[];
   callModel?: ReportModelCall;
+  stage?: "revise" | "cold_revise";
 }) {
   const callModel = input.callModel ?? callReportModel;
   const target = writerModelTarget();
@@ -481,7 +483,7 @@ export async function reviseReportDraftForNamedDefects(input: {
     schema: revisionPatchSchema
   });
   const calls: ReportWriterChainResult["calls"] = [{
-    stage: "revise", model: reviseResult.model, provider: reviseResult.provider, usage: reviseResult.usage
+    stage: input.stage ?? "revise", model: reviseResult.model, provider: reviseResult.provider, usage: reviseResult.usage
   }];
   return { revised: spliceReportRevision(input.draft, defects, reviseResult.value), defects, calls };
 }
@@ -551,10 +553,54 @@ export async function runReportWriterChain(input: {
       throw new Error(`V3 owner_voice_drift defect ${defect.id} lacks eligible comparison evidence.`);
     }
   }
-  if (critique.result === "no_defects" || critique.defects.length === 0) {
-    return { draft: draftResult.value, critique: { ...critique, result: "no_defects", defects: [] }, revised: draftResult.value, calls, promptVersion: critiquePrompt.version };
+  let revised = draftResult.value;
+  if (critique.result !== "no_defects" && critique.defects.length > 0) {
+    const revision = await reviseReportDraftForNamedDefects({ payload, draft: draftResult.value, defects: critique.defects, callModel });
+    calls.push(...revision.calls);
+    revised = revision.revised;
   }
-  const revision = await reviseReportDraftForNamedDefects({ payload, draft: draftResult.value, defects: critique.defects, callModel });
-  calls.push(...revision.calls);
-  return { draft: draftResult.value, critique, revised: revision.revised, calls, promptVersion: critiquePrompt.version };
+
+  // Closing discipline: this request deliberately contains only the rendered
+  // unit and the owner cold-prose ruling. Facts, prompts, comparison evidence,
+  // validator output, and drafting context are excluded so none can rescue
+  // prose that a reader cannot understand cold.
+  const coldResult = await callModel<ReportCritique>({
+    ...target,
+    prompt: [
+      payload.coldProseRuling.text,
+      "Read only the rendered unit below. Return findings only; never rewrite. Route vague referents, assembled or formal language to unnatural_phrasing or owner_voice_drift; repeated setup or explanation-after-landing to density_violation; abrupt or disconnected movement to interpretive_gap. Use the smallest sentence scope that identifies the defect.",
+      `RENDERED_UNIT\n${completeReportUnit(revised)}`
+    ].join("\n\n"),
+    schemaName: "report_unit_cold_read",
+    schema: critiqueSchema
+  });
+  calls.push({ stage: "cold_read", model: coldResult.model, provider: coldResult.provider, usage: coldResult.usage });
+  const coldMovementApplicable = reportDraftMovementApplicable(revised);
+  const coldCritique: ReportCritique = {
+    ...coldResult.value,
+    applicability: {
+      interpretive_movement: coldMovementApplicable ? "applicable" : "not_applicable",
+      reason: coldMovementApplicable
+        ? "The rendered unit contains at least two substantive prose paragraphs."
+        : "The rendered unit contains fewer than two substantive prose paragraphs."
+    }
+  };
+  if (!coldMovementApplicable && coldCritique.defects.some((defect) => defect.category === "interpretive_gap")) {
+    throw new Error("Cold read returned interpretive_gap for a unit where interpretive movement is not applicable.");
+  }
+  if (coldCritique.result !== "no_defects" && coldCritique.defects.length > 0) {
+    const coldRevision = await reviseReportDraftForNamedDefects({
+      payload, draft: revised, defects: coldCritique.defects, callModel, stage: "cold_revise"
+    });
+    calls.push(...coldRevision.calls);
+    revised = coldRevision.revised;
+  }
+  return {
+    draft: draftResult.value,
+    critique: critique.defects.length ? critique : { ...critique, result: "no_defects", defects: [] },
+    coldCritique: coldCritique.defects.length ? coldCritique : { ...coldCritique, result: "no_defects", defects: [] },
+    revised,
+    calls,
+    promptVersion: critiquePrompt.version
+  };
 }

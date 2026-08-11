@@ -1,5 +1,4 @@
 import json
-from datetime import date
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -9,10 +8,6 @@ from tldrastro_api.services.report_window import _is_return
 
 client = TestClient(app)
 FIXTURE = json.loads((Path(__file__).parent / "fixtures" / "marie_report_2026.json").read_text())
-
-
-def _within_day(actual: str, expected: str) -> bool:
-    return abs((date.fromisoformat(actual[:10]) - date.fromisoformat(expected)).days) <= 1
 
 
 def test_report_window_reproduces_owner_transit_and_eclipse_contract():
@@ -56,10 +51,7 @@ def test_report_window_reproduces_owner_transit_and_eclipse_contract():
         assert arc["passCount"] == len(dates)
         assert len(arc["passes"]) == len(dates)
         assert all(report_pass["exactAt"] for report_pass in arc["passes"])
-        assert all(
-            _within_day(report_pass["exactAt"], expected_date)
-            for report_pass, expected_date in zip(arc["passes"], dates)
-        )
+        assert [report_pass["exactAt"][:10] for report_pass in arc["passes"]] == dates
 
     assert arcs[("Jupiter", "Jupiter", "conjunction")]["isReturn"] is True
     saturn_passes = arcs[("Saturn", "Ascendant", "sextile")]["passes"]
