@@ -9,7 +9,7 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const sourcePath = path.join(
   repoRoot,
   "tldr-astro-phrasebank",
-  "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-OWNER.md"
+  "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md"
 );
 const outputPath = path.join(
   repoRoot,
@@ -53,7 +53,7 @@ for (const match of sections) {
       text: copyClaim,
       review_status: "approved"
     },
-    provenance: "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-OWNER.md; exact wording owner-approved 2026-08-10",
+    provenance: "TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md; exact wording owner-approved 2026-08-10",
     review_status: "approved"
   };
 }
@@ -86,7 +86,7 @@ const collection = {
   approval: {
     status: "owner_approved",
     approvedOn: "2026-08-10",
-    sourcePath: "tldr-astro-phrasebank/TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-OWNER.md"
+    sourcePath: "tldr-astro-phrasebank/TLDR-SR-OVERLAY-MANIFESTATION-SETS-V1-NEEDS-REVIEW.md"
   },
   review_status: "approved"
 };
