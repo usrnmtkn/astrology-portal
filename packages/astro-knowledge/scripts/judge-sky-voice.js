@@ -21,10 +21,11 @@ const root = path.join(__dirname, "..");
 const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const sky = readJson(path.join(root, "voice", "tldr-astro", "sky-aspect.json"));
 const examples = readJson(path.join(root, "voice", "tldr-astro", "examples.json"));
+const { plainLanguageJudgeLines } = require("./plain-language-defects.js");
 const PLACEMENT_MODE = "collective-placement-card";
 const PLACEMENT_TOPPER_MODE = "collective-placement-topper";
 const PLACEMENT_WITH_TOPPER_MODE = "collective-placement-with-topper";
-const SKY_PROMPT_VERSION = "sky-aspect-voice-v1:prompt-warmth-harvest-v1";
+const SKY_PROMPT_VERSION = "sky-aspect-voice-v1:prompt-plain-language-v2";
 
 // planet -> tier, matching how exemplars are tagged. The judge must compare a
 // card against its OWN register: an outer/generational card judged against fast
@@ -123,6 +124,7 @@ function buildJudgePrompt(card, options = {}) {
     `  1 = off voice. Reads generic or written; invents scenarios not supported by the ${placement ? "placement" : "aspect"}; moralizes or preaches; stacks endings; names the astrology mechanics; or drifts from the source meaning.`,
     ``,
     `Judge hard on these, which regex cannot catch:`,
+    ...plainLanguageJudgeLines().map((rule) => `  - ${rule}`),
     `  - Overreach / invented specifics the ${placement ? "placement source" : "aspect"} does not support.`,
     `  - Moralizing or life-coaching ("the lesson is", "remember to", telling people what to do).`,
     `  - More than one closing aphorism (the ending must be a single truth + its catch).`,

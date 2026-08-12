@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 2,
+  "candidateSet": "friend-natal-frame-template-rewrite-v2",
+  "status": "active_review_gated",
+  "grammarContract": "apps/web/src/content/fallbackArchitectureV3/contracts/FRIEND-NATAL-SLOT-GRAMMAR-V2.json",
+  "review_status": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "servingChangesAuthorized": false,
+  "rows": []
+}

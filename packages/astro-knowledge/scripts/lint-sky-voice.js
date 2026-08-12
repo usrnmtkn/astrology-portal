@@ -21,6 +21,7 @@ const bannedWords = readJson(path.join(voiceRoot, "banned-words.json")).bannedWo
 const bannedConstructions = readJson(path.join(voiceRoot, "banned-constructions.json")).bannedConstructions || [];
 const sky = readJson(path.join(voiceRoot, "tldr-astro", "sky-aspect.json"));
 const { findBannedConstructions } = require("./banned-construction-matcher.js");
+const { findRealFiller, findTranslationRequired } = require("./plain-language-defects.js");
 
 const META = /[\\^$.*+?()[\]{}|]/;
 function toRegex(term) {
@@ -86,7 +87,7 @@ function closerSentenceCount(sentences) {
   return Math.max(count, 1);
 }
 
-function lintCard(text, { mode = "collective-aspect-card" } = {}) {
+function lintCard(text, { mode = "collective-aspect-card", ownerApprovedExact = false } = {}) {
   const findings = [];
   const sentences = (text.match(/[^.!?]+[.!?]+/g) || []).map((s) => s.trim());
   const placementCloserCount = mode === PLACEMENT_MODE ? closerSentenceCount(sentences) : 0;
@@ -142,6 +143,28 @@ function lintCard(text, { mode = "collective-aspect-card" } = {}) {
     if (m) findings.push({ severity: "fail", source: "banned-words", term, match: m[0] });
   }
   findings.push(...findBannedConstructions(text, bannedConstructions));
+  for (const match of findRealFiller(text)) {
+    findings.push({
+      severity: ownerApprovedExact ? "warn" : "fail",
+      source: "owner-prose-standard",
+      term: "real-filler",
+      match,
+      reason: ownerApprovedExact
+        ? "Flagged for owner re-review; exact approved copy remains unchanged until the owner approves a replacement."
+        : "Name the concrete change or consequence instead of using real as generator filler."
+    });
+  }
+  for (const match of findTranslationRequired(text)) {
+    findings.push({
+      severity: ownerApprovedExact ? "warn" : "fail",
+      source: "owner-prose-standard",
+      term: "translation-required",
+      match,
+      reason: ownerApprovedExact
+        ? "Flagged for owner re-review; exact approved copy remains unchanged until the owner approves a replacement."
+        : "State the ordinary behavior directly; the reader should not have to decode the image."
+    });
+  }
   // output-level fail + warn from the sky surface config
   for (const b of sky.outputBans.fail) {
     const target = mode === PLACEMENT_MODE && b.term === SECOND_PERSON_TERM
@@ -295,7 +318,7 @@ if (require.main === module) {
     ));
     let bad = 0;
     for (const e of sky) {
-      const r = lintCard(e.body, { mode: e.mode });
+      const r = lintCard(e.body, { mode: e.mode, ownerApprovedExact: e.canonical === true });
       if (r.fails) bad++;
       console.log(`${r.score === 3 ? "OK " : "!! "} score ${r.score} (fails ${r.fails}, warns ${r.warns})  ${e.sourceId}`);
     }

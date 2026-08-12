@@ -23,7 +23,8 @@ const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const spec = readJson(path.join(root, "voice", "tldr-astro", "sky-placement.json"));
 const compiledJudgePolicy = readJson(path.join(root, "voice", "tldr-astro", "judge-policy.generated.json"));
 const { judgePolicyLines: ownerWarmthJudgePolicyLines } = require("./owner-corpus-warmth-policy.js");
-const PLACEMENT_PROMPT_VERSION = "tldr-astro.voice.sky-placement.v5:prompt-warmth-harvest-v1";
+const { plainLanguageJudgeLines } = require("./plain-language-defects.js");
+const PLACEMENT_PROMPT_VERSION = "tldr-astro.voice.sky-placement.v5:prompt-plain-language-v2";
 
 const TIER_OF = {};
 for (const [tier, members] of Object.entries(spec.planetTierRegister.tiers)) {
@@ -92,6 +93,7 @@ function buildJudgePrompt(article, options = {}) {
     `  Score 1 when the article contains neither a cycle line nor any clear teaching of what the planet does and how the sign changes its method. A named placement alone is not planet/sign teaching.`,
     `  Score 1 when a concurrent-events paragraph names an event absent from the supplied eventsDuringTransit facts, even when the prose sounds plausible.`,
     `  FIRST-READ NATURAL ENGLISH REVIEW: Does every central sentence sound natural and literal on first read? A central sentence that requires translation cannot score 2 or 3 unless the failure is isolated and the remaining article is strongly grounded.`,
+    ...plainLanguageJudgeLines().map((rule) => `  ${rule}`),
     ``,
     `OWNER-REGISTER AND SCENE CHECKS`,
     `Adjacent-voice recognizability: flag phrasing that matches the CC/SD/AC construction families in voice/banned-constructions.json. AC timing devices may be adapted structurally, but theatrical titles and dense stacked metaphor stay out.`,

@@ -1,0 +1,359 @@
+{
+  "schemaVersion": 1,
+  "record": "friend-natal-owner-verdict-application-v1",
+  "appliedOn": "2026-08-11",
+  "sourceImport": "packages/astro-knowledge/review/friend-natal-owner-verdict-import-2026-08-11.json",
+  "sourceImportSha256": "77a2d44a48b1b6188e6758f03c62b5b71a5b917eaf51496c3938733204f44952",
+  "verdictCounts": {
+    "approve": 2,
+    "cut": 41,
+    "edit": 0
+  },
+  "approvedCandidateKeys": [
+    "fallback-vocab/planet-function/moon",
+    "fallback-vocab/planet-function/venus"
+  ],
+  "discardedCandidateKeys": [
+    "fallback-hook/angle-intro/imum-coeli",
+    "fallback-hook/angle-sign/ascendant/pisces",
+    "fallback-hook/angle-sign/imum-coeli/scorpio",
+    "fallback-hook/angle-sign/midheaven/virgo",
+    "fallback-hook/aspect-pair/jupiter/neptune/conjunction",
+    "fallback-hook/aspect-pair/mars/jupiter/soft",
+    "fallback-hook/aspect-type/opposition",
+    "fallback-hook/house-cusp/virgo",
+    "fallback-hook/placement-house-sentence/saturn/7",
+    "fallback-hook/placement-house-sentence/sun/3",
+    "fallback-hook/placement-house-sentence/venus/11",
+    "fallback-hook/placement-sentence/jupiter/taurus",
+    "fallback-hook/placement-sentence/mercury/aries",
+    "fallback-hook/placement-sentence/saturn/aries",
+    "fallback-hook/planet-intro/sun",
+    "fallback-hook/ruler-method/saturn/cancer",
+    "fallback-vocab/house-jurisdiction/1",
+    "fallback-vocab/house-jurisdiction/11",
+    "fallback-vocab/house-jurisdiction/12",
+    "fallback-vocab/house-jurisdiction/3",
+    "fallback-vocab/house-jurisdiction/7",
+    "fallback-vocab/house-pressure/1",
+    "fallback-vocab/placement-gerund/chiron/aquarius/0",
+    "fallback-vocab/placement-gerund/chiron/aries/0",
+    "fallback-vocab/placement-gerund/chiron/capricorn/0",
+    "fallback-vocab/placement-gerund/chiron/gemini/0",
+    "fallback-vocab/placement-gerund/chiron/leo/0",
+    "fallback-vocab/placement-gerund/chiron/libra/0",
+    "fallback-vocab/placement-gerund/chiron/pisces/0",
+    "fallback-vocab/placement-gerund/chiron/sagittarius/0",
+    "fallback-vocab/placement-gerund/chiron/scorpio/0",
+    "fallback-vocab/placement-gerund/chiron/virgo/0",
+    "fallback-vocab/planet-excess/jupiter",
+    "fallback-vocab/planet-excess/sun",
+    "fallback-vocab/planet-function/chiron",
+    "fallback-vocab/planet-function/mercury",
+    "fallback-vocab/planet-function/sun",
+    "fallback-vocab/planet-productive/north-node",
+    "fallback-vocab/planet-productive/south-node",
+    "fallback-vocab/planet-productive/sun",
+    "fallback-vocab/sign-adverb/cancer"
+  ],
+  "ownerDecisions": [
+    {
+      "number": 1,
+      "decisionNeeded": "element-pattern person contract",
+      "ruling": "Reader-addressed comparison surface — leave as is. These records address the reader alongside {{other_name}}, like synastry; second person is legitimate there. No rewrite; pass 2 does not touch this family. Owner ruling 2026-08-11."
+    },
+    {
+      "number": 2,
+      "decisionNeeded": "Broader friend-register rewrite batch",
+      "ruling": "Authorized: a separately scoped, review-gated rewrite/review batch covering the 378 banned-vocabulary, 146 repeating-skeleton, 49 real-filler, 3 translation-required, and 144 source-facing 'Timing:' findings. Queued strictly AFTER pass 2 completes. All output returns to the owner as candidates; no auto-publish, no serving changes without owner approval. Owner ruling 2026-08-11."
+    },
+    {
+      "number": 3,
+      "decisionNeeded": "Remaining 769-baseline families",
+      "ruling": "Keep all reader-addressed. Daily, Current Sky, lunation, and similar surfaces speak to the app user even in friend context; second person there is intentional. The baseline ratchet stays as-is; no friend-voice rewrites for these families. Owner ruling 2026-08-11."
+    }
+  ],
+  "candidateStateTransitions": [
+    {
+      "key": "fallback-hook/angle-intro/imum-coeli",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-hook/angle-sign/ascendant/pisces",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-hook/angle-sign/imum-coeli/scorpio",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-hook/angle-sign/midheaven/virgo",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-hook/aspect-pair/jupiter/neptune/conjunction",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-hook/aspect-pair/mars/jupiter/soft",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-hook/aspect-type/opposition",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-hook/house-cusp/virgo",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-hook/placement-house-sentence/saturn/7",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-hook/placement-house-sentence/sun/3",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-hook/placement-house-sentence/venus/11",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-hook/placement-sentence/jupiter/taurus",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-hook/placement-sentence/mercury/aries",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-hook/placement-sentence/saturn/aries",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-hook/planet-intro/sun",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-hook/ruler-method/saturn/cancer",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/house-jurisdiction/1",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/house-jurisdiction/11",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/house-jurisdiction/12",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/house-jurisdiction/3",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/house-jurisdiction/7",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/house-pressure/1",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/placement-gerund/chiron/aquarius/0",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/placement-gerund/chiron/aries/0",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/placement-gerund/chiron/capricorn/0",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/placement-gerund/chiron/gemini/0",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/placement-gerund/chiron/leo/0",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/placement-gerund/chiron/libra/0",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/placement-gerund/chiron/pisces/0",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/placement-gerund/chiron/sagittarius/0",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/placement-gerund/chiron/scorpio/0",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/placement-gerund/chiron/virgo/0",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/planet-excess/jupiter",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/planet-excess/sun",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/planet-function/chiron",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/planet-function/mercury",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/planet-function/moon",
+      "from": "needs_review",
+      "to": "owner_approved_candidate",
+      "verdict": "approve"
+    },
+    {
+      "key": "fallback-vocab/planet-function/sun",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/planet-function/venus",
+      "from": "needs_review",
+      "to": "owner_approved_candidate",
+      "verdict": "approve"
+    },
+    {
+      "key": "fallback-vocab/planet-productive/north-node",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/planet-productive/south-node",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/planet-productive/sun",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    },
+    {
+      "key": "fallback-vocab/sign-adverb/cancer",
+      "from": "needs_review",
+      "to": "discarded",
+      "verdict": "cut"
+    }
+  ],
+  "candidateDocuments": [
+    {
+      "path": "apps/web/src/content/fallbackArchitectureV3/source-rows/friend-natal-vocabulary-they-candidates-v1.json",
+      "sha256After": "345bbe30c3fd5f23fc44342c57812105753fd8aa095723ea7b1588d529b7731e"
+    },
+    {
+      "path": "apps/web/src/content/fallbackArchitectureV3/source-rows/friend-natal-row-level-candidates-v1.json",
+      "sha256After": "3e12e53bde68ee58c357714febef21d1dccf089e496bc7a3755dd2799a066a4a"
+    }
+  ],
+  "pass2": {
+    "splitApproachAuthorized": true,
+    "status": "active_review_gated",
+    "broaderDefectBatchStatus": "queued_after_pass_2",
+    "elementPatternStatus": "reader_addressed_untouched",
+    "readerAddressedBaselineFamilies": "resolved_keep_reader_addressed"
+  },
+  "invariants": {
+    "canonicalServingRowsChanged": false,
+    "autoPublish": false,
+    "writerPromotionAuthorized": false,
+    "promotionAuthorizedCandidateCount": 0
+  }
+}
