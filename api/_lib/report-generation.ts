@@ -145,6 +145,13 @@ export type ReportValidationIssue = {
   code: string;
   message: string;
   severity?: "error" | "warning";
+  /** Exact reader-facing value and coordinate when a deterministic lint can
+   * identify its sentence. The revision bridge must use these coordinates
+   * instead of guessing from the prose of `message`. */
+  value?: string;
+  location?: string;
+  sentenceIndex?: number;
+  quote?: string;
 };
 
 export type ReportValidatorOptions = {
@@ -1266,6 +1273,50 @@ function phrasePresent(sentence: string, phrase: string) {
   return new RegExp(`(^|[^a-z0-9])${escaped(phrase)}([^a-z0-9]|$)`, "iu").test(sentence);
 }
 
+type DraftSentenceCoordinate = {
+  location: string;
+  sentenceIndex: number;
+  quote: string;
+};
+
+function draftSentenceCoordinates(draft: ReportDraft, readerFacingOnly = false): DraftSentenceCoordinate[] {
+  const fields: Array<[string, string]> = [
+    ["headline", draft.headline ?? ""], ["tldr", draft.tldr ?? ""], ["summary", draft.summary ?? ""],
+    ["body", draft.body ?? ""], ["action", draft.action ?? ""], ["timing", draft.timing ?? ""],
+    ...(draft.sections ?? []).flatMap((section, index) => [
+      [`sections.${index}.heading`, section.heading ?? ""] as [string, string],
+      [`sections.${index}.body`, section.body ?? ""] as [string, string]
+    ])
+  ];
+  return fields.flatMap(([location, value]) => sentences(value).map((quote, sentenceIndex) => ({
+    location, sentenceIndex, quote
+  }))).filter(({ quote }) => !readerFacingOnly || !/^\s*(?:·\s*)?(?:\*|(?:provenance|governance):)/iu.test(quote));
+}
+
+function pushExactSentenceLint(
+  draft: ReportDraft,
+  issues: ReportValidationIssue[],
+  input: {
+    code: string;
+    message: string;
+    matches: (sentence: string) => boolean;
+    severity?: "error" | "warning";
+    readerFacingOnly?: boolean;
+  }
+) {
+  for (const coordinate of draftSentenceCoordinates(draft, input.readerFacingOnly).filter(({ quote }) => input.matches(quote))) {
+    issues.push({
+      code: input.code,
+      message: input.message,
+      severity: input.severity ?? "error",
+      value: coordinate.quote,
+      location: coordinate.location,
+      sentenceIndex: coordinate.sentenceIndex,
+      quote: coordinate.quote
+    });
+  }
+}
+
 export function manifestationEnumerationSize(sentence: string) {
   const clauseBoundary = /[;:]|,\s+(?=(?:but|so|yet|while|whereas|because|although|though|when|if|unless|since|after|before)\b|(?:i|you|we|they|he|she|it|this|that|these|those|the)\s+(?:am|is|are|was|were|may|might|can|could|will|would|should|must|has|have|had|do|does|did)\b)/iu;
   let largest = 0;
@@ -1359,18 +1410,20 @@ function validateLivedProseMechanics(draft: ReportDraft, issues: ReportValidatio
     "prioritize self-care",
     "trust the evidence"
   ];
-  for (const phrase of writerNotes.filter((candidate) => phrasePresent(text, candidate))) {
-    issues.push({
+  for (const phrase of writerNotes) {
+    pushExactSentenceLint(draft, issues, {
       code: "writer_note_leakage",
       message: `Reader-facing output contains writer-facing report language: ${phrase}.`,
-      severity: "error"
+      matches: (sentence) => phrasePresent(sentence, phrase),
+      readerFacingOnly: true
     });
   }
-  for (const phrase of genericAdvice.filter((candidate) => phrasePresent(text, candidate))) {
-    issues.push({
+  for (const phrase of genericAdvice) {
+    pushExactSentenceLint(draft, issues, {
       code: "generic_advice",
       message: `Reader-facing output contains generic advice instead of a situated practical change: ${phrase}.`,
-      severity: "error"
+      matches: (sentence) => phrasePresent(sentence, phrase),
+      readerFacingOnly: true
     });
   }
   const bannedReaderTerms: Array<[RegExp, string, string]> = [
@@ -1387,7 +1440,7 @@ function validateLivedProseMechanics(draft: ReportDraft, issues: ReportValidatio
     [/\bthe opportunity reaches the calendar\b/iu, "no_cleverness_tax", "Owner-rejected compressed construction requires reader decoding: The opportunity reaches the calendar."]
   ];
   for (const [pattern, code, message] of bannedReaderTerms) {
-    if (pattern.test(text)) issues.push({ code, message, severity: "error" });
+    pushExactSentenceLint(draft, issues, { code, message, matches: (sentence) => pattern.test(sentence), readerFacingOnly: true });
   }
   const mechanismTerms = /\b(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|node|eclipse|profection|solar return|transit|house)\b/iu;
   const concreteCosts = /\b(?:hours?|sleep|meals?|lunch|appointments?|travel|commut(?:e|ing)|preparation|follow-up|workload|recovery|caregiving|schedule|costs?|expenses?|money|time)\b/iu;
@@ -1401,13 +1454,12 @@ function validateLivedProseMechanics(draft: ReportDraft, issues: ReportValidatio
       });
     }
   }
-  if (/^\s*(?:#{1,6}\s*)?(?:ASTROLOGY|LIVED FACT|CAUSE|CONSEQUENCE|CONTRADICTION|DO NOT ASSUME)\s*(?::|$)/mu.test(text)) {
-    issues.push({
-      code: "internal_scaffold_leakage",
-      message: "Reader-facing output exposes the internal lived-prose extraction scaffold.",
-      severity: "error"
-    });
-  }
+  pushExactSentenceLint(draft, issues, {
+    code: "internal_scaffold_leakage",
+    message: "Reader-facing output exposes the internal lived-prose extraction scaffold.",
+    matches: (sentence) => /^\s*(?:#{1,6}\s*)?(?:ASTROLOGY|LIVED FACT|CAUSE|CONSEQUENCE|CONTRADICTION|DO NOT ASSUME)\s*(?::|$)/mu.test(sentence),
+    readerFacingOnly: true
+  });
 }
 
 function validateDeepDiveKeyDates(draft: ReportDraft, issues: ReportValidationIssue[]) {
@@ -1431,14 +1483,12 @@ function validateDeepDiveKeyDates(draft: ReportDraft, issues: ReportValidationIs
 }
 
 function validateLoveBannedVocabulary(draft: ReportDraft, issues: ReportValidationIssue[]) {
-  const text = draftText(draft);
-  const banned = ["soulmate", "twin flame", "divine union", "your person"]
-    .filter((phrase) => phrasePresent(text, phrase));
-  for (const phrase of banned) {
-    issues.push({
+  for (const phrase of ["soulmate", "twin flame", "divine union", "your person"]) {
+    pushExactSentenceLint(draft, issues, {
       code: "love_banned_vocabulary",
       message: `Love & Connection output contains banned vocabulary: ${phrase}.`,
-      severity: "error"
+      matches: (sentence) => phrasePresent(sentence, phrase),
+      readerFacingOnly: true
     });
   }
 }
@@ -1484,11 +1534,12 @@ function validatePersonalHealthCeiling(draft: ReportDraft, issues: ReportValidat
     "healing journey",
     "holding space"
   ];
-  for (const phrase of bannedAdvice.filter((candidate) => phrasePresent(text, candidate))) {
-    issues.push({
+  for (const phrase of bannedAdvice) {
+    pushExactSentenceLint(draft, issues, {
       code: "personal_health_banned_advice",
       message: `Personal & Health output contains banned wellness language: ${phrase}.`,
-      severity: "error"
+      matches: (sentence) => phrasePresent(sentence, phrase),
+      readerFacingOnly: true
     });
   }
 
@@ -1534,11 +1585,16 @@ export function validateReportDraft(
   const signatureNouns = options.signatureNouns ?? ["application"];
   const signatureNounCap = options.signatureNounCap ?? 3;
 
-  if (text.includes("—")) issues.push({ code: "em_dash", message: "Report output contains an em dash." });
-  if (/\bwhether\b/iu.test(text)) issues.push({ code: "whether", message: "Report output contains whether." });
-  if (/\b(?:i think|i'm watching|i am watching|this makes me think)\b/iu.test(text)) {
-    issues.push({ code: "astrologer_persona", message: "Report output uses astrologer persona." });
-  }
+  pushExactSentenceLint(draft, issues, {
+    code: "em_dash", message: "Report output contains an em dash.", matches: (sentence) => sentence.includes("—")
+  });
+  pushExactSentenceLint(draft, issues, {
+    code: "whether", message: "Report output contains whether.", matches: (sentence) => /\bwhether\b/iu.test(sentence)
+  });
+  pushExactSentenceLint(draft, issues, {
+    code: "astrologer_persona", message: "Report output uses astrologer persona.",
+    matches: (sentence) => /\b(?:i think|i'm watching|i am watching|this makes me think)\b/iu.test(sentence)
+  });
 
   for (const noun of signatureNouns) {
     const count = normalized.match(new RegExp(`\\b${escaped(noun.toLowerCase())}s?\\b`, "gu"))?.length ?? 0;

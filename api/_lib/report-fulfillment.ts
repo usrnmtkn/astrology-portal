@@ -68,6 +68,10 @@ function totalTokens(calls: Array<{ usage: { totalTokens: number } }>) {
   return calls.reduce((sum, call) => sum + call.usage.totalTokens, 0);
 }
 
+function totalEstimatedCost(calls: Array<{ model: string; usage: { inputTokens: number; cachedInputTokens?: number; outputTokens: number; totalTokens: number } }>) {
+  return calls.reduce((sum, call) => sum + estimateReportModelCost(call.model, call.usage), 0);
+}
+
 export function reportValidatorAttemptCap(
   job: Pick<FulfillmentJobRow, "validator_attempt_overrides">,
   unitId: string,
@@ -99,6 +103,16 @@ type PassingUnitCacheEntry = {
     promptVersions: Record<string, unknown>;
     factsHash: string | null;
     attemptCounts: { validator: number; judge: number };
+    /** Accepted-work and retry economics for this unit's successful attempt.
+     * Earlier failed job attempts remain immutable in the call ledger. */
+    tokenAccounting?: {
+      acceptedTokens: number;
+      totalTokens: number;
+      retryTokens: number;
+      estimatedUsd: number;
+      acceptedEstimatedUsd: number;
+      retryEstimatedUsd: number;
+    };
   };
   reportTokenCountAfter: number;
 };
@@ -487,9 +501,10 @@ export async function processReportFulfillmentJob(input: {
     promptVersions.ownerReviewEvidence = versions.ownerReviewEvidence.version;
     promptVersions.coldProse = versions.coldProse.version;
     const validatorAttemptCap = reportValidatorAttemptCap(input.job, unitId, config.validatorAttemptCap);
-    const validateWithNamedRevisions = async (initialDraft: ReportDraft, initialChainTokens: number) => {
+    const validateWithNamedRevisions = async (initialDraft: ReportDraft, initialChainTokens: number, initialChainCost: number) => {
       let candidate = initialDraft;
       let acceptedTokens = initialChainTokens;
+      let acceptedEstimatedUsd = initialChainCost;
       let issues: Array<{ code: string; message: string; severity?: "error" | "warning"; value?: string }> = [];
       for (let attempt = 0; attempt < validatorAttemptCap; attempt += 1) {
         await input.store.updateReport(report.id, nowPatch("validating"));
@@ -498,7 +513,7 @@ export async function processReportFulfillmentJob(input: {
         const validation = validateReportDraft(candidate, payload);
         const factLock = verifyReportFactLock(candidate, payload.frozenFacts);
         issues = [...validation, ...factLock.issues];
-        if (issues.length === 0) return { draft: candidate, acceptedTokens, issues };
+        if (issues.length === 0) return { draft: candidate, acceptedTokens, acceptedEstimatedUsd, issues };
         if (attempt + 1 >= validatorAttemptCap) break;
         const defects = reportValidationIssuesToNamedDefects(candidate, issues);
         if (!defects.length) break;
@@ -507,6 +522,7 @@ export async function processReportFulfillmentJob(input: {
         const revision = await reviseReportDraftForNamedDefects({ payload, draft: candidate, defects, callModel: authorizedCall });
         candidate = revision.revised;
         acceptedTokens += totalTokens(revision.calls);
+        acceptedEstimatedUsd += totalEstimatedCost(revision.calls);
       }
       throw new Error(`Validator attempt cap exhausted for ${unitId}: ${JSON.stringify(issues)}`);
     };
@@ -515,6 +531,8 @@ export async function processReportFulfillmentJob(input: {
     const assemblyFailureContext = Array.isArray((existing?.source_snapshot?.assemblyValidation as { issues?: unknown[] } | undefined)?.issues)
       ? (existing?.source_snapshot?.assemblyValidation as { issues: unknown[] }).issues.map((entry) => JSON.stringify(entry))
       : [];
+    const unitTotalTokensBefore = tokenCountTotal;
+    const unitEstimatedCostBefore = estimatedCostTotal;
     const initialChain = await runReportWriterChain({
       payload,
       failureContext: assemblyFailureContext.length ? assemblyFailureContext : undefined,
@@ -524,9 +542,14 @@ export async function processReportFulfillmentJob(input: {
       critique: initialChain.critique,
       coldCritique: initialChain.coldCritique
     }];
-    const initialValidation = await validateWithNamedRevisions(initialChain.revised, totalTokens(initialChain.calls));
+    const initialValidation = await validateWithNamedRevisions(
+      initialChain.revised,
+      totalTokens(initialChain.calls),
+      totalEstimatedCost(initialChain.calls)
+    );
     let draft = initialValidation.draft;
     let acceptedChainTokens = initialValidation.acceptedTokens;
+    let acceptedChainEstimatedUsd = initialValidation.acceptedEstimatedUsd;
     let validatorResults: unknown[] = initialValidation.issues;
     await input.store.updateReport(report.id, nowPatch("judging"));
     await input.store.updateJob(input.job.id, { step: "judging" });
@@ -543,23 +566,44 @@ export async function processReportFulfillmentJob(input: {
       await input.store.updateJob(input.job.id, { step: "writing" });
       const chain = await runReportWriterChain({ payload, failureContext: judged.result.findings.map((finding) => JSON.stringify(finding)), callModel: authorizedCall });
       writerReviews.push({ critique: chain.critique, coldCritique: chain.coldCritique });
-      const judgeRevisionValidation = await validateWithNamedRevisions(chain.revised, totalTokens(chain.calls));
+      const judgeRevisionValidation = await validateWithNamedRevisions(
+        chain.revised,
+        totalTokens(chain.calls),
+        totalEstimatedCost(chain.calls)
+      );
       draft = judgeRevisionValidation.draft;
       acceptedChainTokens = judgeRevisionValidation.acceptedTokens;
+      acceptedChainEstimatedUsd = judgeRevisionValidation.acceptedEstimatedUsd;
       validatorResults = judgeRevisionValidation.issues;
     }
     if (!judged || judged.result.verdict !== "pass") throw new Error(`Judge attempt cap exhausted for ${unitId}.`);
+    const unitAcceptedTokens = acceptedChainTokens + acceptedJudgeTokens;
+    const unitAcceptedEstimatedUsd = acceptedChainEstimatedUsd
+      + estimateReportModelCost(judged.model, judged.usage);
+    // Production judges use the authorized provider wrapper and therefore
+    // appear in the immutable ledger delta. Test/provider adapters may return
+    // judge usage directly, so never report fewer total tokens than accepted.
+    const unitTotalTokens = Math.max(unitAcceptedTokens, tokenCountTotal - unitTotalTokensBefore);
+    const unitEstimatedUsd = Math.max(unitAcceptedEstimatedUsd, estimatedCostTotal - unitEstimatedCostBefore);
     const sourceSnapshot: PassingUnitCacheEntry["sourceSnapshot"] = {
       fulfillmentPassed: true, validatorResults, judge: judged.result, promptVersions,
       writerReviews,
-      factsHash: report.facts_hash, attemptCounts: { validator: validatorAttempts, judge: judgeAttempts }
+      factsHash: report.facts_hash, attemptCounts: { validator: validatorAttempts, judge: judgeAttempts },
+      tokenAccounting: {
+        acceptedTokens: unitAcceptedTokens,
+        totalTokens: unitTotalTokens,
+        retryTokens: Math.max(0, unitTotalTokens - unitAcceptedTokens),
+        estimatedUsd: Number(unitEstimatedUsd.toFixed(6)),
+        acceptedEstimatedUsd: Number(unitAcceptedEstimatedUsd.toFixed(6)),
+        retryEstimatedUsd: Number(Math.max(0, unitEstimatedUsd - unitAcceptedEstimatedUsd).toFixed(6))
+      }
     };
     const passingUnit: PassingUnitCacheEntry = {
       schema: "report-passing-unit-cache.v1",
       unitId,
       draft,
       sourceSnapshot,
-      reportTokenCountAfter: tokenCount + acceptedChainTokens + acceptedJudgeTokens
+      reportTokenCountAfter: tokenCount + unitAcceptedTokens
     };
     passingUnitCache[unitId] = passingUnit;
     await withPersistenceBackoff(unitId, async () => {
