@@ -25,7 +25,8 @@ import { estimateReportModelCost } from "./report-model-pricing.js";
 import {
   reportValidationIssuesToNamedDefects,
   reviseReportDraftForNamedDefects,
-  runReportWriterChain
+  runReportWriterChain,
+  type ReportWriterChainCheckpoint
 } from "./report-writer-chain.js";
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
 import { natalPointLongitudesFromChart, ReportBirthDataError, requireReportBirthProfile, type BirthProfile } from "./report-billing-window.js";
@@ -203,6 +204,32 @@ function parsedPassingUnitCache(value: unknown): Record<string, PassingUnitCache
     && (entry as { schema?: unknown }).schema === "report-passing-unit-cache.v1"
     && typeof (entry as { unitId?: unknown }).unitId === "string"
   ))) as Record<string, PassingUnitCacheEntry>;
+}
+
+const WRITER_CHAIN_CHECKPOINT_KEY = "__writer_chain_checkpoint";
+
+function parsedWriterChainCheckpoint(value: unknown): ReportWriterChainCheckpoint | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const entry = (value as Record<string, unknown>)[WRITER_CHAIN_CHECKPOINT_KEY];
+  if (!entry || typeof entry !== "object" || Array.isArray(entry)) return null;
+  const checkpoint = entry as Partial<ReportWriterChainCheckpoint>;
+  return checkpoint.schema === "report-writer-chain-checkpoint.v1"
+    && typeof checkpoint.chainKey === "string"
+    && typeof checkpoint.unitId === "string"
+    && typeof checkpoint.completedStage === "string"
+    && checkpoint.draft !== null
+    && typeof checkpoint.draft === "object"
+    && Array.isArray(checkpoint.calls)
+    ? checkpoint as ReportWriterChainCheckpoint
+    : null;
+}
+
+function writerChainKey(payload: unknown, promptVersions: unknown, failureContext?: string[]) {
+  return crypto.createHash("sha256").update(stableJson({
+    payload,
+    promptVersions,
+    failureContext: failureContext ?? []
+  })).digest("hex");
 }
 
 async function withPersistenceBackoff(
@@ -406,7 +433,13 @@ export async function processReportFulfillmentJob(input: {
   let judgeAttempts = report.attempt_counts?.judge ?? 0;
   let redundancyAttempts = report.attempt_counts?.redundancy ?? 0;
   const passingUnitCache = parsedPassingUnitCache(input.job.passing_unit_cache);
+  let writerChainCheckpoint = parsedWriterChainCheckpoint(input.job.passing_unit_cache);
   let generatedUnitsThisCycle = 0;
+
+  const durableJobCache = () => ({
+    ...passingUnitCache,
+    ...(writerChainCheckpoint ? { [WRITER_CHAIN_CHECKPOINT_KEY]: writerChainCheckpoint } : {})
+  });
 
   const requeueForContinuation = async () => {
     const continuedAt = new Date((input.continuationPolicy?.now ?? Date.now)()).toISOString();
@@ -456,6 +489,7 @@ export async function processReportFulfillmentJob(input: {
     validatorAttempts = nextValidatorAttempts;
     judgeAttempts = nextJudgeAttempts;
     delete passingUnitCache[entry.unitId];
+    writerChainCheckpoint = null;
     validatorSummary.push({
       unitId: entry.unitId,
       passed: true,
@@ -501,6 +535,29 @@ export async function processReportFulfillmentJob(input: {
     promptVersions.ownerReviewEvidence = versions.ownerReviewEvidence.version;
     promptVersions.coldProse = versions.coldProse.version;
     const validatorAttemptCap = reportValidatorAttemptCap(input.job, unitId, config.validatorAttemptCap);
+    const runCheckpointedWriterChain = async (failureContext?: string[]) => {
+      const chainKey = writerChainKey(payload, versions, failureContext);
+      const checkpoint = writerChainCheckpoint?.chainKey === chainKey
+        && writerChainCheckpoint.unitId === unitId
+        ? writerChainCheckpoint
+        : undefined;
+      return runReportWriterChain({
+        payload,
+        failureContext,
+        callModel: authorizedCall,
+        chainKey,
+        checkpoint,
+        persistCheckpoint: async (nextCheckpoint) => {
+          writerChainCheckpoint = nextCheckpoint;
+          await withPersistenceBackoff(`${unitId}:${nextCheckpoint.completedStage}`, async () => {
+            await input.store.updateJob(input.job.id, {
+              step: "writing",
+              passing_unit_cache: durableJobCache()
+            });
+          }, input.persistenceRetry);
+        }
+      });
+    };
     const validateWithNamedRevisions = async (initialDraft: ReportDraft, initialChainTokens: number, initialChainCost: number) => {
       let candidate = initialDraft;
       let acceptedTokens = initialChainTokens;
@@ -533,11 +590,9 @@ export async function processReportFulfillmentJob(input: {
       : [];
     const unitTotalTokensBefore = tokenCountTotal;
     const unitEstimatedCostBefore = estimatedCostTotal;
-    const initialChain = await runReportWriterChain({
-      payload,
-      failureContext: assemblyFailureContext.length ? assemblyFailureContext : undefined,
-      callModel: authorizedCall
-    });
+    const initialChain = await runCheckpointedWriterChain(
+      assemblyFailureContext.length ? assemblyFailureContext : undefined
+    );
     const writerReviews: Array<{ critique: unknown; coldCritique: unknown }> = [{
       critique: initialChain.critique,
       coldCritique: initialChain.coldCritique
@@ -564,7 +619,9 @@ export async function processReportFulfillmentJob(input: {
       }
       await input.store.updateReport(report.id, nowPatch("writing"));
       await input.store.updateJob(input.job.id, { step: "writing" });
-      const chain = await runReportWriterChain({ payload, failureContext: judged.result.findings.map((finding) => JSON.stringify(finding)), callModel: authorizedCall });
+      const chain = await runCheckpointedWriterChain(
+        judged.result.findings.map((finding) => JSON.stringify(finding))
+      );
       writerReviews.push({ critique: chain.critique, coldCritique: chain.coldCritique });
       const judgeRevisionValidation = await validateWithNamedRevisions(
         chain.revised,
@@ -606,6 +663,7 @@ export async function processReportFulfillmentJob(input: {
       reportTokenCountAfter: tokenCount + unitAcceptedTokens
     };
     passingUnitCache[unitId] = passingUnit;
+    writerChainCheckpoint = null;
     await withPersistenceBackoff(unitId, async () => {
       await input.store.updateJob(input.job.id, { step: "delivery", passing_unit_cache: passingUnitCache });
     }, input.persistenceRetry);
