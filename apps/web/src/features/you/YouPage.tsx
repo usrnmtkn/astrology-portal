@@ -19,6 +19,7 @@ import {
 import { resolvedNatalAspectPatternSectionLabel } from "./natalAspectPatternLabels";
 import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
+import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
 
 type YouTab = "transits" | "chart";
 type NatalChartViewMode = "circle" | "table";
@@ -1087,12 +1088,13 @@ export function YouPage({
   const [profileTab, setProfileTab] = useState<YouTab>("transits");
   const [natalChartViewMode, setNatalChartViewMode] = useState<NatalChartViewMode>("circle");
   const [natalAspectPatternDetail, setNatalAspectPatternDetail] = useState<NatalAspectPatternDetailSelection | null>(null);
+  const natalOnlyAspects = canonicalNatalAspectsForSnapshot(natalSky);
   const natalChart = natalSky ? (
     <div className="wheel natal-wheel chart-shell" id="wheel-natal" aria-label="Natal chart wheel">
       <div className="chart-frame">
         <SkyWheel
           positions={natalSky.positions}
-          aspects={natalSky.aspects}
+          aspects={natalOnlyAspects}
           ascendant={natalSky.ascendant}
           ascendantLongitude={natalSky.ascendantLongitude}
           midheavenLongitude={natalSky.midheavenLongitude}

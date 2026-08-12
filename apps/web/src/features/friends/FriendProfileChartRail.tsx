@@ -10,6 +10,7 @@ import type { PlanetPosition, SkySnapshot } from "../../types";
 import { FriendNatalViewControl, type FriendNatalChartViewMode } from "./FriendNatalViewControl";
 import type { FriendProfileTab } from "./friendsRouting";
 import { RelationshipComparePicker, type RelationshipComparisonOption } from "./RelationshipComparePicker";
+import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
 
 type WheelSky = Pick<
   SkySnapshot,
@@ -85,7 +86,7 @@ export function FriendProfileChartRail({
               <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${chartName} natal chart wheel`}>
                 <SkyWheel
                   positions={natalSky.positions}
-                  aspects={natalSky.aspects}
+                  aspects={canonicalNatalAspectsForSnapshot(natalSky)}
                   ascendant={natalSky.ascendant}
                   ascendantLongitude={natalSky.ascendantLongitude}
                   midheavenLongitude={natalSky.midheavenLongitude}

@@ -95,14 +95,6 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     const { planet, sign, house } = facts;
     const voice = facts.voice === "you" ? "you" : "they";
     const exactHouseLived = house ? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, opts2) : null;
-    if (exactHouseLived) {
-      return {
-        headline: `${title(planet)} in the ${ordinal(house)} house`,
-        parts: [exactHouseLived.body ?? ""],
-        body: exactHouseLived.body ?? "",
-        templateKey: exactHouseLived.contentKey
-      };
-    }
     const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, opts2);
     const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
     const possessive = facts.voice === "you" ? "Your" : `${facts.voice}'s`;
@@ -143,6 +135,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     }
     const gapLabel = `${planet}/${sign}${house ? `/house-${house}` : ""}`;
     const parts = [];
+    const partKeys = [];
     const isNode = planet === "north-node" || planet === "south-node";
     if (isNode) {
       const j = getHook(`fallback-hook/node-journey/${planet}`, voice, opts2);
@@ -152,21 +145,34 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     }
     const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, opts2) ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
     parts.push(exactSignLived?.body ?? renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
+    partKeys.push(exactSignLived?.contentKey ?? signTemplate.contentKey);
     let headlineTemplate = signTemplate;
     if (house) {
-      const houseTemplate = getTemplate("fallback-template/natal.house-context");
-      const houseCtx = {
-        ...ctx,
-        houseOrdinal: ordinal(house),
-        houseMeaning: getHook(`fallback-hook/house-meaning/${house}`, voice, opts2),
-        placementHouseSentences: getHook(`fallback-hook/placement-house-sentence/${planet}/${house}`, voice, opts2),
-        modifierSentences: mods
-      };
-      parts.push(renderTemplate(houseTemplate, houseCtx, gapLabel, voice));
-      headlineTemplate = houseTemplate;
-      ctx.houseOrdinal = houseCtx.houseOrdinal;
+      if (exactHouseLived) {
+        parts.push(exactHouseLived.body ?? "");
+        partKeys.push(exactHouseLived.contentKey);
+      } else {
+        const houseTemplate = getTemplate("fallback-template/natal.house-context");
+        const houseCtx = {
+          ...ctx,
+          houseOrdinal: ordinal(house),
+          houseMeaning: getHook(`fallback-hook/house-meaning/${house}`, voice, opts2),
+          placementHouseSentences: getHook(`fallback-hook/placement-house-sentence/${planet}/${house}`, voice, opts2),
+          modifierSentences: mods
+        };
+        parts.push(renderTemplate(houseTemplate, houseCtx, gapLabel, voice));
+        partKeys.push(houseTemplate.contentKey);
+        headlineTemplate = houseTemplate;
+        ctx.houseOrdinal = houseCtx.houseOrdinal;
+      }
     }
-    return { headline: fixArticles(mustache(headlineTemplate.headline ?? "", ctx)), parts, body: parts.join("\n\n"), templateKey: headlineTemplate.contentKey };
+    return {
+      headline: exactHouseLived ? `${title(planet)} in the ${ordinal(house)} house` : fixArticles(mustache(headlineTemplate.headline ?? "", ctx)),
+      parts,
+      partKeys,
+      body: parts.join("\n\n"),
+      templateKey: exactHouseLived?.contentKey ?? headlineTemplate.contentKey
+    };
   }
   function renderNatalAngle(facts, opts2 = {}) {
     const voice = facts.voice === "you" ? "you" : "they";
@@ -2409,7 +2415,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-11h";
+var PACKAGE_VERSION = "v3-2026-08-12a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
