@@ -24,7 +24,8 @@ export interface VocabRow {
   contentKey: string;
   content_role: string;
   grammar_frame: string;
-  body: string;
+  body?: string;
+  body_they?: string;
   review_status: string;
 }
 export interface ApprovalReference {
@@ -139,6 +140,16 @@ export interface RenderOpts {
 export class SourceGapError extends Error {}
 export class RoleViolationError extends Error {}
 
+const SECOND_PERSON = /\b(?:you|your|yours|yourself|yourselves|you're|you've|you'll)\b/iu;
+const stripSlots = (text: unknown) => String(text ?? "").replace(/\{\{[^}]+\}\}/gu, "");
+
+export function vocabularyBodyForVoice(row: VocabRow | undefined, voice: "you" | "they"): string | null {
+  const body = voice === "you" ? row?.body : (row?.body_they ?? row?.body);
+  if (typeof body !== "string" || !body.trim()) return null;
+  if (voice === "they" && SECOND_PERSON.test(stripSlots(body))) return null;
+  return body;
+}
+
 const READER_ELIGIBLE = new Set(["approved_reuse", "approved", "reviewed"]);
 const OPPOSITE_SIGN: Record<string, string> = { aries: "libra", taurus: "scorpio", gemini: "sagittarius", cancer: "capricorn", leo: "aquarius", virgo: "pisces", libra: "aries", scorpio: "taurus", sagittarius: "gemini", capricorn: "cancer", aquarius: "leo", pisces: "virgo" };
 const ASPECT_GROUP: Record<string, string> = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
@@ -176,19 +187,26 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
   }
   const hooks = new Map((rowsFile.hookRows ?? []).map((r) => [r.contentKey, r]));
 
-  const getVocab = (key: string, opts: RenderOpts = {}): string | null => {
+  const getVocab = (key: string, voice: "you" | "they" = "you", opts: RenderOpts = {}): string | null => {
     const row = [...(vocab.get(key) ?? [])]
       .reverse()
-      .find((candidate) => opts.allowUnreviewed || READER_ELIGIBLE.has(candidate.review_status));
+      .find((candidate) => (
+        (opts.allowUnreviewed || READER_ELIGIBLE.has(candidate.review_status))
+        && (voice === "you"
+          ? typeof candidate.body === "string"
+          : typeof (candidate.body_they ?? candidate.body) === "string")
+      ));
     if (!row) return null;
+    const body = vocabularyBodyForVoice(row, voice);
+    if (body == null) return null;
     if (row.content_role === "fallback_source") throw new RoleViolationError(`Row ${key} is fallback_source and can never fill a reader slot.`);
     if (!opts.allowUnreviewed && !READER_ELIGIBLE.has(row.review_status)) return null;
-    return row.body;
+    return body;
   };
-  const getVocabList = (prefix: string, opts: RenderOpts = {}): string[] => {
+  const getVocabList = (prefix: string, voice: "you" | "they" = "you", opts: RenderOpts = {}): string[] => {
     const out: string[] = [];
     for (let i = 0; i < 8; i++) {
-      const v = getVocab(`${prefix}/${i}`, opts);
+      const v = getVocab(`${prefix}/${i}`, voice, opts);
       if (v == null) break;
       out.push(v);
     }
@@ -261,19 +279,19 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       planetRef: needsArticle ? `the ${title(planet)}` : title(planet),
       planetRefCap: needsArticle ? `The ${title(planet)}` : title(planet),
       signTitle: title(sign),
-      planetTopic: getVocab(`fallback-vocab/planet-topic/${planet}`, opts),
-      planetExcess: getVocab(`fallback-vocab/planet-excess/${planet}`, opts),
-      planetProductive: getVocab(`fallback-vocab/planet-productive/${planet}`, opts),
-      planetCore: getVocab(`fallback-vocab/planet-core/${planet}`, opts),
-      signStyle: getVocab(`fallback-vocab/sign-style/${sign}`, opts),
-      signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, opts),
-      planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, opts),
-      signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, opts),
+      planetTopic: getVocab(`fallback-vocab/planet-topic/${planet}`, voice, opts),
+      planetExcess: getVocab(`fallback-vocab/planet-excess/${planet}`, voice, opts),
+      planetProductive: getVocab(`fallback-vocab/planet-productive/${planet}`, voice, opts),
+      planetCore: getVocab(`fallback-vocab/planet-core/${planet}`, voice, opts),
+      signStyle: getVocab(`fallback-vocab/sign-style/${sign}`, voice, opts),
+      signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, voice, opts),
+      planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, voice, opts),
+      signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, voice, opts),
       planetIntro: getReaderLivedRow(`fallback-hook/planet-lived/${planet}`, voice, opts)?.body
         ?? getHook(`fallback-hook/planet-intro/${planet}`, voice, opts),
       planetBest: getHook(`fallback-hook/planet-best/${planet}`, voice, opts),
       placementSentences: getHook(`fallback-hook/placement-sentence/${planet}/${sign}`, voice, opts),
-      placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, opts).join(", or ") || null,
+      placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, voice, opts).join(", or ") || null,
     };
 
     const mods: string[] = [];
@@ -300,7 +318,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     if (isNode) {
       const j = getHook(`fallback-hook/node-journey/${planet}`, voice, opts);
       const oppSign = OPPOSITE_SIGN[sign];
-      const oppDir = getVocab(`fallback-vocab/node-direction/${oppSign}`, opts);
+      const oppDir = getVocab(`fallback-vocab/node-direction/${oppSign}`, voice, opts);
       ctx.nodeJourney = j ? j.replace(/\{\{oppositeSignTitle\}\}/g, title(oppSign)).replace(/\{\{oppositeDirection\}\}/g, oppDir ?? "") : null;
     }
     const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, opts)
@@ -366,11 +384,11 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       planetATitle: title(facts.planetA),
       planetBTitle: title(facts.planetB),
       aspectName: aspect,
-      aspectAdj: getVocab(`fallback-vocab/aspect-adj/${aspect}`, opts),
-      planetACore: getVocab(`fallback-vocab/planet-core/${facts.planetA}`, opts),
-      planetBCore: getVocab(`fallback-vocab/planet-core/${facts.planetB}`, opts),
+      aspectAdj: getVocab(`fallback-vocab/aspect-adj/${aspect}`, voice, opts),
+      planetACore: getVocab(`fallback-vocab/planet-core/${facts.planetA}`, voice, opts),
+      planetBCore: getVocab(`fallback-vocab/planet-core/${facts.planetB}`, voice, opts),
       aspectTypeLine: getHook(`fallback-hook/aspect-type/${aspect}`, voice, opts),
-      aspectMotion: getVocab(`fallback-vocab/aspect-motion/${aspect}`, opts),
+      aspectMotion: getVocab(`fallback-vocab/aspect-motion/${aspect}`, voice, opts),
       possessiveLow: facts.voice === "you" ? "your" : `${facts.voice}'s`,
       pairSentences: pair,
     };
@@ -400,9 +418,9 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     }
     if (!activation) {
       const qual = mode
-        ? getVocab(`fallback-vocab/pattern-mode/${mode}`, opts)
+        ? getVocab(`fallback-vocab/pattern-mode/${mode}`, voice === "you" ? "you" : "they", opts)
         : element
-          ? getVocab(`fallback-vocab/pattern-element/${element}`, opts)
+          ? getVocab(`fallback-vocab/pattern-element/${element}`, voice === "you" ? "you" : "they", opts)
           : null;
       if (qual) paras.push(`It runs as ${qual}.`);
     }
@@ -454,8 +472,8 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     const topicMKey = `fallback-vocab/empty-house-ruler-jurisdiction/${rulerHouse}`;
     const topicNKey = `fallback-vocab/empty-house-bridge-topic-short/${house}`;
     const bridgeTemplate = opts.includeEmptyHouseBridge ? findTemplate(bridgeTemplateKey, opts) : null;
-    const topicM = bridgeTemplate ? getVocab(topicMKey, opts) : null;
-    const topicN = house === 1 ? null : (bridgeTemplate ? getVocab(topicNKey, opts) : null);
+    const topicM = bridgeTemplate ? getVocab(topicMKey, v, opts) : null;
+    const topicN = house === 1 ? null : (bridgeTemplate ? getVocab(topicNKey, v, opts) : null);
     const planet = ruler === "sun" || ruler === "moon" ? `the ${title(ruler)}` : title(ruler);
     const bridge = bridgeTemplate && topicM && (house === 1 || topicN)
       ? renderTemplate(bridgeTemplate, {
