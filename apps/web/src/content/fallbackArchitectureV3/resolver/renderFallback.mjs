@@ -151,14 +151,6 @@ export function renderNatalPlacement(facts, opts = {}) {
     ? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, { allowUnreviewed })
       ?? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, { allowUnreviewed })
     : null;
-  if (exactHouseLived) {
-    return {
-      headline: `${title(planet)} in the ${ordinal(house)} house`,
-      parts: [exactHouseLived.body],
-      body: exactHouseLived.body,
-      templateKey: exactHouseLived.contentKey,
-    };
-  }
   const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, { allowUnreviewed })
     ?? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, { allowUnreviewed });
 
@@ -205,6 +197,7 @@ export function renderNatalPlacement(facts, opts = {}) {
 
   const gapLabel = `${planet}/${sign}${house ? `/house-${house}` : ""}`;
   const parts = [];
+  const partKeys = [];
 
   const isNode = planet === "north-node" || planet === "south-node";
   if (isNode) {
@@ -216,27 +209,37 @@ export function renderNatalPlacement(facts, opts = {}) {
   const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, { allowUnreviewed })
     ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
   parts.push(exactSignLived?.body ?? renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
+  partKeys.push(exactSignLived?.contentKey ?? signTemplate.contentKey);
 
   let headlineTemplate = signTemplate;
   if (house) {
-    const houseTemplate = getTemplate("fallback-template/natal.house-context");
-    const houseCtx = {
-      ...ctx,
-      houseOrdinal: ordinal(house),
-      houseMeaning: getHook(`fallback-hook/house-meaning/${house}`, voice, { allowUnreviewed }),
-      placementHouseSentences: getHook(`fallback-hook/placement-house-sentence/${planet}/${house}`, voice, { allowUnreviewed }),
-      modifierSentences: mods,
-    };
-    parts.push(renderTemplate(houseTemplate, houseCtx, gapLabel, voice));
-    headlineTemplate = houseTemplate;
-    ctx.houseOrdinal = houseCtx.houseOrdinal;
+    if (exactHouseLived) {
+      parts.push(exactHouseLived.body);
+      partKeys.push(exactHouseLived.contentKey);
+    } else {
+      const houseTemplate = getTemplate("fallback-template/natal.house-context");
+      const houseCtx = {
+        ...ctx,
+        houseOrdinal: ordinal(house),
+        houseMeaning: getHook(`fallback-hook/house-meaning/${house}`, voice, { allowUnreviewed }),
+        placementHouseSentences: getHook(`fallback-hook/placement-house-sentence/${planet}/${house}`, voice, { allowUnreviewed }),
+        modifierSentences: mods,
+      };
+      parts.push(renderTemplate(houseTemplate, houseCtx, gapLabel, voice));
+      partKeys.push(houseTemplate.contentKey);
+      headlineTemplate = houseTemplate;
+      ctx.houseOrdinal = houseCtx.houseOrdinal;
+    }
   }
 
   return {
-    headline: fixArticles(mustache(headlineTemplate.headline, ctx)),
+    headline: exactHouseLived
+      ? `${title(planet)} in the ${ordinal(house)} house`
+      : fixArticles(mustache(headlineTemplate.headline, ctx)),
     parts,
+    partKeys,
     body: parts.join("\n\n"),
-    templateKey: headlineTemplate.contentKey,
+    templateKey: exactHouseLived?.contentKey ?? headlineTemplate.contentKey,
   };
 }
 

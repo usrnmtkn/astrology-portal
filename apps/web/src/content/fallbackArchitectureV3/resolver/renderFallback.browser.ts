@@ -129,7 +129,7 @@ export interface EmptyHouseFacts {
   voice?: Voice;
 }
 export interface AspectFacts { planetA: string; planetB: string; aspect: "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx" | "semisextile" | "nonagen"; voice: Voice }
-export interface RenderResult { headline: string; parts: string[]; body: string; templateKey: string; astroHint?: string; sourceKeys?: string[] }
+export interface RenderResult { headline: string; parts: string[]; partKeys?: string[]; body: string; templateKey: string; astroHint?: string; sourceKeys?: string[] }
 export interface RenderOpts {
   allowUnreviewed?: boolean;
   /** Adds the owner-approved mechanism bridge on empty-house detail pages only. */
@@ -243,14 +243,6 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       ? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, opts)
         ?? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, opts)
       : null;
-    if (exactHouseLived) {
-      return {
-        headline: `${title(planet)} in the ${ordinal(house)} house`,
-        parts: [exactHouseLived.body ?? ""],
-        body: exactHouseLived.body ?? "",
-        templateKey: exactHouseLived.contentKey,
-      };
-    }
     const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts)
       ?? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, opts);
     const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
@@ -295,6 +287,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
 
     const gapLabel = `${planet}/${sign}${house ? `/house-${house}` : ""}`;
     const parts: string[] = [];
+    const partKeys: string[] = [];
 
     const isNode = planet === "north-node" || planet === "south-node";
     if (isNode) {
@@ -306,23 +299,38 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, opts)
       ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
     parts.push(exactSignLived?.body ?? renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
+    partKeys.push(exactSignLived?.contentKey ?? signTemplate.contentKey);
 
     let headlineTemplate = signTemplate;
     if (house) {
-      const houseTemplate = getTemplate("fallback-template/natal.house-context");
-      const houseCtx: Ctx = {
-        ...ctx,
-        houseOrdinal: ordinal(house),
-        houseMeaning: getHook(`fallback-hook/house-meaning/${house}`, voice, opts),
-        placementHouseSentences: getHook(`fallback-hook/placement-house-sentence/${planet}/${house}`, voice, opts),
-        modifierSentences: mods,
-      };
-      parts.push(renderTemplate(houseTemplate, houseCtx, gapLabel, voice));
-      headlineTemplate = houseTemplate;
-      ctx.houseOrdinal = houseCtx.houseOrdinal;
+      if (exactHouseLived) {
+        parts.push(exactHouseLived.body ?? "");
+        partKeys.push(exactHouseLived.contentKey);
+      } else {
+        const houseTemplate = getTemplate("fallback-template/natal.house-context");
+        const houseCtx: Ctx = {
+          ...ctx,
+          houseOrdinal: ordinal(house),
+          houseMeaning: getHook(`fallback-hook/house-meaning/${house}`, voice, opts),
+          placementHouseSentences: getHook(`fallback-hook/placement-house-sentence/${planet}/${house}`, voice, opts),
+          modifierSentences: mods,
+        };
+        parts.push(renderTemplate(houseTemplate, houseCtx, gapLabel, voice));
+        partKeys.push(houseTemplate.contentKey);
+        headlineTemplate = houseTemplate;
+        ctx.houseOrdinal = houseCtx.houseOrdinal;
+      }
     }
 
-    return { headline: fixArticles(mustache(headlineTemplate.headline ?? "", ctx)), parts, body: parts.join("\n\n"), templateKey: headlineTemplate.contentKey };
+    return {
+      headline: exactHouseLived
+        ? `${title(planet)} in the ${ordinal(house)} house`
+        : fixArticles(mustache(headlineTemplate.headline ?? "", ctx)),
+      parts,
+      partKeys,
+      body: parts.join("\n\n"),
+      templateKey: exactHouseLived?.contentKey ?? headlineTemplate.contentKey,
+    };
   }
 
   function renderNatalAngle(facts: AngleFacts, opts: RenderOpts = {}): RenderResult {
