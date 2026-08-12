@@ -179,7 +179,16 @@ for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
       ["browser", browser.renderNatalPlacement],
     ]) {
       const result = render({ planet: object, sign: "aries", house, voice: "you" });
-      assert.equal(result.body, expectedBody, `${label}:${workbookKey}: house body mismatch`);
+      assert.equal(
+        result.parts.at(-1),
+        expectedBody,
+        `${label}:${workbookKey}: approved house body must remain byte-identical as the final placement section`
+      );
+      assert.equal(
+        result.parts.filter((part) => part === expectedBody).length,
+        1,
+        `${label}:${workbookKey}: approved house body must appear exactly once`
+      );
       assert.equal(result.templateKey, mappedKey(workbookKey));
     }
     continue;
