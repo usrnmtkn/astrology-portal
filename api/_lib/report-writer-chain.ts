@@ -49,12 +49,32 @@ type ReportColdReadCritique = {
   applicability: { interpretive_movement: "applicable" | "not_applicable"; reason: string };
   defects: ReportColdReadDefect[];
 };
+export type ReportWriterChainCall = {
+  stage: "draft" | "critique" | "revise" | "cold_read" | "cold_revise";
+  model: string;
+  provider: string;
+  usage: ReportModelUsage;
+};
+
+export type ReportWriterChainCheckpoint = {
+  schema: "report-writer-chain-checkpoint.v1";
+  chainKey: string;
+  unitId: string;
+  completedStage: "draft" | "critique" | "revision" | "cold_read" | "cold_revision";
+  draft: ReportDraft;
+  critique?: ReportCritique;
+  revised?: ReportDraft;
+  coldCritique?: ReportCritique;
+  calls: ReportWriterChainCall[];
+  promptVersion: string;
+};
+
 export type ReportWriterChainResult = {
   draft: ReportDraft;
   critique: ReportCritique;
   revised: ReportDraft;
   coldCritique: ReportCritique;
-  calls: Array<{ stage: "draft" | "critique" | "revise" | "cold_read" | "cold_revise"; model: string; provider: string; usage: ReportModelUsage }>;
+  calls: ReportWriterChainCall[];
   promptVersion: string;
 };
 
@@ -653,6 +673,9 @@ export async function runReportWriterChain(input: {
   payload: ReportGenerationPayload;
   failureContext?: string[];
   callModel?: ReportModelCall;
+  chainKey?: string;
+  checkpoint?: ReportWriterChainCheckpoint;
+  persistCheckpoint?: (checkpoint: ReportWriterChainCheckpoint) => Promise<void>;
 }): Promise<ReportWriterChainResult> {
   const callModel = input.callModel ?? callReportModel;
   const target = writerModelTarget();
@@ -661,64 +684,96 @@ export async function runReportWriterChain(input: {
   // must never consume a billed provider call.
   assertReportEvaluationPacketReady(payload);
   const critiquePrompt = loadActiveReportCritiquePrompt();
-  const calls: ReportWriterChainResult["calls"] = [];
-  const draftResult = await callModel<ReportDraft>({
-    ...target,
-    prompt: [reportPromptFromPayload(payload), input.failureContext?.length ? `FAILURE_CONTEXT\n${input.failureContext.join("\n")}` : "", "Return one report unit using the structured output contract."].filter(Boolean).join("\n\n"),
-    schemaName: "report_unit_draft",
-    schema: draftSchema
-  });
-  calls.push({ stage: "draft", model: draftResult.model, provider: draftResult.provider, usage: draftResult.usage });
-  const packet = reportEvaluationPacket(payload, draftResult.value);
-  const deterministicIssues = [
-    ...validateReportDraft(draftResult.value, payload),
-    ...verifyReportFactLock(draftResult.value, payload.frozenFacts).issues
-  ];
-  const critiqueResult = await callModel<ReportCritique>({
-    ...target,
-    prompt: [
-      critiquePrompt.text,
-      `CANONICAL_PROMPT\n${payload.canonicalOwnerPrompt.text}`,
-      `LIVED_PROSE_STANDARD\n${payload.livedProseStandard.text}`,
-      `NO_CLEVERNESS_TAX_OWNER_RULING\n${payload.noClevernessRuling.text}`,
-      `OWNER_REVIEW_EVIDENCE\n${payload.ownerReviewEvidence.text}`,
-      FLATNESS_DIAGNOSTIC_ROUTING,
-      `PRODUCTION_LOCATION_CONTRACT\n${packet.locationContract}`,
-      `COMPLETE_UNIT\n${packet.completeUnit}`,
-      `UNIT_FACTS\n${JSON.stringify(packet.unitFacts)}`,
-      `OWNER_COMPARISON_SET\n${JSON.stringify(packet.ownerComparisonSet)}`,
-      `TARGET_FUNCTIONS\n${JSON.stringify(packet.targetFunctions)}`,
-      `LABELED_NEGATIVE_EXAMPLES\n${JSON.stringify(packet.labeledNegativeExamples)}`,
-      `VALIDATOR_RESULTS\n${JSON.stringify(deterministicIssues)}`
-    ].join("\n\n"),
-    schemaName: "report_unit_critique",
-    schema: critiqueSchema
-  });
-  calls.push({ stage: "critique", model: critiqueResult.model, provider: critiqueResult.provider, usage: critiqueResult.usage });
-  const movementApplicable = reportDraftMovementApplicable(draftResult.value);
-  const critique: ReportCritique = {
-    ...critiqueResult.value,
-    applicability: {
-      interpretive_movement: movementApplicable ? "applicable" : "not_applicable",
-      reason: movementApplicable
-        ? "The complete unit contains at least two substantive prose paragraphs."
-        : "The complete unit contains fewer than two substantive prose paragraphs."
-    }
+  const chainKey = input.chainKey ?? "standalone";
+  const resumable = input.checkpoint?.schema === "report-writer-chain-checkpoint.v1"
+    && input.checkpoint.chainKey === chainKey
+    && input.checkpoint.unitId === payload.unit.unitId
+    ? input.checkpoint
+    : null;
+  const calls: ReportWriterChainResult["calls"] = resumable ? [...resumable.calls] : [];
+  const persist = async (checkpoint: Omit<ReportWriterChainCheckpoint, "schema" | "chainKey" | "unitId" | "promptVersion">) => {
+    await input.persistCheckpoint?.({
+      schema: "report-writer-chain-checkpoint.v1",
+      chainKey,
+      unitId: payload.unit.unitId,
+      promptVersion: critiquePrompt.version,
+      ...checkpoint,
+      calls: [...checkpoint.calls]
+    });
   };
-  if (!movementApplicable && critique.defects.some((defect) => defect.category === "interpretive_gap")) {
-    throw new Error("V3 critique returned interpretive_gap for a unit where interpretive movement is not applicable.");
+
+  let draft = resumable?.draft;
+  if (!draft) {
+    const draftResult = await callModel<ReportDraft>({
+      ...target,
+      prompt: [reportPromptFromPayload(payload), input.failureContext?.length ? `FAILURE_CONTEXT\n${input.failureContext.join("\n")}` : "", "Return one report unit using the structured output contract."].filter(Boolean).join("\n\n"),
+      schemaName: "report_unit_draft",
+      schema: draftSchema
+    });
+    calls.push({ stage: "draft", model: draftResult.model, provider: draftResult.provider, usage: draftResult.usage });
+    draft = draftResult.value;
+    await persist({ completedStage: "draft", draft, calls });
   }
-  const eligibleEvidence = new Set(packet.ownerComparisonSet.map((passage) => passage.evidenceId));
-  for (const defect of critique.defects.filter((candidate) => candidate.category === "owner_voice_drift")) {
-    if (!defect.evidence_ids.length || defect.evidence_ids.some((id) => !eligibleEvidence.has(id))) {
-      throw new Error(`V3 owner_voice_drift defect ${defect.id} lacks eligible comparison evidence.`);
+
+  const packet = reportEvaluationPacket(payload, draft);
+  let critique = resumable?.critique;
+  if (!critique) {
+    const deterministicIssues = [
+      ...validateReportDraft(draft, payload),
+      ...verifyReportFactLock(draft, payload.frozenFacts).issues
+    ];
+    const critiqueResult = await callModel<ReportCritique>({
+      ...target,
+      prompt: [
+        critiquePrompt.text,
+        `CANONICAL_PROMPT\n${payload.canonicalOwnerPrompt.text}`,
+        `LIVED_PROSE_STANDARD\n${payload.livedProseStandard.text}`,
+        `NO_CLEVERNESS_TAX_OWNER_RULING\n${payload.noClevernessRuling.text}`,
+        `OWNER_REVIEW_EVIDENCE\n${payload.ownerReviewEvidence.text}`,
+        FLATNESS_DIAGNOSTIC_ROUTING,
+        `PRODUCTION_LOCATION_CONTRACT\n${packet.locationContract}`,
+        `COMPLETE_UNIT\n${packet.completeUnit}`,
+        `UNIT_FACTS\n${JSON.stringify(packet.unitFacts)}`,
+        `OWNER_COMPARISON_SET\n${JSON.stringify(packet.ownerComparisonSet)}`,
+        `TARGET_FUNCTIONS\n${JSON.stringify(packet.targetFunctions)}`,
+        `LABELED_NEGATIVE_EXAMPLES\n${JSON.stringify(packet.labeledNegativeExamples)}`,
+        `VALIDATOR_RESULTS\n${JSON.stringify(deterministicIssues)}`
+      ].join("\n\n"),
+      schemaName: "report_unit_critique",
+      schema: critiqueSchema
+    });
+    calls.push({ stage: "critique", model: critiqueResult.model, provider: critiqueResult.provider, usage: critiqueResult.usage });
+    const movementApplicable = reportDraftMovementApplicable(draft);
+    critique = {
+      ...critiqueResult.value,
+      applicability: {
+        interpretive_movement: movementApplicable ? "applicable" : "not_applicable",
+        reason: movementApplicable
+          ? "The complete unit contains at least two substantive prose paragraphs."
+          : "The complete unit contains fewer than two substantive prose paragraphs."
+      }
+    };
+    if (!movementApplicable && critique.defects.some((defect) => defect.category === "interpretive_gap")) {
+      throw new Error("V3 critique returned interpretive_gap for a unit where interpretive movement is not applicable.");
     }
+    const eligibleEvidence = new Set(packet.ownerComparisonSet.map((passage) => passage.evidenceId));
+    for (const defect of critique.defects.filter((candidate) => candidate.category === "owner_voice_drift")) {
+      if (!defect.evidence_ids.length || defect.evidence_ids.some((id) => !eligibleEvidence.has(id))) {
+        throw new Error(`V3 owner_voice_drift defect ${defect.id} lacks eligible comparison evidence.`);
+      }
+    }
+    await persist({ completedStage: "critique", draft, critique, calls });
   }
-  let revised = draftResult.value;
-  if (critique.result !== "no_defects" && critique.defects.length > 0) {
-    const revision = await reviseReportDraftForNamedDefects({ payload, draft: draftResult.value, defects: critique.defects, callModel });
-    calls.push(...revision.calls);
-    revised = revision.revised;
+
+  let revised = resumable?.revised;
+  if (!revised) {
+    revised = draft;
+    if (critique.result !== "no_defects" && critique.defects.length > 0) {
+      const revision = await reviseReportDraftForNamedDefects({ payload, draft, defects: critique.defects, callModel });
+      calls.push(...revision.calls);
+      revised = revision.revised;
+    }
+    await persist({ completedStage: "revision", draft, critique, revised, calls });
   }
 
   // Closing discipline: this request deliberately contains only the rendered
@@ -727,7 +782,9 @@ export async function runReportWriterChain(input: {
   // prose that a reader cannot understand cold.
   const coldMovementApplicable = reportDraftMovementApplicable(revised);
   const coldCoordinates = reportUnitCoordinates(revised);
-  const coldResult = await callModel<ReportColdReadCritique>({
+  let coldCritique = resumable?.coldCritique;
+  if (!coldCritique) {
+    const coldResult = await callModel<ReportColdReadCritique>({
     ...target,
     prompt: [
       payload.coldProseRuling.text,
@@ -741,18 +798,23 @@ export async function runReportWriterChain(input: {
     ].join("\n\n"),
     schemaName: "report_unit_cold_read",
     schema: coldReadCritiqueSchema(revised, coldMovementApplicable)
-  });
-  calls.push({ stage: "cold_read", model: coldResult.model, provider: coldResult.provider, usage: coldResult.usage });
-  const coldCritique = normalizeReportColdReadCritique(revised, coldResult.value, coldMovementApplicable);
-  if (coldCritique.result !== "no_defects" && coldCritique.defects.length > 0) {
-    const coldRevision = await reviseReportDraftForNamedDefects({
-      payload, draft: revised, defects: coldCritique.defects, callModel, stage: "cold_revise"
     });
-    calls.push(...coldRevision.calls);
-    revised = coldRevision.revised;
+    calls.push({ stage: "cold_read", model: coldResult.model, provider: coldResult.provider, usage: coldResult.usage });
+    coldCritique = normalizeReportColdReadCritique(revised, coldResult.value, coldMovementApplicable);
+    await persist({ completedStage: "cold_read", draft, critique, revised, coldCritique, calls });
+  }
+  if (coldCritique.result !== "no_defects" && coldCritique.defects.length > 0) {
+    if (resumable?.completedStage !== "cold_revision") {
+      const coldRevision = await reviseReportDraftForNamedDefects({
+        payload, draft: revised, defects: coldCritique.defects, callModel, stage: "cold_revise"
+      });
+      calls.push(...coldRevision.calls);
+      revised = coldRevision.revised;
+      await persist({ completedStage: "cold_revision", draft, critique, revised, coldCritique, calls });
+    }
   }
   return {
-    draft: draftResult.value,
+    draft,
     critique: critique.defects.length ? critique : { ...critique, result: "no_defects", defects: [] },
     coldCritique: coldCritique.defects.length ? coldCritique : { ...coldCritique, result: "no_defects", defects: [] },
     revised,
