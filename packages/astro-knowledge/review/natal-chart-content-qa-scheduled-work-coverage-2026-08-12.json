@@ -1,0 +1,4198 @@
+{
+  "schemaVersion": "natal-chart-content-qa-scheduled-work-coverage-v1",
+  "generatedOn": "2026-08-12",
+  "authority": {
+    "pass2Plan": "packages/astro-knowledge/review/friend-natal-pass-2-plan-2026-08-11.md@700f1bd0",
+    "broaderBatch": "packages/astro-knowledge/review/friend-natal-voice-audit-v1.json@700f1bd0",
+    "broaderBatchSha256": "bc0b185c76b926e6fc232066a68b3024bcffe852d10ff15a541fe3221e905b63",
+    "ownerDecision": "Broader defect batch authorized strictly after pass 2; no content authorization."
+  },
+  "pass2": {
+    "surface": "friend",
+    "contentAuthored": false,
+    "status": "scheduled-review-gated",
+    "authoredReplacementFamilies": [
+      "placement-composed"
+    ],
+    "frameRewriteFamilies": [
+      "named-point",
+      "natal-aspect",
+      "glossary"
+    ],
+    "retiredSourcePrefixes": [
+      "fallback-hook/ruler-method/"
+    ],
+    "legacyEmptyHousePrefixes": [
+      "fallback-hook/empty-house-ruler-v3/",
+      "fallback-hook/empty-house-ruler/",
+      "fallback-hook/empty-house-placement/",
+      "fallback-hook/empty-house/bridge/",
+      "fallback-hook/empty-house/close/",
+      "fallback-hook/empty-house/explainer/"
+    ],
+    "note": "Pass 2 is Friend-only, review-gated, and has zero authored rows in its recorded scaffold. 'Covered' means scheduled supersession, not serving promotion."
+  },
+  "broaderBatch": {
+    "surface": "friend",
+    "status": "authorized-after-pass-2",
+    "findingCounts": {
+      "banned-vocabulary": 378,
+      "repeating-skeleton": 146,
+      "translation-required": 3,
+      "real-filler": 49,
+      "source-facing-language": 144
+    },
+    "affectedItems": [
+      {
+        "id": "angle:ascendant/aries",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:ascendant/leo",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:ascendant/scorpio",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:descendant/cancer",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:descendant/capricorn",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:imum-coeli/taurus",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:midheaven/aquarius",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:midheaven/aries",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:midheaven/cancer",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:midheaven/capricorn",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:midheaven/gemini",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:midheaven/leo",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:midheaven/libra",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:midheaven/pisces",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:midheaven/sagittarius",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:midheaven/scorpio",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:midheaven/taurus",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "angle:midheaven/virgo",
+        "family": "angle",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect-pattern:grand_square",
+        "family": "aspect-pattern",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/conjunction/mars",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/conjunction/saturn",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/opposition/mercury",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/opposition/moon",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/opposition/saturn",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/opposition/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/opposition/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/sextile/mercury",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/sextile/sun",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/sextile/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/square/mercury",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/square/moon",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/square/saturn",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/square/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/square/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/trine/mercury",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/trine/sun",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:chiron/trine/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:jupiter/conjunction/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:jupiter/opposition/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:jupiter/opposition/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:jupiter/sextile/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:jupiter/sextile/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:jupiter/sextile/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:jupiter/square/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:jupiter/square/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:jupiter/trine/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:jupiter/trine/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:jupiter/trine/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:lilith/conjunction/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:lilith/conjunction/mercury",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:lilith/conjunction/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:lilith/conjunction/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:lilith/opposition/mars",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:lilith/opposition/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:lilith/sextile/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:lilith/square/mars",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:lilith/square/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:lilith/trine/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mars/conjunction/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mars/conjunction/saturn",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mars/conjunction/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mars/opposition/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mars/opposition/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mars/opposition/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mars/sextile/pluto",
+        "family": "aspect",
+        "triage": "REWRITE",
+        "findings": [
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "aspect:mars/square/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mars/square/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mars/square/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mars/trine/pluto",
+        "family": "aspect",
+        "triage": "REWRITE",
+        "findings": [
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "aspect:mercury/conjunction/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mercury/conjunction/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mercury/conjunction/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mercury/conjunction/saturn",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mercury/conjunction/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mercury/opposition/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mercury/sextile/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mercury/sextile/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mercury/sextile/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mercury/sextile/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mercury/square/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mercury/trine/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mercury/trine/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mercury/trine/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:mercury/trine/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/conjunction/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/conjunction/mars",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/conjunction/mercury",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/conjunction/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/conjunction/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/conjunction/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/conjunction/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/opposition/mars",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/opposition/mercury",
+        "family": "aspect",
+        "triage": "REWRITE",
+        "findings": [
+          "translation-required"
+        ]
+      },
+      {
+        "id": "aspect:moon/opposition/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/opposition/sun",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/opposition/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/opposition/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/sextile/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/sextile/mars",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/sextile/mercury",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/sextile/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/sextile/sun",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/sextile/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/square/mars",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/square/mercury",
+        "family": "aspect",
+        "triage": "REWRITE",
+        "findings": [
+          "translation-required"
+        ]
+      },
+      {
+        "id": "aspect:moon/square/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/square/sun",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/square/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/square/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/trine/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/trine/mars",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/trine/mercury",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/trine/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/trine/sun",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:moon/trine/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:neptune/conjunction/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:neptune/opposition/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:neptune/square/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:north-node/conjunction/mars",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:north-node/conjunction/moon",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:north-node/conjunction/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:north-node/opposition/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:north-node/opposition/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:north-node/sextile/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:north-node/square/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:north-node/square/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:north-node/trine/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:saturn/conjunction/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:saturn/opposition/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:saturn/opposition/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:saturn/opposition/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:saturn/sextile/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:saturn/sextile/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:saturn/square/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:saturn/square/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:saturn/square/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:saturn/trine/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:saturn/trine/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:south-node/conjunction/moon",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:south-node/conjunction/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:south-node/conjunction/pluto",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:south-node/conjunction/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:south-node/opposition/moon",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:south-node/opposition/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:south-node/sextile/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:south-node/sextile/moon",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:south-node/sextile/sun",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:south-node/square/moon",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:south-node/square/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:south-node/trine/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:south-node/trine/moon",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:south-node/trine/sun",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/conjunction/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/conjunction/mars",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/conjunction/mercury",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/conjunction/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/conjunction/venus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/opposition/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/opposition/mars",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/opposition/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/opposition/saturn",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/opposition/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/sextile/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/sextile/mars",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/sextile/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/sextile/saturn",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/square/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/square/mars",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/square/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/square/saturn",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/square/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/trine/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/trine/mars",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/trine/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:sun/trine/saturn",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:uranus/opposition/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:uranus/sextile/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:uranus/square/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:uranus/trine/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:venus/conjunction/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:venus/conjunction/mars",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler"
+        ]
+      },
+      {
+        "id": "aspect:venus/conjunction/neptune",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:venus/opposition/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:venus/opposition/saturn",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:venus/opposition/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:venus/sextile/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:venus/square/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:venus/square/saturn",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:venus/square/uranus",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "aspect:venus/trine/jupiter",
+        "family": "aspect",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "empty:1/aquarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:1/aries",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:1/cancer",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:1/capricorn",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:1/gemini",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:1/leo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:1/libra",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:1/pisces",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:1/sagittarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:1/scorpio",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:1/taurus",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:1/virgo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:10/aquarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:10/aries",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:10/cancer",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:10/capricorn",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:10/gemini",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:10/leo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:10/libra",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:10/pisces",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:10/sagittarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:10/scorpio",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:10/taurus",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:10/virgo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:11/aquarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:11/aries",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:11/cancer",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:11/capricorn",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:11/gemini",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:11/leo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:11/libra",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:11/pisces",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:11/sagittarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:11/scorpio",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:11/taurus",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:11/virgo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:12/aquarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:12/aries",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:12/cancer",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:12/capricorn",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:12/gemini",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:12/leo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:12/libra",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:12/pisces",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:12/sagittarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:12/scorpio",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:12/taurus",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:12/virgo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:2/aquarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:2/aries",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:2/cancer",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:2/capricorn",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:2/gemini",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:2/leo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:2/libra",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:2/pisces",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:2/sagittarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:2/scorpio",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:2/taurus",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:2/virgo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:3/aquarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:3/aries",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:3/cancer",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:3/capricorn",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:3/gemini",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:3/leo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:3/libra",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:3/pisces",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:3/sagittarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:3/scorpio",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:3/taurus",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:3/virgo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:4/aquarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:4/aries",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:4/cancer",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:4/capricorn",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:4/gemini",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:4/leo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:4/libra",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:4/pisces",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:4/sagittarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:4/scorpio",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:4/taurus",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:4/virgo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:5/aquarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:5/aries",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:5/cancer",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:5/capricorn",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:5/gemini",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:5/leo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:5/libra",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:5/pisces",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:5/sagittarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:5/scorpio",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:5/taurus",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:5/virgo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:6/aquarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:6/aries",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:6/cancer",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:6/capricorn",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:6/gemini",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:6/leo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:6/libra",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:6/pisces",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:6/sagittarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:6/scorpio",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:6/taurus",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:6/virgo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:7/aquarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:7/aries",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:7/cancer",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:7/capricorn",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:7/gemini",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:7/leo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:7/libra",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:7/pisces",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:7/sagittarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:7/scorpio",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:7/taurus",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:7/virgo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:8/aquarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:8/aries",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:8/cancer",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:8/capricorn",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:8/gemini",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:8/leo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:8/libra",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:8/pisces",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:8/sagittarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:8/scorpio",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:8/taurus",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:8/virgo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:9/aquarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:9/aries",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:9/cancer",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:9/capricorn",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:9/gemini",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:9/leo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:9/libra",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:9/pisces",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:9/sagittarius",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:9/scorpio",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:9/taurus",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "empty:9/virgo",
+        "family": "empty",
+        "triage": "REWRITE",
+        "findings": [
+          "source-facing-language"
+        ]
+      },
+      {
+        "id": "placement:chiron/aquarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:chiron/aries",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:chiron/cancer",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:chiron/capricorn",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:chiron/gemini",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:chiron/leo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:chiron/libra",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:chiron/pisces",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:chiron/sagittarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:chiron/scorpio",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:chiron/taurus",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:chiron/virgo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:jupiter/aquarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:jupiter/aries",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:jupiter/cancer",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:jupiter/capricorn",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:jupiter/gemini",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:jupiter/leo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:jupiter/libra",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:jupiter/pisces",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:jupiter/sagittarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:jupiter/scorpio",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:jupiter/taurus",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:jupiter/virgo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:lilith/aquarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:lilith/aries",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:lilith/cancer",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:lilith/capricorn",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:lilith/gemini",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:lilith/leo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:lilith/libra",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:lilith/pisces",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:lilith/sagittarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:lilith/scorpio",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:lilith/taurus",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:lilith/virgo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mars/aquarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mars/aries",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mars/cancer",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mars/capricorn",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mars/gemini",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mars/leo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mars/libra",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mars/pisces",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mars/sagittarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mars/scorpio",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mars/taurus",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mars/virgo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mercury/aquarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mercury/aries",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mercury/cancer",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mercury/capricorn",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mercury/gemini",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mercury/leo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mercury/libra",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mercury/pisces",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mercury/sagittarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mercury/scorpio",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mercury/taurus",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:mercury/virgo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:moon/aquarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:moon/aries",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:moon/cancer",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:moon/capricorn",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:moon/gemini",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:moon/leo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:moon/libra",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:moon/pisces",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:moon/sagittarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:moon/scorpio",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:moon/taurus",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:moon/virgo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:neptune/aquarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:neptune/aries",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:neptune/cancer",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:neptune/capricorn",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:neptune/gemini",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:neptune/leo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:neptune/libra",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:neptune/pisces",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:neptune/sagittarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:neptune/scorpio",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:neptune/taurus",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:neptune/virgo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:north-node/aries",
+        "family": "placement",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "placement:north-node/libra",
+        "family": "placement",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "placement:north-node/pisces",
+        "family": "placement",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "placement:north-node/scorpio",
+        "family": "placement",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler"
+        ]
+      },
+      {
+        "id": "placement:north-node/virgo",
+        "family": "placement",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler"
+        ]
+      },
+      {
+        "id": "placement:pluto/aquarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:pluto/aries",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:pluto/cancer",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:pluto/capricorn",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:pluto/gemini",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:pluto/leo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:pluto/libra",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:pluto/pisces",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:pluto/sagittarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:pluto/scorpio",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:pluto/taurus",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:pluto/virgo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:saturn/aquarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:saturn/aries",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:saturn/cancer",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:saturn/capricorn",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:saturn/gemini",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:saturn/leo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:saturn/libra",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:saturn/pisces",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:saturn/sagittarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:saturn/scorpio",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:saturn/taurus",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:saturn/virgo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:south-node/aries",
+        "family": "placement",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "placement:south-node/capricorn",
+        "family": "placement",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "placement:south-node/leo",
+        "family": "placement",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler"
+        ]
+      },
+      {
+        "id": "placement:south-node/libra",
+        "family": "placement",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "placement:south-node/pisces",
+        "family": "placement",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "placement:south-node/scorpio",
+        "family": "placement",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "placement:south-node/taurus",
+        "family": "placement",
+        "triage": "LIGHT EDIT",
+        "findings": [
+          "banned-vocabulary"
+        ]
+      },
+      {
+        "id": "placement:sun/aquarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:sun/aries",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:sun/cancer",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:sun/capricorn",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:sun/gemini",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:sun/leo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:sun/libra",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:sun/pisces",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:sun/sagittarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:sun/scorpio",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:sun/taurus",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:sun/virgo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:uranus/aquarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:uranus/aries",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton",
+          "translation-required"
+        ]
+      },
+      {
+        "id": "placement:uranus/cancer",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:uranus/capricorn",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:uranus/gemini",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:uranus/leo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:uranus/libra",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:uranus/pisces",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:uranus/sagittarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:uranus/scorpio",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:uranus/taurus",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:uranus/virgo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:venus/aquarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:venus/aries",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:venus/cancer",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:venus/capricorn",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:venus/gemini",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:venus/leo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:venus/libra",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:venus/pisces",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:venus/sagittarius",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:venus/scorpio",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:venus/taurus",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "real-filler",
+          "repeating-skeleton"
+        ]
+      },
+      {
+        "id": "placement:venus/virgo",
+        "family": "placement",
+        "triage": "REWRITE",
+        "findings": [
+          "banned-vocabulary",
+          "repeating-skeleton"
+        ]
+      }
+    ]
+  }
+}
