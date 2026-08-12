@@ -1,9 +1,9 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "e1534c4bc1325a0253d92c6fc429ed15b9be0e98",
+  "sourceCommit": "7498a69f",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "ada73e328efc41b373607b282c66179b77006dd85fb4609da4ef8bbc8056c8f5",
+  "contentFingerprint": "97337169028b32c0c442c76eb27603beb209fe6bb434705a2cea55da768a2356",
   "recordCount": 9537,
   "statusCounts": {
     "owner-approved": 9537
@@ -979,9 +979,9 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner-authored exact serving approval, chat 2026-08-11",
-      "contentHash": "e886ffbdfa7fd9caf8dedcea83245af19261fcadd5f15d1231fe30d7beca4eea",
+      "contentHash": "1acdd7262bf1f691f458867ca3c8c4778ac36f5b03eb75093e5290854ddb5deb",
       "wording": {
-        "body": "What is happening this week: The Moon in Virgo makes small, annoying chores and missed details much harder to ignore.\nWhere it hits your life: You may spot a missed calendar invite, catch a typo in an important email, or finally cross off a tedious task you've been putting off. Fixing a specific problem feels good because you know exactly what to do about it.\nThe trap to avoid: The problem starts when every detail begins to feel equally important. You might rewrite the same email four times, keep tweaking a project that is already done, or clean the kitchen because staying busy feels easier than admitting you're anxious, annoyed, or unsure about what happens next.\nWhat to do about it: Check the details once to make sure they're right. Checking the same thing three more times won't make you feel more certain. Fix what actually needs fixing, then leave it alone."
+        "body": "The Moon in Virgo makes small, annoying chores and missed details much harder to ignore.\n\nYou may spot a missed calendar invite, catch a typo in an important email, or finally cross off a tedious task you've been putting off. Fixing a specific problem feels good because you know exactly what to do about it.\n\nThe problem starts when every detail begins to feel equally important. You might rewrite the same email four times, keep tweaking a project that is already done, or clean the kitchen because staying busy feels easier than admitting you're anxious, annoyed, or unsure about what happens next.\n\nCheck the details once to make sure they're right. Checking the same thing three more times won't make you feel more certain. Fix what actually needs fixing, then leave it alone."
       },
       "astrology": {
         "objects": [],
@@ -79017,10 +79017,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner-authored exact serving approval, chat 2026-08-11",
-      "contentHash": "730c450b8720b444824119b23bdd8e27aa016fc3f9867740b773f1edf1058161",
+      "contentHash": "87830a6f7120b07431738033dbe60a06834c57c68bba1751efcad207817b1810",
       "wording": {
         "headline": "",
-        "body": "What is happening this week: Don't trust your first reaction to messages or news. Double-check the facts before you respond.\nWhere it hits your life: Neptune in Aries can make you respond quickly because you feel sure you understood what someone meant. You may not have the full story yet. A confusing text might seem clear at first, only for you to realize an hour later that you misread it. You might have a conversation, think you both agreed on something, and compare notes later to find out you heard completely different terms. You might assume someone is mad at you because of their tone even though their actual words are neutral. Because Neptune is retrograde, an old conversation or misunderstanding may come back up while your memory of what actually happened is fuzzy.\nWhat to do about it: Slow down when the details matter. Read texts twice. Double-check dates and times. Ask direct questions, and put important agreements in writing. Spending one extra minute checking the facts now can prevent a messy cleanup later."
+        "body": "Don't trust your first reaction to messages or news. Double-check the facts before you respond.\n\nNeptune in Aries can make you respond quickly because you feel sure you understood what someone meant. You may not have the full story yet. A confusing text might seem clear at first, only for you to realize an hour later that you misread it. You might have a conversation, think you both agreed on something, and compare notes later to find out you heard completely different terms. You might assume someone is mad at you because of their tone even though their actual words are neutral. Because Neptune is retrograde, an old conversation or misunderstanding may come back up while your memory of what actually happened is fuzzy.\n\nSlow down when the details matter. Read texts twice. Double-check dates and times. Ask direct questions, and put important agreements in writing. Spending one extra minute checking the facts now can prevent a messy cleanup later."
       },
       "astrology": {
         "objects": [
