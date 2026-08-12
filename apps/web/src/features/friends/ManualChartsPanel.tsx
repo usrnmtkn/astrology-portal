@@ -144,6 +144,7 @@ import { useRelationshipCompare } from "./useRelationshipCompare";
 import { resolvedNatalAspectPatternSectionLabel } from "../you/natalAspectPatternLabels";
 import type { SkyDetail } from "../sky/SkyDetailArticle";
 import { wholeDegreeOrb } from "../sky/skyHelpers";
+import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
 
 const FriendsWorkspaceShell = lazy(() =>
   import("./FriendsWorkspaceShell").then((module) => ({
@@ -1509,7 +1510,7 @@ export function ManualChartsPanel({
   }, [friendProfileWork.natal, selectedChart?.natalChart, selectedFriendPlacementRows]);
   const selectedFriendNatalAspectGroups = useMemo(() => (
     friendProfileWork.natal && selectedChart?.natalChart
-      ? groupFriendNatalAspects(selectedChart.natalChart.aspects)
+      ? groupFriendNatalAspects(canonicalNatalAspectsForSnapshot(selectedChart.natalChart))
       : []
   ), [friendProfileWork.natal, selectedChart?.natalChart]);
   const selectedFriendNatalAspectPatternItems = useMemo(() => (
