@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 2,
+  "contract": "friend-natal-slot-grammar-v2",
+  "status": "active_review_gated",
+  "activatedOn": "2026-08-11",
+  "servingChangesAuthorized": false,
+  "autoPublish": false,
+  "writerPromotionAuthorized": false,
+  "voice": {
+    "person": "third_person",
+    "allowedPronouns": ["they", "them", "their"],
+    "forbiddenPronouns": ["you", "your", "yourself"],
+    "globalPronounReplacementAllowed": false
+  },
+  "slotTypes": {
+    "authored_unit": {
+      "embeddable": false,
+      "requiresCompleteSentence": true
+    },
+    "complete_finite_clause": {
+      "embeddable": false,
+      "requiresCompleteSentence": true
+    },
+    "plural_house_topic_list": {
+      "grammaticalNumber": "plural",
+      "allowedVerbForms": ["base"]
+    },
+    "singular_subject": {
+      "grammaticalNumber": "singular",
+      "allowedVerbForms": ["third_person_singular"]
+    },
+    "noun_phrase": {
+      "grammaticalNumber": "declared_by_row",
+      "allowedVerbForms": []
+    }
+  },
+  "compositionRules": {
+    "optionalBlocksOmitWhole": true,
+    "danglingPunctuationAllowed": false,
+    "runtimeConjugationAllowed": false,
+    "runtimeCopyRepairAllowed": false,
+    "listSeparator": ", ",
+    "listFinalConjunction": "and",
+    "duplicateConjunctionAllowed": false,
+    "completeSentenceEmbeddedAsNounPhraseAllowed": false
+  },
+  "families": {
+    "authoredPlacement": [
+      "fallback-hook/placement-sentence/*",
+      "fallback-hook/placement-house-sentence/*"
+    ],
+    "frameRewrite": [
+      "fallback-hook/planet-intro/*",
+      "fallback-hook/angle-intro/*",
+      "fallback-hook/angle-sign/*",
+      "fallback-hook/aspect-type/*",
+      "fallback-hook/aspect-pair/*",
+      "fallback-hook/house-cusp/*",
+      "fallback-hook/empty-house-ruler-v3/*",
+      "fallback-hook/empty-house-ruler",
+      "fallback-hook/empty-house-placement",
+      "fallback-hook/empty-house-bridge/*",
+      "fallback-hook/empty-house-close",
+      "fallback-hook/empty-house-explainer",
+      "fallback-hook/house-glossary/*"
+    ],
+    "retired": ["fallback-hook/ruler-method/*"],
+    "replacement": ["fallback-hook/empty-house-ruler-placement/*"],
+    "chironObservational": ["fallback-vocab/placement-gerund/chiron/*"],
+    "untouched": ["fallback-hook/element-pattern/*"]
+  },
+  "composedOutputQa": {
+    "requiresRenderedSampleOrStableContract": true,
+    "rejectSecondPerson": true,
+    "rejectReaderManagement": true,
+    "rejectDisguisedAdvice": true,
+    "rejectTranslationRequiredLanguage": true,
+    "rejectUnresolvedSlots": true,
+    "rejectDuplicateWords": true,
+    "rejectAgreementErrors": true,
+    "rejectSourceFacingLanguage": true,
+    "rejectRepeatingSkeletons": true
+  }
+}

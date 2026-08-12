@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "candidateSet": "friend-natal-authored-placement-v2",
+  "status": "active_review_gated",
+  "source": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json",
+  "sourceEligibility": {
+    "ownerApprovedRequired": true,
+    "approvedRows": 301,
+    "excludedRows": 713
+  },
+  "targetFamilies": [
+    "fallback-hook/placement-sentence/*",
+    "fallback-hook/placement-house-sentence/*"
+  ],
+  "review_status": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "servingChangesAuthorized": false,
+  "rows": []
+}

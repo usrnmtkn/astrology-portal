@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 2,
+  "candidateSet": "friend-natal-chiron-observational-v2",
+  "status": "active_review_gated",
+  "targetFamilies": ["fallback-vocab/placement-gerund/chiron/*"],
+  "bannedCoachingVocabulary": ["assignment", "prescription", "rep", "experiment", "the move"],
+  "review_status": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "servingChangesAuthorized": false,
+  "rows": []
+}

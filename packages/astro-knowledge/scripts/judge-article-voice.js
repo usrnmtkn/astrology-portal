@@ -28,7 +28,8 @@ const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const spec = readJson(path.join(root, "voice", "tldr-astro", "sky-article-longform.json"));
 const { buildReferenceFactContext } = require("./reference-fact-bank.js");
 const { judgePolicyLines: ownerWarmthJudgePolicyLines } = require("./owner-corpus-warmth-policy.js");
-const ARTICLE_PROMPT_VERSION = "sky-article-longform-v6:prompt-v2-warmth-harvest";
+const { plainLanguageJudgeLines } = require("./plain-language-defects.js");
+const ARTICLE_PROMPT_VERSION = "sky-article-longform-v6:prompt-v3-plain-language";
 
 function furnitureFor(planet) {
   const key = String(planet || "").toLowerCase();
@@ -58,6 +59,7 @@ function buildJudgePrompt(articleText, options = {}) {
     furniture ? `This planet's structural family (a menu across its corpus, not a checklist for every edition): ${furniture}` : ``,
     `Interpretation rules (mandatory):`,
     ...spec.judgeGuidance.map((rule) => `  - ${rule}`),
+    ...plainLanguageJudgeLines().map((rule) => `  - ${rule}`),
     ...ownerWarmthJudgePolicyLines(options).map((rule) => `  - ${rule}`),
     referenceFactContext,
     ``,

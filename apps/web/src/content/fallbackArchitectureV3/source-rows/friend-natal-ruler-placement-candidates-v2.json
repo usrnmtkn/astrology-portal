@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 2,
+  "candidateSet": "friend-natal-ruler-placement-v2",
+  "status": "active_review_gated",
+  "retireFamilies": ["fallback-hook/ruler-method/*"],
+  "replacementFamilies": ["fallback-hook/empty-house-ruler-placement/*"],
+  "review_status": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "servingChangesAuthorized": false,
+  "rows": []
+}
