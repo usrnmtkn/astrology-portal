@@ -1022,6 +1022,15 @@ try {
     /What is happening this week:/u,
     "The weekly approval must not replace the shared daily/Friends transit row."
   );
+  const saturnReturnCopy = fallbackRuntime.transitSynastryFallbackRendererV3.renderTransitReturn({
+    planet: "saturn"
+  });
+  assert.equal(saturnReturnCopy.headline, "Saturn Return");
+  assert.equal(
+    saturnReturnCopy.body,
+    "Saturn has completed its circle and returned to where it was when you were born, bringing your life's goals, rules, and responsibilities back into focus. Your goals may still be the same, but the way you pursue them needs to change. Old rules and heavy responsibilities might no longer fit your current life. This milestone is about keeping the commitments that still matter and renegotiating or letting go of the rest as you mature.",
+    "The Saturn Return renderer must preserve the owner's exact 2026-08-12 serving approval."
+  );
   const forcedNeptuneSelfContactNatal = {
     ...natalSky,
     positions: natalSky.positions.map((position) => (
