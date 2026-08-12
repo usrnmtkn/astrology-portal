@@ -4243,50 +4243,6 @@ function reviewedSkyAspectWritingSection(
   }
 }
 
-function fallbackSkyAspectWritingSection(
-  aspect: SkySnapshot["aspects"][number],
-  positions?: PlanetPosition[]
-): NormalizedSkyAspectSection | null {
-  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
-  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
-
-  try {
-    const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
-      a: normalizeContentIdPart(aspect.from),
-      b: normalizeContentIdPart(aspect.to),
-      aspect: normalizeContentIdPart(aspect.type),
-      aSign: firstSign ? normalizeContentIdPart(firstSign) : undefined,
-      bSign: secondSign ? normalizeContentIdPart(secondSign) : undefined
-    });
-
-    if (rendered.contentKey?.startsWith("fallback-hook/sky-aspect-")) {
-      return null;
-    }
-
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
-
-    if (!body || !isReaderFacingCopy(body)) {
-      return null;
-    }
-
-    return {
-      slot: "meaning",
-      required: true,
-      layer: "fallback",
-      tier: "fallback-architecture-v3",
-      sourceKeys: [rendered.templateKey],
-      heading: rendered.headline || skyAspectDisplayTitle(aspect),
-      body
-    };
-  } catch (error) {
-    if (error instanceof FallbackV3SourceGapError) {
-      return null;
-    }
-
-    throw error;
-  }
-}
-
 type SkyWritingAspectBeat = {
   aspect: string;
   applying?: boolean;
@@ -4310,13 +4266,11 @@ function normalizeSkyAspectSurface(
   const authoredSection = approvedExactSkyAspectWritingSection(aspect, positions);
   const reviewedSection = reviewedSkyAspectWritingSection(aspect, positions, "generic");
   const generatedSection = generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt);
-  const fallbackSection = fallbackSkyAspectWritingSection(aspect, positions);
   const selectedSection = selectSkyAspectCopyByPrecedence({
     signSpecific: signAwareSection,
     exact: authoredSection,
     phrasebook: reviewedSection,
-    generated: generatedSection,
-    fallback: fallbackSection
+    generated: generatedSection
   });
   const sections = selectedSection ? [selectedSection] : [];
 
@@ -5101,6 +5055,7 @@ function currentSkyPlacementDetailArticle({
   articleMode = "current",
   generatedAt,
   generatedContent,
+  onOpenDetail,
   position,
   positions
 }: {
@@ -5161,6 +5116,21 @@ function currentSkyPlacementDetailArticle({
         pointName: position.planet,
         positions
       });
+  const sourceGapAspectRows = isRegistryArticle
+    ? []
+    : relatedAspectRowsForPlacement({
+        aspects: aspects.filter((aspect) => (
+          normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt).sections.length === 0
+        )),
+        generatedAt,
+        generatedContent,
+        mode: "sky",
+        onOpenSkyAspect: onOpenDetail
+          ? (aspect) => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions))
+          : undefined,
+        pointName: position.planet,
+        positions
+      }).filter((row): row is SkyDetailRelatedAspectRow => Boolean(row));
   const articleSections = (placementSection?.articleSections ?? []).map((section) => ({
     heading: section.heading,
     body: section.body,
@@ -5191,6 +5161,12 @@ function currentSkyPlacementDetailArticle({
     suppressTldr: authoredBody.length > 0 && !isRetrograde,
     body: articleSections.length > 0 ? [] : body,
     sections: articleSections.length > 0 ? articleSections : relatedAspectSections,
+    relatedAspects: sourceGapAspectRows.length > 0
+      ? {
+          heading: "Aspect details",
+          rows: sourceGapAspectRows
+        }
+      : undefined,
     historicalLookback,
     astrologyDrilldown: null
   };
@@ -5278,7 +5254,7 @@ function skyDetailFromRoutePath(
       && skyRoutePartMatches(candidate.to, thirdPart)
     ));
 
-    if (!aspect || normalizeSkyAspectSurface(aspect, generatedContent, sky.positions, sky.generatedAt).sections.length === 0) {
+    if (!aspect) {
       return null;
     }
 
@@ -5376,10 +5352,6 @@ function relatedAspectRowsForPlacement({
       const normalizedSkySurface = mode === "sky" && generatedAt
         ? normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt)
         : null;
-
-      if (mode === "sky" && !normalizedSkySurface?.sections.length) {
-        return null;
-      }
 
       const otherPoint = aspectOtherPoint(aspect, pointName);
       const title = `${pointName} ${titleCase(aspect.type)} ${otherPoint}`;
@@ -15036,7 +15008,6 @@ function ActiveAspects({
           aspect,
           normalized: normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt)
         }))
-        .filter(({ normalized }) => normalized.sections.length > 0)
     }))
     .filter((group) => group.aspects.length > 0);
 

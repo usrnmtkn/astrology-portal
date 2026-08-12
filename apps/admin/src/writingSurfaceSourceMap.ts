@@ -220,8 +220,8 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     status: "normalized",
     requiredSlots: ["current aspect meaning"],
     visibleLayerOrder: ["source-grounded", "generated", "madlib-fallback"],
-    currentRenderPath: "normalizeSkyAspectSurface resolves reviewed sign-specific copy first, then LIVE exact-aspect readerCopy, reviewed exact/pair package copy, approved generated prose, and finally the general fallback frame.",
-    risk: "Generated rows must retain generated provenance and must never outrank owner-approved exact or reviewed package copy.",
+    currentRenderPath: "normalizeSkyAspectSurface resolves reviewed sign-specific copy first, then LIVE exact-aspect readerCopy, reviewed exact/pair package copy, approved generated prose, and then SOURCE_GAP.",
+    risk: "Generated rows must retain generated provenance and must never outrank owner-approved exact or reviewed package copy; the retired generic compositor must never serve direct-address prose on this collective surface.",
     nextAction: "Keep the dashboard provenance labels and precedence regression aligned with the Sky aspect surface contract.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },

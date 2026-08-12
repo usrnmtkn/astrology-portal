@@ -1979,12 +1979,7 @@ export function renderSkyAspectCard({ a, b, aspect, aSign, bSign, dateLine }) {
     };
   }
 
-  const g = GROUP[aspect] ?? aspect;
-  const frame = hooks.get(`fallback-hook/sky-event/aspect-${g}`)?.body_you;
-  if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame aspect-${g}`);
-  const body = fill(frame, eventCtx({ type: "aspect", a, b, aspect, aSign, bSign, dateLine: dateLine ?? "Right now" }));
-  if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky aspect ${a}-${aspect}-${b} missing facts (${body})`);
-  return { headline: `${title(a)} ${title(aspect)} ${title(b)}`, body, parts: [body], templateKey: "fallback-template/sky.aspect-card" };
+  throw new SourceGapError(`SOURCE_GAP: no approved collective Sky aspect copy for ${a}-${aspect}-${b}`);
 }
 
 // ---- Transits to your bond: a transiting planet activating the synastry contact between

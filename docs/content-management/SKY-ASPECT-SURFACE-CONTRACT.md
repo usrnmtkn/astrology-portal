@@ -1,6 +1,6 @@
 # Sky aspect surface contract
 
-Updated: 2026-08-01
+Updated: 2026-08-12
 
 This document protects the reader-facing contract for the aspect section on
 the Sky page. Read it before changing aspect content selection, hydration,
@@ -11,12 +11,14 @@ visibility, grouping, card interaction, or fallback behavior.
 The Sky aspect section is an editorial reading surface, not a calculation
 debugger.
 
-- Every calculated aspect that resolves approved reader copy appears in the
-  normal aspect-card list.
-- Every visible aspect card is clickable and opens its full write-up.
+- Every calculated aspect appears in the normal aspect-card list with its
+  engine facts.
+- Every visible aspect card is clickable and opens its detail page. An
+  interpretation appears only when approved reader copy exists.
 - Aspects keep the established Gifts/Lessons grouping and card treatment.
-- Do not move aspects into a disclosure, accordion, collapsed folder,
-  facts-only list, or alternate card class without explicit product approval.
+- Do not move aspects into a disclosure, accordion, collapsed folder, or
+  alternate card class without explicit product approval. The established
+  aspect row may retain engine facts when interpretation copy is unavailable.
 - Do not infer permission for a UX change from a content migration, review-gate
   change, performance task, or missing exact generated row.
 
@@ -32,8 +34,7 @@ Resolve each calculated Sky aspect in this order:
 2. Owner-approved exact-aspect reader copy from the canonical transit corpus
 3. Approved exact or pair-specific Sky aspect phrasebook hook
 4. Explicitly approved generated write-up for the current planet/aspect/sign facts
-5. Approved general Sky aspect template assembled from fallback hooks/vocabulary
-6. SOURCE_GAP
+5. SOURCE_GAP
 ```
 
 Owner-approved sign-specific and exact-aspect copy is author-final and immutable. A generated
@@ -42,34 +43,29 @@ newer, or judge-scored. Generated content is an enhancement only when no
 approved exact or phrasebook unit exists, and it must be labeled as generated
 in application provenance rather than `authored`.
 
-The app should render approved local copy immediately. Hydration may replace a
-general fallback only with a higher-ranked approved unit; it may never replace
+The app should render approved local copy immediately. It may never replace
 owner-approved exact or phrasebook copy with generated prose. A network
-request for generated content must not replace usable fallback cards with a
-loading-only or facts-only state.
+request for generated content must not replace usable specific copy with a
+loading-only state. When no approved specific or generated unit exists, the
+interpretation fails closed. The calculated aspect remains visible through its
+existing factual detail row: bodies, aspect, timing, and orb, with no prose
+body.
 
 ## Content-key rule
 
-Specific phrasebook output normally identifies itself with a `contentKey`, for
+Specific phrasebook output identifies itself with a `contentKey`, for
 example:
 
 ```text
 fallback-hook/sky-aspect-pair/sun/jupiter/conjunction
 ```
 
-The approved general fallback identifies itself with a `templateKey`:
-
-```text
-fallback-template/sky.aspect-card
-```
-
-Both are valid resolver results. An adapter must not require a
-`fallback-hook/sky-aspect-` content-key prefix, because doing so discards the
-general template fallback even when its assembled copy is complete,
-reader-facing, and approved.
-
-Validate the completed resolver result and its reader eligibility. Do not use
-key shape as a substitute for that validation.
+The retired general compositor used the template key
+`fallback-template/sky.aspect-card`. That key is not reader-eligible on the
+collective Sky or Calendar aspect surfaces after the owner ruling of
+2026-08-12. Adapters accept approved specific content keys, approved exact
+registry content, and explicitly approved generated units. They never treat a
+generic template key as sufficient authority to serve prose.
 
 ## Layer responsibilities
 
@@ -81,8 +77,8 @@ ephemeris and canonical Sky profile.
 
 ### Content resolver
 
-Selects the exact approved unit or assembles the approved fallback. It owns
-content precedence and returns complete reader copy or `SOURCE_GAP`.
+Selects an exact approved unit. It owns content precedence and returns complete
+reader copy or `SOURCE_GAP`; it does not assemble generic aspect prose.
 
 ### React
 
@@ -91,7 +87,7 @@ Renders the established card list and opens the detail article. React must not:
 - invent interpretation copy;
 - reject a valid resolver result based only on its key prefix;
 - turn review failures into a new information architecture;
-- create a second facts-only aspect collection;
+- create a second facts-only aspect collection outside the established aspect rows;
 - hide approved fallback while exact content hydrates.
 
 ## Source gaps
@@ -117,13 +113,14 @@ Any Sky aspect resolver or UI change must verify all of the following:
 2. Owner-approved sign-specific copy wins over generic exact corpus copy for the matching signs.
 3. Owner-approved exact corpus copy wins over generic phrasebook, generated, and general fallback copy.
 4. Pair/exact phrasebook hooks win over approved generated copy and the general template.
-5. The general template is accepted when no approved specific unit exists.
-6. Generated sections are never labeled `authored` in application provenance.
-7. Lilith, Chiron, and node combinations exercise the fallback path.
-8. The app contains no unapproved collapsed or facts-only aspect collection.
-9. Clicking a fallback-backed aspect opens a reader-facing detail article.
-10. Generated-content loading or failure leaves approved fallback cards visible.
-11. Typecheck, the production web build, and the content test suite pass.
+5. A combination with no approved specific, exact, phrasebook, or generated unit returns `SOURCE_GAP`; its established factual detail remains visible without an interpretation body.
+6. The retired `fallback-template/sky.aspect-card` path cannot reach reader output.
+7. Generated sections are never labeled `authored` in application provenance.
+8. Lilith, Chiron, and node combinations exercise approved specific copy or fail closed.
+9. The app contains no unapproved collapsed or substitute aspect collection; source-gap rows contain only engine facts.
+10. Clicking any calculated aspect opens its detail page; approved copy appears when available and is otherwise absent.
+11. Generated-content loading or failure leaves approved specific cards visible and does not reveal generic substitute prose.
+12. Typecheck, the production web build, and the content test suite pass.
 
 The focused regression lives in:
 
@@ -148,17 +145,18 @@ the owner-approved Saturn square Lilith record shipped on 2026-08-11: 66 Chiron
 targets, 71 remaining Lilith targets, 60 node-axis targets, and 42
 classical-planet quincunxes (239 combinations total). For these combinations, the
 exact lookup fails closed: it must not invent, import, or relabel generic copy
-as an approved exact record. The resolver may continue to the already-approved
-lower precedence tiers described above. Adding exact prose for any gap is a
-separate governed editorial change.
+as an approved exact record. The resolver may continue only to approved
+phrasebook or explicitly approved generated tiers. Otherwise it returns
+`SOURCE_GAP`. Adding exact prose for any gap is a separate governed editorial
+change.
 
 ## Change-review checklist
 
 Before approving a Sky aspect change, answer these questions explicitly:
 
 - Does this alter copy eligibility only, or does it also alter the UX?
-- Does the resolver still reach the approved general fallback?
-- Does React accept both `contentKey` and `templateKey` results?
+- Does every visible card resolve approved specific, exact, phrasebook, or generated copy?
+- Can the retired `fallback-template/sky.aspect-card` key reach React or Calendar output?
 - What does the page show before generated-content hydration finishes?
 - What does it show if hydration fails?
 - Was any new disclosure, bucket, grouping, or interaction explicitly requested?
@@ -184,6 +182,26 @@ The failure had three parts:
 3. tests covered the new phrasebook path but not the entire resolver-to-React
    contract.
 
-The corrective rule is permanent: preserve the established card UX, accept
-complete approved template fallback results, and test the full matrix through
-the application boundary.
+At the time, the corrective rule restored the general template. The owner
+superseded that copy-eligibility decision on 2026-08-12 after the template was
+shown to use direct second person on a collective surface. The UX rule remains:
+preserve the established card interaction for every calculated aspect. The new
+copy rule is fail closed when no approved specific unit exists; retain the
+existing factual detail and do not replace the missing prose with another
+information architecture.
+
+## Owner ruling: generic compositor retirement, 2026-08-12
+
+The owner authorized the recommended next sequence beginning with failing the
+generic Sky-aspect compositor closed. The owner then clarified the visible
+detail contract: if an aspect exists, show the aspect in the details; if no
+write-up exists, do not restore generic prose or weaken the test.
+
+- The collective Sky surface never receives direct-address prose from the
+  retired generic compositor.
+- Calendar follows the same aspect-copy eligibility boundary.
+- Approved sign-specific, exact, phrasebook, and generated units retain their
+  precedence and behavior.
+- Missing approved copy produces `SOURCE_GAP` for interpretation only. The
+  calculated aspect remains visible with its factual title, timing, and orb,
+  and no interpretation paragraph.

@@ -303,14 +303,19 @@ console.log(`Rendered ${cal} calendar pieces.`);
 
 // Sky aspect cards: all pairs x aspects render collectively, no natal-voice leakage
 let skyAsp = 0;
+let skyAspGaps = 0;
 for (let i = 0; i < SKY_PL.length; i++) for (let j = i + 1; j < SKY_PL.length; j++) for (const asp of ["conjunction", "square", "trine", "sextile", "opposition"]) {
   try {
     const r = renderSkyAspectCard({ a: SKY_PL[i], b: SKY_PL[j], aspect: asp });
     if (/\{\{|natal/.test(r.body)) fail(`sky aspect ${SKY_PL[i]}-${asp}-${SKY_PL[j]}: bad output`);
     skyAsp++;
-  } catch (e) { fail(`sky aspect ${SKY_PL[i]}-${asp}-${SKY_PL[j]}: ${e.message}`); }
+  } catch (e) {
+    if (/SOURCE_GAP: no approved collective Sky aspect copy/u.test(e.message)) skyAspGaps++;
+    else fail(`sky aspect ${SKY_PL[i]}-${asp}-${SKY_PL[j]}: ${e.message}`);
+  }
 }
-console.log(`Rendered ${skyAsp} sky aspect cards.`);
+if (!skyAsp || !skyAspGaps) fail("sky aspects must include both approved specific copy and fail-closed gaps");
+console.log(`Rendered ${skyAsp} approved sky aspect cards; ${skyAspGaps} combinations failed closed.`);
 
 
 // Bond transits: every transiting body x aspect x a spread of contact pairs
