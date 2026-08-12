@@ -211,6 +211,7 @@ import {
 import { loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
 import { uniqueDisplayableNatalAspects as uniqueNatalAspectRows } from "./services/natalAspectDisplay";
 import { loadPlanetTopicVocabulary, planetTopicPhrase, signNeedPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
+import { canonicalNatalAspectsForSnapshot } from "./services/natalAspectFacts";
 import { interpolateTemplateString, type TemplateSlotValues } from "./services/templateInterpolation";
 import {
   compositeAspectContentKey,
@@ -14389,7 +14390,7 @@ function natalPlacementDetailArticle(
   });
   const relatedAspectRows = natalSky
     ? relatedAspectRowsForPlacement({
-        aspects: natalSky.aspects,
+        aspects: canonicalNatalAspectsForSnapshot(natalSky),
         generatedContent,
         mode: "natal",
         onOpenNatalAspect,
@@ -15851,7 +15852,7 @@ function ProfileView({
   );
   const emptyNatalHouses = Array.from({ length: 12 }, (_, index) => index + 1)
     .filter((house) => !occupiedNatalHouses.has(house));
-  const natalAspectRows = uniqueNatalAspectRows(natalSky?.aspects ?? [])
+  const natalAspectRows = uniqueNatalAspectRows(canonicalNatalAspectsForSnapshot(natalSky))
     .slice()
     .sort((first, second) => first.orb - second.orb)
     .slice(0, 8);
