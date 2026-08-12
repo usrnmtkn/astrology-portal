@@ -14,6 +14,12 @@ fail the generic Sky-aspect compositor closed, the owner instructed:
 This authorization applies to selection behavior only. It does not authorize
 new or revised reader wording.
 
+After the first CI run exposed an empty Calendar aspect shell, the owner
+clarified the required rendering behavior:
+
+> if there is an aspect, show the aspect in the details, but if there is no
+> write-up for the aspect do not restore the generic prose or weaken the test
+
 ## Decision
 
 The generic compositor identified by
@@ -28,8 +34,9 @@ Precedence is now:
 4. explicitly approved generated copy;
 5. `SOURCE_GAP`.
 
-No prose replaces a missing unit. The existing aspect-card UI remains
-unchanged for aspects that resolve approved copy.
+No prose replaces a missing unit. Every calculated aspect remains visible in
+the existing aspect-card UI with its engine facts. A source-gap aspect has no
+interpretation paragraph.
 
 ## Measured impact
 
@@ -50,7 +57,8 @@ aspect list.
 - No aspect wording changed.
 - No placement wording changed.
 - No review or approval state changed.
-- No collapsed, facts-only, or substitute UI was added.
+- No collapsed or substitute UI was added. Existing factual aspect details
+  remain visible when interpretation copy is unavailable.
 - Approved sign-specific, exact, phrasebook, and generated precedence remains.
 - House transits, natal aspects, and transit-to-natal content are untouched.
 
@@ -60,6 +68,8 @@ aspect list.
   phrasebook unit exists.
 - Application and Calendar precedence can still select approved exact or
   generated copy above that package source gap.
+- Source-gap aspects retain their title, timing, and orb in the established
+  detail UI, with no interpretation body.
 - The retired template key cannot reach the reader.
 - The canonical snapshot partitions into 11 phrasebook, 8 exact, and 2 source
   gaps.
