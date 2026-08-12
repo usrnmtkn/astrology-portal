@@ -4242,50 +4242,6 @@ function reviewedSkyAspectWritingSection(
   }
 }
 
-function fallbackSkyAspectWritingSection(
-  aspect: SkySnapshot["aspects"][number],
-  positions?: PlanetPosition[]
-): NormalizedSkyAspectSection | null {
-  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
-  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
-
-  try {
-    const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
-      a: normalizeContentIdPart(aspect.from),
-      b: normalizeContentIdPart(aspect.to),
-      aspect: normalizeContentIdPart(aspect.type),
-      aSign: firstSign ? normalizeContentIdPart(firstSign) : undefined,
-      bSign: secondSign ? normalizeContentIdPart(secondSign) : undefined
-    });
-
-    if (rendered.contentKey?.startsWith("fallback-hook/sky-aspect-")) {
-      return null;
-    }
-
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
-
-    if (!body || !isReaderFacingCopy(body)) {
-      return null;
-    }
-
-    return {
-      slot: "meaning",
-      required: true,
-      layer: "fallback",
-      tier: "fallback-architecture-v3",
-      sourceKeys: [rendered.templateKey],
-      heading: rendered.headline || skyAspectDisplayTitle(aspect),
-      body
-    };
-  } catch (error) {
-    if (error instanceof FallbackV3SourceGapError) {
-      return null;
-    }
-
-    throw error;
-  }
-}
-
 type SkyWritingAspectBeat = {
   aspect: string;
   applying?: boolean;
@@ -4309,13 +4265,11 @@ function normalizeSkyAspectSurface(
   const authoredSection = approvedExactSkyAspectWritingSection(aspect, positions);
   const reviewedSection = reviewedSkyAspectWritingSection(aspect, positions, "generic");
   const generatedSection = generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt);
-  const fallbackSection = fallbackSkyAspectWritingSection(aspect, positions);
   const selectedSection = selectSkyAspectCopyByPrecedence({
     signSpecific: signAwareSection,
     exact: authoredSection,
     phrasebook: reviewedSection,
-    generated: generatedSection,
-    fallback: fallbackSection
+    generated: generatedSection
   });
   const sections = selectedSection ? [selectedSection] : [];
 
