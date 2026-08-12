@@ -2006,12 +2006,13 @@
       "contentKey": "authored/transit-return/saturn",
       "content_role": "full_copy",
       "surface": "transit-return",
-      "headline": "The life you built is due for an inspection.",
-      "body": "The rules you live by were written by a younger you. Stop following them out of loyalty to who you were. Ask which ones you'd agree to today. Everything is up for review.",
+      "headline": "Saturn Return",
+      "body": "Saturn has completed its circle and returned to where it was when you were born, bringing your life's goals, rules, and responsibilities back into focus. Your goals may still be the same, but the way you pursue them needs to change. Old rules and heavy responsibilities might no longer fit your current life. This milestone is about keeping the commitments that still matter and renegotiating or letting go of the rest as you mature.",
       "review_status": "approved",
-      "approved_via": "owner-authored library (final voice)",
+      "approved_via": "owner-authored exact serving approval, chat 2026-08-12",
       "source_keys": [
-        "TLDR-Aspect-Samples-Batch5-SunJupiterSlow.md"
+        "TLDR-Aspect-Samples-Batch5-SunJupiterSlow.md",
+        "owner-exemplar/transit-return/saturn/2026-08-12"
       ]
     },
     {
