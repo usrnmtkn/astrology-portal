@@ -1483,6 +1483,69 @@ assert.deepEqual(
   "The exact persisted critique survives the worker boundary as review evidence."
 );
 
+const judgeRetryCheckpointStore = createMemoryStore();
+const judgeRetryCheckpointReport = {
+  ...structuredClone(resumeReport),
+  id: "judge-retry-checkpoint-report",
+  user_id: "judge-retry-checkpoint-user",
+  facts: factsForHorizon("1_month"),
+  facts_engine: "FIXTURE_ONLY_ENGINE",
+  facts_hash: "FIXTURE_ONLY_FACTS_HASH",
+  fulfillment_status: "writing",
+  failure_history: []
+};
+const judgeRetryDraft = fixtureUnitDraft("overview");
+const judgeRetryCheckpoint = {
+  schema: "report-writer-chain-checkpoint.v1",
+  chainKey: "FIXTURE_ONLY_JUDGE_RETRY_CHAIN_KEY",
+  unitId: "overview",
+  completedStage: "cold_revision",
+  draft: judgeRetryDraft,
+  critique: {
+    result: "no_defects",
+    applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" },
+    defects: []
+  },
+  revised: judgeRetryDraft,
+  coldCritique: {
+    result: "no_defects",
+    applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" },
+    defects: []
+  },
+  calls: [],
+  promptVersion: "FIXTURE_ONLY_CRITIQUE_V1"
+};
+const judgeRetryCheckpointJob = authorizedJob({
+  id: "judge-retry-checkpoint-job",
+  report_id: judgeRetryCheckpointReport.id,
+  entitlement_id: "judge-retry-checkpoint-ent",
+  state: "running",
+  step: "writing",
+  attempt: 2,
+  passing_unit_cache: { __writer_chain_checkpoint: judgeRetryCheckpoint }
+});
+judgeRetryCheckpointStore.reports.set(judgeRetryCheckpointReport.id, judgeRetryCheckpointReport);
+judgeRetryCheckpointStore.entitlements.set(judgeRetryCheckpointJob.entitlement_id, {
+  id: judgeRetryCheckpointJob.entitlement_id,
+  user_id: judgeRetryCheckpointReport.user_id,
+  status: "active",
+  product_key: "general_1m"
+});
+judgeRetryCheckpointStore.jobs.set(judgeRetryCheckpointJob.id, structuredClone(judgeRetryCheckpointJob));
+const judgeRetryResumeModel = modelCallWithCrash();
+const judgeRetryResume = await processReportFulfillmentJob({
+  job: structuredClone(judgeRetryCheckpointJob),
+  store: judgeRetryCheckpointStore,
+  calculateFacts,
+  callModel: judgeRetryResumeModel,
+  judgeCall
+});
+assert.equal(judgeRetryResume.status, "needs_review");
+assert.equal(judgeRetryResumeModel.count(), 10,
+  "A retry chain checkpoint with a judge-derived key must resume at judging; only the other three unit chains and report-level pass are billed.");
+assert.deepEqual(judgeRetryCheckpointStore.units.get(`${judgeRetryCheckpointReport.id}:overview`).body, judgeRetryDraft.body,
+  "The completed judge-retry draft must persist byte-identically without another draft call.");
+
 const retryStore = createMemoryStore();
 retryStore.claimJobs = async () => [authorizedJob({ id: "retry-job", report_id: "retry-report", entitlement_id: "retry-ent", state: "running", step: "writing", attempt: 1 })];
 retryStore.reports.set("retry-report", { ...structuredClone(resumeReport), id: "retry-report", fulfillment_status: "writing" });

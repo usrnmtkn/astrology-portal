@@ -535,12 +535,27 @@ export async function processReportFulfillmentJob(input: {
     promptVersions.ownerReviewEvidence = versions.ownerReviewEvidence.version;
     promptVersions.coldProse = versions.coldProse.version;
     const validatorAttemptCap = reportValidatorAttemptCap(input.job, unitId, config.validatorAttemptCap);
-    const runCheckpointedWriterChain = async (failureContext?: string[]) => {
-      const chainKey = writerChainKey(payload, versions, failureContext);
-      const checkpoint = writerChainCheckpoint?.chainKey === chainKey
-        && writerChainCheckpoint.unitId === unitId
+    let persistedCheckpointConsumed = false;
+    const runCheckpointedWriterChain = async (failureContext?: string[], resumePersistedCheckpoint = false) => {
+      // A checkpoint created by a judge-requested retry has a different key
+      // from the unit's initial chain. After a worker yield, the judge findings
+      // are no longer on the stack, so recomputing the initial key would discard
+      // completed retry work. On the first chain entry for this unit, the
+      // durable checkpoint is the source of truth regardless of which governed
+      // failure context produced it.
+      const persistedCheckpoint = resumePersistedCheckpoint
+        && !persistedCheckpointConsumed
+        && writerChainCheckpoint?.unitId === unitId
         ? writerChainCheckpoint
         : undefined;
+      if (persistedCheckpoint) persistedCheckpointConsumed = true;
+      const chainKey = persistedCheckpoint?.chainKey ?? writerChainKey(payload, versions, failureContext);
+      const checkpoint = persistedCheckpoint ?? (
+        writerChainCheckpoint?.chainKey === chainKey
+          && writerChainCheckpoint.unitId === unitId
+          ? writerChainCheckpoint
+          : undefined
+      );
       return runReportWriterChain({
         payload,
         failureContext,
@@ -591,7 +606,8 @@ export async function processReportFulfillmentJob(input: {
     const unitTotalTokensBefore = tokenCountTotal;
     const unitEstimatedCostBefore = estimatedCostTotal;
     const initialChain = await runCheckpointedWriterChain(
-      assemblyFailureContext.length ? assemblyFailureContext : undefined
+      assemblyFailureContext.length ? assemblyFailureContext : undefined,
+      true
     );
     const writerReviews: Array<{ critique: unknown; coldCritique: unknown }> = [{
       critique: initialChain.critique,
