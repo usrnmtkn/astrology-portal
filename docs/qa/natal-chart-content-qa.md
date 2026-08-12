@@ -94,6 +94,14 @@ Run the contract check:
 npm run qa:natal-content
 ```
 
+Generate the exhaustive deterministic You/Friend inventory and semantic-review queue:
+
+```sh
+npm run qa:natal-content:inventory
+```
+
+The inventory enumerates every supported placement, angle, natal aspect, aspect pattern, empty-house, and house-glossary render for both surfaces. It records successful renders, fail-closed source gaps, stable hashes, deterministic language findings, and a deduplicated queue whose whole-passage status remains `pending_semantic_review`. Generating the inventory does not constitute the semantic whole-passage judgment and makes no model request.
+
 Validate a completed packet:
 
 ```sh
