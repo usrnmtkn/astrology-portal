@@ -7,11 +7,15 @@ import { canonicalNatalAspectsForSnapshot } from "../apps/web/src/services/natal
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
+const zodiacSigns = [
+  "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
+  "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
+];
 const position = (planet, longitude) => ({
   planet,
   glyph: "",
   longitude,
-  sign: "Aries",
+  sign: zodiacSigns[Math.floor(longitude / 30)],
   signGlyph: "♈",
   degree: longitude % 30,
   house: 1,
@@ -59,6 +63,14 @@ assert.deepEqual(
   actual,
   canonicalNatalAspectsForSnapshot({ ...snapshot, aspects: [] }),
   "Every incoming aspect record must be ignored at the natal reader boundary."
+);
+assert.deepEqual(
+  actual,
+  canonicalNatalAspectsForSnapshot({
+    ...snapshot,
+    positions: snapshot.positions.map(({ longitude: _longitude, ...savedPosition }) => savedPosition)
+  }),
+  "Legacy saved charts must reconstruct fixed natal longitudes from sign and degree."
 );
 assert.deepEqual(
   actual.map(({ from, type, to, orb }) => ({ from, type, to, orb })),
