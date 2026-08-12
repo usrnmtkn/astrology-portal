@@ -2015,12 +2015,7 @@ ${passHook}`;
         contentKey: reviewed.contentKey
       };
     }
-    const g = GROUP[aspect] ?? aspect;
-    const frame = hooks.get(`fallback-hook/sky-event/aspect-${g}`)?.body_you;
-    if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame aspect-${g}`);
-    const body = fill(frame, eventCtx({ type: "aspect", a, b, aspect, aSign, bSign, dateLine: dateLine ?? "Right now" }));
-    if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky aspect ${a}-${aspect}-${b} missing facts (${body})`);
-    return { headline: `${title2(a)} ${title2(aspect)} ${title2(b)}`, body, parts: [body], templateKey: "fallback-template/sky.aspect-card" };
+    throw new SourceGapError(`SOURCE_GAP: no approved collective Sky aspect copy for ${a}-${aspect}-${b}`);
   }
   function renderBondTransit({
     transiting,
@@ -2409,7 +2404,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-11h";
+var PACKAGE_VERSION = "v3-2026-08-12a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
