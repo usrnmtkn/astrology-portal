@@ -134,7 +134,12 @@ try {
   );
   assert.equal(
     mondayVirgoTone?.body,
-    "What is happening this week: The Moon in Virgo makes small, annoying chores and missed details much harder to ignore.\nWhere it hits your life: You may spot a missed calendar invite, catch a typo in an important email, or finally cross off a tedious task you've been putting off. Fixing a specific problem feels good because you know exactly what to do about it.\nThe trap to avoid: The problem starts when every detail begins to feel equally important. You might rewrite the same email four times, keep tweaking a project that is already done, or clean the kitchen because staying busy feels easier than admitting you're anxious, annoyed, or unsure about what happens next.\nWhat to do about it: Check the details once to make sure they're right. Checking the same thing three more times won't make you feel more certain. Fix what actually needs fixing, then leave it alone."
+    "The Moon in Virgo makes small, annoying chores and missed details much harder to ignore.\n\nYou may spot a missed calendar invite, catch a typo in an important email, or finally cross off a tedious task you've been putting off. Fixing a specific problem feels good because you know exactly what to do about it.\n\nThe problem starts when every detail begins to feel equally important. You might rewrite the same email four times, keep tweaking a project that is already done, or clean the kitchen because staying busy feels easier than admitting you're anxious, annoyed, or unsure about what happens next.\n\nCheck the details once to make sure they're right. Checking the same thing three more times won't make you feel more certain. Fix what actually needs fixing, then leave it alone."
+  );
+  assert.doesNotMatch(
+    mondayVirgoTone?.body ?? "",
+    /(?:What is happening this week|Where it hits your life|The trap to avoid|What to do about it):/u,
+    "Internal weekly structure labels must not render in the Virgo Moon card."
   );
 
   const stationEvent = {
@@ -998,7 +1003,12 @@ try {
   assert.equal(neptuneMercuryReading.headline, "Neptune square your Mercury");
   assert.equal(
     neptuneMercuryReading.body,
-    "What is happening this week: Don't trust your first reaction to messages or news. Double-check the facts before you respond.\nWhere it hits your life: Neptune in Aries can make you respond quickly because you feel sure you understood what someone meant. You may not have the full story yet. A confusing text might seem clear at first, only for you to realize an hour later that you misread it. You might have a conversation, think you both agreed on something, and compare notes later to find out you heard completely different terms. You might assume someone is mad at you because of their tone even though their actual words are neutral. Because Neptune is retrograde, an old conversation or misunderstanding may come back up while your memory of what actually happened is fuzzy.\nWhat to do about it: Slow down when the details matter. Read texts twice. Double-check dates and times. Ask direct questions, and put important agreements in writing. Spending one extra minute checking the facts now can prevent a messy cleanup later."
+    "Don't trust your first reaction to messages or news. Double-check the facts before you respond.\n\nNeptune in Aries can make you respond quickly because you feel sure you understood what someone meant. You may not have the full story yet. A confusing text might seem clear at first, only for you to realize an hour later that you misread it. You might have a conversation, think you both agreed on something, and compare notes later to find out you heard completely different terms. You might assume someone is mad at you because of their tone even though their actual words are neutral. Because Neptune is retrograde, an old conversation or misunderstanding may come back up while your memory of what actually happened is fuzzy.\n\nSlow down when the details matter. Read texts twice. Double-check dates and times. Ask direct questions, and put important agreements in writing. Spending one extra minute checking the facts now can prevent a messy cleanup later."
+  );
+  assert.doesNotMatch(
+    neptuneMercuryReading.body,
+    /(?:What is happening this week|Where it hits your life|The trap to avoid|What to do about it):/u,
+    "Internal weekly structure labels must not render in the Neptune-Mercury card."
   );
   const sharedTransitCopy = fallbackRuntime.transitSynastryFallbackRendererV3.renderTransitAspect({
     transiting: "neptune",
