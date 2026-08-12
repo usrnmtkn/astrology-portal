@@ -68,7 +68,14 @@ export type ReportRevisionReplacement = {
 
 export type ReportRevisionPatch = { replacements: ReportRevisionReplacement[] };
 
-type MechanicalValidationIssue = ReportValidationIssue & { value?: string };
+type MechanicalValidationIssue = ReportValidationIssue;
+
+const EXACT_SENTENCE_LINT_CODES = new Set([
+  "em_dash", "whether", "astrologer_persona",
+  "writer_note_leakage", "generic_advice", "internal_scaffold_leakage",
+  "vague_noun", "banned_settled", "astrology_as_agent", "labor_for_work", "no_cleverness_tax",
+  "love_banned_vocabulary", "personal_health_banned_advice"
+]);
 
 const draftSchema = {
   type: "object",
@@ -290,10 +297,30 @@ function locatedSentences(draft: ReportDraft, needle?: string) {
 
 function issueNeedle(issue: MechanicalValidationIssue) {
   if (issue.value) return issue.value;
+  if (issue.code === "em_dash") return "—";
+  if (issue.code === "whether") return "whether";
   const afterColon = issue.message.includes(": ") ? issue.message.slice(issue.message.lastIndexOf(": ") + 2) : "";
   if (afterColon && afterColon.split(/\s+/u).length > 1) return afterColon;
   const phrase = /(?:contains|language|terms?|condition|item|fact):\s*([^.]*)/iu.exec(issue.message)?.[1];
   return phrase?.trim() || afterColon || "";
+}
+
+function exactIssueMatches(draft: ReportDraft, issue: MechanicalValidationIssue) {
+  if (issue.location !== undefined || issue.sentenceIndex !== undefined || issue.quote !== undefined) {
+    if (!issue.location || !Number.isInteger(issue.sentenceIndex) || !issue.quote) {
+      throw new ReportRevisionScopeError(`Deterministic lint '${issue.code}' has an incomplete sentence coordinate.`);
+    }
+    const value = textFields(draft).get(issue.location);
+    const span = value === undefined ? undefined : sentenceSpans(value)[issue.sentenceIndex as number];
+    if (!span || span.text !== issue.quote) {
+      throw new ReportRevisionScopeError(`Deterministic lint '${issue.code}' does not match its supplied sentence coordinate.`);
+    }
+    return [{ location: issue.location, sentenceIndex: issue.sentenceIndex as number, quote: span.text }];
+  }
+  if (issue.code === "astrologer_persona") {
+    return locatedSentences(draft).filter(({ quote }) => /\b(?:i think|i'm watching|i am watching|this makes me think)\b/iu.test(quote));
+  }
+  return locatedSentences(draft, issueNeedle(issue));
 }
 
 /**
@@ -319,6 +346,22 @@ export function reportValidationIssuesToNamedDefects(
           sentence_index: match.sentenceIndex, scope_start: match.sentenceIndex, scope_end: match.sentenceIndex,
           quote: match.quote, evidence: issue.message, evidence_ids: [],
           instruction: mechanicalInstruction(issue, noun)
+        });
+      }
+      continue;
+    }
+    if (EXACT_SENTENCE_LINT_CODES.has(issue.code)) {
+      const matches = exactIssueMatches(draft, issue);
+      if (!matches.length) {
+        throw new ReportRevisionScopeError(`Deterministic lint '${issue.code}' could not be localized to an exact sentence.`);
+      }
+      for (const [matchIndex, match] of matches.entries()) {
+        defects.push({
+          id: `validator-${issueIndex + 1}-${matchIndex + 1}-${issue.code}`,
+          category: issueCategory(issue.code), location: match.location,
+          sentence_index: match.sentenceIndex, scope_start: match.sentenceIndex, scope_end: match.sentenceIndex,
+          quote: match.quote, evidence: issue.message, evidence_ids: [],
+          instruction: mechanicalInstruction(issue)
         });
       }
       continue;
