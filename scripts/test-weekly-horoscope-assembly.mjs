@@ -124,6 +124,19 @@ try {
     /The Cancer Moon doesn't make you weak; it makes you aware\./u
   );
 
+  const mondayVirgoTone = weekly.resolveCalendarWeeklyMoonTone({
+    mondayDateKey: "2026-08-17",
+    moonSign: "Virgo"
+  });
+  assert.equal(
+    mondayVirgoTone?.contentKey,
+    "authored/calendar-weekly-moon/virgo/variant-2"
+  );
+  assert.equal(
+    mondayVirgoTone?.body,
+    "What is happening this week: The Moon in Virgo makes small, annoying chores and missed details much harder to ignore.\nWhere it hits your life: You may spot a missed calendar invite, catch a typo in an important email, or finally cross off a tedious task you've been putting off. Fixing a specific problem feels good because you know exactly what to do about it.\nThe trap to avoid: The problem starts when every detail begins to feel equally important. You might rewrite the same email four times, keep tweaking a project that is already done, or clean the kitchen because staying busy feels easier than admitting you're anxious, annoyed, or unsure about what happens next.\nWhat to do about it: Check the details once to make sure they're right. Checking the same thing three more times won't make you feel more certain. Fix what actually needs fixing, then leave it alone."
+  );
+
   const stationEvent = {
     id: "station-mercury-retrograde-test",
     type: "station",
@@ -961,6 +974,44 @@ try {
   );
   const mondayNeptune = mondaySky.positions.find((position) => position.planet === "Neptune");
   assert.ok(mondayNeptune && typeof mondayNeptune.longitude === "number");
+  assert.equal(mondayNeptune.sign, "Aries");
+  assert.equal(mondayNeptune.motion, "retrograde");
+  const forcedNeptuneMercuryNatal = {
+    ...natalSky,
+    positions: natalSky.positions.map((position) => (
+      position.planet === "Mercury"
+        ? { ...position, longitude: (mondayNeptune.longitude + 90) % 360 }
+        : position
+    ))
+  };
+  const neptuneMercuryWeek = await weekly.buildWeeklyHoroscope({
+    userId: "weekly-neptune-mercury-owner-copy-fixture",
+    natalSky: forcedNeptuneMercuryNatal,
+    risingSign: "gemini",
+    location,
+    now: new Date("2026-07-29T12:00:00Z")
+  });
+  const neptuneMercuryReading = [neptuneMercuryWeek.horoscope, ...neptuneMercuryWeek.aspects].find((reading) => (
+    /Neptune square your Mercury/iu.test(reading.driverLabel)
+  ));
+  assert.ok(neptuneMercuryReading, "The exact Neptune-square-Mercury contact must render as a weekly reading.");
+  assert.equal(neptuneMercuryReading.headline, "Neptune square your Mercury");
+  assert.equal(
+    neptuneMercuryReading.body,
+    "What is happening this week: Don't trust your first reaction to messages or news. Double-check the facts before you respond.\nWhere it hits your life: Neptune in Aries can make you respond quickly because you feel sure you understood what someone meant. You may not have the full story yet. A confusing text might seem clear at first, only for you to realize an hour later that you misread it. You might have a conversation, think you both agreed on something, and compare notes later to find out you heard completely different terms. You might assume someone is mad at you because of their tone even though their actual words are neutral. Because Neptune is retrograde, an old conversation or misunderstanding may come back up while your memory of what actually happened is fuzzy.\nWhat to do about it: Slow down when the details matter. Read texts twice. Double-check dates and times. Ask direct questions, and put important agreements in writing. Spending one extra minute checking the facts now can prevent a messy cleanup later."
+  );
+  const sharedTransitCopy = fallbackRuntime.transitSynastryFallbackRendererV3.renderTransitAspect({
+    transiting: "neptune",
+    natal: "mercury",
+    aspect: "square",
+    sign: "aries",
+    isRetrograde: true
+  });
+  assert.doesNotMatch(
+    sharedTransitCopy.body,
+    /What is happening this week:/u,
+    "The weekly approval must not replace the shared daily/Friends transit row."
+  );
   const forcedNeptuneSelfContactNatal = {
     ...natalSky,
     positions: natalSky.positions.map((position) => (
