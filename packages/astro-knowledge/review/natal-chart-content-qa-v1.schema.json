@@ -1,0 +1,212 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.com/schemas/natal-chart-content-qa-v1.schema.json",
+  "title": "TLDR Astro Natal Chart Content QA packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "rubric",
+    "scope",
+    "governance",
+    "passages"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "natal-chart-content-qa-v1"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "rubric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "const": "tldr-astro-phrasebank/TLDR-NATAL-CHART-WHOLE-PASSAGE-FLOW-JUDGE-OWNER.md"
+        },
+        "sha256": {
+          "const": "df7ca21789ea4f12a8460ca2521f75ecba0d66f451f85f4c55d01ce984d25589"
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["surfaces"],
+      "properties": {
+        "surfaces": {
+          "type": "array",
+          "prefixItems": [
+            { "const": "you" },
+            { "const": "friend" }
+          ],
+          "items": false
+        }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["advisoryOnly", "servingChanges", "autoPublish", "writerPromotion"],
+      "properties": {
+        "advisoryOnly": { "const": true },
+        "servingChanges": { "const": false },
+        "autoPublish": { "const": false },
+        "writerPromotion": { "const": false }
+      }
+    },
+    "passages": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/passage" }
+    }
+  },
+  "$defs": {
+    "stageStatus": {
+      "enum": ["PASS", "EDIT", "CUT", "SOURCE_GAP"]
+    },
+    "passage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "passageId",
+        "comparisonGroupId",
+        "surface",
+        "family",
+        "route",
+        "renderKey",
+        "renderedText",
+        "renderedTextSha256",
+        "sourceKeys",
+        "productionCorrectness",
+        "youFriendComparison",
+        "sentenceWritingQuality",
+        "wholePassageReview",
+        "visualReview",
+        "candidateState"
+      ],
+      "properties": {
+        "passageId": { "type": "string", "minLength": 1 },
+        "comparisonGroupId": { "type": "string", "minLength": 1 },
+        "surface": { "enum": ["you", "friend"] },
+        "family": {
+          "enum": [
+            "big-three",
+            "placement-sign",
+            "placement-house",
+            "placement-composed",
+            "named-point",
+            "natal-aspect",
+            "natal-aspect-group",
+            "natal-aspect-pattern",
+            "empty-house",
+            "glossary"
+          ]
+        },
+        "route": { "type": "string", "minLength": 1 },
+        "renderKey": { "type": "string", "minLength": 1 },
+        "renderedText": { "type": "string", "minLength": 1 },
+        "renderedTextSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "sourceKeys": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "productionCorrectness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verdict", "notes"],
+          "properties": {
+            "verdict": { "$ref": "#/$defs/stageStatus" },
+            "notes": { "type": "string" }
+          }
+        },
+        "youFriendComparison": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verdict", "pairedPassageId", "equivalenceNotes"],
+          "properties": {
+            "verdict": { "$ref": "#/$defs/stageStatus" },
+            "pairedPassageId": { "type": "string", "minLength": 1 },
+            "equivalenceNotes": { "type": "string" }
+          }
+        },
+        "sentenceWritingQuality": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verdict", "violations", "revisionInstruction"],
+          "properties": {
+            "verdict": { "$ref": "#/$defs/stageStatus" },
+            "violations": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "revisionInstruction": { "type": "string" }
+          }
+        },
+        "wholePassageReview": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "judgeInputMode",
+            "coreMessage",
+            "verdict",
+            "flowDiagnosis",
+            "problemLines",
+            "revisionInstruction",
+            "hardFailureCodes"
+          ],
+          "properties": {
+            "judgeInputMode": { "const": "rendered_text_only" },
+            "coreMessage": { "type": "string", "minLength": 1 },
+            "verdict": { "$ref": "#/$defs/stageStatus" },
+            "flowDiagnosis": { "type": "string", "minLength": 1 },
+            "problemLines": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "revisionInstruction": { "type": "string" },
+            "hardFailureCodes": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "core_message_missing",
+                  "competing_core_messages",
+                  "central_subject_changed_without_bridge",
+                  "example_does_not_support_message",
+                  "conclusion_not_earned",
+                  "idea_level_repetition",
+                  "requires_astrology_context",
+                  "assembled_not_written"
+                ]
+              }
+            }
+          }
+        },
+        "visualReview": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verdict", "viewports", "notes"],
+          "properties": {
+            "verdict": { "$ref": "#/$defs/stageStatus" },
+            "viewports": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "enum": ["desktop", "mobile"] },
+              "uniqueItems": true
+            },
+            "notes": { "type": "string" }
+          }
+        },
+        "candidateState": {
+          "enum": ["unchanged-approved", "needs_review", "discarded", "source_gap"]
+        }
+      }
+    }
+  }
+}
