@@ -95,6 +95,22 @@ for (const [body, code] of [
 
 assert.ok(unitCodes("Overcommitting may affect your capacity.").includes("mechanism_grounding"));
 assert.ok(!unitCodes("Jupiter makes the invitation look easy, but the sixth-house Moon shows the cost in sleep and appointments.").includes("mechanism_grounding"));
+const approvedLateAugustCapacitySection = [
+  "Near the end of summer, all the new communication starts competing with your daily capacity. Jupiter squares your 6th-house Moon. Jupiter increases the messages, invitations, conversations, and opportunities, while the square puts that growth in conflict with the routines that keep each day functioning. Each new opportunity can look manageable by itself. Together, these commitments can delay meals, shorten sleep, and force appointments or existing plans off the calendar.",
+  "Overcommitting does not always happen because of bad choices. It often happens when you say yes to good opportunities. But you still only have so many hours in a day, so a quick “sure, I’ll do it” may cut into lunch, sleep, an appointment, or plans you already made. Preparation and follow-up may take longer than the meeting itself."
+].join("\n\n");
+assert.ok(!unitCodes(approvedLateAugustCapacitySection).includes("mechanism_grounding"),
+  "The owner-approved late-August mechanism paragraph followed by its plain-language cost paragraph must pass.");
+assert.ok(unitCodes("Overcommitting can still cost hours, lunch, sleep, appointments, and preparation time.").includes("mechanism_grounding"),
+  "A capacity section with concrete costs but no astrological mechanism anywhere must fail.");
+assert.ok(validateReportDraft({
+  body: "Jupiter squares your 6th-house Moon.",
+  sections: [{
+    heading: "A separate section",
+    body: "Overcommitting can still cost hours, lunch, sleep, appointments, and preparation time."
+  }]
+}, payload).some((entry) => entry.code === "mechanism_grounding"),
+"An astrological mechanism in a different section must not satisfy the capacity passage's section-level requirement.");
 assert.ok(!unitCodes("Uranus is changing the terms of an established role this spring.").includes("possibility_language"),
   "A confident mechanism statement must not be forced into possibility language.");
 assert.equal(isAstrologyMechanismStatement("Uranus is changing the terms of an established role this spring."), true);

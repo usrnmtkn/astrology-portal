@@ -269,7 +269,7 @@ function mechanicalInstruction(issue: MechanicalValidationIssue, noun?: string) 
     case "no_cleverness_tax":
       return "Rewrite the quoted sentence so it names the observable behavior, circumstance, decision, or consequence directly. The reader must not have to decode a metaphor, compressed phrase, or abstract noun.";
     case "mechanism_grounding":
-      return "Name the astrological mechanism and the concrete cost in hours, sleep, meals, appointments, travel, preparation, follow-up, workload, recovery, caregiving, schedule, money, or expenses. Do not turn the passage into generic balance advice.";
+      return "Ensure the enclosing section names the astrological mechanism and this capacity passage names a concrete cost in hours, sleep, meals, appointments, travel, preparation, follow-up, workload, recovery, caregiving, schedule, money, or expenses. Do not turn the passage into generic balance advice.";
     case "money_abstraction":
       return "Translate the abstraction in the quoted sentence into rate, hours, expenses, scope, payment timing, or another supported concrete financial term.";
     case "love_banned_vocabulary":
