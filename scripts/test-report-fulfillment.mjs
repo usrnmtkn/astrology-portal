@@ -451,6 +451,57 @@ assert.equal(spliceChain.revised.body, "FIXTURE_ONLY_REPLACED. FIXTURE_ONLY_SECO
 assert.equal(spliceChain.revised.summary, spliceChainDraft.summary, "The writer chain must keep unnamed text byte-identical.");
 assert.equal(spliceChain.coldCritique.result, "no_defects");
 
+// Production report 8b3e266e repeatedly completed domain:main's draft,
+// critique, and revision, then yielded before cold read. The durable stage
+// record must make the next worker start at cold read, never draft.
+const domainMainCheckpointPayload = assembleReportGenerationPayload({
+  reportId: "8b3e266e-286d-4ea7-a008-f60776e6b791",
+  reportDomain: "general",
+  reportHorizon: "12_months",
+  unitId: "domain:main",
+  frozenFacts: frozen
+});
+const domainMainCheckpointSchemas = [];
+let domainMainCheckpoint = null;
+const domainMainChainKey = "FIXTURE_ONLY_PRODUCTION_DOMAIN_MAIN_ATTEMPT";
+const domainMainCheckpointModel = async (input) => {
+  domainMainCheckpointSchemas.push(input.schemaName);
+  if (input.schemaName === "report_unit_cold_read" && domainMainCheckpointSchemas.filter((schema) => schema === "report_unit_cold_read").length === 1) {
+    throw new Error("FIXTURE_ONLY_DEADLINE_YIELD_BEFORE_COLD_READ");
+  }
+  const value = input.schemaName === "report_unit_draft" ? spliceChainDraft
+    : input.schemaName === "report_unit_critique" ? {
+      result: "defects", applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" }, defects: spliceChainDefects
+    }
+      : input.schemaName === "report_unit_revision_spans" ? { replacements: [
+        { defect_id: "chain-body", location: "body", scope_start: 0, scope_end: 0, replacement: "FIXTURE_ONLY_REPLACED." },
+        { defect_id: "chain-timing", location: "timing", scope_start: 0, scope_end: 0, replacement: "FIXTURE_ONLY_NEW_TIMING." }
+      ] }
+        : { result: "no_defects", applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" }, defects: [] };
+  return { value, model: input.model, provider: input.provider, usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } };
+};
+await assert.rejects(runReportWriterChain({
+  payload: domainMainCheckpointPayload,
+  chainKey: domainMainChainKey,
+  callModel: domainMainCheckpointModel,
+  persistCheckpoint: async (checkpoint) => { domainMainCheckpoint = structuredClone(checkpoint); }
+}), /FIXTURE_ONLY_DEADLINE_YIELD_BEFORE_COLD_READ/u);
+assert.equal(domainMainCheckpoint.completedStage, "revision");
+assert.deepEqual(domainMainCheckpoint.calls.map((call) => call.stage), ["draft", "critique", "revise"]);
+const domainMainResumeStart = domainMainCheckpointSchemas.length;
+const resumedDomainMain = await runReportWriterChain({
+  payload: domainMainCheckpointPayload,
+  chainKey: domainMainChainKey,
+  checkpoint: domainMainCheckpoint,
+  callModel: domainMainCheckpointModel,
+  persistCheckpoint: async (checkpoint) => { domainMainCheckpoint = structuredClone(checkpoint); }
+});
+assert.deepEqual(domainMainCheckpointSchemas.slice(domainMainResumeStart), ["report_unit_cold_read"],
+  "A yielded Production-shaped domain:main attempt must resume at cold read without re-billing draft, critique, or revision.");
+assert.equal(domainMainCheckpoint.completedStage, "cold_read");
+assert.deepEqual(resumedDomainMain.calls.map((call) => call.stage), ["draft", "critique", "revise", "cold_read"]);
+assert.equal(resumedDomainMain.revised.body, "FIXTURE_ONLY_REPLACED. FIXTURE_ONLY_SECOND.");
+
 const coldCoordinateSchemas = [];
 const coldCoordinateChain = await runReportWriterChain({ payload: spliceChainPayload, callModel: async (input) => {
   coldCoordinateSchemas.push(input.schemaName);
@@ -1365,6 +1416,73 @@ assert.deepEqual(persistenceStore.units.get("persistence-report:overview").sourc
 assert.equal(persistenceStore.units.get("persistence-report:overview").source_snapshot.writerReviews[0].coldCritique.result, "no_defects",
   "Persisted review evidence must include the context-free closing pass.");
 
+const chainCheckpointStore = createMemoryStore();
+const chainCheckpointReport = {
+  ...structuredClone(resumeReport),
+  id: "8b3e266e-286d-4ea7-a008-f60776e6b791",
+  user_id: "checkpoint-user",
+  fulfillment_status: "queued",
+  failure_history: []
+};
+const chainCheckpointJob = authorizedJob({
+  id: "domain-main-checkpoint-job",
+  report_id: chainCheckpointReport.id,
+  entitlement_id: "domain-main-checkpoint-ent",
+  state: "running",
+  step: "writing",
+  attempt: 1,
+  passing_unit_cache: {}
+});
+chainCheckpointStore.reports.set(chainCheckpointReport.id, chainCheckpointReport);
+chainCheckpointStore.entitlements.set(chainCheckpointJob.entitlement_id, {
+  id: chainCheckpointJob.entitlement_id,
+  user_id: chainCheckpointReport.user_id,
+  status: "active",
+  product_key: "general_1m"
+});
+chainCheckpointStore.jobs.set(chainCheckpointJob.id, structuredClone(chainCheckpointJob));
+chainCheckpointStore.claimJobs = async () => [structuredClone(chainCheckpointJob)];
+const interruptedChainModel = modelCallWithCrash(3);
+const interruptedChainBatch = await runReportFulfillmentBatch({
+  workerId: "checkpoint-worker-1",
+  store: chainCheckpointStore,
+  calculateFacts,
+  callModel: interruptedChainModel,
+  judgeCall
+});
+assert.equal(interruptedChainBatch.processed[0].retryable, true);
+assert.equal(interruptedChainModel.count(), 3, "The first worker reaches cold read after completing draft and critique.");
+const durableChainCheckpoint = chainCheckpointStore.jobs.get(chainCheckpointJob.id).passing_unit_cache.__writer_chain_checkpoint;
+assert.equal(durableChainCheckpoint.schema, "report-writer-chain-checkpoint.v1");
+assert.equal(durableChainCheckpoint.unitId, "overview");
+assert.equal(durableChainCheckpoint.completedStage, "revision");
+assert.deepEqual(durableChainCheckpoint.calls.map((call) => call.stage), ["draft", "critique"]);
+
+const resumedChainModel = modelCallWithCrash();
+chainCheckpointStore.claimJobs = async () => [{
+  ...structuredClone(chainCheckpointJob),
+  ...structuredClone(chainCheckpointStore.jobs.get(chainCheckpointJob.id)),
+  state: "running",
+  attempt: 2
+}];
+const resumedChainBatch = await runReportFulfillmentBatch({
+  workerId: "checkpoint-worker-2",
+  store: chainCheckpointStore,
+  calculateFacts,
+  callModel: resumedChainModel,
+  judgeCall
+});
+assert.equal(resumedChainBatch.processed[0].result.status, "needs_review");
+assert.equal(resumedChainModel.count(), 11,
+  "The resumed overview starts at cold read, then only the other three unit chains and report-level pass are billed.");
+assert.deepEqual(chainCheckpointStore.jobs.get(chainCheckpointJob.id).passing_unit_cache, {},
+  "The in-progress checkpoint clears only after the resumed unit passes and persists.");
+assert.deepEqual(
+  chainCheckpointStore.units.get(`${chainCheckpointReport.id}:overview`).source_snapshot.writerReviews[0].critique,
+  durableChainCheckpoint.critique,
+  "The exact persisted critique survives the worker boundary as review evidence."
+);
+
 const retryStore = createMemoryStore();
 retryStore.claimJobs = async () => [authorizedJob({ id: "retry-job", report_id: "retry-report", entitlement_id: "retry-ent", state: "running", step: "writing", attempt: 1 })];
 retryStore.reports.set("retry-report", { ...structuredClone(resumeReport), id: "retry-report", fulfillment_status: "writing" });
@@ -1401,4 +1519,4 @@ assert.ok(webhookSource.includes('reportBillingMode() === "free_test"'));
 const stripeSetupSource = fs.readFileSync(new URL("./setup-stripe-report-products.mjs", import.meta.url), "utf8");
 assert.ok(stripeSetupSource.indexOf('reportBillingMode() !== "stripe"') < stripeSetupSource.indexOf("for (const sku"));
 
-console.log("Report fulfillment passed: 16-key free-test catalog, Stripe fail-closed mode, direct comp grant/revoke, per-call authorization, observed-duration deadline admission, deadline-aware one-unit worker continuation, Production-shaped unit upsert, durable passing-unit cache, persistence backoff without re-billing, mocked generation/judge/manual-release/log-only-delivery E2E, shared facts, crash resume, retry queue, and no-edit admin contract.");
+console.log("Report fulfillment passed: 16-key free-test catalog, Stripe fail-closed mode, direct comp grant/revoke, per-call authorization, observed-duration deadline admission, deadline-aware one-unit worker continuation, durable per-step writer-chain checkpoints, Production-shaped unit upsert, durable passing-unit cache, persistence backoff without re-billing, mocked generation/judge/manual-release/log-only-delivery E2E, shared facts, crash resume, retry queue, and no-edit admin contract.");
