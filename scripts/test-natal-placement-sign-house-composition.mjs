@@ -23,9 +23,17 @@ const expectedSignBody = rows.hookRows.find(
 const expectedHouseBody = rows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/placement-house-lived/moon/6"
 )?.body;
+const expectedMercurySignBody = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/placement-sign-lived/mercury/pisces"
+)?.body;
+const expectedTenthHouseBody = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/house-lived/10"
+)?.body;
 
 assert.ok(expectedSignBody, "Moon-in-Scorpio approved sign copy must exist.");
 assert.ok(expectedHouseBody, "Moon-in-6th-house approved house copy must exist.");
+assert.ok(expectedMercurySignBody, "Mercury-in-Pisces approved sign copy must exist.");
+assert.ok(expectedTenthHouseBody, "Approved 10th-house copy must exist.");
 
 for (const [rendererName, renderPlacement] of [
   ["Node", renderNodePlacement],
@@ -54,6 +62,18 @@ for (const [rendererName, renderPlacement] of [
     `${rendererName} Friend placement must expose its composed sign and house provenance.`
   );
   assert.doesNotMatch(friend.body, /\byou(?:r|rs|self)?\b/iu, `${rendererName} Friend placement must not leak second person.`);
+
+  const mercuryYou = renderPlacement({ planet: "mercury", sign: "pisces", house: 10, voice: "you" });
+  assert.deepEqual(
+    mercuryYou.parts,
+    [expectedMercurySignBody, expectedTenthHouseBody],
+    `${rendererName} Mercury-in-Pisces placement must preserve sign copy before the shared 10th-house copy.`
+  );
+  assert.deepEqual(
+    mercuryYou.partKeys,
+    ["fallback-hook/placement-sign-lived/mercury/pisces", "fallback-hook/house-lived/10"],
+    `${rendererName} Mercury-in-Pisces placement must expose exact per-section provenance.`
+  );
 }
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
@@ -65,4 +85,4 @@ assert.doesNotMatch(
 assert.match(appSource, /rendered\.partKeys\?\.\[index\]/u, "The app must retain per-section placement provenance.");
 assert.match(appSource, /const housePartKey = rendered\.partKeys\?\.\[1\]/u, "The app must classify the house section from its own key.");
 
-console.log("natal placement sign + house composition: ok (You exact rows and Friend composed rows)");
+console.log("natal placement sign + house composition: ok (Moon and Mercury You routes; Friend composed rows)");
