@@ -785,19 +785,22 @@ export async function runReportWriterChain(input: {
   let coldCritique = resumable?.coldCritique;
   if (!coldCritique) {
     const coldResult = await callModel<ReportColdReadCritique>({
-    ...target,
-    prompt: [
-      payload.coldProseRuling.text,
-      "Read only the rendered unit below. Return findings only; never rewrite. Every finding must copy address_token exactly from one supplied [LOCATION=...; PARAGRAPH_INDEX=...] token. These tokens are coordinates, not prose or drafting context. Quote the exact smallest sentence span at that coordinate. Never invent, combine, paraphrase, or extend an address token.",
-      coldMovementApplicable
-        ? "Interpretive movement is applicable. Route abrupt or disconnected movement to interpretive_gap."
-        : "Interpretive movement is not applicable. Do not return interpretive_gap. Route an actual phrasing or density problem to its supported category; otherwise return no finding.",
-      "Route vague referents, assembled or formal language to unnatural_phrasing or owner_voice_drift; repeated setup or explanation-after-landing to density_violation.",
-      `SUPPLIED_ADDRESS_TOKENS\n${coldCoordinates.map((coordinate) => coordinate.token).join("\n")}`,
-      `RENDERED_UNIT\n${completeReportUnit(revised)}`
-    ].join("\n\n"),
-    schemaName: "report_unit_cold_read",
-    schema: coldReadCritiqueSchema(revised, coldMovementApplicable)
+      ...target,
+      prompt: [
+        payload.coldProseRuling.text,
+        "Read only the rendered unit below. Return findings only; never rewrite. Every finding must copy address_token exactly from one supplied [LOCATION=...; PARAGRAPH_INDEX=...] token. These tokens are coordinates, not prose or drafting context. Quote the exact smallest sentence span at that coordinate. Never invent, combine, paraphrase, or extend an address token.",
+        coldMovementApplicable
+          ? "Interpretive movement is applicable. Route abrupt or disconnected movement to interpretive_gap."
+          : "Interpretive movement is not applicable. Do not return interpretive_gap. Route an actual phrasing or density problem to its supported category; otherwise return no finding.",
+        "Route vague referents, assembled or formal language to unnatural_phrasing or owner_voice_drift; repeated setup or explanation-after-landing to density_violation.",
+        `SUPPLIED_ADDRESS_TOKENS\n${coldCoordinates.map((coordinate) => coordinate.token).join("\n")}`,
+        `RENDERED_UNIT\n${completeReportUnit(revised)}`
+      ].join("\n\n"),
+      schemaName: "report_unit_cold_read",
+      schema: coldReadCritiqueSchema(revised, coldMovementApplicable),
+      validateResponse: (value) => {
+        normalizeReportColdReadCritique(revised, value, coldMovementApplicable);
+      }
     });
     calls.push({ stage: "cold_read", model: coldResult.model, provider: coldResult.provider, usage: coldResult.usage });
     coldCritique = normalizeReportColdReadCritique(revised, coldResult.value, coldMovementApplicable);

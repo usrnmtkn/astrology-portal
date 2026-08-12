@@ -20,7 +20,12 @@ import {
   type AssembledReportUnit,
   type ReportAssemblyIssue
 } from "./report-assembly.js";
-import { callReportModel, type ReportModelCall } from "./report-model-client.js";
+import {
+  callReportModel,
+  ReportModelResponseRejectedError,
+  type ReportModelCall,
+  withReportModelResponseRetries
+} from "./report-model-client.js";
 import { estimateReportModelCost } from "./report-model-pricing.js";
 import {
   reportValidationIssuesToNamedDefects,
@@ -321,7 +326,7 @@ export async function processReportFulfillmentJob(input: {
   let tokenCountTotal = report.token_count_total ?? 0;
   let authorizationTokenCount = input.job.authorization_token_count ?? 0;
   let estimatedCostTotal = report.token_spend_usd_estimate ?? 0;
-  const providerCall = input.callModel ?? callReportModel;
+  const providerCall = withReportModelResponseRetries(input.callModel ?? callReportModel);
   const callClock = input.continuationPolicy?.now ?? Date.now;
   const callDurationEstimates = reportCallDurationEstimates(
     await input.store.callTimingHistory(input.job.id),
@@ -396,9 +401,32 @@ export async function processReportFulfillmentJob(input: {
       if (!activeLedgerCallId) return;
       const callId = activeLedgerCallId;
       activeLedgerCallId = null;
+      const rejected = error instanceof ReportModelResponseRejectedError ? error : null;
+      const estimatedCostUsd = rejected?.usage
+        ? estimateReportModelCost(attempt.model, rejected.usage)
+        : 0;
       await input.store.finishAuthorizedCall(callId, {
-        state: "error", error: error instanceof Error ? error.message : "Provider call failed."
+        state: "error",
+        inputTokens: rejected?.usage?.inputTokens,
+        cachedInputTokens: rejected?.usage?.cachedInputTokens,
+        outputTokens: rejected?.usage?.outputTokens,
+        totalTokens: rejected?.usage?.totalTokens,
+        estimatedCostUsd,
+        responseId: rejected?.responseId,
+        error: error instanceof Error ? error.message : "Provider call failed."
       });
+      if (rejected?.usage) {
+        tokenCountTotal += rejected.usage.totalTokens;
+        authorizationTokenCount += rejected.usage.totalTokens;
+        estimatedCostTotal = Number((estimatedCostTotal + estimatedCostUsd).toFixed(6));
+        const lifetimeTokenBudget = report.token_budget_lifetime ?? config.reportLifetimeTokenBudget;
+        assertReportTokenBudgets({
+          authorizationTokenCount,
+          authorizationTokenBudget: input.job.authorized_token_budget,
+          lifetimeTokenCount: tokenCountTotal,
+          lifetimeTokenBudget
+        });
+      }
     }
   });
   assertReportDomainFulfillmentReady(report.report_domain);
