@@ -19,7 +19,9 @@ import {
 import { releaseReviewedReport } from "../api/_lib/report-release.ts";
 import { verifyStripeWebhookSignature } from "../api/_lib/stripe-report-billing.ts";
 import { assembleReportGenerationPayload, validateReportDraft } from "../api/_lib/report-generation.ts";
-import { reportDraftMovementApplicable, reportUnitCoordinates } from "../api/_lib/report-evaluation-packet.ts";
+import {
+  reportDraftMovementApplicable, reportUnitSentenceAddresses, sentenceAddressedReportUnit
+} from "../api/_lib/report-evaluation-packet.ts";
 import {
   enforceReportRevisionStopRule, ReportRevisionScopeError, ReportStopRuleError,
   mergeOverlappingReportDefects, reportValidationIssuesToNamedDefects,
@@ -330,17 +332,19 @@ const coordinateDraft = {
   headline: "FIXTURE_ONLY_HEADLINE.", tldr: "", summary: "FIXTURE_ONLY_SUMMARY.",
   body: "FIXTURE_ONLY_BODY_FIRST. FIXTURE_ONLY_BODY_SECOND.", action: "", timing: "", sections: []
 };
-const coordinateTokens = reportUnitCoordinates(coordinateDraft).map((coordinate) => coordinate.token);
-assert.deepEqual(coordinateTokens, [
-  "[LOCATION=headline; PARAGRAPH_INDEX=0]",
-  "[LOCATION=summary; PARAGRAPH_INDEX=0]",
-  "[LOCATION=body; PARAGRAPH_INDEX=0]"
-], "Cold-read addresses must be exact supplied field/paragraph coordinates.");
+const coordinateSentences = reportUnitSentenceAddresses(coordinateDraft);
+assert.deepEqual(coordinateSentences.map(({ id, location, sentenceIndex }) => ({ id, location, sentenceIndex })), [
+  { id: "S1", location: "headline", sentenceIndex: 0 },
+  { id: "S2", location: "summary", sentenceIndex: 0 },
+  { id: "S3", location: "body", sentenceIndex: 0 },
+  { id: "S4", location: "body", sentenceIndex: 1 }
+], "Report sentence IDs must deterministically map to runtime-owned field sentence indices.");
+assert.match(sentenceAddressedReportUnit(coordinateDraft), /\[S4\] \[LOCATION=body; PARAGRAPH_INDEX=0\] FIXTURE_ONLY_BODY_SECOND\./u);
 const normalizedCoordinateFinding = normalizeReportColdReadCritique(coordinateDraft, {
   result: "defects", applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
   defects: [{
     id: "cold-coordinate", category: "unnatural_phrasing",
-    address_token: "[LOCATION=body; PARAGRAPH_INDEX=0]", quote: "FIXTURE_ONLY_BODY_SECOND.",
+    sentence_ids: ["S4"], quote: "FIXTURE_ONLY_BODY_SECOND_WITH_NORMALIZATION_DIFFERENCE",
     evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY_REPLACE"
   }]
 });
@@ -350,16 +354,16 @@ assert.deepEqual({
   start: normalizedCoordinateFinding.defects[0].scope_start,
   end: normalizedCoordinateFinding.defects[0].scope_end
 }, { location: "body", sentenceIndex: 1, start: 1, end: 1 },
-"An exact cold-read coordinate plus exact quote must resolve to a bounded internal sentence scope.");
+"A sentence ID must resolve to a bounded internal sentence scope without quote matching.");
 
-for (const inventedAddress of ["body; paragraph 0", "summary; paragraph 0"]) {
+for (const inventedAddress of ["S999", "body; paragraph 0"]) {
   assert.throws(() => normalizeReportColdReadCritique(coordinateDraft, {
     result: "defects", applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
     defects: [{
-      id: `invented-${inventedAddress}`, category: "unnatural_phrasing", address_token: inventedAddress,
+      id: `invented-${inventedAddress}`, category: "unnatural_phrasing", sentence_ids: [inventedAddress],
       quote: "FIXTURE_ONLY_BODY_FIRST.", evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY"
     }]
-  }), /was not supplied/u, `Production's invented '${inventedAddress}' address must be rejected before revision.`);
+  }), /was not supplied/u, `An invented '${inventedAddress}' sentence ID must be rejected before revision.`);
 }
 
 const oneParagraphColdDraft = {
@@ -371,7 +375,7 @@ const suppressedMovementFinding = normalizeReportColdReadCritique(oneParagraphCo
   result: "defects", applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY_MODEL_BYPASS" },
   defects: [{
     id: "not-applicable-movement", category: "interpretive_gap",
-    address_token: "[LOCATION=body; PARAGRAPH_INDEX=0]", quote: "FIXTURE_ONLY_BODY.",
+    sentence_ids: ["S2"], quote: "FIXTURE_ONLY_BODY.",
     evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY"
   }]
 }, false);
@@ -434,15 +438,31 @@ const spliceChainDefects = [
   { id: "chain-body", category: "density_violation", location: "body", sentence_index: 0, scope_start: 0, scope_end: 0, quote: "FIXTURE_ONLY_FIRST.", evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY_REPLACE" },
   { id: "chain-timing", category: "astrology_chronology", location: "timing", sentence_index: 0, scope_start: 0, scope_end: 0, quote: "FIXTURE_ONLY_OLD_TIMING.", evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY_REPLACE" }
 ];
+function sentenceAddressedDefects(draft, defects) {
+  const addresses = reportUnitSentenceAddresses(draft);
+  return defects.map(({ location, sentence_index: _sentenceIndex, scope_start: scopeStart, scope_end: scopeEnd, ...defect }) => ({
+    ...defect,
+    sentence_ids: addresses
+      .filter((sentence) => sentence.location === location && sentence.sentenceIndex >= scopeStart && sentence.sentenceIndex <= scopeEnd)
+      .map((sentence) => sentence.id)
+  }));
+}
+const spliceChainAddressedDefects = sentenceAddressedDefects(spliceChainDraft, spliceChainDefects);
 const spliceChainSchemas = [];
 const spliceChain = await runReportWriterChain({ payload: spliceChainPayload, callModel: async (input) => {
   spliceChainSchemas.push(input.schemaName);
+  if (input.schemaName === "report_unit_critique") {
+    assert.ok(input.schema.properties.defects.items.properties.sentence_ids,
+      "The full critique must use the same sentence-ID addressing contract as the cold read.");
+    assert.equal("location" in input.schema.properties.defects.items.properties, false);
+    assert.match(input.prompt, /quote is informational only/u);
+  }
   if (input.schemaName === "report_unit_cold_read") {
-    assert.match(input.prompt, /RENDERED_UNIT/u);
+    assert.match(input.prompt, /SENTENCE_ADDRESSED_UNIT/u);
     assert.doesNotMatch(input.prompt, /UNIT_FACTS|CANONICAL_PROMPT|OWNER_COMPARISON_SET|VALIDATOR_RESULTS/u);
   }
   const value = input.schemaName === "report_unit_draft" ? spliceChainDraft
-    : input.schemaName === "report_unit_critique" ? { result: "defects", applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" }, defects: spliceChainDefects }
+    : input.schemaName === "report_unit_critique" ? { result: "defects", applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" }, defects: spliceChainAddressedDefects }
       : input.schemaName === "report_unit_cold_read" ? { result: "no_defects", applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" }, defects: [] }
       : { replacements: [
         { defect_id: "chain-body", location: "body", scope_start: 0, scope_end: 0, replacement: "FIXTURE_ONLY_REPLACED." },
@@ -475,7 +495,7 @@ const domainMainCheckpointModel = async (input) => {
   }
   const value = input.schemaName === "report_unit_draft" ? spliceChainDraft
     : input.schemaName === "report_unit_critique" ? {
-      result: "defects", applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" }, defects: spliceChainDefects
+      result: "defects", applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" }, defects: spliceChainAddressedDefects
     }
       : input.schemaName === "report_unit_revision_spans" ? { replacements: [
         { defect_id: "chain-body", location: "body", scope_start: 0, scope_end: 0, replacement: "FIXTURE_ONLY_REPLACED." },
@@ -516,15 +536,13 @@ const coldCoordinateChain = await runReportWriterChain({ payload: spliceChainPay
     return { value: { result: "no_defects", applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" }, defects: [] }, model: input.model, provider: input.provider, usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } };
   }
   assert.equal(input.schemaName, "report_unit_cold_read");
-  assert.deepEqual(input.schema.properties.defects.items.properties.address_token.enum, [
-    "[LOCATION=headline; PARAGRAPH_INDEX=0]",
-    "[LOCATION=body; PARAGRAPH_INDEX=0]"
-  ], "The provider schema must reject every address except an exact supplied token.");
+  assert.deepEqual(input.schema.properties.defects.items.properties.sentence_ids.items.enum, ["S1", "S2"],
+    "The provider schema must reject every address except an exact supplied sentence ID.");
   assert.equal(input.schema.properties.defects.items.properties.category.enum.includes("interpretive_gap"), false,
     "The provider schema must reject interpretive_gap when movement is not applicable.");
   assert.equal("location" in input.schema.properties.defects.items.properties, false,
     "Cold-read findings must not receive the old free-form location field.");
-  assert.match(input.prompt, /coordinates, not prose or drafting context/u);
+  assert.match(input.prompt, /runtime owns segmentation/u);
   return {
     // Deliberately bypass the schema in this mock: runtime suppression remains
     // the second line of defense for a nonconforming provider response.
@@ -532,7 +550,7 @@ const coldCoordinateChain = await runReportWriterChain({ payload: spliceChainPay
       result: "defects", applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY_BYPASS" },
       defects: [{
         id: "bypass-movement", category: "interpretive_gap",
-        address_token: "[LOCATION=body; PARAGRAPH_INDEX=0]", quote: "FIXTURE_ONLY_BODY.",
+        sentence_ids: ["S2"], quote: "FIXTURE_ONLY_BODY.",
         evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY"
       }]
     },
@@ -543,56 +561,50 @@ assert.deepEqual(coldCoordinateSchemas, ["report_unit_draft", "report_unit_criti
   "A suppressed non-applicable movement finding must never trigger a revision call.");
 assert.equal(coldCoordinateChain.coldCritique.result, "no_defects");
 
-const cr02RejectedPayload = {
-  result: "defects",
-  applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY_PRODUCTION_REJECTION" },
-  defects: [{
-    id: "CR-02",
-    category: "unnatural_phrasing",
-    address_token: "[LOCATION=body; PARAGRAPH_INDEX=0]",
-    quote: "FIXTURE_ONLY_BODY",
-    evidence: "FIXTURE_ONLY_REJECTED_QUOTE",
-    evidence_ids: [],
-    instruction: "FIXTURE_ONLY_CORRECT_THE_SENTENCE"
+const markdownKeyDatesDraft = {
+  headline: "KEY TURNING POINTS", tldr: "FIXTURE_ONLY_TLDR.", summary: "FIXTURE_ONLY_SUMMARY.", body: "",
+  action: "FIXTURE_ONLY_ACTION.", timing: "Across the report year", sections: [{
+    heading: "KEY TURNING POINTS",
+    body: [
+      "- **A home responsibility reaches a decision point.** A lunar eclipse falls near natal Saturn.",
+      "- **An old role needs different terms.** Uranus squares your natal Sun, disrupting a plan that depends on the old arrangement continuing.",
+      "- **The terms require scrutiny.** Credit, access, and final authority still have to be negotiated.",
+      "- **A new method gets a practical test.** The useful version is the one you can repeat during an ordinary week.",
+      "- **A communication cycle begins.** Writing, learning, or teaching may become work you continue developing.",
+      "- **Communication expands.** Each opportunity can look manageable by itself.",
+      "- **The communication becomes public.** A draft, decision, or conversation may need revision because other people now have to understand it."
+    ].join("\n\n")
   }]
 };
-const cr02RetryPrompts = [];
-const cr02RetryingCall = withReportModelResponseRetries(async (input) => {
-  cr02RetryPrompts.push(input.prompt);
-  const attempt = { provider: input.provider, model: input.model, schemaName: input.schemaName };
-  await input.beforeProviderCall?.(attempt);
-  const value = cr02RetryPrompts.length === 1 ? cr02RejectedPayload : {
-    result: "no_defects",
-    applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY_CORRECTED" },
-    defects: []
-  };
-  const result = {
-    value, model: input.model, provider: input.provider,
-    usage: { inputTokens: 7, outputTokens: 3, totalTokens: 10 }
-  };
-  try {
-    input.validateResponse?.(value);
-  } catch (error) {
-    const rejected = new ReportModelResponseRejectedError(error.message, result.usage, "fixture-rejected-response");
-    await input.onProviderCallError?.(attempt, rejected);
-    throw rejected;
-  }
-  await input.afterProviderCall?.(attempt, result);
-  return result;
-});
-const cr02RetryChain = await runReportWriterChain({ payload: spliceChainPayload, callModel: async (input) => {
-  if (input.schemaName === "report_unit_draft") {
-    return { value: oneParagraphColdDraft, model: input.model, provider: input.provider, usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } };
-  }
-  if (input.schemaName === "report_unit_critique") {
-    return { value: { result: "no_defects", applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" }, defects: [] }, model: input.model, provider: input.provider, usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } };
-  }
-  return cr02RetryingCall(input);
-} });
-assert.equal(cr02RetryPrompts.length, 2, "CR-02's inexact quote must retry the same cold-read call once.");
-assert.match(cr02RetryPrompts[1], /Cold-read quote for 'CR-02' is not an exact sentence span/u);
-assert.match(cr02RetryPrompts[1], /RESPONSE_REJECTION/u);
-assert.equal(cr02RetryChain.coldCritique.result, "no_defects");
+const markdownAddresses = reportUnitSentenceAddresses(markdownKeyDatesDraft);
+const addressAtParagraph = (paragraphIndex) => markdownAddresses.find((sentence) => (
+  sentence.location === "sections.0.body" && sentence.paragraphIndex === paragraphIndex
+));
+assert.ok(addressAtParagraph(1) && addressAtParagraph(6), "The markdown-heavy key-dates fixture must expose stable sentence IDs in the two Production failure paragraphs.");
+assert.equal((sentenceAddressedReportUnit(markdownKeyDatesDraft).match(/^\[S\d+\]/gmu) ?? []).length, markdownAddresses.length,
+  "Every sentence in a markdown-heavy unit must be pre-segmented and labeled exactly once.");
+
+const productionRejectedFindings = [
+  { id: "D6", paragraphIndex: 6, quote: "The communication becomes public" },
+  { id: "D3", paragraphIndex: 6, quote: "A draft decision or conversation may need revision" },
+  { id: "D5", paragraphIndex: 6, quote: "other people now have to understand it" },
+  { id: "D3", paragraphIndex: 1, quote: "An old role needs different terms" }
+];
+for (const rejected of productionRejectedFindings) {
+  const sentence = addressAtParagraph(rejected.paragraphIndex);
+  const normalized = normalizeReportColdReadCritique(markdownKeyDatesDraft, {
+    result: "defects",
+    applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY_PRODUCTION_REJECTION" },
+    defects: [{
+      id: rejected.id, category: "unnatural_phrasing", sentence_ids: [sentence.id], quote: rejected.quote,
+      evidence: "FIXTURE_ONLY_REJECTED_QUOTE", evidence_ids: [], instruction: "FIXTURE_ONLY_CORRECT_THE_SENTENCE"
+    }]
+  });
+  assert.equal(normalized.defects[0].location, "sections.0.body");
+  assert.equal(normalized.defects[0].sentence_index, sentence.sentenceIndex);
+  assert.equal(normalized.defects[0].quote, rejected.quote,
+    `${rejected.id}'s normalized markdown quote must remain informational and never participate in addressing.`);
+}
 
 let exhaustedResponseAttempts = 0;
 await assert.rejects(
@@ -864,11 +876,11 @@ function modelCallWithCrash(crashAt = Infinity) {
       assert.match(input.prompt, /LIVED_PROSE_STANDARD[\s\S]*INTERNAL PRE-DRAFT EXTRACTION \(REQUIRED\)[\s\S]*REPORT_GENERATION_PAYLOAD/u);
     }
     if (input.schemaName === "report_unit_critique") {
-      assert.match(input.prompt, /LIVED_PROSE_STANDARD[\s\S]*FLATNESS \/ LIVED PROSE[\s\S]*COMPLETE_UNIT[\s\S]*UNIT_FACTS[\s\S]*OWNER_COMPARISON_SET/u);
+      assert.match(input.prompt, /LIVED_PROSE_STANDARD[\s\S]*FLATNESS \/ LIVED PROSE[\s\S]*SENTENCE_ADDRESSED_UNIT[\s\S]*UNIT_FACTS[\s\S]*OWNER_COMPARISON_SET/u);
       assert.match(input.prompt, /Never return flatness or lived_prose as a defect category\./u);
     }
     if (input.schemaName === "report_unit_cold_read") {
-      assert.match(input.prompt, /RENDERED_UNIT/u);
+      assert.match(input.prompt, /SENTENCE_ADDRESSED_UNIT/u);
       assert.doesNotMatch(input.prompt, /UNIT_FACTS|CANONICAL_PROMPT|OWNER_COMPARISON_SET|VALIDATOR_RESULTS/u,
         "The final cold read must receive rendered prose only, never context that can rescue it.");
     }
