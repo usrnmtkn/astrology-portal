@@ -12,6 +12,10 @@ import { verifyReportFactLock } from "../api/_lib/report-fact-lock.ts";
 import { createReportMailProvider } from "../api/_lib/report-mail.ts";
 import { reportUrl } from "../api/_lib/report-http.ts";
 import { estimateReportModelCost, estimateReportPlanningProfile, reportModelPricing } from "../api/_lib/report-model-pricing.ts";
+import {
+  ReportModelResponseRejectedError,
+  withReportModelResponseRetries
+} from "../api/_lib/report-model-client.ts";
 import { releaseReviewedReport } from "../api/_lib/report-release.ts";
 import { verifyStripeWebhookSignature } from "../api/_lib/stripe-report-billing.ts";
 import { assembleReportGenerationPayload, validateReportDraft } from "../api/_lib/report-generation.ts";
@@ -538,6 +542,74 @@ const coldCoordinateChain = await runReportWriterChain({ payload: spliceChainPay
 assert.deepEqual(coldCoordinateSchemas, ["report_unit_draft", "report_unit_critique", "report_unit_cold_read"],
   "A suppressed non-applicable movement finding must never trigger a revision call.");
 assert.equal(coldCoordinateChain.coldCritique.result, "no_defects");
+
+const cr02RejectedPayload = {
+  result: "defects",
+  applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY_PRODUCTION_REJECTION" },
+  defects: [{
+    id: "CR-02",
+    category: "unnatural_phrasing",
+    address_token: "[LOCATION=body; PARAGRAPH_INDEX=0]",
+    quote: "FIXTURE_ONLY_BODY",
+    evidence: "FIXTURE_ONLY_REJECTED_QUOTE",
+    evidence_ids: [],
+    instruction: "FIXTURE_ONLY_CORRECT_THE_SENTENCE"
+  }]
+};
+const cr02RetryPrompts = [];
+const cr02RetryingCall = withReportModelResponseRetries(async (input) => {
+  cr02RetryPrompts.push(input.prompt);
+  const attempt = { provider: input.provider, model: input.model, schemaName: input.schemaName };
+  await input.beforeProviderCall?.(attempt);
+  const value = cr02RetryPrompts.length === 1 ? cr02RejectedPayload : {
+    result: "no_defects",
+    applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY_CORRECTED" },
+    defects: []
+  };
+  const result = {
+    value, model: input.model, provider: input.provider,
+    usage: { inputTokens: 7, outputTokens: 3, totalTokens: 10 }
+  };
+  try {
+    input.validateResponse?.(value);
+  } catch (error) {
+    const rejected = new ReportModelResponseRejectedError(error.message, result.usage, "fixture-rejected-response");
+    await input.onProviderCallError?.(attempt, rejected);
+    throw rejected;
+  }
+  await input.afterProviderCall?.(attempt, result);
+  return result;
+});
+const cr02RetryChain = await runReportWriterChain({ payload: spliceChainPayload, callModel: async (input) => {
+  if (input.schemaName === "report_unit_draft") {
+    return { value: oneParagraphColdDraft, model: input.model, provider: input.provider, usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } };
+  }
+  if (input.schemaName === "report_unit_critique") {
+    return { value: { result: "no_defects", applicability: { interpretive_movement: "not_applicable", reason: "FIXTURE_ONLY" }, defects: [] }, model: input.model, provider: input.provider, usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } };
+  }
+  return cr02RetryingCall(input);
+} });
+assert.equal(cr02RetryPrompts.length, 2, "CR-02's inexact quote must retry the same cold-read call once.");
+assert.match(cr02RetryPrompts[1], /Cold-read quote for 'CR-02' is not an exact sentence span/u);
+assert.match(cr02RetryPrompts[1], /RESPONSE_REJECTION/u);
+assert.equal(cr02RetryChain.coldCritique.result, "no_defects");
+
+let exhaustedResponseAttempts = 0;
+await assert.rejects(
+  withReportModelResponseRetries(async () => {
+    exhaustedResponseAttempts += 1;
+    throw new ReportModelResponseRejectedError("FIXTURE_ONLY_STILL_INVALID");
+  })({
+    provider: "openai",
+    model: "FIXTURE_ONLY_MODEL",
+    prompt: "FIXTURE_ONLY_PROMPT",
+    schemaName: "FIXTURE_ONLY_SCHEMA",
+    schema: { type: "object" }
+  }),
+  /FIXTURE_ONLY_STILL_INVALID/u
+);
+assert.equal(exhaustedResponseAttempts, 4,
+  "Response-contract exhaustion must escalate only after the initial call plus three retries.");
 assert.equal(verifyReportFactLock({ ...draft, body: "March 3 is traceable." }, frozen).passed, true);
 assert.equal(verifyReportFactLock({ ...draft, body: "March 31 is not traceable." }, frozen).passed, false);
 assert.equal(verifyReportFactLock({ ...draft, body: "MAR 3 · FIXTURE_ONLY · FIXTURE_ONLY. · *A lunar eclipse falls on your natal Saturn.*" }, frozen).passed, true);
