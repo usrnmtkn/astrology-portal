@@ -5054,6 +5054,7 @@ function currentSkyPlacementDetailArticle({
   articleMode = "current",
   generatedAt,
   generatedContent,
+  onOpenDetail,
   position,
   positions
 }: {
@@ -5114,6 +5115,21 @@ function currentSkyPlacementDetailArticle({
         pointName: position.planet,
         positions
       });
+  const sourceGapAspectRows = isRegistryArticle
+    ? []
+    : relatedAspectRowsForPlacement({
+        aspects: aspects.filter((aspect) => (
+          normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt).sections.length === 0
+        )),
+        generatedAt,
+        generatedContent,
+        mode: "sky",
+        onOpenSkyAspect: onOpenDetail
+          ? (aspect) => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions))
+          : undefined,
+        pointName: position.planet,
+        positions
+      }).filter((row): row is SkyDetailRelatedAspectRow => Boolean(row));
   const articleSections = (placementSection?.articleSections ?? []).map((section) => ({
     heading: section.heading,
     body: section.body,
@@ -5144,6 +5160,12 @@ function currentSkyPlacementDetailArticle({
     suppressTldr: authoredBody.length > 0 && !isRetrograde,
     body: articleSections.length > 0 ? [] : body,
     sections: articleSections.length > 0 ? articleSections : relatedAspectSections,
+    relatedAspects: sourceGapAspectRows.length > 0
+      ? {
+          heading: "Aspect details",
+          rows: sourceGapAspectRows
+        }
+      : undefined,
     historicalLookback,
     astrologyDrilldown: null
   };
@@ -5231,7 +5253,7 @@ function skyDetailFromRoutePath(
       && skyRoutePartMatches(candidate.to, thirdPart)
     ));
 
-    if (!aspect || normalizeSkyAspectSurface(aspect, generatedContent, sky.positions, sky.generatedAt).sections.length === 0) {
+    if (!aspect) {
       return null;
     }
 
@@ -5329,10 +5351,6 @@ function relatedAspectRowsForPlacement({
       const normalizedSkySurface = mode === "sky" && generatedAt
         ? normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt)
         : null;
-
-      if (mode === "sky" && !normalizedSkySurface?.sections.length) {
-        return null;
-      }
 
       const otherPoint = aspectOtherPoint(aspect, pointName);
       const title = `${pointName} ${titleCase(aspect.type)} ${otherPoint}`;
@@ -14992,7 +15010,6 @@ function ActiveAspects({
           aspect,
           normalized: normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt)
         }))
-        .filter(({ normalized }) => normalized.sections.length > 0)
     }))
     .filter((group) => group.aspects.length > 0);
 
