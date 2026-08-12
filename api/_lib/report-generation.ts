@@ -1444,14 +1444,18 @@ function validateLivedProseMechanics(draft: ReportDraft, issues: ReportValidatio
   }
   const mechanismTerms = /\b(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|node|eclipse|profection|solar return|transit|house)\b/iu;
   const concreteCosts = /\b(?:hours?|sleep|meals?|lunch|appointments?|travel|commut(?:e|ing)|preparation|follow-up|workload|recovery|caregiving|schedule|costs?|expenses?|money|time)\b/iu;
-  for (const paragraph of paragraphs(draft)) {
-    if (!/\b(?:overcommit(?:ment|ting|ted)?|capacity|crowd(?:ed|s|ing)? the week|full week)\b/iu.test(paragraph)) continue;
-    if (!mechanismTerms.test(paragraph) || !concreteCosts.test(paragraph)) {
-      issues.push({
-        code: "mechanism_grounding",
-        message: `Capacity or overcommitment passage must name both its astrological mechanism and a concrete cost: ${paragraph}`,
-        severity: "error"
-      });
+  const proseSections = [draft.body ?? "", ...(draft.sections ?? []).map((section) => section.body ?? "")];
+  for (const section of proseSections) {
+    const sectionNamesMechanism = mechanismTerms.test(section);
+    for (const paragraph of section.split(/\n\s*\n/u).map((value) => value.trim()).filter(Boolean)) {
+      if (!/\b(?:overcommit(?:ment|ting|ted)?|capacity|crowd(?:ed|s|ing)? the week|full week)\b/iu.test(paragraph)) continue;
+      if (!sectionNamesMechanism || !concreteCosts.test(paragraph)) {
+        issues.push({
+          code: "mechanism_grounding",
+          message: `Capacity or overcommitment passage must name its astrological mechanism within the same section and a concrete cost within the passage: ${paragraph}`,
+          severity: "error"
+        });
+      }
     }
   }
   pushExactSentenceLint(draft, issues, {
