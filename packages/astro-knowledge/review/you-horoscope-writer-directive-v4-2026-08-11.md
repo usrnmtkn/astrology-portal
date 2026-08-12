@@ -34,14 +34,14 @@ Every weekly pass-1 packet contains six owner-authored passages: the two fixed c
 
 ## 5. Weekly structure
 
-Every weekly body uses these labels in this order:
+Every weekly body follows these four movements internally, in this order. They are writing scaffolding, not reader-facing section titles. Never print the labels in horoscope copy.
 
-1. `What is happening this week:` State the message in the first line and connect it to an observable temporary change.
-2. `Where it hits your life:` Use only arenas, roles, settings, objects, and situations carried by the resolved packet.
-3. `The trap to avoid:` Name the mistaken assumption, repeated behavior, or consequence the transit can enable without predicting guaranteed failure.
-4. `What to do about it:` End with one plain, human action or check that fits the moment, not therapy, permission language, a checklist, or an aphorism.
+1. State what is happening this week in the first line and connect it to an observable temporary change.
+2. Show where it hits the reader's life using only arenas, roles, settings, objects, and situations carried by the resolved packet.
+3. Name the mistaken assumption, repeated behavior, or consequence the transit can enable without predicting guaranteed failure.
+4. End with one plain, human action or check that fits the moment, not therapy, permission language, a checklist, or an aphorism.
 
-Show three distinct forms of the same licensed problem. The examples must advance one mechanism rather than form an unrelated inventory. Daily cards follow the same logical movement without labels.
+Show three distinct forms of the same licensed problem. The examples must advance one mechanism rather than form an unrelated inventory. Weekly and daily cards both follow their logical movement without visible labels.
 
 ## 6. Why today or this week, and what to expect
 
