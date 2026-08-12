@@ -1,8 +1,8 @@
 {
   "packageVersion": "v3-2026-08-11f",
-  "contentHash": "0e1a1cf1c41548e57367b897d336d801",
-  "keyManifestHash": "85fe4dceead2d082a419884c6960dcfe",
-  "keyCount": 7369,
+  "contentHash": "79bb4cd68b8b762a82a3039012bc0a46",
+  "keyManifestHash": "59162d9178d3a395f92caa57cc6476e1",
+  "keyCount": 7370,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -2766,6 +2766,7 @@
     "authored:authored/week-opener/quiet",
     "authored:authored/week-opener/standard",
     "authored:authored/week-opener/station",
+    "authored:authored/weekly-transit-aspect/neptune/aries/rx/mercury/square",
     "authored:sky-article/saturn/aries/2026",
     "authored:sky-article/saturn/pisces/2023",
     "authored:sky.ingress.jupiter.leo",

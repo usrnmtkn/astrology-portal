@@ -10548,9 +10548,13 @@
   {
    "contentKey": "authored/calendar-weekly-moon/virgo/variant-2",
    "content_role": "full_copy",
-   "body": "You may feel the need to get organized, but check if that's coming from care or control. The Virgo Moon can make you believe that if you just perfect the system, you'll finally feel safe. But some chaos can't be organized away; it needs to be felt through. Practical analysis is helpful until it becomes a way to avoid the messy human parts. Good for health routines, organizing, helping others; just make sure you're not using productivity as a numbing agent. You're allowed to rest before you've earned it.",
-   "review_status": "approved_reuse",
-   "notes": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Marie Satori). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+   "body": "What is happening this week: The Moon in Virgo makes small, annoying chores and missed details much harder to ignore.\nWhere it hits your life: You may spot a missed calendar invite, catch a typo in an important email, or finally cross off a tedious task you've been putting off. Fixing a specific problem feels good because you know exactly what to do about it.\nThe trap to avoid: The problem starts when every detail begins to feel equally important. You might rewrite the same email four times, keep tweaking a project that is already done, or clean the kitchen because staying busy feels easier than admitting you're anxious, annoyed, or unsure about what happens next.\nWhat to do about it: Check the details once to make sure they're right. Checking the same thing three more times won't make you feel more certain. Fix what actually needs fixing, then leave it alone.",
+   "review_status": "approved",
+   "approved_via": "owner-authored exact serving approval, chat 2026-08-11",
+   "notes": "Owner-authored weekly Moon-sign tone; exact owner serving approval 2026-08-11. Rotate variants by ISO week.",
+   "source_keys": [
+    "owner-exemplar/weekly/moon-virgo/2026-08-11"
+   ],
    "focus": "Functional care, gentle systems, progress not perfection",
    "strategy": "Organize what helps, release what's just control"
   },
