@@ -14,7 +14,7 @@ import { reportUrl } from "../api/_lib/report-http.ts";
 import { estimateReportModelCost, estimateReportPlanningProfile, reportModelPricing } from "../api/_lib/report-model-pricing.ts";
 import { releaseReviewedReport } from "../api/_lib/report-release.ts";
 import { verifyStripeWebhookSignature } from "../api/_lib/stripe-report-billing.ts";
-import { assembleReportGenerationPayload } from "../api/_lib/report-generation.ts";
+import { assembleReportGenerationPayload, validateReportDraft } from "../api/_lib/report-generation.ts";
 import { reportDraftMovementApplicable, reportUnitCoordinates } from "../api/_lib/report-evaluation-packet.ts";
 import {
   enforceReportRevisionStopRule, ReportRevisionScopeError, ReportStopRuleError,
@@ -226,6 +226,67 @@ assert.ok(productionSummerValidatorDefects.filter((defect) => defect.id.includes
   .every((defect) => defect.instruction.startsWith("Reduce the quoted sentence to at most five items.")));
 assert.equal(mergeOverlappingReportDefects(productionSummerDraft, productionSummerValidatorDefects).length, 2,
   "The lexical and menu findings on Summer's first sentence must share one replacement; the second sentence remains separately scoped.");
+
+const productionYearThemeDraft = {
+  headline: "Finish the private work before other people need an answer",
+  tldr: "FIXTURE_ONLY_TLDR.", summary: "FIXTURE_ONLY_SUMMARY.", body: "FIXTURE_ONLY_BODY.",
+  action: "Set aside one uninterrupted block. Consider whether an existing responsibility may need to move or end, and protect the uninterrupted hours required to finish the work first.",
+  timing: "FIXTURE_ONLY_TIMING.", sections: []
+};
+const [productionWhetherDefect] = reportValidationIssuesToNamedDefects(productionYearThemeDraft, [{
+  code: "whether", message: "Report output contains whether."
+}]);
+assert.deepEqual({
+  id: productionWhetherDefect.id,
+  location: productionWhetherDefect.location,
+  sentenceIndex: productionWhetherDefect.sentence_index,
+  scopeStart: productionWhetherDefect.scope_start,
+  scopeEnd: productionWhetherDefect.scope_end,
+  quote: productionWhetherDefect.quote,
+  instruction: productionWhetherDefect.instruction
+}, {
+  id: "validator-1-1-whether",
+  location: "action",
+  sentenceIndex: 1,
+  scopeStart: 1,
+  scopeEnd: 1,
+  quote: "Consider whether an existing responsibility may need to move or end, and protect the uninterrupted hours required to finish the work first.",
+  instruction: "Rewrite the quoted sentence without the word whether while preserving its branches and meaning."
+}, "Report 8b3e266e's exact year-theme failure must target the sentence containing whether, never the headline fallback.");
+const productionWhetherFixed = spliceReportRevision(productionYearThemeDraft, [productionWhetherDefect], { replacements: [{
+  defect_id: productionWhetherDefect.id,
+  location: "action",
+  scope_start: 1,
+  scope_end: 1,
+  replacement: "Decide if an existing responsibility may need to move or end, and protect the uninterrupted hours required to finish the work first."
+}] });
+assert.doesNotMatch(productionWhetherFixed.action, /\bwhether\b/iu,
+  "The exact year-theme validator splice must remove whether without changing any unnamed sentence.");
+assert.equal(productionWhetherFixed.action?.split(". ")[0], "Set aside one uninterrupted block",
+  "The exact year-theme validator splice must preserve the unnamed action sentence byte-for-byte.");
+
+const exactLintPayload = assembleReportGenerationPayload({
+  reportId: "fixture-exact-lint-routing", reportDomain: "general", reportHorizon: "12_months", unitId: "year-theme", frozenFacts: frozen
+});
+const exactLintDraft = {
+  headline: "FIXTURE_ONLY_HEADLINE.", tldr: "FIXTURE_ONLY_TLDR.", summary: "FIXTURE_ONLY_SUMMARY.",
+  body: "I think the schedule may change. The work may shift — but the date remains.",
+  action: "Consider whether an existing responsibility may move. This report may help.",
+  timing: "FIXTURE_ONLY_TIMING.", sections: []
+};
+const exactLintIssues = validateReportDraft(exactLintDraft, exactLintPayload).filter((issue) => (
+  ["astrologer_persona", "em_dash", "whether", "writer_note_leakage"].includes(issue.code)
+));
+const exactLintDefects = reportValidationIssuesToNamedDefects(exactLintDraft, exactLintIssues);
+assert.deepEqual(exactLintDefects.map((defect) => ({
+  code: defect.id.split("-").at(-1), location: defect.location, sentence: defect.sentence_index, quote: defect.quote
+})), [
+  { code: "em_dash", location: "body", sentence: 1, quote: "The work may shift — but the date remains." },
+  { code: "whether", location: "action", sentence: 0, quote: "Consider whether an existing responsibility may move." },
+  { code: "astrologer_persona", location: "body", sentence: 0, quote: "I think the schedule may change." },
+  { code: "writer_note_leakage", location: "action", sentence: 1, quote: "This report may help." }
+], "Every deterministic lint must carry its exact quoted sentence and single replacement scope into the writer chain.");
+assert.ok(exactLintDefects.every((defect) => defect.scope_start === defect.scope_end && defect.scope_start === defect.sentence_index));
 
 assert.throws(() => enforceReportRevisionStopRule(spliceReplay.draft, spliceReplay.failedWholeUnitRevision, spliceReplay.defects), ReportStopRuleError,
   "Run 1's whole-unit revision must preserve the recorded old stop-rule failure.");
@@ -714,7 +775,7 @@ const judgeCall = async () => ({
     applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
     overall: 1, verdict: "pass", findings: []
   },
-  usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }, model: "FIXTURE_ONLY_JUDGE", promptVersion: "FIXTURE_ONLY_JUDGE_V1"
+  usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }, model: "gpt-5.6-terra", promptVersion: "FIXTURE_ONLY_JUDGE_V1"
 });
 
 function authorizedJob(input) {
@@ -1271,6 +1332,14 @@ const cachedOverview = persistenceStore.jobs.get(persistenceJob.id).passing_unit
 assert.equal(cachedOverview.schema, "report-passing-unit-cache.v1");
 assert.deepEqual(cachedOverview.draft, fixtureUnitDraft("overview"), "The exact passing text must be durable in job state before the unit write.");
 assert.deepEqual(cachedOverview.sourceSnapshot.judge.scores, passingJudgeScores, "The passing judge scores must be durable in job state.");
+assert.deepEqual(cachedOverview.sourceSnapshot.tokenAccounting, {
+  acceptedTokens: 8,
+  totalTokens: 8,
+  retryTokens: 0,
+  estimatedUsd: 0.000119,
+  acceptedEstimatedUsd: 0.000119,
+  retryEstimatedUsd: 0
+}, "Each passing unit must preserve accepted-work tokens and retry cost separately for owner review.");
 
 const secondPersistenceModel = modelCallWithCrash();
 persistenceStore.claimJobs = async () => [{
