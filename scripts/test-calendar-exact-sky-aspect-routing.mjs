@@ -266,6 +266,24 @@ assert.equal(generatedBeforeGeneric.sections[0]?.tier, "generated-sky-aspect-lin
 assert.equal(exactLookup("Chiron", "square", "Lilith"), null, "Remaining exact gaps must still fail closed.");
 assert.equal(exactLookup("Saturn", "square", "Lilith")?.sourceId, "saturn-square-lilith");
 
+const sourceGapWithoutGenericProse = normalizeCalendarEventSurface(
+  aspectEvent({
+    first: "Moon",
+    second: "Chiron",
+    aspect: "sextile",
+    fromSign: "Pisces",
+    toSign: "Taurus",
+    id: "source-gap-with-factual-shell"
+  }),
+  null,
+  "On Tuesday, August 11",
+  null,
+  exactLookup
+);
+
+assert.equal(sourceGapWithoutGenericProse.status, "not-servable");
+assert.deepEqual(sourceGapWithoutGenericProse.sections, []);
+
 console.log("Calendar exact Sky-aspect routing parity passed", {
   readerEligibleRecords: exactRecords.length,
   routedDirections,

@@ -22,7 +22,14 @@ The two source gaps are:
 
 Both Node and browser package renderers return `SOURCE_GAP` for unsupported
 copy. The application and Calendar can still select approved exact and
-generated tiers before deciding that a card is unavailable.
+generated tiers before deciding that interpretation copy is unavailable.
+
+The factual aspect remains visible when interpretation is unavailable:
+
+- Sky keeps the aspect title, timing, orb, and clickable detail route;
+- Sky placement details keep a factual related-aspect row;
+- Calendar keeps the event heading and time;
+- none of those source-gap states renders an interpretation paragraph.
 
 ## Approved-row invariant
 
@@ -41,6 +48,8 @@ Therefore all previously approved row bodies remain byte-identical.
 - `node scripts/test-calendar-exact-sky-aspect-routing.mjs`: PASS, 215 records / 430 directions
 - `node scripts/test-calendar-content-hydration.mjs`: PASS
 - `node scripts/test-sky-aspect-matrix-parity.mjs`: PASS at two direct ephemeris instants
+- focused Calendar visual contract: PASS; four aspect events, three approved
+  interpretation bodies, one factual source-gap event with no body
 - `node scripts/test-reader-facing-content-contract.mjs`: PASS
 - `npm run test:content`: PASS
 - `npm run typecheck -w @tldr/web`: PASS

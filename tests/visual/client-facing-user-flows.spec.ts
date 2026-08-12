@@ -1467,7 +1467,11 @@ test.describe("client-facing user flow case studies", () => {
     const weeklyAspectEvents = weeklyView.locator(".lunar-weekly-event.event-aspect");
     const weeklyAspectEventCount = await weeklyAspectEvents.count();
     expect(weeklyAspectEventCount, "Weekly aspects are present in the fixture week").toBeGreaterThan(0);
-    await expect(weeklyAspectEvents.locator(".lunar-weekly-event__body")).toHaveCount(weeklyAspectEventCount);
+    const weeklyAspectSourceGaps = weeklyView.locator('.lunar-weekly-event.event-aspect[data-content-key^="source-gap/"]');
+    await expect(weeklyAspectSourceGaps).toHaveCount(1);
+    await expect(weeklyAspectSourceGaps.locator(".lunar-weekly-event__heading")).toBeVisible();
+    await expect(weeklyAspectSourceGaps.locator(".lunar-weekly-event__body")).toHaveCount(0);
+    await expect(weeklyAspectEvents.locator(".lunar-weekly-event__body")).toHaveCount(weeklyAspectEventCount - 1);
     expect(
       await weeklyAspectEvents.first().evaluate((aspect) => {
         const content = aspect.closest(".lunar-weekly-day__content");

@@ -11,12 +11,14 @@ visibility, grouping, card interaction, or fallback behavior.
 The Sky aspect section is an editorial reading surface, not a calculation
 debugger.
 
-- Every calculated aspect that resolves approved reader copy appears in the
-  normal aspect-card list.
-- Every visible aspect card is clickable and opens its full write-up.
+- Every calculated aspect appears in the normal aspect-card list with its
+  engine facts.
+- Every visible aspect card is clickable and opens its detail page. An
+  interpretation appears only when approved reader copy exists.
 - Aspects keep the established Gifts/Lessons grouping and card treatment.
-- Do not move aspects into a disclosure, accordion, collapsed folder,
-  facts-only list, or alternate card class without explicit product approval.
+- Do not move aspects into a disclosure, accordion, collapsed folder, or
+  alternate card class without explicit product approval. The established
+  aspect row may retain engine facts when interpretation copy is unavailable.
 - Do not infer permission for a UX change from a content migration, review-gate
   change, performance task, or missing exact generated row.
 
@@ -44,8 +46,10 @@ in application provenance rather than `authored`.
 The app should render approved local copy immediately. It may never replace
 owner-approved exact or phrasebook copy with generated prose. A network
 request for generated content must not replace usable specific copy with a
-loading-only or facts-only state. When no approved specific or generated unit
-exists, the aspect fails closed and the card is omitted.
+loading-only state. When no approved specific or generated unit exists, the
+interpretation fails closed. The calculated aspect remains visible through its
+existing factual detail row: bodies, aspect, timing, and orb, with no prose
+body.
 
 ## Content-key rule
 
@@ -83,7 +87,7 @@ Renders the established card list and opens the detail article. React must not:
 - invent interpretation copy;
 - reject a valid resolver result based only on its key prefix;
 - turn review failures into a new information architecture;
-- create a second facts-only aspect collection;
+- create a second facts-only aspect collection outside the established aspect rows;
 - hide approved fallback while exact content hydrates.
 
 ## Source gaps
@@ -109,12 +113,12 @@ Any Sky aspect resolver or UI change must verify all of the following:
 2. Owner-approved sign-specific copy wins over generic exact corpus copy for the matching signs.
 3. Owner-approved exact corpus copy wins over generic phrasebook, generated, and general fallback copy.
 4. Pair/exact phrasebook hooks win over approved generated copy and the general template.
-5. A combination with no approved specific, exact, phrasebook, or generated unit returns `SOURCE_GAP` and renders no card.
+5. A combination with no approved specific, exact, phrasebook, or generated unit returns `SOURCE_GAP`; its established factual detail remains visible without an interpretation body.
 6. The retired `fallback-template/sky.aspect-card` path cannot reach reader output.
 7. Generated sections are never labeled `authored` in application provenance.
 8. Lilith, Chiron, and node combinations exercise approved specific copy or fail closed.
-9. The app contains no unapproved collapsed or facts-only aspect collection.
-10. Clicking an approved specific aspect opens a reader-facing detail article.
+9. The app contains no unapproved collapsed or substitute aspect collection; source-gap rows contain only engine facts.
+10. Clicking any calculated aspect opens its detail page; approved copy appears when available and is otherwise absent.
 11. Generated-content loading or failure leaves approved specific cards visible and does not reveal generic substitute prose.
 12. Typecheck, the production web build, and the content test suite pass.
 
@@ -181,20 +185,23 @@ The failure had three parts:
 At the time, the corrective rule restored the general template. The owner
 superseded that copy-eligibility decision on 2026-08-12 after the template was
 shown to use direct second person on a collective surface. The UX rule remains:
-preserve the established card interaction for every servable aspect. The new
-copy rule is fail closed when no approved specific unit exists; do not replace
-the omitted card with another information architecture.
+preserve the established card interaction for every calculated aspect. The new
+copy rule is fail closed when no approved specific unit exists; retain the
+existing factual detail and do not replace the missing prose with another
+information architecture.
 
 ## Owner ruling: generic compositor retirement, 2026-08-12
 
 The owner authorized the recommended next sequence beginning with failing the
-generic Sky-aspect compositor closed. This changes copy eligibility only. It
-does not authorize new wording, a facts-only substitute, a collapsed list, or
-any other UX change.
+generic Sky-aspect compositor closed. The owner then clarified the visible
+detail contract: if an aspect exists, show the aspect in the details; if no
+write-up exists, do not restore generic prose or weaken the test.
 
 - The collective Sky surface never receives direct-address prose from the
   retired generic compositor.
 - Calendar follows the same aspect-copy eligibility boundary.
 - Approved sign-specific, exact, phrasebook, and generated units retain their
   precedence and behavior.
-- Missing approved copy produces `SOURCE_GAP`; the unavailable card is omitted.
+- Missing approved copy produces `SOURCE_GAP` for interpretation only. The
+  calculated aspect remains visible with its factual title, timing, and orb,
+  and no interpretation paragraph.

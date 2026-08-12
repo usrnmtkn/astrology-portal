@@ -192,6 +192,11 @@ assert.match(appSource, /signSpecific: signAwareSection,[\s\S]*exact: authoredSe
 assert.doesNotMatch(appSource, /fallback: fallbackSection/u);
 assert.match(appSource, /layer: "generated",[\s\S]*tier: "generated-sky-aspect-lint-v1"/u);
 assert.doesNotMatch(appSource, /layer: "authored",[\s\S]{0,120}tier: "generated-sky-aspect-lint-v1"/u);
+assert.doesNotMatch(appSource, /if \(!aspect \|\| normalizeSkyAspectSurface\(/u);
+assert.doesNotMatch(appSource, /if \(mode === "sky" && !normalizedSkySurface\?\.sections\.length\)/u);
+assert.doesNotMatch(appSource, /\.filter\(\(\{ normalized \}\) => normalized\.sections\.length > 0\)/u);
+assert.match(appSource, /const sourceGapAspectRows = isRegistryArticle/u);
+assert.match(appSource, /heading: "Aspect details"/u);
 assert.doesNotMatch(appSource, /All calculated aspects/u);
 assert.doesNotMatch(appSource, /Facts only/u);
 assert.match(adminSource, /type AdminContentSystemFilter = "all" \| "authored" \| "generated" \| "fallback"/u);
