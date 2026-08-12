@@ -2,7 +2,8 @@ import type { ReportDraft, ReportGenerationPayload, ReportValidationIssue } from
 import { reportPromptFromPayload, validateReportDraft } from "./report-generation.js";
 import {
   assertReportEvaluationPacketReady, completeReportUnit, reportEvaluationPacket,
-  reportDraftMovementApplicable, reportUnitCoordinates
+  reportDraftMovementApplicable, reportSentenceSpans, reportUnitSentenceAddresses,
+  sentenceAddressedReportUnit
 } from "./report-evaluation-packet.js";
 import { verifyReportFactLock } from "./report-fact-lock.js";
 import { callReportModel, type ReportModelCall, type ReportModelUsage, writerModelTarget } from "./report-model-client.js";
@@ -41,13 +42,13 @@ export type ReportCritique = {
   applicability: { interpretive_movement: "applicable" | "not_applicable"; reason: string };
   defects: ReportDefect[];
 };
-type ReportColdReadDefect = Omit<ReportDefect, "location" | "sentence_index" | "scope_start" | "scope_end"> & {
-  address_token: string;
+type ReportSentenceAddressedDefect = Omit<ReportDefect, "location" | "sentence_index" | "scope_start" | "scope_end"> & {
+  sentence_ids: string[];
 };
-type ReportColdReadCritique = {
+type ReportSentenceAddressedCritique = {
   result: "no_defects" | "defects";
   applicability: { interpretive_movement: "applicable" | "not_applicable"; reason: string };
-  defects: ReportColdReadDefect[];
+  defects: ReportSentenceAddressedDefect[];
 };
 export type ReportWriterChainCall = {
   stage: "draft" | "critique" | "revise" | "cold_read" | "cold_revise";
@@ -108,34 +109,9 @@ const draftSchema = {
   }
 };
 
-const critiqueSchema = {
-  type: "object", additionalProperties: false, required: ["result", "applicability", "defects"],
-  properties: {
-    result: { type: "string", enum: ["no_defects", "defects"] },
-    applicability: {
-      type: "object", additionalProperties: false,
-      required: ["interpretive_movement", "reason"],
-      properties: {
-        interpretive_movement: { type: "string", enum: ["applicable", "not_applicable"] },
-        reason: { type: "string" }
-      }
-    },
-    defects: { type: "array", items: { type: "object", additionalProperties: false,
-      required: ["id", "category", "location", "sentence_index", "scope_start", "scope_end", "quote", "evidence", "evidence_ids", "instruction"],
-      properties: {
-        id: { type: "string" }, category: { type: "string", enum: [...REPORT_DEFECT_CATEGORIES] },
-        location: { type: "string" }, sentence_index: { type: "integer", minimum: 0 },
-        scope_start: { type: "integer", minimum: 0 }, scope_end: { type: "integer", minimum: 0 },
-        quote: { type: "string" }, evidence: { type: "string" },
-        evidence_ids: { type: "array", items: { type: "string" } }, instruction: { type: "string" }
-      }
-    } }
-  }
-};
-
-function coldReadCritiqueSchema(draft: ReportDraft, movementApplicable: boolean) {
-  const addressTokens = reportUnitCoordinates(draft).map((coordinate) => coordinate.token);
-  if (!addressTokens.length) throw new ReportRevisionScopeError("Cold-read unit has no supplied address tokens.");
+function sentenceAddressedCritiqueSchema(draft: ReportDraft, movementApplicable: boolean) {
+  const sentenceIds = reportUnitSentenceAddresses(draft).map((sentence) => sentence.id);
+  if (!sentenceIds.length) throw new ReportRevisionScopeError("Report unit has no supplied sentence IDs.");
   const categories = movementApplicable
     ? [...REPORT_DEFECT_CATEGORIES]
     : REPORT_DEFECT_CATEGORIES.filter((category) => category !== "interpretive_gap");
@@ -156,10 +132,13 @@ function coldReadCritiqueSchema(draft: ReportDraft, movementApplicable: boolean)
         type: "array",
         items: {
           type: "object", additionalProperties: false,
-          required: ["id", "category", "address_token", "quote", "evidence", "evidence_ids", "instruction"],
+          required: ["id", "category", "sentence_ids", "quote", "evidence", "evidence_ids", "instruction"],
           properties: {
             id: { type: "string" }, category: { type: "string", enum: categories },
-            address_token: { type: "string", enum: addressTokens },
+            sentence_ids: {
+              type: "array", minItems: 1, uniqueItems: true,
+              items: { type: "string", enum: sentenceIds }
+            },
             quote: { type: "string" }, evidence: { type: "string" },
             evidence_ids: { type: "array", items: { type: "string" } }, instruction: { type: "string" }
           }
@@ -200,22 +179,6 @@ Never return flatness or lived_prose as a defect category.`;
 
 function sentences(value: string) {
   return value.match(/[^.!?]+[.!?]+|[^.!?]+$/gu)?.map((sentence) => sentence.trim()).filter(Boolean) ?? [];
-}
-
-type SentenceSpan = { start: number; end: number; text: string };
-
-function sentenceSpans(value: string): SentenceSpan[] {
-  const spans: SentenceSpan[] = [];
-  const matcher = /[^.!?]+[.!?]+|[^.!?]+$/gu;
-  for (const match of value.matchAll(matcher)) {
-    const raw = match[0];
-    const leading = raw.length - raw.trimStart().length;
-    const trailing = raw.length - raw.trimEnd().length;
-    const start = (match.index ?? 0) + leading;
-    const end = (match.index ?? 0) + raw.length - trailing;
-    if (start < end) spans.push({ start, end, text: value.slice(start, end) });
-  }
-  return spans;
 }
 
 function textFields(draft: ReportDraft) {
@@ -306,7 +269,7 @@ function locatedSentences(draft: ReportDraft, needle?: string) {
   const normalized = needle ? normalizedNeedle(needle) : "";
   const matches: Array<{ location: string; sentenceIndex: number; quote: string }> = [];
   for (const [location, value] of textFields(draft)) {
-    for (const [sentenceIndex, span] of sentenceSpans(value).entries()) {
+    for (const [sentenceIndex, span] of reportSentenceSpans(value).entries()) {
       if (!normalized || span.text.toLowerCase().includes(normalized)) {
         matches.push({ location, sentenceIndex, quote: span.text });
       }
@@ -331,7 +294,7 @@ function exactIssueMatches(draft: ReportDraft, issue: MechanicalValidationIssue)
       throw new ReportRevisionScopeError(`Deterministic lint '${issue.code}' has an incomplete sentence coordinate.`);
     }
     const value = textFields(draft).get(issue.location);
-    const span = value === undefined ? undefined : sentenceSpans(value)[issue.sentenceIndex as number];
+    const span = value === undefined ? undefined : reportSentenceSpans(value)[issue.sentenceIndex as number];
     if (!span || span.text !== issue.quote) {
       throw new ReportRevisionScopeError(`Deterministic lint '${issue.code}' does not match its supplied sentence coordinate.`);
     }
@@ -429,7 +392,7 @@ export function mergeOverlappingReportDefects(draft: ReportDraft, defects: Repor
     }
     const scopeStart = Math.min(...group.map((defect) => defect.scope_start));
     const scopeEnd = Math.max(...group.map((defect) => defect.scope_end));
-    const spans = sentenceSpans(fields.get(location) ?? "");
+    const spans = reportSentenceSpans(fields.get(location) ?? "");
     const first = spans[scopeStart];
     const last = spans[scopeEnd];
     if (!first || !last) throw new ReportRevisionScopeError(`Merged replacement scope is outside '${location}'.`);
@@ -472,48 +435,50 @@ function assertReportDefectBounds(fields: Map<string, string>, defect: ReportDef
     || defect.scope_end < defect.scope_start || defect.sentence_index < defect.scope_start || defect.sentence_index > defect.scope_end) {
     throw new ReportRevisionScopeError(`Invalid named scope for '${defect.id}'.`);
   }
-  const spans = sentenceSpans(value);
+  const spans = reportSentenceSpans(value);
   if (!spans[defect.scope_start] || !spans[defect.scope_end]) {
     throw new ReportRevisionScopeError(`Replacement '${defect.id}' references a sentence outside '${defect.location}'.`);
   }
 }
 
-function quoteSentenceRange(value: string, quote: string) {
-  const expected = quote.trim();
-  const spans = sentenceSpans(value);
-  for (let start = 0; start < spans.length; start += 1) {
-    for (let end = start; end < spans.length; end += 1) {
-      if (value.slice(spans[start].start, spans[end].end).trim() === expected) return { start, end };
-    }
-  }
-  return null;
-}
-
-export function normalizeReportColdReadCritique(
+export function normalizeReportSentenceAddressedCritique(
   draft: ReportDraft,
-  critique: ReportColdReadCritique,
+  critique: ReportSentenceAddressedCritique,
   movementApplicable = reportDraftMovementApplicable(draft)
 ): ReportCritique {
-  const coordinates = new Map(reportUnitCoordinates(draft).map((coordinate) => [coordinate.token, coordinate]));
+  const addresses = new Map(reportUnitSentenceAddresses(draft).map((sentence) => [sentence.id, sentence]));
   const defects: ReportDefect[] = [];
   for (const finding of critique.defects) {
     // The dynamic provider schema excludes this category. Suppression here is
     // the fail-safe for mocks or providers that bypass structured validation.
     if (!movementApplicable && finding.category === "interpretive_gap") continue;
-    const coordinate = coordinates.get(finding.address_token);
-    if (!coordinate) {
-      throw new ReportRevisionScopeError(`Cold-read address token '${finding.address_token}' was not supplied.`);
+    if (!Array.isArray(finding.sentence_ids) || !finding.sentence_ids.length) {
+      throw new ReportRevisionScopeError(`Finding '${finding.id}' did not reference a supplied sentence ID.`);
     }
-    const localRange = quoteSentenceRange(coordinate.text, finding.quote);
-    if (!localRange) {
-      throw new ReportRevisionScopeError(`Cold-read quote for '${finding.id}' is not an exact sentence span at '${finding.address_token}'.`);
+    const uniqueIds = [...new Set(finding.sentence_ids)];
+    if (uniqueIds.length !== finding.sentence_ids.length) {
+      throw new ReportRevisionScopeError(`Finding '${finding.id}' repeated a sentence ID.`);
     }
-    const scopeStart = coordinate.sentenceStartIndex + localRange.start;
-    const scopeEnd = coordinate.sentenceStartIndex + localRange.end;
+    const selected = uniqueIds.map((id) => {
+      const sentence = addresses.get(id);
+      if (!sentence) throw new ReportRevisionScopeError(`Sentence ID '${id}' for finding '${finding.id}' was not supplied.`);
+      return sentence;
+    }).sort((left, right) => left.sentenceIndex - right.sentenceIndex);
+    const location = selected[0].location;
+    if (selected.some((sentence) => sentence.location !== location)) {
+      throw new ReportRevisionScopeError(`Finding '${finding.id}' crosses report fields.`);
+    }
+    for (let index = 1; index < selected.length; index += 1) {
+      if (selected[index].sentenceIndex !== selected[index - 1].sentenceIndex + 1) {
+        throw new ReportRevisionScopeError(`Finding '${finding.id}' references a non-contiguous sentence range.`);
+      }
+    }
+    const scopeStart = selected[0].sentenceIndex;
+    const scopeEnd = selected[selected.length - 1].sentenceIndex;
     defects.push({
       id: finding.id,
       category: finding.category,
-      location: coordinate.location,
+      location,
       sentence_index: scopeStart,
       scope_start: scopeStart,
       scope_end: scopeEnd,
@@ -531,6 +496,8 @@ export function normalizeReportColdReadCritique(
   };
   return { result: defects.length ? "defects" : "no_defects", applicability, defects };
 }
+
+export const normalizeReportColdReadCritique = normalizeReportSentenceAddressedCritique;
 
 function setTextField(draft: ReportDraft, location: string, value: string) {
   if (["headline", "tldr", "summary", "body", "action", "timing"].includes(location)) {
@@ -572,7 +539,7 @@ export function spliceReportRevision(draft: ReportDraft, defects: ReportDefect[]
     }
     const value = fields.get(defect.location);
     if (value === undefined) throw new ReportRevisionScopeError(`Replacement location '${defect.location}' is not present.`);
-    const spans = sentenceSpans(value);
+    const spans = reportSentenceSpans(value);
     const first = spans[defect.scope_start];
     const last = spans[defect.scope_end];
     if (!first || !last) throw new ReportRevisionScopeError(`Replacement '${defect.id}' references a sentence outside '${defect.location}'.`);
@@ -722,7 +689,8 @@ export async function runReportWriterChain(input: {
       ...validateReportDraft(draft, payload),
       ...verifyReportFactLock(draft, payload.frozenFacts).issues
     ];
-    const critiqueResult = await callModel<ReportCritique>({
+    const movementApplicable = reportDraftMovementApplicable(draft);
+    const critiqueResult = await callModel<ReportSentenceAddressedCritique>({
       ...target,
       prompt: [
         critiquePrompt.text,
@@ -731,8 +699,8 @@ export async function runReportWriterChain(input: {
         `NO_CLEVERNESS_TAX_OWNER_RULING\n${payload.noClevernessRuling.text}`,
         `OWNER_REVIEW_EVIDENCE\n${payload.ownerReviewEvidence.text}`,
         FLATNESS_DIAGNOSTIC_ROUTING,
-        `PRODUCTION_LOCATION_CONTRACT\n${packet.locationContract}`,
-        `COMPLETE_UNIT\n${packet.completeUnit}`,
+        "SENTENCE_ADDRESS_CONTRACT\nEvery finding must reference one or more supplied sentence_ids. The runtime owns source segmentation and resolves those IDs to exact replacement spans. quote is informational only and is never used as an address or compared for byte equality.",
+        `SENTENCE_ADDRESSED_UNIT\n${sentenceAddressedReportUnit(draft)}`,
         `UNIT_FACTS\n${JSON.stringify(packet.unitFacts)}`,
         `OWNER_COMPARISON_SET\n${JSON.stringify(packet.ownerComparisonSet)}`,
         `TARGET_FUNCTIONS\n${JSON.stringify(packet.targetFunctions)}`,
@@ -740,18 +708,15 @@ export async function runReportWriterChain(input: {
         `VALIDATOR_RESULTS\n${JSON.stringify(deterministicIssues)}`
       ].join("\n\n"),
       schemaName: "report_unit_critique",
-      schema: critiqueSchema
+      schema: sentenceAddressedCritiqueSchema(draft, movementApplicable),
+      validateResponse: (value) => {
+        normalizeReportSentenceAddressedCritique(draft, value, movementApplicable);
+      }
     });
     calls.push({ stage: "critique", model: critiqueResult.model, provider: critiqueResult.provider, usage: critiqueResult.usage });
-    const movementApplicable = reportDraftMovementApplicable(draft);
+    const normalizedCritique = normalizeReportSentenceAddressedCritique(draft, critiqueResult.value, movementApplicable);
     critique = {
-      ...critiqueResult.value,
-      applicability: {
-        interpretive_movement: movementApplicable ? "applicable" : "not_applicable",
-        reason: movementApplicable
-          ? "The complete unit contains at least two substantive prose paragraphs."
-          : "The complete unit contains fewer than two substantive prose paragraphs."
-      }
+      ...normalizedCritique
     };
     if (!movementApplicable && critique.defects.some((defect) => defect.category === "interpretive_gap")) {
       throw new Error("V3 critique returned interpretive_gap for a unit where interpretive movement is not applicable.");
@@ -781,29 +746,29 @@ export async function runReportWriterChain(input: {
   // validator output, and drafting context are excluded so none can rescue
   // prose that a reader cannot understand cold.
   const coldMovementApplicable = reportDraftMovementApplicable(revised);
-  const coldCoordinates = reportUnitCoordinates(revised);
+  const coldSentenceAddresses = reportUnitSentenceAddresses(revised);
   let coldCritique = resumable?.coldCritique;
   if (!coldCritique) {
-    const coldResult = await callModel<ReportColdReadCritique>({
+    const coldResult = await callModel<ReportSentenceAddressedCritique>({
       ...target,
       prompt: [
         payload.coldProseRuling.text,
-        "Read only the rendered unit below. Return findings only; never rewrite. Every finding must copy address_token exactly from one supplied [LOCATION=...; PARAGRAPH_INDEX=...] token. These tokens are coordinates, not prose or drafting context. Quote the exact smallest sentence span at that coordinate. Never invent, combine, paraphrase, or extend an address token.",
+        "Read only the rendered unit below. Return findings only; never rewrite. Every finding must copy one or more sentence_ids exactly from the supplied [S1], [S2] sentence labels. The runtime owns segmentation and resolves sentence IDs to exact source spans. quote is informational only and is never validated against source text.",
         coldMovementApplicable
           ? "Interpretive movement is applicable. Route abrupt or disconnected movement to interpretive_gap."
           : "Interpretive movement is not applicable. Do not return interpretive_gap. Route an actual phrasing or density problem to its supported category; otherwise return no finding.",
         "Route vague referents, assembled or formal language to unnatural_phrasing or owner_voice_drift; repeated setup or explanation-after-landing to density_violation.",
-        `SUPPLIED_ADDRESS_TOKENS\n${coldCoordinates.map((coordinate) => coordinate.token).join("\n")}`,
-        `RENDERED_UNIT\n${completeReportUnit(revised)}`
+        `SUPPLIED_SENTENCE_IDS\n${coldSentenceAddresses.map((sentence) => sentence.id).join("\n")}`,
+        `SENTENCE_ADDRESSED_UNIT\n${sentenceAddressedReportUnit(revised)}`
       ].join("\n\n"),
       schemaName: "report_unit_cold_read",
-      schema: coldReadCritiqueSchema(revised, coldMovementApplicable),
+      schema: sentenceAddressedCritiqueSchema(revised, coldMovementApplicable),
       validateResponse: (value) => {
-        normalizeReportColdReadCritique(revised, value, coldMovementApplicable);
+        normalizeReportSentenceAddressedCritique(revised, value, coldMovementApplicable);
       }
     });
     calls.push({ stage: "cold_read", model: coldResult.model, provider: coldResult.provider, usage: coldResult.usage });
-    coldCritique = normalizeReportColdReadCritique(revised, coldResult.value, coldMovementApplicable);
+    coldCritique = normalizeReportSentenceAddressedCritique(revised, coldResult.value, coldMovementApplicable);
     await persist({ completedStage: "cold_read", draft, critique, revised, coldCritique, calls });
   }
   if (coldCritique.result !== "no_defects" && coldCritique.defects.length > 0) {
