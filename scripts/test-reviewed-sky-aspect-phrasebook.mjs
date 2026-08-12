@@ -137,37 +137,66 @@ assert.match(
   /^A petty argument carries the weight of months of unspoken words\./u
 );
 
-const uncovered = renderNodeSkyAspectCard({ a: "mars", b: "jupiter", aspect: "square" });
-assert.equal(uncovered.contentKey, undefined);
-assert.equal(uncovered.templateKey, "fallback-template/sky.aspect-card");
-assert.match(uncovered.body, /Mars/u);
-assert.match(uncovered.body, /Jupiter/u);
+assert.throws(
+  () => renderNodeSkyAspectCard({ a: "mars", b: "jupiter", aspect: "square" }),
+  /SOURCE_GAP: no approved collective Sky aspect copy/u
+);
+assert.throws(
+  () => browserRenderer.renderSkyAspectCard({ a: "mars", b: "jupiter", aspect: "square" }),
+  /SOURCE_GAP: no approved collective Sky aspect copy/u
+);
 
+let canonicalPhrasebookCount = 0;
+let canonicalExactCount = 0;
+const canonicalSourceGaps = [];
 for (const row of canonicalMatrix.aspects) {
   const [a, aspect, b, aSign, bSign] = row.key.split("|");
   const facts = { a, b, aspect, aSign, bSign };
-  const nodeResult = renderNodeSkyAspectCard(facts);
-  const browserResult = browserRenderer.renderSkyAspectCard(facts);
+  const exact = exactTransitRecords.find((record) => record.aspect === aspect && (
+    (record.transiting === a && record.other === b) || (record.transiting === b && record.other === a)
+  ));
 
-  assert.ok(nodeResult.body, `${row.key} must remain available to non-reader fallback tooling`);
-  assert.equal(browserResult.body, nodeResult.body, `${row.key} browser and Node fallback tooling diverged`);
+  try {
+    const nodeResult = renderNodeSkyAspectCard(facts);
+    const browserResult = browserRenderer.renderSkyAspectCard(facts);
+    assert.ok(nodeResult.contentKey?.startsWith("fallback-hook/sky-aspect-"), `${row.key} reached non-specific package copy`);
+    assert.equal(browserResult.body, nodeResult.body, `${row.key} browser and Node phrasebook copy diverged`);
+    canonicalPhrasebookCount += 1;
+  } catch (error) {
+    assert.match(String(error), /SOURCE_GAP: no approved collective Sky aspect copy/u, `${row.key} failed unexpectedly`);
+    assert.throws(() => browserRenderer.renderSkyAspectCard(facts), /SOURCE_GAP: no approved collective Sky aspect copy/u);
+    if (exact) canonicalExactCount += 1;
+    else canonicalSourceGaps.push(row.key);
+  }
 }
+assert.equal(canonicalPhrasebookCount, 11);
+assert.equal(canonicalExactCount, 8);
+assert.deepEqual(canonicalSourceGaps, [
+  "moon|sextile|chiron|pisces|taurus",
+  "moon|conjunction|north-node|pisces|aquarius"
+]);
 
 const appSource = fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");
 const adminSource = fs.readFileSync(new URL("../apps/admin/src/GeneratedContentAdminDashboard.tsx", import.meta.url), "utf8");
 const adminSurfaceMap = fs.readFileSync(new URL("../apps/admin/src/writingSurfaceSourceMap.ts", import.meta.url), "utf8");
-assert.match(appSource, /function fallbackSkyAspectWritingSection\(/u);
+assert.doesNotMatch(appSource, /function fallbackSkyAspectWritingSection\(/u);
 assert.match(appSource, /function approvedExactSkyAspectWritingSection\(/u);
 assert.match(appSource, /function reviewedSkyAspectWritingSection\(/u);
 assert.match(appSource, /sourceKeys: \[rendered\.contentKey\]/u);
-assert.match(appSource, /sourceKeys: \[rendered\.templateKey\]/u);
+assert.doesNotMatch(appSource, /sourceKeys: \[rendered\.templateKey\]/u);
 assert.match(appSource, /const signAwareSection = reviewedSkyAspectWritingSection\(aspect, positions, "sign-aware"\)/u);
 assert.match(appSource, /const authoredSection = approvedExactSkyAspectWritingSection\(aspect, positions\)/u);
 assert.match(appSource, /reviewedSkyAspectWritingSection\(aspect, positions, "generic"\)/u);
 assert.match(appSource, /const selectedSection = selectSkyAspectCopyByPrecedence\(\{/u);
-assert.match(appSource, /signSpecific: signAwareSection,[\s\S]*exact: authoredSection,[\s\S]*phrasebook: reviewedSection,[\s\S]*generated: generatedSection,[\s\S]*fallback: fallbackSection/u);
+assert.match(appSource, /signSpecific: signAwareSection,[\s\S]*exact: authoredSection,[\s\S]*phrasebook: reviewedSection,[\s\S]*generated: generatedSection/u);
+assert.doesNotMatch(appSource, /fallback: fallbackSection/u);
 assert.match(appSource, /layer: "generated",[\s\S]*tier: "generated-sky-aspect-lint-v1"/u);
 assert.doesNotMatch(appSource, /layer: "authored",[\s\S]{0,120}tier: "generated-sky-aspect-lint-v1"/u);
+assert.doesNotMatch(appSource, /if \(!aspect \|\| normalizeSkyAspectSurface\(/u);
+assert.doesNotMatch(appSource, /if \(mode === "sky" && !normalizedSkySurface\?\.sections\.length\)/u);
+assert.doesNotMatch(appSource, /\.filter\(\(\{ normalized \}\) => normalized\.sections\.length > 0\)/u);
+assert.match(appSource, /const sourceGapAspectRows = isRegistryArticle/u);
+assert.match(appSource, /heading: "Aspect details"/u);
 assert.doesNotMatch(appSource, /All calculated aspects/u);
 assert.doesNotMatch(appSource, /Facts only/u);
 assert.match(adminSource, /type AdminContentSystemFilter = "all" \| "authored" \| "generated" \| "fallback"/u);
@@ -177,6 +206,7 @@ assert.match(adminSource, /if \(role === "generated-content" \|\| role === "lega
 assert.match(adminSource, /if \(status === "LIVE"\) return "Published"/u);
 assert.match(adminSource, /Published maps to LIVE and means reader-eligible within this provenance system/u);
 assert.match(adminSurfaceMap, /visibleLayerOrder: \["source-grounded", "generated", "madlib-fallback"\],[\s\S]*reviewed sign-specific copy first/u);
+assert.doesNotMatch(adminSurfaceMap, /finally the general fallback frame/u);
 
 const runtimeSource = fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3Runtime.ts", import.meta.url), "utf8");
 assert.match(runtimeSource, /source-rows\/sky-aspect-phrasebook-v1\.json/u);
