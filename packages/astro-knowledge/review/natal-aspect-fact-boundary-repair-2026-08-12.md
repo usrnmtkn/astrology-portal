@@ -12,7 +12,8 @@ Natal reader components treated the incoming `SkySnapshot.aspects` array as auth
 
 `apps/web/src/services/natalAspectFacts.ts` establishes one fail-closed reader boundary. It:
 
-- accepts only canonical natal point positions with finite longitudes;
+- accepts only canonical natal points with a finite fixed position;
+- reconstructs the same fixed longitude from a valid sign and degree when a legacy saved chart omits the redundant absolute-longitude field;
 - recomputes aspects from those fixed longitudes with the canonical sky-aspect engine;
 - canonicalizes the node axis; and
 - deliberately ignores every incoming aspect record.
