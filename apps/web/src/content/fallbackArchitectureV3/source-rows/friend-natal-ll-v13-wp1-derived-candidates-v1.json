@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "friend-natal-ll-v13-wp1-derived-candidates-v1",
+  "governance": {
+    "source": "owner-approved LL V13 WP-1 placement rows",
+    "reviewGated": true,
+    "servingAuthorized": false,
+    "autoPublish": false,
+    "writerPromotion": false,
+    "failClosedUntilAuthoredAndOwnerReviewed": true
+  },
+  "rows": []
+}

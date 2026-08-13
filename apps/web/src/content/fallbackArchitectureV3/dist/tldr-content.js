@@ -1,4 +1,4 @@
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
+// resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -345,7 +345,7 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
+// resolver/renderTransitSynastry.browser.ts
 var TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
 function skyPlacementKeyDates({
   planet,
@@ -2216,7 +2216,7 @@ ${passHook}`;
   return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/knowledgeMatrixV9.browser.ts
+// resolver/knowledgeMatrixV9.browser.ts
 var EXCLUDED_PREFIX = "[EXCLUDE FROM FALLBACK]";
 var OWNER_APPROVED = "owner-approved";
 function normalizedKeyPart(value) {
@@ -2317,11 +2317,12 @@ function createKnowledgeMatrixV9Resolver(manifest, rowsFile, buildReport) {
   });
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/knowledgeMatrixV13.browser.ts
+// resolver/knowledgeMatrixV13.browser.ts
 var ALLOWED_GOVERNANCE = [
   "owner-approved-v13-direct-language",
   "owner-lived-experience-ll-v9-owner-approved",
-  "owner-approved-clarity-fix-ll-v12"
+  "owner-approved-clarity-fix-ll-v12",
+  "owner-approved-v13-wp1"
 ];
 function normalizeObject(value) {
   return String(value ?? "").trim().toLowerCase().replaceAll("_", "-").replace(/\s+/gu, "-");
@@ -2341,18 +2342,14 @@ function toResult(row, sourceVersion) {
   };
 }
 function assertExactSchema2(file) {
-  if (file.schema !== "tldrastro.knowledge-matrix.rows.v13" || file.version !== "v13-direct-language-owner-approved" || file.approvedAt !== "2026-08-10" || file.governance.authorityField !== "ownerApproved" || file.governance.requiredValue !== true || file.counts.sourceRows !== 1014 || file.counts.ownerApprovedRows !== 301 || file.counts.excludedUnapprovedRows !== 713 || file.counts.clarityStrictV13Rows !== 195 || file.rows.length !== 301) {
+  if (file.schema !== "tldrastro.knowledge-matrix.rows.v13" || file.version !== "v13-direct-language-owner-approved" || file.approvedAt !== "2026-08-10" || file.governance.authorityField !== "ownerApproved" || file.governance.requiredValue !== true || file.counts.sourceRows !== 1014 || file.counts.ownerApprovedRows < 301 || file.counts.ownerApprovedRows > 1014 || file.counts.excludedUnapprovedRows !== 1014 - file.counts.ownerApprovedRows || file.counts.clarityStrictV13Rows !== 195 || file.rows.length !== file.counts.ownerApprovedRows) {
     throw new Error("Knowledge matrix V13 is not the canonical owner-approved package.");
   }
-  if (JSON.stringify(file.counts.bySheet) !== JSON.stringify({
-    PlacementMeanings: 113,
-    AspectMeanings: 165,
-    NodesPhasesFortune: 23
-  }) || JSON.stringify(file.counts.byGovernance) !== JSON.stringify({
-    "owner-approved-v13-direct-language": 194,
-    "owner-lived-experience-ll-v9-owner-approved": 106,
-    "owner-approved-clarity-fix-ll-v12": 1
-  })) {
+  const expectedBySheet = Object.fromEntries(
+    ["PlacementMeanings", "AspectMeanings", "NodesPhasesFortune"].map((sheet) => [sheet, file.rows.filter((row) => row.sheet === sheet).length])
+  );
+  const wp1Rows = file.rows.filter((row) => row.governance === "owner-approved-v13-wp1").length;
+  if (JSON.stringify(file.counts.bySheet) !== JSON.stringify(expectedBySheet) || file.counts.byGovernance["owner-approved-v13-direct-language"] !== 194 || file.counts.byGovernance["owner-lived-experience-ll-v9-owner-approved"] !== 106 || file.counts.byGovernance["owner-approved-clarity-fix-ll-v12"] !== 1 || (file.counts.byGovernance["owner-approved-v13-wp1"] ?? 0) !== wp1Rows || wp1Rows !== file.rows.length - 301) {
     throw new Error("Knowledge matrix V13 owner-approved counts do not match the canonical workbook.");
   }
   if (!file.governance.discardedPath.includes("Gemini") || !file.governance.discardedPath.includes("blind-edit")) {
@@ -2364,7 +2361,7 @@ function createKnowledgeMatrixV13Resolver(file) {
   const byContentKey = /* @__PURE__ */ new Map();
   const byWorkbookKey = /* @__PURE__ */ new Map();
   for (const row of file.rows) {
-    if (row.ownerApproved !== true || row.authorship !== "owner_authored" || !ALLOWED_GOVERNANCE.includes(row.governance) || !row.copy || !row.contentKey || !/^[a-f0-9]{64}$/u.test(row.payloadSha256) || row.workbookProvenance.path !== file.sourceWorkbook || row.workbookProvenance.sheet !== row.sheet || row.workbookRow < 2) {
+    if (row.ownerApproved !== true || row.authorship !== "owner_authored" || !ALLOWED_GOVERNANCE.includes(row.governance) || !row.copy || !row.contentKey || !/^[a-f0-9]{64}$/u.test(row.payloadSha256) || !row.workbookProvenance.path || (row.governance === "owner-approved-v13-wp1" ? row.workbookProvenance.sheet !== "Candidates132" : row.workbookProvenance.path !== file.sourceWorkbook || row.workbookProvenance.sheet !== row.sheet) || row.workbookRow < 2) {
       throw new Error(`Knowledge matrix V13 row is incomplete or unauthorized: ${row.sheet}/${row.key}`);
     }
     if (byContentKey.has(row.contentKey) || byWorkbookKey.has(row.key)) {
@@ -2409,7 +2406,7 @@ function createKnowledgeMatrixV13Resolver(file) {
   });
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
+// resolver/index.browser.ts
 var PACKAGE_VERSION = "v3-2026-08-12b";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {

@@ -1,7 +1,8 @@
 export type KnowledgeMatrixV13Governance =
   | "owner-approved-v13-direct-language"
   | "owner-lived-experience-ll-v9-owner-approved"
-  | "owner-approved-clarity-fix-ll-v12";
+  | "owner-approved-clarity-fix-ll-v12"
+  | "owner-approved-v13-wp1";
 
 export type KnowledgeMatrixV13Row = {
   sheet: "PlacementMeanings" | "AspectMeanings" | "NodesPhasesFortune";
@@ -17,20 +18,21 @@ export type KnowledgeMatrixV13Row = {
   workbookProvenance: {
     path: string;
     sheet: string;
-    keyCell: string;
-    copyCell: string;
-    governanceCell: string;
-    ownerApprovedCell: string;
-    category: string | null;
-    themes: string | null;
-    pageRef: string | null;
+    row?: number;
+    keyCell?: string;
+    copyCell?: string;
+    governanceCell?: string;
+    ownerApprovedCell?: string;
+    category?: string | null;
+    themes?: string | null;
+    pageRef?: string | null;
   };
 };
 
 export type KnowledgeMatrixV13File = {
   schema: "tldrastro.knowledge-matrix.rows.v13";
   version: "v13-direct-language-owner-approved";
-  approvedAt: "2026-08-10";
+  approvedAt: string;
   sourceWorkbook: string;
   sourceWorkbookSha256: string;
   governance: {
@@ -86,7 +88,8 @@ export type KnowledgeMatrixV13Resolver = {
 const ALLOWED_GOVERNANCE: readonly KnowledgeMatrixV13Governance[] = [
   "owner-approved-v13-direct-language",
   "owner-lived-experience-ll-v9-owner-approved",
-  "owner-approved-clarity-fix-ll-v12"
+  "owner-approved-clarity-fix-ll-v12",
+  "owner-approved-v13-wp1"
 ];
 
 function normalizeObject(value: unknown) {
@@ -117,24 +120,24 @@ function assertExactSchema(file: KnowledgeMatrixV13File) {
     || file.governance.authorityField !== "ownerApproved"
     || file.governance.requiredValue !== true
     || file.counts.sourceRows !== 1014
-    || file.counts.ownerApprovedRows !== 301
-    || file.counts.excludedUnapprovedRows !== 713
+    || file.counts.ownerApprovedRows < 301
+    || file.counts.ownerApprovedRows > 1014
+    || file.counts.excludedUnapprovedRows !== 1014 - file.counts.ownerApprovedRows
     || file.counts.clarityStrictV13Rows !== 195
-    || file.rows.length !== 301
+    || file.rows.length !== file.counts.ownerApprovedRows
   ) {
     throw new Error("Knowledge matrix V13 is not the canonical owner-approved package.");
   }
-  if (
-    JSON.stringify(file.counts.bySheet) !== JSON.stringify({
-      PlacementMeanings: 113,
-      AspectMeanings: 165,
-      NodesPhasesFortune: 23
-    })
-    || JSON.stringify(file.counts.byGovernance) !== JSON.stringify({
-      "owner-approved-v13-direct-language": 194,
-      "owner-lived-experience-ll-v9-owner-approved": 106,
-      "owner-approved-clarity-fix-ll-v12": 1
-    })
+  const expectedBySheet = Object.fromEntries(
+    ["PlacementMeanings", "AspectMeanings", "NodesPhasesFortune"].map((sheet) => [sheet, file.rows.filter((row) => row.sheet === sheet).length])
+  );
+  const wp1Rows = file.rows.filter((row) => row.governance === "owner-approved-v13-wp1").length;
+  if (JSON.stringify(file.counts.bySheet) !== JSON.stringify(expectedBySheet)
+    || file.counts.byGovernance["owner-approved-v13-direct-language"] !== 194
+    || file.counts.byGovernance["owner-lived-experience-ll-v9-owner-approved"] !== 106
+    || file.counts.byGovernance["owner-approved-clarity-fix-ll-v12"] !== 1
+    || (file.counts.byGovernance["owner-approved-v13-wp1"] ?? 0) !== wp1Rows
+    || wp1Rows !== file.rows.length - 301
   ) {
     throw new Error("Knowledge matrix V13 owner-approved counts do not match the canonical workbook.");
   }
@@ -155,8 +158,10 @@ export function createKnowledgeMatrixV13Resolver(file: KnowledgeMatrixV13File): 
       || !row.copy
       || !row.contentKey
       || !/^[a-f0-9]{64}$/u.test(row.payloadSha256)
-      || row.workbookProvenance.path !== file.sourceWorkbook
-      || row.workbookProvenance.sheet !== row.sheet
+      || !row.workbookProvenance.path
+      || (row.governance === "owner-approved-v13-wp1"
+        ? row.workbookProvenance.sheet !== "Candidates132"
+        : row.workbookProvenance.path !== file.sourceWorkbook || row.workbookProvenance.sheet !== row.sheet)
       || row.workbookRow < 2
     ) {
       throw new Error(`Knowledge matrix V13 row is incomplete or unauthorized: ${row.sheet}/${row.key}`);
