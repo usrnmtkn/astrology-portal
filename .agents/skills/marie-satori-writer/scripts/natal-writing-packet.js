@@ -7,7 +7,7 @@ const path = require("path");
 const { buildIndex, repoRoot } = require("./build-voice-index.js");
 
 const packageRoot = path.join(repoRoot, "packages", "astro-knowledge");
-const PACKET_VERSION = "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1";
+const PACKET_VERSION = "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1";
 const MIN_PASSAGES = 4;
 const MAX_PASSAGES = 6;
 const MIN_SOURCE_ROWS = 3;
@@ -18,6 +18,7 @@ const SOFT_ASPECTS = new Set(["sextile", "trine"]);
 const HARD_ASPECTS = new Set(["square", "opposition", "quincunx", "semisquare", "sesquisquare"]);
 const STANDARD_PATHS = {
   mechanism: "tldr-astro-phrasebank/TLDR-AUTHOR-FROM-MECHANISM-RULING-OWNER.md",
+  wholePassage: "tldr-astro-phrasebank/TLDR-AUTHOR-FROM-MECHANISM-WHOLE-PASSAGE-CLARIFICATION-OWNER.md",
   delineation: "tldr-astro-phrasebank/TLDR-NATAL-PLACEMENT-DELINEATION-STANDARD-OWNER.md",
   corrections: "docs/writing/OWNER_CORRECTIONS.md",
   editorial: "tldr-astro-phrasebank/TLDR-BATCH-EDITORIAL-STANDARD-V2.md"
