@@ -8,8 +8,8 @@ import { readInlineXlsxSheet } from "./lib/read-inline-xlsx.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const workbookRelativePath = "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx";
-const exportRelativePath = "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json";
-const lockedRelativePath = "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json";
+const exportRelativePath = "packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json";
+const lockedRelativePath = "packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json";
 const publicLockedRelativePath = "apps/web/public/content/knowledge-matrix-v13/v13-direct-language-owner-approved/knowledge-matrix-v13-owner-approved-locked.json";
 const sourceRowsRelativePath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
 const manifestRelativePath = "packages/astro-knowledge/review/ll-matrix-v13-runtime-manifest.json";

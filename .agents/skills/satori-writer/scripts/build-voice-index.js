@@ -7,7 +7,7 @@ const path = require("path");
 
 const repoRoot = path.resolve(__dirname, "../../../..");
 const packageRoot = path.join(repoRoot, "packages", "astro-knowledge");
-const writerRoot = path.join(packageRoot, "voice", "tldr-astro", "marie-satori-writer");
+const writerRoot = path.join(packageRoot, "voice", "tldr-astro", "satori-writer");
 const ownerCorpusRoot = path.join(packageRoot, "voice", "tldr-astro", "fixtures", "sky-article-longform", "owner-corpus");
 const activeOwnerRoot = path.dirname(ownerCorpusRoot);
 const outputPath = path.join(writerRoot, "voice-index.json");
@@ -598,7 +598,7 @@ function buildIndex() {
   }
   return {
     schemaVersion: 1,
-    indexId: "marie-satori-governed-voice-index-v1",
+    indexId: "satori-governed-voice-index-v1",
     generatedAt: "2026-08-02T00:00:00.000Z",
     authorityPolicy: relative(path.join(writerRoot, "authority-policy.json")),
     summary: {

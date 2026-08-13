@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tldrastro.local/schema/marie-satori-voice-index.schema.json",
+  "$id": "https://tldrastro.local/schema/satori-voice-index.schema.json",
   "type": "object",
   "required": ["schemaVersion", "indexId", "generatedAt", "authorityPolicy", "summary", "entries"],
   "properties": {

@@ -96,7 +96,7 @@ Per-unit prompts (extending `buildPrompt()` + style guide), each grounded in the
 - `year_ahead_season` ×4–5: paragraph 1 = natal pattern backstory (grounded in the natal placements the season's headline transit activates); paragraph 2 = forecast with directives. Hard rule: prose may not name planets/aspects — the attribution line does that.
 - `year_ahead_key_date` ×~20: 2–3 sentences each, category-toned.
 
-All units flow through the existing editorial gates (`evaluateEditorialCoherence`, banned phrases) and land as `needs_review` per `AGENTS.md`; the marie-satori-writer skill governs the copy pass. Budget real owner-review time: a full report is ~25 units.
+All units flow through the existing editorial gates (`evaluateEditorialCoherence`, banned phrases) and land as `needs_review` per `AGENTS.md`; the satori-writer skill governs the copy pass. Budget real owner-review time: a full report is ~25 units.
 
 ### 4.3 UI
 

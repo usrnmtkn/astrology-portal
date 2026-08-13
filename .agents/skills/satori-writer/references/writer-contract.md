@@ -1,4 +1,4 @@
-# Marie Satori writer contract
+# Satori writer contract
 
 ## Purpose
 
@@ -49,9 +49,17 @@ Do not confuse simplicity with flatness. A simple sentence is strong when it nam
 
 ## Current Sky contract
 
-- Use `we`, `someone`, a named group, or a concrete collective subject.
-- Never use the generic noun `people`; name who or what is actually acting.
-- Never use `you`, `your`, `yours`, `yourself`, or `yourselves`.
+SKY PAGE ADDRESS (owner ruling 2026-08-12): sky placement
+pages speak TO the reader. Direct address ("you") is allowed and wanted.
+NOT wanted: breaking the fourth wall, no narrator commentary about the
+writing itself, no "I'll be honest with you," no meta-asides about writing
+a transit. The voice addresses the reader's life, never the page's making.
+Third-person observation stays available for lived scenes; the two mix as
+the writing needs. This supersedes third-person-only for collective sky
+placement pages.
+
+- Mix direct address with third-person observation as the article needs.
+- Never use the generic noun `people` merely to avoid direct address; name who or what is actually acting when specificity matters.
 - Keep timing proportional to the transit.
 - A qualitative, non-numeric subperiod such as `a few months in`, `early in the transit`, or `by midyear` may trace to a reviewed residency fact only when it cannot exceed that residency.
 - Numeric or date-like subperiods such as `four months in`, `in March`, or `by the 15th` require an explicit engine fact or render token.
@@ -80,7 +88,7 @@ The engine owns the headline, date range, cycle fact line, dates, and approved a
 - Treat supplied OWNER FOUNDATION LINES in a `harvest_mode: matched` packet as the only source for the turn toward the reader. Adapt at most one; verbatim or near-verbatim use is allowed. If the packet says `harvest_mode: none_found`, proceed without a warmth beat and do not invent one.
 - In a full card, use one warmth sentence after the shadow or cost, as the final or penultimate sentence. Never add a second warmth beat or conclusion.
 - In a TLDR line or short preview, use `harvest_mode: vocabulary_only`; foundation lines affect word choice but are not inserted.
-- Current Sky uses the packet's minimally collectivized lines. Natal, transit-to-natal, and synastry aspect surfaces may preserve the owner's second person.
+- Current Sky may retain or adapt owner-authored direct address when it speaks to the reader's life and does not break the fourth wall. Natal, transit-to-natal, and synastry aspect surfaces may preserve the owner's second person.
 - Record `warmthSource: {sourceArticleId, originalLine, usedForm}` and the `owner-corpus-derived` evidence label whenever a foundation line is used. Neither field grants approval.
 
 ## Internal drafting process
@@ -135,7 +143,7 @@ At article level require:
 - a behavioral turn with consequence;
 - one ending that lands inside the consequence rather than assigning a task;
 - moves with pressure, choice, or consequence;
-- no Current Sky second person;
+- direct address and third-person observation may mix without narrator commentary or fourth-wall breaks;
 - natural language over polish.
 - no advocacy-default subject matter unsupported by the astrology and owner evidence;
 - warmth is preserved when changing an unsupported lived domain.

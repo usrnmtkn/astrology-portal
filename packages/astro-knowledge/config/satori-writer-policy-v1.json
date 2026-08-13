@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyId": "marie-satori-writer-policy-v1",
+  "policyId": "satori-writer-policy-v1",
   "lane": {
     "laneId": "writer:sky-placement",
     "role": "writer",

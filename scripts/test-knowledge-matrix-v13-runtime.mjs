@@ -23,7 +23,8 @@ import { readInlineXlsxSheet } from "./lib/read-inline-xlsx.mjs";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const workbookRelativePath = "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx";
 const workbookPath = path.join(repoRoot, workbookRelativePath);
-const lockedRelativePath = "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json";
+const lockedRelativePath = "packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json";
+const approvalRecordRelativePath = "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json";
 const publicRelativePath = "apps/web/public/content/knowledge-matrix-v13/v13-direct-language-owner-approved/knowledge-matrix-v13-owner-approved-locked.json";
 const lockedPath = path.join(repoRoot, lockedRelativePath);
 const publicPath = path.join(repoRoot, publicRelativePath);
@@ -109,7 +110,7 @@ for (const row of locked.rows) {
   assert.equal(servingRow.reader_only, true);
   assert.equal(servingRow.render_policy, "reader-only-exact-lived-v1");
   assert.equal(servingRow.approval?.approvalLevel, "exact_owner_approved");
-  assert.equal(servingRow.approval?.recordPath, lockedRelativePath);
+  assert.equal(servingRow.approval?.recordPath, approvalRecordRelativePath);
   assert.equal(servingRow.approval?.payloadSha256, row.payloadSha256);
   assert.equal(servingRow.source_workbook_row, row.workbookRow);
   assert.equal(servingRow.source_workbook_sha256, locked.sourceWorkbookSha256);

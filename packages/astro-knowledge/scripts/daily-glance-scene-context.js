@@ -6,7 +6,7 @@ const path = require("path");
 const packageRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(packageRoot, "..", "..");
 const defaultRegistryPath = path.join(packageRoot, "config", "daily-glance-scene-licenses-v1.json");
-const llMatrixPath = path.join(packageRoot, "voice", "tldr-astro", "marie-satori-writer", "ll-matrix-v13", "ll-matrix-v13.json");
+const llMatrixPath = path.join(packageRoot, "voice", "tldr-astro", "satori-writer", "ll-matrix-v13", "ll-matrix-v13.json");
 const pairRoot = path.join(packageRoot, "data", "pairs");
 
 const SERVING_STATUSES = new Set(["approved", "approved_reuse", "reviewed"]);

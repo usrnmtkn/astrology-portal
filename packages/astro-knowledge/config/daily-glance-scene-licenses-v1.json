@@ -100,7 +100,7 @@
       "evidence": [
         {
           "sourceId": "ll:moon|conjunction|neptune",
-          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json",
           "selector": "rows[key=moon|conjunction|neptune]",
           "match": "exact",
           "text": "Moon conjunct Neptune can make you notice somebody else's mood before they tell you what happened. You walk into the room and know something is off, or a song, movie, or memory changes the whole atmosphere inside you. Sensitivity gets confusing when another person's sadness starts feeling like your own, or when the version of someone in your head is easier to love than the person in front of you.",
@@ -174,7 +174,7 @@
       "evidence": [
         {
           "sourceId": "ll:6th house",
-          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json",
           "selector": "rows[key=6th house]",
           "match": "includes",
           "text": "The 6th house is where big ideas turn into daily tasks. It is the workload, the appointment, the routine, the skill built through repetition, the task nobody applauds, and the body that still needs care on the day you would rather push through. Competence is usually built here in unglamorous increments.",
@@ -242,7 +242,7 @@
       "evidence": [
         {
           "sourceId": "ll:10th house",
-          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json",
           "selector": "rows[key=10th house]",
           "match": "includes",
           "text": "The 10th house is the work other people can point to. It includes career, reputation, authority, achievement, public responsibility, and the role that starts carrying your name before you enter the room. Visibility turns private ability into something other people can evaluate, hire, promote, criticize, or trust.",
@@ -321,7 +321,7 @@
       "evidence": [
         {
           "sourceId": "ll:moon|virgo",
-          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json",
           "selector": "rows[key=moon|virgo]",
           "match": "includes",
           "text": "Moon in Virgo tries to turn the feeling into something productive. You clean the kitchen, make the list, research the symptom, fix the schedule, organize the drawer, or solve somebody else's problem because usefulness gives anxiety somewhere to go. Competence can be deeply regulating.",

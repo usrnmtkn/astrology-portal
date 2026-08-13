@@ -5,14 +5,14 @@ Run from the repository root.
 ## Build and check the voice index
 
 ```bash
-node .agents/skills/marie-satori-writer/scripts/build-voice-index.js
-node .agents/skills/marie-satori-writer/scripts/build-voice-index.js --check
+node .agents/skills/satori-writer/scripts/build-voice-index.js
+node .agents/skills/satori-writer/scripts/build-voice-index.js --check
 ```
 
 ## Compile the minimal affinity packet
 
 ```bash
-node .agents/skills/marie-satori-writer/scripts/compile-writing-packet.js \
+node .agents/skills/satori-writer/scripts/compile-writing-packet.js \
   --planet jupiter \
   --sign libra \
   --requested-beat full_article \
@@ -88,10 +88,10 @@ Full-card matches compile with `harvest_mode: matched`. Use `--format tldr-line`
 ## Run authorship audit
 
 ```bash
-node .agents/skills/marie-satori-writer/scripts/audit-authorship.js \
+node .agents/skills/satori-writer/scripts/audit-authorship.js \
   --candidate-file packages/astro-knowledge/review/sky-placement-voice-pass-v6-targeted-candidates.json \
   --candidate-id sky-placement-v6-saturn-capricorn \
-  --out packages/astro-knowledge/out/marie-satori-writer/saturn-capricorn/authorship.json
+  --out packages/astro-knowledge/out/satori-writer/saturn-capricorn/authorship.json
 ```
 
 Without semantic attestation, a mechanically clean article remains `authorship_review_required`. Complete the skill's sentence and article checks, rewrite failures, and provide an attestation before calling the candidate authored.
@@ -99,9 +99,9 @@ Without semantic attestation, a mechanically clean article remains `authorship_r
 ## Preview owner-feedback ingestion
 
 ```bash
-node .agents/skills/marie-satori-writer/scripts/record-owner-feedback.js \
+node .agents/skills/satori-writer/scripts/record-owner-feedback.js \
   --input /path/to/feedback.json \
-  --out packages/astro-knowledge/out/marie-satori-writer/feedback-preview.json
+  --out packages/astro-knowledge/out/satori-writer/feedback-preview.json
 ```
 
 Dry-run is the default. Exact approval requires both an explicit owner statement and `--confirm-exact-approval`. Governed promotion is refused.

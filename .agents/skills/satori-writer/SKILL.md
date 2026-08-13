@@ -1,9 +1,9 @@
 ---
-name: marie-satori-writer
+name: satori-writer
 description: Write, rewrite, refine, compare, or prepare approval candidates for TLDR Astro reader copy using ranked Marie Satori owner evidence, the required aspect warmth harvest, structured before/after corrections, deterministic lint, and an authorship rewrite gate before the Terra judge. Use for Sky Placement and aspect editorial work, whenever Codex is asked to make astrology copy sound more like Marie, assess whether wording is authored rather than merely compliant, or record owner feedback without inferring approval.
 ---
 
-# Marie Satori Writer
+# Satori Writer
 
 Produce authored candidate wording from governed evidence. Treat writing, judging, approval, and promotion as separate jobs.
 
@@ -47,7 +47,7 @@ Require the packet to contain:
 
 For a beat-only rewrite, the passages must come from at least three articles, contain at least three paragraph structures, and include at least two passages matching the requested beat. Reject a packet if anything other than `owner_authored_final` appears in initial writer retrieval.
 
-For any aspect surface, also run `packages/astro-knowledge/scripts/build-aspect-writing-packet.js` before drafting. When the harvest finds a qualifying match, the packet records `harvest_mode: matched` and contains one to three OWNER FOUNDATION LINES selected through `packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md`. Current Sky receives minimally collectivized lines with originals retained in provenance. Natal, transit-to-natal, and synastry aspect surfaces retain the owner's second person. A missing human-moment beat fails closed. A corpus miss records `harvest_mode: none_found` and proceeds without a warmth beat.
+For any aspect surface, also run `packages/astro-knowledge/scripts/build-aspect-writing-packet.js` before drafting. When the harvest finds a qualifying match, the packet records `harvest_mode: matched` and contains one to three OWNER FOUNDATION LINES selected through `packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md`. Current Sky may use direct address or third-person observation as the writing needs, but never narrator commentary or a fourth-wall break. Natal, transit-to-natal, and synastry aspect surfaces retain the owner's second person. A missing human-moment beat fails closed. A corpus miss records `harvest_mode: none_found` and proceeds without a warmth beat.
 
 For a full aspect card, adapt at most one foundation line into one warmth sentence after the shadow or cost, as the final or penultimate sentence. For TLDR lines and short previews, require `harvest_mode: vocabulary_only` and do not add a warmth beat. When a foundation line is used, record `warmthSource` and label the candidate `owner-corpus-derived`; this evidence metadata never changes approval status.
 
@@ -75,7 +75,7 @@ Permanent distinction: “Chani-adjacent cadence is acceptable. Advocacy-default
 
 ### 5. Run audits after drafting
 
-Only after the draft returns, run deterministic astrology, Current Sky pronoun, and surface checks. Record the findings without passing them back into the writer call.
+Only after the draft returns, run deterministic astrology, Sky Page address, fourth-wall, and surface checks. Record the findings without passing them back into the writer call.
 
 For a controlled writer sample, return the Sol draft unchanged even when a check finds a problem. Do not automatically rewrite it, weaken a rule to pass it, or redesign retrieval because of one sentence.
 

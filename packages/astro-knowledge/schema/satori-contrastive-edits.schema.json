@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://tldrastro.local/schema/marie-satori-contrastive-edits.schema.json",
+  "$id": "https://tldrastro.local/schema/satori-contrastive-edits.schema.json",
   "type": "object",
   "required": ["schemaVersion", "datasetId", "records"],
   "properties": {
