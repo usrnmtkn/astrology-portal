@@ -15,6 +15,7 @@ import {
 } from "./report-generation.js";
 import { reportSystemPromptVersions } from "./report-prompt-versions.js";
 import {
+  deduplicateAssembledReport,
   runReportRedundancyPass,
   validateReportKeyDateFormat,
   validateAssembledReport,
@@ -232,6 +233,19 @@ function parsedWriterChainCheckpoint(value: unknown): ReportWriterChainCheckpoin
     && Array.isArray(checkpoint.calls)
     ? checkpoint as ReportWriterChainCheckpoint
     : null;
+}
+
+function isAssemblyInvalidatedPassingSnapshot(snapshot: Record<string, unknown> | undefined) {
+  if (!snapshot || snapshot.fulfillmentPassed !== false) return false;
+  const assembly = snapshot.assemblyValidation;
+  const judge = snapshot.judge;
+  return Boolean(
+    assembly && typeof assembly === "object"
+    && Array.isArray((assembly as { issues?: unknown[] }).issues)
+    && (assembly as { issues: unknown[] }).issues.length
+    && judge && typeof judge === "object"
+    && (judge as { verdict?: unknown }).verdict === "pass"
+  );
 }
 
 function writerChainKey(payload: unknown, promptVersions: unknown, failureContext?: string[]) {
@@ -461,7 +475,13 @@ export async function processReportFulfillmentJob(input: {
   let tokenCount = report.token_count ?? 0;
   const promptVersions: Record<string, unknown> = {};
   const judgeScores: Array<{ unitId: string; result: ReportJudgeResult }> = [];
-  const validatorSummary: Array<{ unitId: string; passed: true; issues: unknown[] }> = [];
+  const validatorSummary: Array<{
+    unitId: string;
+    passed: true;
+    issues: unknown[];
+    warnings?: unknown[];
+    mechanicalRemovals?: unknown[];
+  }> = [];
   let validatorAttempts = report.attempt_counts?.validator ?? 0;
   let judgeAttempts = report.attempt_counts?.judge ?? 0;
   let redundancyAttempts = report.attempt_counts?.redundancy ?? 0;
@@ -542,7 +562,7 @@ export async function processReportFulfillmentJob(input: {
       continue;
     }
     const existing = await input.store.unit(report.id, unitId);
-    if (existing?.source_snapshot?.fulfillmentPassed === true) {
+    if (existing?.source_snapshot?.fulfillmentPassed === true || isAssemblyInvalidatedPassingSnapshot(existing?.source_snapshot)) {
       const snapshot = existing.source_snapshot;
       validatorSummary.push({ unitId, passed: true, issues: Array.isArray(snapshot.validatorResults) ? snapshot.validatorResults : [] });
       if (snapshot.judge && typeof snapshot.judge === "object") {
@@ -795,7 +815,7 @@ export async function processReportFulfillmentJob(input: {
 
   const unitRows = await input.store.unitRows(report.id);
   const unitById = new Map(unitRows.map((row) => [row.content_key.replace(`report:${report.id}:`, ""), row]));
-  const assembledUnits: AssembledReportUnit[] = orderedUnitIds.map((unitId) => {
+  let assembledUnits: AssembledReportUnit[] = orderedUnitIds.map((unitId) => {
     const row = unitById.get(unitId);
     if (!row) throw new Error(`REPORT_ASSEMBLY_INCOMPLETE: missing persisted unit '${unitId}'.`);
     return {
@@ -829,10 +849,37 @@ export async function processReportFulfillmentJob(input: {
       attempt_counts: { validator: validatorAttempts, judge: judgeAttempts, redundancy: redundancyAttempts }
     });
   };
+  const deduplication = deduplicateAssembledReport(assembledUnits);
+  assembledUnits = deduplication.units;
   const structuralIssues = validateAssembledReport(assembledUnits);
-  if (structuralIssues.length) {
-    await invalidateAssemblyUnits(structuralIssues);
-    throw new ReportAssemblyRegenerationRequired(structuralIssues);
+  const structuralErrors = structuralIssues.filter((entry) => entry.severity === "error");
+  const assemblyWarnings = structuralIssues.filter((entry) => entry.severity !== "error");
+  const warningsByUnit = new Map<string, ReportAssemblyIssue[]>();
+  for (const entry of assemblyWarnings) warningsByUnit.set(entry.unitId, [...(warningsByUnit.get(entry.unitId) ?? []), entry]);
+  const removalsByUnit = new Map<string, typeof deduplication.removals>();
+  for (const entry of deduplication.removals) removalsByUnit.set(entry.unitId, [...(removalsByUnit.get(entry.unitId) ?? []), entry]);
+  for (const assembled of assembledUnits) {
+    const row = unitById.get(assembled.unitId);
+    if (!row) continue;
+    const unitErrors = structuralErrors.filter((entry) => entry.unitId === assembled.unitId);
+    const unitWarnings = warningsByUnit.get(assembled.unitId) ?? [];
+    const unitRemovals = removalsByUnit.get(assembled.unitId) ?? [];
+    const previouslyAssemblyInvalidated = isAssemblyInvalidatedPassingSnapshot(row.source_snapshot);
+    if (!previouslyAssemblyInvalidated && !unitErrors.length && !unitWarnings.length && !unitRemovals.length) continue;
+    await input.store.saveUnit(report, assembled.unitId, assembled.draft, {
+      ...row.source_snapshot,
+      fulfillmentPassed: unitErrors.length === 0,
+      assemblyValidation: {
+        passed: unitErrors.length === 0,
+        issues: [...unitErrors, ...unitWarnings],
+        warnings: unitWarnings,
+        mechanicalRemovals: unitRemovals
+      }
+    });
+  }
+  if (structuralErrors.length) {
+    await invalidateAssemblyUnits(structuralErrors);
+    throw new ReportAssemblyRegenerationRequired(structuralErrors);
   }
 
   await input.store.updateReport(report.id, nowPatch("validating"));
@@ -855,11 +902,10 @@ export async function processReportFulfillmentJob(input: {
   });
   tokenCount += redundancy.usage.totalTokens;
   promptVersions.redundancy = redundancy.promptVersion;
-  if (redundancy.findings.length) {
-    const redundancyIssues: ReportAssemblyIssue[] = redundancy.findings.map((finding) => ({
+  const redundancyWarnings: ReportAssemblyIssue[] = redundancy.findings.map((finding) => ({
       code: `report_${finding.category}`,
       message: finding.evidence,
-      severity: "error",
+      severity: "warning",
       unitId: finding.unit_id,
       relatedUnitIds: finding.related_unit_ids,
       location: finding.location,
@@ -868,9 +914,14 @@ export async function processReportFulfillmentJob(input: {
       scopeEnd: finding.scope_end,
       quote: finding.quote
     }));
-    await invalidateAssemblyUnits(redundancyIssues);
-    throw new ReportAssemblyRegenerationRequired(redundancyIssues);
-  }
+  const allAssemblyWarnings = [...assemblyWarnings, ...redundancyWarnings];
+  validatorSummary.push({
+    unitId: "assembled-report",
+    passed: true,
+    issues: allAssemblyWarnings,
+    warnings: allAssemblyWarnings,
+    mechanicalRemovals: deduplication.removals
+  });
 
   const publicationStatus = config.autoPublishEnabled ? "live" : "needs_review";
   await input.store.updateReport(report.id, {
