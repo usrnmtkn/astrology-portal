@@ -98,7 +98,7 @@ const EXACT_SENTENCE_LINT_CODES = new Set([
   "love_banned_vocabulary", "personal_health_banned_advice"
 ]);
 
-const draftSchema = {
+export const REPORT_DRAFT_SCHEMA = {
   type: "object",
   additionalProperties: false,
   required: ["headline", "tldr", "summary", "body", "action", "timing", "sections"],
@@ -109,7 +109,7 @@ const draftSchema = {
   }
 };
 
-function sentenceAddressedCritiqueSchema(draft: ReportDraft, movementApplicable: boolean) {
+export function reportSentenceAddressedCritiqueSchema(draft: ReportDraft, movementApplicable: boolean) {
   const sentenceIds = reportUnitSentenceAddresses(draft).map((sentence) => sentence.id);
   if (!sentenceIds.length) throw new ReportRevisionScopeError("Report unit has no supplied sentence IDs.");
   const categories = movementApplicable
@@ -136,7 +136,7 @@ function sentenceAddressedCritiqueSchema(draft: ReportDraft, movementApplicable:
           properties: {
             id: { type: "string" }, category: { type: "string", enum: categories },
             sentence_ids: {
-              type: "array", minItems: 1, uniqueItems: true,
+              type: "array", minItems: 1,
               items: { type: "string", enum: sentenceIds }
             },
             quote: { type: "string" }, evidence: { type: "string" },
@@ -148,7 +148,7 @@ function sentenceAddressedCritiqueSchema(draft: ReportDraft, movementApplicable:
   };
 }
 
-const revisionPatchSchema = {
+export const REPORT_REVISION_PATCH_SCHEMA = {
   type: "object", additionalProperties: false, required: ["replacements"],
   properties: {
     replacements: {
@@ -628,7 +628,7 @@ export async function reviseReportDraftForNamedDefects(input: {
       `LIVED_PROSE_OWNER_RULING\n${payload.livedProseStandard.text}`
     ].join("\n\n"),
     schemaName: "report_unit_revision_spans",
-    schema: revisionPatchSchema
+    schema: REPORT_REVISION_PATCH_SCHEMA
   });
   const calls: ReportWriterChainResult["calls"] = [{
     stage: input.stage ?? "revise", model: reviseResult.model, provider: reviseResult.provider, usage: reviseResult.usage
@@ -675,7 +675,7 @@ export async function runReportWriterChain(input: {
       ...target,
       prompt: [reportPromptFromPayload(payload), input.failureContext?.length ? `FAILURE_CONTEXT\n${input.failureContext.join("\n")}` : "", "Return one report unit using the structured output contract."].filter(Boolean).join("\n\n"),
       schemaName: "report_unit_draft",
-      schema: draftSchema
+      schema: REPORT_DRAFT_SCHEMA
     });
     calls.push({ stage: "draft", model: draftResult.model, provider: draftResult.provider, usage: draftResult.usage });
     draft = draftResult.value;
@@ -708,7 +708,7 @@ export async function runReportWriterChain(input: {
         `VALIDATOR_RESULTS\n${JSON.stringify(deterministicIssues)}`
       ].join("\n\n"),
       schemaName: "report_unit_critique",
-      schema: sentenceAddressedCritiqueSchema(draft, movementApplicable),
+      schema: reportSentenceAddressedCritiqueSchema(draft, movementApplicable),
       validateResponse: (value) => {
         normalizeReportSentenceAddressedCritique(draft, value, movementApplicable);
       }
@@ -762,7 +762,7 @@ export async function runReportWriterChain(input: {
         `SENTENCE_ADDRESSED_UNIT\n${sentenceAddressedReportUnit(revised)}`
       ].join("\n\n"),
       schemaName: "report_unit_cold_read",
-      schema: sentenceAddressedCritiqueSchema(revised, coldMovementApplicable),
+      schema: reportSentenceAddressedCritiqueSchema(revised, coldMovementApplicable),
       validateResponse: (value) => {
         normalizeReportSentenceAddressedCritique(revised, value, coldMovementApplicable);
       }
