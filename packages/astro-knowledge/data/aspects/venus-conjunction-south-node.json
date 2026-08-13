@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-conjunction-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus conjunct South Node can make karmic situations arrive through love, money, pleasure, or personal values.",
+  "astrologySupportSha256": "0edbbfe5763d83808b02ba900537235371d7f2deb689126cf15b83680377d501",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "conjunction",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 281,
+    "keyCell": "A281",
+    "pageRef": "PDF p.363",
+    "astrologySupportCell": "L281",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

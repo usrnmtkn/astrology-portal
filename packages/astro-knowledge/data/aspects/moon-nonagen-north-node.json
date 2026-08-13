@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-nonagen-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon semisextile North Node can make useful teachers harder to attract or trust while an old emotional pattern in the houses involved stays in place.",
+  "astrologySupportSha256": "45203e04f62ab4e6f2b8d9fb606e442fad58a4f5854173c7a2a1f7f52f3261ea",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "nonagen",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 146,
+    "keyCell": "A146",
+    "pageRef": "PDF p.331",
+    "astrologySupportCell": "L146",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

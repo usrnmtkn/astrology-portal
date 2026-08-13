@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mercury-square-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mercury square Part of Fortune can make the mind work against its own practical goals.",
+  "astrologySupportSha256": "69c363edc815608be33d40d447dedf4315aa9ac2cb93465b2c8daed766f88270",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "square",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 207,
+    "keyCell": "A207",
+    "pageRef": "PDF p.345",
+    "astrologySupportCell": "L207",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

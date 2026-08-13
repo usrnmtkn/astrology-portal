@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mercury-sextile-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mercury sextile Ascendant makes conversation easy to enjoy.",
+  "astrologySupportSha256": "6ab0330397924b5be8323616edc592eadb555ff83a187bf7856b762641680703",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "sextile",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 531,
+    "keyCell": "A531",
+    "pageRef": "PDF p.411-412",
+    "astrologySupportCell": "L531",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

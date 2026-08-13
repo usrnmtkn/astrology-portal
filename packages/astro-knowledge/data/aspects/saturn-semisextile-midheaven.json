@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "saturn-semisextile-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Saturn semisextile Midheaven can make public advancement feel deliberately restricted.",
+  "astrologySupportSha256": "93aff14f7b113d282ed50b4ededd8e987be6a380a5127a8b91b608e9116fe175",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "semisextile",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 649,
+    "keyCell": "A649",
+    "pageRef": "PDF p.423-424",
+    "astrologySupportCell": "L649",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

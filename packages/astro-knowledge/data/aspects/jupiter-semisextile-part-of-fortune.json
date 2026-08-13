@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-semisextile-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter semisextile Part of Fortune can make a clearer sense of meaning feel blocked until the old way of handling the houses involved starts to change.",
+  "astrologySupportSha256": "a36a06988dce7f68f1b78e8befd5102a77331ff14d6cead34799ddbe0f0cdec8",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "semisextile",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 411,
+    "keyCell": "A411",
+    "pageRef": "PDF p.387",
+    "astrologySupportCell": "L411",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

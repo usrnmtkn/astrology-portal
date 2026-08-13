@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-sextile-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus sextile Ascendant can make warmth easy to show.",
+  "astrologySupportSha256": "3e4c72936f86e1a59378a63be222cbf16abb739d3767a030f3205c03f1919836",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "sextile",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 538,
+    "keyCell": "A538",
+    "pageRef": "PDF p.412",
+    "astrologySupportCell": "L538",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-trine-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon trine North Node can bring teachers who feel emotionally familiar.",
+  "astrologySupportSha256": "3a8123a8031faf1869caf489c8e9680b8dd8df5466de76e5b9c7ceb44b30e1cc",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "trine",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 149,
+    "keyCell": "A149",
+    "pageRef": "PDF p.332",
+    "astrologySupportCell": "L149",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

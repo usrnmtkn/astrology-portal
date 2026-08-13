@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "part-of-fortune-sextile-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Part of Fortune sextile Ascendant can make personal success easier to build through the way someone meets life.",
+  "astrologySupportSha256": "29f9b4b3f56397aefe5e94f35693f7c2a4b501c00864fe42621b8945c0d87ef0",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "part-of-fortune",
+      "aspect": "sextile",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 587,
+    "keyCell": "A587",
+    "pageRef": "PDF p.417",
+    "astrologySupportCell": "L587",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

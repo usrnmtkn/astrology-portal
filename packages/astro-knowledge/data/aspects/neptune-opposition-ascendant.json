@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-opposition-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune opposite Ascendant can make close relationships a place of idealization.",
+  "astrologySupportSha256": "e96597069e4f8d1eb7e344dc3a479f2a531a70532c0b9dccf757564be2f7ecaa",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "opposition",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 577,
+    "keyCell": "A577",
+    "pageRef": "PDF p.415-416",
+    "astrologySupportCell": "L577",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

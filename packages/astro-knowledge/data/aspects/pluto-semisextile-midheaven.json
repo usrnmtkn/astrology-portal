@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-semisextile-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto semisextile Midheaven can make public visibility feel restricted until the person knows themselves more deeply.",
+  "astrologySupportSha256": "762c9793c58449101a57c415bb2ce6b6f2fcb9c8f7dd63024201dd36b0542e05",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "semisextile",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 670,
+    "keyCell": "A670",
+    "pageRef": "PDF p.425-426",
+    "astrologySupportCell": "L670",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

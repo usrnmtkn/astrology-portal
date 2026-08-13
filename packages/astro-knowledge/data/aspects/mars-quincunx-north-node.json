@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-quincunx-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars inconjunct North Node can make a teacher's own struggles with desire seem like proof that they cannot help anyone else.",
+  "astrologySupportSha256": "19eb32e820f1a1a685855d3aa2c1defce80f434429a566f47f22a82fdad89afc",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "quincunx",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 401,
+    "keyCell": "A401",
+    "pageRef": "PDF p.378",
+    "astrologySupportCell": "L401",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

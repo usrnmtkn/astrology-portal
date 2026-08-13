@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-opposition-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune opposite North Node can make the need for spiritual guidance increasingly clear.",
+  "astrologySupportSha256": "e3b18b534c5032ad0a7553bbc67ec8a75add75589d32523b329d6fcf150837a5",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "opposition",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 486,
+    "keyCell": "A486",
+    "pageRef": "PDF p.406",
+    "astrologySupportCell": "L486",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

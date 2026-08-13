@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-square-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune square North Node can create conflict around teachers because old karmic issues with spiritual authority are still active.",
+  "astrologySupportSha256": "8084758a5e42ed3a011feda50ec1061301f12fc5fdb577d7a89ca913318d38bd",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "square",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 483,
+    "keyCell": "A483",
+    "pageRef": "PDF p.406",
+    "astrologySupportCell": "L483",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

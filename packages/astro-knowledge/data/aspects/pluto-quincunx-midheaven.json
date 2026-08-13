@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-quincunx-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto inconjunct Midheaven can make recognition less interesting than another goal that carries more personal meaning.",
+  "astrologySupportSha256": "d90060cbc4f4fa16f9695b1719040abcc6087cc753c1bf5c564afaeab3c9d0ce",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "quincunx",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 674,
+    "keyCell": "A674",
+    "pageRef": "PDF p.425-426",
+    "astrologySupportCell": "L674",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

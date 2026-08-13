@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-trine-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon trine Ascendant can make emotional openness easy.",
+  "astrologySupportSha256": "a3ac4d3235a482f0959838e5a637bd4e150287b192dc57327eb819d2b40e981a",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "trine",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 526,
+    "keyCell": "A526",
+    "pageRef": "PDF p.410-411",
+    "astrologySupportCell": "L526",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

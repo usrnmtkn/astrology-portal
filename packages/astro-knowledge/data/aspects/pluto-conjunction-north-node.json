@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-conjunction-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto conjunct North Node can attract teachers who push the person toward deeper spiritual awareness.",
+  "astrologySupportSha256": "ddec9111da09ff869f87ffca5a7e2101f58294c9759b81774e1b5f1249694be1",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "conjunction",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 501,
+    "keyCell": "A501",
+    "pageRef": "PDF p.408",
+    "astrologySupportCell": "L501",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

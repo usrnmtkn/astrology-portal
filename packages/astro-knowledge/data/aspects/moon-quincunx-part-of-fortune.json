@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-quincunx-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon inconjunct Part of Fortune can make personal judgment unreliable when an old path still feels familiar.",
+  "astrologySupportSha256": "be5b90b69fe19d4b4a445f255ba8cff7fc1af923b9cca35c5ad8acdcd0dcb6ca",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "quincunx",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 143,
+    "keyCell": "A143",
+    "pageRef": "PDF p.331",
+    "astrologySupportCell": "L143",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

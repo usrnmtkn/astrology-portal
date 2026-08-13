@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-nonagen-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus semisextile North Node can make helpful teachers harder to attract while old values remain unexamined.",
+  "astrologySupportSha256": "3d2c6ede80a4cb41e85adcef846c39c5ae1c579da00a30e966278e4d9dbbfac1",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "nonagen",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 275,
+    "keyCell": "A275",
+    "pageRef": "PDF p.362",
+    "astrologySupportCell": "L275",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

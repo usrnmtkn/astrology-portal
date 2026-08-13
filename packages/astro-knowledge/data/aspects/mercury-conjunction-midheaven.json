@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mercury-conjunction-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mercury conjunct Midheaven can make logic and communication central to recognition.",
+  "astrologySupportSha256": "4439134737f47b690fc9c5407a91218afb427f91f334f7842ef4ffaa6a463524",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "conjunction",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 620,
+    "keyCell": "A620",
+    "pageRef": "PDF p.420-421",
+    "astrologySupportCell": "L620",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

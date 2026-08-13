@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-sextile-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto sextile Part of Fortune gives deeper spiritual awareness a workable opening.",
+  "astrologySupportSha256": "9f349865c94d5248e1b5403769924fcb228d2972a7cf2d4e6ddc828a28446b74",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "sextile",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 496,
+    "keyCell": "A496",
+    "pageRef": "PDF p.408",
+    "astrologySupportCell": "L496",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

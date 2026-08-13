@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-quincunx-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus inconjunct South Node can make karmic necessity difficult to accept when it interferes with what the person values.",
+  "astrologySupportSha256": "48563e3263d5fd8edde4e644a2f86f6440f89f158c9458da7e4cdc0bb571197f",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "quincunx",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 286,
+    "keyCell": "A286",
+    "pageRef": "PDF p.363",
+    "astrologySupportCell": "L286",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

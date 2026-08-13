@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "saturn-conjunction-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Saturn conjunct North Node can attract teachers who challenge pride, authority, and the person's relationship with limitation.",
+  "astrologySupportSha256": "e9f667ab45d120260038582f90bdb8e65219650ab71721412eb5a40f200b6ad0",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "conjunction",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 438,
+    "keyCell": "A438",
+    "pageRef": "PDF p.397",
+    "astrologySupportCell": "L438",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

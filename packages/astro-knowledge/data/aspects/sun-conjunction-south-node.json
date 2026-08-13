@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-conjunction-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun conjunct South Node can make karmic situations arrive with unusual force. The purpose in this framework is to expose ego habits that still need to change rather than simply repeat the past.",
+  "astrologySupportSha256": "37a8ab0bbed91abf65a7423006429b6d456f87e8ee9fc28ca6cb4e509de47cb7",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "conjunction",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 75,
+    "keyCell": "A75",
+    "pageRef": "PDF p.314",
+    "astrologySupportCell": "L75",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

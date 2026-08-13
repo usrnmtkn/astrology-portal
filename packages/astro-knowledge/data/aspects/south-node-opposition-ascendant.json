@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "south-node-opposition-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "South Node opposite Ascendant can make both helpful and harmful past-life personality traits show up through relationships.",
+  "astrologySupportSha256": "33b7a8eec3aecb61616bcf14d7859654c287418f4ec8d69bbdf0f047b09f0be4",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "south-node",
+      "aspect": "opposition",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 605,
+    "keyCell": "A605",
+    "pageRef": "PDF p.418",
+    "astrologySupportCell": "L605",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

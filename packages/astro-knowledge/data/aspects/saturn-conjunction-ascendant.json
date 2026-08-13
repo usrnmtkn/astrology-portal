@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "saturn-conjunction-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Saturn conjunct Ascendant can make seriousness part of the first impression.",
+  "astrologySupportSha256": "0dd79d5166040aff44a93ca824fc28e197c80639e2103791fa823ae4ccc45d6e",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "conjunction",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 557,
+    "keyCell": "A557",
+    "pageRef": "PDF p.414",
+    "astrologySupportCell": "L557",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

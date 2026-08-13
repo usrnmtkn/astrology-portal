@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-semisextile-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars semisextile Midheaven can make recognition feel blocked by the person's own unfinished lessons.",
+  "astrologySupportSha256": "beea607b7ece37452503c6b76b170bed990301262fb9050540c8fb5f4ffe21e0",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "semisextile",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 635,
+    "keyCell": "A635",
+    "pageRef": "PDF p.421-422",
+    "astrologySupportCell": "L635",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

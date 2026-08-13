@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-sextile-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon sextile North Node can make supportive teachers easier to encounter.",
+  "astrologySupportSha256": "261f972004a9598f2607c4aca4a51568b4d1b2f46d3ac5f0bdffa13bedba188e",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "sextile",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 147,
+    "keyCell": "A147",
+    "pageRef": "PDF p.332",
+    "astrologySupportCell": "L147",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

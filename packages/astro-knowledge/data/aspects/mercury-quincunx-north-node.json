@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mercury-quincunx-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mercury inconjunct North Node can make a teacher's own unfinished mental work seem like proof that they cannot help anyone else.",
+  "astrologySupportSha256": "a9215d2418def1b47816a3aa0bdeb43c6ff8cdfcf8e9c7449c4eaf9162a78816",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "quincunx",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 216,
+    "keyCell": "A216",
+    "pageRef": "PDF p.347",
+    "astrologySupportCell": "L216",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

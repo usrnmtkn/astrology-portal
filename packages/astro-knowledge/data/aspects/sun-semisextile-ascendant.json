@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-semisextile-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun semisextile Ascendant can make the true personality harder to reveal.",
+  "astrologySupportSha256": "341ce7376511e20c1becf3d079cfd8be2190f4f29eda63712b254a64a2a6ac9a",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "semisextile",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 516,
+    "keyCell": "A516",
+    "pageRef": "PDF p.410",
+    "astrologySupportCell": "L516",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

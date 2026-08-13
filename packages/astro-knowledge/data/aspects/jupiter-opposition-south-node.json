@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-opposition-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter opposite South Node can make karmic situations impossible to separate from spiritual learning.",
+  "astrologySupportSha256": "946d04f5d924e434b10e8ad8892b8d25557d0d026431c53660e6c3f5f3768bab",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "opposition",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 430,
+    "keyCell": "A430",
+    "pageRef": "PDF p.389",
+    "astrologySupportCell": "L430",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

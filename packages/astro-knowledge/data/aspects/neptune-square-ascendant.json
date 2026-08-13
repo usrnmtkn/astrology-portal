@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-square-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune square Ascendant can make perception strong and confidence weak at the same time.",
+  "astrologySupportSha256": "3c96f51c3d744ec7d96aa021ebb0bdbe8380ea842649b74f5f66537f6aa6e585",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "square",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 574,
+    "keyCell": "A574",
+    "pageRef": "PDF p.415-416",
+    "astrologySupportCell": "L574",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

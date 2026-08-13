@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "uranus-conjunction-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Uranus conjunct North Node can attract teachers who help the person work directly with intuition and the unconscious mind.",
+  "astrologySupportSha256": "f3b41dc032b6cb8710b4c97f3ac9d725acb3eb5c2ddd525b9765289f1af652f4",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "uranus",
+      "aspect": "conjunction",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 459,
+    "keyCell": "A459",
+    "pageRef": "PDF p.403",
+    "astrologySupportCell": "L459",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

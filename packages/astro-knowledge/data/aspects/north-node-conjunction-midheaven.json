@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "north-node-conjunction-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "North Node conjunct Midheaven can make career and achievement major places where the person learns what actually matters spiritually.",
+  "astrologySupportSha256": "2622ae877b235bfdda96ce28719affe748ac796b165ccbb31556a175e2fa744b",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "north-node",
+      "aspect": "conjunction",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 683,
+    "keyCell": "A683",
+    "pageRef": "PDF p.427",
+    "astrologySupportCell": "L683",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

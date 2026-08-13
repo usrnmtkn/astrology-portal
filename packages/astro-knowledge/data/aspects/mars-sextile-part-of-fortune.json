@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-sextile-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars sextile Part of Fortune gives desire a workable route toward change.",
+  "astrologySupportSha256": "6dae94d23205a3c7a126abf91a796dfb04aa795be81214b32518e7d732b0b990",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "sextile",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 391,
+    "keyCell": "A391",
+    "pageRef": "PDF p.376",
+    "astrologySupportCell": "L391",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

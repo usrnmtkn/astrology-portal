@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-semisextile-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune semisextile Part of Fortune can make astral or psychic perception feel blocked until the old way of handling the houses involved starts to change.",
+  "astrologySupportSha256": "65ccfffea929007aa368bfb4cfc7936a36a338363e0b18c0f74e087bc6b0343a",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "semisextile",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 474,
+    "keyCell": "A474",
+    "pageRef": "PDF p.405",
+    "astrologySupportCell": "L474",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

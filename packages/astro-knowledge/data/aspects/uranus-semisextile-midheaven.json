@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "uranus-semisextile-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Uranus semisextile Midheaven can make public advancement feel restricted until rebellion becomes more thoughtful.",
+  "astrologySupportSha256": "7c32d1928c2ea68225e4efd7449938f7bd082bd0a3f9c912ace7a7ae3a05932d",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "uranus",
+      "aspect": "semisextile",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 656,
+    "keyCell": "A656",
+    "pageRef": "PDF p.424",
+    "astrologySupportCell": "L656",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-opposition-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter opposite Ascendant can make relationships one of the best ways to learn.",
+  "astrologySupportSha256": "16ab18f102a9af37b3aa91c22bea7b813f5a8fe9e45a0a85d547e00358c5792a",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "opposition",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 556,
+    "keyCell": "A556",
+    "pageRef": "PDF p.413-414",
+    "astrologySupportCell": "L556",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

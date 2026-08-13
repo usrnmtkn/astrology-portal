@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mercury-sextile-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mercury sextile North Node can make helpful teachers easier to encounter.",
+  "astrologySupportSha256": "8eaa631be548441900064974f3aa449b3b799dd8f58712db71f941edd2deb3ef",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "sextile",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 213,
+    "keyCell": "A213",
+    "pageRef": "PDF p.346",
+    "astrologySupportCell": "L213",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

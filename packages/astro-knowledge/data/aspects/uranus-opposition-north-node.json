@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "uranus-opposition-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Uranus opposite North Node can make the need for guidance around the unconscious increasingly clear.",
+  "astrologySupportSha256": "ddf4417684d02f1d2057cab649820c69b4ff3c99ad0645e9cdf08bc709feefa8",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "uranus",
+      "aspect": "opposition",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 465,
+    "keyCell": "A465",
+    "pageRef": "PDF p.403",
+    "astrologySupportCell": "L465",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

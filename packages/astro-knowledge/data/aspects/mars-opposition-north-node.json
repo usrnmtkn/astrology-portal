@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-opposition-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars opposite North Node can make the need for guidance around desire increasingly obvious.",
+  "astrologySupportSha256": "c336ceb9876eeefd6ce66903df176b99674b86bcddbf8242354c9ebc97954197",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "opposition",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 402,
+    "keyCell": "A402",
+    "pageRef": "PDF p.378",
+    "astrologySupportCell": "L402",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

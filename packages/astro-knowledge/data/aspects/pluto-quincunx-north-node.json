@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-quincunx-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto inconjunct North Node can make a teacher's own unfinished deep change seem like proof that they cannot help anyone else.",
+  "astrologySupportSha256": "25d52f818ad3121d53555efa4f23589662228c6ad377e5056d2aed70ce0fe237",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "quincunx",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 506,
+    "keyCell": "A506",
+    "pageRef": "PDF p.409",
+    "astrologySupportCell": "L506",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}
