@@ -31,7 +31,7 @@
     "test:report-foundation": "node --experimental-strip-types scripts/test-report-envelope.mjs && node scripts/test-report-attribution.mjs && node scripts/test-report-article-fixture.mjs && node scripts/test-report-foundation-contract.mjs",
     "test:report-generation": "tsx scripts/test-report-facts.mjs && tsx scripts/test-report-generation.mjs && tsx scripts/test-report-assembly.mjs && tsx scripts/audit-report-manifestation-coverage.mjs",
     "audit:report-production-coverage": "tsx scripts/audit-production-report-coverage.mjs",
-    "test:report-fulfillment": "node scripts/test-report-runtime-assets.mjs && node scripts/test-production-report-smoke.mjs && tsx scripts/test-report-fulfillment.mjs && tsx scripts/test-report-judge-personal-health.mjs && tsx scripts/test-report-judge-v3.mjs && tsx scripts/calibrate-report-judge.mjs",
+    "test:report-fulfillment": "node scripts/test-report-runtime-assets.mjs && node scripts/test-production-report-smoke.mjs && tsx scripts/test-report-provider-schemas.mjs && tsx scripts/test-report-fulfillment.mjs && tsx scripts/test-report-judge-personal-health.mjs && tsx scripts/test-report-judge-v3.mjs && tsx scripts/calibrate-report-judge.mjs",
     "smoke:production-report": "node scripts/smoke-production-report-deployment.mjs",
     "test:report-judge:v3": "tsx scripts/test-report-judge-v3.mjs",
     "test:production-health": "node scripts/test-production-api-health.mjs",
