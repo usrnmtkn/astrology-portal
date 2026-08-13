@@ -17,6 +17,15 @@ export type ReportAssemblyIssue = ReportValidationIssue & {
   relatedUnitIds?: string[];
 };
 
+export type ReportAssemblyDeduplication = {
+  code: "repeated_exact_sentence" | "repeated_near_sentence";
+  unitId: string;
+  relatedUnitIds: string[];
+  location: string;
+  sentenceIndex: number;
+  quote: string;
+};
+
 export type ReportRedundancyFinding = {
   id: string;
   category: "semantic_duplication" | "menu_repetition" | "signature_phrase_repetition" | "mechanism_certainty" | "eclipse_arc_continuity" | "stop_after_landing";
@@ -85,8 +94,18 @@ function fields(unit: AssembledReportUnit): LocatedField[] {
   ];
 }
 
+function sentenceSpans(text: string) {
+  return [...text.matchAll(/[^.!?]+[.!?]?/gu)].flatMap((match) => {
+    const raw = match[0];
+    const quote = raw.trim();
+    if (!quote) return [];
+    const leading = raw.indexOf(quote);
+    return [{ quote, start: (match.index ?? 0) + leading, end: (match.index ?? 0) + leading + quote.length }];
+  });
+}
+
 function sentenceQuotes(text: string) {
-  return text.match(/[^.!?]+[.!?]?/gu)?.map((quote) => quote.trim()).filter(Boolean) ?? [];
+  return sentenceSpans(text).map((span) => span.quote);
 }
 
 function normalizedText(value: string) {
@@ -130,8 +149,11 @@ function headingKey(value: string) {
   return season?.[0] ?? normalized;
 }
 
-function issue(input: Omit<ReportAssemblyIssue, "severity">): ReportAssemblyIssue {
-  return { ...input, severity: "error" };
+function issue(
+  input: Omit<ReportAssemblyIssue, "severity">,
+  severity: "error" | "warning" = "warning"
+): ReportAssemblyIssue {
+  return { ...input, severity };
 }
 
 function markdownBalanced(value: string) {
@@ -254,6 +276,7 @@ function validateRepeatedSentences(units: AssembledReportUnit[], issues: ReportA
       const nearThreshold = adjacentSameField ? 0.7 : 0.88;
       const near = current.tokens.length >= 12 && prior.tokens.length >= 12 && similarity(current.tokens, prior.tokens) >= nearThreshold;
       if (!exact && !near) continue;
+      const acrossUnits = current.unitId !== prior.unitId;
       issues.push(issue({
         code: exact ? "repeated_exact_sentence" : "repeated_near_sentence",
         message: `${exact ? "Exact" : "Near-exact"} sentence repetition between ${prior.unitId} and ${current.unitId}.`,
@@ -264,7 +287,7 @@ function validateRepeatedSentences(units: AssembledReportUnit[], issues: ReportA
         scopeStart: current.sentenceIndex,
         scopeEnd: current.sentenceIndex,
         quote: current.quote
-      }));
+      }, acrossUnits ? "error" : "warning"));
       break;
     }
   }
@@ -368,6 +391,70 @@ export function validateAssembledReport(units: AssembledReportUnit[]) {
   validateLexicalBudgets(units, issues);
   validateMenus(units, issues);
   return issues;
+}
+
+function setDraftField(draft: ReportDraft, location: string, value: string) {
+  if (location === "headline" || location === "tldr" || location === "summary"
+    || location === "body" || location === "action" || location === "timing") {
+    draft[location] = value;
+    return;
+  }
+  const match = /^sections\.(\d+)\.(heading|body)$/u.exec(location);
+  if (!match) throw new Error(`REPORT_ASSEMBLY_DEDUPLICATION_LOCATION_INVALID: ${location}`);
+  const index = Number(match[1]);
+  const key = match[2] as "heading" | "body";
+  const section = draft.sections?.[index];
+  if (!section) throw new Error(`REPORT_ASSEMBLY_DEDUPLICATION_LOCATION_INVALID: ${location}`);
+  section[key] = value;
+}
+
+function removeSentence(draft: ReportDraft, location: string, sentenceIndex: number) {
+  const holder = fields({ unitId: "deduplication", draft }).find((field) => field.location === location);
+  if (!holder) throw new Error(`REPORT_ASSEMBLY_DEDUPLICATION_LOCATION_INVALID: ${location}`);
+  const span = sentenceSpans(holder.text)[sentenceIndex];
+  if (!span) throw new Error(`REPORT_ASSEMBLY_DEDUPLICATION_SENTENCE_INVALID: ${location}[${sentenceIndex}]`);
+  const next = `${holder.text.slice(0, span.start)}${holder.text.slice(span.end)}`.trim();
+  setDraftField(draft, location, next);
+}
+
+/**
+ * Removes only the later sentence in blocking cross-unit exact/near-exact
+ * pairs. No prose is generated: every operation is a deletion at a
+ * deterministic persisted coordinate.
+ */
+export function deduplicateAssembledReport(units: AssembledReportUnit[]) {
+  const deduplicated = structuredClone(units);
+  const removals: ReportAssemblyDeduplication[] = [];
+  for (let pass = 0; pass < 20; pass += 1) {
+    const repeated = validateAssembledReport(deduplicated).filter((entry) => (
+      entry.severity === "error"
+      && (entry.code === "repeated_exact_sentence" || entry.code === "repeated_near_sentence")
+    ));
+    if (!repeated.length) return { units: deduplicated, removals };
+    const grouped = new Map<string, ReportAssemblyIssue[]>();
+    for (const entry of repeated) {
+      const key = `${entry.unitId}\u0000${entry.location}`;
+      grouped.set(key, [...(grouped.get(key) ?? []), entry]);
+    }
+    for (const entries of grouped.values()) {
+      const unit = deduplicated.find((candidate) => candidate.unitId === entries[0].unitId);
+      if (!unit) throw new Error(`REPORT_ASSEMBLY_DEDUPLICATION_UNIT_MISSING: ${entries[0].unitId}`);
+      const unique = [...new Map(entries.map((entry) => [entry.sentenceIndex, entry])).values()]
+        .sort((left, right) => right.sentenceIndex - left.sentenceIndex);
+      for (const entry of unique) {
+        removeSentence(unit.draft, entry.location, entry.sentenceIndex);
+        removals.push({
+          code: entry.code as ReportAssemblyDeduplication["code"],
+          unitId: entry.unitId,
+          relatedUnitIds: entry.relatedUnitIds ?? [],
+          location: entry.location,
+          sentenceIndex: entry.sentenceIndex,
+          quote: entry.quote
+        });
+      }
+    }
+  }
+  throw new Error("REPORT_ASSEMBLY_DEDUPLICATION_EXHAUSTED: repeated sentences remain after 20 deterministic passes.");
 }
 
 export const REPORT_REDUNDANCY_SCHEMA = {

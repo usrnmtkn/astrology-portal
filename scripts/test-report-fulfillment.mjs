@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import { REPORT_AUTOMATION_RULING_PATH, REPORT_AUTOMATION_RULING_VERSION, REPORT_SKUS, reportBillingMode, reportCallEstimate, reportFulfillmentConfig, reportSku } from "../api/_lib/report-fulfillment-config.ts";
-import { assertReportTokenBudgets, processReportFulfillmentJob, ReportAssemblyRegenerationRequired, ReportPersistenceInfrastructureError, reportCallDurationEstimates, reportValidatorAttemptCap, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
+import { assertReportTokenBudgets, processReportFulfillmentJob, ReportPersistenceInfrastructureError, reportCallDurationEstimates, reportValidatorAttemptCap, runReportFulfillmentBatch } from "../api/_lib/report-fulfillment.ts";
 import { createReportFulfillmentStore } from "../api/_lib/report-fulfillment-store.ts";
 import { ReportBirthDataError, birthProfileFromPersistedData } from "../api/_lib/report-billing-window.ts";
 import { ReportCalculationApiClientError } from "../api/_lib/report-facts.ts";
@@ -1437,16 +1437,30 @@ structuralStore.reports.set(structuralReport.id, structuralReport);
 structuralStore.entitlements.set("structural-ent", { id: "structural-ent", user_id: structuralReport.user_id, status: "active", product_key: "general_1m" });
 const repeatedClose = "The same closing sentence must not appear in two report units.";
 await seedAssemblyUnits(structuralStore, structuralReport, { overview: repeatedClose, "what-matters-most": repeatedClose });
+for (const unitId of ["overview", "what-matters-most", "domain:main"]) {
+  const row = structuralStore.units.get(`structural-report:${unitId}`);
+  row.source_snapshot = {
+    ...row.source_snapshot,
+    fulfillmentPassed: false,
+    assemblyValidation: {
+      passed: false,
+      issues: [{ code: "report_modal_budget", severity: "error", unitId, location: "body", quote: row.body }]
+    }
+  };
+}
 const structuralModel = modelCallWithCrash();
-await assert.rejects(processReportFulfillmentJob({
+await processReportFulfillmentJob({
   job: authorizedJob({ id: "structural-job", report_id: structuralReport.id, entitlement_id: "structural-ent", state: "running", step: "validating", attempt: 1 }),
   store: structuralStore, calculateFacts, callModel: structuralModel, judgeCall
-}), (error) => error instanceof ReportAssemblyRegenerationRequired && error.issues.some((entry) => entry.code === "repeated_exact_sentence"));
-assert.equal(structuralModel.count(), 0, "Deterministic assembly defects must fail before a report-level provider call.");
+});
+assert.equal(structuralModel.count(), 1, "Assembly-only recovery must skip every writer call and run only the report-level review pass.");
 assert.equal(structuralStore.units.get("structural-report:overview").source_snapshot.fulfillmentPassed, true);
-assert.equal(structuralStore.units.get("structural-report:what-matters-most").source_snapshot.fulfillmentPassed, false,
-  "Only the implicated repeated unit should re-enter its writer chain.");
-assert.notEqual(structuralStore.reports.get(structuralReport.id).fulfillment_status, "needs_review");
+assert.equal(structuralStore.units.get("structural-report:what-matters-most").source_snapshot.fulfillmentPassed, true);
+assert.equal(structuralStore.units.get("structural-report:what-matters-most").body, "",
+  "The later exact sentence must be mechanically removed without a writer call.");
+assert.equal(structuralStore.reports.get(structuralReport.id).fulfillment_status, "needs_review");
+const structuralAssemblyReview = structuralStore.reports.get(structuralReport.id).validator_results.find((entry) => entry.unitId === "assembled-report");
+assert.equal(structuralAssemblyReview.mechanicalRemovals.length, 1);
 
 const redundancyStore = createMemoryStore();
 const redundancyReport = assemblyReadyReport("redundancy-report");
@@ -1477,14 +1491,17 @@ const redundancyFindingCall = async (input) => {
   await input.afterProviderCall?.(attempt, result);
   return result;
 };
-await assert.rejects(processReportFulfillmentJob({
+await processReportFulfillmentJob({
   job: authorizedJob({ id: "redundancy-job", report_id: redundancyReport.id, entitlement_id: "redundancy-ent", state: "running", step: "validating", attempt: 1 }),
   store: redundancyStore, calculateFacts, callModel: redundancyFindingCall, judgeCall
-}), (error) => error instanceof ReportAssemblyRegenerationRequired && error.issues.some((entry) => entry.code === "report_semantic_duplication"));
+});
 assert.equal(redundancyProviderCalls, 1, "The report-level pass is one findings-only provider call.");
-assert.equal(redundancyStore.units.get("redundancy-report:what-matters-most").source_snapshot.fulfillmentPassed, false);
+assert.equal(redundancyStore.units.get("redundancy-report:what-matters-most").source_snapshot.fulfillmentPassed, true);
 assert.equal(redundancyStore.reports.get(redundancyReport.id).token_count, 2, "Accepted report-level evaluation tokens must remain accounted when a named unit is requeued.");
-assert.notEqual(redundancyStore.reports.get(redundancyReport.id).fulfillment_status, "needs_review");
+assert.equal(redundancyStore.reports.get(redundancyReport.id).fulfillment_status, "needs_review");
+const redundancyReview = redundancyStore.reports.get(redundancyReport.id).validator_results.find((entry) => entry.unitId === "assembled-report");
+assert.equal(redundancyReview.warnings[0].code, "report_semantic_duplication");
+assert.equal(redundancyReview.warnings[0].severity, "warning");
 
 const persistenceStore = createMemoryStore();
 const persistenceReport = {
