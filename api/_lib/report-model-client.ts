@@ -1,4 +1,7 @@
 import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
+import { assertOpenAiStrictResponseSchema, ReportProviderSchemaError } from "./report-provider-schema.js";
+
+export { assertOpenAiStrictResponseSchema, ReportProviderSchemaError } from "./report-provider-schema.js";
 
 export type ReportModelUsage = { inputTokens: number; cachedInputTokens?: number; outputTokens: number; totalTokens: number };
 export type ReportModelResult<T> = { value: T; model: string; provider: string; responseId?: string; usage: ReportModelUsage };
@@ -59,6 +62,7 @@ async function callOpenAi<T>(input: {
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
   onProviderCallError?: (attempt: ReportProviderAttempt, error: unknown) => Promise<void>;
 }): Promise<ReportModelResult<T>> {
+  assertOpenAiStrictResponseSchema(input.schema, input.schemaName);
   const attempt = { provider: input.provider, model: input.model, schemaName: input.schemaName };
   try { await input.beforeProviderCall?.(attempt); } catch (error) { throw new ReportModelLifecycleError("before", error); }
   let result: ReportModelResult<T>;
@@ -192,7 +196,9 @@ export const callReportModel: ReportModelCall = async <T>(input: {
   try {
     return await directReportModelCall<T>(input);
   } catch (error) {
-    if (error instanceof ReportModelLifecycleError || error instanceof ReportModelResponseRejectedError) throw error;
+    if (error instanceof ReportModelLifecycleError
+      || error instanceof ReportModelResponseRejectedError
+      || error instanceof ReportProviderSchemaError) throw error;
     const config = reportFulfillmentConfig();
     if (!config.fallbackProvider || !config.fallbackModel
       || (config.fallbackProvider === input.provider && config.fallbackModel === input.model)) throw error;

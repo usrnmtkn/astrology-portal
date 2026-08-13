@@ -32,7 +32,7 @@ export type ReportJudgeResult = {
   findings: Array<{ category: ReportJudgeCategory; location: string; finding: string; evidence_ids: string[] }>;
 };
 
-const judgeSchema = {
+export const REPORT_JUDGE_SCHEMA = {
   type: "object", additionalProperties: false, required: ["scores", "applicability", "overall", "verdict", "findings"],
   properties: {
     scores: {
@@ -94,7 +94,7 @@ export async function judgeReportUnit(input: {
       `CONFIGURED_THRESHOLD\n${input.threshold}`
     ].join("\n\n"),
     schemaName: "report_fulfillment_judge",
-    schema: judgeSchema
+    schema: REPORT_JUDGE_SCHEMA
   });
   const movementApplicable = reportDraftMovementApplicable(input.draft);
   const scores: ReportJudgeScores = {
