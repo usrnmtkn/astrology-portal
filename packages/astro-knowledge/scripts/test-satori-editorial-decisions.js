@@ -6,9 +6,9 @@ const fs = require("fs");
 const path = require("path");
 
 const packageRoot = path.resolve(__dirname, "..");
-const { compiledFiles, loadDecisionSource, validateDecisionSource, writeOrCheck } = require("./compile-owner-author-editorial-decisions.js");
+const { compiledFiles, loadDecisionSource, validateDecisionSource, writeOrCheck } = require("./compile-satori-editorial-decisions.js");
 const { lintArticle, lintBatchRepetition } = require("./lint-placement-voice.js");
-const { buildPacket } = require(path.join(packageRoot, "..", "..", ".agents", "skills", "owner-author-writer", "scripts", "compile-writing-packet.js"));
+const { buildPacket } = require(path.join(packageRoot, "..", "..", ".agents", "skills", "satori-writer", "scripts", "compile-writing-packet.js"));
 const { buildJudgePrompt } = require("./judge-placement-voice.js");
 
 function article(overrides = {}) {
