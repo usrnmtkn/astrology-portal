@@ -13864,7 +13864,7 @@ function SkyDatePicker({
   const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
-    <section className="date-picker" id="sky-date-picker" ref={pickerRef} aria-label="Select transit date">
+    <section className="date-picker" id="sky-date-picker" ref={pickerRef} aria-label="Pick Date">
       <div className="date-picker-header">
         <button className="date-picker-nav" type="button" aria-label="Previous month" onClick={() => setVisibleMonth((month) => addMonths(month, -1))}>
           <ChevronLeft size={16} aria-hidden="true" />
