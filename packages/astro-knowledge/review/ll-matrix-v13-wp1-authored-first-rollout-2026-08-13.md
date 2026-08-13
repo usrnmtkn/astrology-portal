@@ -32,6 +32,19 @@ The machine-readable manifest is `packages/astro-knowledge/review/ll-matrix-v13-
 
 The clarity annotation is a deterministic precheck for `translation-required`, `real-filler`, and `astrology-restated`. “No deterministic V13 clarity defect detected” is not a pass verdict; owner review controls.
 
+## Batch 1 editorial revision V2
+
+The owner supplied a separate editorial draft packet:
+
+- `packages/astro-knowledge/review/TLDR-LL-V13-WP1-BATCH-01-EDITORIAL-REVISION-V2.xlsx`
+- `packages/astro-knowledge/review/TLDR-LL-V13-WP1-BATCH-01-EDITORIAL-REVISION-V2-SUMMARY.md`
+
+Both files are copied byte-identically from the owner's working folder. The V2 workbook preserves `Candidates132!A1:L133` values and formulas from the original workbook, including all 132 metadata SHA-256 values. Its 132 owner verdict and owner edit pairs remain blank. The appended editorial fields contain 47 `AS_IS`, 10 `LIGHT_EDIT`, 75 `REWRITE`, and 0 `SOURCE_GAP` dispositions; 85 rows carry revised copy.
+
+This packet is editorial evidence only. Revised copy is not owner approved, canonical, merged into the V13 source, served, added to the voice index, or eligible for writer promotion. The original Batch 1 workbook remains unmodified.
+
+`tldr-astro-phrasebank/TLDR-BATCH-EDITORIAL-STANDARD-V2.md` records the forward standard. Future batches require a complete editorial packet before workbook generation. Deterministic gates fail the build on the V2 tripwires, including em dashes, `whether`, filler uses of `real`, permission endings, clinical language, summary scaffolds, invented biography, and repeated neighboring openings. The gates do not replace whole-passage judgment or the owner's verdict.
+
 ## Atomic verdict import
 
 `scripts/import_ll_v13_wp1_owner_verdicts.py`:
@@ -39,12 +52,14 @@ The clarity annotation is a deterministic precheck for `translation-required`, `
 - requires all 132 verdicts and accepts only `approve`, `edit`, or `cut`;
 - validates every controlled workbook cell and metadata SHA-256 against the manifest;
 - refuses formulas in verdict/edit cells, missing rows, extra/reordered keys, partial verdicts, copy drift, or hash drift;
-- adopts current copy byte-identically for `approve`, owner wording verbatim for `edit`, and no row for `cut`;
+- accepts the original 12-column workbook and the V2 15-column editorial shape;
+- adopts revised copy verbatim for `approve` on a `LIGHT_EDIT` or `REWRITE` row, current copy byte-identically for `approve` on `AS_IS`, owner wording verbatim for `edit`, and no row for `cut`;
+- refuses `approve` on `SOURCE_GAP` and refuses a revised value whose disposition is missing or inconsistent;
 - performs no state change when validation fails;
 - on an authorized `--apply`, replaces canonical fallback rows by exact `contentKey`, runs the duplicate-key invariant before and after, and preserves every other row byte-identically;
 - writes approved evidence to the separate WP-1 locked overlay consumed by the voice-index builder.
 
-The checked-in workbook is intentionally blank, so importer execution currently refuses it. It becomes executable only after the owner fills every row.
+Both checked-in review workbooks are intentionally blank in their owner-input columns, so importer execution currently refuses them. The V2 workbook is now the default import input; it becomes executable only after the owner fills every row.
 
 ## Friend derivation boundary
 
