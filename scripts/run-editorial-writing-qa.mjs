@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import assert from "node:assert/strict";
 import { readdir, readFile, stat } from "node:fs/promises";
 import { createRequire } from "node:module";
 import path from "node:path";
@@ -130,19 +131,38 @@ function truncate(value) {
   return value.replace(/\s+/g, " ").trim().slice(0, 180);
 }
 
-function collectReaderStringsFromJson(value, filePath, trail = []) {
+function isExactOwnerApprovedRecord(value) {
+  return Boolean(
+    value
+    && typeof value === "object"
+    && !Array.isArray(value)
+    && value.owner_approved === true
+    && value.review_status === "approved"
+    && value.approval?.approvalLevel === "exact_owner_approved"
+    && typeof value.approval?.recordPath === "string"
+    && value.approval.recordPath.length > 0
+    && /^[a-f0-9]{64}$/i.test(value.approval?.payloadSha256 ?? "")
+  );
+}
+
+function collectReaderStringsFromJson(value, filePath, trail = [], exactOwnerApproved = false) {
   if (typeof value === "string") {
     const key = String(trail.at(-1) ?? "");
     if (!readerFieldPattern.test(key) || ignoredFieldPattern.test(key)) return [];
-    return [{ value, fieldPath: trail.join(".") }];
+    return [{ value, fieldPath: trail.join("."), exactOwnerApproved }];
   }
 
   if (Array.isArray(value)) {
-    return value.flatMap((item, index) => collectReaderStringsFromJson(item, filePath, [...trail, String(index)]));
+    return value.flatMap((item, index) => (
+      collectReaderStringsFromJson(item, filePath, [...trail, String(index)], exactOwnerApproved)
+    ));
   }
 
   if (value && typeof value === "object") {
-    return Object.entries(value).flatMap(([key, child]) => collectReaderStringsFromJson(child, filePath, [...trail, key]));
+    const childExactOwnerApproved = exactOwnerApproved || isExactOwnerApprovedRecord(value);
+    return Object.entries(value).flatMap(([key, child]) => (
+      collectReaderStringsFromJson(child, filePath, [...trail, key], childExactOwnerApproved)
+    ));
   }
 
   return [];
@@ -169,12 +189,13 @@ function lineForJsonField(source, fieldPath, value) {
   return lastKey ? lineFor(`"${lastKey}"`) : 1;
 }
 
-function checkString({ filePath, source, fieldPath, value }) {
+function checkString({ filePath, source, fieldPath, value, exactOwnerApproved = false }) {
   const findings = [];
   const line = lineForJsonField(source, fieldPath, value);
   const fieldName = String(fieldPath.split(".").at(-1) ?? "");
 
   for (const check of blockingChecks) {
+    if (check.id === "mechanical-emergency-detail-fallback" && exactOwnerApproved) continue;
     if (check.pattern.test(value)) {
       findings.push({
         severity: "BLOCKER",
@@ -233,6 +254,11 @@ function checkString({ filePath, source, fieldPath, value }) {
 }
 
 function checkSourceForKnownLeaks({ filePath, source }) {
+  // JSON reader fields are checked structurally above so their approval
+  // provenance is available. Raw-source scanning is retained for TypeScript,
+  // where emergency copy can otherwise hide outside an extracted reader field.
+  if (filePath.endsWith(".json")) return [];
+
   const findings = [];
   const lineFor = makeLineLookup(source);
 
@@ -253,6 +279,44 @@ function checkSourceForKnownLeaks({ filePath, source }) {
 
   return findings;
 }
+
+function assertEditorialApprovalContract() {
+  const source = JSON.stringify({
+    approved: {
+      owner_approved: true,
+      review_status: "approved",
+      approval: {
+        approvalLevel: "exact_owner_approved",
+        recordPath: "packages/astro-knowledge/review/contract.json",
+        payloadSha256: "a".repeat(64)
+      },
+      body: "Identity is active here."
+    },
+    unreviewed: {
+      review_status: "draft",
+      body: "This transit is active now."
+    }
+  }, null, 2);
+  const strings = collectReaderStringsFromJson(JSON.parse(source), "contract.json");
+  const approved = strings.find((entry) => entry.fieldPath === "approved.body");
+  const unreviewed = strings.find((entry) => entry.fieldPath === "unreviewed.body");
+
+  assert.ok(approved?.exactOwnerApproved, "Exact owner approval must travel with its reader text.");
+  assert.equal(
+    checkString({ filePath: "contract.json", source, ...approved })
+      .some((finding) => finding.check === "mechanical-emergency-detail-fallback"),
+    false,
+    "Exact owner-approved wording must not be rejected by the generic emergency-copy heuristic."
+  );
+  assert.equal(
+    checkString({ filePath: "contract.json", source, ...unreviewed })
+      .some((finding) => finding.check === "mechanical-emergency-detail-fallback"),
+    true,
+    "Unreviewed mechanical emergency copy must remain blocking."
+  );
+}
+
+assertEditorialApprovalContract();
 
 try {
   const handledSurface = await runSurfaceVoiceQa(process.argv.slice(2));
