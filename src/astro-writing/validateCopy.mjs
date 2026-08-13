@@ -1,4 +1,5 @@
 import { WRITING_POLICY_DATA } from "./policyData.generated.mjs";
+import { priorCopyStructuralCorrespondence } from "./authoringSource.mjs";
 
 const DEFAULT_BANNED = [
   "whether",
@@ -22,6 +23,28 @@ const STOCK_TROPES = [
 ];
 
 const INTERNAL_GUARD_FIELDS = new Set(["DO_NOT_ASSUME", "do_not_assume"]);
+
+const OBSERVABLE_TERMS = Object.freeze([
+  "answer", "appointment", "argument", "ask", "bill", "body", "book", "bring", "budget",
+  "calendar", "call", "cancel", "card", "class", "client", "coffee", "conversation", "course",
+  "coworker", "deadline", "decision", "document", "drive", "eat", "email", "flight", "food",
+  "friend", "game", "hour", "invoice", "job", "meal", "meeting", "message", "money", "pay",
+  "plan", "presentation", "project", "purchase", "relationship", "rematch", "reply", "schedule",
+  "claim", "source",
+  "send", "shift", "sign up", "sleep", "spend", "text", "time", "trip", "volunteer", "work",
+  "write", "rewrite", "wash", "leave", "arrive", "finish", "delay", "move", "say", "tell",
+  "check", "share", "agree", "refuse", "notice", "show"
+]);
+
+const ARCHETYPE_TERMS = Object.freeze([
+  "warrior", "warriors", "athlete", "athletes", "rocket fuel", "chariot", "chariots", "blade",
+  "blades", "underworld", "catharsis", "death and rebirth", "mysteries of life", "superpower"
+]);
+
+const THERAPY_SUMMARY_TERMS = Object.freeze([
+  "empathy", "suffering", "trauma", "nurturing", "healing", "fertile potential", "growth",
+  "deep bonds", "emotional entanglements", "intuition", "leap of faith", "work ethic"
+]);
 
 const HOUSE_BLEED_NOUNS = Object.freeze({
   aries: ["appearance", "body image", "first impression", "identity", "self-presentation"],
@@ -93,7 +116,8 @@ export function validateCopy(copy, {
   expectedPlaceholders = [],
   requiredFields = [],
   protectedOwnerLines = [],
-  ownerCorrections = []
+  ownerCorrections = [],
+  priorCopy = null
 } = {}) {
   const text = copyText(copy);
   const normalized = text.toLowerCase();
@@ -137,6 +161,38 @@ export function validateCopy(copy, {
       violations.push({ category: correction.category, detail: correction.rule ?? correction.why ?? correction.bad });
     }
   }
+  const authorFromMechanism = Boolean(plan?.astrology_support ?? plan?.astrologySupport);
+  if (authorFromMechanism) {
+    const proseSegments = typeof copy === "string"
+      ? [copy]
+      : Object.entries(copy ?? {})
+        .filter(([field, value]) => !INTERNAL_GUARD_FIELDS.has(field) && typeof value === "string")
+        .map(([, value]) => value.trim())
+        .filter(Boolean);
+    const traitEntry = proseSegments.find((segment) => /^(?:your (?:creativity|empathy|competitive streak|intuition|work ethic|faith|talent|ability|capacity)\b|your [^.!?]{0,80}\b(?:gives?|allows?|helps?|makes?) you\b|you (?:crave\b|value\b|possess\b|embody\b|radiate\b|have (?:faith|a (?:talent|gift|capacity|tendency|knack))\b|are (?:creative|empathetic|intuitive|competitive)\b)|moments of catharsis\b)/iu.test(segment));
+    if (traitEntry) {
+      violations.push({ category: "trait_entry", detail: `Trait-first opening: ${traitEntry.split(/[.!?]/u)[0]}` });
+    }
+    const hasObservableTerm = OBSERVABLE_TERMS.some((term) => hasBanned(normalized, term));
+    if (!hasObservableTerm) {
+      violations.push({ category: "photograph_test", detail: "No clause names an action, situation, exchange, object, time, place, or consequence that could be photographed or overheard." });
+    }
+    if (traitEntry && !hasObservableTerm) {
+      violations.push({ category: "astrology_summary", detail: "Trait-first abstract description substitutes for a lived mechanism and consequence." });
+    }
+    const archetypeMatches = ARCHETYPE_TERMS.filter((term) => hasBanned(normalized, term));
+    if (archetypeMatches.length >= 2 || archetypeMatches.some((term) => ["rocket fuel", "underworld", "death and rebirth"].includes(term))) {
+      violations.push({ category: "archetype_soup", detail: archetypeMatches.join(", ") });
+    }
+    const therapyMatches = THERAPY_SUMMARY_TERMS.filter((term) => hasBanned(normalized, term));
+    if (therapyMatches.length >= 2 && !hasObservableTerm) {
+      violations.push({ category: "astrology_summary", detail: `Abstract or therapy-register summary without lived action: ${therapyMatches.join(", ")}` });
+    }
+  }
+  const priorMatch = priorCopyStructuralCorrespondence(text, priorCopy);
+  if (priorMatch.matched) {
+    violations.push({ category: "paraphrase_of_prior", detail: `${priorMatch.reason} (${priorMatch.score.toFixed(3)})` });
+  }
   if (plan?.house == null) {
     const matches = (HOUSE_BLEED_NOUNS[plan?.sign] ?? []).filter((noun) => normalized.includes(noun));
     if (matches.length >= HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS) {
@@ -149,4 +205,12 @@ export function validateCopy(copy, {
   return { passed: violations.length === 0, violations };
 }
 
-export { DEFAULT_BANNED, HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS, HOUSE_BLEED_NOUNS, STOCK_TROPES };
+export {
+  ARCHETYPE_TERMS,
+  DEFAULT_BANNED,
+  HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS,
+  HOUSE_BLEED_NOUNS,
+  OBSERVABLE_TERMS,
+  STOCK_TROPES,
+  THERAPY_SUMMARY_TERMS
+};

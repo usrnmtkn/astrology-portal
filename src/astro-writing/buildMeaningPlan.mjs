@@ -21,6 +21,10 @@ function textList(value) {
 }
 
 export function buildMeaningPlan(input) {
+  const sourceRowKey = requiredText(input.rowKey ?? input.row_key, "source row key");
+  const astrologySupport = requiredText(input.astrologySupport ?? input.astrology_support, "AstrologySupport");
+  const sourceConstraints = textList(input.sourceConstraints ?? input.source_constraints);
+  if (!sourceConstraints.length) throw new Error("Meaning plan requires source constraints.");
   const object = requiredText(input.object ?? input.planet ?? input.point, "object / point").toLowerCase();
   const sign = requiredText(input.sign, "sign").toLowerCase();
   const house = input.house == null ? null : Number(input.house);
@@ -46,6 +50,9 @@ export function buildMeaningPlan(input) {
   );
   const risks = textList(input.risks ?? input.shadowExpression);
   const plan = {
+    source_row_key: sourceRowKey,
+    astrology_support: astrologySupport,
+    source_constraints: sourceConstraints,
     content_type: String(input.contentType ?? input.content_type ?? "placement"),
     object,
     sign,
@@ -66,6 +73,9 @@ export function buildMeaningPlan(input) {
     stock_trope_risks: textList(input.stockTropeRisks),
     unearned_motives: textList(input.unearnedMotives),
     // Compatibility aliases for existing retrieval and generation call sites.
+    rowKey: sourceRowKey,
+    astrologySupport,
+    sourceConstraints,
     eventType: input.eventType ? String(input.eventType).trim().toLowerCase() : null,
     objectFunction,
     signMechanics,
