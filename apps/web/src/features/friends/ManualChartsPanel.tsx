@@ -214,6 +214,8 @@ export function ManualChartsPanel({
   profile,
   profileHandle,
   currentSky,
+  currentSkyLoading,
+  transitDateLabel,
   fallbackArchitectureV3Version,
   profileNatalSky,
   profileTransits,
@@ -234,6 +236,8 @@ export function ManualChartsPanel({
   profile: UserProfile;
   profileHandle: string | null;
   currentSky: SkySnapshot | null;
+  currentSkyLoading: boolean;
+  transitDateLabel: string;
   fallbackArchitectureV3Version: number;
   profileNatalSky: SkySnapshot | null;
   profileTransits: TransitItem[];
@@ -2441,16 +2445,18 @@ export function ManualChartsPanel({
           {friendProfileTab === "transits" && (
             <FriendTransitsTab
               bondTransits={selectedBondTransitViewCards}
+              isLoading={currentSkyLoading}
               dailyForecast={selectedFriendDailyForecast}
               dailyDoItems={selectedFriendDailyDoDont?.do ?? []}
               dailyDontItems={selectedFriendDailyDoDont?.dont ?? []}
+              dateLabel={transitDateLabel}
               friendName={selectedChart.displayName}
               houseTransits={selectedFriendHouseTransitViewCards}
               onOpenBondTransit={openBondTransitById}
               onOpenHouseTransit={openFriendHouseTransitById}
               onOpenPersonalTransit={openFriendTransitById}
-              patternItems={selectedFriendNatalAspectPatternItems}
-              patternTimingOverrides={selectedFriendNatalAspectPatternTimingOverrides}
+              patternItems={currentSkyLoading ? [] : selectedFriendNatalAspectPatternItems}
+              patternTimingOverrides={currentSkyLoading ? {} : selectedFriendNatalAspectPatternTimingOverrides}
               personalTransitGroups={selectedFriendPersonalTransitGroups}
             />
           )}
