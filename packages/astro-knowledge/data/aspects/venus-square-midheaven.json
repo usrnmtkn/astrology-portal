@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-square-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus square Midheaven can make flattery tempting when the person wants approval or advancement.",
+  "astrologySupportSha256": "acda10acb74ee33ac656f55eb396d306c3eea8c50be47e246368a44391ae500c",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "square",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 630,
+    "keyCell": "A630",
+    "pageRef": "PDF p.421",
+    "astrologySupportCell": "L630",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

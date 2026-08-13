@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-square-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto square Midheaven can make reform feel more urgent than cooperation.",
+  "astrologySupportSha256": "3071dd47f52e1ca8229756b4707a8b7e23d300930890a9c1c1c9a410e59c34a9",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "square",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 672,
+    "keyCell": "A672",
+    "pageRef": "PDF p.425-426",
+    "astrologySupportCell": "L672",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

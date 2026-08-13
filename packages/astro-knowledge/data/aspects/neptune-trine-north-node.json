@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-trine-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune trine North Node can bring teachers who feel spiritually familiar.",
+  "astrologySupportSha256": "dcd92fce5a601ee2d2f98dc5714cc337c18a964b77f1bd1336c6310441c8a065",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "trine",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 484,
+    "keyCell": "A484",
+    "pageRef": "PDF p.406",
+    "astrologySupportCell": "L484",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

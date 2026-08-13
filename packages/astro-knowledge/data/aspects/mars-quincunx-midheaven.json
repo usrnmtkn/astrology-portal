@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-quincunx-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars inconjunct Midheaven can make the person want the top position before the long climb that produces it.",
+  "astrologySupportSha256": "a3cf38d8de11d5e505a0696addac57c6b4b456ebace11fe305ce2441a3d778f2",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "quincunx",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 639,
+    "keyCell": "A639",
+    "pageRef": "PDF p.421-422",
+    "astrologySupportCell": "L639",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

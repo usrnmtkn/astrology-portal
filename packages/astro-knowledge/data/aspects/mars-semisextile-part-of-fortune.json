@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-semisextile-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars semisextile Part of Fortune can make the change in what they want feel blocked until the old way of handling the houses involved starts to change.",
+  "astrologySupportSha256": "e616f3231196c485fd04188b676721f02768a615c01d3c80bef4ccb7f9c92a0e",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "semisextile",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 390,
+    "keyCell": "A390",
+    "pageRef": "PDF p.376",
+    "astrologySupportCell": "L390",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

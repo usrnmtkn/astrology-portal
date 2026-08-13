@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "saturn-trine-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Saturn trine Midheaven can make professional competence build steadily.",
+  "astrologySupportSha256": "a4847e3abbaae2ded1db59fbe302abedffe99f7b51f2fdab1508df7ebc5dee7d",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "trine",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 652,
+    "keyCell": "A652",
+    "pageRef": "PDF p.423-424",
+    "astrologySupportCell": "L652",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

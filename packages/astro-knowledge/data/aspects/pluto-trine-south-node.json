@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-trine-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto trine South Node can make karmic situations easier to accept as part of expanding awareness. In this framework, the person is more willing to let experience change the worldview instead of fighting to preserve it.",
+  "astrologySupportSha256": "309600a27938140b024246390498887ddd3ebe2b79a8c5a219e5c8ec5255a34f",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "trine",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 512,
+    "keyCell": "A512",
+    "pageRef": "PDF p.410",
+    "astrologySupportCell": "L512",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

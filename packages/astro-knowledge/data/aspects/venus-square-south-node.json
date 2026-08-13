@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-square-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus square South Node can make karmic repetition feel unfair when the real issue is resistance to changing a value that keeps recreating the same problem.",
+  "astrologySupportSha256": "03947427a20277eda3fd5543f19f2bb3195b5990a54c48228b82bb8d1bfa9821",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "square",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 284,
+    "keyCell": "A284",
+    "pageRef": "PDF p.363",
+    "astrologySupportCell": "L284",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

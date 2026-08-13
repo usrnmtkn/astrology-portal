@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-opposition-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus opposite Part of Fortune can make the need to change values impossible to ignore.",
+  "astrologySupportSha256": "77efff2bb706d1ffebddf6b757506588fc5bffacb452651496c4f95f32917a46",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "opposition",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 273,
+    "keyCell": "A273",
+    "pageRef": "PDF p.361",
+    "astrologySupportCell": "L273",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

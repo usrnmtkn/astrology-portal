@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-sextile-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon sextile Part of Fortune gives the way the person is changing an easier opening.",
+  "astrologySupportSha256": "1e4f0dac958c07c34e62a9bed3f162ff756914f6f06b3cddfb608faf67185def",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "sextile",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 140,
+    "keyCell": "A140",
+    "pageRef": "PDF p.331",
+    "astrologySupportCell": "L140",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

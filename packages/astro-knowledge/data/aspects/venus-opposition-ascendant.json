@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-opposition-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus opposite Ascendant can make approval especially important in one-on-one contact.",
+  "astrologySupportSha256": "826faa58f4fe4a749520684147cb93071e81e9fa06c140ef2fe713d8be9aafd7",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "opposition",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 542,
+    "keyCell": "A542",
+    "pageRef": "PDF p.412",
+    "astrologySupportCell": "L542",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

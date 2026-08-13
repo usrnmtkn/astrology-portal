@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "uranus-trine-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Uranus trine South Node can make karmic situations easier to accept as openings into unconscious material. In this framework, the person is more willing to let what returns reveal something rather than immediately shutting it down.",
+  "astrologySupportSha256": "a2c4dd0aa709714f034382a958ad300f0dc1cde45ec0ab2a2faa392252647e36",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "uranus",
+      "aspect": "trine",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 470,
+    "keyCell": "A470",
+    "pageRef": "PDF p.404",
+    "astrologySupportCell": "L470",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

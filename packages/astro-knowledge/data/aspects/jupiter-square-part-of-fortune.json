@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-square-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter square Part of Fortune can make two priorities pulling against each other interfere with the ability to recognize spiritual meaning.",
+  "astrologySupportSha256": "dd4a75a03ac0b8096b85d5c963ba3ced247e3dfbdd78cf2978ff82debdea2e24",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "square",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 413,
+    "keyCell": "A413",
+    "pageRef": "PDF p.388",
+    "astrologySupportCell": "L413",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

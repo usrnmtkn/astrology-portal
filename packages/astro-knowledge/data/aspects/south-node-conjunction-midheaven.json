@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "south-node-conjunction-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "South Node conjunct Midheaven can make unfinished responsibility carried forward from a past life feel more important than public recognition.",
+  "astrologySupportSha256": "7dc62f3e2e5cc7c39bf021f8464c3c858524c0aaf6130bac95e66b29bc5699de",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "south-node",
+      "aspect": "conjunction",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 690,
+    "keyCell": "A690",
+    "pageRef": "PDF p.427-428",
+    "astrologySupportCell": "L690",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

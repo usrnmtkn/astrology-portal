@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mercury-trine-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mercury trine Midheaven can make clear thinking and intuition support career with relatively little friction.",
+  "astrologySupportSha256": "75cb0aace65042a75306b626b2dafa389c9195aa4cce86c40b41c8f6b67faba6",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "trine",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 624,
+    "keyCell": "A624",
+    "pageRef": "PDF p.420-421",
+    "astrologySupportCell": "L624",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "uranus-conjunction-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Uranus conjunct Part of Fortune ties emotional balance closely to access to the unconscious mind.",
+  "astrologySupportSha256": "5d9f58c8771838a1ea1835ac5af0e49ce416f9c6c7863d77989010ff4ae3f37f",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "uranus",
+      "aspect": "conjunction",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 452,
+    "keyCell": "A452",
+    "pageRef": "PDF p.402",
+    "astrologySupportCell": "L452",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

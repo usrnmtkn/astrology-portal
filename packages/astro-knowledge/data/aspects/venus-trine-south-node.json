@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-trine-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus trine South Node can make karmic situations easier to accept as part of changing what matters.",
+  "astrologySupportSha256": "f5a3c4dc0faa94d12b602f4534496a3ecf9b7e599f6835fd16a9d83368b647e2",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "trine",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 285,
+    "keyCell": "A285",
+    "pageRef": "PDF p.363",
+    "astrologySupportCell": "L285",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

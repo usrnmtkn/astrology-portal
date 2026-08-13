@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mercury-opposition-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mercury opposite Part of Fortune can make the link between intelligence and practical success impossible to ignore.",
+  "astrologySupportSha256": "23e94cd5349e8219aa6c59fda607f2cfecccd9a5d7645a286688c4b85cf4afb0",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "opposition",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 210,
+    "keyCell": "A210",
+    "pageRef": "PDF p.346",
+    "astrologySupportCell": "L210",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

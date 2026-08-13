@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "part-of-fortune-opposition-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Part of Fortune opposite Midheaven can make career success depend on cooperating with experience rather than controlling it.",
+  "astrologySupportSha256": "3b5fd24cda0faa439621347705619ff47b24e29cdc77741b900a9afe008d9017",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "part-of-fortune",
+      "aspect": "opposition",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 682,
+    "keyCell": "A682",
+    "pageRef": "PDF p.426",
+    "astrologySupportCell": "L682",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

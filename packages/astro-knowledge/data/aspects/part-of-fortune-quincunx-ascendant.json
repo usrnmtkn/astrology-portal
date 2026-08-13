@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "part-of-fortune-quincunx-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Part of Fortune inconjunct Ascendant can make motive the hidden issue behind personal success.",
+  "astrologySupportSha256": "5c99bf8fac28558058a1937a3f7c58b00e333f00f96d6a7559200c10ac2876b9",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "part-of-fortune",
+      "aspect": "quincunx",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 590,
+    "keyCell": "A590",
+    "pageRef": "PDF p.417",
+    "astrologySupportCell": "L590",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

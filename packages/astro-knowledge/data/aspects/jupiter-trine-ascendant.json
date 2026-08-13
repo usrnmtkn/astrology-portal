@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-trine-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter trine Ascendant can make openness and optimism easy to see.",
+  "astrologySupportSha256": "21d60c5fdd03635592330c5531f7ece5d6d7ae06b09c5f35a1b5c6fbfab72f67",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "trine",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 554,
+    "keyCell": "A554",
+    "pageRef": "PDF p.413-414",
+    "astrologySupportCell": "L554",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

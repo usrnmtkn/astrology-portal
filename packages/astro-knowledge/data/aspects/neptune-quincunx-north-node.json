@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-quincunx-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune inconjunct North Node can make a teacher's own unfinished spiritual work seem like proof that they cannot help anyone else.",
+  "astrologySupportSha256": "fbe9fa343c2d7949086cbedc89f60723b3627cf06243fe485bd9f22b85749246",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "quincunx",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 485,
+    "keyCell": "A485",
+    "pageRef": "PDF p.406",
+    "astrologySupportCell": "L485",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

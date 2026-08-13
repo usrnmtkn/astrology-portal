@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "saturn-quincunx-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Saturn inconjunct Part of Fortune can require a change in thinking before humility becomes possible.",
+  "astrologySupportSha256": "ac60b1e54b0c91ac17a97dcb699a0e0672137dc3c32fccee89f59824292823d1",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "quincunx",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 436,
+    "keyCell": "A436",
+    "pageRef": "PDF p.397",
+    "astrologySupportCell": "L436",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

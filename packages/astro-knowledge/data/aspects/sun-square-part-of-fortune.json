@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-square-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun square Part of Fortune can put personal recognition and what the soul is trying to learn on opposite sides of the same decision.",
+  "astrologySupportSha256": "e478586f47299aac2a34631032f0e68eedbf5a8e893158021578f15c2badc981",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "square",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 64,
+    "keyCell": "A64",
+    "pageRef": "PDF p.313",
+    "astrologySupportCell": "L64",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

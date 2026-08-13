@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-conjunction-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter conjunct Ascendant can make generosity and optimism part of the first impression.",
+  "astrologySupportSha256": "344f2114995fb76982b3f3511b8cd47235049b8dbba36b2f43cafde2c3e8c46e",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "conjunction",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 550,
+    "keyCell": "A550",
+    "pageRef": "PDF p.413-414",
+    "astrologySupportCell": "L550",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "north-node-quincunx-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "North Node inconjunct Ascendant can require the person to question some of the assumptions they use to define themselves before a spiritual life feels possible.",
+  "astrologySupportSha256": "3932eb4f9fc904d61bafdcd4a430ac50a400e48abaef0350f7644a06f7f1f91a",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "north-node",
+      "aspect": "quincunx",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 597,
+    "keyCell": "A597",
+    "pageRef": "PDF p.417-418",
+    "astrologySupportCell": "L597",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-opposition-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto opposite Midheaven can make public status feel secondary to other goals.",
+  "astrologySupportSha256": "5bab5dca4f7aeab931f871a3ce11fd8ec34e5014ff74618b8e86b976e43b7b40",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "opposition",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 675,
+    "keyCell": "A675",
+    "pageRef": "PDF p.425-426",
+    "astrologySupportCell": "L675",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

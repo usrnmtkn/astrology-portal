@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-square-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun square Ascendant can make life direction harder to settle.",
+  "astrologySupportSha256": "0cbdb0e6c6a7cfa587b6ebc0c949047589c1f97323e8d547789fd693388edb0b",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "square",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 518,
+    "keyCell": "A518",
+    "pageRef": "PDF p.410",
+    "astrologySupportCell": "L518",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

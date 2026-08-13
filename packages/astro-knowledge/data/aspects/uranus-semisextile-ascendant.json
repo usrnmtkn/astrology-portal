@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "uranus-semisextile-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Uranus semisextile Ascendant can make freedom feel restricted by circumstances the person cannot easily ignore.",
+  "astrologySupportSha256": "641c3a4e3311925d4385ced1a0b580095684e686ca99dd71aad8262183e95e9b",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "uranus",
+      "aspect": "semisextile",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 565,
+    "keyCell": "A565",
+    "pageRef": "PDF p.414-415",
+    "astrologySupportCell": "L565",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

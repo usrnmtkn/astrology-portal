@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-quincunx-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon inconjunct Midheaven can make professional judgment too dependent on the current feeling.",
+  "astrologySupportSha256": "7677e5bac232be7e1c29b95afb6071ad02bf38317a85cb75eb4f755c662a9cc9",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "quincunx",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 618,
+    "keyCell": "A618",
+    "pageRef": "PDF p.419-420",
+    "astrologySupportCell": "L618",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "saturn-trine-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Saturn trine South Node can make karmic situations easier to accept as material for learning humility.",
+  "astrologySupportSha256": "04280ba1442bea912ae44ad747e0e063c72769c4b030a2c0e5c334e5c67360eb",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "trine",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 449,
+    "keyCell": "A449",
+    "pageRef": "PDF p.398",
+    "astrologySupportCell": "L449",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

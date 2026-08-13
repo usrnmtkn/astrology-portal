@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "south-node-opposition-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "South Node opposite Midheaven can make career ambition and karmic responsibility both difficult to ignore.",
+  "astrologySupportSha256": "22d12f713446c68d4a187a6a6cadce7fc62188ee66883ec8d50072e1ca447224",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "south-node",
+      "aspect": "opposition",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 696,
+    "keyCell": "A696",
+    "pageRef": "PDF p.427-428",
+    "astrologySupportCell": "L696",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

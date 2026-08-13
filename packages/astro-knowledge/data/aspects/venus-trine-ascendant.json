@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-trine-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus trine Ascendant can make charm, attractiveness, artistic ability, and social ease feel natural.",
+  "astrologySupportSha256": "12e653531c74784196396c31f5029e33ec9dda8d6001085744fade4e0438428f",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "trine",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 540,
+    "keyCell": "A540",
+    "pageRef": "PDF p.412",
+    "astrologySupportCell": "L540",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

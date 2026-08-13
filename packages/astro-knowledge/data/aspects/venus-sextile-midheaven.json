@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-sextile-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus sextile Midheaven gives a pleasant personality a usable place in career.",
+  "astrologySupportSha256": "148c341db2a138dbc1286f18ba56a7d8c5cdf3afffc03f26d64c2c88fe0d8d9d",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "sextile",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 629,
+    "keyCell": "A629",
+    "pageRef": "PDF p.421",
+    "astrologySupportCell": "L629",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

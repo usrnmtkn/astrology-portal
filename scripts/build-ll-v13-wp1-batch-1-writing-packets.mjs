@@ -21,8 +21,11 @@ function sha256(value) {
 
 const rows = batch.rows.map((row) => {
   const packet = buildNatalWritingPacket({ surface: "natal-aspect", key: row.rowKey, indexEntries: entries });
-  const modelInput = packet.generationAllowed
-    ? renderNatalModelInput(packet, { task: `Author one fresh, owner-review-gated natal delineation for ${row.rowKey}. Return only the finished passage.` })
+  const selfModelInput = packet.generationAllowed
+    ? renderNatalModelInput(packet, { voice: "self", task: `Author one fresh, owner-review-gated self natal delineation for ${row.rowKey}. Return only the finished passage.` })
+    : null;
+  const friendModelInput = packet.generationAllowed
+    ? renderNatalModelInput(packet, { voice: "friend", task: `Author one fresh, owner-review-gated Friend natal delineation for ${row.rowKey}. Use the token Name. Return only the finished passage.` })
     : null;
   return {
     rowKey: row.rowKey,
@@ -39,7 +42,10 @@ const rows = batch.rows.map((row) => {
       evidenceSummary: packet.evidenceSummary,
       ownerPassages: packet.ownerPassages,
       promptBlockSha256: sha256(packet.promptBlock),
-      modelInputSha256: modelInput ? sha256(modelInput) : null,
+      authoringTasks: packet.generationAllowed ? [
+        { voice: "self", entryPoint: "reader-own-experience", modelInputSha256: sha256(selfModelInput) },
+        { voice: "friend", entryPoint: "observer-in-the-room", derivedFromPairedPassage: false, modelInputSha256: sha256(friendModelInput) }
+      ] : [],
       governance: packet.governance
     }
   };

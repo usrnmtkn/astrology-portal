@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-square-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun square South Node can make karmic situations feel like unfair repetition.",
+  "astrologySupportSha256": "dfd0dd06102a7ebb6a389b39dfdb230a1d3ea663dacd70e71f70e7ef90fd779a",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "square",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 78,
+    "keyCell": "A78",
+    "pageRef": "PDF p.315",
+    "astrologySupportCell": "L78",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-quincunx-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun inconjunct North Node can make a teacher's ordinary human flaws difficult to reconcile with the value of what they know.",
+  "astrologySupportSha256": "3a4efb162254b4a90af354643c68d4f7bd72873ff9b0d19b8dae45f92fe903d1",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "quincunx",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 73,
+    "keyCell": "A73",
+    "pageRef": "PDF p.314",
+    "astrologySupportCell": "L73",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

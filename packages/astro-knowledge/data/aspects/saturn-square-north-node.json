@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "saturn-square-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Saturn square North Node can create conflict around teachers because old karmic issues with authority and humility are still active.",
+  "astrologySupportSha256": "dac383fa904257dcd7346d7cee51350ce77b7892f6c20a29d01775a2ec6af59d",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "square",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 441,
+    "keyCell": "A441",
+    "pageRef": "PDF p.397",
+    "astrologySupportCell": "L441",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

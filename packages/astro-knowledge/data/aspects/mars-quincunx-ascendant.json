@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-quincunx-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars inconjunct Ascendant can make cooperation feel like a compromise of personal effort.",
+  "astrologySupportSha256": "839b412a0283f975ead96a1dc8ed668f6d58c7b533717446d3d36cba6e6039ab",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "quincunx",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 548,
+    "keyCell": "A548",
+    "pageRef": "PDF p.412-413",
+    "astrologySupportCell": "L548",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

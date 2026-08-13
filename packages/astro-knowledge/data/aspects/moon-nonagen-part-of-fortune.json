@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-nonagen-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon semisextile Part of Fortune can make the way the person is changing feel blocked until the old way of handling the houses involved starts to change.",
+  "astrologySupportSha256": "5b2bcdd3698970cfd4ab8ac614a56510317ab8cfa4ab707c3fa1bba130c76fa5",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "nonagen",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 139,
+    "keyCell": "A139",
+    "pageRef": "PDF p.331",
+    "astrologySupportCell": "L139",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

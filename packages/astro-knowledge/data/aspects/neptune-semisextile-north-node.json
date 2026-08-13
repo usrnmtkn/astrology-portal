@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-semisextile-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune semisextile North Node can make helpful teachers harder to attract while an old rule about spiritual perception stays fixed.",
+  "astrologySupportSha256": "f403724221bf4093c3adea1e4814d9fc382f80395d97cb5d82603db3b183a587",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "semisextile",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 481,
+    "keyCell": "A481",
+    "pageRef": "PDF p.406",
+    "astrologySupportCell": "L481",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

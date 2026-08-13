@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-quincunx-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter inconjunct South Node can make karmic necessity difficult to accept because it conflicts with the person's idea of how life is supposed to work.",
+  "astrologySupportSha256": "4413b51a985c46e400b13479c5628cad41e645668872e005e3f190374557d613",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "quincunx",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 429,
+    "keyCell": "A429",
+    "pageRef": "PDF p.389",
+    "astrologySupportCell": "L429",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

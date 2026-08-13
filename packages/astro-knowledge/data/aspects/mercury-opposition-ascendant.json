@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mercury-opposition-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mercury opposite Ascendant can make other people the preferred source of mental stimulation.",
+  "astrologySupportSha256": "d2d1681492a2eccbd4acf97a618e4a955231b75606ec0d62b0f4ff521a4b2fe1",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "opposition",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 535,
+    "keyCell": "A535",
+    "pageRef": "PDF p.411-412",
+    "astrologySupportCell": "L535",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

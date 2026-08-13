@@ -6,9 +6,9 @@ import { REVIEWER_GOLD_EXEMPLARS } from "./reviewerGoldExemplars.generated.mjs";
 import { NATAL_MECHANISM_CALIBRATION } from "./mechanismCalibration.generated.mjs";
 import { buildCardWriterInstructions } from "./cardWritingStandard.mjs";
 
-export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v4-whole-passage-2026-08-13";
+export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v5-natal-entry-point-2026-08-13";
 export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v5-whole-passage-2026-08-13";
-export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v6-whole-passage-2026-08-13";
+export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v7-natal-entry-point-2026-08-13";
 
 export const COLD_RENDERED_PROSE_RULE = `Read the copy cold, rendered, and line by line as prose. Judge the final text exactly as a
 reader would encounter it in the product. Do not use the prompt, source notes, astrology
@@ -61,6 +61,8 @@ export const canonicalAstrologyWritingInstructions = `CODEX INSTRUCTION (owner-d
 AUTHOR-FROM-MECHANISM RULING: The AstrologySupport field is the source. The existing prose is not the draft. Never paraphrase current V2/V3 copy or preserve its sentence structure. For every row: reduce AstrologySupport to one plain internal mechanism sentence; find an ordinary human situation; enter through something happening rather than a trait; show what gets overbooked, misunderstood, spent, delayed, strained, missed, or made easier; add perspective only after the scene; delete astrology-summary prose. Ask: could some part of the interpretation be photographed or overheard? If not, it still needs work. Keep the row key, AstrologySupport mechanism, and source constraints. Author the reader copy fresh against the lived benchmark.
 
 WHOLE-PASSAGE CLARIFICATION: A passage does not pass because it contains one photographable clause. Every sentence must either advance the lived scene, state a specific consequence, or provide necessary astrology-to-life perspective. A generic astrology-summary sentence fails the passage even when another sentence passes the photograph test. Observable-noun counts are lint signals only; they do not prove voice quality or coherent causal scene density.
+
+ENTRY-POINT RULING: Self and friend are two independent authoring tasks from the same mechanism. Self speaks to the reader and enters through the reader's own experience. Friend speaks about Name and enters through what people in the room observe. Never derive friend copy by swapping pronouns or preserving self sentence structure. Do not assert private interior states in friend voice and do not coach the reader about the friend.
 
 Concrete does not mean adding a random object or domestic scene. Concrete means naming the observable behavior, circumstance, decision, or consequence produced by the astrology. Paraphrase test: could a reader paraphrase the sentence literally after one read? If not, rewrite it.
 
@@ -175,6 +177,21 @@ When prior copy is supplied for downstream comparison, does the candidate track 
 15. WHOLE-PASSAGE SENTENCE ROLE
 Does every sentence advance the lived scene, state a specific consequence, or provide necessary astrology-to-life perspective? One photographable clause cannot launder generic astrology-summary prose elsewhere in the passage. Fail the entire passage when any sentence could be removed without losing the lived mechanism and functions only as a generic horoscope, spiritual, therapy, or astrology-book summary.
 
+16. ABSTRACT-SUBJECT GRAMMAR
+Does an abstract quality such as meaning, emotion, sensitivity, confidence, intensity, ambition, imagination, or discipline act as the grammatical subject? If so, fail it and replace the explanation with something a person does, says, notices, handles, or changes. Also fail deictic "here" when it points at the chart rather than a lived situation.
+
+17. FRIEND ENTRY POSITION
+On friend surfaces, does the opening begin from what people in the room can observe? If it can become self voice by pronoun substitution alone, fail it.
+
+18. PRONOUN-SWAP DERIVATION
+On paired self/friend work, does the friend passage follow the self passage's sentence structure or narrative movement? Friend must be authored independently from the same mechanism, not derived from self copy.
+
+19. FRIEND INTERIOR ACCESS
+Does friend copy assert a private feeling, thought, motive, hope, fear, or conclusion that an observer could not reasonably infer from behavior? If so, fail it.
+
+20. FRIEND COACHING
+Does friend copy advise the reader how to handle, manage, reassure, correct, or accommodate the other person? Friend copy describes. It does not coach.
+
 OTHER CHECKS
 
 clinical shorthand
@@ -244,6 +261,12 @@ export const REVIEW_FIELDS = Object.freeze([
   "archetype_soup",
   "paraphrase_of_prior",
   "whole_passage_sentence_role",
+  "abstract_subject_grammar",
+  "chart_deixis",
+  "friend_entry_position",
+  "pronoun_swap_derivation",
+  "friend_interior_access",
+  "friend_coaching",
   "voice_match",
   "register_consistency",
   "redundancy"
@@ -266,5 +289,11 @@ export const HARD_REVISE_FIELDS = Object.freeze([
   "astrology_summary",
   "archetype_soup",
   "paraphrase_of_prior",
-  "whole_passage_sentence_role"
+  "whole_passage_sentence_role",
+  "abstract_subject_grammar",
+  "chart_deixis",
+  "friend_entry_position",
+  "pronoun_swap_derivation",
+  "friend_interior_access",
+  "friend_coaching"
 ]);

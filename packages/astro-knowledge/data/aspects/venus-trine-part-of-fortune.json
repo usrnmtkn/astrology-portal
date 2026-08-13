@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-trine-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus trine Part of Fortune can make money or other tangible benefits easier to attract after what matters to the person has already changed in a healthier direction. In this karmic framework, that ease is treated as something carried forward from earlier work.",
+  "astrologySupportSha256": "f67e7c202df02242fe0ff0f3f864c1a207f1d086a3491397436391da2c19e342",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "trine",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 271,
+    "keyCell": "A271",
+    "pageRef": "PDF p.361",
+    "astrologySupportCell": "L271",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

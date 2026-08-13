@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-trine-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun trine Part of Fortune can make what the soul is trying to learn feel like a continuation rather than a new assignment. In this karmic framework, that ease is treated as something carried forward from past-life work.",
+  "astrologySupportSha256": "625b78d4c23ee88b308b12b666da18b8a7ee3963be201cf07db4e5364d547d74",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "trine",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 65,
+    "keyCell": "A65",
+    "pageRef": "PDF p.313",
+    "astrologySupportCell": "L65",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

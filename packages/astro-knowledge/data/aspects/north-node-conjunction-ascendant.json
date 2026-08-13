@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "north-node-conjunction-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "North Node conjunct Ascendant can make a spiritual way of living part of the person's basic approach to life.",
+  "astrologySupportSha256": "27ec93972a8f241ccbca05a3dcbf80f250485e8a620a19b74d59be71c2ce2ad4",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "north-node",
+      "aspect": "conjunction",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 592,
+    "keyCell": "A592",
+    "pageRef": "PDF p.417-418",
+    "astrologySupportCell": "L592",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

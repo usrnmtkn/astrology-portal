@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "saturn-conjunction-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Saturn conjunct South Node can make karmic situations arrive through responsibility, authority, delay, or limitation. The purpose in this framework is to teach humility by exposing the places where control or pride still runs the response.",
+  "astrologySupportSha256": "aa2d6bb3a7f8139bd4d709b16cebd6fdd9ead61a6ce4b591f59648cec15e92da",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "conjunction",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 445,
+    "keyCell": "A445",
+    "pageRef": "PDF p.398",
+    "astrologySupportCell": "L445",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

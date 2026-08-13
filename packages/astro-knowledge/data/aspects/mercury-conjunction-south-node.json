@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mercury-conjunction-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mercury conjunct South Node can make karmic situations arrive through ideas, conversations, decisions, or repeated misunderstandings. The purpose in this framework is to change mental habits that keep recreating the same result.",
+  "astrologySupportSha256": "46285c8de1bfb7a1caba72015a7aac917ce27e4dbbf52809b7277b67ca69dd03",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "conjunction",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 218,
+    "keyCell": "A218",
+    "pageRef": "PDF p.347",
+    "astrologySupportCell": "L218",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

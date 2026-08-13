@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-conjunction-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus conjunct North Node can attract teachers who challenge the person's values.",
+  "astrologySupportSha256": "aab1675dd4670d517adb93fb7c9a5216a90e1bb3bb73624d60f223fa290e4873",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "conjunction",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 274,
+    "keyCell": "A274",
+    "pageRef": "PDF p.362",
+    "astrologySupportCell": "L274",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-square-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto square Ascendant can make emotional intensity turn inward until it becomes brooding or secrecy.",
+  "astrologySupportSha256": "f8dff598adc30245d4f970b98f19a9bc892e19277578993a5f2338312d2a3db2",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "square",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 581,
+    "keyCell": "A581",
+    "pageRef": "PDF p.416-417",
+    "astrologySupportCell": "L581",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-semisextile-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun semisextile Midheaven can make public approval feel delayed.",
+  "astrologySupportSha256": "c388e98935780529eda00986da80aa048b354cff3944d5326393a40a6bf3a3c3",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "semisextile",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 607,
+    "keyCell": "A607",
+    "pageRef": "PDF p.418-419",
+    "astrologySupportCell": "L607",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

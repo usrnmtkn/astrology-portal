@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-sextile-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune sextile Part of Fortune gives astral or psychic perception a workable opening.",
+  "astrologySupportSha256": "e3be283e2e26c5212e3d6ddec6fca86b8ae59822f4805c27732a17592b7eac17",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "sextile",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 475,
+    "keyCell": "A475",
+    "pageRef": "PDF p.405",
+    "astrologySupportCell": "L475",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

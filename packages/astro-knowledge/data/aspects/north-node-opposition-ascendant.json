@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "north-node-opposition-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "North Node opposite Ascendant can make other people the place where the need for a spiritual direction becomes obvious.",
+  "astrologySupportSha256": "d17a69951a982c4cd271b72b2cf83fad2bb775f44e9bae1f6fa6f898244d8e23",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "north-node",
+      "aspect": "opposition",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 598,
+    "keyCell": "A598",
+    "pageRef": "PDF p.417-418",
+    "astrologySupportCell": "L598",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

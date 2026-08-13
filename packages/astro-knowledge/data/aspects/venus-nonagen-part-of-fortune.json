@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-nonagen-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus semisextile Part of Fortune can make change in what matters feel blocked until the old way of handling the houses involved starts to change.",
+  "astrologySupportSha256": "4eb9f4e8a5e666fd3bb795cfadc4e97982003605ece3e3edf2e117332b987755",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "nonagen",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 268,
+    "keyCell": "A268",
+    "pageRef": "PDF p.361",
+    "astrologySupportCell": "L268",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-trine-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars trine Ascendant can make courage and independence look natural.",
+  "astrologySupportSha256": "27732f18c27bf0aaa9c423339619db760120b4ee4a932b290ad2c431a9099ea4",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "trine",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 547,
+    "keyCell": "A547",
+    "pageRef": "PDF p.412-413",
+    "astrologySupportCell": "L547",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-square-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus square North Node can create distrust or conflict around teachers, especially when old karmic issues with teaching or values are still active.",
+  "astrologySupportSha256": "439a8bd01d022562a327cc10afee942d0d8d46cfdac0da55f8198b9f65350236",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "square",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 277,
+    "keyCell": "A277",
+    "pageRef": "PDF p.362",
+    "astrologySupportCell": "L277",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

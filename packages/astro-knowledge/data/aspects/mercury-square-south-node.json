@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mercury-square-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mercury square South Node can make karmic situations feel like evidence that life keeps misunderstanding the person.",
+  "astrologySupportSha256": "7d51a452f07a9d5004b0331bf8ae22225d2037d60d7cb14b4df857ff747259f0",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "square",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 221,
+    "keyCell": "A221",
+    "pageRef": "PDF p.347",
+    "astrologySupportCell": "L221",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}
