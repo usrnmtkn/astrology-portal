@@ -1045,6 +1045,35 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("You and Friends share a date picker for past and future transits", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { profile: true, friends: true });
+    await expectClientRouteLoads(page, "/#you");
+
+    const dateTrigger = page.locator(".sky-header-date-button");
+    await expect(dateTrigger).toBeVisible();
+    await expect(dateTrigger).toContainText("Today");
+    await dateTrigger.click();
+    await page.getByRole("button", { name: "Date", exact: true }).click();
+    await expect(page.getByLabel("Select transit date")).toBeVisible();
+    await page.getByRole("gridcell", { name: "Monday, July 20, 2026" }).click();
+
+    await expect(page).toHaveURL(/[?&]date=2026-07-20(?:&|#|$)/u);
+    await expect(dateTrigger).toContainText("Jul 20");
+
+    await page.getByRole("button", { name: "Friends", exact: true }).click();
+    await expect(page.getByLabel("Friends")).toBeVisible();
+    await expect(dateTrigger).toContainText("Jul 20");
+    await dateTrigger.click();
+    await page.getByRole("button", { name: "Date", exact: true }).click();
+    await page.getByRole("gridcell", { name: "Sunday, July 12, 2026" }).click();
+
+    await expect(page).toHaveURL(/[?&]date=2026-07-12(?:&|#|$)/u);
+    await expect(dateTrigger).toContainText("Jul 12");
+    await assertNoClientErrors();
+  });
+
   test("chart calculation failure terminates in a visible error state", async ({ page }) => {
     await page.route("**/wasm/swisseph.data", async (route) => {
       await route.fulfill({ status: 503, body: "Ephemeris unavailable for visual-smoke coverage." });
