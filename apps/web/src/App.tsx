@@ -12828,12 +12828,16 @@ export function App() {
 
   const isTodayMode = mode === "guest" || mode === "member";
   const isSkyLoading = isTodayMode && skyStatus === "loading";
-  const isTransitDateMode = isTodayMode || mode === "profile" || mode === "friends";
+  const isPersonalTransitDateMode = mode === "profile" || mode === "friends";
+  const isTransitDateMode = isTodayMode || isPersonalTransitDateMode;
   const showTransitDateControls = isTransitDateMode && !selectedSkyDetail;
   const showSkyLocationControl = isTodayMode;
   const needsChartSetup = Boolean(userProfile && !hasCompleteChartSetup(userProfile));
   const todaySkyDate = dateInputValue();
   const tomorrowSkyDate = dateInputValue(new Date(localDayStart(new Date()).getTime() + 86_400_000));
+  const transitDateButtonLabel = isPersonalTransitDateMode && skyDate === todaySkyDate
+    ? "Pick Date"
+    : formatSkyHeaderDateLabel(skyDate);
   const skyFullChartTitleId = "sky-full-chart-title";
   const skyFullChartMeta = `${formatSkyFullChartDate(skyDate)} · ${compactCityLabel(location.label)}`;
 
@@ -12991,12 +12995,21 @@ export function App() {
               className="sky-header-date-button"
               type="button"
               ref={mobileDatePickerTriggerRef}
-              aria-expanded={mobileSkyControlsOpen}
-              aria-controls="mobile-sky-controls"
+              aria-expanded={isPersonalTransitDateMode ? datePickerOpen : mobileSkyControlsOpen}
+              aria-controls={isPersonalTransitDateMode ? "sky-date-picker" : "mobile-sky-controls"}
               aria-label={showSkyLocationControl
                 ? `${formatSkyHeaderDateLabel(skyDate)}, ${compactCityLabel(location.label)}`
-                : `View transits for ${formatSkyFullChartDate(skyDate)}`}
+                : `Pick Date. Viewing transits for ${formatSkyFullChartDate(skyDate)}`}
               onClick={() => {
+                if (isPersonalTransitDateMode) {
+                  if (datePickerOpen) {
+                    setDatePickerOpen(false);
+                  } else {
+                    openMobileDatePicker();
+                  }
+                  return;
+                }
+
                 setCityPickerOpen(false);
                 setCityPickerOpenedFromMobileControls(false);
                 setDatePickerOpen(false);
@@ -13004,11 +13017,11 @@ export function App() {
                 setMobileSkyControlsOpen((isOpen) => !isOpen);
               }}
             >
-              <span className="sky-header-date-button__date">{formatSkyHeaderDateLabel(skyDate)}</span>
+              <span className="sky-header-date-button__date">{transitDateButtonLabel}</span>
               <ChevronDown className="sky-header-date-button__chevron" size={16} aria-hidden="true" />
             </button>
           )}
-          {showTransitDateControls && mobileSkyControlsOpen && (
+          {showTransitDateControls && !isPersonalTransitDateMode && mobileSkyControlsOpen && (
             <div
               className="mobile-sky-controls"
               id="mobile-sky-controls"
