@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import {
+  deduplicateAssembledReport,
   REPORT_LEVEL_LEXICAL_BUDGETS,
   validateAssembledReport
 } from "../api/_lib/report-assembly.ts";
@@ -17,14 +18,17 @@ const frozen = JSON.parse(fs.readFileSync(new URL("./fixtures/marie-report-froze
 const issues = validateAssembledReport(reviewFixture.units);
 const has = (code, unitId) => issues.some((entry) => entry.code === code && (!unitId || entry.unitId === unitId));
 
-assert.ok(has("duplicate_heading", "winter-current"), "The exact consecutive WINTER 2026 headings must hard-fail assembly.");
-assert.ok(has("duplicate_key_date_label", "summer"), "The duplicated Summer AUG 12 label must hard-fail assembly.");
-assert.ok(has("fused_key_date_slots", "summer"), "The exact Summer AUG 12/AUG 19/AUG 27 concatenations must hard-fail assembly.");
-assert.ok(has("fused_key_date_slots", "winter-next"), "The exact Winter 2027 JAN 10/FEB 5/FEB 6 concatenation must hard-fail assembly.");
-assert.ok(has("missing_key_date_label", "key-dates"), "The missing FEB 22 label must hard-fail assembly.");
+assert.ok(has("duplicate_heading", "winter-current"), "The exact consecutive WINTER 2026 headings must be surfaced at assembly.");
+assert.ok(has("duplicate_key_date_label", "summer"), "The duplicated Summer AUG 12 label must be surfaced at assembly.");
+assert.ok(has("fused_key_date_slots", "summer"), "The exact Summer AUG 12/AUG 19/AUG 27 concatenations must be surfaced at assembly.");
+assert.ok(has("fused_key_date_slots", "winter-next"), "The exact Winter 2027 JAN 10/FEB 5/FEB 6 concatenation must be surfaced at assembly.");
+assert.ok(has("missing_key_date_label", "key-dates"), "The missing FEB 22 label must be surfaced at assembly.");
 assert.ok(has("assembled_key_date_format", "summer"), "The assembled DATE · TITLE · sentence · attribution contract must reject fused records.");
-assert.ok(has("malformed_markdown", "summer"), "The fused Summer emphasis markers must hard-fail Markdown validation.");
-assert.ok(has("repeated_near_sentence", "review-current-year"), "The duplicated 2026 IN REVIEW closing sentence must hard-fail assembly.");
+assert.ok(has("malformed_markdown", "summer"), "The fused Summer emphasis markers must be surfaced at assembly.");
+assert.ok(has("repeated_near_sentence", "review-current-year"), "The duplicated 2026 IN REVIEW closing sentence must be surfaced at assembly.");
+assert.ok(issues.filter((entry) => entry.severity === "error").every((entry) => (
+  entry.code === "repeated_exact_sentence" || entry.code === "repeated_near_sentence"
+)), "Only exact and near-exact sentence repetition across units may block assembly.");
 
 const validKeyDates = [{
   unitId: "key-dates",
@@ -47,6 +51,7 @@ const lexicalUnits = [{
 }];
 assert.equal(REPORT_LEVEL_LEXICAL_BUDGETS.terms.find((entry) => entry.id === "application")?.cap, 3);
 assert.ok(validateAssembledReport(lexicalUnits).some((entry) => entry.code === "report_lexical_budget"));
+assert.ok(validateAssembledReport(lexicalUnits).filter((entry) => entry.code === "report_lexical_budget").every((entry) => entry.severity === "warning"));
 
 const phraseUnits = [{
   unitId: "overview",
@@ -56,6 +61,7 @@ const phraseUnits = [{
   }
 }];
 assert.ok(validateAssembledReport(phraseUnits).some((entry) => entry.code === "signature_phrase_budget"));
+assert.ok(validateAssembledReport(phraseUnits).filter((entry) => entry.code === "signature_phrase_budget").every((entry) => entry.severity === "warning"));
 
 assert.ok(!validateAssembledReport([{
   unitId: "autumn",
@@ -67,6 +73,46 @@ assert.ok(validateAssembledReport([{
   draft: { headline: "SUMMER", body: "The eclipse may involve an announcement, application, piece of writing, class, contract, conversation, or decision." }
 }]).some((entry) => entry.code === "report_menu_density"),
 "Report-level menu discipline must catch Summer's original seven-item enumeration.");
+
+// Production-shaped assembly regression from report 8b3e266e, preserving the
+// seven exact and two near-exact relationships recorded on 2026-08-13.
+const grief = "When an ending matters emotionally, grief or mourning may be part of the experience, even when the ending is wanted or necessary.";
+const practical = "Some endings may be practical.";
+const manageable = "Each new opportunity can look manageable by itself.";
+const overcommit = "Overcommitting does not always happen because of bad choices.";
+const goodOpportunities = "It often happens when you say yes to good opportunities.";
+const publicCommunication = "Now the communication itself matters publicly.";
+const productionRepetitionUnits = [{
+  unitId: "overview",
+  draft: { body: grief }
+}, {
+  unitId: "year-theme",
+  draft: { body: `At 47, you are in a 12th-house profection year, the final year before the cycle returns to your 1st house. ${grief} ${practical} You can still be fully capable of doing a job or carrying a responsibility and realize you cannot keep organizing your week around it.` }
+}, {
+  unitId: "domain:main",
+  draft: {
+    body: `${manageable} ${overcommit} ${goodOpportunities} ${publicCommunication}`,
+    sections: [{
+      heading: "WHAT 2026 IS ABOUT",
+      body: `At 47, you are in the final profection year before the cycle returns to your 1st house. ${grief} ${practical}`
+    }, { heading: "FIXTURE_ONLY" }, {
+      heading: "SPRING 2026",
+      body: "You can still be fully capable of doing a job and realize you cannot keep organizing your week around it."
+    }]
+  }
+}, {
+  unitId: "summer",
+  draft: { body: `${manageable} ${overcommit} ${goodOpportunities} ${publicCommunication}` }
+}];
+const productionRepetitionIssues = validateAssembledReport(productionRepetitionUnits);
+assert.equal(productionRepetitionIssues.filter((entry) => entry.code === "repeated_exact_sentence" && entry.severity === "error").length, 7);
+assert.equal(productionRepetitionIssues.filter((entry) => entry.code === "repeated_near_sentence" && entry.severity === "error").length, 2);
+const productionDeduplication = deduplicateAssembledReport(productionRepetitionUnits);
+assert.equal(productionDeduplication.removals.filter((entry) => entry.code === "repeated_exact_sentence").length, 7);
+assert.equal(productionDeduplication.removals.filter((entry) => entry.code === "repeated_near_sentence").length, 2);
+assert.equal(validateAssembledReport(productionDeduplication.units).filter((entry) => entry.severity === "error").length, 0);
+assert.equal(productionRepetitionUnits[3].draft.body, `${manageable} ${overcommit} ${goodOpportunities} ${publicCommunication}`,
+  "Mechanical deduplication must not mutate the persisted input object in place.");
 
 const payload = assembleReportGenerationPayload({
   reportId: "fixture-report-assembly",
