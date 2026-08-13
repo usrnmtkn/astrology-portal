@@ -569,6 +569,49 @@ function llMatrixV13Entries() {
   });
 }
 
+function llMatrixV13Wp1Entries() {
+  // Owner-reviewed WP-1 additions are a separate, append-only approval lineage.
+  // The importer writes only complete owner verdict batches here; unapproved
+  // matrix rows and review-gated Friend derivations never enter this loader.
+  const file = path.join(writerRoot, "ll-matrix-v13", "wp1-owner-approved-locked.json");
+  if (!fs.existsSync(file)) return [];
+  const dataset = readJson(file);
+  if (dataset.schemaVersion !== "ll-matrix-v13-wp1-owner-approved-locked-v1" || !Array.isArray(dataset.rows)) {
+    throw new Error("LL matrix V13 WP-1 voice evidence has an invalid schema.");
+  }
+  const seen = new Set();
+  return dataset.rows.map((row) => {
+    if (row.ownerApproved !== true || !row.copy || !row.contentKey || seen.has(row.contentKey)) {
+      throw new Error("LL matrix V13 WP-1 voice evidence is incomplete or duplicated.");
+    }
+    seen.add(row.contentKey);
+    const parts = String(row.key).split("|");
+    const placement = row.sheet === "PlacementMeanings" ? parts[1] ?? "" : "";
+    const placementSlug = tokens(placement).join("-");
+    return baseEntry({
+      sourceId: `ll-v13-wp1:${row.batchId.toLowerCase()}:${row.sheet.toLowerCase()}:${tokens(row.key).join("-")}`,
+      text: row.copy,
+      sourcePath: relative(file),
+      author: "Owner-approved exact wording",
+      origin: "owner-approved-ll-matrix-v13-wp1",
+      surface: row.sheet === "AspectMeanings" ? "natal-aspect" : "natal-placement",
+      planet: tokens(parts[0] || "").join("-"),
+      sign: SIGNS.includes(placementSlug) ? placementSlug : "",
+      house: placement.match(/^(\d{1,2})(?:st|nd|rd|th) house$/u)?.[1] ?? "",
+      articleBeat: "ll-delineation",
+      structuralFunction: row.sheet === "AspectMeanings" ? `natal aspect delineation (${parts[1] || "aspect"} ${parts[2] || ""})`.trim() : "natal placement delineation",
+      authorityClass: "exact_owner_approved",
+      ownerApproved: true,
+      reviewStatus: "approved",
+      editorialStatus: row.governance,
+      canonical: true,
+      useAsPositiveVoiceEvidence: true,
+      useAsContextualEvidence: true,
+      provenance: `Owner-approved LL V13 WP-1 row, ${row.batchId}, approved ${row.approvedAt}. Copy preserved exactly. Runtime payload ${row.payloadSha256}.`
+    });
+  });
+}
+
 function buildIndex() {
   const entries = [
     ...activeOwnerEntries(),
@@ -577,6 +620,7 @@ function buildIndex() {
     ...approvedFormatExemplarEntries(),
     ...knowledgeMatrixV9Entries(),
     ...llMatrixV13Entries(),
+    ...llMatrixV13Wp1Entries(),
     ...historicalEntries(),
     ...contrastiveEntries(),
     ...negativeEntries(),
