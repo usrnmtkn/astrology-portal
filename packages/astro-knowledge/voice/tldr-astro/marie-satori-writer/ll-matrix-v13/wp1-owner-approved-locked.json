@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "ll-matrix-v13-wp1-owner-approved-locked-v1",
+  "governance": {
+    "source": "owner-populated WP-1 batch workbooks imported atomically",
+    "unapprovedRowsServe": false,
+    "autoPublish": false,
+    "writerPromotion": false
+  },
+  "counts": {
+    "ownerApprovedRows": 0,
+    "byBatch": {}
+  },
+  "rows": []
+}
