@@ -126,6 +126,8 @@ export type YouPageProps = {
   signatureTitle: string;
   signaturesReady: boolean;
   standaloneTransitRows?: ReactNode[];
+  transitDateLabel: string;
+  transitsLoading?: boolean;
   weeklyTransitRows?: ReactNode[];
   transitArticle?: YouTransitArticle | null;
 };
@@ -491,6 +493,8 @@ function YouUpdatesTab({
   natalAspectPatternTimingOverrides,
   onCreateChart,
   standaloneTransitRows = [],
+  transitDateLabel,
+  transitsLoading = false,
   weeklyTransitRows = []
 }: {
   aspectRows: ReactNode[];
@@ -503,6 +507,8 @@ function YouUpdatesTab({
   onCreateChart: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
   standaloneTransitRows?: ReactNode[];
+  transitDateLabel: string;
+  transitsLoading?: boolean;
   weeklyTransitRows?: ReactNode[];
 }) {
   const dailyHeadline = dailyUpdateSummary?.headline.trim();
@@ -580,7 +586,7 @@ function YouUpdatesTab({
         ) : null}
       {dailyHoroscopeAssembly?.specialSections.map((section) => (
         <section className="daily-special-section" key={section.headline}>
-          <span className="eyebrow section-label">Today&apos;s Sky</span>
+          <span className="eyebrow section-label">{transitDateLabel} sky</span>
           <h3>{section.headline}</h3>
           {section.body.split(/\n{2,}/).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         </section>
@@ -594,7 +600,7 @@ function YouUpdatesTab({
         <section className="you-empty-card" aria-label="Current city needed">
           <span>Updates</span>
           <h3>Add your current city.</h3>
-          <p>We need your current city to localize today’s sky against your chart.</p>
+          <p>We need your current city to localize the selected date’s sky against your chart.</p>
           <button type="button" onClick={onCreateChart}>Add current city →</button>
         </section>
       )}
@@ -611,10 +617,15 @@ function YouUpdatesTab({
           </div>
         </>
       )}
-      {hasSavedCurrentCity && aspectRows.length === 0 && standaloneTransitRows.length === 0 && (
+      {hasSavedCurrentCity && transitsLoading && (
+        <div className="feature-loading-fallback" role="status">
+          Calculating transits for {transitDateLabel}…
+        </div>
+      )}
+      {hasSavedCurrentCity && !transitsLoading && aspectRows.length === 0 && standaloneTransitRows.length === 0 && (
         <section className="you-empty-card" aria-label="Transit setup">
           <span>Updates</span>
-          <h3>No major updates are active today.</h3>
+          <h3>No major updates are active for {transitDateLabel}.</h3>
           <p>The sky is still moving, but no major personalized transit is pressing on your natal placements in this window.</p>
           <button type="button" onClick={onCreateChart}>Edit details →</button>
         </section>
@@ -1082,6 +1093,8 @@ export function YouPage({
   signatureTitle,
   signaturesReady,
   standaloneTransitRows = [],
+  transitDateLabel,
+  transitsLoading = false,
   weeklyTransitRows = [],
   transitArticle
 }: YouPageProps) {
@@ -1217,6 +1230,8 @@ export function YouPage({
               onCreateChart={onCreateChart}
               personalTimingSummary={personalTimingSummary}
               standaloneTransitRows={standaloneTransitRows}
+              transitDateLabel={transitDateLabel}
+              transitsLoading={transitsLoading}
               weeklyTransitRows={weeklyTransitRows}
             />
           )}

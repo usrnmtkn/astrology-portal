@@ -87,6 +87,7 @@
     "test:sky-aspects": "node scripts/test-sky-aspect-matrix-parity.mjs && node scripts/test-calendar-exact-sky-aspect-routing.mjs && node --experimental-strip-types scripts/test-current-sky-aspect-adapter.mjs && node scripts/test-sky-aspect-integration.mjs && node scripts/test-sky-aspect-cron-entrypoint.mjs && node scripts/test-sky-aspect-hydration.mjs",
     "test:sky-aspect-timing": "node scripts/test-sky-aspect-timing-register.mjs",
     "test:transit-pass-engine": "node scripts/test-natal-transit-pass-engine.mjs && node scripts/test-you-transit-live-content-wiring.mjs",
+    "test:transit-date-picker": "node scripts/test-shared-transit-date-picker.mjs",
     "test:verified-sky-cache": "node scripts/test-verified-sky-cache.mjs",
     "test:ephemeris-release-gate": "node scripts/test-ephemeris-release-gate.mjs",
     "test:ephemeris-monitoring": "node scripts/test-ephemeris-monitoring-contract.mjs && node scripts/test-cloud-run-deploy-contract.mjs",
