@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "part-of-fortune-trine-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Part of Fortune trine Midheaven can make adaptation support recognition naturally.",
+  "astrologySupportSha256": "3cd23d13d24a11b0d6f742347087265889dced4cf59de75e1a7582b149c9b84a",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "part-of-fortune",
+      "aspect": "trine",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 680,
+    "keyCell": "A680",
+    "pageRef": "PDF p.426",
+    "astrologySupportCell": "L680",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

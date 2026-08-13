@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "uranus-trine-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Uranus trine Midheaven can make an unusual career a natural route toward recognition.",
+  "astrologySupportSha256": "893e4eb49853bfd98ddda1a0aa8bb6544446d581ff636f7ba52c8a63e5898206",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "uranus",
+      "aspect": "trine",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 659,
+    "keyCell": "A659",
+    "pageRef": "PDF p.424",
+    "astrologySupportCell": "L659",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

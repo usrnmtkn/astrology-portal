@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-semisextile-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars semisextile North Node can make useful teachers harder to attract while an old rule about desire stays in place.",
+  "astrologySupportSha256": "44ac0c131b0fcd241c456a04974414bd7f6359be0509cbf316f534fe11a315b7",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "semisextile",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 397,
+    "keyCell": "A397",
+    "pageRef": "PDF p.377",
+    "astrologySupportCell": "L397",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

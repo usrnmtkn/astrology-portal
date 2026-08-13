@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-semisextile-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto semisextile Ascendant can make intense connection harder to form.",
+  "astrologySupportSha256": "26fb25bf914d8e819228dc25085711812093c3e41da50429224e02d4213a6ce4",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "semisextile",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 579,
+    "keyCell": "A579",
+    "pageRef": "PDF p.416-417",
+    "astrologySupportCell": "L579",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

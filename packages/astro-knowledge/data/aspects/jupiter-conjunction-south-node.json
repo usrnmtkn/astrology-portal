@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-conjunction-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter conjunct South Node can make karmic situations arrive with a clear spiritual or philosophical lesson.",
+  "astrologySupportSha256": "bdc4907381205c2f7cc365648518cff90e1a0d1b4c33dfa2ee39df1f8ed81a7e",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "conjunction",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 424,
+    "keyCell": "A424",
+    "pageRef": "PDF p.389",
+    "astrologySupportCell": "L424",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

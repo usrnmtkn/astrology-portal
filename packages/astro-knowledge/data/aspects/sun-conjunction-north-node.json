@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-conjunction-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun conjunct North Node can make important teachers arrive at moments when the ego is ready to be challenged. The contact is treated as a strong karmic pull toward people who can help refine how identity and will are being used.",
+  "astrologySupportSha256": "6354799062825af3dc194f2b5fb6fff5bee85174cbad427ada87b55532d26ad6",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "conjunction",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 68,
+    "keyCell": "A68",
+    "pageRef": "PDF p.314",
+    "astrologySupportCell": "L68",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

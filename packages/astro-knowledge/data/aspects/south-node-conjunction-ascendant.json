@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "south-node-conjunction-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "South Node conjunct Ascendant can make an old personality pattern return suddenly enough to feel like becoming a former version of the self.",
+  "astrologySupportSha256": "bab4d9986e04cdf52cc66b966480bd864bf68b68149c7991ad52e81a942ae0f6",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "south-node",
+      "aspect": "conjunction",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 599,
+    "keyCell": "A599",
+    "pageRef": "PDF p.418",
+    "astrologySupportCell": "L599",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "saturn-quincunx-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Saturn inconjunct South Node can make karmic necessity difficult to accept when it reduces control or status.",
+  "astrologySupportSha256": "d4348c21cff336f5b3dd60762e30d59188b92ea831aa44ea6c5c529f843ebdec",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "quincunx",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 450,
+    "keyCell": "A450",
+    "pageRef": "PDF p.398",
+    "astrologySupportCell": "L450",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

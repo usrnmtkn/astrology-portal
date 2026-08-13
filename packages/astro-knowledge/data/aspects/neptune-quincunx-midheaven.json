@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-quincunx-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune inconjunct Midheaven can make working for someone else more comfortable than carrying the full weight of public ambition.",
+  "astrologySupportSha256": "a84a9297a0d036a5c4092fc145ef9689c24828ca1aa210c7398967b0f9ae3998",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "quincunx",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 667,
+    "keyCell": "A667",
+    "pageRef": "PDF p.425",
+    "astrologySupportCell": "L667",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-conjunction-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars conjunct Midheaven directs a great deal of energy toward public achievement.",
+  "astrologySupportSha256": "52ca780dd571837dcf16b2dfa62f55d88785f5c77f614a87aba87bb303cd2485",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "conjunction",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 634,
+    "keyCell": "A634",
+    "pageRef": "PDF p.421-422",
+    "astrologySupportCell": "L634",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

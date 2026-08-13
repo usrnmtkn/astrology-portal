@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-square-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus square Ascendant can make charm work well enough that sincerity sometimes gets lost behind it.",
+  "astrologySupportSha256": "d66432bef8ce22161c343639d9bc6ba43b67afa25bf288492e8068351792255e",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "square",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 539,
+    "keyCell": "A539",
+    "pageRef": "PDF p.412",
+    "astrologySupportCell": "L539",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

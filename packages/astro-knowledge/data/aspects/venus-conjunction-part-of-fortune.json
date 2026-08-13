@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-conjunction-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus conjunct Part of Fortune ties emotional balance closely to the change in what matters.",
+  "astrologySupportSha256": "fb1c1bcd34cb745f286b79066c3986d99676ae3ed0c8a3d57af3964d6a151f1e",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "conjunction",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 267,
+    "keyCell": "A267",
+    "pageRef": "PDF p.361",
+    "astrologySupportCell": "L267",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-quincunx-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter inconjunct Part of Fortune can require a change in thinking before a clearer sense of meaning becomes usable. The person may already be receiving information that does not fit the framework they are using to explain it.",
+  "astrologySupportSha256": "16b10640bd0bcc43fc71899b2760269ebafe25521d6d9702ec7911e16679e409",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "quincunx",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 415,
+    "keyCell": "A415",
+    "pageRef": "PDF p.388",
+    "astrologySupportCell": "L415",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

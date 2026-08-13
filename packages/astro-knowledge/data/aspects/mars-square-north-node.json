@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-square-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars square North Node can create conflict around teachers because old karmic issues with authority and desire are still active.",
+  "astrologySupportSha256": "5bfb4f5ca7a04a2a35ef98c650315c4dd47f8f403b5d25558af02e98f6e52295",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "square",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 399,
+    "keyCell": "A399",
+    "pageRef": "PDF p.377",
+    "astrologySupportCell": "L399",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "north-node-square-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "North Node square Ascendant can make spiritual and material priorities feel like competing identities.",
+  "astrologySupportSha256": "ba83c74ac397ba99bd12c52bd8e68f606c401a1995663b931bd2b0d2cafd9d4c",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "north-node",
+      "aspect": "square",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 595,
+    "keyCell": "A595",
+    "pageRef": "PDF p.417-418",
+    "astrologySupportCell": "L595",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

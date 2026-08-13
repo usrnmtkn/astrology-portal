@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-quincunx-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun inconjunct Ascendant can give the personality real depth while making it difficult for other people to read quickly.",
+  "astrologySupportSha256": "a533ac646c7e135367b296af76b562b374a84d83da90ee28c9d394387767d991",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "quincunx",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 520,
+    "keyCell": "A520",
+    "pageRef": "PDF p.410",
+    "astrologySupportCell": "L520",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

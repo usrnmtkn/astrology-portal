@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "south-node-quincunx-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "South Node inconjunct Midheaven can require a change in thinking about what career is for. The person may need to prioritize unfinished karmic responsibility over the kind of recognition they once expected success to provide.",
+  "astrologySupportSha256": "c151cf8301c1cd0a7671972964e5bc0ab55551beeff257ad375a4687d0863ccb",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "south-node",
+      "aspect": "quincunx",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 695,
+    "keyCell": "A695",
+    "pageRef": "PDF p.427-428",
+    "astrologySupportCell": "L695",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

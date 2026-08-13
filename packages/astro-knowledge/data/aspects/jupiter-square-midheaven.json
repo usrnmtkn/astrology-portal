@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-square-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter square Midheaven can make ambition divide between wanting power and wanting to help.",
+  "astrologySupportSha256": "8e93b90adac08f6a44d2511575167eb1a856cb5cab0576bacfc20ae29aee74c7",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "square",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 644,
+    "keyCell": "A644",
+    "pageRef": "PDF p.422-423",
+    "astrologySupportCell": "L644",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

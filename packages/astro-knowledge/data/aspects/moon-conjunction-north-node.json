@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-conjunction-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon conjunct North Node can make helpful teachers arrive around periods of emotional change. The karmic purpose is not only spiritual instruction but changing the feeling patterns that keep repeating.",
+  "astrologySupportSha256": "e5c73e6d7024a0069e33a931055063f9defd3f40171f4f0d68b8b4a35437cfd7",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "conjunction",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 145,
+    "keyCell": "A145",
+    "pageRef": "PDF p.331",
+    "astrologySupportCell": "L145",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

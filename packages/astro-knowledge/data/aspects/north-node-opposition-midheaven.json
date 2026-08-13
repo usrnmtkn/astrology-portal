@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "north-node-opposition-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "North Node opposite Midheaven can make it increasingly clear that career and a deeper spiritual life do not have to cancel each other out.",
+  "astrologySupportSha256": "364c2dbb54cf92e9e1d9a906d24de237662b82751c46cd273a5b9dc56446b6e4",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "north-node",
+      "aspect": "opposition",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 689,
+    "keyCell": "A689",
+    "pageRef": "PDF p.427",
+    "astrologySupportCell": "L689",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

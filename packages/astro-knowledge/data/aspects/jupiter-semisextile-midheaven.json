@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-semisextile-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter semisextile Midheaven can make recognition feel delayed until humility becomes part of the person's approach to ambition.",
+  "astrologySupportSha256": "dc0dbf72ed5be48a564bffee50b40ca0fa3bebb0ca4fe3c3ebcd5e0146d861cb",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "semisextile",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 642,
+    "keyCell": "A642",
+    "pageRef": "PDF p.422-423",
+    "astrologySupportCell": "L642",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

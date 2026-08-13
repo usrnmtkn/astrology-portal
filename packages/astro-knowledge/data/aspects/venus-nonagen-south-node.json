@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-nonagen-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus semisextile South Node can delay karmic situations that would otherwise force a shift in values.",
+  "astrologySupportSha256": "e6f38b859d7f22d44351ad88b49a2231ad5de1d4416171e7c5b5b64caa247a4e",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "nonagen",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 282,
+    "keyCell": "A282",
+    "pageRef": "PDF p.363",
+    "astrologySupportCell": "L282",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

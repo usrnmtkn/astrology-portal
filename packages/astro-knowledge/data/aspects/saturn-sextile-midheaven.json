@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "saturn-sextile-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Saturn sextile Midheaven can make disciplined work a dependable route toward recognition.",
+  "astrologySupportSha256": "06e2f30d24be47afd43e8d7ba4ca7a5b2241128ec62fd45af51e1c7e8ff6b972",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "sextile",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 650,
+    "keyCell": "A650",
+    "pageRef": "PDF p.423-424",
+    "astrologySupportCell": "L650",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

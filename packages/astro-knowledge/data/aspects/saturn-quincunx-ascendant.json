@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "saturn-quincunx-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Saturn inconjunct Ascendant can make important work so absorbing that pleasure starts looking frivolous.",
+  "astrologySupportSha256": "cd459543748dac0d3dd86413c63255a105c3b885a30ecd9c210c529fea9ec087",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "quincunx",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 562,
+    "keyCell": "A562",
+    "pageRef": "PDF p.414",
+    "astrologySupportCell": "L562",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

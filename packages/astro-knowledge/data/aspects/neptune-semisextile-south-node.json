@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-semisextile-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune semisextile South Node can delay karmic situations that would otherwise deepen psychic perception.",
+  "astrologySupportSha256": "b947b0cac4f38b4d025d2aa9db1895d21c430af18eaffd112d11ef23a8348629",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "semisextile",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 488,
+    "keyCell": "A488",
+    "pageRef": "PDF p.407",
+    "astrologySupportCell": "L488",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

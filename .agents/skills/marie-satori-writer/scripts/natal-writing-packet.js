@@ -7,7 +7,7 @@ const path = require("path");
 const { buildIndex, repoRoot } = require("./build-voice-index.js");
 
 const packageRoot = path.join(repoRoot, "packages", "astro-knowledge");
-const PACKET_VERSION = "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1";
+const PACKET_VERSION = "natal-writer-packet-v4:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v2:exact-owner-evidence-v1:two-entry-points-v1:five-beat-v1:whole-passage-v1:fail-closed-v1";
 const MIN_PASSAGES = 4;
 const MAX_PASSAGES = 6;
 const MIN_SOURCE_ROWS = 3;
@@ -21,7 +21,8 @@ const STANDARD_PATHS = {
   wholePassage: "tldr-astro-phrasebank/TLDR-AUTHOR-FROM-MECHANISM-WHOLE-PASSAGE-CLARIFICATION-OWNER.md",
   delineation: "tldr-astro-phrasebank/TLDR-NATAL-PLACEMENT-DELINEATION-STANDARD-OWNER.md",
   corrections: "docs/writing/OWNER_CORRECTIONS.md",
-  editorial: "tldr-astro-phrasebank/TLDR-BATCH-EDITORIAL-STANDARD-V2.md"
+  editorial: "tldr-astro-phrasebank/TLDR-BATCH-EDITORIAL-STANDARD-V2.md",
+  entryPoint: "tldr-astro-phrasebank/TLDR-VOICE-ENTRY-POINT-RULING-OWNER.md"
 };
 const SUPPORT_REGISTRY_PATH = path.join(packageRoot, "voice", "tldr-astro", "marie-satori-writer", "ll-matrix-v13", "ll-matrix-v13-astrology-support-v1.json");
 
@@ -120,6 +121,8 @@ function registryCandidates(target) {
     const exact = `${target.planetA}-${target.aspect}-${target.planetB}.json`;
     const reverse = `${target.planetB}-${target.aspect}-${target.planetA}.json`;
     return [
+      path.join(packageRoot, "data", "aspects", exact),
+      path.join(packageRoot, "data", "aspects", reverse),
       path.join(packageRoot, "data", "insights", "natal-aspects", exact),
       path.join(packageRoot, "data", "insights", "natal-aspects", reverse),
       path.join(packageRoot, "data", "points", "aspects", "natal", exact),
@@ -326,7 +329,7 @@ function promptBlockFor(packet) {
   const documents = Object.entries(packet.standards.documents)
     .map(([id, document]) => `\n\n${id.toUpperCase()} (${document.sourcePath})\n${document.text.trim()}`)
     .join("");
-  return `NATAL WRITING EVIDENCE CONTRACT\nGeneration is allowed only because this packet contains AstrologySupport for the exact row plus four to six exact owner-approved passages from at least three source rows. AstrologySupport is the sole target-mechanism source. Use owner passages as writing-operation evidence, never as target facts. Registry prose and all existing candidate prose are excluded from this packet by construction. Do not add facts absent from AstrologySupport.\n\nAUTHORING ORDER\nExtract an internal mechanism sentence that is never shipped; find the human situation; enter through a scene; show the consequence; add perspective last; delete astrology-summary prose.\n\nFIVE-BEAT CONSTRAINTS\n${beats}${documents}`;
+  return `NATAL WRITING EVIDENCE CONTRACT\nGeneration is allowed only because this packet contains AstrologySupport for the exact row plus four to six exact owner-approved passages from at least three source rows. AstrologySupport is the sole target-mechanism source. Use owner passages as writing-operation evidence, never as target facts. Registry prose and all existing candidate prose are excluded from this packet by construction. Do not add facts absent from AstrologySupport.\n\nTWO INDEPENDENT AUTHORING TASKS\nAuthor self from the mechanism at the reader's own entry point. Author friend separately from the same mechanism at the observer's entry point. Never derive either passage from the other. Do not expose unobservable interior states in friend voice and do not coach the reader about the friend.\n\nAUTHORING ORDER\nExtract an internal mechanism sentence that is never shipped; find the human situation; enter through a scene; show the consequence; add perspective last; delete astrology-summary prose.\n\nFIVE-BEAT CONSTRAINTS\n${beats}${documents}`;
 }
 
 function buildNatalWritingPacket({ surface, key, indexEntries, factBoundaryLoader = loadNatalFactBoundary, supportRegistry }) {
@@ -374,7 +377,12 @@ function buildNatalWritingPacket({ surface, key, indexEntries, factBoundaryLoade
       approvalEffect: "none",
       reviewGatedCandidateOnly: true,
       autoPublish: false,
-      writerPromotion: false
+      writerPromotion: false,
+      personContract: {
+        self: "reader-own-experience",
+        friend: "observer-in-the-room",
+        friendDerivedFromSelf: false
+      }
     }
   };
   packet.promptBlock = promptBlockFor(packet);
@@ -388,11 +396,12 @@ function assertNatalGenerationAllowed(packet) {
   }
 }
 
-function renderNatalModelInput(packet, { task = "Write the requested natal delineation.", inputText } = {}) {
+function renderNatalModelInput(packet, { task = "Write the requested natal delineation.", inputText, voice = "self" } = {}) {
   assertNatalGenerationAllowed(packet);
   if (inputText != null && String(inputText).trim()) {
     throw new Error("PRIOR_COPY_FORBIDDEN: natal authoring packets cannot accept existing candidate prose.");
   }
+  if (!new Set(["self", "friend"]).has(voice)) throw new Error(`UNSUPPORTED_NATAL_VOICE: ${voice}`);
   const evidence = packet.ownerPassages.map((entry, index) => [
     `OWNER PASSAGE ${index + 1}`,
     `Source row: ${entry.sourceRowId}`,
@@ -407,7 +416,10 @@ function renderNatalModelInput(packet, { task = "Write the requested natal delin
     identity: packet.factBoundary.identity,
     usageBoundary: packet.factBoundary.usageBoundary
   };
-  return `${packet.promptBlock}\n\nAUTHORING SOURCE\n${JSON.stringify(packet.authoringSource, null, 2)}\n\nREGISTRY IDENTITY BOUNDARY\n${JSON.stringify(registryIdentity, null, 2)}\n\nEXACT TASK\n${task}\n\n${evidence}\n`;
+  const personTask = voice === "self"
+    ? "SELF ENTRY POINT: speak to the reader and enter through the reader's own experience."
+    : "FRIEND ENTRY POINT: speak about Name from what people in the room can observe. Author independently; do not reuse the self passage's sentence structure, assert private interior states, or coach the reader.";
+  return `${packet.promptBlock}\n\nAUTHORING SOURCE\n${JSON.stringify(packet.authoringSource, null, 2)}\n\nREGISTRY IDENTITY BOUNDARY\n${JSON.stringify(registryIdentity, null, 2)}\n\nVOICE TASK\n${personTask}\n\nEXACT TASK\n${task}\n\n${evidence}\n`;
 }
 
 module.exports = {

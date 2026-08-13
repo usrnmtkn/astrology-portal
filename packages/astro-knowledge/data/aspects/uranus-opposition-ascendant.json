@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "uranus-opposition-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Uranus opposite Ascendant can make unusual people especially attractive because they keep the relationship from feeling predictable.",
+  "astrologySupportSha256": "6c5f3b1a210874227d2c400d4cd6d2ded4d26024bb3f6c8732d57b724f457085",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "uranus",
+      "aspect": "opposition",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 570,
+    "keyCell": "A570",
+    "pageRef": "PDF p.414-415",
+    "astrologySupportCell": "L570",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

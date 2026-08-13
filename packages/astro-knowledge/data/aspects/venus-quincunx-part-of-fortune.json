@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-quincunx-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus inconjunct Part of Fortune can require a change in thinking before values themselves can change.",
+  "astrologySupportSha256": "0b1e8a0237e437ac5e1b747a2b9353b47074cabbb4ce333c1fc3d62a17e40bfd",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "quincunx",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 272,
+    "keyCell": "A272",
+    "pageRef": "PDF p.361",
+    "astrologySupportCell": "L272",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

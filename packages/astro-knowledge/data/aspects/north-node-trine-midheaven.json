@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "north-node-trine-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "North Node trine Midheaven can make career and the person's deeper spiritual direction reinforce each other.",
+  "astrologySupportSha256": "719088763aae83a7de7c5a9768bed0dc4cb688f1074e52a07e9f97dec69b4bdd",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "north-node",
+      "aspect": "trine",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 687,
+    "keyCell": "A687",
+    "pageRef": "PDF p.427",
+    "astrologySupportCell": "L687",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-sextile-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter sextile South Node can make karmic situations easier to use as spiritual teaching.",
+  "astrologySupportSha256": "3f94a8af0cb0d1edc3a3707be279537417bd2159c2af13f62dc091c06e099bca",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "sextile",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 426,
+    "keyCell": "A426",
+    "pageRef": "PDF p.389",
+    "astrologySupportCell": "L426",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

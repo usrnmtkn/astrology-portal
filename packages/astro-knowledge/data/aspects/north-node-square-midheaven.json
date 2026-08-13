@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "north-node-square-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "North Node square Midheaven can put public recognition and the larger spiritual direction in conflict.",
+  "astrologySupportSha256": "f9193f0ba80604aa7c0b9b654d9ab7cf1b14c5042df6315e12e039b4146b806b",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "north-node",
+      "aspect": "square",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 686,
+    "keyCell": "A686",
+    "pageRef": "PDF p.427",
+    "astrologySupportCell": "L686",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

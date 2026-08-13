@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-sextile-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter sextile Ascendant can make sociability, optimism, tolerance, and broad-mindedness easy to show.",
+  "astrologySupportSha256": "736fdac14c1efb55b06775517d6d6b2a511c976fd23b299f0749d082ab83439e",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "sextile",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 552,
+    "keyCell": "A552",
+    "pageRef": "PDF p.413-414",
+    "astrologySupportCell": "L552",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

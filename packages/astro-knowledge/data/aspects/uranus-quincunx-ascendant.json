@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "uranus-quincunx-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Uranus inconjunct Ascendant can make restless energy difficult to contain inside ordinary presentation.",
+  "astrologySupportSha256": "7f367272bfeb76ed6c425ffd6d10f201ee3a80b03da0aaa5b08a3160fb56d9cd",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "uranus",
+      "aspect": "quincunx",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 569,
+    "keyCell": "A569",
+    "pageRef": "PDF p.414-415",
+    "astrologySupportCell": "L569",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

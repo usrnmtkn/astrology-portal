@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-opposition-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter opposite North Node can make the need for a teacher or larger perspective difficult to dismiss.",
+  "astrologySupportSha256": "31b6b9296599655f7efeac50b915d86e8837eb7904220331816fb4bd7eeafcd8",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "opposition",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 423,
+    "keyCell": "A423",
+    "pageRef": "PDF p.389",
+    "astrologySupportCell": "L423",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

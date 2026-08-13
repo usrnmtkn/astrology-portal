@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-sextile-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto sextile Ascendant can make personal magnetism and depth easier to use well.",
+  "astrologySupportSha256": "91017cd79e674fbdf673d722aeb071a3f904ee82b9d3fb92327637a67d5f6d04",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "sextile",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 580,
+    "keyCell": "A580",
+    "pageRef": "PDF p.416-417",
+    "astrologySupportCell": "L580",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

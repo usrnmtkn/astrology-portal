@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-opposition-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus opposite South Node can make karmic pressure around values impossible to dismiss.",
+  "astrologySupportSha256": "1f96d5c3edc7ebf59fcfba329713b55c0390c8d22a315d8fe6682f80b1719061",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "opposition",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 287,
+    "keyCell": "A287",
+    "pageRef": "PDF p.364",
+    "astrologySupportCell": "L287",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

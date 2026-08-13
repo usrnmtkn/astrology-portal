@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-opposition-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun opposite Ascendant can make one-on-one contact central to the way identity develops.",
+  "astrologySupportSha256": "bfd4514fe09b00e30e3799d90c650b88aca46932b66fa65c88b29b8a4e69e10d",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "opposition",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 521,
+    "keyCell": "A521",
+    "pageRef": "PDF p.410",
+    "astrologySupportCell": "L521",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "south-node-sextile-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "South Node sextile Ascendant can bring occasional returns to older personality traits that still fit the present well enough.",
+  "astrologySupportSha256": "eb55a5ae9c52b6307dba3e89fe6edd2db95e7bfb8b9ce24d7cf37f003ea5bb11",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "south-node",
+      "aspect": "sextile",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 601,
+    "keyCell": "A601",
+    "pageRef": "PDF p.418",
+    "astrologySupportCell": "L601",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

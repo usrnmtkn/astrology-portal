@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-trine-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto trine North Node can bring teachers who feel familiar and deeply significant.",
+  "astrologySupportSha256": "2db622ec1f239f6f24b907785095f9782200ffe7549c3f30d1028945e9a520c0",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "trine",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 505,
+    "keyCell": "A505",
+    "pageRef": "PDF p.409",
+    "astrologySupportCell": "L505",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

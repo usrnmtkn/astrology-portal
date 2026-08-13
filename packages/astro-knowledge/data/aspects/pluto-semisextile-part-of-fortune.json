@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-semisextile-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto semisextile Part of Fortune can make deeper spiritual awareness feel blocked until the old way of handling the houses involved starts to change. The person may want access to a larger level of understanding while still holding tightly to the framework that keeps it closed.",
+  "astrologySupportSha256": "6e0d9952c7f18b26a92ee8225e03e778109a55fdcc3a50c4b7158727162165e7",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "semisextile",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 495,
+    "keyCell": "A495",
+    "pageRef": "PDF p.408",
+    "astrologySupportCell": "L495",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

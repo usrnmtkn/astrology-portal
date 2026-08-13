@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-square-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon square Ascendant can make mood and presentation pull in different directions.",
+  "astrologySupportSha256": "455830b5d857ee2c6491c7b0b6838b8fb3e257ca72a3f151fbcc7297b203ff83",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "square",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 525,
+    "keyCell": "A525",
+    "pageRef": "PDF p.410-411",
+    "astrologySupportCell": "L525",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

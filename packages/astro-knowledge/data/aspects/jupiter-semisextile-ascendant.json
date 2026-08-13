@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-semisextile-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter semisextile Ascendant can make social situations harder to relax into than the person's outward confidence suggests.",
+  "astrologySupportSha256": "a11136960fde1c005af756eb454fca3f360630d91a96af035bed8874bd2e5262",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "semisextile",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 551,
+    "keyCell": "A551",
+    "pageRef": "PDF p.413-414",
+    "astrologySupportCell": "L551",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

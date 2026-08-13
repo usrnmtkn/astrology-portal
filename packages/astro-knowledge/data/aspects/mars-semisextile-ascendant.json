@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-semisextile-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars semisextile Ascendant can make frustration difficult to release cleanly.",
+  "astrologySupportSha256": "a9e8152ece721a48ac668ba9abfec7dee21174675d9c3e7829044800480acd38",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "semisextile",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 544,
+    "keyCell": "A544",
+    "pageRef": "PDF p.412-413",
+    "astrologySupportCell": "L544",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

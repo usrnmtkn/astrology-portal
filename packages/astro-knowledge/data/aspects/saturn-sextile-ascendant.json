@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "saturn-sextile-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Saturn sextile Ascendant can make loyalty and responsibility easy to see.",
+  "astrologySupportSha256": "82c70608b47ec7f5ecfbc9f8b1bce529af4e1e90ac7e125b08162011b0c85890",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "sextile",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 559,
+    "keyCell": "A559",
+    "pageRef": "PDF p.414",
+    "astrologySupportCell": "L559",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

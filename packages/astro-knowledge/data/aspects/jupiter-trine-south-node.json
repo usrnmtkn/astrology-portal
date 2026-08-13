@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-trine-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter trine South Node can make karmic situations easier to welcome as material for spiritual understanding. In this framework, the person is more willing to learn from what returns rather than only asking for it to stop returning.",
+  "astrologySupportSha256": "419e0ae8edf482e7e1e84e99c564e0ae33d7ec10013015b129c7d7a70d7f034c",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "trine",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 428,
+    "keyCell": "A428",
+    "pageRef": "PDF p.389",
+    "astrologySupportCell": "L428",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

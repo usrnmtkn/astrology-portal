@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-semisextile-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars semisextile South Node can delay karmic situations that would otherwise force a change in desire.",
+  "astrologySupportSha256": "18ac26d927b8d35a77d36f8dd7f34b8b519eaeddbf1d5f6659223c728a011275",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "semisextile",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 404,
+    "keyCell": "A404",
+    "pageRef": "PDF p.378",
+    "astrologySupportCell": "L404",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-square-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune square Midheaven can make ambition lose energy when the career lacks a larger ideal.",
+  "astrologySupportSha256": "b84f66d06ae72b218eae988ec9f490e4ec5f320e7f6225eb8b2ec56b6e192640",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "square",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 665,
+    "keyCell": "A665",
+    "pageRef": "PDF p.425",
+    "astrologySupportCell": "L665",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

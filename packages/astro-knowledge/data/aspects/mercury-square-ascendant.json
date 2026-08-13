@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mercury-square-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mercury square Ascendant can make nervous energy spill into speech.",
+  "astrologySupportSha256": "63e55cda27eddac6cfb3c65df4158f884b66e8795984cffeed29f6a3c69a8a4e",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "square",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 532,
+    "keyCell": "A532",
+    "pageRef": "PDF p.411-412",
+    "astrologySupportCell": "L532",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}
