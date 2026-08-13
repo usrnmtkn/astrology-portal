@@ -1,0 +1,78 @@
+#!/usr/bin/env node
+
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { createRequire } from "node:module";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
+
+const require = createRequire(import.meta.url);
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const {
+  buildNatalWritingPacket,
+  renderNatalModelInput
+} = require("../.agents/skills/marie-satori-writer/scripts/natal-writing-packet.js");
+const {
+  buildAspectWritingPacket
+} = require("../packages/astro-knowledge/scripts/build-aspect-writing-packet.js");
+
+const ready = buildNatalWritingPacket({
+  surface: "natal-aspect",
+  key: "moon|sextile|venus"
+});
+assert.equal(ready.status, "ready");
+assert.equal(ready.generationAllowed, true);
+assert.ok(ready.ownerPassages.length >= 4 && ready.ownerPassages.length <= 6);
+assert.ok(ready.ownerPassages.every((entry) => entry.authorityClass === "exact_owner_approved"));
+assert.ok(new Set(ready.ownerPassages.map((entry) => entry.sourceRowId)).size >= 3);
+for (const sourceRowId of new Set(ready.ownerPassages.map((entry) => entry.sourceRowId))) {
+  assert.ok(ready.ownerPassages.filter((entry) => entry.sourceRowId === sourceRowId).length <= 2);
+}
+assert.match(ready.promptBlock, /FIVE-BEAT CONSTRAINTS/u);
+assert.match(ready.promptBlock, /Mechanism to role/u);
+assert.match(ready.promptBlock, /Evidence proves mechanism/u);
+assert.match(ready.promptBlock, /Consequence over time/u);
+assert.match(ready.promptBlock, /Complication after strength/u);
+assert.match(ready.promptBlock, /direct, adult, specific, generous/u);
+assert.match(ready.promptBlock, /TLDR-NATAL-PLACEMENT-DELINEATION-STANDARD-OWNER\.md/u);
+assert.match(ready.promptBlock, /OWNER_CORRECTIONS\.md/u);
+assert.match(ready.promptBlock, /TLDR-BATCH-EDITORIAL-STANDARD-V2\.md/u);
+assert.equal(ready.factBoundary.sourcePath, "packages/astro-knowledge/data/insights/natal-aspects/moon-sextile-venus.json");
+
+const routed = buildAspectWritingPacket({
+  surface: "natal",
+  entry: { id: "moon|sextile|venus" }
+});
+assert.equal(routed.packetType, "natal-writing-packet");
+assert.equal(routed.generationAllowed, true);
+assert.ok(routed.ownerPassages.length >= 4);
+
+const blocked = buildNatalWritingPacket({
+  surface: "natal-aspect",
+  key: "moon|sextile|venus",
+  indexEntries: []
+});
+assert.equal(blocked.status, "insufficient-evidence");
+assert.equal(blocked.generationAllowed, false);
+assert.ok(blocked.evidenceSummary.reasons.includes("fewer-than-four-owner-passages"));
+assert.throws(() => renderNatalModelInput(blocked), /INSUFFICIENT_NATAL_WRITER_EVIDENCE/u);
+
+const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tldr-natal-writer-packet-"));
+try {
+  const cli = spawnSync(process.execPath, [
+    ".agents/skills/marie-satori-writer/scripts/compile-writing-packet.js",
+    "--surface", "natal-aspect",
+    "--id", "moon|sextile|venus",
+    "--task", "Write natal aspect copy.",
+    "--out", tempDir
+  ], { cwd: repoRoot, encoding: "utf8" });
+  assert.equal(cli.status, 0, cli.stderr || cli.stdout);
+  assert.ok(fs.existsSync(path.join(tempDir, "packet.json")));
+  assert.ok(fs.existsSync(path.join(tempDir, "model-input.md")));
+} finally {
+  fs.rmSync(tempDir, { recursive: true, force: true });
+}
+
+console.log("Natal writer evidence packet contract passed: registry boundary, exact owner evidence, five beats, and fail-closed behavior.");

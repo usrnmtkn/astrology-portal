@@ -1,0 +1,806 @@
+{
+  "schemaVersion": "ll-v13-wp1-editorial-draft-v2",
+  "generatedAt": "2026-08-13T00:00:00.000Z",
+  "batchId": "WP1-B02",
+  "packetBundlePath": "packages/astro-knowledge/review/natal-writer-evidence-2026-08-13/ll-v13-wp1-batch-02-writing-packets-v1.json",
+  "governance": {
+    "ownerApproved": false,
+    "canonical": false,
+    "serving": false,
+    "autoPublish": false,
+    "writerPromotion": false
+  },
+  "summary": {
+    "rows": 131,
+    "rewrite": 45,
+    "sourceGap": 86
+  },
+  "rows": [
+    {
+      "rowKey": "pluto|square|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "pluto|square|south_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "pluto|trine|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "pluto|trine|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "pluto|trine|north_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "pluto|trine|south_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|conjunction|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|conjunction|north_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|conjunction|pluto",
+      "disposition": "REWRITE",
+      "revisedCopy": "You can carry a hard job long after other people would have changed course. Saturn keeps applying structure while Pluto keeps pushing toward total change, so endurance starts to look like the only honorable response. That strength can hold a crisis together, but it can also keep a failed method alive because stopping resembles defeat. The effort still counts when you choose a different method.",
+      "editorialNote": "Authored through compliant natal packet 8643ca9c8198680ef384c69c83bdca60ab6580025bb055131b2c4a547eb85b78; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "saturn|conjunction|uranus",
+      "disposition": "REWRITE",
+      "revisedCopy": "You can meet every obligation while quietly measuring the distance to the exit. Saturn holds the structure in place as Uranus presses for a freer method, so the conflict stays contained until one more demand makes it visible. This can produce useful reform inside rigid systems, but ignored pressure tends to end in an abrupt refusal. Naming the limit early gives change somewhere to go besides the breaking point.",
+      "editorialNote": "Authored through compliant natal packet 699b2774550552d14c43cc6c2ab49d810d5c666e331fdcfe4582d0f14b5c66ed; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "saturn|opposition|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|opposition|north_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|opposition|pluto",
+      "disposition": "REWRITE",
+      "revisedCopy": "A demand for control often meets a person or circumstance that refuses to be managed. Saturn tries to preserve the workable structure while Pluto exposes the power underneath it, so compromise can seem like a loss of authority. Repeated standoffs show where discipline has become domination. A structure becomes stronger when another person can act inside it without disappearing.",
+      "editorialNote": "Authored through compliant natal packet b78be033fb5ec2f5c55555c2564b7b3c67cbc3d36f50259f21c3604da65eddb8; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "saturn|opposition|south_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|square|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|square|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|square|north_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|square|south_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|trine|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|trine|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|trine|north_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|trine|pluto",
+      "disposition": "REWRITE",
+      "revisedCopy": "Pressure tends to make you more focused, not more theatrical. Saturn supplies patience and Pluto supplies depth, so you can face an inconvenient fact, make the difficult decision, and keep the room steady while the consequences unfold. People learn to trust that kind of authority because it has survived use. The strength is not looking powerful; it is remaining responsible when power has a cost.",
+      "editorialNote": "Authored through compliant natal packet 5134cf9a9d309019c3c2b4c0ebb76a4dd8dce79d1d63e38cac864f3f8451b621; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "saturn|trine|south_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|trine|uranus",
+      "disposition": "REWRITE",
+      "revisedCopy": "You can keep the commitment and change the method in the same motion. Saturn gives an idea enough structure to work repeatedly, while Uranus keeps that structure from becoming a cage. This makes room for schedules with flexibility, unconventional plans that still meet the deadline, and independence that does not require a dramatic exit. Freedom lasts longer when it has something dependable to stand on.",
+      "editorialNote": "Authored through compliant natal packet 09f6f4653869434ad4a7a88e59243125a627a98929e91420df242d46caf517d9; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "south_node|conjunction|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "south_node|conjunction|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "south_node|opposition|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "south_node|square|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "south_node|trine|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "south_node|trine|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "sun|conjunction|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "sun|conjunction|jupiter",
+      "disposition": "REWRITE",
+      "revisedCopy": "You tend to enter a larger plan expecting that life will make room for it. The Sun wants to act from a clear center and Jupiter enlarges the reach, so confidence quickly becomes a trip, a generous offer, a public yes, or a goal with more at stake. That appetite can open doors for everyone around you, but easy momentum can also make judgment seem unnecessary. Expansion works best when gratitude does not replace discernment.",
+      "editorialNote": "Authored through compliant natal packet 04561d59f9bf28475b32cf4cc3e7035bb19fc103687ccc77c0c4a80c0da9fe0f; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|conjunction|mars",
+      "disposition": "REWRITE",
+      "revisedCopy": "You move quickly once something matters to you. The Sun makes the direction personal and Mars supplies immediate force, so leadership, competition, and decisive action arrive before much hesitation. That concentration of will can get a stalled situation moving, but conflict begins when another person's direction seems illegitimate. Confidence has more range when it can lead without making obedience the price of joining it.",
+      "editorialNote": "Authored through compliant natal packet 718e87944e85378c869a1ba24e45d9bec944a8bf822254a19fce507c171325fc; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|conjunction|mercury",
+      "disposition": "REWRITE",
+      "revisedCopy": "An idea often reaches your mouth at the same moment it becomes clear in your mind. The Sun ties identity to Mercury's need to name, explain, and connect, so teaching, joking, answering, and preparing the next point come easily. The same speed can turn a conversation into a demonstration of competence instead of an exchange. A sharp mind becomes more persuasive after it has made room for an answer it did not prepare.",
+      "editorialNote": "Authored through compliant natal packet d57c96bf4d9f984c9b2ffa5108437f679362ea77edb9d9c2578fe39a37f6bbe5; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|conjunction|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "sun|conjunction|moon",
+      "disposition": "REWRITE",
+      "revisedCopy": "A feeling can gather your whole attention before you have decided what to do with it. The Sun's direction and the Moon's instinct arrive together, so excitement launches the project and hurt changes the plan with equal force. This unity gives emotion unusual creative power, but the first reaction can take over the situation before it becomes a choice. A short pause lets the same force act with intention.",
+      "editorialNote": "Authored through compliant natal packet a7e040c18e0f0de73b46810d5f6f3dd2881c2a18945d79bdbec94258ad726772; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|conjunction|neptune",
+      "disposition": "REWRITE",
+      "revisedCopy": "An atmosphere can alter your sense of direction before anyone says what is happening. The Sun looks for a stable center while Neptune opens that center to music, imagination, longing, and other people's moods. This sensitivity can produce art and precise compassion, but it can also make avoidance look like empathy or turn hope into a reason not to check the facts. Imagination stays useful when it remains in contact with what occurred.",
+      "editorialNote": "Authored through compliant natal packet c854416413504fdbfde3edc2e8d2e13e0332d20fdc880ef5a1f422c4e8cba200; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|conjunction|north_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "sun|conjunction|pluto",
+      "disposition": "REWRITE",
+      "revisedCopy": "You tend to invest your full identity in outcomes that matter to you. The Sun wants visible purpose and Pluto intensifies the need to shape what happens, so leadership and control can become difficult to separate. That force can transform a group or project, but compromise may register as a threat to significance. Authority becomes cleaner when you can state the motive and still let somebody else's decision alter the result.",
+      "editorialNote": "Authored through compliant natal packet 8647a18b8e28e0f4ca7b8416c80b5f1f4b34671bf53abbcd5e3b58324be7a5b0; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|conjunction|south_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "sun|conjunction|uranus",
+      "disposition": "REWRITE",
+      "revisedCopy": "You notice the rule that no longer fits and move toward the alternative quickly. The Sun makes independence central to identity while Uranus keeps testing the standard version, so originality shows up as a method, decision, or refusal that other people did not expect. This can free a stagnant situation, but disagreement may sound like an attempt to control you. Independence is sturdier when another person's idea can enter the room without taking yours away.",
+      "editorialNote": "Authored through compliant natal packet eeec55bd196ca8238e72ba535c360d1747a71d4dab0d04a835edeec4a489365b; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|opposition|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "sun|opposition|neptune",
+      "disposition": "REWRITE",
+      "revisedCopy": "The person in front of you can disappear behind the person you hoped they would become. The Sun tries to hold a clear direction while Neptune places an ideal across the relationship, so disappointment is easy to explain away until ordinary limits interrupt the picture. Compassion can keep a bond open, but idealization makes honest recognition harder. Love becomes more exact when it includes the person who did not match the dream.",
+      "editorialNote": "Authored through compliant natal packet 224234db0fba6091cb34201c6da259bf247acbef77f743ad78613bb4ad85c499; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|opposition|north_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "sun|opposition|pluto",
+      "disposition": "REWRITE",
+      "revisedCopy": "A power struggle can repeat with a new face and the same emotional shape. The Sun locates purpose in your own direction while Pluto arrives through another person's leverage, so each conflict seems to begin outside you. Leaving may end one standoff without changing the pattern that rebuilds it. The repetition loosens when you can see where your own need for control enters the exchange.",
+      "editorialNote": "Authored through compliant natal packet 4fe89dd08ff7401618df961605ef543cc4a6c11c62b2e8a3a801d77623fe38e2; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|opposition|saturn",
+      "disposition": "REWRITE",
+      "revisedCopy": "Another person's need can interrupt the plan you were ready to pursue alone. The Sun presses toward self-directed purpose while Saturn arrives as a duty, limit, or standard held across the relationship. This can teach durable cooperation, though the delay may first look like somebody else blocking your life. Responsibility becomes adult when their need matters without becoming the only reason you act.",
+      "editorialNote": "Authored through compliant natal packet 60e5ba2e9573de427e66e0c44fe9649c8c1c7b7dce4afed3527a8cc1a4520af2; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|opposition|uranus",
+      "disposition": "REWRITE",
+      "revisedCopy": "A disagreement can become a referendum on your freedom before the original issue is settled. The Sun wants to move from its own center while Uranus arrives through somebody else's refusal, surprise, or different plan. That friction can expose a stale arrangement, but boredom also makes disruption seem more important than it is. Independence includes hearing the limit clearly before deciding it deserves to be broken.",
+      "editorialNote": "Authored through compliant natal packet 49b55ed4d7b092bc6727e9fc5cb90dc7c6dacbadbdc55139222991a25d4006b7; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|square|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "sun|square|neptune",
+      "disposition": "REWRITE",
+      "revisedCopy": "A noble explanation can hide the resentment growing underneath it. The Sun wants a coherent motive while Neptune blurs the line between intuition, longing, and the story you would prefer to believe. This tension can deepen art and spiritual inquiry, but it also makes confusing loyalties and evasions harder to name. Insight begins when the beautiful explanation is tested against the behavior it was covering.",
+      "editorialNote": "Authored through compliant natal packet af207128943553729153509f7d4ac2097cf3cf0d672255bd87f31c9c5e8aa79c; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|square|north_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "sun|square|uranus",
+      "disposition": "REWRITE",
+      "revisedCopy": "A limit can make change seem urgent before you know what the change is for. The Sun wants a direction it can own while Uranus rejects the arrangement that feels confining, so quitting or overturning the plan brings immediate relief. That disruption can reveal an overdue correction, but motion alone does not create a workable replacement. The useful break is the one that leaves you able to name what the new structure must support.",
+      "editorialNote": "Authored through compliant natal packet b2c70ea6cc48989e0f91474bde85bcb4cd19cd4dfbcfae5ac28cdd0b3492bda6; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|trine|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "sun|trine|jupiter",
+      "disposition": "REWRITE",
+      "revisedCopy": "You tend to meet a difficult opening with more possibility than fear. The Sun's confidence and Jupiter's reach reinforce each other, so generosity, candor, and a larger plan are available without much internal argument. This ease can encourage other people and widen the life around you, though good timing may start to look like proof that every judgment is sound. Fortune has more consequence when you use it deliberately instead of assuming it will repeat.",
+      "editorialNote": "Authored through compliant natal packet 08b9d8e991ed3891bf39e578188dd53a6391a6b9bc39150801d0efaaee8bee5f; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|trine|moon",
+      "disposition": "REWRITE",
+      "revisedCopy": "What you want and what you feel often move in the same direction. The Sun supplies intention and the Moon supplies instinct, so creative choices, emotional expression, and public presence require less internal negotiation. That agreement gives you steady access to yourself, but it can also make a first response seem complete because little inside you is objecting. Ease becomes discernment when agreement is still allowed to pause.",
+      "editorialNote": "Authored through compliant natal packet ce160b095306de55433e3da362462ef9479e93f2432b1dd0cc929e0a8b2aaff3; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|trine|neptune",
+      "disposition": "REWRITE",
+      "revisedCopy": "You can register an atmosphere and give it a form other people recognize. The Sun provides direction while Neptune supplies image, feeling, and permeability, so music, art, care, or spiritual practice can carry what ordinary explanation misses. Direct conflict may be less appealing because you notice everything around the words. Sensitivity becomes a craft when it is given a practice sturdy enough to hold it.",
+      "editorialNote": "Authored through compliant natal packet 1265076b59a48f460a4cb58f0ec222b22de3daaac96da374e724ba345be8f586; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|trine|pluto",
+      "disposition": "REWRITE",
+      "revisedCopy": "You can look at an uncomfortable motive without waiting for a crisis to expose it. The Sun keeps a sense of purpose while Pluto makes depth and change available, so admitting the hidden reason can lead directly to a different habit. This gives self-examination practical force instead of turning it into punishment. The courage is not finding a darker explanation; it is changing once the truthful one appears.",
+      "editorialNote": "Authored through compliant natal packet 5b54fa8f0a7891913c5c300041eef433fc3276c25ab4a56db06c82d5be781fbd; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|trine|saturn",
+      "disposition": "REWRITE",
+      "revisedCopy": "You tend to give a goal structure before anyone asks you to. The Sun supplies direction and Saturn organizes the time, sequence, and responsibility needed to sustain it, so other people often notice competence early. The same self-command can make receiving direction feel slower than giving it. Authority works best when discipline remains a capacity, not proof that your method must govern everybody else.",
+      "editorialNote": "Authored through compliant natal packet c4b74786182af85b640c8d7dbb208e5a169747ec125f6b0b396aa21c638ab49c; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "sun|trine|south_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "sun|trine|uranus",
+      "disposition": "REWRITE",
+      "revisedCopy": "An unusual idea can become part of your ordinary way of working. The Sun gives the idea a personal center while Uranus keeps the method open to invention, so independence does not require constant rebellion to stay alive. This can make change practical and originality easy to inhabit. The idea travels farther when you explain how it works instead of assuming its value is self-evident.",
+      "editorialNote": "Authored through compliant natal packet 588da28726b8fd61d7a3119d93f15f9cf74b7dab806e38851d6fb53815d3da4a; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "uranus|conjunction|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "uranus|conjunction|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "uranus|conjunction|neptune",
+      "disposition": "REWRITE",
+      "revisedCopy": "A generation starts treating invention and imagination as parts of the same problem. Uranus unsettles the accepted method while Neptune dissolves the old boundary around belief, so technology, science, mysticism, and collective ideals begin changing together. Individuals carry this pressure differently, but its scale is larger than one personality. The conjunction describes an era learning that a new tool also changes what people imagine is possible.",
+      "editorialNote": "Authored through compliant natal packet a66a08999605597141e9bee4b950951cada95aca91b8604acb529e3ae46cc50f; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "uranus|conjunction|north_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "uranus|conjunction|pluto",
+      "disposition": "REWRITE",
+      "revisedCopy": "A generation grows up expecting entrenched systems to break open. Uranus brings disruption while Pluto exposes the power holding an institution in place, so reform arrives with urgency and little reverence for permanence. That pressure can clear space for necessary change, but it can also overlook the lives caught inside the structure. Transformation lasts when impatience with the system is matched by care for what replaces it.",
+      "editorialNote": "Authored through compliant natal packet 0a9791399e9b33e249fe854770cfbfbddd593f39bcff06b51e4e13e9cb4fa721; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "uranus|conjunction|south_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "uranus|opposition|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "uranus|opposition|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "uranus|opposition|neptune",
+      "disposition": "REWRITE",
+      "revisedCopy": "A revolutionary answer can become another belief that must be defended. Uranus pushes toward revision while Neptune places a compelling ideal across from it, so a new philosophy seems liberating until experience changes the question again. This tension keeps spiritual and intellectual life moving, but certainty can turn inquiry into protection of the latest system. A living worldview remains able to be revised by the life it claims to explain.",
+      "editorialNote": "Authored through compliant natal packet 9705a3a20bfbff8d2dd748b6d33d31947438dedb9e107e267cca3eb503a903e1; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "uranus|opposition|north_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "uranus|opposition|pluto",
+      "disposition": "REWRITE",
+      "revisedCopy": "A disagreement can pull you beneath the argument and into the motive that made winning seem necessary. Uranus holds tightly to independent thought while Pluto arrives through another person's pressure, exposing the fear or memory underneath the position. The exchange can become a contest for control, but it can also reveal what the intellect was protecting. Understanding begins when the hidden stake matters more than the victory.",
+      "editorialNote": "Authored through compliant natal packet a0fc23f750a22a614929bab5f118abc336368abd921a9c2fb4ce855a42fd5444; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "uranus|square|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "uranus|square|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "uranus|square|neptune",
+      "disposition": "REWRITE",
+      "revisedCopy": "One rigid explanation can collapse into an escape that is just as absolute. Uranus rejects the respectable system while Neptune reaches for transcendence, so doubt may send you toward an extreme belief, a numbing habit, or a world that asks less of ordinary life. Creative work can hold the uncertainty without pretending to solve it. A worldview becomes more durable when doubt has somewhere to exist inside it.",
+      "editorialNote": "Authored through compliant natal packet b8f63afea7779f528fc0f101decbd0eb251857e7a2caa5cadab34d3cca73e117; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "uranus|trine|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "uranus|trine|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "uranus|trine|neptune",
+      "disposition": "REWRITE",
+      "revisedCopy": "You can stay open to an unusual impression without turning it into a final doctrine. Uranus encourages independent inquiry while Neptune keeps imagination and spiritual perception available, so older philosophies and new possibilities can be considered in the same conversation. Curiosity protects sensitivity from becoming certainty too quickly. What you notice remains useful because it is allowed to stay a question.",
+      "editorialNote": "Authored through compliant natal packet e40fc64c95a45a4bc1de4995c41284c55d82fe9c858264b6b4ef514a03b0395c; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "uranus|trine|north_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "uranus|trine|pluto",
+      "disposition": "REWRITE",
+      "revisedCopy": "A difficult change often reveals options that were invisible before the pressure arrived. Uranus notices the unconventional route while Pluto keeps attention on the buried cause, so crisis can produce both freedom and a deeper account of what happened. This makes unusual conditions easier to face without minimizing them. The insight matters because it changes how you move through the problem, not because the problem was secretly desirable.",
+      "editorialNote": "Authored through compliant natal packet b5df8b4f455c2a89d7aaf102908aa50a4c5954dd15409a3b89dc6df4b703678f; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "uranus|trine|south_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|conjunction|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|conjunction|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|conjunction|north_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|conjunction|saturn",
+      "disposition": "REWRITE",
+      "revisedCopy": "Love often becomes visible through what you maintain. Venus values closeness while Saturn gives it weight and duration, so the repaired hinge, paid bill, kept promise, and ride home carry more meaning than a dramatic display. Reliability can make a bond safe, but open warmth may stay withheld because exposure feels costly. Devotion is easier to recognize when the loving part is said as clearly as the practical part is done.",
+      "editorialNote": "Authored through compliant natal packet b1875919550a245a7528e37606e8484b847c76297885f3cb7c065f8e075a064c; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "venus|conjunction|south_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|opposition|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|opposition|jupiter",
+      "disposition": "REWRITE",
+      "revisedCopy": "Pleasure can keep expanding after the evening, gift, or purchase has already done its job. Venus wants what feels good while Jupiter enlarges the gesture across the table, so generosity quickly becomes the better seats, another round, or more than the budget planned. The warmth brings people together, but excess leaves a consequence after the mood has passed. Enjoyment becomes easier to trust when enough is allowed to end the sentence.",
+      "editorialNote": "Authored through compliant natal packet 6086f9a958ef1fe356bd239d86505247d968cff47c119c476782e78168eb874b; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "venus|opposition|mars",
+      "disposition": "REWRITE",
+      "revisedCopy": "Desire can be immediate while agreement takes longer. Venus reaches for connection and Mars arrives through the other person's competing pace or answer, so chemistry and conflict often occupy the same exchange. That tension can keep a bond alive, but anger takes over when difference is treated as rejection. The relationship gets stronger when the problem receives a clear sentence before it becomes a showdown.",
+      "editorialNote": "Authored through compliant natal packet 8f67649f768c8d25c7638436f7d96679febf75fdb59c23fc8b96f77bf500c8da; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "venus|opposition|north_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|opposition|pluto",
+      "disposition": "REWRITE",
+      "revisedCopy": "Closeness can become something you monitor instead of something you inhabit. Venus wants the bond while Pluto places fear of loss, replacement, or control across from it, so supervision starts masquerading as devotion. The intensity can expose what the relationship is worth, but pressure eventually drives intimacy away from the very person trying to secure it. Love becomes more dependable when possession is no longer asked to prove its depth.",
+      "editorialNote": "Authored through compliant natal packet 029ceec844ece43fa4c6e8000aeb382370a92ceec63822286c47b71fcb18d43c; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "venus|opposition|south_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|opposition|uranus",
+      "disposition": "REWRITE",
+      "revisedCopy": "You may agree to closeness before making enough room for your need to remain separate. Venus reaches for the bond while Uranus arrives through a sudden demand for space, so generosity lasts until accumulated resentment makes distance urgent. This tension can keep relationships honest about freedom, but disappearing late causes more damage than declining early. Independence belongs in the agreement from the beginning.",
+      "editorialNote": "Authored through compliant natal packet dad67ec867f1a442d19ee9b6cf36bc907d66fddfd52a6ad7ed1003cd3a7624e9; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "venus|square|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|square|jupiter",
+      "disposition": "REWRITE",
+      "revisedCopy": "The larger, prettier option can hide the complication attached to it. Venus responds to pleasure and value while Jupiter increases the size of the offer, so an upgrade or generous yes arrives before the legal detail, expense, partner, or family consequence is fully considered. The opportunity may still be worthwhile, but its scale does not settle the question. A good choice can survive a clear look at the motive and the bill.",
+      "editorialNote": "Authored through compliant natal packet 9a2accd62c821673935ff55f9452ec8b02b013ffd040ba93f9e26ec3e2e5ca15; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "venus|square|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|square|neptune",
+      "disposition": "REWRITE",
+      "revisedCopy": "Compassion can keep explaining a broken promise after the explanation has stopped protecting the bond. Venus wants to preserve love while Neptune blurs sacrifice with devotion, so resentment grows underneath an ideal of endless understanding. Forgiveness can soften a relationship, but it cannot make repetition harmless. The boundary matters because it keeps kindness from becoming the method that permits the same injury.",
+      "editorialNote": "Authored through compliant natal packet c50336e9b45f8136e31577a3c9e212fc28ebca0cf0d3094193f75d7eea49bada; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "venus|square|north_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|square|pluto",
+      "disposition": "REWRITE",
+      "revisedCopy": "A relationship can tempt you to answer manipulation in the same language. Venus wants to protect what matters while Pluto intensifies jealousy, retaliation, and the fear of losing power, so harmful behavior starts to seem justified by what the other person did first. The conflict exposes the values at stake by testing how you behave under pressure. Change begins when revenge stops being the proof that you were hurt.",
+      "editorialNote": "Authored through compliant natal packet 019d52f2e90d1732d8ef89a9ba51370385b21b71a8a7a8e9d18ef2e7f9f1bceb; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "venus|square|south_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|square|uranus",
+      "disposition": "REWRITE",
+      "revisedCopy": "A friendship can change your values even when it does not remain in your life. Venus forms the attachment while Uranus disrupts the familiar type, so an unusual person exposes preferences or compromises you had stopped questioning. The ending may be abrupt, but the encounter leaves the old self-description harder to maintain. Its consequence is the part of you that can no longer pretend not to know what changed.",
+      "editorialNote": "Authored through compliant natal packet 7a21359dab98cf4325927f25878249dd18667250cedb60121e909748d699ff8b; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "venus|trine|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|trine|jupiter",
+      "disposition": "REWRITE",
+      "revisedCopy": "Pleasure and a larger view of life tend to support each other. Venus recognizes what is worth enjoying while Jupiter widens the context through art, travel, study, teaching, or generous company. This ease makes loyalty and abundance natural parts of the same relationship. What you value grows because enjoyment does not have to compete with curiosity.",
+      "editorialNote": "Authored through compliant natal packet 2e6652bbbba9f020ce731f29628f8a2ac6ea9d225eba96bfb880fd25614c789c; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "venus|trine|mars",
+      "disposition": "REWRITE",
+      "revisedCopy": "Affection and desire usually move toward the same person, project, or experience. Venus brings receptivity while Mars supplies pursuit, so warmth is easier to show through the body and creative work gathers momentum without a long argument. The bond feels alive because wanting and caring are not working against each other. Intensity becomes expressive instead of automatically becoming a crisis.",
+      "editorialNote": "Authored through compliant natal packet 3c0eb11979c38f53d9068550cfc74688398aba97551226141ab3bce7638976ff; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "venus|trine|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|trine|neptune",
+      "disposition": "REWRITE",
+      "revisedCopy": "Beauty can move you toward generosity before you have explained why. Venus recognizes value while Neptune opens it to music, art, tenderness, and spiritual feeling, so compassion finds a natural route into relationship and creative work. Idealization remains possible, but the ease here also makes inspiration usable. Beauty deepens the life most when reality does not have to become flawless to deserve love.",
+      "editorialNote": "Authored through compliant natal packet 72079706ca8fc137b3f07b6baf88b8ab67cc9d00d878fcb36aecc3e122d6d98c; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "venus|trine|north_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|trine|pluto",
+      "disposition": "REWRITE",
+      "revisedCopy": "You can stay close to a difficult change without trying to own its outcome. Venus holds the value of the bond while Pluto makes depth, loss, and renewal possible, so love can accompany another person's transition without turning dependency into proof of devotion. This gives intimacy enough strength to survive an honest ending or a changed agreement. Letting go alters what you value without erasing your capacity to love.",
+      "editorialNote": "Authored through compliant natal packet aecef8f462a8c1835db841d7fa69e4dc812e319d3b69f0ff8eb46081a4297720; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "venus|trine|south_node",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "venus|trine|uranus",
+      "disposition": "REWRITE",
+      "revisedCopy": "Closeness and separate plans can exist without automatically threatening each other. Venus keeps the bond present while Uranus leaves room for difference, so unconventional people, changed agreements, and creative experiments are easier to welcome. This flexibility helps affection survive a shift that would make a more rigid bond panic. Freedom supports love because it is included, not smuggled in after resentment builds.",
+      "editorialNote": "Authored through compliant natal packet 0c819741999ef67ff1752c2b34e810663193721c6ad5eed5d7bb5586897170c7; 6 exact owner-approved passages from 6 source rows."
+    },
+    {
+      "rowKey": "jupiter|inconjunct|neptune",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "jupiter|inconjunct|part_of_fortune",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "mars|inconjunct|neptune",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "mars|inconjunct|part_of_fortune",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "mercury|inconjunct|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "mercury|inconjunct|neptune",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "mercury|inconjunct|part_of_fortune",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "moon|inconjunct|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "moon|inconjunct|jupiter",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "moon|inconjunct|mercury",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "moon|inconjunct|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "moon|inconjunct|part_of_fortune",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "moon|inconjunct|pluto",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "neptune|inconjunct|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "neptune|inconjunct|part_of_fortune",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "north_node|inconjunct|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "north_node|inconjunct|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "part_of_fortune|inconjunct|ascendant",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "part_of_fortune|inconjunct|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "pluto|inconjunct|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "pluto|inconjunct|part_of_fortune",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|inconjunct|midheaven",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    },
+    {
+      "rowKey": "saturn|inconjunct|part_of_fortune",
+      "disposition": "SOURCE_GAP",
+      "revisedCopy": "",
+      "editorialNote": "Fail closed: missing-registry-row. No draft was generated."
+    }
+  ]
+}

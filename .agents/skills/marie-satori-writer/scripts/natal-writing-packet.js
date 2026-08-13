@@ -1,0 +1,376 @@
+#!/usr/bin/env node
+"use strict";
+
+const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
+const { buildIndex, repoRoot } = require("./build-voice-index.js");
+
+const packageRoot = path.join(repoRoot, "packages", "astro-knowledge");
+const PACKET_VERSION = "natal-writer-packet-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1";
+const MIN_PASSAGES = 4;
+const MAX_PASSAGES = 6;
+const MIN_SOURCE_ROWS = 3;
+const MAX_PER_SOURCE_ROW = 2;
+const ACTIVE_FACT_STATUSES = new Set(["REVIEWED", "LIVE", "APPROVED", "SOURCE_BACKED"]);
+const SIGNS = new Set(["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]);
+const SOFT_ASPECTS = new Set(["sextile", "trine"]);
+const HARD_ASPECTS = new Set(["square", "opposition", "quincunx", "semisquare", "sesquisquare"]);
+const STANDARD_PATHS = {
+  delineation: "tldr-astro-phrasebank/TLDR-NATAL-PLACEMENT-DELINEATION-STANDARD-OWNER.md",
+  corrections: "docs/writing/OWNER_CORRECTIONS.md",
+  editorial: "tldr-astro-phrasebank/TLDR-BATCH-EDITORIAL-STANDARD-V2.md"
+};
+
+function sha256(value) {
+  return crypto.createHash("sha256").update(value).digest("hex");
+}
+
+function posix(value) {
+  return String(value).replaceAll(path.sep, "/");
+}
+
+function relative(value) {
+  return posix(path.relative(repoRoot, value));
+}
+
+function normalize(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replaceAll("_", "-")
+    .replace(/\s+/gu, "-")
+    .replace(/^-+|-+$/gu, "");
+}
+
+function normalizeAspect(value) {
+  const aspect = normalize(value);
+  if (aspect === "conjunct") return "conjunction";
+  if (aspect === "inconjunct") return "quincunx";
+  return aspect;
+}
+
+function houseNumber(value) {
+  const match = String(value || "").trim().toLowerCase().match(/^(1[0-2]|[1-9])(?:st|nd|rd|th)(?:[ -]house)?$/u);
+  return match ? Number(match[1]) : 0;
+}
+
+function aspectFamily(value) {
+  const aspect = normalizeAspect(value);
+  if (SOFT_ASPECTS.has(aspect)) return "soft";
+  if (HARD_ASPECTS.has(aspect)) return "hard";
+  if (aspect === "conjunction") return "conjunction";
+  return "other";
+}
+
+function normalizeSurface(surface) {
+  const value = normalize(surface);
+  if (value === "natal") return "natal-aspect";
+  if (value === "natal-aspect" || value === "natal-placement") return value;
+  throw new Error(`Unsupported natal packet surface: ${surface}`);
+}
+
+function parseNatalTarget(surface, key) {
+  const normalizedSurface = normalizeSurface(surface);
+  const rawKey = String(key || "").trim();
+  const parts = rawKey.split("|").map((part) => part.trim());
+  if (normalizedSurface === "natal-aspect") {
+    if (parts.length !== 3 || parts.some((part) => !part)) {
+      return { surface: normalizedSurface, key: rawKey, supported: false, reason: "unsupported-key-shape" };
+    }
+    const planetA = normalize(parts[0]);
+    const aspect = normalizeAspect(parts[1]);
+    const planetB = normalize(parts[2]);
+    return {
+      surface: normalizedSurface,
+      key: `${planetA}|${aspect}|${planetB}`,
+      supported: true,
+      planetA,
+      aspect,
+      planetB,
+      aspectFamily: aspectFamily(aspect)
+    };
+  }
+  if (parts.length !== 2 || parts.some((part) => !part)) {
+    return { surface: normalizedSurface, key: rawKey, supported: false, reason: "unsupported-key-shape" };
+  }
+  const planet = normalize(parts[0]);
+  const sign = normalize(parts[1]);
+  const house = houseNumber(parts[1]);
+  if (!SIGNS.has(sign) && !house) {
+    return { surface: normalizedSurface, key: rawKey, supported: false, reason: "unsupported-placement-position" };
+  }
+  return {
+    surface: normalizedSurface,
+    key: house ? `${planet}|${house}${house === 1 ? "st" : house === 2 ? "nd" : house === 3 ? "rd" : "th"} house` : `${planet}|${sign}`,
+    supported: true,
+    planet,
+    placementType: house ? "house" : "sign",
+    placementValue: house ? String(house) : sign
+  };
+}
+
+function registryCandidates(target) {
+  if (target.surface === "natal-aspect") {
+    const exact = `${target.planetA}-${target.aspect}-${target.planetB}.json`;
+    const reverse = `${target.planetB}-${target.aspect}-${target.planetA}.json`;
+    return [
+      path.join(packageRoot, "data", "insights", "natal-aspects", exact),
+      path.join(packageRoot, "data", "insights", "natal-aspects", reverse),
+      path.join(packageRoot, "data", "points", "aspects", "natal", exact),
+      path.join(packageRoot, "data", "points", "aspects", "natal", reverse)
+    ];
+  }
+  const filename = `${target.planet}-${target.placementValue}.json`;
+  return [
+    path.join(packageRoot, "data", "placements", target.placementType, filename),
+    path.join(packageRoot, "data", "points", "placements", target.placementType, filename)
+  ];
+}
+
+function loadNatalFactBoundary(target) {
+  if (!target.supported) return { ok: false, reason: target.reason };
+  const sourcePath = registryCandidates(target).find((candidate) => fs.existsSync(candidate));
+  if (!sourcePath) return { ok: false, reason: "missing-registry-row" };
+  const bytes = fs.readFileSync(sourcePath);
+  const row = JSON.parse(bytes);
+  const status = String(row.status || "").trim().toUpperCase();
+  if (!ACTIVE_FACT_STATUSES.has(status)) {
+    return { ok: false, reason: "unverified-registry-row", sourcePath: relative(sourcePath), status };
+  }
+  if (target.surface === "natal-aspect") {
+    const factor = Array.isArray(row.sourceFactors)
+      ? row.sourceFactors.find((item) => item?.type === "natal-aspect")
+      : null;
+    const actualPair = [normalize(factor?.planetA), normalize(factor?.planetB)].sort().join("|");
+    const wantedPair = [target.planetA, target.planetB].sort().join("|");
+    if (!factor || actualPair !== wantedPair || normalizeAspect(factor.aspect) !== target.aspect) {
+      return { ok: false, reason: "registry-identity-mismatch", sourcePath: relative(sourcePath), status };
+    }
+    return {
+      ok: true,
+      sourcePath: relative(sourcePath),
+      sourceSha256: sha256(bytes),
+      status,
+      registryKind: row.kind || "natal-aspect",
+      identity: { planetA: target.planetA, aspect: target.aspect, planetB: target.planetB },
+      factMaterial: Object.fromEntries(["tldr", "summary", "body", "gift", "challenge", "shadow", "integration", "business", "policy", "sourceFactors"]
+        .filter((key) => row[key] != null)
+        .map((key) => [key, row[key]])),
+      usageBoundary: "Astrology facts only. This registry prose is not owner-voice evidence and must not be imitated."
+    };
+  }
+  const actualPlanet = normalize(row.planet || row.point);
+  const actualValue = target.placementType === "house" ? String(row.key ?? row.house ?? "") : normalize(row.key || row.sign);
+  if (actualPlanet !== target.planet || actualValue !== target.placementValue) {
+    return { ok: false, reason: "registry-identity-mismatch", sourcePath: relative(sourcePath), status };
+  }
+  return {
+    ok: true,
+    sourcePath: relative(sourcePath),
+    sourceSha256: sha256(bytes),
+    status,
+    registryKind: row.kind || target.placementType,
+    identity: { planet: target.planet, placementType: target.placementType, placementValue: target.placementValue },
+    factMaterial: Object.fromEntries(["tldr", "body", "gift", "challenge", "shadow", "integration", "business", "policy", "note"]
+      .filter((key) => row[key] != null)
+      .map((key) => [key, row[key]])),
+    usageBoundary: "Astrology facts only. This registry prose is not owner-voice evidence and must not be imitated."
+  };
+}
+
+function metadataFromEntry(entry) {
+  const governedKey = String(entry.governedKey || "");
+  const parts = governedKey.split("|");
+  if (entry.surface === "natal-aspect" && parts.length === 3) {
+    return {
+      planetA: normalize(entry.planetA || parts[0]),
+      aspect: normalizeAspect(entry.aspect || parts[1]),
+      planetB: normalize(entry.planetB || parts[2])
+    };
+  }
+  if (entry.surface === "natal-placement" && parts.length === 2) {
+    const value = entry.placementValue || parts[1];
+    const house = houseNumber(value);
+    return {
+      planet: normalize(entry.planet || parts[0]),
+      placementType: entry.placementType || (house ? "house" : SIGNS.has(normalize(value)) ? "sign" : ""),
+      placementValue: house ? String(house) : normalize(value)
+    };
+  }
+  return {};
+}
+
+function sourceRowId(entry) {
+  return [entry.sourcePath || "unknown", entry.workbookSourceRow || entry.sourceId].join("#");
+}
+
+function aspectAffinity(target, entry) {
+  const meta = metadataFromEntry(entry);
+  if (!meta.planetA || !meta.aspect || !meta.planetB) return null;
+  const targetPair = [target.planetA, target.planetB].sort().join("|");
+  const entryPair = [meta.planetA, meta.planetB].sort().join("|");
+  if (targetPair === entryPair) return { rank: 0, label: "same-planet-pair" };
+  if (aspectFamily(meta.aspect) === target.aspectFamily && target.aspectFamily !== "other") return { rank: 1, label: `same-${target.aspectFamily}-aspect-family` };
+  if ([meta.planetA, meta.planetB].some((planet) => planet === target.planetA || planet === target.planetB)) return { rank: 2, label: "same-planet-any-aspect" };
+  return { rank: 3, label: "adjacent-owner-approved-natal-aspect" };
+}
+
+function placementAffinity(target, entry) {
+  const meta = metadataFromEntry(entry);
+  if (!meta.planet || !meta.placementType || !meta.placementValue) return null;
+  if (meta.planet === target.planet && meta.placementType === target.placementType && meta.placementValue === target.placementValue) {
+    return { rank: 0, label: "same-placement" };
+  }
+  if (meta.planet === target.planet && meta.placementType === target.placementType) return { rank: 1, label: "same-planet-same-placement-family" };
+  if (meta.planet === target.planet) return { rank: 2, label: "same-planet" };
+  if (meta.placementType === target.placementType && meta.placementValue === target.placementValue) return { rank: 3, label: "same-sign-or-house" };
+  return { rank: 4, label: "adjacent-owner-approved-natal-placement" };
+}
+
+function selectOwnerPassages(target, indexEntries) {
+  const ranked = indexEntries
+    .filter((entry) => entry.surface === target.surface)
+    .filter((entry) => entry.authorityClass === "exact_owner_approved")
+    .filter((entry) => entry.ownerApproved === true && entry.useAsPositiveVoiceEvidence === true)
+    .filter((entry) => typeof entry.text === "string" && entry.text.trim())
+    .map((entry) => ({ entry, affinity: target.surface === "natal-aspect" ? aspectAffinity(target, entry) : placementAffinity(target, entry) }))
+    .filter((item) => item.affinity)
+    .sort((left, right) => left.affinity.rank - right.affinity.rank || sourceRowId(left.entry).localeCompare(sourceRowId(right.entry)) || left.entry.sourceId.localeCompare(right.entry.sourceId));
+
+  const selected = [];
+  const bySource = new Map();
+  for (const item of ranked) {
+    const rowId = sourceRowId(item.entry);
+    if ((bySource.get(rowId) || 0) >= MAX_PER_SOURCE_ROW) continue;
+    selected.push({
+      sourceId: item.entry.sourceId,
+      sourceRowId: rowId,
+      sourcePath: item.entry.sourcePath,
+      workbookSourceRow: item.entry.workbookSourceRow || null,
+      governedKey: item.entry.governedKey || null,
+      sourceSha256: item.entry.sourceSha256,
+      authorityClass: item.entry.authorityClass,
+      affinity: item.affinity,
+      text: item.entry.text
+    });
+    bySource.set(rowId, (bySource.get(rowId) || 0) + 1);
+    if (selected.length === MAX_PASSAGES) break;
+  }
+  return selected;
+}
+
+function loadStandards() {
+  const documents = Object.fromEntries(Object.entries(STANDARD_PATHS).map(([id, sourcePath]) => {
+    const absolute = path.join(repoRoot, sourcePath);
+    if (!fs.existsSync(absolute)) throw new Error(`Missing natal writing standard: ${sourcePath}`);
+    const text = fs.readFileSync(absolute, "utf8");
+    return [id, { sourcePath, sourceSha256: sha256(text), text }];
+  }));
+  return {
+    fiveBeats: [
+      "Mechanism to role: explain what the planet or point does here without trait naming.",
+      "Evidence proves mechanism: show observable behavior or a recognizable lived moment.",
+      "Consequence over time: show what repeatedly happens because of that mechanism.",
+      "Complication after strength: establish the useful capacity before naming its cost.",
+      "Tone: direct, adult, specific, generous, and free of personality-label conclusions."
+    ],
+    documents
+  };
+}
+
+function promptBlockFor(packet) {
+  const beats = packet.standards.fiveBeats.map((beat, index) => `${index + 1}. ${beat}`).join("\n");
+  const documents = Object.entries(packet.standards.documents)
+    .map(([id, document]) => `\n\n${id.toUpperCase()} (${document.sourcePath})\n${document.text.trim()}`)
+    .join("");
+  return `NATAL WRITING EVIDENCE CONTRACT\nGeneration is allowed only because this packet contains four to six exact owner-approved passages from at least three source rows. Use them as writing-operation evidence, not as facts for the target. The registry fact boundary supplies target astrology; its prose is fact material only and is prohibited as voice evidence. Do not add facts that are absent from that boundary.\n\nFIVE-BEAT CONSTRAINTS\n${beats}${documents}`;
+}
+
+function buildNatalWritingPacket({ surface, key, indexEntries, factBoundaryLoader = loadNatalFactBoundary }) {
+  const target = parseNatalTarget(surface, key);
+  const factBoundary = factBoundaryLoader(target);
+  const standards = loadStandards();
+  const ownerPassages = target.supported ? selectOwnerPassages(target, indexEntries || buildIndex().entries) : [];
+  const distinctSourceRows = new Set(ownerPassages.map((entry) => entry.sourceRowId)).size;
+  const evidenceCompliant = ownerPassages.length >= MIN_PASSAGES && ownerPassages.length <= MAX_PASSAGES && distinctSourceRows >= MIN_SOURCE_ROWS;
+  const generationAllowed = target.supported && factBoundary.ok === true && evidenceCompliant;
+  const reasons = [];
+  if (!target.supported) reasons.push(target.reason);
+  if (target.supported && !factBoundary.ok) reasons.push(factBoundary.reason);
+  if (ownerPassages.length < MIN_PASSAGES) reasons.push("fewer-than-four-owner-passages");
+  if (distinctSourceRows < MIN_SOURCE_ROWS) reasons.push("fewer-than-three-distinct-source-rows");
+  const packet = {
+    schemaVersion: 1,
+    packetVersion: PACKET_VERSION,
+    packetType: "natal-writing-packet",
+    status: generationAllowed ? "ready" : "insufficient-evidence",
+    generationAllowed,
+    target,
+    factBoundary,
+    evidencePolicy: {
+      authorityClass: "exact_owner_approved",
+      minimumPassages: MIN_PASSAGES,
+      maximumPassages: MAX_PASSAGES,
+      minimumDistinctSourceRows: MIN_SOURCE_ROWS,
+      maximumPassagesPerSourceRow: MAX_PER_SOURCE_ROW,
+      ranking: target.surface === "natal-aspect"
+        ? ["same planet pair", "same soft/hard aspect family", "same planet with any aspect", "adjacent"]
+        : ["same placement", "same planet and placement family", "same planet", "same sign or house", "adjacent"]
+    },
+    evidenceSummary: {
+      qualifyingPassages: ownerPassages.length,
+      distinctSourceRows,
+      reasons
+    },
+    ownerPassages,
+    standards,
+    governance: {
+      approvalEffect: "none",
+      reviewGatedCandidateOnly: true,
+      autoPublish: false,
+      writerPromotion: false
+    }
+  };
+  packet.promptBlock = promptBlockFor(packet);
+  return packet;
+}
+
+function assertNatalGenerationAllowed(packet) {
+  if (!packet?.generationAllowed) {
+    const reasons = packet?.evidenceSummary?.reasons?.join(", ") || "unknown";
+    throw new Error(`INSUFFICIENT_NATAL_WRITER_EVIDENCE: ${reasons}`);
+  }
+}
+
+function renderNatalModelInput(packet, { task = "Write the requested natal delineation.", inputText = "" } = {}) {
+  assertNatalGenerationAllowed(packet);
+  const evidence = packet.ownerPassages.map((entry, index) => [
+    `OWNER PASSAGE ${index + 1}`,
+    `Source row: ${entry.sourceRowId}`,
+    `Affinity: ${entry.affinity.label}`,
+    entry.text
+  ].join("\n")).join("\n\n");
+  return `${packet.promptBlock}\n\nFACT BOUNDARY\n${JSON.stringify(packet.factBoundary, null, 2)}\n\nEXACT TASK\n${task}${inputText ? `\n\nTEXT TO REVISE\n${inputText}` : ""}\n\n${evidence}\n`;
+}
+
+module.exports = {
+  ACTIVE_FACT_STATUSES,
+  MAX_PASSAGES,
+  MAX_PER_SOURCE_ROW,
+  MIN_PASSAGES,
+  MIN_SOURCE_ROWS,
+  PACKET_VERSION,
+  STANDARD_PATHS,
+  aspectFamily,
+  assertNatalGenerationAllowed,
+  buildNatalWritingPacket,
+  houseNumber,
+  loadNatalFactBoundary,
+  normalizeAspect,
+  normalizeSurface,
+  parseNatalTarget,
+  promptBlockFor,
+  renderNatalModelInput,
+  selectOwnerPassages
+};
