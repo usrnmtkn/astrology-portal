@@ -743,7 +743,9 @@
   }
 
   .mode-guest :where(.sky-header-date-button, .menu-toggle),
-  .mode-member :where(.sky-header-date-button, .menu-toggle) {
+  .mode-member :where(.sky-header-date-button, .menu-toggle),
+  .mode-profile :where(.sky-header-date-button, .menu-toggle),
+  .mode-friends :where(.sky-header-date-button, .menu-toggle) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -784,7 +786,9 @@
   }
 
   .mode-guest .mobile-sky-controls,
-  .mode-member .mobile-sky-controls {
+  .mode-member .mobile-sky-controls,
+  .mode-profile .mobile-sky-controls,
+  .mode-friends .mobile-sky-controls {
     position: fixed;
     top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) + 6px);
     right: var(--mobile-page-gutter);
@@ -895,7 +899,9 @@
   }
 
   .mode-guest .topbar-actions,
-  .mode-member .topbar-actions {
+  .mode-member .topbar-actions,
+  .mode-profile .topbar-actions,
+  .mode-friends .topbar-actions {
     gap: 10px;
   }
 
@@ -1782,7 +1788,9 @@
 
 @media (max-width: 520px) {
   .mode-guest .sky-header-date-button,
-  .mode-member .sky-header-date-button {
+  .mode-member .sky-header-date-button,
+  .mode-profile .sky-header-date-button,
+  .mode-friends .sky-header-date-button {
     max-width: 132px;
     min-width: 132px;
   }
@@ -1794,7 +1802,9 @@
 
 @media (max-width: 420px) {
   .mode-guest .sky-header-date-button,
-  .mode-member .sky-header-date-button {
+  .mode-member .sky-header-date-button,
+  .mode-profile .sky-header-date-button,
+  .mode-friends .sky-header-date-button {
     max-width: 112px;
     min-width: 112px;
     padding-inline: var(--space-4);
@@ -1803,7 +1813,9 @@
 
 @media (max-width: 380px) {
   .mode-guest .brand-word,
-  .mode-member .brand-word {
+  .mode-member .brand-word,
+  .mode-profile .brand-word,
+  .mode-friends .brand-word {
     display: none;
   }
 

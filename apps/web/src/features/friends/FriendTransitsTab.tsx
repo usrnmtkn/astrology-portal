@@ -84,8 +84,10 @@ export function FriendTransitsTab({
   dailyForecast,
   dailyDoItems = [],
   dailyDontItems = [],
+  dateLabel,
   friendName,
   houseTransits,
+  isLoading = false,
   onOpenBondTransit,
   onOpenHouseTransit,
   onOpenPersonalTransit,
@@ -97,8 +99,10 @@ export function FriendTransitsTab({
   dailyForecast?: FriendDailyForecastView | null;
   dailyDoItems?: string[];
   dailyDontItems?: string[];
+  dateLabel: string;
   friendName: string;
   houseTransits: FriendHouseTransitView[];
+  isLoading?: boolean;
   onOpenBondTransit: (id: string) => void;
   onOpenHouseTransit: (id: string) => void;
   onOpenPersonalTransit: (id: string) => void;
@@ -118,9 +122,14 @@ export function FriendTransitsTab({
   return (
     <div className="friend-tab-pane friend-compat-stage friend-transits-stage friend-transits-stage--full" aria-label={`${friendName} transits`}>
       <div className="friend-profile-copy-column">
+        {isLoading ? (
+          <div className="feature-loading-fallback" role="status">
+            Calculating transits for the selected date…
+          </div>
+        ) : null}
         {dailyForecast ? (
           <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Daily forecast for ${friendName}`}>
-            <span className="eyebrow section-label friend-section-label">Today for {friendName}</span>
+            <span className="eyebrow section-label friend-section-label">{dateLabel} for {friendName}</span>
             <h3>{dailyForecast.headline}</h3>
             <p>{dailyForecast.body}</p>
           </section>
@@ -242,7 +251,7 @@ export function FriendTransitsTab({
           items={patternItems}
           timingOverrides={patternTimingOverrides}
         />
-        {!hasAnyTransit && (
+        {!isLoading && !hasAnyTransit && (
           <article className="friends-logic-card">
             <span>Transits</span>
             <h3>No prioritized transits are active.</h3>
