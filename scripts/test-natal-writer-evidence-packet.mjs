@@ -37,9 +37,26 @@ assert.match(ready.promptBlock, /Consequence over time/u);
 assert.match(ready.promptBlock, /Complication after strength/u);
 assert.match(ready.promptBlock, /direct, adult, specific, generous/u);
 assert.match(ready.promptBlock, /TLDR-NATAL-PLACEMENT-DELINEATION-STANDARD-OWNER\.md/u);
+assert.match(ready.promptBlock, /TLDR-AUTHOR-FROM-MECHANISM-RULING-OWNER\.md/u);
+assert.match(ready.promptBlock, /The AstrologySupport field is the source\. The existing prose is not the draft\./u);
 assert.match(ready.promptBlock, /OWNER_CORRECTIONS\.md/u);
 assert.match(ready.promptBlock, /TLDR-BATCH-EDITORIAL-STANDARD-V2\.md/u);
 assert.equal(ready.factBoundary.sourcePath, "packages/astro-knowledge/data/insights/natal-aspects/moon-sextile-venus.json");
+assert.equal(ready.authoringSource.rowKey, "moon|sextile|venus");
+assert.ok(ready.authoringSource.astrologySupport.length > 0);
+assert.equal(ready.authoringSource.astrologySupportSha256.length, 64);
+assert.equal("factMaterial" in ready.factBoundary, false, "Registry prose must not enter a natal writer packet.");
+const currentCopy = JSON.parse(fs.readFileSync(path.join(repoRoot, "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json"), "utf8"))
+  .rows.find((row) => row.sheet === "AspectMeanings" && row.key === "moon|sextile|venus").copy;
+const modelInput = renderNatalModelInput(ready, { task: "Write natal aspect copy." });
+assert.match(modelInput, /AUTHORING SOURCE/u);
+assert.ok(modelInput.includes(ready.authoringSource.astrologySupport));
+assert.ok(!modelInput.includes(currentCopy), "Existing candidate prose must be absent from the writer context by construction.");
+assert.doesNotMatch(modelInput, /TEXT TO REVISE/u);
+assert.throws(
+  () => renderNatalModelInput(ready, { inputText: currentCopy }),
+  /PRIOR_COPY_FORBIDDEN/u
+);
 
 const routed = buildAspectWritingPacket({
   surface: "natal",
@@ -59,6 +76,14 @@ assert.equal(blocked.generationAllowed, false);
 assert.ok(blocked.evidenceSummary.reasons.includes("fewer-than-four-owner-passages"));
 assert.throws(() => renderNatalModelInput(blocked), /INSUFFICIENT_NATAL_WRITER_EVIDENCE/u);
 
+const missingSupport = buildNatalWritingPacket({
+  surface: "natal-aspect",
+  key: "moon|sextile|venus",
+  supportRegistry: { rows: [], sourceWorkbook: "synthetic.xlsx", sourceWorkbookSha256: "0".repeat(64) }
+});
+assert.equal(missingSupport.generationAllowed, false);
+assert.ok(missingSupport.evidenceSummary.reasons.includes("missing-astrology-support"));
+
 const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tldr-natal-writer-packet-"));
 try {
   const cli = spawnSync(process.execPath, [
@@ -71,6 +96,15 @@ try {
   assert.equal(cli.status, 0, cli.stderr || cli.stdout);
   assert.ok(fs.existsSync(path.join(tempDir, "packet.json")));
   assert.ok(fs.existsSync(path.join(tempDir, "model-input.md")));
+  const rejectedInput = spawnSync(process.execPath, [
+    ".agents/skills/marie-satori-writer/scripts/compile-writing-packet.js",
+    "--surface", "natal-aspect",
+    "--id", "moon|sextile|venus",
+    "--input", currentCopy,
+    "--out", tempDir
+  ], { cwd: repoRoot, encoding: "utf8" });
+  assert.notEqual(rejectedInput.status, 0);
+  assert.match(rejectedInput.stderr, /PRIOR_COPY_FORBIDDEN/u);
 } finally {
   fs.rmSync(tempDir, { recursive: true, force: true });
 }

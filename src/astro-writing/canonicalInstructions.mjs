@@ -3,6 +3,7 @@
 // docs/writing/REVIEW_RUBRIC.md. Tests prevent these excerpts from drifting.
 
 import { REVIEWER_GOLD_EXEMPLARS } from "./reviewerGoldExemplars.generated.mjs";
+import { NATAL_MECHANISM_CALIBRATION } from "./mechanismCalibration.generated.mjs";
 import { buildCardWriterInstructions } from "./cardWritingStandard.mjs";
 
 export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v3-author-from-mechanism-2026-08-13";
@@ -82,6 +83,13 @@ House bleed can survive even when the prose is good. Do not judge sign-house sep
 Governance: Never label generated or refined wording as owner-authored, owner-approved, exact, settled, or locked until the owner explicitly approves that exact wording.`;
 
 export const candidateCardAstrologyWritingInstructions = buildCardWriterInstructions(canonicalAstrologyWritingInstructions);
+
+const NATAL_MECHANISM_CALIBRATION_BLOCK = [
+  "NATAL AUTHOR-FROM-MECHANISM POSITIVE CALIBRATION",
+  ...NATAL_MECHANISM_CALIBRATION.positive.map((fixture) => `PASS ${fixture.rowKey}: ${fixture.copy}`),
+  "NATAL AUTHOR-FROM-MECHANISM NEGATIVE CALIBRATION",
+  ...NATAL_MECHANISM_CALIBRATION.negative.map((fixture) => `REVISE ${fixture.id}: ${fixture.diagnosis}`)
+].join("\n\n");
 
 export const canonicalAstrologyReviewInstructions = `# RUNTIME REVIEWER PROMPT (owner-authored, verbatim, 2026-08-09)
 (The reviewer diagnoses only. The reviser is a separate call receiving only failed lines
@@ -202,6 +210,8 @@ Do not rewrite the passage.
 Diagnose failures and provide narrowly scoped revision instructions.
 
 DECISION CONTRACT: Return PASS or REVISE only. Never return FAIL.
+
+${NATAL_MECHANISM_CALIBRATION_BLOCK}
 
 ${REVIEWER_GOLD_EXEMPLARS}`;
 

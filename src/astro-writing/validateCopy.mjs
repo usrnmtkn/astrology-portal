@@ -36,6 +36,32 @@ const OBSERVABLE_TERMS = Object.freeze([
   "check", "share", "agree", "refuse", "notice", "show"
 ]);
 
+const CONCRETE_NOUNS = Object.freeze([
+  "answer", "appointment", "argument", "bag", "bank", "bill", "body", "book", "budget", "bus", "calendar",
+  "call", "car", "card", "chair", "class", "client", "coffee", "contract", "course", "coworker",
+  "claim", "deadline", "desk", "dinner", "document", "dollar", "door", "email", "evidence", "fact", "flight", "food", "form",
+  "friend", "game", "hour", "invoice", "job", "kitchen", "lamp", "meal", "meeting", "message",
+  "information", "money", "office", "phone", "presentation", "project", "purchase", "receipt", "rematch", "room",
+  "schedule", "source", "table", "text", "ticket", "time", "train", "trip", "vehicle", "week", "workout"
+]);
+
+const OBSERVABLE_ACTIONS = Object.freeze([
+  "answer", "arrive", "ask", "book", "bring", "call", "cancel", "check", "drive", "eat", "finish",
+  "leave", "look", "notice", "pay", "read", "reply", "rewrite", "say", "send", "share", "sign",
+  "spend", "tell", "volunteer", "wash", "write"
+]);
+
+const ABSTRACT_OPENING_SUBJECTS = Object.freeze([
+  "ability", "affection", "ambition", "authority", "capacity", "compassion", "confidence", "connection",
+  "creativity", "desire", "discipline", "empathy", "energy", "faith", "freedom", "generosity", "growth",
+  "healing", "hope", "independence", "intuition", "love", "optimism", "possibility", "potential", "power",
+  "recognition", "responsibility", "sensitivity", "transformation", "work ethic"
+]);
+
+const THERAPY_CLUSTER_TERMS = Object.freeze([
+  "empathy", "trauma", "nurturing", "healing", "growth", "potential", "energy", "journey"
+]);
+
 const ARCHETYPE_TERMS = Object.freeze([
   "warrior", "warriors", "athlete", "athletes", "rocket fuel", "chariot", "chariots", "blade",
   "blades", "underworld", "catharsis", "death and rebirth", "mysteries of life", "superpower"
@@ -169,12 +195,22 @@ export function validateCopy(copy, {
         .filter(([field, value]) => !INTERNAL_GUARD_FIELDS.has(field) && typeof value === "string")
         .map(([, value]) => value.trim())
         .filter(Boolean);
-    const traitEntry = proseSegments.find((segment) => /^(?:your (?:creativity|empathy|competitive streak|intuition|work ethic|faith|talent|ability|capacity)\b|your [^.!?]{0,80}\b(?:gives?|allows?|helps?|makes?) you\b|you (?:crave\b|value\b|possess\b|embody\b|radiate\b|have (?:faith|a (?:talent|gift|capacity|tendency|knack))\b|are (?:creative|empathetic|intuitive|competitive)\b)|moments of catharsis\b)/iu.test(segment));
+    const firstSentence = proseSegments[0]?.split(/(?<=[.!?])\s+/u)[0] ?? "";
+    const abstractSubjectPattern = new RegExp(`^(?:the |your )?(?:${ABSTRACT_OPENING_SUBJECTS.map((term) => term.replace(/ /gu, "\\s+")).join("|")})\\b`, "iu");
+    const abstractOpening = abstractSubjectPattern.test(firstSentence);
+    if (abstractOpening) {
+      violations.push({ category: "abstract_noun_subject", detail: `Opening sentence begins from an abstract quality: ${firstSentence}` });
+    }
+    const traitEntry = proseSegments.find((segment) => /^(?:your (?:creativity|empathy|competitive streak|intuition|work ethic|faith|talent|ability|capacity)\b|your [^.!?]{0,80}\b(?:gives?|allows?|helps?|makes?) you\b|you (?:crave\b|value\b|possess\b|embody\b|radiate\b|have (?:faith|a (?:talent|gift|capacity|tendency|knack))\b|are (?:creative|empathetic|intuitive|competitive)\b)|moments of catharsis\b)/iu.test(segment)) || (abstractOpening ? proseSegments[0] : null);
     if (traitEntry) {
       violations.push({ category: "trait_entry", detail: `Trait-first opening: ${traitEntry.split(/[.!?]/u)[0]}` });
     }
     const hasObservableTerm = OBSERVABLE_TERMS.some((term) => hasBanned(normalized, term));
-    if (!hasObservableTerm) {
+    const concreteMatches = CONCRETE_NOUNS.filter((term) => hasBanned(normalized, term));
+    if (!concreteMatches.length) {
+      violations.push({ category: "zero_concrete_nouns", detail: "No concrete noun from the observable set appears in the passage." });
+    }
+    if (!hasObservableTerm || !concreteMatches.length) {
       violations.push({ category: "photograph_test", detail: "No clause names an action, situation, exchange, object, time, place, or consequence that could be photographed or overheard." });
     }
     if (traitEntry && !hasObservableTerm) {
@@ -187,6 +223,14 @@ export function validateCopy(copy, {
     const therapyMatches = THERAPY_SUMMARY_TERMS.filter((term) => hasBanned(normalized, term));
     if (therapyMatches.length >= 2 && !hasObservableTerm) {
       violations.push({ category: "astrology_summary", detail: `Abstract or therapy-register summary without lived action: ${therapyMatches.join(", ")}` });
+    }
+    for (const paragraph of proseSegments.flatMap((segment) => segment.split(/\n\s*\n/gu)).filter(Boolean)) {
+      const normalizedParagraph = paragraph.toLowerCase();
+      const cluster = THERAPY_CLUSTER_TERMS.filter((term) => hasBanned(normalizedParagraph, term));
+      const hasAction = OBSERVABLE_ACTIONS.some((term) => hasBanned(normalizedParagraph, term));
+      if (cluster.length >= 2 && !hasAction) {
+        violations.push({ category: "therapy_register_cluster", detail: `Therapy-register cluster without observable action: ${cluster.join(", ")}` });
+      }
     }
   }
   const priorMatch = priorCopyStructuralCorrespondence(text, priorCopy);
@@ -207,10 +251,14 @@ export function validateCopy(copy, {
 
 export {
   ARCHETYPE_TERMS,
+  ABSTRACT_OPENING_SUBJECTS,
+  CONCRETE_NOUNS,
   DEFAULT_BANNED,
   HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS,
   HOUSE_BLEED_NOUNS,
   OBSERVABLE_TERMS,
+  OBSERVABLE_ACTIONS,
   STOCK_TROPES,
+  THERAPY_CLUSTER_TERMS,
   THERAPY_SUMMARY_TERMS
 };
