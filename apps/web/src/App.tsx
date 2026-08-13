@@ -2680,6 +2680,38 @@ function dateFromInput(value: string) {
   return new Date(`${value}T12:00:00`);
 }
 
+function isDateInputValue(value: string | null): value is string {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/u.test(value)) {
+    return false;
+  }
+
+  const parsed = dateFromInput(value);
+  return !Number.isNaN(parsed.getTime()) && dateInputValue(parsed) === value;
+}
+
+function transitDateFromUrl() {
+  try {
+    const value = new URL(window.location.href).searchParams.get("date");
+    return isDateInputValue(value) ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+function getInitialTransitDate() {
+  return transitDateFromUrl() ?? dateInputValue();
+}
+
+function updateTransitDateUrl(value: string, mode: "push" | "replace" = "push") {
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.set("date", value);
+    window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
+  } catch {
+    // URL state is an enhancement; the selected date still works in memory.
+  }
+}
+
 function timeInZoneForInput(date: Date, timeZone = browserTimeZone()) {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone,
@@ -10298,7 +10330,7 @@ export function App() {
   const [dyslexiaFriendlyFont, setDyslexiaFriendlyFont] = useState(getInitialDyslexiaFont);
   const [journalPromptsEnabled, setJournalPromptsEnabled] = useState(getInitialJournalPrompts);
   const [guestHouseSignLabelStyle, setGuestHouseSignLabelStyle] = useState<HouseSignLabelStyle>(getInitialHouseSignLabelStyle);
-  const [skyDate, setSkyDate] = useState(dateInputValue);
+  const [skyDate, setSkyDate] = useState(getInitialTransitDate);
   const [mode, setMode] = useState<PortalMode>(getInitialPortalMode);
   const [location, setLocation] = useState<LocationInput>(initialLocationState.location);
   const [manualLocation, setManualLocation] = useState(initialLocationState.location.label);
@@ -10346,6 +10378,7 @@ export function App() {
   const [chartModalMessage, setChartModalMessage] = useState("");
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [profileTransits, setProfileTransits] = useState<TransitItem[]>([]);
+  const [profileTransitsTargetDate, setProfileTransitsTargetDate] = useState<string | null>(null);
   const [profileNatalSky, setProfileNatalSky] = useState<SkySnapshot | null>(null);
   const [profileNatalCalculationStatus, setProfileNatalCalculationStatus] = useState<NatalChartCalculationStatus>("idle");
   const [profileNatalCalculationError, setProfileNatalCalculationError] = useState("");
@@ -10360,7 +10393,7 @@ export function App() {
   const lastSocialProfileSaveRef = useRef("");
   const initialSkyCacheKey = skySnapshotCacheKey(
     withTimeZone(initialLocationState.location),
-    dateInputValue()
+    getInitialTransitDate()
   );
   const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey);
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
@@ -10400,6 +10433,10 @@ export function App() {
   const showNatalAspectPatterns = natalAspectPatternReaderEnabled();
   const showNatalAspectPatternActivation = showNatalAspectPatterns && natalAspectPatternActivationEnabled();
   const activeTransits = rankTransitsByLifeAreaFocus(profileTransits.length > 0 ? profileTransits : sampleTransits, userLifeAreaFocus);
+  const selectedDateSky = sky?.generatedAt.slice(0, 10) === skyDate ? sky : null;
+  const selectedDateTransits = profileTransitsTargetDate === skyDate
+    ? rankTransitsByLifeAreaFocus(profileTransits, userLifeAreaFocus)
+    : [];
   const selectedTransit = activeTransits.find((transit) => transit.id === selectedTransitId) ?? activeTransits[0] ?? sampleTransits[0];
   const isSignupMode = mode === "profile" && !userProfile;
   const isFriendsMode = mode === "friends";
@@ -10963,6 +11000,7 @@ export function App() {
   useEffect(() => {
     function handlePortalUrlChange() {
       const urlMode = portalModeFromUrl();
+      setSkyDate(transitDateFromUrl() ?? dateInputValue());
 
       if (!urlMode) {
         return;
@@ -11891,6 +11929,7 @@ export function App() {
     if (!birthDate || !birthCity || !birthTime || !primaryChart?.birthLocation?.timeZone) {
       profileNatalSkyRequestRef.current = null;
       setProfileNatalSky(null);
+      setProfileTransitsTargetDate(null);
       setProfileNatalCalculationStatus("idle");
       setProfileNatalCalculationError("");
       setProfileNatalAspectPatternStatus("idle");
@@ -11927,6 +11966,7 @@ export function App() {
           : "idle"
       );
       setProfileTransits(nextTransits);
+      setProfileTransitsTargetDate(sky?.generatedAt.slice(0, 10) ?? null);
       setTransitsDrawn(true);
       setSelectedTransitId((currentId) => (
         nextTransits.some((transit) => transit.id === currentId)
@@ -12026,6 +12066,7 @@ export function App() {
         profileNatalSkyRequestRef.current = null;
         setProfileNatalSky(null);
         setProfileTransits([]);
+        setProfileTransitsTargetDate(null);
         setTransitsDrawn(false);
         setProfileNatalCalculationStatus("error");
         setProfileNatalCalculationError(errorMessage);
@@ -12056,19 +12097,19 @@ export function App() {
   useEffect(() => {
     const primaryChart = userProfile?.charts[0];
 
-    if (!isProfileMode || !userProfile || !primaryChart || !sky || !profileNatalSky) {
+    if (!isProfileMode || !userProfile || !primaryChart || !selectedDateSky || !profileNatalSky) {
       setPersonalTimingGenerated(null);
       setPersonalTimingGeneratedStatus("idle");
       return;
     }
 
-    const rendered = dailyGlanceGeneratedContent(userProfile, sky, profileNatalSky, skyDate);
+    const rendered = dailyGlanceGeneratedContent(userProfile, selectedDateSky, profileNatalSky, skyDate);
 
     setPersonalTimingGenerated(rendered);
     setPersonalTimingGeneratedStatus(rendered ? "ready" : "error");
   }, [
     isProfileMode,
-    sky,
+    selectedDateSky,
     skyDate,
     profileNatalSky,
     userProfile?.id,
@@ -12078,14 +12119,21 @@ export function App() {
   useEffect(() => {
     const primaryChart = userProfile?.charts[0];
 
-    if (!isProfileMode || !userProfile || !remoteAccountId || !primaryChart || !transitsDrawn) {
+    if (
+      !isProfileMode
+      || !userProfile
+      || !remoteAccountId
+      || !primaryChart
+      || !transitsDrawn
+      || profileTransitsTargetDate !== skyDate
+    ) {
       setPersonalTransitGeneratedContent(new Map());
       return;
     }
 
     const profile = userProfile;
     const subjectId = primaryChart.id;
-    const transits = rankTransitsByLifeAreaFocus(profileTransits.length > 0 ? profileTransits : sampleTransits, normalizeChartSettings(profile.settings).lifeAreaFocus).slice(0, 8);
+    const transits = rankTransitsByLifeAreaFocus(profileTransits, normalizeChartSettings(profile.settings).lifeAreaFocus).slice(0, 8);
 
     if (transits.length === 0) {
       setPersonalTransitGeneratedContent(new Map());
@@ -12215,6 +12263,7 @@ export function App() {
     };
   }, [
     profileTransits,
+    profileTransitsTargetDate,
     remoteAccountId,
     isProfileMode,
     skyDate,
@@ -12742,6 +12791,7 @@ export function App() {
           nextRising = natalBigThree.rising;
           nextChart = { ...nextChart, birthLocation: resolvedBirthLocation };
           setProfileTransits(nextTransits);
+          setProfileTransitsTargetDate(sky?.generatedAt.slice(0, 10) ?? null);
           setSelectedTransitId(nextTransits[0]?.id ?? sampleTransits[0].id);
         } catch {
           chartCalculationFailed = true;
@@ -12778,19 +12828,32 @@ export function App() {
 
   const isTodayMode = mode === "guest" || mode === "member";
   const isSkyLoading = isTodayMode && skyStatus === "loading";
-  const showSkyDateControls = isTodayMode && !selectedSkyDetail;
+  const isTransitDateMode = isTodayMode || mode === "profile" || mode === "friends";
+  const showTransitDateControls = isTransitDateMode && !selectedSkyDetail;
+  const showSkyLocationControl = isTodayMode;
   const needsChartSetup = Boolean(userProfile && !hasCompleteChartSetup(userProfile));
   const todaySkyDate = dateInputValue();
   const tomorrowSkyDate = dateInputValue(new Date(localDayStart(new Date()).getTime() + 86_400_000));
   const skyFullChartTitleId = "sky-full-chart-title";
   const skyFullChartMeta = `${formatSkyFullChartDate(skyDate)} · ${compactCityLabel(location.label)}`;
 
-  function selectSkyDateFromMobileControls(nextDate: string) {
+  function selectTransitDate(nextDate: string) {
+    if (!isDateInputValue(nextDate)) {
+      return;
+    }
+
+    if (nextDate !== skyDate) {
+      updateTransitDateUrl(nextDate);
+    }
+
     setSkyDate(nextDate);
     setDatePickerOpen(false);
     setCityPickerOpen(false);
     setCityPickerOpenedFromMobileControls(false);
     setMobileSkyControlsOpen(false);
+    window.requestAnimationFrame(() => (
+      mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current
+    )?.focus());
   }
 
   function openMobileDatePicker() {
@@ -12923,14 +12986,16 @@ export function App() {
           </div>
 
         <div className="topbar-actions">
-          {showSkyDateControls && (
+          {showTransitDateControls && (
             <button
               className="sky-header-date-button"
               type="button"
               ref={mobileDatePickerTriggerRef}
               aria-expanded={mobileSkyControlsOpen}
               aria-controls="mobile-sky-controls"
-              aria-label={`${formatSkyHeaderDateLabel(skyDate)}, ${compactCityLabel(location.label)}`}
+              aria-label={showSkyLocationControl
+                ? `${formatSkyHeaderDateLabel(skyDate)}, ${compactCityLabel(location.label)}`
+                : `View transits for ${formatSkyFullChartDate(skyDate)}`}
               onClick={() => {
                 setCityPickerOpen(false);
                 setCityPickerOpenedFromMobileControls(false);
@@ -12943,13 +13008,13 @@ export function App() {
               <ChevronDown className="sky-header-date-button__chevron" size={16} aria-hidden="true" />
             </button>
           )}
-          {showSkyDateControls && mobileSkyControlsOpen && (
+          {showTransitDateControls && mobileSkyControlsOpen && (
             <div
               className="mobile-sky-controls"
               id="mobile-sky-controls"
               ref={mobileSkyControlsRef}
               role="dialog"
-              aria-label="Sky controls"
+              aria-label={showSkyLocationControl ? "Sky controls" : "Transit date controls"}
             >
               {cityPickerOpenedFromMobileControls ? (
                 <form
@@ -12999,18 +13064,18 @@ export function App() {
                 </form>
               ) : (
                 <>
-                  <div className="mobile-sky-controls__tabs" role="group" aria-label="Sky date shortcuts">
+                  <div className="mobile-sky-controls__tabs" role="group" aria-label="Transit date shortcuts">
                     <button
                       type="button"
                       className={skyDate === todaySkyDate ? "active" : ""}
-                      onClick={() => selectSkyDateFromMobileControls(todaySkyDate)}
+                      onClick={() => selectTransitDate(todaySkyDate)}
                     >
                       Today
                     </button>
                     <button
                       type="button"
                       className={skyDate === tomorrowSkyDate ? "active" : ""}
-                      onClick={() => selectSkyDateFromMobileControls(tomorrowSkyDate)}
+                      onClick={() => selectTransitDate(tomorrowSkyDate)}
                     >
                       Tomorrow
                     </button>
@@ -13023,16 +13088,20 @@ export function App() {
                       Date
                     </button>
                   </div>
-                  <span className="mobile-sky-controls__label">Location</span>
-                  <button
-                    type="button"
-                    className="mobile-sky-controls__location"
-                    ref={cityPickerTriggerRef}
-                    onClick={openMobileCityPicker}
-                  >
-                    <MapPin size={18} aria-hidden="true" />
-                    <span>{compactCityLabel(location.label)}</span>
-                  </button>
+                  {showSkyLocationControl && (
+                    <>
+                      <span className="mobile-sky-controls__label">Location</span>
+                      <button
+                        type="button"
+                        className="mobile-sky-controls__location"
+                        ref={cityPickerTriggerRef}
+                        onClick={openMobileCityPicker}
+                      >
+                        <MapPin size={18} aria-hidden="true" />
+                        <span>{compactCityLabel(location.label)}</span>
+                      </button>
+                    </>
+                  )}
                 </>
               )}
             </div>
@@ -13200,6 +13269,18 @@ export function App() {
         </header>
       )}
 
+      {showTransitDateControls && datePickerOpen && (
+        <SkyDatePicker
+          value={skyDate}
+          pickerRef={datePickerRef}
+          onClose={() => {
+            setDatePickerOpen(false);
+            (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
+          }}
+          onSelect={selectTransitDate}
+        />
+      )}
+
       {selectedSkyDetail ? (
         <>
           {skyPlacementFallbackStatus === "loading" ? (
@@ -13247,21 +13328,6 @@ export function App() {
             <section className={isCalendarMode ? "detail-panel calendar-content-column" : "detail-panel sky-content-column chart-layout__content"} aria-label="Portal details">
               {isTodayMode && (
                 <SkyRoute>
-                  {datePickerOpen && (
-                    <SkyDatePicker
-                      value={skyDate}
-                      pickerRef={datePickerRef}
-                      onClose={() => {
-                        setDatePickerOpen(false);
-                        (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
-                      }}
-                      onSelect={(nextDate) => {
-                        setSkyDate(nextDate);
-                        setDatePickerOpen(false);
-                        (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
-                      }}
-                    />
-                  )}
                   <section className="today-hero" aria-label="Today controls">
                     <div className="sky-intro">
                       <h1 className="sky-intro__lead">{formatSkyHeroTitle()}</h1>
@@ -13419,8 +13485,9 @@ export function App() {
                       profileHandle={ownSocialProfile?.handle}
                       targetDate={skyDate}
                       transitForm={transitForm}
-                      transitItems={activeTransits}
-                      currentSky={sky}
+                      transitItems={selectedDateTransits}
+                      currentSky={selectedDateSky}
+                      currentSkyLoading={!selectedDateSky && skyStatus !== "error"}
                       natalSky={profileNatalSky}
                       natalCalculationStatus={profileNatalCalculationStatus}
                       natalCalculationError={profileNatalCalculationError}
@@ -13433,7 +13500,7 @@ export function App() {
                       transitsDrawn={transitsDrawn}
                       selectedTransitId={selectedTransitId}
                       setSelectedTransitId={setSelectedTransitId}
-                      skyGeneratedAt={sky?.generatedAt ?? ""}
+                      skyGeneratedAt={selectedDateSky?.generatedAt ?? `${skyDate}T12:00:00`}
                       onCreateChart={() => openCreateChartModal({
                         prefill: true,
                         step: "birth"
@@ -13473,10 +13540,12 @@ export function App() {
                   <ManualChartsPanel
                     profile={userProfile}
                     profileHandle={ownSocialProfile?.handle ?? null}
-                    currentSky={sky}
+                    currentSky={selectedDateSky}
+                    currentSkyLoading={friendCalculationNeeds.currentSky && !selectedDateSky && skyStatus !== "error"}
+                    transitDateLabel={formatSkyFullChartDate(skyDate)}
                     fallbackArchitectureV3Version={fallbackArchitectureV3Version}
                     profileNatalSky={profileNatalSky}
-                    profileTransits={activeTransits}
+                    profileTransits={selectedDateTransits}
                     natalGeneratedContent={natalGeneratedContent}
                     relationshipGeneratedContent={relationshipGeneratedContent}
                     landingKey={friendsLandingKey}
@@ -13795,7 +13864,7 @@ function SkyDatePicker({
   const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
-    <section className="date-picker" id="sky-date-picker" ref={pickerRef} aria-label="Select sky date">
+    <section className="date-picker" id="sky-date-picker" ref={pickerRef} aria-label="Pick Date">
       <div className="date-picker-header">
         <button className="date-picker-nav" type="button" aria-label="Previous month" onClick={() => setVisibleMonth((month) => addMonths(month, -1))}>
           <ChevronLeft size={16} aria-hidden="true" />
@@ -15635,6 +15704,7 @@ function ProfileView({
   transitForm,
   transitItems,
   currentSky,
+  currentSkyLoading,
   natalSky,
   natalCalculationStatus,
   natalCalculationError,
@@ -15657,6 +15727,7 @@ function ProfileView({
   transitForm: TransitForm;
   transitItems: TransitItem[];
   currentSky: SkySnapshot | null;
+  currentSkyLoading: boolean;
   natalSky: SkySnapshot | null;
   natalCalculationStatus: NatalChartCalculationStatus;
   natalCalculationError: string;
@@ -15738,6 +15809,7 @@ function ProfileView({
           natalSky,
           risingSign: displayRising,
           location: currentLocation,
+          now: dateFromInput(targetDate),
           dailyServedUnitsByDate
         })
           .then((assembly) => {
@@ -16572,7 +16644,7 @@ function ProfileView({
     : personalTimingStatus === "loading"
       ? {
           headline: "Calculating personal timing",
-          summary: "Checking today's sky against your chart and annual profection.",
+          summary: "Checking the selected date’s sky against your chart and annual profection.",
           keyFactors: [],
           status: personalTimingStatus
         }
@@ -16624,6 +16696,8 @@ function ProfileView({
         standaloneTransitRows={standaloneHouseTransitRows}
         weeklyTransitRows={weeklyTransitRows}
         transitArticle={transitArticle}
+        transitDateLabel={formatSkyFullChartDate(targetDate)}
+        transitsLoading={currentSkyLoading}
       />
     </Suspense>
   );
