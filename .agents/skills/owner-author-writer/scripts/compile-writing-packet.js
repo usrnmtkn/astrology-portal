@@ -988,6 +988,9 @@ function main() {
   if (!args.out) throw new Error("--out is required.");
   if (["natal", "natal-aspect", "natal-placement"].includes(args.surface)) {
     if (!args.id) throw new Error("--id is required for natal surfaces.");
+    if (args.input != null && String(args.input).trim()) {
+      throw new Error("PRIOR_COPY_FORBIDDEN: --input is not accepted for natal authoring packets.");
+    }
     const surface = args.surface === "natal" ? "natal-aspect" : args.surface;
     const packet = buildNatalWritingPacket({ surface, key: args.id });
     fs.mkdirSync(args.out, { recursive: true });
@@ -997,7 +1000,7 @@ function main() {
       process.exitCode = 2;
       return;
     }
-    fs.writeFileSync(path.join(args.out, "model-input.md"), renderNatalModelInput(packet, { task: args.task, inputText: args.input || "" }));
+    fs.writeFileSync(path.join(args.out, "model-input.md"), renderNatalModelInput(packet, { task: args.task }));
     console.log(`Compiled ${packet.ownerPassages.length}-passage natal packet at ${args.out}. No model call was made.`);
     return;
   }

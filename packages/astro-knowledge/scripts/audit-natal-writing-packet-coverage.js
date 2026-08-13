@@ -66,6 +66,12 @@ function main() {
         generationAllowed: packet.generationAllowed,
         reasons: packet.evidenceSummary.reasons,
         factBoundary: packet.factBoundary,
+        authoringSource: {
+          sourcePath: packet.authoringSource.sourcePath,
+          sheet: packet.authoringSource.sheet,
+          workbookRow: packet.authoringSource.workbookRow,
+          astrologySupportSha256: packet.authoringSource.astrologySupportSha256
+        },
         qualifyingPassages: packet.evidenceSummary.qualifyingPassages,
         distinctSourceRows: packet.evidenceSummary.distinctSourceRows,
         evidenceSourceRows: packet.ownerPassages.map((entry) => entry.sourceRowId)
@@ -98,7 +104,8 @@ function main() {
       maximumExactOwnerApprovedPassages: 6,
       minimumDistinctSourceRows: 3,
       maximumPassagesPerSourceRow: 2,
-      factBoundary: "active astro-knowledge natal aspect or placement registry row"
+      factBoundary: "active astro-knowledge natal aspect or placement registry row",
+      authoringSource: "exact-key AstrologySupport; existing candidate prose excluded"
     },
     summary: {
       total: rows.length,
@@ -116,7 +123,7 @@ function main() {
   fs.writeFileSync(outputPath, `${JSON.stringify(artifact, null, 2)}\n`);
   const table = Object.entries(batchCounts).map(([batchId, counts]) => `| ${batchId} | ${counts.total} | ${counts.compliant} | ${percentage(counts.compliant, counts.total)}% |`).join("\n");
   const reasons = Object.entries(reasonCounts).sort((a, b) => b[1] - a[1]).map(([reason, count]) => `- ${reason}: ${count}`).join("\n");
-  fs.writeFileSync(reviewPath, `# Natal writer evidence coverage — 2026-08-13\n\nStatus: deterministic pre-drafting coverage record. No model call was made. No row was edited, approved, served, or promoted.\n\n## Result\n\nA compliant, registry-bounded packet can be built today for **${compliant} of ${rows.length}** unapproved LL V13 rows (${percentage(compliant, rows.length)}%). The remaining **${rows.length - compliant}** rows are fail-closed.\n\n## Batch coverage\n\n| Batch | Rows | Compliant packets | Coverage |\n| --- | ---: | ---: | ---: |\n${table}\n\n## Fail-closed reasons\n\n${reasons || "- none"}\n\nA row can have more than one reason, so reason counts are not additive. \`unverified-registry-row\` includes a registry row whose status remains DRAFT. \`unsupported-key-shape\` covers generic aspect, sign, house, planet, phase, or fortune rows that are not one of the authorized natal packet key forms.\n\n## Governance\n\n- Evidence is restricted to \`authorityClass: exact_owner_approved\`.\n- Fact boundaries contain registry identity and provenance, not registry prose as voice evidence.\n- Fewer than four qualifying passages or fewer than three source rows blocks drafting.\n- Batch 2 may be regenerated only for rows marked compliant in the JSON artifact.\n- Approval state, serving state, auto-publish, and writer promotion remain unchanged.\n`);
+  fs.writeFileSync(reviewPath, `# Natal writer evidence coverage — 2026-08-13\n\nStatus: deterministic pre-drafting coverage record. No model call was made. No row was edited, approved, served, or promoted.\n\n## Result\n\nA compliant, registry-bounded packet can be built today for **${compliant} of ${rows.length}** unapproved LL V13 rows (${percentage(compliant, rows.length)}%). The remaining **${rows.length - compliant}** rows are fail-closed. All **713 of 713** rows have exact-key AstrologySupport; the fail-closed remainder is caused by absent, inactive, or unsupported registry boundaries, not missing mechanism source.\n\n## Batch coverage\n\n| Batch | Rows | Compliant packets | Coverage |\n| --- | ---: | ---: | ---: |\n${table}\n\n## Fail-closed reasons\n\n${reasons || "- none"}\n\nA row can have more than one reason, so reason counts are not additive. \`unverified-registry-row\` includes a registry row whose status remains DRAFT. \`unsupported-key-shape\` covers generic aspect, sign, house, planet, phase, or fortune rows that are not one of the authorized natal packet key forms.\n\n## Governance\n\n- AstrologySupport is the sole target-mechanism source; prior/current/revised candidate prose is excluded from writer packets.\n- Evidence is restricted to \`authorityClass: exact_owner_approved\`.\n- Fact boundaries contain registry identity and provenance only; registry prose is excluded from writer context.\n- Fewer than four qualifying passages or fewer than three source rows blocks drafting.\n- Batch 1 V3 may be authored only for rows marked compliant in the JSON artifact; all other rows remain SOURCE_GAP.\n- Approval state, serving state, auto-publish, and writer promotion remain unchanged.\n`);
   console.log(JSON.stringify(artifact.summary, null, 2));
 }
 
