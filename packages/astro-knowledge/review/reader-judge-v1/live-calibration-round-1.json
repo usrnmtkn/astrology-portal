@@ -1,0 +1,1222 @@
+{
+  "schemaVersion": "reader-judge-v1-live-calibration-round-1",
+  "state": "complete",
+  "advisoryForever": true,
+  "proseJudgmentOwnerGate": true,
+  "calibrationTargetMet": true,
+  "oneRoundOnly": true,
+  "model": "gpt-5.6-terra",
+  "reasoningEffort": "medium",
+  "callCount": 19,
+  "usage": {
+    "input_tokens": 278467,
+    "output_tokens": 5314,
+    "total_tokens": 283781,
+    "reasoning_tokens": 369,
+    "cached_input_tokens": 251568
+  },
+  "corpus": {
+    "minedCount": 44,
+    "existingCorrectionCount": 20,
+    "duplicateBadTextCount": 7,
+    "combinedUniqueCount": 57,
+    "minedCategoryCount": 31
+  },
+  "density": {
+    "approvedAverage": 0,
+    "knownBadAverage": 7.083333333333333
+  },
+  "targets": {
+    "approvedFewFlags": true,
+    "approvedNoHighConfidence": true,
+    "knownBadManyFlags": true,
+    "venusLibraNotRevisionLike": true
+  },
+  "results": [
+    {
+      "fixtureId": "reader-gold-saturn-capricorn-owner-approved",
+      "fixtureKind": "owner-approved",
+      "source": "owner-approved Saturn in Capricorn rendered page",
+      "flagCount": 0,
+      "categories": [],
+      "highConfidenceFlagCount": 0,
+      "mediumConfidenceFlagCount": 0,
+      "lowConfidenceFlagCount": 0,
+      "flags": [],
+      "readPriority": "read last",
+      "note": "",
+      "provider": {
+        "responseId": "resp_07d72aa454fa604c006a7d635024a481a0968a9d798210092a",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 15413,
+          "input_tokens_details": {
+            "cache_write_tokens": 15410,
+            "cached_tokens": 0
+          },
+          "output_tokens": 70,
+          "output_tokens_details": {
+            "reasoning_tokens": 34
+          },
+          "total_tokens": 15483
+        }
+      }
+    },
+    {
+      "fixtureId": "reader-gold-sun-leo-v3",
+      "fixtureKind": "owner-approved",
+      "source": "fallback-hook/sky-sign-copy/sun/leo",
+      "flagCount": 0,
+      "categories": [],
+      "highConfidenceFlagCount": 0,
+      "mediumConfidenceFlagCount": 0,
+      "lowConfidenceFlagCount": 0,
+      "flags": [],
+      "readPriority": "read last",
+      "note": "",
+      "provider": {
+        "responseId": "resp_01b2c24888f0cc0b006a7d6351f608819db0e6545bd8387ec0",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14361,
+          "input_tokens_details": {
+            "cache_write_tokens": 382,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 34,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 14395
+        }
+      }
+    },
+    {
+      "fixtureId": "reader-gold-venus-libra",
+      "fixtureKind": "owner-approved",
+      "source": "fallback-hook/sky-sign-copy/venus/libra",
+      "flagCount": 0,
+      "categories": [],
+      "highConfidenceFlagCount": 0,
+      "mediumConfidenceFlagCount": 0,
+      "lowConfidenceFlagCount": 0,
+      "flags": [],
+      "readPriority": "read last",
+      "note": "",
+      "provider": {
+        "responseId": "resp_0240d47f6f30f4eb006a7d63533f7c8191a965553accc1d881",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14306,
+          "input_tokens_details": {
+            "cache_write_tokens": 327,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 34,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 14340
+        }
+      }
+    },
+    {
+      "fixtureId": "reader-gold-published-saturn-aries",
+      "fixtureKind": "owner-approved",
+      "source": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+      "flagCount": 0,
+      "categories": [],
+      "highConfidenceFlagCount": 0,
+      "mediumConfidenceFlagCount": 0,
+      "lowConfidenceFlagCount": 0,
+      "flags": [],
+      "readPriority": "read last",
+      "note": "",
+      "provider": {
+        "responseId": "resp_05b3662cbbd92ed4006a7d6356437c819c9f4a56d6d3874399",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 20347,
+          "input_tokens_details": {
+            "cache_write_tokens": 6368,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 145,
+          "output_tokens_details": {
+            "reasoning_tokens": 109
+          },
+          "total_tokens": 20492
+        }
+      }
+    },
+    {
+      "fixtureId": "reader-gold-lilith-aries-v5",
+      "fixtureKind": "owner-approved",
+      "source": "data/writing/owner-approved-examples.jsonl#gold-lilith-aries-v5",
+      "flagCount": 0,
+      "categories": [],
+      "highConfidenceFlagCount": 0,
+      "mediumConfidenceFlagCount": 0,
+      "lowConfidenceFlagCount": 0,
+      "flags": [],
+      "readPriority": "read last",
+      "note": "",
+      "provider": {
+        "responseId": "resp_02f0681a65876567006a7d6358c88c8191aa988a1642584cce",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14229,
+          "input_tokens_details": {
+            "cache_write_tokens": 250,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 34,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 14263
+        }
+      }
+    },
+    {
+      "fixtureId": "reader-gold-lilith-libra-v5",
+      "fixtureKind": "owner-approved",
+      "source": "data/writing/owner-approved-examples.jsonl#gold-lilith-libra-v5",
+      "flagCount": 0,
+      "categories": [],
+      "highConfidenceFlagCount": 0,
+      "mediumConfidenceFlagCount": 0,
+      "lowConfidenceFlagCount": 0,
+      "flags": [],
+      "readPriority": "read last",
+      "note": "",
+      "provider": {
+        "responseId": "resp_007994786d898c4f006a7d635a1838819ebe7808af76d3661b",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14236,
+          "input_tokens_details": {
+            "cache_write_tokens": 257,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 34,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 14270
+        }
+      }
+    },
+    {
+      "fixtureId": "reader-gold-lilith-sagittarius-v5",
+      "fixtureKind": "owner-approved",
+      "source": "data/writing/owner-approved-examples.jsonl#gold-lilith-sagittarius-v5",
+      "flagCount": 0,
+      "categories": [],
+      "highConfidenceFlagCount": 0,
+      "mediumConfidenceFlagCount": 0,
+      "lowConfidenceFlagCount": 0,
+      "flags": [],
+      "readPriority": "read last",
+      "note": "",
+      "provider": {
+        "responseId": "resp_07dc02f7c3657831006a7d635b253c81a09271642c21c41c13",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14241,
+          "input_tokens_details": {
+            "cache_write_tokens": 262,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 34,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 14275
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-aries-v7",
+      "fixtureKind": "known-bad",
+      "source": "packages/astro-knowledge/review/mercury-ingress-masters-v7/TLDR-Mercury-Ingress-Articles-V7.md",
+      "flagCount": 7,
+      "categories": [
+        "constructed_sentence",
+        "personification",
+        "vagueness",
+        "abstraction_over_consequence",
+        "vague_word"
+      ],
+      "highConfidenceFlagCount": 3,
+      "mediumConfidenceFlagCount": 3,
+      "lowConfidenceFlagCount": 1,
+      "flags": [
+        {
+          "quote": "The answer comes quickly. Make sure the rest of the question gets a chance to arrive.",
+          "category": "constructed_sentence",
+          "why": "The contrast is clear, but “gets a chance to arrive” sounds written rather than like ordinary speech.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Aries changes Mercury’s pace.",
+          "category": "personification",
+          "why": "This gives Aries agency over Mercury instead of describing the emphasis of Mercury in Aries.",
+          "confidence": "low"
+        },
+        {
+          "quote": "The hesitation that kept a conversation stuck can disappear as soon as somebody finally says what they actually think.",
+          "category": "vagueness",
+          "why": "“The hesitation” and “a conversation stuck” name the pattern without showing the specific moment that has been delayed.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "This works well when delay has become more complicated than the decision itself.",
+          "category": "abstraction_over_consequence",
+          "why": "It explains the condition in general terms instead of naming what the reader would notice happening.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Mercury in Aries can cut through the part of the conversation that only exists because nobody wanted to go first.",
+          "category": "constructed_sentence",
+          "why": "“Cut through the part of the conversation” is a roundabout construction where a direct description of someone avoiding the first move would land more naturally.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Then the decision has to be reopened because the detail that looked small was the part everything depended on.",
+          "category": "abstraction_over_consequence",
+          "why": "“The decision” and “everything” keep the consequence generic rather than naming the actual mix-up or work that has to be redone.",
+          "confidence": "high"
+        },
+        {
+          "quote": "A fast answer is only useful if it does not create another round of cleanup.",
+          "category": "vague_word",
+          "why": "“Cleanup” is broad process language that makes the reader supply what has to be corrected or redone.",
+          "confidence": "high"
+        }
+      ],
+      "readPriority": "read soon",
+      "note": "",
+      "provider": {
+        "responseId": "resp_0867e61a0989bdaf006a7d635c4bf0819d9a7e8d12cc45de49",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14284,
+          "input_tokens_details": {
+            "cache_write_tokens": 305,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 407,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 14691
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-taurus-v7",
+      "fixtureKind": "known-bad",
+      "source": "packages/astro-knowledge/review/mercury-ingress-masters-v7/TLDR-Mercury-Ingress-Articles-V7.md",
+      "flagCount": 6,
+      "categories": [
+        "personification",
+        "boilerplate_opener",
+        "explanatory_not_lived",
+        "analytical_register",
+        "generic_astrology_copy"
+      ],
+      "highConfidenceFlagCount": 2,
+      "mediumConfidenceFlagCount": 4,
+      "lowConfidenceFlagCount": 0,
+      "flags": [
+        {
+          "quote": "Taurus changes Mercury’s standard.",
+          "category": "personification",
+          "why": "It gives Taurus a human action; the sign can describe the emphasis without appearing to set a standard.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "This works well when a decision needs more than enthusiasm behind it.",
+          "category": "boilerplate_opener",
+          "why": "This opens in broad horoscope language before the paragraph gets to the concrete ways someone would test a proposal.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Mercury in Taurus is good at noticing the difference between an idea that sounds reassuring and one that can actually support the life built around it.",
+          "category": "explanatory_not_lived",
+          "why": "This explains the placement from above rather than staying with the proposal, expense, and terms that already make the point clearly.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "The complication is keeping the old answer because it once worked well.",
+          "category": "analytical_register",
+          "why": "“The complication” and “old answer” make the lived resistance sound like an abstract analysis.",
+          "confidence": "high"
+        },
+        {
+          "quote": "At that point, caution is not protecting the decision.",
+          "category": "analytical_register",
+          "why": "“Protecting the decision” is procedural language where the actual cost of keeping the familiar method would land more clearly.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "While Mercury is in Taurus, take enough time to know what can be relied on.",
+          "category": "generic_astrology_copy",
+          "why": "This reads like a standard transit instruction rather than naming the specific situation in which extra time changes the outcome.",
+          "confidence": "medium"
+        }
+      ],
+      "readPriority": "read soon",
+      "note": "",
+      "provider": {
+        "responseId": "resp_0b2e4ef86a8e5bf9006a7d6362694481a2b63526de58b7b3d0",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14282,
+          "input_tokens_details": {
+            "cache_write_tokens": 303,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 340,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 14622
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-gemini-v7",
+      "fixtureKind": "known-bad",
+      "source": "packages/astro-knowledge/review/mercury-ingress-masters-v7/TLDR-Mercury-Ingress-Articles-V7.md",
+      "flagCount": 5,
+      "categories": [
+        "vagueness",
+        "explanatory_not_lived",
+        "constructed_sentence",
+        "natural_language",
+        "abstraction_over_consequence"
+      ],
+      "highConfidenceFlagCount": 2,
+      "mediumConfidenceFlagCount": 3,
+      "lowConfidenceFlagCount": 0,
+      "flags": [
+        {
+          "quote": "Gemini changes Mercury’s range.",
+          "category": "vagueness",
+          "why": "“Changes Mercury’s range” is too abstract for the concrete examples that follow, so the reader has to supply what range means.",
+          "confidence": "high"
+        },
+        {
+          "quote": "This works well when the answer depends on comparison.",
+          "category": "explanatory_not_lived",
+          "why": "This explains the mechanism before showing it, where a concrete moment of comparing two versions would carry the point more naturally.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Mercury in Gemini makes room for the possibility that better information should change what gets said next.",
+          "category": "constructed_sentence",
+          "why": "“Makes room for the possibility” sounds written and indirect rather than like ordinary speech.",
+          "confidence": "high"
+        },
+        {
+          "quote": "The connection gets found, but nobody else understands it because the explanation skipped the middle.",
+          "category": "natural_language",
+          "why": "“The connection gets found” is passive and unnatural; the reader needs the ordinary action that led someone to make the connection.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "By the end, there may be more facts on the table and less agreement about what any of them mean.",
+          "category": "abstraction_over_consequence",
+          "why": "The line summarizes the problem in broad terms instead of naming what actually goes wrong when people leave with different understandings.",
+          "confidence": "medium"
+        }
+      ],
+      "readPriority": "read soon",
+      "note": "",
+      "provider": {
+        "responseId": "resp_08c938444554181d006a7d63666ac0819da29238ddb7127de2",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14259,
+          "input_tokens_details": {
+            "cache_write_tokens": 280,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 298,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 14557
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-cancer-v7",
+      "fixtureKind": "known-bad",
+      "source": "packages/astro-knowledge/review/mercury-ingress-masters-v7/TLDR-Mercury-Ingress-Articles-V7.md",
+      "flagCount": 4,
+      "categories": [
+        "constructed_sentence",
+        "explanatory_not_lived",
+        "analytical_register"
+      ],
+      "highConfidenceFlagCount": 2,
+      "mediumConfidenceFlagCount": 2,
+      "lowConfidenceFlagCount": 0,
+      "flags": [
+        {
+          "quote": "Cancer changes Mercury’s context.",
+          "category": "constructed_sentence",
+          "why": "The phrasing sounds written and technical before the page gets to the ordinary, recognizable examples.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Mercury in Cancer can hold the history that explains why a small exchange feels much larger than it looks.",
+          "category": "explanatory_not_lived",
+          "why": "This explains the mechanism after the examples have already shown it, rather than staying with what someone notices in the exchange.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "The complication is letting recognition become proof.",
+          "category": "analytical_register",
+          "why": "“Recognition” and “proof” make a familiar reactive moment sound like an abstract argument.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Memory is useful context.",
+          "category": "analytical_register",
+          "why": "“Useful context” is communications-handbook language rather than the page’s more lived language about a conversation.",
+          "confidence": "high"
+        }
+      ],
+      "readPriority": "read soon",
+      "note": "",
+      "provider": {
+        "responseId": "resp_0f5d8bc3dcc102e2006a7d63718584819e843a721ce0132acc",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14276,
+          "input_tokens_details": {
+            "cache_write_tokens": 297,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 213,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 14489
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-leo-v7",
+      "fixtureKind": "known-bad",
+      "source": "packages/astro-knowledge/review/mercury-ingress-masters-v7/TLDR-Mercury-Ingress-Articles-V7.md",
+      "flagCount": 9,
+      "categories": [
+        "constructed_sentence",
+        "explanatory_not_lived",
+        "personification",
+        "abstraction_over_consequence",
+        "analytical_register",
+        "metaphor_requires_translation"
+      ],
+      "highConfidenceFlagCount": 4,
+      "mediumConfidenceFlagCount": 5,
+      "lowConfidenceFlagCount": 0,
+      "flags": [
+        {
+          "quote": "If the point matters to you, it will probably sound like it.",
+          "category": "constructed_sentence",
+          "why": "The line is clear but sounds shaped as a tagline rather than like something the reader would naturally say.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Put your voice behind the point",
+          "category": "constructed_sentence",
+          "why": "This is a compressed instruction that needs the reader to infer what putting a voice behind a point means in practice.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Leo changes Mercury’s delivery.",
+          "category": "explanatory_not_lived",
+          "why": "This explains the placement from above instead of opening with the recognizable behavior the paragraph goes on to describe.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Ideas want personality behind them.",
+          "category": "personification",
+          "why": "Ideas cannot want anything, and the sentence makes the abstract subject do the work instead of naming what people do.",
+          "confidence": "high"
+        },
+        {
+          "quote": "This works well when the facts need a reason to matter.",
+          "category": "abstraction_over_consequence",
+          "why": "“The facts need a reason to matter” stays abstract instead of naming the moment when someone understands why the information affects them.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Pride can take over the conversation",
+          "category": "constructed_sentence",
+          "why": "The heading names a theme rather than the concrete shift in the conversation that follows.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "The complication is confusing disagreement with disrespect.",
+          "category": "analytical_register",
+          "why": "“The complication” frames an ordinary conflict like an analysis instead of getting directly to how correction starts to feel personal.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Keep the point bigger than the applause",
+          "category": "metaphor_requires_translation",
+          "why": "The reader has to translate “bigger than the applause” back into the more direct issue of caring more about being right than improving the idea.",
+          "confidence": "high"
+        },
+        {
+          "quote": "let your voice show",
+          "category": "metaphor_requires_translation",
+          "why": "A voice cannot literally show, so the instruction is less direct than saying what the person should do with their opinion or style.",
+          "confidence": "medium"
+        }
+      ],
+      "readPriority": "read soon",
+      "note": "",
+      "provider": {
+        "responseId": "resp_0b6f4746814fa351006a7d6374762c81a1aad6464f55edfb1c",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14274,
+          "input_tokens_details": {
+            "cache_write_tokens": 295,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 442,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 14716
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-virgo-v7",
+      "fixtureKind": "known-bad",
+      "source": "packages/astro-knowledge/review/mercury-ingress-masters-v7/TLDR-Mercury-Ingress-Articles-V7.md",
+      "flagCount": 3,
+      "categories": [
+        "vagueness",
+        "analytical_register",
+        "abstraction_over_consequence"
+      ],
+      "highConfidenceFlagCount": 1,
+      "mediumConfidenceFlagCount": 2,
+      "lowConfidenceFlagCount": 0,
+      "flags": [
+        {
+          "quote": "Find the part that keeps breaking",
+          "category": "vagueness",
+          "why": "“The part” and “breaking” leave the reader to supply what is failing before the concrete examples arrive.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "The question is not simply what is wrong. It is where the process stopped working.",
+          "category": "analytical_register",
+          "why": "“The process stopped working” turns a recognizable mistake into procedural language rather than naming what people have to redo.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "The complication is treating every flaw like it carries the same consequence.",
+          "category": "abstraction_over_consequence",
+          "why": "This explains the principle in abstract terms before the paragraph reaches the lived cost of people using the wrong version.",
+          "confidence": "high"
+        }
+      ],
+      "readPriority": "read soon",
+      "note": "",
+      "provider": {
+        "responseId": "resp_0e556bb3d2fd94a7006a7d637966b4819e80c8c44b88cff1c4",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14295,
+          "input_tokens_details": {
+            "cache_write_tokens": 316,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 182,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 14477
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-libra-v7",
+      "fixtureKind": "known-bad",
+      "source": "packages/astro-knowledge/review/mercury-ingress-masters-v7/TLDR-Mercury-Ingress-Articles-V7.md",
+      "flagCount": 7,
+      "categories": [
+        "metaphor_requires_translation",
+        "abstraction_over_consequence",
+        "explanatory_not_lived",
+        "batch_furniture",
+        "boilerplate_opener",
+        "constructed_sentence"
+      ],
+      "highConfidenceFlagCount": 4,
+      "mediumConfidenceFlagCount": 3,
+      "lowConfidenceFlagCount": 0,
+      "flags": [
+        {
+          "quote": "Libra changes Mercury’s measure.",
+          "category": "metaphor_requires_translation",
+          "why": "“Mercury’s measure” is decorative shorthand that the reader has to translate before the paragraph gets concrete.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Attention moves toward fairness, tone, competing versions of events, and the point where keeping the peace begins to change the actual agreement.",
+          "category": "abstraction_over_consequence",
+          "why": "This names communication concepts rather than showing the actual moment when one person’s agreement gets changed.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Comparing both versions can expose the assumption nobody noticed the first time.",
+          "category": "abstraction_over_consequence",
+          "why": "“Both versions,” “the assumption,” and “the first time” keep the consequence generic instead of naming what changes for either person.",
+          "confidence": "high"
+        },
+        {
+          "quote": "A clearer phrase can make a difficult point easier to hear.",
+          "category": "explanatory_not_lived",
+          "why": "This explains the benefit in general terms instead of giving the reader a recognizable exchange where the wording changes what happens.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "The decision waits for one more opinion while the first proposal quietly becomes the default.",
+          "category": "batch_furniture",
+          "why": "“Decision,” “opinion,” and “proposal” return to the procedural language the owner asks the page to move beyond.",
+          "confidence": "high"
+        },
+        {
+          "quote": "While Mercury is in Libra, listen carefully and make room for nuance.",
+          "category": "boilerplate_opener",
+          "why": "This opens with broad transit advice before getting to the sharper instruction that follows.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Fairness is not everybody leaving pleased.",
+          "category": "constructed_sentence",
+          "why": "The phrasing sounds composed as a maxim rather than like the ordinary language used in the rest of the page.",
+          "confidence": "medium"
+        }
+      ],
+      "readPriority": "read soon",
+      "note": "",
+      "provider": {
+        "responseId": "resp_05c9674eb68925db006a7d637c6478819eb4a2348d47c9bcba",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14274,
+          "input_tokens_details": {
+            "cache_write_tokens": 295,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 390,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 14664
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-scorpio-v7",
+      "fixtureKind": "known-bad",
+      "source": "packages/astro-knowledge/review/mercury-ingress-masters-v7/TLDR-Mercury-Ingress-Articles-V7.md",
+      "flagCount": 7,
+      "categories": [
+        "abstraction_over_consequence",
+        "constructed_sentence",
+        "unearned_assumption",
+        "metaphor_requires_translation",
+        "invented_motive",
+        "vague_word"
+      ],
+      "highConfidenceFlagCount": 3,
+      "mediumConfidenceFlagCount": 4,
+      "lowConfidenceFlagCount": 0,
+      "flags": [
+        {
+          "quote": "what shows up when separate pieces of information are compared",
+          "category": "abstraction_over_consequence",
+          "why": "This explains the process without naming what the reader would actually notice when the details do not match.",
+          "confidence": "high"
+        },
+        {
+          "quote": "One contradiction can undo hours of reassurance.",
+          "category": "constructed_sentence",
+          "why": "The contrast is clear, but \"undo hours of reassurance\" sounds written rather than like ordinary speech.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "The right follow-up question often uncovers the detail everyone else missed.",
+          "category": "unearned_assumption",
+          "why": "\"Everyone else missed\" overstates what can be known and makes the reader infer a specific failure by other people.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Staying with a problem long enough brings the pattern beneath the obvious explanation into view.",
+          "category": "metaphor_requires_translation",
+          "why": "\"Brings the pattern... into view\" is indirect when the page could name the actual detail or inconsistency that becomes clear.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "An incomplete answer can look deliberate before there is proof that anyone is hiding something.",
+          "category": "invented_motive",
+          "why": "The sentence moves quickly from an incomplete answer to the possibility of intentional hiding instead of staying with what can be observed.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Depth is useful when it sharpens perception, not when fear starts filling in the blanks.",
+          "category": "abstraction_over_consequence",
+          "why": "\"Depth,\" \"perception,\" and \"fear\" explain the idea at a high level instead of showing the mistake someone makes with the available facts.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Once the facts are sufficient, let them be enough.",
+          "category": "vague_word",
+          "why": "\"Sufficient\" leaves the reader to decide what standard has been met without giving a recognizable stopping point.",
+          "confidence": "high"
+        }
+      ],
+      "readPriority": "read soon",
+      "note": "",
+      "provider": {
+        "responseId": "resp_0cbca4ec2c0a4dc1006a7d63811ee0819e821d4d8715d77352",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14252,
+          "input_tokens_details": {
+            "cache_write_tokens": 273,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 397,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 14649
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-sagittarius-v7",
+      "fixtureKind": "known-bad",
+      "source": "packages/astro-knowledge/review/mercury-ingress-masters-v7/TLDR-Mercury-Ingress-Articles-V7.md",
+      "flagCount": 16,
+      "categories": [
+        "textbook_scaffold",
+        "abstraction_over_consequence",
+        "analytical_register",
+        "constructed_sentence",
+        "vagueness",
+        "personification",
+        "generic_astrology_copy"
+      ],
+      "highConfidenceFlagCount": 12,
+      "mediumConfidenceFlagCount": 4,
+      "lowConfidenceFlagCount": 0,
+      "flags": [
+        {
+          "quote": "Name the larger point",
+          "category": "textbook_scaffold",
+          "why": "The instructional heading announces the lesson instead of moving straight into the lived observation.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Individual facts become more interesting once they belong to a larger story.",
+          "category": "abstraction_over_consequence",
+          "why": "It explains the mental mechanism in general terms instead of showing what someone notices when separate details begin to add up.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Attention moves toward meaning, direction, consequences, and the conclusion that explains why several separate updates matter together.",
+          "category": "analytical_register",
+          "why": "The list of “meaning, direction, consequences” and “the conclusion” reads like communications-handbook language rather than ordinary speech.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Give the information a direction",
+          "category": "constructed_sentence",
+          "why": "This heading sounds written and abstract; information does not naturally “have a direction” in this register.",
+          "confidence": "high"
+        },
+        {
+          "quote": "This works well when everybody is buried in detail and nobody knows what to do with it.",
+          "category": "vagueness",
+          "why": "“Buried in detail” and “what to do with it” leave the reader to supply the actual situation and consequence.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "The conversation can move once somebody names what all the information adds up to.",
+          "category": "constructed_sentence",
+          "why": "“The conversation can move” sounds constructed rather than naming what actually changes for the people in it.",
+          "confidence": "high"
+        },
+        {
+          "quote": "A long explanation becomes easier to remember when the central point is clear.",
+          "category": "abstraction_over_consequence",
+          "why": "It names a general communication outcome instead of a recognizable moment, such as people remembering what they need to act on.",
+          "confidence": "high"
+        },
+        {
+          "quote": "The facts gain direction because people understand why they matter.",
+          "category": "personification",
+          "why": "Facts cannot “gain direction,” and the sentence repeats the abstract explanation already made above.",
+          "confidence": "high"
+        },
+        {
+          "quote": "The conclusion can get ahead of the evidence",
+          "category": "constructed_sentence",
+          "why": "The heading is technically understandable but sounds like a written formulation rather than natural speech.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "The complication is giving one example the weight of an entire argument.",
+          "category": "analytical_register",
+          "why": "“The complication,” “weight,” and “entire argument” make the moment sound like formal analysis instead of an ordinary claim growing too certain.",
+          "confidence": "high"
+        },
+        {
+          "quote": "A confident summary starts sounding settled before the supporting detail has been checked.",
+          "category": "analytical_register",
+          "why": "“Confident summary” and “supporting detail” are procedural terms that flatten the lived moment of a claim being repeated as fact too soon.",
+          "confidence": "high"
+        },
+        {
+          "quote": "The larger point may be correct, but certainty can make it look more proven than it is.",
+          "category": "abstraction_over_consequence",
+          "why": "It stays at the level of point, certainty, and proof rather than showing the consequence of people acting on a conclusion before the missing facts arrive.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Check how much the facts really support",
+          "category": "constructed_sentence",
+          "why": "The phrasing sounds clipped and instructional, and “how much the facts support” is not a natural object for the verb here.",
+          "confidence": "high"
+        },
+        {
+          "quote": "While Mercury is in Sagittarius, make the connection and say the bigger point out loud.",
+          "category": "generic_astrology_copy",
+          "why": "This direct instruction reads like standard horoscope guidance instead of showing the behavior and its stakes.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Then return to the evidence.",
+          "category": "analytical_register",
+          "why": "The imperative is concise but sounds like a research instruction rather than the ordinary action of checking what the claim is actually based on.",
+          "confidence": "high"
+        },
+        {
+          "quote": "The detail that complicates the story still counts, especially when it changes the conclusion.",
+          "category": "analytical_register",
+          "why": "“Detail,” “complicates,” and “conclusion” keep the ending in abstract argument language instead of naming the fact that changes what people think is true.",
+          "confidence": "high"
+        }
+      ],
+      "readPriority": "read soon",
+      "note": "The page repeatedly explains the same idea in abstract, instructional language, so the owner may want to look first at the headings and the repeated “larger point,” “conclusion,” and “evidence” phrasing.",
+      "provider": {
+        "responseId": "resp_06bfb9df034b72ad006a7d638dcf9081a392a46b59381f47c8",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14247,
+          "input_tokens_details": {
+            "cache_write_tokens": 268,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 884,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 15131
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-capricorn-v7",
+      "fixtureKind": "known-bad",
+      "source": "packages/astro-knowledge/review/mercury-ingress-masters-v7/TLDR-Mercury-Ingress-Articles-V7.md",
+      "flagCount": 7,
+      "categories": [
+        "constructed_sentence",
+        "textbook_scaffold",
+        "abstraction_over_consequence",
+        "boilerplate_opener",
+        "vagueness"
+      ],
+      "highConfidenceFlagCount": 5,
+      "mediumConfidenceFlagCount": 2,
+      "lowConfidenceFlagCount": 0,
+      "flags": [
+        {
+          "quote": "Capricorn changes Mercury’s terms.",
+          "category": "constructed_sentence",
+          "why": "This sounds written rather than said, and “terms” is too abstract to show what changes in an actual conversation.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Attention moves toward deadlines, standards, responsibilities, approvals, sequence, limits, and the exact point where an idea becomes a commitment.",
+          "category": "textbook_scaffold",
+          "why": "This is a keyword list that explains the placement without yet giving the reader a moment they would recognize.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Make the plan accountable to reality",
+          "category": "abstraction_over_consequence",
+          "why": "A plan cannot be accountable in a lived scene, and the heading makes the reader translate the point back into ordinary action.",
+          "confidence": "high"
+        },
+        {
+          "quote": "A plan becomes easier to evaluate because the practical consequences are visible before anybody agrees.",
+          "category": "abstraction_over_consequence",
+          "why": "“Evaluate” and “practical consequences” explain the mechanism from above instead of naming what someone would notice before agreeing.",
+          "confidence": "high"
+        },
+        {
+          "quote": "The complication is taking so long to prepare the responsible answer that the window closes.",
+          "category": "constructed_sentence",
+          "why": "“Prepare the responsible answer” is technically understandable but does not sound like ordinary speech.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Say it while it can still matter",
+          "category": "boilerplate_opener",
+          "why": "This is a broad transit instruction that needs the concrete consequence already present in the paragraph to give it weight.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Name the limit before it becomes a problem.",
+          "category": "vagueness",
+          "why": "The reader has to supply what limit is being named and what problem it would prevent.",
+          "confidence": "medium"
+        }
+      ],
+      "readPriority": "read soon",
+      "note": "",
+      "provider": {
+        "responseId": "resp_06fd0a976c2eabb1006a7d63959df081a19c493c0a430344e4",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14251,
+          "input_tokens_details": {
+            "cache_write_tokens": 272,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 602,
+          "output_tokens_details": {
+            "reasoning_tokens": 226
+          },
+          "total_tokens": 14853
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-aquarius-v7",
+      "fixtureKind": "known-bad",
+      "source": "packages/astro-knowledge/review/mercury-ingress-masters-v7/TLDR-Mercury-Ingress-Articles-V7.md",
+      "flagCount": 7,
+      "categories": [
+        "vocabulary_outside_corpus",
+        "analytical_register",
+        "abstraction_over_consequence",
+        "constructed_sentence",
+        "personification",
+        "vagueness"
+      ],
+      "highConfidenceFlagCount": 4,
+      "mediumConfidenceFlagCount": 3,
+      "lowConfidenceFlagCount": 0,
+      "flags": [
+        {
+          "quote": "Aquarius changes Mercury’s vantage point.",
+          "category": "vocabulary_outside_corpus",
+          "why": "“Vantage point” sounds more formal and analytical than the owner’s usual plainspoken opening language.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Instead of treating each breakdown as a separate mistake, attention moves toward the rule, policy, or process producing the same outcome again and again.",
+          "category": "analytical_register",
+          "why": "“Attention moves toward” and the stacked procedural nouns make this read like a systems-analysis explanation instead of a lived observation.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Once the larger pattern becomes visible, changing the rule itself can solve more than another temporary workaround ever could.",
+          "category": "abstraction_over_consequence",
+          "why": "“The larger pattern” and “solve more” leave the reader to supply what would actually change in someone’s day.",
+          "confidence": "high"
+        },
+        {
+          "quote": "The complication is getting attached to an idea because it is clever, new, or elegant.",
+          "category": "constructed_sentence",
+          "why": "“The complication is” introduces the point in a written, explanatory way rather than getting directly to the recognizable behavior.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Aquarius is not interested in innovation for its own sake.",
+          "category": "personification",
+          "why": "The sign is treated as having an interest, rather than describing the emphasis of Mercury in Aquarius.",
+          "confidence": "high"
+        },
+        {
+          "quote": "The point is to build something better than what came before.",
+          "category": "vagueness",
+          "why": "“Something better” does not name the concrete difference that would make the new system better for the people affected.",
+          "confidence": "high"
+        },
+        {
+          "quote": "A brilliant idea means very little if the answer is no.",
+          "category": "abstraction_over_consequence",
+          "why": "The closing returns to “brilliant idea” and an abstract answer instead of landing on the actual burden or access problem at stake.",
+          "confidence": "medium"
+        }
+      ],
+      "readPriority": "read soon",
+      "note": "",
+      "provider": {
+        "responseId": "resp_0dd1b50cb8396587006a7d639cf0ec81929607895aafa56fe9",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14351,
+          "input_tokens_details": {
+            "cache_write_tokens": 372,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 408,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 14759
+        }
+      }
+    },
+    {
+      "fixtureId": "cold-negative-mercury-pisces-v7",
+      "fixtureKind": "known-bad",
+      "source": "packages/astro-knowledge/review/mercury-ingress-masters-v7/TLDR-Mercury-Ingress-Articles-V7.md",
+      "flagCount": 7,
+      "categories": [
+        "personification",
+        "analytical_register",
+        "boilerplate_opener",
+        "vague_word",
+        "constructed_sentence"
+      ],
+      "highConfidenceFlagCount": 3,
+      "mediumConfidenceFlagCount": 4,
+      "lowConfidenceFlagCount": 0,
+      "flags": [
+        {
+          "quote": "Pisces changes Mercury’s way of gathering information.",
+          "category": "personification",
+          "why": "The sign is made to act on Mercury rather than describing the emphasis of Mercury in Pisces.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Attention moves toward tone, imagery, memory, hesitation, emotional undercurrents, and the connection that becomes obvious before the reasoning has fully formed.",
+          "category": "analytical_register",
+          "why": "The abstract list and “reasoning” language explain the mechanism instead of showing what someone would notice in an actual exchange.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Intuition can catch the missing context",
+          "category": "boilerplate_opener",
+          "why": "This heading sounds like a broad horoscope claim rather than naming the concrete consequence the section goes on to describe.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Mercury in Pisces can notice what is present before language has organized it neatly.",
+          "category": "personification",
+          "why": "Mercury in Pisces is given the human action of noticing instead of the sentence staying with what a person notices.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "Hope or fear slips into the gap where the missing fact should be.",
+          "category": "personification",
+          "why": "Hope and fear are made to move on their own, which makes the otherwise direct point less literal.",
+          "confidence": "medium"
+        },
+        {
+          "quote": "The impression may contain real information while the explanation still needs to change.",
+          "category": "vague_word",
+          "why": "“Change” leaves the reader to supply what needs changing in the explanation.",
+          "confidence": "high"
+        },
+        {
+          "quote": "Give the feeling enough language to test",
+          "category": "constructed_sentence",
+          "why": "“Give the feeling enough language” sounds written rather than like ordinary spoken English.",
+          "confidence": "high"
+        }
+      ],
+      "readPriority": "read soon",
+      "note": "",
+      "provider": {
+        "responseId": "resp_014d8defbf8c1aea006a7d63a155ac81a0a9dfa5192a578479",
+        "responseModel": "gpt-5.6-terra",
+        "requestedModel": "gpt-5.6-terra",
+        "reasoningEffort": "medium",
+        "usage": {
+          "input_tokens": 14289,
+          "input_tokens_details": {
+            "cache_write_tokens": 310,
+            "cached_tokens": 13976
+          },
+          "output_tokens": 366,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 14655
+        }
+      }
+    }
+  ]
+}
