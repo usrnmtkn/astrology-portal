@@ -1053,10 +1053,9 @@ test.describe("client-facing user flow case studies", () => {
 
     const dateTrigger = page.locator(".sky-header-date-button");
     await expect(dateTrigger).toBeVisible();
-    await expect(dateTrigger).toContainText("Today");
+    await expect(dateTrigger).toContainText("Pick Date");
     await dateTrigger.click();
-    await page.getByRole("button", { name: "Date", exact: true }).click();
-    await expect(page.getByLabel("Pick Date")).toBeVisible();
+    await expect(page.getByRole("region", { name: "Pick Date" })).toBeVisible();
     await page.getByRole("gridcell", { name: "Monday, July 20, 2026" }).click();
 
     await expect(page).toHaveURL(/[?&]date=2026-07-20(?:&|#|$)/u);
@@ -1066,7 +1065,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByLabel("Friends")).toBeVisible();
     await expect(dateTrigger).toContainText("Jul 20");
     await dateTrigger.click();
-    await page.getByRole("button", { name: "Date", exact: true }).click();
+    await expect(page.getByRole("region", { name: "Pick Date" })).toBeVisible();
     await page.getByRole("gridcell", { name: "Sunday, July 12, 2026" }).click();
 
     await expect(page).toHaveURL(/[?&]date=2026-07-12(?:&|#|$)/u);

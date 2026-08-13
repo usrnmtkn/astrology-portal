@@ -9,8 +9,18 @@ const responsiveStyles = fs.readFileSync("apps/web/src/styles/responsive.css", "
 
 assert.match(
   app,
-  /const isTransitDateMode = isTodayMode \|\| mode === "profile" \|\| mode === "friends";/u,
+  /const isPersonalTransitDateMode = mode === "profile" \|\| mode === "friends";[\s\S]*const isTransitDateMode = isTodayMode \|\| isPersonalTransitDateMode;/u,
   "The shared header date control must be available on Sky, You, and Friends."
+);
+assert.match(
+  app,
+  /if \(isPersonalTransitDateMode\) \{[\s\S]*openMobileDatePicker\(\);[\s\S]*return;/u,
+  "You and Friends must open the date picker directly from the header control."
+);
+assert.match(
+  app,
+  /isPersonalTransitDateMode && skyDate === todaySkyDate[\s\S]*\? "Pick Date"/u,
+  "You and Friends must visibly present the header control as Pick Date."
 );
 assert.equal(
   (app.match(/<SkyDatePicker/gu) ?? []).length,
