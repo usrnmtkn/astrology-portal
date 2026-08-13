@@ -181,7 +181,7 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
       )}
       <div className="admin-content-table-scroll">
         <table className="admin-content-table">
-          <thead><tr><th>Report</th><th>Source</th><th>Domain</th><th>Horizon</th><th>Status</th><th>Accepted / total tokens</th><th>Lifetime token cap</th><th>Estimated USD</th><th>Attempts</th><th>Last failure</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Report</th><th>Source</th><th>Domain</th><th>Horizon</th><th>Status</th><th>Accepted / total tokens</th><th>Lifetime token cap</th><th>Estimated USD</th><th>Attempts</th><th>Assembly warnings</th><th>Last failure</th><th>Actions</th></tr></thead>
           <tbody>{dashboard?.reports.map((report) => (
             <tr
               id={`report-row-${String(report.id)}`}
@@ -208,6 +208,9 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
               </td>
               <td>${Number(report.token_spend_usd_estimate ?? 0).toFixed(4)} est.</td>
               <td><code>{JSON.stringify(report.attempt_counts ?? {})}</code></td>
+              <td><code>{JSON.stringify(Array.isArray(report.validator_results)
+                ? report.validator_results.find((entry) => entry && typeof entry === "object" && (entry as { unitId?: unknown }).unitId === "assembled-report") ?? null
+                : null)}</code></td>
               <td><code>{JSON.stringify(Array.isArray(report.failure_history) ? report.failure_history.at(-1) ?? null : null)}</code></td>
               <td>
                 <div className="admin-toolbar-actions">
