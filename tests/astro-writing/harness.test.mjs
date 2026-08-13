@@ -62,6 +62,7 @@ const ownerDoctrine = read("packages/astro-knowledge/review/writing-harness-v1/T
 const cardStandard = read("tldr-astro-phrasebank/TLDR-CARD-TRANSIT-WRITING-STANDARD-OWNER.md");
 const cardChecklist = read("tldr-astro-phrasebank/TLDR-CARD-CRITIQUE-CHECKLIST-V3-DRAFT.md");
 const authorFromMechanismRuling = read("tldr-astro-phrasebank/TLDR-AUTHOR-FROM-MECHANISM-RULING-OWNER.md");
+const wholePassageClarification = read("tldr-astro-phrasebank/TLDR-AUTHOR-FROM-MECHANISM-WHOLE-PASSAGE-CLARIFICATION-OWNER.md");
 const mechanismCalibration = JSON.parse(read("data/writing/natal-author-from-mechanism-calibration-v1.json"));
 const normalizedAstrologyContract = astrologyContract.replace(/\s+/gu, " ");
 const normalizedLiteralRules = literalRules.replace(/\s+/gu, " ");
@@ -94,10 +95,13 @@ assert.ok(voiceContract.startsWith(ownerDoctrine));
 assert.ok(voiceContract.endsWith(read("tldr-astro-phrasebank/MARIE-VOICE-BANK.md")));
 assert.equal(sha256(cardStandard), "20ebf9edc5143c7f7dc04672bb1d107f7b480dcac61043db17b19432c6491175", "Card transit writing standard must remain byte-for-byte owner supplied.");
 assert.equal(sha256(authorFromMechanismRuling), "b68255fca1e49c716250d924c7cb5544e1ee8005baaa82cf1f2b82a6cef2e8c8", "Author-from-mechanism ruling must remain byte-for-byte owner supplied.");
+assert.equal(sha256(wholePassageClarification), "99ee9ee114648a54ff78aa1e85f8e971f0870205320959c1b46cd78b4e16e7ad", "Whole-passage clarification must remain byte-for-byte owner supplied.");
 assert.match(authorFromMechanismRuling, /The AstrologySupport field is the source\. The existing prose is not the draft\./u);
 assert.match(authorFromMechanismRuling, /That whole mode needs to be rejected, not polished\./u);
 assert.equal(mechanismCalibration.positive.length, 3);
 assert.equal(mechanismCalibration.negative.length, 8);
+assert.equal(mechanismCalibration.loopholeNegative.photographTest, "PASS");
+assert.deepEqual(mechanismCalibration.loopholeNegative.defects, ["astrology_summary", "whole_passage_sentence_role"]);
 for (const fixture of mechanismCalibration.positive) {
   assert.equal(fixture.expected, "PASS");
   assert.ok(canonicalAstrologyReviewInstructions.includes(fixture.copy));
@@ -106,6 +110,8 @@ for (const fixture of mechanismCalibration.negative) {
   assert.equal(fixture.expected, "REVISE");
   assert.ok(canonicalAstrologyReviewInstructions.includes(fixture.diagnosis));
 }
+assert.ok(canonicalAstrologyReviewInstructions.includes(mechanismCalibration.loopholeNegative.copy));
+assert.ok(canonicalAstrologyReviewInstructions.includes(mechanismCalibration.loopholeNegative.diagnosis));
 assert.equal(cardTransitWritingStandard, cardStandard);
 assert.equal(cardCritiqueChecklist, cardChecklist);
 assert.match(cardStandard, /Status: owner ruling, 2026-08-09[\s\S]*Generation rule, not reader-facing copy/u);
@@ -159,6 +165,10 @@ assert.ok(!HARD_REVISE_FIELDS.includes("cold_rendered_prose"));
 assert.ok(coldRenderedProseReviewInstructions.replace(/\s+/gu, " ").includes("Do not reward a sentence for being astrologically correct if it is awkward prose."));
 assert.ok(canonicalAstrologyReviewInstructions.includes(COLD_RENDERED_PROSE_RULE));
 assert.ok(canonicalAstrologyReviewInstructions.includes("DECISION CONTRACT: Return PASS or REVISE only. Never return FAIL."));
+assert.ok(REVIEW_FIELDS.includes("whole_passage_sentence_role"));
+assert.ok(HARD_REVISE_FIELDS.includes("whole_passage_sentence_role"));
+assert.ok(canonicalAstrologyWritingInstructions.includes("A passage does not pass because it contains one photographable clause."));
+assert.ok(canonicalAstrologyReviewInstructions.includes("One photographable clause cannot launder generic astrology-summary prose elsewhere in the passage."));
 for (const sign of ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]) {
   assert.ok(canonicalAstrologyReviewInstructions.includes(`## gold-lilith-${sign}-v5: PASS`), `Reviewer instructions must include the locked ${sign} PASS exemplar.`);
 }
@@ -406,6 +416,13 @@ const archetypeSoup = validateCopy("Warriors drive a chariot through the underwo
 assert.ok(archetypeSoup.violations.some((entry) => entry.category === "archetype_soup"));
 const priorParaphrase = validateCopy(priorCopy, { plan, priorCopy });
 assert.ok(priorParaphrase.violations.some((entry) => entry.category === "paraphrase_of_prior"));
+const photographedButGeneric = validateCopy(
+  "A teacher, trip, disappointment, or opportunity shows up and you recognize the question almost immediately. The details are different, but the same belief is back on the table. In this karmic framework, repetition carries a philosophical or spiritual lesson.",
+  { plan, register: "second_person" }
+);
+assert.ok(!photographedButGeneric.violations.some((entry) => entry.category === "photograph_test"));
+assert.ok(photographedButGeneric.violations.some((entry) => entry.category === "astrology_summary"));
+assert.ok(photographedButGeneric.violations.some((entry) => entry.category === "whole_passage_sentence_role"));
 for (const benchmark of [
   "You sign up for the course, book the trip, volunteer for the project, and only then look at the week you already had planned.",
   "A grieving friend gets a text that does not demand an answer. A tense email gets rewritten once before you send it.",

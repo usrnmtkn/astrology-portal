@@ -6,9 +6,9 @@ import { REVIEWER_GOLD_EXEMPLARS } from "./reviewerGoldExemplars.generated.mjs";
 import { NATAL_MECHANISM_CALIBRATION } from "./mechanismCalibration.generated.mjs";
 import { buildCardWriterInstructions } from "./cardWritingStandard.mjs";
 
-export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v3-author-from-mechanism-2026-08-13";
-export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v4-author-from-mechanism-2026-08-13";
-export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v5-author-from-mechanism-2026-08-13";
+export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v4-whole-passage-2026-08-13";
+export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v5-whole-passage-2026-08-13";
+export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v6-whole-passage-2026-08-13";
 
 export const COLD_RENDERED_PROSE_RULE = `Read the copy cold, rendered, and line by line as prose. Judge the final text exactly as a
 reader would encounter it in the product. Do not use the prompt, source notes, astrology
@@ -60,6 +60,8 @@ export const canonicalAstrologyWritingInstructions = `CODEX INSTRUCTION (owner-d
 
 AUTHOR-FROM-MECHANISM RULING: The AstrologySupport field is the source. The existing prose is not the draft. Never paraphrase current V2/V3 copy or preserve its sentence structure. For every row: reduce AstrologySupport to one plain internal mechanism sentence; find an ordinary human situation; enter through something happening rather than a trait; show what gets overbooked, misunderstood, spent, delayed, strained, missed, or made easier; add perspective only after the scene; delete astrology-summary prose. Ask: could some part of the interpretation be photographed or overheard? If not, it still needs work. Keep the row key, AstrologySupport mechanism, and source constraints. Author the reader copy fresh against the lived benchmark.
 
+WHOLE-PASSAGE CLARIFICATION: A passage does not pass because it contains one photographable clause. Every sentence must either advance the lived scene, state a specific consequence, or provide necessary astrology-to-life perspective. A generic astrology-summary sentence fails the passage even when another sentence passes the photograph test. Observable-noun counts are lint signals only; they do not prove voice quality or coherent causal scene density.
+
 Concrete does not mean adding a random object or domestic scene. Concrete means naming the observable behavior, circumstance, decision, or consequence produced by the astrology. Paraphrase test: could a reader paraphrase the sentence literally after one read? If not, rewrite it.
 
 Do not confuse a sign with its traditionally associated house. A sign-only placement can use concrete examples from many life domains, but one life domain must not become the definition of the sign. Capricorn is not automatically career. Scorpio is not automatically debt/shared finances. Cancer is not automatically home. Virgo is not automatically work and health. Aquarius is not automatically friendship. Pisces is not automatically relationships or retreat.
@@ -88,7 +90,9 @@ const NATAL_MECHANISM_CALIBRATION_BLOCK = [
   "NATAL AUTHOR-FROM-MECHANISM POSITIVE CALIBRATION",
   ...NATAL_MECHANISM_CALIBRATION.positive.map((fixture) => `PASS ${fixture.rowKey}: ${fixture.copy}`),
   "NATAL AUTHOR-FROM-MECHANISM NEGATIVE CALIBRATION",
-  ...NATAL_MECHANISM_CALIBRATION.negative.map((fixture) => `REVISE ${fixture.id}: ${fixture.diagnosis}`)
+  ...NATAL_MECHANISM_CALIBRATION.negative.map((fixture) => `REVISE ${fixture.id}: ${fixture.diagnosis}`),
+  "NATAL PHOTOGRAPH-LAUNDERING NEGATIVE CALIBRATION",
+  `REVISE ${NATAL_MECHANISM_CALIBRATION.loopholeNegative.id}: ${NATAL_MECHANISM_CALIBRATION.loopholeNegative.copy}\nDiagnosis: ${NATAL_MECHANISM_CALIBRATION.loopholeNegative.diagnosis}`
 ].join("\n\n");
 
 export const canonicalAstrologyReviewInstructions = `# RUNTIME REVIEWER PROMPT (owner-authored, verbatim, 2026-08-09)
@@ -151,7 +155,7 @@ Can the tagline be understood without the body?
 Reject cryptic compression.
 
 9. PHOTOGRAPH OR OVERHEAR TEST
-Does at least one clause name an observable action, situation, exchange, object, time, place, or consequence? Abstract personality description alone fails.
+Does at least one clause name an observable action, situation, exchange, object, time, place, or consequence? Abstract personality description alone fails. This is a necessary minimum only. Passing this check does not make the passage pass.
 
 10. TRAIT ENTRY
 Does the passage enter through something happening? Reject openings such as "Your creativity and empathy...", "You crave...", "You have faith...", or "You have a talent..." that describe the reader from across the room.
@@ -167,6 +171,9 @@ Do warriors, chariots, blades, rocket fuel, the underworld, catharsis, death and
 
 14. PARAPHRASE OF PRIOR
 When prior copy is supplied for downstream comparison, does the candidate track its sentence structure or narrative movement? Prior prose is evidence of what not to use as a draft. Structural paraphrase fails even when the vocabulary changes.
+
+15. WHOLE-PASSAGE SENTENCE ROLE
+Does every sentence advance the lived scene, state a specific consequence, or provide necessary astrology-to-life perspective? One photographable clause cannot launder generic astrology-summary prose elsewhere in the passage. Fail the entire passage when any sentence could be removed without losing the lived mechanism and functions only as a generic horoscope, spiritual, therapy, or astrology-book summary.
 
 OTHER CHECKS
 
@@ -236,6 +243,7 @@ export const REVIEW_FIELDS = Object.freeze([
   "astrology_summary",
   "archetype_soup",
   "paraphrase_of_prior",
+  "whole_passage_sentence_role",
   "voice_match",
   "register_consistency",
   "redundancy"
@@ -257,5 +265,6 @@ export const HARD_REVISE_FIELDS = Object.freeze([
   "interchangeable",
   "astrology_summary",
   "archetype_soup",
-  "paraphrase_of_prior"
+  "paraphrase_of_prior",
+  "whole_passage_sentence_role"
 ]);

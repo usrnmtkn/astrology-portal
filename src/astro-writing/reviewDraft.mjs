@@ -114,6 +114,10 @@ function semanticPatternFailures(copy, priorCopy = null) {
     add("trait_entry", "The passage describes the reader from across the room instead of entering through something happening.", "Start with an observable action, situation, or consequence supported by AstrologySupport.");
     add("astrology_summary", "The sentence reads like a personality profile rather than lived interpretation.", "Delete the summary sentence and author fresh from the mechanism.");
   }
+  if (/\bin this karmic framework\b|\b(?:philosophical|spiritual) lesson\b/iu.test(text)) {
+    add("astrology_summary", "A generic astrology-book sentence remains inside an otherwise lived passage.", "Delete the summary sentence and keep only scene, consequence, or necessary astrology-to-life perspective.");
+    add("whole_passage_sentence_role", "A photographable clause elsewhere does not cure a sentence that fails to advance the lived mechanism.", "Review every sentence by role; remove the sentence that merely summarizes astrology.");
+  }
   const priorMatch = priorCopyStructuralCorrespondence(text, priorCopy);
   if (priorMatch.matched) {
     add("paraphrase_of_prior", `${priorMatch.reason} (${priorMatch.score.toFixed(3)}).`, "Re-enter through a different lived situation derived from AstrologySupport; do not preserve the prior movement.");
