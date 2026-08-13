@@ -4,7 +4,7 @@ Status: deterministic pre-drafting coverage record. No model call was made. No r
 
 ## Result
 
-A compliant, registry-bounded packet can be built today for **266 of 713** unapproved LL V13 rows (37.31%). The remaining **447** rows are fail-closed.
+A compliant, registry-bounded packet can be built today for **266 of 713** unapproved LL V13 rows (37.31%). The remaining **447** rows are fail-closed. All **713 of 713** rows have exact-key AstrologySupport; the fail-closed remainder is caused by absent, inactive, or unsupported registry boundaries, not missing mechanism source.
 
 ## Batch coverage
 
@@ -27,8 +27,9 @@ A row can have more than one reason, so reason counts are not additive. `unverif
 
 ## Governance
 
+- AstrologySupport is the sole target-mechanism source; prior/current/revised candidate prose is excluded from writer packets.
 - Evidence is restricted to `authorityClass: exact_owner_approved`.
-- Fact boundaries contain registry identity and provenance, not registry prose as voice evidence.
+- Fact boundaries contain registry identity and provenance only; registry prose is excluded from writer context.
 - Fewer than four qualifying passages or fewer than three source rows blocks drafting.
-- Batch 2 may be regenerated only for rows marked compliant in the JSON artifact.
+- Batch 1 V3 may be authored only for rows marked compliant in the JSON artifact; all other rows remain SOURCE_GAP.
 - Approval state, serving state, auto-publish, and writer promotion remain unchanged.

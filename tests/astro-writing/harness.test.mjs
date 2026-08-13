@@ -62,6 +62,7 @@ const ownerDoctrine = read("packages/astro-knowledge/review/writing-harness-v1/T
 const cardStandard = read("tldr-astro-phrasebank/TLDR-CARD-TRANSIT-WRITING-STANDARD-OWNER.md");
 const cardChecklist = read("tldr-astro-phrasebank/TLDR-CARD-CRITIQUE-CHECKLIST-V3-DRAFT.md");
 const authorFromMechanismRuling = read("tldr-astro-phrasebank/TLDR-AUTHOR-FROM-MECHANISM-RULING-OWNER.md");
+const mechanismCalibration = JSON.parse(read("data/writing/natal-author-from-mechanism-calibration-v1.json"));
 const normalizedAstrologyContract = astrologyContract.replace(/\s+/gu, " ");
 const normalizedLiteralRules = literalRules.replace(/\s+/gu, " ");
 for (const required of [
@@ -95,6 +96,16 @@ assert.equal(sha256(cardStandard), "20ebf9edc5143c7f7dc04672bb1d107f7b480dcac610
 assert.equal(sha256(authorFromMechanismRuling), "b68255fca1e49c716250d924c7cb5544e1ee8005baaa82cf1f2b82a6cef2e8c8", "Author-from-mechanism ruling must remain byte-for-byte owner supplied.");
 assert.match(authorFromMechanismRuling, /The AstrologySupport field is the source\. The existing prose is not the draft\./u);
 assert.match(authorFromMechanismRuling, /That whole mode needs to be rejected, not polished\./u);
+assert.equal(mechanismCalibration.positive.length, 3);
+assert.equal(mechanismCalibration.negative.length, 8);
+for (const fixture of mechanismCalibration.positive) {
+  assert.equal(fixture.expected, "PASS");
+  assert.ok(canonicalAstrologyReviewInstructions.includes(fixture.copy));
+}
+for (const fixture of mechanismCalibration.negative) {
+  assert.equal(fixture.expected, "REVISE");
+  assert.ok(canonicalAstrologyReviewInstructions.includes(fixture.diagnosis));
+}
 assert.equal(cardTransitWritingStandard, cardStandard);
 assert.equal(cardCritiqueChecklist, cardChecklist);
 assert.match(cardStandard, /Status: owner ruling, 2026-08-09[\s\S]*Generation rule, not reader-facing copy/u);

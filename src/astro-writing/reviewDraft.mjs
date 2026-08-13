@@ -134,6 +134,9 @@ function violationRecord(copy, category, reason, instruction, location = locatio
 }
 
 function canonicalCategory(category) {
+  if (category === "abstract_noun_subject") return "trait_entry";
+  if (category === "zero_concrete_nouns") return "photograph_test";
+  if (category === "therapy_register_cluster") return "astrology_summary";
   if (["required_fields", "placeholder_integrity", "owner_line_integrity", "compressed_prose", "vagueness", "natural_language"].includes(category)) {
     return "literal_first_read_clarity";
   }
