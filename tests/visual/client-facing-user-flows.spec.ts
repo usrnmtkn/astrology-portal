@@ -1056,7 +1056,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(dateTrigger).toContainText("Today");
     await dateTrigger.click();
     await page.getByRole("button", { name: "Date", exact: true }).click();
-    await expect(page.getByLabel("Select transit date")).toBeVisible();
+    await expect(page.getByLabel("Pick Date")).toBeVisible();
     await page.getByRole("gridcell", { name: "Monday, July 20, 2026" }).click();
 
     await expect(page).toHaveURL(/[?&]date=2026-07-20(?:&|#|$)/u);
@@ -2424,7 +2424,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(skyControls).toBeVisible();
     await skyControls.getByRole("button", { name: "Date" }).click();
 
-    const datePicker = page.getByLabel("Select sky date");
+    const datePicker = page.getByLabel("Pick Date");
     await expect(datePicker).toBeVisible();
     await datePicker.getByRole("button", { name: "Next month" }).click();
     await datePicker.getByRole("button", { name: "Previous month" }).click();
