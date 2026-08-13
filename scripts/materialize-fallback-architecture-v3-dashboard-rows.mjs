@@ -255,6 +255,22 @@ function eventTypeForKey(key, role) {
 }
 
 function rowBody(record) {
+  if (
+    record.render_policy === "sky-placement-continuous-v2"
+    && typeof record.body_you !== "string"
+  ) {
+    const era = record.era_layer ?? {};
+    return [
+      record.opening,
+      record.tension,
+      record.development,
+      era.frame,
+      era.handoff,
+      era.recurrence,
+      era.collective_lesson,
+      record.close
+    ].filter((part) => typeof part === "string" && part.trim()).join("\n\n");
+  }
   return String(record.body_you ?? record.body ?? record.text ?? "").trim();
 }
 

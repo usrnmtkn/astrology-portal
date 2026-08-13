@@ -1,0 +1,33 @@
+{
+  "candidateId": "sky-placement-saturn-capricorn-era-layer-rendered-sample-v1",
+  "family": "sky-placement",
+  "register": "collective",
+  "expectedPlaceholders": [
+    "priorSign",
+    "priorSignEntryDateWithYear",
+    "priorSignExitDateWithYear",
+    "previousResidencyEntryDateWithYear",
+    "previousResidencyExitDateWithYear"
+  ],
+  "lint": {
+    "passed": true,
+    "violations": []
+  },
+  "deterministicEditorialReview": {
+    "decision": "PASS",
+    "violations": [],
+    "requiredRevisions": []
+  },
+  "semanticReview": {
+    "status": "not_run",
+    "reason": "No billed call was requested or needed for the rendered-sample gate."
+  },
+  "coldRenderedProse": {
+    "status": "owner_gate_pending",
+    "reason": "Automated cold-prose findings are advisory-only. Exact reader judgment belongs to the owner."
+  },
+  "focusedTests": {
+    "scripts/test-slow-mover-era-layer.mjs": "PASS",
+    "scripts/test-sky-placement-engine-facts.mjs": "PASS"
+  }
+}

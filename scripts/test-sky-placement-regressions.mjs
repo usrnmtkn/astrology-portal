@@ -688,7 +688,13 @@ assert.deepEqual(
   "Browser and Node continuous Sun fallback assembly must remain byte-identical."
 );
 
-assert.equal(skyPlacementOwnerApprovedFallbacksV1.rows.length, 56);
+assert.equal(skyPlacementOwnerApprovedFallbacksV1.rows.length, 58);
+assert.equal(
+  skyPlacementOwnerApprovedFallbacksV1.rows.find((row) => (
+    row.contentKey === "fallback-hook/sky-planet-education/saturn"
+  ))?.review_status,
+  "approved"
+);
 const ownerFallbackDateFacts = {
   entryDate: "August 24, 2028",
   exitDate: "September 24, 2029",
@@ -711,7 +717,10 @@ const fillOwnerFallback = (value, facts) => value.replace(/\{\{([\w.]+)\}\}/gu, 
   return renderedDates[key] ?? facts[key] ?? `{{${key}}}`;
 });
 
-for (const row of skyPlacementOwnerApprovedFallbacksV1.rows) {
+for (const row of skyPlacementOwnerApprovedFallbacksV1.rows.filter((candidate) => (
+  candidate.render_policy === "sky-placement-continuous-v2"
+  && candidate.contentKey !== "fallback-hook/sky-sign-copy/saturn/capricorn"
+))) {
   const [, , planet, sign] = row.contentKey.split("/");
   const facts = {
     planet,
@@ -719,10 +728,11 @@ for (const row of skyPlacementOwnerApprovedFallbacksV1.rows) {
     ...ownerFallbackDateFacts
   };
   const rendered = renderer.renderSkyPlacement(facts);
+  const collectiveStart = planet === "saturn" ? 2 : 1;
 
   assert.equal(rendered.contentKey, row.contentKey);
   assert.equal(rendered.templateKey, "sky-placement-continuous-v2");
-  assert.deepEqual(rendered.parts.slice(1, 4), [
+  assert.deepEqual(rendered.parts.slice(collectiveStart, collectiveStart + 3), [
     fillOwnerFallback(row.opening, facts),
     fillOwnerFallback(row.tension, facts),
     fillOwnerFallback(row.development, facts)

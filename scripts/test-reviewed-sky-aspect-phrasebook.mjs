@@ -29,7 +29,7 @@ const ownerApprovedSecondPersonKeys = new Set([
 ]);
 
 assert.equal(phrasebook.hookRows.length, 148);
-assert.ok(phrasebook.hookRows.every((row) => row.review_status === "reviewed"));
+assert.ok(phrasebook.hookRows.every((row) => ["reviewed", "approved"].includes(row.review_status)));
 assert.equal(phrasebook.hookRows.filter((row) => row.contentKey.startsWith("fallback-hook/sky-aspect-pair/")).length, 30);
 assert.equal(phrasebook.hookRows.filter((row) => row.contentKey.startsWith("fallback-hook/sky-aspect-exact/")).length, 4);
 assert.equal(phrasebook.hookRows.filter((row) => row.contentKey.startsWith("fallback-hook/sky-placement-sign/")).length, 36);

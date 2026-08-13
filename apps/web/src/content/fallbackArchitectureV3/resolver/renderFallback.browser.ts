@@ -58,6 +58,12 @@ export interface HookRow {
   tension?: string;
   development_heading?: string;
   development?: string;
+  era_layer?: {
+    frame: string;
+    handoff: string;
+    recurrence: string;
+    collective_lesson: string;
+  };
   close_heading?: string;
   close?: string;
   try_this?: string[];

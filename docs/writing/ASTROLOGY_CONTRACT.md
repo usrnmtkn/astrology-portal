@@ -62,6 +62,98 @@ Sun-in-Leo core is the owner-designated calibration sample.
 Register note: the owner's own examples use "people" naturally in this second-person surface;
 the no-"people" rule remains Current Sky (collective) only.
 
+SKY PAGE ADDRESS (owner ruling 2026-08-12): sky placement
+pages speak TO the reader. Direct address ("you") is allowed and wanted.
+NOT wanted: breaking the fourth wall, no narrator commentary about the
+writing itself, no "I'll be honest with you," no meta-asides about writing
+a transit. The voice addresses the reader's life, never the page's making.
+Third-person observation stays available for lived scenes; the two mix as
+the writing needs. This supersedes third-person-only for collective sky
+placement pages.
+
+STANDING SLOW-MOVER LAW (owner ruling, 2026-08-12; supersedes earlier partial versions):
+Inheritable architecture, in order, optional layers used only when earned:
+planet education; occult or traditional portrait; planetary condition or
+dignity when relevant; symbol or mythology when it interprets the mechanism;
+the job of the transit; cultural or collective thesis; lived evidence; failure
+mechanism; practical strategic bias; power, cost, or consequence; previous-sign
+handoff; immediate historical recurrence; older historical analogs when
+source-supported and useful; current-sky modifier when another slow planet or
+defining aspect materially changes the story; collective test; final thesis.
+
+CRITICAL INHERITANCE RULE: future slow-mover articles inherit the
+ARCHITECTURE, never this article's subject matter. Do not inherit
+Capricorn-specific nouns or arguments. Future articles must not automatically
+become essays about invisible work, backups, handoffs, one person carrying the
+system, hierarchy, overfunctioning, or institutional failure. Each planet-sign
+combination generates its own cultural rule, lived scenes, failure point, and
+practical consequence.
+
+Standing questions each slow-mover article must answer internally:
+- Planetary condition: how comfortable or constrained is this planet in this
+  sign, and what does that change about how directly its nature can operate?
+  Technical dignity vocabulary appears in reader copy only when it genuinely
+  helps.
+- Mythology and symbolism: allowed when it interprets, banned when it
+  decorates. A myth, symbol, deity, or occult correspondence must explain
+  something the reader would understand less clearly without it.
+- Strategic bias: what kind of move fits this placement, and what kind does it
+  expose as weak, mistimed, or unsustainable? (Saturn in Capricorn:
+  reinforcement before expansion.)
+- The job: every article must be able to finish "The job of this transit
+  is..." in plain language.
+
+SOURCE-FIDELITY NOTE (owner correction, same date): evocative titles and epithets must not
+be upgraded into "the tradition" without a sourced basis (the "lord of thresholds" case:
+replaced with the owner-preferred interpretive sentence instead). Source-specific ideas are
+preserved accurately, never inflated into historical doctrine.
+
+OCCULT DEPTH LAYERS (owner ruling, 2026-08-12, AC articles as meaning reference only, never
+voice): five layers approved for placement articles where they earn their place:
+1. OCCULT PLANET PORTRAIT: the planet as a figure in the tradition (thresholds, karma,
+   cause and effect), deepening the education block beyond function.
+2. SYMBOL EXEGESIS: the sign's image read as mechanism (the centaur as forced synthesis of
+   animal and human drives). Standing rule: mythology is ALLOWED when it interprets the
+   friction, banned when it decorates.
+3. DIGNITY LAYER: the planet's traditional standing in the sign (domicile, exaltation,
+   triplicity, face) and what it changes about expression; dignity facts join the engine's
+   teachable data.
+4. RULER-RELATIONSHIP BEAT: the sign's ruler as host, the visiting planet as guest, and how
+   ownership changes motivation (Saturn in Jupiter's sign: duty replaces enthusiasm).
+5. CULTURAL FINGERPRINT RECURRENCE: prior-transit artifacts and verifiable natives may join
+   the recurrence library; every claim verifiable, natal claims doubly so.
+Left out by ruling: remediation/talisman material and almanac-essay length.
+
+NO "IN ASTROLOGY" FRAMING (owner ruling, 2026-08-12): never write "In astrology," as a
+framing phrase anywhere on the site; the entire site is about astrology. State the meaning
+directly. Planet education blocks name the planet with its epithet (owner model: Saturn,
+the Taskmaster). Epithets per planet are owner-approved wording, one per planet.
+
+RECURRENCE LIBRARY RULE (owner directive, same date): era-layer recurrence paragraphs are
+drafted AHEAD of time as a library, one per slow-mover placement, pairing the
+engine-computed prior-residency dates with one or two verifiable, neutral memory sentences
+in the owner's voice, each owner-approved before serving. Bare dates serve only until the
+approved memory line exists; invented cultural claims never serve.
+
+HISTORICAL-LAYER RULES (owner ruling, 2026-08-12):
+Historical recurrence is pattern recognition, never causal proof; never imply
+Saturn caused these events. Older recurrences must earn their place by
+advancing the placement thesis. Do not reduce history to vague language such
+as "major structural resets"; give enough detail that the reader understands
+what was changing. Preserve source provenance internally in the recurrence
+library. No visible "according to AC" attribution in reader copy; reader-facing
+sourcing stays clean unless a separate product-level citation convention
+requires otherwise.
+
+NEW-CONSEQUENCE TEST: "Does this paragraph advance the argument through a new
+consequence, or is it explaining an idea the reader has already understood?"
+Explanation that repeats what the demonstration already made gets cut, not
+polished. On a strong draft, expect to cut or revise 15 to 20 percent, mostly
+repeated explanation around the strongest lived examples; do not add prose to
+fix a page that is already saying enough. Section progression to aim for:
+system problem -> lived example -> psychological trap -> consequence -> repair.
+
+
 COLD RENDERED PROSE RULE (owner verbatim, 2026-08-11, written after the V7 Mercury masters
 failed her cold read; BLOCKING for all reader-facing copy):
 

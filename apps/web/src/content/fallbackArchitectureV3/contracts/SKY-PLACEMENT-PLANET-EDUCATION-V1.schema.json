@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/contracts/sky-placement-planet-education-v1.schema.json",
+  "title": "TLDR Astro standing Sky Placement planet-education row",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "contentKey",
+    "content_role",
+    "grammar_frame",
+    "render_policy",
+    "body",
+    "review_status",
+    "source_keys"
+  ],
+  "properties": {
+    "contentKey": {
+      "type": "string",
+      "pattern": "^fallback-hook/sky-planet-education/(sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|lilith|north-node|south-node|nodes)$"
+    },
+    "content_role": {
+      "const": "fallback_hook"
+    },
+    "grammar_frame": {
+      "const": "collective_editorial_unit"
+    },
+    "render_policy": {
+      "const": "sky-placement-planet-education-v1"
+    },
+    "body": {
+      "type": "string",
+      "minLength": 1
+    },
+    "review_status": {
+      "enum": ["needs_review", "approved", "superseded"]
+    },
+    "source_keys": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

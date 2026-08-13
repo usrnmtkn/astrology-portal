@@ -13,6 +13,24 @@
   },
   "releases": [
     {
+      "release_id": "sky-placement-saturn-capricorn-v3",
+      "release_batch": "saturn-capricorn-v3",
+      "distribution_state": "serving",
+      "transition": "staged_to_serving",
+      "required_runtime_capability": "sky-placement-on-demand-v1",
+      "approved_keys": [
+        "fallback-hook/sky-sign-copy/saturn/capricorn"
+      ],
+      "owner_approval": {
+        "statement": "Owner approval: the Saturn in Capricorn rendered page is approved at exact wording.",
+        "approved_at": "2026-08-13",
+        "source": "packages/astro-knowledge/review/saturn-capricorn-article-v3/OWNER-APPROVAL-2026-08-13.md",
+        "approved_keys": [
+          "fallback-hook/sky-sign-copy/saturn/capricorn"
+        ]
+      }
+    },
+    {
       "release_id": "pre-manifest-sun-leo-serving",
       "release_batch": "legacy",
       "distribution_state": "superseded",

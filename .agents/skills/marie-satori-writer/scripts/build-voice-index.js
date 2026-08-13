@@ -78,7 +78,7 @@ function beatFromHeading(heading) {
   return "body";
 }
 
-function baseEntry({ sourceId, text, sourcePath, author, origin, surface, planet = "", sign = "", house = "", articleBeat, structuralFunction, authorityClass, ownerAuthored, ownerApproved, reviewStatus, editorialStatus, canonical, useAsPositiveVoiceEvidence, useAsContextualEvidence = false, useAsNegativeEvidence, failureTags = [], provenance, governance, judgeLineage, workbookSourceRow }) {
+function baseEntry({ sourceId, text, sourcePath, author, origin, surface, planet = "", sign = "", house = "", articleBeat, structuralFunction, authorityClass, ownerAuthored, ownerApproved, reviewStatus, editorialStatus, canonical, useAsPositiveVoiceEvidence, useAsContextualEvidence = false, useAsNegativeEvidence, failureTags = [], provenance, governance, judgeLineage, workbookSourceRow, evidenceRole }) {
   return {
     sourceId,
     text,
@@ -106,6 +106,7 @@ function baseEntry({ sourceId, text, sourcePath, author, origin, surface, planet
     ...(governance ? { governance } : {}),
     ...(judgeLineage ? { judgeLineage } : {}),
     ...(workbookSourceRow ? { workbookSourceRow } : {}),
+    ...(evidenceRole ? { evidenceRole } : {}),
     sourceSha256: sha256(text)
   };
 }
@@ -177,7 +178,10 @@ function activeOwnerEntries() {
     }
     const planet = record.planet || detect([record.title], PLANETS);
     const sign = detect([record.title], SIGNS);
-    excerpts.forEach((text, index) => entries.push(baseEntry({
+    const isSaturnAriesRegisterGold = record.file === "TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md";
+    excerpts.forEach((text, index) => {
+      const fourthWallBreak = isSaturnAriesRegisterGold && /I'll be honest with you|Writing about Saturn transits/iu.test(text);
+      entries.push(baseEntry({
       sourceId: `owner-active:${path.basename(record.file, ".md")}:e${String(index + 1).padStart(3, "0")}`,
       text,
       sourcePath: relative(file),
@@ -194,12 +198,52 @@ function activeOwnerEntries() {
       reviewStatus: "published",
       editorialStatus: "owner_authored_final",
       canonical: false,
-      useAsPositiveVoiceEvidence: true,
+      useAsPositiveVoiceEvidence: !fourthWallBreak,
+      useAsContextualEvidence: fourthWallBreak,
       useAsNegativeEvidence: false,
-      provenance: `Active owner-published fixture preserved by ${relative(path.join(activeOwnerRoot, "manifest.json"))}; voice evidence only, never runtime facts.`
-    })));
+      failureTags: fourthWallBreak ? ["fourth_wall_break"] : [],
+      evidenceRole: isSaturnAriesRegisterGold ? "sky-placement-register-gold" : "",
+      provenance: fourthWallBreak
+        ? `Owner-published passage preserved by ${relative(path.join(activeOwnerRoot, "manifest.json"))}; excluded from positive Sky Placement retrieval by the 2026-08-12 fourth-wall ruling.`
+        : `Active owner-published fixture preserved by ${relative(path.join(activeOwnerRoot, "manifest.json"))}; voice evidence only, never runtime facts.`
+      }));
+    });
   }
   return entries;
+}
+
+function skyPageRegisterGoldEntries() {
+  const file = path.join(repoRoot, "data", "writing", "SKY_PAGE_REGISTER_GOLD_SATURN_ARIES.jsonl");
+  if (!fs.existsSync(file)) return [];
+  const records = fs.readFileSync(file, "utf8").trim().split("\n").filter(Boolean).map((line) => JSON.parse(line));
+  if (records.length !== 7) throw new Error("Saturn in Aries Sky Page register gold must contain exactly seven fixtures.");
+  return records.map((record) => {
+    if (record.label !== "PASS" || record.status !== "owner-authored") {
+      throw new Error(`Unauthorized Sky Page register fixture: ${record.fixture_id}`);
+    }
+    return baseEntry({
+      sourceId: `register-gold:${record.fixture_id}`,
+      text: record.text,
+      sourcePath: relative(file),
+      author: "Marie Satori",
+      origin: "owner-published-register-gold",
+      surface: "sky-placement",
+      planet: "saturn",
+      sign: "aries",
+      articleBeat: "register-gold",
+      structuralFunction: record.teaches,
+      authorityClass: "owner_authored_final",
+      ownerAuthored: true,
+      ownerApproved: true,
+      reviewStatus: "published",
+      editorialStatus: "owner_authored_final",
+      canonical: false,
+      useAsPositiveVoiceEvidence: true,
+      useAsNegativeEvidence: false,
+      evidenceRole: `sky-placement-register-gold:${record.teaches}`,
+      provenance: `${record.source}. ${record.note}`
+    });
+  });
 }
 
 function articleSlotEntries(file, candidate, policy = {}) {
@@ -572,6 +616,7 @@ function llMatrixV13Entries() {
 function buildIndex() {
   const entries = [
     ...activeOwnerEntries(),
+    ...skyPageRegisterGoldEntries(),
     ...ownerCorpusEntries(),
     ...reviewCandidateEntries(),
     ...approvedFormatExemplarEntries(),
