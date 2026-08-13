@@ -19,6 +19,8 @@ api/_lib/local-env.js
 # Local/generated review artifacts
 exports/
 scripts/generated/
+apps/admin/public/generated/
+apps/web/public/generated/
 
 # Private-model datasets, checkpoints, and local model caches
 packages/astro-knowledge/private-model/.local-data/

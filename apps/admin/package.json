@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "node ../../scripts/build-admin-hook-catalog.mjs",
     "dev": "vite --host 127.0.0.1 --port 5174",
-    "build": "tsc && vite build",
+    "build": "node ../../scripts/build-admin-hook-catalog.mjs && tsc && vite build",
     "preview": "vite preview --host 127.0.0.1 --port 4174",
     "typecheck": "tsc --noEmit"
   },
