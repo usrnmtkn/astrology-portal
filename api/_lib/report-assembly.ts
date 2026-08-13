@@ -71,7 +71,7 @@ function fields(unit: AssembledReportUnit): LocatedField[] {
     { unitId: unit.unitId, location: "headline", text: draft.headline ?? "", heading: true, keyDateBlock: false },
     { unitId: unit.unitId, location: "tldr", text: draft.tldr ?? "", heading: false, keyDateBlock: false },
     { unitId: unit.unitId, location: "summary", text: draft.summary ?? "", heading: false, keyDateBlock: false },
-    { unitId: unit.unitId, location: "body", text: draft.body ?? "", heading: false, keyDateBlock: false },
+    { unitId: unit.unitId, location: "body", text: draft.body ?? "", heading: false, keyDateBlock: unit.unitId === "key-dates" },
     { unitId: unit.unitId, location: "action", text: draft.action ?? "", heading: false, keyDateBlock: false },
     { unitId: unit.unitId, location: "timing", text: draft.timing ?? "", heading: false, keyDateBlock: false },
     ...(draft.sections ?? []).flatMap((section, index) => {
@@ -231,6 +231,14 @@ function validateMarkdown(units: AssembledReportUnit[], issues: ReportAssemblyIs
       }
     }
   }
+}
+
+export function validateReportKeyDateFormat(draft: ReportDraft) {
+  const units = [{ unitId: "key-dates", draft }];
+  const issues: ReportAssemblyIssue[] = [];
+  validateKeyDates(units, issues);
+  validateMarkdown(units, issues);
+  return issues;
 }
 
 function validateRepeatedSentences(units: AssembledReportUnit[], issues: ReportAssemblyIssue[]) {
