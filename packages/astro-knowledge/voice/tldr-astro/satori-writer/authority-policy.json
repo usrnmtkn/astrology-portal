@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyId": "owner-author-voice-authority-v1",
+  "policyId": "satori-voice-authority-v1",
   "classes": {
     "owner_authored_final": {
       "rank": 1,
