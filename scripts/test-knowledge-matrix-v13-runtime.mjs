@@ -47,6 +47,8 @@ const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex"
 const lockedBytes = fs.readFileSync(lockedPath);
 const publicBytes = fs.readFileSync(publicPath);
 const locked = JSON.parse(lockedBytes.toString("utf8"));
+const baseLockedRows = locked.rows.filter((row) => !row.batchId);
+const wp1LockedRows = locked.rows.filter((row) => row.batchId);
 
 assert.deepEqual(publicBytes, lockedBytes, "public and governed locked V13 JSON must be byte-identical");
 assert.equal(sha256(lockedBytes), manifest.lockedRowsSha256);
@@ -54,19 +56,19 @@ assert.equal(sha256(fs.readFileSync(workbookPath)), manifest.sourceWorkbookSha25
 assert.equal(locked.sourceWorkbook, workbookRelativePath);
 assert.equal(locked.sourceWorkbookSha256, manifest.sourceWorkbookSha256);
 assert.equal(locked.counts.sourceRows, 1014);
-assert.equal(locked.counts.ownerApprovedRows, 301);
-assert.equal(locked.counts.excludedUnapprovedRows, 713);
+assert.equal(baseLockedRows.length, 301);
+assert.equal(locked.counts.ownerApprovedRows, 301 + wp1LockedRows.length);
+assert.equal(locked.counts.excludedUnapprovedRows, 713 - wp1LockedRows.length);
 assert.equal(locked.counts.clarityStrictV13Rows, 195);
-assert.deepEqual(locked.counts.bySheet, {
-  PlacementMeanings: 113,
-  AspectMeanings: 165,
-  NodesPhasesFortune: 23,
-});
-assert.deepEqual(locked.counts.byGovernance, {
+assert.deepEqual(locked.counts.bySheet, Object.fromEntries(
+  ["PlacementMeanings", "AspectMeanings", "NodesPhasesFortune"].map((sheet) => [sheet, locked.rows.filter((row) => row.sheet === sheet).length]),
+));
+assert.deepEqual(Object.fromEntries(Object.entries(locked.counts.byGovernance).filter(([key]) => key !== "owner-approved-v13-wp1")), {
   "owner-approved-v13-direct-language": 194,
   "owner-lived-experience-ll-v9-owner-approved": 106,
   "owner-approved-clarity-fix-ll-v12": 1,
 });
+assert.equal(locked.counts.byGovernance["owner-approved-v13-wp1"] ?? 0, wp1LockedRows.length);
 assert.match(locked.governance.canonicalDecision, /195-row ClarityStrictV13 pass.+canonical/iu);
 assert.match(locked.governance.canonicalDecision, /Gemini.+discarded.+must not run/iu);
 
@@ -88,9 +90,19 @@ const sourceByReleaseKey = new Map(
     .filter((row) => row.source_release === "ll-matrix-v13-owner-approved-runtime")
     .map((row) => [row.contentKey, row]),
 );
+const lockedContentKeys = new Set(locked.rows.map((row) => row.contentKey));
+const sourceByLockedKey = new Map(sourceRows.hookRows.filter((row) => lockedContentKeys.has(row.contentKey)).map((row) => [row.contentKey, row]));
 assert.equal(sourceByReleaseKey.size, 301);
-assert.equal(manifest.rows.length, 301);
+assert.equal(manifest.rows.length, locked.rows.length);
 for (const row of locked.rows) {
+  if (row.batchId) {
+    assert.equal(row.ownerApproved, true);
+    assert.equal(row.governance, "owner-approved-v13-wp1");
+    assert.match(row.batchId, /^WP1-B\d{2}$/u);
+    assert.equal(sha256(JSON.stringify({ body: row.copy })), row.payloadSha256);
+    assert.equal(sourceByLockedKey.get(row.contentKey)?.body, row.copy);
+    continue;
+  }
   const workbookRow = workbookRows.get(`${row.sheet}\u0000${row.workbookRow}`);
   assert.ok(workbookRow, `${row.sheet}/${row.workbookRow}: workbook provenance missing`);
   assert.equal(workbookRow.Key, row.key);
@@ -117,7 +129,7 @@ for (const row of locked.rows) {
 
 const servingApprovedReviews = new Set(["approved", "approved_reuse", "reviewed"]);
 const priorApprovedRows = sourceRows.hookRows.filter((row) => (
-  row.source_release !== "ll-matrix-v13-owner-approved-runtime"
+  !lockedContentKeys.has(row.contentKey)
   && !row.contentKey.startsWith("fallback-hook/empty-house/")
   && servingApprovedReviews.has(row.review_status)
 ));
@@ -130,10 +142,10 @@ assert.equal(manifest.invariants.existingApprovedRowsChanged, 0);
 
 const resolver = createKnowledgeMatrixV13Resolver(locked);
 assert.deepEqual(resolver.counts, {
-  ownerApprovedRows: 301,
-  placementRows: 113,
-  aspectRows: 165,
-  pointRows: 23,
+  ownerApprovedRows: locked.rows.length,
+  placementRows: locked.rows.filter((row) => row.sheet === "PlacementMeanings").length,
+  aspectRows: locked.rows.filter((row) => row.sheet === "AspectMeanings").length,
+  pointRows: locked.rows.filter((row) => row.sheet === "NodesPhasesFortune").length,
 });
 assert.equal(resolver.renderNatalPlacement({ planet: "Mars", sign: "Aries" })?.body, locked.rows.find((row) => row.key === "mars|aries")?.copy);
 assert.equal(resolver.renderNatalPlacement({ planet: "North_Node", sign: "Capricorn" })?.body, locked.rows.find((row) => row.key === "north-node|capricorn")?.copy);
@@ -179,7 +191,7 @@ try {
   const materialized = JSON.parse(fs.readFileSync(materializerOutput, "utf8"));
   const materializedByKey = new Map(materialized.rows.map((row) => [row.content_key, row]));
   const v13Rows = locked.rows.map((row) => materializedByKey.get(row.contentKey));
-  assert.equal(v13Rows.filter(Boolean).length, 301);
+  assert.equal(v13Rows.filter(Boolean).length, locked.rows.length);
   for (const [index, row] of v13Rows.entries()) {
     const lockedRow = locked.rows[index];
     assert.equal(row.body, lockedRow.copy, `${lockedRow.contentKey}: Supabase body must remain exact.`);
@@ -187,7 +199,7 @@ try {
     assert.equal(row.lane, "serving", `${lockedRow.contentKey}: serving lane must be explicit.`);
     assert.equal(row.review_state, null, `${lockedRow.contentKey}: reader guard must be clear.`);
     assert.equal(row.facts?.readerServing, true, `${lockedRow.contentKey}: reader guard must allow serving.`);
-    assert.equal(row.sections?.packageRecord?.source_release, "ll-matrix-v13-owner-approved-runtime");
+    assert.match(row.sections?.packageRecord?.source_release, /^ll-matrix-v13-(?:owner-approved-runtime|wp1-b\d{2}-owner-approved)$/u);
   }
 } finally {
   fs.rmSync(materializerTempDir, { recursive: true, force: true });
@@ -206,4 +218,4 @@ assert.equal((await renderKnowledgeMatrixV13Placement({ planet: "mars", sign: "a
 assert.equal((await renderKnowledgeMatrixV13NatalAspect({ planetA: "moon", aspect: "square", planetB: "sun" }, runtimeFetch))?.body, sunMoon?.copy);
 assert.equal((await renderKnowledgeMatrixV13WorkbookKey("balsamic-moon", runtimeFetch))?.body, resolver.renderWorkbookKey("balsamic-moon")?.body);
 
-console.log("Knowledge matrix V13 runtime passed: canonical workbook governance exact; 301 approved rows traced to sheet/cell provenance; 713 unapproved rows excluded; V13 exact-key precedence and fail-closed behavior verified.");
+console.log(`Knowledge matrix V13 runtime passed: 301 original approvals plus ${wp1LockedRows.length} WP-1 approvals traced; ${713 - wp1LockedRows.length} unapproved rows excluded; exact-key precedence and fail-closed behavior verified.`);
