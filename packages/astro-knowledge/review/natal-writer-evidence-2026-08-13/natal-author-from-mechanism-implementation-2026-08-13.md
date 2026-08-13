@@ -8,6 +8,8 @@ Status: review-evidence implementation. No reader copy in this record is owner-a
 - Owner source SHA-256: `b68255fca1e49c716250d924c7cb5544e1ee8005baaa82cf1f2b82a6cef2e8c8`
 - AstrologySupport workbook: `tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx`
 - Workbook SHA-256: `08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58`
+- `tldr-astro-phrasebank/TLDR-AUTHOR-FROM-MECHANISM-WHOLE-PASSAGE-CLARIFICATION-OWNER.md`
+- Whole-passage clarification SHA-256: `99ee9ee114648a54ff78aa1e85f8e971f0870205320959c1b46cd78b4e16e7ad`
 
 ## Generation contract
 
@@ -40,11 +42,14 @@ The fail-closed remainder is caused by missing registries, inactive/DRAFT regist
 - 81 blank reader-copy cells marked SOURCE_GAP;
 - exact AstrologySupport beside each row for audit;
 - deterministic gate status;
+- explicit photograph-minimum status and whole-passage semantic-review status;
 - blank V3 owner-verdict and owner-edit columns.
 
 Candidates132 columns A:O are cell-identical to the V2 workbook: 1,980 checked cells. Metadata SHA-256 values are unchanged. All V3 owner fields remain blank.
 
-The 51 candidates pass the deterministic mechanism lint and downstream prior-structure comparison. They remain review gated because the blocking semantic owner checks, including interchangeable copy, still require owner review.
+The 51 candidates clear the deterministic mechanism precheck and downstream prior-structure comparison. That result is not an editorial verdict. They remain review gated because the blocking semantic owner checks, including interchangeable copy, astrology-summary, and whole-passage sentence role, still require row-by-row owner review.
+
+The batch split is exact: all 81 Ascendant, Midheaven, North Node, South Node, and Part of Fortune rows are the 81 SOURCE_GAP rows; all 51 non-point rows are READY. AstrologySupport exists for all 132, but the 81 point/angle mechanisms do not have the required active registry boundary.
 
 No external model-provider call was made for this V3 preparation.
 
@@ -61,6 +66,8 @@ Pre-judge lint now flags:
 - trait-first openings;
 - archetype soup;
 - structural paraphrase of prior prose.
+
+The photograph test is a necessary minimum only. Every sentence must advance the lived scene, state a specific consequence, or provide necessary astrology-to-life perspective. Observable-noun density remains lint and is not used as a voice-quality score.
 
 ## Sequencing
 

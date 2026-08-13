@@ -29,6 +29,11 @@
         "sourceSha256": "b68255fca1e49c716250d924c7cb5544e1ee8005baaa82cf1f2b82a6cef2e8c8",
         "text": "# Author from mechanism, not from existing prose (owner ruling, canonical, verbatim)\n\n**Status: owner ruling, 2026-08-13. Generation and judge rule, not reader-facing copy. Applies to every reader-facing delineation surface: natal placements, natal aspects, empty houses, sky placements, and report units. Supersedes any workflow that starts from existing candidate prose. Companion to `TLDR-NATAL-PLACEMENT-DELINEATION-STANDARD-OWNER.md` (five beats) and `TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md` (astrology sentence to lived consequence).**\n\n## The ruling in one line\n\nThe AstrologySupport field is the source. The existing prose is not the draft. Paraphrasing current copy is the cause of the drift.\n\n## Owner text verbatim\n\n```text\nThe rule I should have been using\n\nThe AstrologySupport field is the source. The existing prose is not the draft.\nI need to stop paraphrasing the current copy. That is the source of the drift.\n\nFor every row, the process should now be:\n\nStage / Requirement\n1. Extract mechanism - Reduce the astrology to one plain internal sentence. Example: Jupiter opposite Mars can push enthusiasm and action past a useful limit.\n2. Find the human situation - Ask where someone actually experiences this: calendar, trip, argument, workout, work deadline, money, class, relationship, body.\n3. Enter through the scene - Start with something happening, not a trait.\n4. Show the consequence - What gets overbooked, misunderstood, spent, delayed, strained, missed, or made easier?\n5. Add perspective only after the scene - Explain just enough for the reader to understand themselves differently.\n6. Delete astrology-summary prose - If a sentence could appear in a generic horoscope, personality profile, therapy worksheet, or spiritual Instagram post, it probably goes.\n\nAnd there is a harder quality test:\n\nCould I photograph or overhear some part of this interpretation?\n\nIf the answer is no, it probably still needs work.\n\n\"Your creativity and empathy give you the ability to hold compassion\" cannot be photographed.\n\"You are the friend who brings dinner over and stays long enough to wash the dishes because you know grief makes ordinary chores harder\" can.\n\n\"Your competitive streak is strong\" cannot.\n\"You turn the friendly game into a rematch, answer the coworker before they finish their sentence, or add another mile because stopping while you are ahead feels strangely unsatisfying\" can.\n\nThat is the difference.\n```\n\n## Rejected mode (owner diagnosis, verbatim)\n\n```text\nMercury sextile Venus is written like therapy language: empathy, suffering, grief, trauma, fertile potential, nurturing care, growth. There is no person doing anything.\nSaturn trine Venus uses deep bonds, financial and emotional entanglements, intricate ties, engender loyalty. Nobody talks or lives like that.\nUranus sextile Venus turns the whole placement into an investment metaphor instead of showing how affection or money actually behaves.\nJupiter opposite Mars gives us life's biggest questions, adventure, education, spirituality, losing the forest for the trees, nuance. Almost every noun is abstract.\nNeptune sextile Mars gives us intuition, discoveries, leaps of faith, work ethic, superpower. It could describe hundreds of placements.\nPluto trine Mars is all astrology poetry: catharsis, underworld, death and rebirth, mysteries of life. The reader has to translate every sentence.\nMoon square Mars gives us knowledge, perspectives, rash judgments, defensive tendencies, objectivity. Again, analysis from outside the person.\nMC conjunct Mars is archetype soup: warriors, athletes, striving, rocket fuel, chariot, blades. It is cleverer than it is useful.\n\nThat whole mode needs to be rejected, not polished.\n```\n\n## Owner benchmark rewrites (calibration exemplars, verbatim)\n\n**Jupiter opposite Mars**\n\n```text\nYou sign up for the course, book the trip, volunteer for the project, and only then look at the week you already had planned. Enthusiasm makes the next experience feel worth stretching for, especially when there is something to learn, prove, or see for yourself. The problem usually appears later, when the flight is at six, the presentation is still unfinished, and your body has been running on whatever you could eat between obligations. You can want the bigger life without making every opportunity fit into the same week.\n```\n\n**Mercury sextile Venus**\n\n```text\nYou usually know how to say the difficult part without making somebody regret telling you. A grieving friend gets a text that does not demand an answer. A tense email gets rewritten once before you send it. When somebody is embarrassed, you can leave them a little dignity while still dealing with what happened. That same instinct can show up in writing, editing, design, art, or any work where the way something is communicated matters almost as much as the information itself.\n```\n\n**Moon sextile Venus**\n\n```text\nYou remember the coffee order, bring food when someone has had a terrible week, and notice when the room would feel better with the lamp on instead of the overhead light. Affection tends to come through small choices that make another person more comfortable. You may not think of any of this as caretaking. To the people who know you well, it is often how they know you care.\n```\n\n## Workflow change (owner directive, verbatim)\n\n```text\nSo I would make a significant change to our workflow: do not use V2/V3 prose as the starting sentence structure anymore. Keep the row key, source mechanism, astrology support, and source constraints. Then write the reader copy fresh against the lived benchmark.\n```\n\n## Implementation (not owner prose)\n\n### Generation contract\n\nThe writer receives the row key, the astrology-support mechanism, and the source constraints. The writer does NOT receive the existing candidate prose as a drafting input. Existing prose may be shown only to a downstream comparison step, never as the sentence structure to improve.\n\nStage order is enforced: mechanism sentence (internal, never shipped) → human situation → scene entry → consequence → perspective last.\n\n### Judge additions\n\n1. `photograph-test` (blocking): at least one clause in the passage names something that could be photographed or overheard. Abstract-noun subjects with no observable referent fail. The failing pattern is a sentence whose subject is a quality (creativity, empathy, competitiveness, intuition, work ethic) rather than a person doing something.\n2. `trait-entry` (blocking): the opening must be something happening, not a trait or an abstract restatement.\n3. `interchangeable` (blocking): if the passage could describe many other placements without alteration, it fails. Test by substituting a different planet pair and asking whether the prose still reads as true.\n4. `astrology-summary` (blocking): a sentence that could appear unchanged in a generic horoscope, personality profile, therapy worksheet, or spiritual social post is deleted, not softened.\n5. `archetype-soup` (blocking): mythological or archetypal vocabulary standing in for behavior (warriors, chariot, underworld, catharsis, rebirth, blades, rocket fuel).\n6. `paraphrase-of-prior` (blocking, batch pipelines only): a candidate whose sentence structure tracks the prior version's is a paraphrase, not an authoring. Compare against the prior row and fail on structural correspondence.\n\n### Deterministic lint (pre-judge)\n\nFlag abstract-noun subjects in opening sentences; flag passages containing zero concrete nouns from the observable set (objects, places, times, money amounts, body, food, messages, documents, rooms, vehicles, appointments); flag therapy-register vocabulary clusters (empathy, trauma, nurturing, healing, growth, potential, energy, journey) where no observable action appears in the same paragraph.\n\n### Precedence\n\nWhere this ruling and an earlier standard appear to conflict, this ruling governs the entry point and the evidence source; the five-beat model still governs the shape once the scene has been established; the lived-prose standard still governs the astrology-to-consequence move.\n"
       },
+      "wholePassage": {
+        "sourcePath": "tldr-astro-phrasebank/TLDR-AUTHOR-FROM-MECHANISM-WHOLE-PASSAGE-CLARIFICATION-OWNER.md",
+        "sourceSha256": "99ee9ee114648a54ff78aa1e85f8e971f0870205320959c1b46cd78b4e16e7ad",
+        "text": "# Author-from-mechanism whole-passage clarification — owner ruling\n\n**Status:** Owner ruling, 2026-08-13. Generation and review rule; not reader-facing copy.\n\n> A passage does not pass because it contains one photographable clause. Every sentence must either advance the lived scene, state a specific consequence, or provide necessary astrology-to-life perspective. A generic astrology-summary sentence fails the passage even when another sentence passes the photograph test.\n\n## Application\n\n- The photograph or overhear test is a necessary minimum, not an overall editorial verdict.\n- Observable-noun counts are deterministic lint only. They do not establish voice quality, coherence, or causal scene density.\n- Review the prose row by row. Do not infer that one model's entire batch is better because it has more concrete nouns or clears deterministic lint.\n- A lived sentence cannot launder an abstract sentence elsewhere in the same passage.\n- A sentence that does not advance the lived scene, state a specific consequence, or provide necessary astrology-to-life perspective blocks the passage.\n\n## Calibration failure exposed by this ruling\n\nThe sentence \"In this karmic framework, repetition carries a philosophical or spiritual lesson\" fails the astrology-summary gate even when a preceding teacher, trip, disappointment, opportunity, or repeated question clears the photograph-test minimum.\n\nGovernance: This clarification changes the writer and judge contract only. It does not approve, import, serve, auto-publish, or promote any candidate copy.\n"
+      },
       "delineation": {
         "sourcePath": "tldr-astro-phrasebank/TLDR-NATAL-PLACEMENT-DELINEATION-STANDARD-OWNER.md",
         "sourceSha256": "f686d1d5715149487ebb258611f926812117541ed9adb6f5019e35269a8a137b",
@@ -60,7 +65,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|conjunction|ascendant",
@@ -198,7 +203,7 @@
             "text": "Attraction can feel impossible to keep casual. You like someone and the temperature rises fast, including feeling attracted to and irritated by the same person at the same time. Money, sex, partnership, or who gets their way can become charged quickly. Strong feeling is not the problem. It needs a direct outlet that does not turn every difference into a test of love."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -221,7 +226,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|conjunction|midheaven",
@@ -359,7 +364,7 @@
             "text": "Attraction can arrive suddenly and make the usual relationship script feel less interesting. You are drawn to unusual people, unexpected plans, new places, or the friendship that refuses the standard script. Your mood about the relationship can change quickly, especially when creativity has nowhere to go. Art, travel, nature, and making something with your hands can keep restlessness from blaming the nearest person."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -380,7 +385,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|conjunction|neptune",
@@ -525,8 +530,8 @@
             "text": "Love can feel idealized before you actually know the other person. A song, a look, or your own imagination about their life can make you feel completely swept up right away. Beauty, art, music, and tenderness thrive here. Relationships do better when you let the person in front of you be an ordinary, real human once the initial excitement fades."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "04a689aa8a19e81a0ff671454e70889b3db0b52cb3ee88f773ef55a3e95ca296",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "f3a610c90ef04ccfabd83525e8c5a9da041fe525d2f8f0bd73770a8707646f04",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -546,7 +551,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|conjunction|pluto",
@@ -691,8 +696,8 @@
             "text": "Attraction can feel impossible to keep casual. You like someone and the temperature rises fast, including feeling attracted to and irritated by the same person at the same time. Money, sex, partnership, or who gets their way can become charged quickly. Strong feeling is not the problem. It needs a direct outlet that does not turn every difference into a test of love."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "d84ae44ef39c5b3e7de5d7d7ba5af94a12823ad98a57aebcef3669313a819fdf",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "b0887f8ec9cc3b7a3f130085546c438aed6bbde793946f22503c59fef4d65906",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -712,7 +717,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|conjunction|saturn",
@@ -857,8 +862,8 @@
             "text": "Warmth can become part of how you become visible. You care about the room, the art, the friendship, the way people feel around you, and you may have a natural instinct for making life more pleasant or beautiful. Affection is sincere, but you may wait for a sign it will be returned before showing all of it. You open up more easily when reciprocity feels possible."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "ad5f69637c28ba899204c7ecaec28a0f03f0b82280deb80da05a79db29a8a302",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "4c4655187e1c15d34569c809b3903da6ca254b75404ab24b02c0eeada03265bb",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -880,7 +885,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|conjunction|south-node",
@@ -1018,7 +1023,7 @@
             "text": "Attraction can feel impossible to keep casual. You like someone and the temperature rises fast, including feeling attracted to and irritated by the same person at the same time. Money, sex, partnership, or who gets their way can become charged quickly. Strong feeling is not the problem. It needs a direct outlet that does not turn every difference into a test of love."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -1041,7 +1046,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|opposition|midheaven",
@@ -1179,7 +1184,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -1200,7 +1205,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|opposition|saturn",
@@ -1345,8 +1350,8 @@
             "text": "Moon opposite Saturn can expect the disappointing answer before the message has even been opened. You hold back affection, wait for the other person to prove they care, or tell yourself you need less because needing anything feels risky. There can be plenty of warmth here. Fear makes it slow to come out."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "b8d07a0c57368261c625d9ebe02ce74cc51beb8563b80c8f5761ea180be78ff9",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "7e7b9912c280bedead971ededb74d07edd1e61a5784b117b524a3447889c2beb",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -1368,7 +1373,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|opposition|south-node",
@@ -1506,7 +1511,7 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -1527,7 +1532,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|opposition|uranus",
@@ -1672,8 +1677,8 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "cd8393f3965ad3290a1a79f5a8135b79d4146d64f052dfadacd606b2dcb36afe",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "727e547a12798d8afb675fa92922906600d642929e1c1e869e55f572c6b6e03e",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -1695,7 +1700,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|square|ascendant",
@@ -1833,7 +1838,7 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -1856,7 +1861,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|square|midheaven",
@@ -1994,7 +1999,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -2017,7 +2022,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|square|south-node",
@@ -2155,7 +2160,7 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -2178,7 +2183,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|trine|ascendant",
@@ -2316,7 +2321,7 @@
             "text": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -2339,7 +2344,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|trine|midheaven",
@@ -2477,7 +2482,7 @@
             "text": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -2498,7 +2503,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|trine|pluto",
@@ -2643,8 +2648,8 @@
             "text": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "f724526dad6a3649617bff11a41292876475d85ffad11178627475a41a533d4b",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "dd300b937c9afae80bbbac427e82f8d864efc14c9f853560e77e2f873aa4627a",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -2666,7 +2671,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|trine|south-node",
@@ -2804,7 +2809,7 @@
             "text": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -2825,7 +2830,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "jupiter|trine|uranus",
@@ -2970,8 +2975,8 @@
             "text": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "c0d4ee3d396e81bc314776ad9f9c076de286151b9d994b1a12e41f899eb1297f",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "2a2a334b7a3f74d70329b994521ec1229bcdd9c67142e4d0467fee9035c76fea",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -2993,7 +2998,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|conjunction|ascendant",
@@ -3131,7 +3136,7 @@
             "text": "Attraction can arrive suddenly and make the usual relationship script feel less interesting. You are drawn to unusual people, unexpected plans, new places, or the friendship that refuses the standard script. Your mood about the relationship can change quickly, especially when creativity has nowhere to go. Art, travel, nature, and making something with your hands can keep restlessness from blaming the nearest person."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -3154,7 +3159,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|conjunction|midheaven",
@@ -3292,7 +3297,7 @@
             "text": "Warmth can become part of how you become visible. You care about the room, the art, the friendship, the way people feel around you, and you may have a natural instinct for making life more pleasant or beautiful. Affection is sincere, but you may wait for a sign it will be returned before showing all of it. You open up more easily when reciprocity feels possible."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -3313,7 +3318,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|conjunction|neptune",
@@ -3458,8 +3463,8 @@
             "text": "Attraction can arrive suddenly and make the usual relationship script feel less interesting. You are drawn to unusual people, unexpected plans, new places, or the friendship that refuses the standard script. Your mood about the relationship can change quickly, especially when creativity has nowhere to go. Art, travel, nature, and making something with your hands can keep restlessness from blaming the nearest person."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "cd159f5e942df4c7656b4d67dbc04aee94dcc2c50ab73ed8f6054512bdf5f385",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "ce106ac3a93a10e905c22953173e7ce7a9ac4667cb1cf1e35a09a5481707ecd4",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -3481,7 +3486,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|conjunction|north-node",
@@ -3619,7 +3624,7 @@
             "text": "Attraction can feel impossible to keep casual. You like someone and the temperature rises fast, including feeling attracted to and irritated by the same person at the same time. Money, sex, partnership, or who gets their way can become charged quickly. Strong feeling is not the problem. It needs a direct outlet that does not turn every difference into a test of love."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -3640,7 +3645,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|conjunction|pluto",
@@ -3785,8 +3790,8 @@
             "text": "Attraction can feel impossible to keep casual. You like someone and the temperature rises fast, including feeling attracted to and irritated by the same person at the same time. Money, sex, partnership, or who gets their way can become charged quickly. Strong feeling is not the problem. It needs a direct outlet that does not turn every difference into a test of love."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "179e4d3c0b5fda94abc0dcbc27bdd9b87a2c0a93cda44ea7edc7d409ac5b8b4c",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "d735c5d1459bc4916c2432b7431da85808bee80c9b80cbaf5ead3425439498fe",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -3808,7 +3813,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|conjunction|south-node",
@@ -3946,7 +3951,7 @@
             "text": "Attraction can feel impossible to keep casual. You like someone and the temperature rises fast, including feeling attracted to and irritated by the same person at the same time. Money, sex, partnership, or who gets their way can become charged quickly. Strong feeling is not the problem. It needs a direct outlet that does not turn every difference into a test of love."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -3969,7 +3974,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|opposition|ascendant",
@@ -4107,7 +4112,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -4130,7 +4135,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|opposition|midheaven",
@@ -4268,7 +4273,7 @@
             "text": "Moon opposite Saturn can expect the disappointing answer before the message has even been opened. You hold back affection, wait for the other person to prove they care, or tell yourself you need less because needing anything feels risky. There can be plenty of warmth here. Fear makes it slow to come out."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -4289,7 +4294,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|opposition|neptune",
@@ -4434,8 +4439,8 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "9229eeef852ce8ca1333cd7e26348290f77d060e1ed0fc1b1bcf61578760e23c",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "a5889a18400bec8171f558fa092e70249d1229cfc317e3f58c580228638fdecb",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -4457,7 +4462,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|opposition|north-node",
@@ -4595,7 +4600,7 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -4618,7 +4623,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|opposition|south-node",
@@ -4756,7 +4761,7 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -4779,7 +4784,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|square|ascendant",
@@ -4917,7 +4922,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -4940,7 +4945,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|square|midheaven",
@@ -5078,7 +5083,7 @@
             "text": "Moon opposite Saturn can expect the disappointing answer before the message has even been opened. You hold back affection, wait for the other person to prove they care, or tell yourself you need less because needing anything feels risky. There can be plenty of warmth here. Fear makes it slow to come out."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -5099,7 +5104,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|square|neptune",
@@ -5244,8 +5249,8 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "2249c56cd5339adfacb8644e33a877e026945451e8d8fd5260b64928b87152ee",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "cb13fff3dfaeea92a0015d977c3469017eed20a6b2ef2682edd4b3971d133567",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -5267,7 +5272,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|square|north-node",
@@ -5405,7 +5410,7 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -5428,7 +5433,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|square|south-node",
@@ -5566,7 +5571,7 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -5589,7 +5594,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|trine|ascendant",
@@ -5727,7 +5732,7 @@
             "text": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -5750,7 +5755,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|trine|north-node",
@@ -5888,7 +5893,7 @@
             "text": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -5909,7 +5914,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|trine|pluto",
@@ -6054,8 +6059,8 @@
             "text": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "b38cd474634a111917019b5845858adb84bc51900cb067df14a3d4f6c8d3764c",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "af708bdd642f9c52661244c7b29a5dbccb9e2ce48a05a43e335f80615e9e5db1",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -6077,7 +6082,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mars|trine|south-node",
@@ -6215,7 +6220,7 @@
             "text": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -6238,7 +6243,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|conjunction|ascendant",
@@ -6376,7 +6381,7 @@
             "text": "Attraction can arrive suddenly and make the usual relationship script feel less interesting. You are drawn to unusual people, unexpected plans, new places, or the friendship that refuses the standard script. Your mood about the relationship can change quickly, especially when creativity has nowhere to go. Art, travel, nature, and making something with your hands can keep restlessness from blaming the nearest person."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -6397,7 +6402,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|conjunction|mars",
@@ -6542,8 +6547,8 @@
             "text": "Attraction can feel impossible to keep casual. You like someone and the temperature rises fast, including feeling attracted to and irritated by the same person at the same time. Money, sex, partnership, or who gets their way can become charged quickly. Strong feeling is not the problem. It needs a direct outlet that does not turn every difference into a test of love."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "75ccd01a197cc564cd6756216106dbe0049e85f07670a4390095b3ddcfbb70d0",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "0bec2f60bac8c35f5659ed2300fd8c0cda7a7d5b01d01c8fc380e3f053483dfd",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -6565,7 +6570,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|conjunction|midheaven",
@@ -6703,7 +6708,7 @@
             "text": "Attraction can arrive suddenly and make the usual relationship script feel less interesting. You are drawn to unusual people, unexpected plans, new places, or the friendship that refuses the standard script. Your mood about the relationship can change quickly, especially when creativity has nowhere to go. Art, travel, nature, and making something with your hands can keep restlessness from blaming the nearest person."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -6724,7 +6729,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|conjunction|neptune",
@@ -6869,8 +6874,8 @@
             "text": "Attraction can arrive suddenly and make the usual relationship script feel less interesting. You are drawn to unusual people, unexpected plans, new places, or the friendship that refuses the standard script. Your mood about the relationship can change quickly, especially when creativity has nowhere to go. Art, travel, nature, and making something with your hands can keep restlessness from blaming the nearest person."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "0c1be320a77f1449647f01b07bd110b7e7c433e4e30d881ae93d58b0892fc6bf",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "d40223e9c68014932df4ac24f9356bcec9a9ebe653a8d059cc42185cb0d4fd2f",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -6892,7 +6897,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|conjunction|north-node",
@@ -7030,7 +7035,7 @@
             "text": "Attraction can arrive suddenly and make the usual relationship script feel less interesting. You are drawn to unusual people, unexpected plans, new places, or the friendship that refuses the standard script. Your mood about the relationship can change quickly, especially when creativity has nowhere to go. Art, travel, nature, and making something with your hands can keep restlessness from blaming the nearest person."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -7051,7 +7056,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|conjunction|pluto",
@@ -7196,8 +7201,8 @@
             "text": "Attraction can feel impossible to keep casual. You like someone and the temperature rises fast, including feeling attracted to and irritated by the same person at the same time. Money, sex, partnership, or who gets their way can become charged quickly. Strong feeling is not the problem. It needs a direct outlet that does not turn every difference into a test of love."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "bef2edffcde8d02a6bdb4683d2274aeb6827daa3be01bd1a3de09afc60f1352a",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "b5325db380932479b6106d34b17e9e9390fdac21d4d97856c3dd75bee186fcc5",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -7217,7 +7222,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|conjunction|saturn",
@@ -7362,8 +7367,8 @@
             "text": "Attraction can arrive suddenly and make the usual relationship script feel less interesting. You are drawn to unusual people, unexpected plans, new places, or the friendship that refuses the standard script. Your mood about the relationship can change quickly, especially when creativity has nowhere to go. Art, travel, nature, and making something with your hands can keep restlessness from blaming the nearest person."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "15b5d4f40f6b2d3dc12b1d516d62101c7a9f40c82e2a203523e75395b8c55058",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "7c495ecfeb3db323223dbf912b3f394c3691bcab9feed08f05b30f7a82bfa60d",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -7385,7 +7390,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|conjunction|south-node",
@@ -7523,7 +7528,7 @@
             "text": "Attraction can feel impossible to keep casual. You like someone and the temperature rises fast, including feeling attracted to and irritated by the same person at the same time. Money, sex, partnership, or who gets their way can become charged quickly. Strong feeling is not the problem. It needs a direct outlet that does not turn every difference into a test of love."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -7544,7 +7549,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|conjunction|venus",
@@ -7689,8 +7694,8 @@
             "text": "Love can feel idealized before you actually know the other person. A song, a look, or your own imagination about their life can make you feel completely swept up right away. Beauty, art, music, and tenderness thrive here. Relationships do better when you let the person in front of you be an ordinary, real human once the initial excitement fades."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "674ceed653aeaf10eac3092288cf8552a622667e892623a1a6fa20abfecc2bb6",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "02baabb4b656377322b0f5b7a517976fdc3c9c6724b9c8991e1762dbb626e8f1",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -7712,7 +7717,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|opposition|ascendant",
@@ -7850,7 +7855,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -7871,7 +7876,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|opposition|jupiter",
@@ -8016,8 +8021,8 @@
             "text": "Moon opposite Saturn can expect the disappointing answer before the message has even been opened. You hold back affection, wait for the other person to prove they care, or tell yourself you need less because needing anything feels risky. There can be plenty of warmth here. Fear makes it slow to come out."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "be9f7e1c166b3165e9dc70a07deea5b279155bbc648be10015a6eecd852d284e",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "8dae236d07a839b37145521bb94352562bdc82394d371e52db0bdcfcbec53f50",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -8037,7 +8042,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|opposition|mars",
@@ -8182,8 +8187,8 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "572b42153a8de348f21f0f76e4b976c93d3ab7ad4b43cb7f0e3ca80162add7b0",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "8958817443f023f4f4a417adf629ab7a4d21493d57ca91f873bc007f974e3e34",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -8205,7 +8210,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|opposition|north-node",
@@ -8343,7 +8348,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -8364,7 +8369,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|opposition|pluto",
@@ -8509,8 +8514,8 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "744a767992e6582ffc57c6708ad7b0228ab4ac4a89f67b3487e2625e4ee4169a",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "6099efd6f47a3818254c51c668dcf62c735553ab40fd090a1c031bcd59331938",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -8530,7 +8535,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|opposition|saturn",
@@ -8675,8 +8680,8 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "ca1f825bfd6c882843629af52bcc1d75a45360a40648013700736ed306e64acf",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "03e7132f4d5ebc3c8372b64b7dbcb1f883461bfb6dd89f30a318d84393dc55b5",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -8698,7 +8703,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|opposition|south-node",
@@ -8836,7 +8841,7 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -8857,7 +8862,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|opposition|uranus",
@@ -9002,8 +9007,8 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "f78592be45404ac1a328146c249adf136219aaece573aede62fb4f68f39f0785",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "fff6153dffd16c8d812b1fdb51bdec62783fdc22af315f54d2e3cbcfcbe13107",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -9025,7 +9030,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|square|ascendant",
@@ -9163,7 +9168,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -9186,7 +9191,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|square|midheaven",
@@ -9324,7 +9329,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -9347,7 +9352,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|square|north-node",
@@ -9485,7 +9490,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -9506,7 +9511,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|square|saturn",
@@ -9651,8 +9656,8 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "a25af1d31bd09e65e0a54b9e6e63a2560130a66f4c0e63f359e8e0634e85f8fa",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "4badb2229eb53db15eae9a4b639d549e82a1c9745d3058359683d7949722988f",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -9674,7 +9679,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|square|south-node",
@@ -9812,7 +9817,7 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -9835,7 +9840,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|trine|ascendant",
@@ -9973,7 +9978,7 @@
             "text": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -9994,7 +9999,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|trine|jupiter",
@@ -10139,8 +10144,8 @@
             "text": "Mercury sextile Mars can make it easy to see the steps while everyone else is still discussing the idea. You can explain how to fix it, write the instructions, run the numbers, or break the job into a sequence and get started. The mind moves quickly without the action having to become rushed."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "05cc75b21fbe990d1a9fad4397dfbb5e504643dcb7e56578ee375740e1dcd1a4",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "a103a2c622d308235a6aa36dd69ef3737209858916bf28d474e68062dbf89a8b",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -10162,7 +10167,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|trine|midheaven",
@@ -10300,7 +10305,7 @@
             "text": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -10323,7 +10328,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|trine|north-node",
@@ -10461,7 +10466,7 @@
             "text": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -10482,7 +10487,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|trine|pluto",
@@ -10627,8 +10632,8 @@
             "text": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "2912a889981764e3eeb3640d33f11534a25da87ca461d225c6a2dd171fa8017a",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "9ce491366376705c1d0f6efefb7db55c87437835dfd1469e4f69df60aa7d56f1",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -10648,7 +10653,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|trine|saturn",
@@ -10793,8 +10798,8 @@
             "text": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "5e5595765e75126d7b6ed3735b3fda0319cbcc61c0e3ab3c555ae8e09598cf88",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "ffb2668a959e34566d73112dabbf76c55d83d2dbe971d84c6c1e91a53966a02f",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -10816,7 +10821,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|trine|south-node",
@@ -10954,7 +10959,7 @@
             "text": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -10975,7 +10980,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "mercury|trine|uranus",
@@ -11120,8 +11125,8 @@
             "text": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "0e4f72281646ba5c15bb4c5075f11141a4a097ae820e5a3ea49df125f19489a1",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "df8af13defc75ed407222b7e01626dc4cb9edf8a13191a9f5239adf43dc44632",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -11143,7 +11148,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|conjunction|ascendant",
@@ -11281,7 +11286,7 @@
             "text": "Attraction can arrive suddenly and make the usual relationship script feel less interesting. You are drawn to unusual people, unexpected plans, new places, or the friendship that refuses the standard script. Your mood about the relationship can change quickly, especially when creativity has nowhere to go. Art, travel, nature, and making something with your hands can keep restlessness from blaming the nearest person."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -11302,7 +11307,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|conjunction|mercury",
@@ -11447,8 +11452,8 @@
             "text": "Love can feel idealized before you actually know the other person. A song, a look, or your own imagination about their life can make you feel completely swept up right away. Beauty, art, music, and tenderness thrive here. Relationships do better when you let the person in front of you be an ordinary, real human once the initial excitement fades."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "84f58c57ff081b9935edafdf69a9fea53968f7525d1c191111ae1d1b75d7f497",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "d29c93b10920325c936aea00cf5937447f882436993ca1ee2f5253fb972832e6",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -11470,7 +11475,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|conjunction|midheaven",
@@ -11608,7 +11613,7 @@
             "text": "Attraction can arrive suddenly and make the usual relationship script feel less interesting. You are drawn to unusual people, unexpected plans, new places, or the friendship that refuses the standard script. Your mood about the relationship can change quickly, especially when creativity has nowhere to go. Art, travel, nature, and making something with your hands can keep restlessness from blaming the nearest person."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -11631,7 +11636,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|conjunction|north-node",
@@ -11769,7 +11774,7 @@
             "text": "Attraction can arrive suddenly and make the usual relationship script feel less interesting. You are drawn to unusual people, unexpected plans, new places, or the friendship that refuses the standard script. Your mood about the relationship can change quickly, especially when creativity has nowhere to go. Art, travel, nature, and making something with your hands can keep restlessness from blaming the nearest person."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -11790,7 +11795,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|conjunction|pluto",
@@ -11935,8 +11940,8 @@
             "text": "Attraction can feel impossible to keep casual. You like someone and the temperature rises fast, including feeling attracted to and irritated by the same person at the same time. Money, sex, partnership, or who gets their way can become charged quickly. Strong feeling is not the problem. It needs a direct outlet that does not turn every difference into a test of love."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "5b858ba10d31a5ceb31692cd70bcf458a9e0ee8cac31ee2e7b7f96eff0427a4e",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "f4cce17f133a2a42ec30428564538ebaad8a51ac44c35c8857fcd3f70f67b9cf",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -11956,7 +11961,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|conjunction|saturn",
@@ -12101,8 +12106,8 @@
             "text": "Warmth can become part of how you become visible. You care about the room, the art, the friendship, the way people feel around you, and you may have a natural instinct for making life more pleasant or beautiful. Affection is sincere, but you may wait for a sign it will be returned before showing all of it. You open up more easily when reciprocity feels possible."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "5f9acdcd0e7cfa33e9ce3bafb024c5fc16fff7cc33c0aa827b43803e8a78310a",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "d44bb7b3f114fb018411e0d0e8bdc55c0d48a558b9079c74e50fb6918314558d",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -12124,7 +12129,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|conjunction|south-node",
@@ -12262,7 +12267,7 @@
             "text": "Attraction can arrive suddenly and make the usual relationship script feel less interesting. You are drawn to unusual people, unexpected plans, new places, or the friendship that refuses the standard script. Your mood about the relationship can change quickly, especially when creativity has nowhere to go. Art, travel, nature, and making something with your hands can keep restlessness from blaming the nearest person."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -12283,7 +12288,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|conjunction|uranus",
@@ -12428,8 +12433,8 @@
             "text": "Attraction can arrive suddenly and make the usual relationship script feel less interesting. You are drawn to unusual people, unexpected plans, new places, or the friendship that refuses the standard script. Your mood about the relationship can change quickly, especially when creativity has nowhere to go. Art, travel, nature, and making something with your hands can keep restlessness from blaming the nearest person."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "6a82a1cb92f9fcae32fd16cb6775336c48de8704823b9558085336e90189cef8",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "d136a9aaa5310b0d9ac239a5f0c04c05f9e9087fec2750ba494b9f2891d4ffeb",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -12449,7 +12454,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|conjunction|venus",
@@ -12594,8 +12599,8 @@
             "text": "Attraction can arrive suddenly and make the usual relationship script feel less interesting. You are drawn to unusual people, unexpected plans, new places, or the friendship that refuses the standard script. Your mood about the relationship can change quickly, especially when creativity has nowhere to go. Art, travel, nature, and making something with your hands can keep restlessness from blaming the nearest person."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "49d1cc8d1da0c625925254def0cd9bf2dbcb4327a646aa94ba1307885697cb4b",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "0b9b9cb86e6e54034605d3146f35fb104d2fa6a7e9267cae9b41326ad20ae019",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -12615,7 +12620,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|opposition|jupiter",
@@ -12760,8 +12765,8 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "3ef5be122330651e2fc1101662bab694bd742ca3940e111bd03fcbc8746b4768",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "226d4f8798d9f1090455b0a69d19660e7f56082f72701ba51eee2206cc47f478",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -12781,7 +12786,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|opposition|mars",
@@ -12926,8 +12931,8 @@
             "text": "Moon opposite Saturn can expect the disappointing answer before the message has even been opened. You hold back affection, wait for the other person to prove they care, or tell yourself you need less because needing anything feels risky. There can be plenty of warmth here. Fear makes it slow to come out."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "92adcc00f33de0d2a69d19e8aae216bcebd93b5cc7bfb1bdd7150d4116f760fe",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "e33081c323fb9c975b29889a010936778a77cace2c302af65dec761dfef59f9e",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -12947,7 +12952,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|opposition|mercury",
@@ -13092,8 +13097,8 @@
             "text": "Moon inconjunct Neptune can make leaving the room feel like the fastest way to get relief. Someone is upset, the atmosphere is heavy, or you are tired of absorbing everybody else's mood, so you disappear for a while. Distance helps until staying away starts creating the loneliness you were trying to avoid."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "f4a33a97a4097ba0e3e33bb6eff1ce63d69586b0e103c3b5e0bf2839c02d9558",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "77b2c9105e84d172fd0f3bd95f2311a7242f0462146497f48203425a7a6dfe77",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -13113,7 +13118,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|opposition|neptune",
@@ -13258,8 +13263,8 @@
             "text": "Moon opposite Saturn can expect the disappointing answer before the message has even been opened. You hold back affection, wait for the other person to prove they care, or tell yourself you need less because needing anything feels risky. There can be plenty of warmth here. Fear makes it slow to come out."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "609068c498f2d914a5ab5c3897e074c440fa788794bb9a178664b18aff6de898",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "053473ec19ae4da9a233200242ef27edaf5a961fa426a345f3c30c7daea875c6",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -13281,7 +13286,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|opposition|north-node",
@@ -13419,7 +13424,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -13442,7 +13447,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|opposition|south-node",
@@ -13580,7 +13585,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -13601,7 +13606,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|opposition|uranus",
@@ -13746,8 +13751,8 @@
             "text": "Moon inconjunct Neptune can make leaving the room feel like the fastest way to get relief. Someone is upset, the atmosphere is heavy, or you are tired of absorbing everybody else's mood, so you disappear for a while. Distance helps until staying away starts creating the loneliness you were trying to avoid."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "ededf0ec3b3be323a4fa31b0995f4805e5cf9f848d38d20d8eff3f071095955e",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "03b7ecc446400a1c1e2d28d18809c578b66addef84e5d7a0ebffd186deb9af36",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -13767,7 +13772,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|opposition|venus",
@@ -13912,8 +13917,8 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "aae508080fdcc92792c62a38a30323d233283bc7bfb2d78b0fdacb164997a393",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "f4d98a6c316ad84e057fee3adc18151221039303c4ff09f18565ec07e551a250",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -13935,7 +13940,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|square|ascendant",
@@ -14073,7 +14078,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -14094,7 +14099,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|square|jupiter",
@@ -14239,8 +14244,8 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "0c2986e4ac78231d3a0d4c1424b532fb1fa0318a269c3754574d572536326635",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "63e908aa9fa84b2a49a505a954473fde87837a8fec02d643eea0cade1fe9e7f3",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -14260,7 +14265,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|square|mercury",
@@ -14405,8 +14410,8 @@
             "text": "Moon inconjunct Neptune can make leaving the room feel like the fastest way to get relief. Someone is upset, the atmosphere is heavy, or you are tired of absorbing everybody else's mood, so you disappear for a while. Distance helps until staying away starts creating the loneliness you were trying to avoid."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "82c9eae22392370182cb6d59971e9ea76c26eb1371ab51c31dfcb317456cdc99",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "34085c273c7aae9c484e3e2ff85b8c5f574706034939cd82ab52d3f893aa30b4",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -14428,7 +14433,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|square|midheaven",
@@ -14566,7 +14571,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -14589,7 +14594,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|square|north-node",
@@ -14727,7 +14732,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -14748,7 +14753,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|square|saturn",
@@ -14893,8 +14898,8 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "e32817b759656a25e2bdde7bff46ea4e1d4121715f58177ecb474cb4e17eb05b",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "8ef6a789795b7d3c7c2394d425a5450b28fc8a4dad55ded668375c55c679bfb7",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -14916,7 +14921,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|square|south-node",
@@ -15054,7 +15059,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -15075,7 +15080,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|square|uranus",
@@ -15220,8 +15225,8 @@
             "text": "Moon inconjunct Neptune can make leaving the room feel like the fastest way to get relief. Someone is upset, the atmosphere is heavy, or you are tired of absorbing everybody else's mood, so you disappear for a while. Distance helps until staying away starts creating the loneliness you were trying to avoid."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "37585c01df668121234703e80c7cfe1b0f9815dd5675d683b7873fd1a8309a17",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "bb9382ef7a7f633667043a4d81d4b42e3e8b15f6dbb84675dc64e091640fa280",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -15241,7 +15246,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|square|venus",
@@ -15386,8 +15391,8 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "eeee56235e726de6e80d0f95a8c5eecc8f31eadcd7e7561cf769eb44e05b9c3c",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "f318b627738432081153eacfbbdaac6c638c524cbf1970a45bf88c397c6533e2",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -15409,7 +15414,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|trine|ascendant",
@@ -15547,7 +15552,7 @@
             "text": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -15568,7 +15573,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|trine|jupiter",
@@ -15713,8 +15718,8 @@
             "text": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "1d9e5d7ce311948e2d53f2917a5967eb31b3dc1e724e13337d287cab57341712",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "8b41bf339eae5aa9bc5d933908a894787c7508b226a92f714f55fc4038a6145c",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -15734,7 +15739,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|trine|mars",
@@ -15879,8 +15884,8 @@
             "text": "Moon sextile Neptune can help you notice a heavy atmosphere without carrying all of it home. You put on music after the tense meeting, take ten quiet minutes after the visit, or let yourself imagine something gentler without pretending the hard mood was not real. Sensitivity works better when every feeling in the room does not become yours."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "8ca0504db96e3027fa29b944b555d7e73fafb2d3588c44035ce466ab595636a0",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "cfe9d2b635e19f99f02b6114eb7aa820d9c2a304e69101f60b3fc40014769cbd",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -15900,7 +15905,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|trine|mercury",
@@ -16045,8 +16050,8 @@
             "text": "Venus sextile the Part of Fortune can catch you halfway through agreeing to the familiar choice. You are about to order the same option, return to the same kind of relationship, or say yes because it is what you usually do, and realize you do not actually want it this time. The old preference is easier to notice before it becomes another decision."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "e7bb915db13dd0848fd3b49fd3e2d439ea49905809eae36e04d21e42539de78b",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "409b1e031c750df74e9d9affd32782cdadc74b367a683d865d152b66941a89fa",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -16068,7 +16073,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|trine|midheaven",
@@ -16206,7 +16211,7 @@
             "text": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -16227,7 +16232,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|trine|neptune",
@@ -16372,8 +16377,8 @@
             "text": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "b5d2a48aa809b2664516352958c9a9fc668550bfe232b51c7494819cdf82187f",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "2a2b48c6a422da338a8b068d6f77d9f8eb0cf4a9630d2589df063d5251d32332",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -16395,7 +16400,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|trine|north-node",
@@ -16533,7 +16538,7 @@
             "text": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -16554,7 +16559,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|trine|pluto",
@@ -16699,8 +16704,8 @@
             "text": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "afb462491e848e4294dc3e7404d71a975b6d6fc9e069cf1eb70077fb33c5381c",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "4ae8c5105185e06236d438fa2902b30273d07494c1f30f07c05fec4e0cd8acc2",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -16720,7 +16725,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|trine|saturn",
@@ -16865,8 +16870,8 @@
             "text": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "e068a0db5045f03f89b5df7edffb48ea74fe041a6dc481e2300b09f91256fe86",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "0abdd59273bdf239ffaa4a3aaa3ca3a07d3f45bd284d66c8f123f5f3dc2463e1",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -16888,7 +16893,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|trine|south-node",
@@ -17026,7 +17031,7 @@
             "text": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -17047,7 +17052,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|trine|uranus",
@@ -17192,8 +17197,8 @@
             "text": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "866eacef05d7bd3201932e3102740d281404fc006ef8fd36d8dfd08c7d78eda2",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "a4c396f9df0a6d8566867eaefb1ed61184037b3760116cf4dc1a82d394c6f366",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -17213,7 +17218,7 @@
         "reasons": []
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "moon|trine|venus",
@@ -17358,8 +17363,8 @@
             "text": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
-        "modelInputSha256": "1017e22397720eb20ee91cb23fa9f29107fafb76cbeebcd90e9a164f7dffd701",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
+        "modelInputSha256": "36c3f0427340b56f5029596c117f7f0ce6b58bcd49fff5b08071b073770b8d0f",
         "governance": {
           "approvalEffect": "none",
           "reviewGatedCandidateOnly": true,
@@ -17381,7 +17386,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "neptune|conjunction|ascendant",
@@ -17519,7 +17524,7 @@
             "text": "Attraction can feel impossible to keep casual. You like someone and the temperature rises fast, including feeling attracted to and irritated by the same person at the same time. Money, sex, partnership, or who gets their way can become charged quickly. Strong feeling is not the problem. It needs a direct outlet that does not turn every difference into a test of love."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -17542,7 +17547,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "neptune|conjunction|midheaven",
@@ -17680,7 +17685,7 @@
             "text": "Love can feel idealized before you actually know the other person. A song, a look, or your own imagination about their life can make you feel completely swept up right away. Beauty, art, music, and tenderness thrive here. Relationships do better when you let the person in front of you be an ordinary, real human once the initial excitement fades."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -17703,7 +17708,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "neptune|conjunction|north-node",
@@ -17841,7 +17846,7 @@
             "text": "Attraction can arrive suddenly and make the usual relationship script feel less interesting. You are drawn to unusual people, unexpected plans, new places, or the friendship that refuses the standard script. Your mood about the relationship can change quickly, especially when creativity has nowhere to go. Art, travel, nature, and making something with your hands can keep restlessness from blaming the nearest person."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -17864,7 +17869,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "neptune|conjunction|south-node",
@@ -18002,7 +18007,7 @@
             "text": "Warmth can become part of how you become visible. You care about the room, the art, the friendship, the way people feel around you, and you may have a natural instinct for making life more pleasant or beautiful. Affection is sincere, but you may wait for a sign it will be returned before showing all of it. You open up more easily when reciprocity feels possible."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -18025,7 +18030,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "neptune|opposition|midheaven",
@@ -18163,7 +18168,7 @@
             "text": "Moon inconjunct Neptune can make leaving the room feel like the fastest way to get relief. Someone is upset, the atmosphere is heavy, or you are tired of absorbing everybody else's mood, so you disappear for a while. Distance helps until staying away starts creating the loneliness you were trying to avoid."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -18186,7 +18191,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "neptune|opposition|north-node",
@@ -18324,7 +18329,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -18347,7 +18352,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "neptune|opposition|south-node",
@@ -18485,7 +18490,7 @@
             "text": "Moon opposite Saturn can expect the disappointing answer before the message has even been opened. You hold back affection, wait for the other person to prove they care, or tell yourself you need less because needing anything feels risky. There can be plenty of warmth here. Fear makes it slow to come out."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -18508,7 +18513,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "neptune|square|ascendant",
@@ -18646,7 +18651,7 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -18669,7 +18674,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "neptune|square|midheaven",
@@ -18807,7 +18812,7 @@
             "text": "Moon inconjunct Neptune can make leaving the room feel like the fastest way to get relief. Someone is upset, the atmosphere is heavy, or you are tired of absorbing everybody else's mood, so you disappear for a while. Distance helps until staying away starts creating the loneliness you were trying to avoid."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -18830,7 +18835,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "neptune|trine|ascendant",
@@ -18968,7 +18973,7 @@
             "text": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -18991,7 +18996,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "neptune|trine|midheaven",
@@ -19129,7 +19134,7 @@
             "text": "Venus sextile the Part of Fortune can catch you halfway through agreeing to the familiar choice. You are about to order the same option, return to the same kind of relationship, or say yes because it is what you usually do, and realize you do not actually want it this time. The old preference is easier to notice before it becomes another decision."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -19152,7 +19157,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "neptune|trine|north-node",
@@ -19290,7 +19295,7 @@
             "text": "Venus sextile Pluto can make an old taste stop mattering without much drama. You buy the piece you actually like, make something nobody else would have chosen, or stop needing another person's approval before enjoying what you enjoy. What matters to you gets clearer when the old reasons for wanting it lose their hold."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -19313,7 +19318,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "north-node|conjunction|ascendant",
@@ -19451,7 +19456,7 @@
             "text": "Attraction can feel impossible to keep casual. You like someone and the temperature rises fast, including feeling attracted to and irritated by the same person at the same time. Money, sex, partnership, or who gets their way can become charged quickly. Strong feeling is not the problem. It needs a direct outlet that does not turn every difference into a test of love."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -19474,7 +19479,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "north-node|conjunction|midheaven",
@@ -19612,7 +19617,7 @@
             "text": "Love can feel idealized before you actually know the other person. A song, a look, or your own imagination about their life can make you feel completely swept up right away. Beauty, art, music, and tenderness thrive here. Relationships do better when you let the person in front of you be an ordinary, real human once the initial excitement fades."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -19635,7 +19640,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "north-node|opposition|ascendant",
@@ -19773,7 +19778,7 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -19796,7 +19801,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "north-node|opposition|midheaven",
@@ -19934,7 +19939,7 @@
             "text": "Moon inconjunct Neptune can make leaving the room feel like the fastest way to get relief. Someone is upset, the atmosphere is heavy, or you are tired of absorbing everybody else's mood, so you disappear for a while. Distance helps until staying away starts creating the loneliness you were trying to avoid."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -19957,7 +19962,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "north-node|square|ascendant",
@@ -20095,7 +20100,7 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -20118,7 +20123,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "north-node|square|midheaven",
@@ -20256,7 +20261,7 @@
             "text": "Moon inconjunct Neptune can make leaving the room feel like the fastest way to get relief. Someone is upset, the atmosphere is heavy, or you are tired of absorbing everybody else's mood, so you disappear for a while. Distance helps until staying away starts creating the loneliness you were trying to avoid."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -20279,7 +20284,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "north-node|trine|ascendant",
@@ -20417,7 +20422,7 @@
             "text": "Mercury sextile the South Node can help you catch the familiar reply before you send it. The same defensive explanation or assumption appears, but this time you recognize it as something you have said before. That recognition gives you a chance to answer the conversation you are actually having instead of the older one in your head."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -20440,7 +20445,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "north-node|trine|midheaven",
@@ -20578,7 +20583,7 @@
             "text": "Venus sextile the Part of Fortune can catch you halfway through agreeing to the familiar choice. You are about to order the same option, return to the same kind of relationship, or say yes because it is what you usually do, and realize you do not actually want it this time. The old preference is easier to notice before it becomes another decision."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -20601,7 +20606,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "pluto|conjunction|ascendant",
@@ -20739,7 +20744,7 @@
             "text": "Attraction can feel impossible to keep casual. You like someone and the temperature rises fast, including feeling attracted to and irritated by the same person at the same time. Money, sex, partnership, or who gets their way can become charged quickly. Strong feeling is not the problem. It needs a direct outlet that does not turn every difference into a test of love."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -20762,7 +20767,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "pluto|conjunction|north-node",
@@ -20900,7 +20905,7 @@
             "text": "Attraction can feel impossible to keep casual. You like someone and the temperature rises fast, including feeling attracted to and irritated by the same person at the same time. Money, sex, partnership, or who gets their way can become charged quickly. Strong feeling is not the problem. It needs a direct outlet that does not turn every difference into a test of love."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -20923,7 +20928,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "pluto|conjunction|south-node",
@@ -21061,7 +21066,7 @@
             "text": "Attraction can feel impossible to keep casual. You like someone and the temperature rises fast, including feeling attracted to and irritated by the same person at the same time. Money, sex, partnership, or who gets their way can become charged quickly. Strong feeling is not the problem. It needs a direct outlet that does not turn every difference into a test of love."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -21084,7 +21089,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "pluto|opposition|ascendant",
@@ -21222,7 +21227,7 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -21245,7 +21250,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "pluto|opposition|midheaven",
@@ -21383,7 +21388,7 @@
             "text": "You may look composed until one overloaded moment makes everything you have been holding back come out at once. Most of the time you manage control well enough that nobody sees the buildup. Under extreme pressure, everything releases at once. Step away before responding when you can. Distance gives the nervous system time to stop turning distress into attack."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
@@ -21406,7 +21411,7 @@
         ]
       },
       "packet": {
-        "packetVersion": "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1",
+        "packetVersion": "natal-writer-packet-v3:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:whole-passage-v1:fail-closed-v1",
         "target": {
           "surface": "natal-aspect",
           "key": "pluto|opposition|south-node",
@@ -21544,7 +21549,7 @@
             "text": "Sun square Moon can make the sensible plan and the honest feeling disagree all day. You agree to the family plan because it makes sense, then spend the afternoon irritated because it was not what you wanted. The conflict gets exhausting when one side has to be declared wrong before you let yourself make another choice."
           }
         ],
-        "promptBlockSha256": "e8c991f3fb206960764211a967183cbba9941494a76d2a164c9697bf24f65337",
+        "promptBlockSha256": "4ab2b4ed9721b6f4f45c93fe3d11d91ef2fc63a43c6693f7f0565a8898a3159c",
         "modelInputSha256": null,
         "governance": {
           "approvalEffect": "none",
