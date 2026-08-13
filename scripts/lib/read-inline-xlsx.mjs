@@ -54,7 +54,7 @@ function sheetMember(workbookPath, sheetName) {
   return relationshipTarget(workbookPath, relationshipId);
 }
 
-export function readInlineXlsxSheet(workbookPath, sheetName) {
+export function readInlineXlsxSheet(workbookPath, sheetName, { headerRowNumber = null } = {}) {
   const xml = unzipText(workbookPath, sheetMember(workbookPath, sheetName));
   let sharedStrings = [];
   try {
@@ -69,21 +69,23 @@ export function readInlineXlsxSheet(workbookPath, sheetName) {
     .map((rowMatch) => {
       const rowNumber = Number(rowMatch[1].match(/\br="(\d+)"/u)?.[1]);
       const values = [];
-      for (const cellMatch of rowMatch[2].matchAll(/<(?:\w+:)?c\b([^>]*)>([\s\S]*?)<\/(?:\w+:)?c>/gu)) {
+      for (const cellMatch of rowMatch[2].matchAll(/<(?:\w+:)?c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/(?:\w+:)?c>)/gu)) {
         const reference = cellMatch[1].match(/\br="([A-Z]+\d+)"/u)?.[1];
         if (!reference) continue;
         const type = cellMatch[1].match(/\bt="([^"]+)"/u)?.[1] ?? "";
-        const raw = type === "inlineStr" ? inlineText(cellMatch[2]) : valueText(cellMatch[2]);
+        const raw = type === "inlineStr" ? inlineText(cellMatch[2] ?? "") : valueText(cellMatch[2] ?? "");
         values[columnIndex(reference)] = type === "s" ? sharedStrings[Number(raw)] ?? "" : raw;
       }
       return { rowNumber, values };
     });
 
-  const headerRow = parsedRows[0];
+  const headerRow = headerRowNumber == null
+    ? parsedRows[0]
+    : parsedRows.find((row) => row.rowNumber === headerRowNumber);
   if (!headerRow) return [];
   const headers = headerRow.values.map((header) => String(header ?? ""));
-  return parsedRows.slice(1).map(({ rowNumber, values }) => ({
+  return parsedRows.filter((row) => row.rowNumber > headerRow.rowNumber).map(({ rowNumber, values }) => ({
     rowNumber,
-    cells: Object.fromEntries(headers.map((header, index) => [header, values[index] ?? ""])),
+    cells: Object.fromEntries(headers.flatMap((header, index) => header ? [[header, values[index] ?? ""]] : [])),
   }));
 }

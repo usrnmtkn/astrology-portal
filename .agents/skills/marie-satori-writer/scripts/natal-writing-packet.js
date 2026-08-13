@@ -7,7 +7,7 @@ const path = require("path");
 const { buildIndex, repoRoot } = require("./build-voice-index.js");
 
 const packageRoot = path.join(repoRoot, "packages", "astro-knowledge");
-const PACKET_VERSION = "natal-writer-packet-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1";
+const PACKET_VERSION = "natal-writer-packet-v2:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v1:exact-owner-evidence-v1:five-beat-v1:fail-closed-v1";
 const MIN_PASSAGES = 4;
 const MAX_PASSAGES = 6;
 const MIN_SOURCE_ROWS = 3;
@@ -17,10 +17,12 @@ const SIGNS = new Set(["aries", "taurus", "gemini", "cancer", "leo", "virgo", "l
 const SOFT_ASPECTS = new Set(["sextile", "trine"]);
 const HARD_ASPECTS = new Set(["square", "opposition", "quincunx", "semisquare", "sesquisquare"]);
 const STANDARD_PATHS = {
+  mechanism: "tldr-astro-phrasebank/TLDR-AUTHOR-FROM-MECHANISM-RULING-OWNER.md",
   delineation: "tldr-astro-phrasebank/TLDR-NATAL-PLACEMENT-DELINEATION-STANDARD-OWNER.md",
   corrections: "docs/writing/OWNER_CORRECTIONS.md",
   editorial: "tldr-astro-phrasebank/TLDR-BATCH-EDITORIAL-STANDARD-V2.md"
 };
+const SUPPORT_REGISTRY_PATH = path.join(packageRoot, "voice", "tldr-astro", "marie-satori-writer", "ll-matrix-v13", "ll-matrix-v13-astrology-support-v1.json");
 
 function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");
@@ -84,6 +86,7 @@ function parseNatalTarget(surface, key) {
     return {
       surface: normalizedSurface,
       key: `${planetA}|${aspect}|${planetB}`,
+      sourceKey: rawKey,
       supported: true,
       planetA,
       aspect,
@@ -103,6 +106,7 @@ function parseNatalTarget(surface, key) {
   return {
     surface: normalizedSurface,
     key: house ? `${planet}|${house}${house === 1 ? "st" : house === 2 ? "nd" : house === 3 ? "rd" : "th"} house` : `${planet}|${sign}`,
+    sourceKey: rawKey,
     supported: true,
     planet,
     placementType: house ? "house" : "sign",
@@ -154,10 +158,7 @@ function loadNatalFactBoundary(target) {
       status,
       registryKind: row.kind || "natal-aspect",
       identity: { planetA: target.planetA, aspect: target.aspect, planetB: target.planetB },
-      factMaterial: Object.fromEntries(["tldr", "summary", "body", "gift", "challenge", "shadow", "integration", "business", "policy", "sourceFactors"]
-        .filter((key) => row[key] != null)
-        .map((key) => [key, row[key]])),
-      usageBoundary: "Astrology facts only. This registry prose is not owner-voice evidence and must not be imitated."
+      usageBoundary: "Identity and active-status boundary only. Registry prose is excluded from the writer context."
     };
   }
   const actualPlanet = normalize(row.planet || row.point);
@@ -172,10 +173,50 @@ function loadNatalFactBoundary(target) {
     status,
     registryKind: row.kind || target.placementType,
     identity: { planet: target.planet, placementType: target.placementType, placementValue: target.placementValue },
-    factMaterial: Object.fromEntries(["tldr", "body", "gift", "challenge", "shadow", "integration", "business", "policy", "note"]
-      .filter((key) => row[key] != null)
-      .map((key) => [key, row[key]])),
-    usageBoundary: "Astrology facts only. This registry prose is not owner-voice evidence and must not be imitated."
+    usageBoundary: "Identity and active-status boundary only. Registry prose is excluded from the writer context."
+  };
+}
+
+function loadAstrologySupportRegistry() {
+  if (!fs.existsSync(SUPPORT_REGISTRY_PATH)) {
+    throw new Error(`Missing AstrologySupport registry: ${relative(SUPPORT_REGISTRY_PATH)}. Run scripts/build-ll-v13-astrology-support-registry.mjs.`);
+  }
+  return JSON.parse(fs.readFileSync(SUPPORT_REGISTRY_PATH, "utf8"));
+}
+
+function supportSheetFor(target) {
+  if (target.surface === "natal-aspect") return "AspectMeanings";
+  return ["north-node", "south-node", "part-of-fortune"].includes(target.planet)
+    ? "NodesPhasesFortune"
+    : "PlacementMeanings";
+}
+
+function loadAstrologySupport(target, supportRegistry = loadAstrologySupportRegistry()) {
+  if (!target.supported) return { ok: false, reason: target.reason };
+  const preferredSheet = supportSheetFor(target);
+  const exactRows = supportRegistry.rows.filter((entry) => entry.key === target.sourceKey);
+  const row = exactRows.find((entry) => entry.sheet === preferredSheet) || (exactRows.length === 1 ? exactRows[0] : null);
+  const sheet = row?.sheet || preferredSheet;
+  if (!row) return { ok: false, reason: "missing-astrology-support", sheet, key: target.key };
+  if (!String(row.astrologySupport || "").trim()) return { ok: false, reason: "blank-astrology-support", sheet, key: target.key };
+  return {
+    ok: true,
+    rowKey: target.key,
+    sheet,
+    workbookRow: row.workbookRow,
+    astrologySupport: row.astrologySupport,
+    astrologySupportSha256: row.astrologySupportSha256,
+    sourcePath: supportRegistry.sourceWorkbook,
+    sourceSha256: supportRegistry.sourceWorkbookSha256,
+    sourceConstraints: [
+      "AstrologySupport is the sole target-mechanism source.",
+      "Registry data supplies target identity and active-status boundaries only; its prose is unavailable.",
+      "Existing, prior, current, and revised candidate prose is unavailable to the writer.",
+      "Keep possibility as possibility and do not invent biography, childhood, trauma, relationships, work, health, or life status.",
+      target.surface === "natal-aspect"
+        ? "Preserve the aspect mechanism and both planetary roles; do not substitute a generic aspect description."
+        : "Preserve the planet or point role and the exact sign or house context; do not substitute natural-zodiac equivalence."
+    ]
   };
 }
 
@@ -284,20 +325,22 @@ function promptBlockFor(packet) {
   const documents = Object.entries(packet.standards.documents)
     .map(([id, document]) => `\n\n${id.toUpperCase()} (${document.sourcePath})\n${document.text.trim()}`)
     .join("");
-  return `NATAL WRITING EVIDENCE CONTRACT\nGeneration is allowed only because this packet contains four to six exact owner-approved passages from at least three source rows. Use them as writing-operation evidence, not as facts for the target. The registry fact boundary supplies target astrology; its prose is fact material only and is prohibited as voice evidence. Do not add facts that are absent from that boundary.\n\nFIVE-BEAT CONSTRAINTS\n${beats}${documents}`;
+  return `NATAL WRITING EVIDENCE CONTRACT\nGeneration is allowed only because this packet contains AstrologySupport for the exact row plus four to six exact owner-approved passages from at least three source rows. AstrologySupport is the sole target-mechanism source. Use owner passages as writing-operation evidence, never as target facts. Registry prose and all existing candidate prose are excluded from this packet by construction. Do not add facts absent from AstrologySupport.\n\nAUTHORING ORDER\nExtract an internal mechanism sentence that is never shipped; find the human situation; enter through a scene; show the consequence; add perspective last; delete astrology-summary prose.\n\nFIVE-BEAT CONSTRAINTS\n${beats}${documents}`;
 }
 
-function buildNatalWritingPacket({ surface, key, indexEntries, factBoundaryLoader = loadNatalFactBoundary }) {
+function buildNatalWritingPacket({ surface, key, indexEntries, factBoundaryLoader = loadNatalFactBoundary, supportRegistry }) {
   const target = parseNatalTarget(surface, key);
   const factBoundary = factBoundaryLoader(target);
+  const authoringSource = loadAstrologySupport(target, supportRegistry);
   const standards = loadStandards();
   const ownerPassages = target.supported ? selectOwnerPassages(target, indexEntries || buildIndex().entries) : [];
   const distinctSourceRows = new Set(ownerPassages.map((entry) => entry.sourceRowId)).size;
   const evidenceCompliant = ownerPassages.length >= MIN_PASSAGES && ownerPassages.length <= MAX_PASSAGES && distinctSourceRows >= MIN_SOURCE_ROWS;
-  const generationAllowed = target.supported && factBoundary.ok === true && evidenceCompliant;
+  const generationAllowed = target.supported && factBoundary.ok === true && authoringSource.ok === true && evidenceCompliant;
   const reasons = [];
   if (!target.supported) reasons.push(target.reason);
   if (target.supported && !factBoundary.ok) reasons.push(factBoundary.reason);
+  if (target.supported && !authoringSource.ok) reasons.push(authoringSource.reason);
   if (ownerPassages.length < MIN_PASSAGES) reasons.push("fewer-than-four-owner-passages");
   if (distinctSourceRows < MIN_SOURCE_ROWS) reasons.push("fewer-than-three-distinct-source-rows");
   const packet = {
@@ -308,6 +351,7 @@ function buildNatalWritingPacket({ surface, key, indexEntries, factBoundaryLoade
     generationAllowed,
     target,
     factBoundary,
+    authoringSource,
     evidencePolicy: {
       authorityClass: "exact_owner_approved",
       minimumPassages: MIN_PASSAGES,
@@ -343,15 +387,26 @@ function assertNatalGenerationAllowed(packet) {
   }
 }
 
-function renderNatalModelInput(packet, { task = "Write the requested natal delineation.", inputText = "" } = {}) {
+function renderNatalModelInput(packet, { task = "Write the requested natal delineation.", inputText } = {}) {
   assertNatalGenerationAllowed(packet);
+  if (inputText != null && String(inputText).trim()) {
+    throw new Error("PRIOR_COPY_FORBIDDEN: natal authoring packets cannot accept existing candidate prose.");
+  }
   const evidence = packet.ownerPassages.map((entry, index) => [
     `OWNER PASSAGE ${index + 1}`,
     `Source row: ${entry.sourceRowId}`,
     `Affinity: ${entry.affinity.label}`,
     entry.text
   ].join("\n")).join("\n\n");
-  return `${packet.promptBlock}\n\nFACT BOUNDARY\n${JSON.stringify(packet.factBoundary, null, 2)}\n\nEXACT TASK\n${task}${inputText ? `\n\nTEXT TO REVISE\n${inputText}` : ""}\n\n${evidence}\n`;
+  const registryIdentity = {
+    sourcePath: packet.factBoundary.sourcePath,
+    sourceSha256: packet.factBoundary.sourceSha256,
+    status: packet.factBoundary.status,
+    registryKind: packet.factBoundary.registryKind,
+    identity: packet.factBoundary.identity,
+    usageBoundary: packet.factBoundary.usageBoundary
+  };
+  return `${packet.promptBlock}\n\nAUTHORING SOURCE\n${JSON.stringify(packet.authoringSource, null, 2)}\n\nREGISTRY IDENTITY BOUNDARY\n${JSON.stringify(registryIdentity, null, 2)}\n\nEXACT TASK\n${task}\n\n${evidence}\n`;
 }
 
 module.exports = {
@@ -361,12 +416,15 @@ module.exports = {
   MIN_PASSAGES,
   MIN_SOURCE_ROWS,
   PACKET_VERSION,
+  SUPPORT_REGISTRY_PATH,
   STANDARD_PATHS,
   aspectFamily,
   assertNatalGenerationAllowed,
   buildNatalWritingPacket,
   houseNumber,
   loadNatalFactBoundary,
+  loadAstrologySupport,
+  loadAstrologySupportRegistry,
   normalizeAspect,
   normalizeSurface,
   parseNatalTarget,
