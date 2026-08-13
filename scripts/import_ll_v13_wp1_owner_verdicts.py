@@ -16,9 +16,22 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import Any
 
+try:
+    from ll_v13_wp1_editorial import (
+        EDITORIAL_HEADERS,
+        EditorialValidationError,
+        validate_editorial_rows,
+    )
+except ModuleNotFoundError:  # Imported as scripts.import_ll_v13_wp1_owner_verdicts in tests/tools.
+    from scripts.ll_v13_wp1_editorial import (
+        EDITORIAL_HEADERS,
+        EditorialValidationError,
+        validate_editorial_rows,
+    )
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_WORKBOOK = REPO_ROOT / "tldr-astro-phrasebank/TLDR-LL-V13-WP1-BATCH-01-OWNER-REVIEW.xlsx"
+DEFAULT_WORKBOOK = REPO_ROOT / "packages/astro-knowledge/review/TLDR-LL-V13-WP1-BATCH-01-EDITORIAL-REVISION-V2.xlsx"
 DEFAULT_MANIFEST = REPO_ROOT / "packages/astro-knowledge/review/ll-matrix-v13-wp1-review-batch-manifest.json"
 SOURCE_ROWS = REPO_ROOT / "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
 APPROVED_OVERLAY = REPO_ROOT / "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/wp1-owner-approved-locked.json"
@@ -27,7 +40,7 @@ PUBLIC_LOCKED = REPO_ROOT / "apps/web/public/content/knowledge-matrix-v13/v13-di
 RUNTIME_MANIFEST = REPO_ROOT / "packages/astro-knowledge/review/ll-matrix-v13-runtime-manifest.json"
 FRIEND_CANDIDATES = REPO_ROOT / "apps/web/src/content/fallbackArchitectureV3/source-rows/friend-natal-ll-v13-wp1-derived-candidates-v1.json"
 VALID_VERDICTS = {"approve", "edit", "cut"}
-EXPECTED_HEADERS = [
+EXPECTED_BASE_HEADERS = [
     "#", "Sheet", "Family", "Row key", "Current copy", "Judge annotation (V13 clarity rubric)",
     "QA flagged passages", "QA judged passages", "QA flag rate", "Owner verdict", "Owner edit", "Metadata SHA-256",
 ]
@@ -165,14 +178,48 @@ def validate_manifest(manifest: dict[str, Any], batch_id: str) -> dict[str, Any]
     return batch
 
 
+def candidate_sheet_name(batch: dict[str, Any]) -> str:
+    return f"Candidates{len(batch['rows'])}"
+
+
+def validate_editorial_packet(review: SheetData, batch: dict[str, Any]) -> list[dict[str, str]] | None:
+    row_count = len(batch["rows"])
+    headers = [cell(review, column, 1) for column in ("M", "N", "O")]
+    if headers == ["", "", ""]:
+        if any(cell(review, column, row) for row in range(2, row_count + 2) for column in ("M", "N", "O")):
+            raise ImportValidationError("Editorial values are present without the V2 editorial headers.")
+        return None
+    if headers != EDITORIAL_HEADERS:
+        raise ImportValidationError("Editorial headers drifted from the V2 contract.")
+    editorial_formula_refs = {f"{column}{row}" for row in range(2, row_count + 2) for column in ("M", "N", "O")}
+    formulas = sorted(editorial_formula_refs.intersection(review.formulas))
+    if formulas:
+        raise ImportValidationError(f"Formula cells are refused in editorial fields: {', '.join(formulas)}")
+    rows = [
+        {
+            "rowKey": item["rowKey"],
+            "disposition": cell(review, "M", index + 2),
+            "revisedCopy": cell(review, "N", index + 2),
+            "editorialNote": cell(review, "O", index + 2),
+        }
+        for index, item in enumerate(batch["rows"])
+    ]
+    try:
+        return validate_editorial_rows(batch["rows"], rows)
+    except EditorialValidationError as exc:
+        raise ImportValidationError(str(exc)) from exc
+
+
 def validate_workbook(workbook: Path, batch: dict[str, Any]) -> list[dict[str, Any]]:
     sheets = read_xlsx_sheets(workbook)
-    if "Candidates132" not in sheets:
-        raise ImportValidationError("Workbook is missing Candidates132.")
-    review = sheets["Candidates132"]
+    sheet_name = candidate_sheet_name(batch)
+    if sheet_name not in sheets:
+        raise ImportValidationError(f"Workbook is missing {sheet_name}.")
+    review = sheets[sheet_name]
     headers = [cell(review, chr(ord("A") + index), 1) for index in range(12)]
-    if headers != EXPECTED_HEADERS:
-        raise ImportValidationError("Candidates132 headers drifted from the governed contract.")
+    if headers != EXPECTED_BASE_HEADERS:
+        raise ImportValidationError(f"{sheet_name} headers drifted from the governed contract.")
+    editorial_rows = validate_editorial_packet(review, batch)
     controlled_formula_refs = {f"{column}{row}" for row in range(2, len(batch["rows"]) + 2) for column in ("J", "K")}
     formulas = sorted(controlled_formula_refs.intersection(review.formulas))
     if formulas:
@@ -192,7 +239,7 @@ def validate_workbook(workbook: Path, batch: dict[str, Any]) -> list[dict[str, A
         field_names = ["#", "Sheet", "Family", "Row key", "Current copy", "Judge annotation", "QA flagged passages", "QA judged passages", "QA flag rate", "Metadata SHA-256"]
         mismatches = [field_names[position] for position in exact_indexes if actual[position] != expected[position]]
         if mismatches:
-            raise ImportValidationError(f"Candidates132 row {row} drifted in: {', '.join(mismatches)}")
+            raise ImportValidationError(f"{sheet_name} row {row} drifted in: {', '.join(mismatches)}")
         key = actual[3]
         if key in seen:
             raise ImportValidationError(f"Duplicate workbook row key: {key}")
@@ -200,17 +247,38 @@ def validate_workbook(workbook: Path, batch: dict[str, Any]) -> list[dict[str, A
         verdict = cell(review, "J", row).strip().lower()
         edit = cell(review, "K", row)
         if verdict not in VALID_VERDICTS:
-            raise ImportValidationError(f"Candidates132!J{row} must be approve, edit, or cut.")
+            raise ImportValidationError(f"{sheet_name}!J{row} must be approve, edit, or cut.")
         if verdict == "edit" and not edit.strip():
-            raise ImportValidationError(f"Candidates132!K{row} requires the owner's verbatim edit.")
+            raise ImportValidationError(f"{sheet_name}!K{row} requires the owner's verbatim edit.")
         if verdict != "edit" and edit != "":
-            raise ImportValidationError(f"Candidates132!K{row} must be blank unless verdict is edit.")
-        adopted = item["currentCopy"] if verdict == "approve" else edit if verdict == "edit" else None
+            raise ImportValidationError(f"{sheet_name}!K{row} must be blank unless verdict is edit.")
+        editorial = editorial_rows[index - 1] if editorial_rows is not None else None
+        if verdict == "approve" and editorial is not None and editorial["disposition"] == "SOURCE_GAP":
+            raise ImportValidationError(f"{sheet_name}!J{row} cannot approve a SOURCE_GAP row; use edit or cut.")
+        if verdict == "approve":
+            adopted = (
+                item["currentCopy"]
+                if editorial is None or editorial["disposition"] == "AS_IS"
+                else editorial["revisedCopy"]
+            )
+            import_disposition = (
+                "adopt-current-copy-byte-identically"
+                if editorial is None or editorial["disposition"] == "AS_IS"
+                else "adopt-editorial-revision-verbatim"
+            )
+        elif verdict == "edit":
+            adopted = edit
+            import_disposition = "adopt-owner-wording-verbatim"
+        else:
+            adopted = None
+            import_disposition = "discard-row"
         verdicts.append({
             "number": index, "sheet": item["sheet"], "family": item["family"], "rowKey": key,
             "workbookRow": item["workbookRow"], "ownerReviewWorkbookRow": row,
             "contentKey": item["contentKey"], "metadataSha256": item["metadataSha256"],
-            "verdict": verdict, "disposition": {"approve": "adopt-current-copy-byte-identically", "edit": "adopt-owner-wording-verbatim", "cut": "discard-row"}[verdict],
+            "verdict": verdict, "disposition": import_disposition,
+            "editorialDisposition": editorial["disposition"] if editorial is not None else None,
+            "editorialDraftSha256": sha256(editorial["revisedCopy"]) if editorial is not None and editorial["revisedCopy"] else None,
             "adoptedCopy": adopted,
         })
     return verdicts
@@ -222,7 +290,12 @@ def build_record(workbook: Path, workbook_bytes: bytes, manifest_path: Path, bat
         "record": "ll-matrix-v13-wp1-owner-verdict-import-v1",
         "batchId": batch["batchId"],
         "ownerReviewDate": owner_review_date,
-        "sourceWorkbook": {"fileName": workbook.name, "sha256": sha256(workbook_bytes), "ownerInputRange": f"Candidates132!J2:K{len(verdicts) + 1}"},
+        "sourceWorkbook": {
+            "fileName": workbook.name,
+            "sha256": sha256(workbook_bytes),
+            "candidateSheet": candidate_sheet_name(batch),
+            "ownerInputRange": f"{candidate_sheet_name(batch)}!J2:K{len(verdicts) + 1}",
+        },
         "batchManifest": {"path": str(manifest_path.relative_to(REPO_ROOT)), "sha256": sha256(manifest_path.read_bytes())},
         "validation": {"candidateCount": len(verdicts), "allRowsHashMatched": True, "allControlledFieldsMatched": True, "partialImportAllowed": False},
         "verdictCounts": {name: sum(item["verdict"] == name for item in verdicts) for name in sorted(VALID_VERDICTS)},
@@ -311,7 +384,7 @@ def apply_import(record: dict[str, Any], record_path: Path) -> None:
         "key": item["rowKey"], "contentKey": item["contentKey"], "runtimeFamily": runtime_family(item["family"]),
         "copy": item["adoptedCopy"], "ownerApproved": True, "approvedAt": record["ownerReviewDate"], "governance": "owner-approved-v13-wp1",
         "authorship": "owner_authored", "payloadSha256": sha256(compact_json({"body": item["adoptedCopy"]})), "metadataSha256": item["metadataSha256"],
-        "workbookProvenance": {"path": record["sourceWorkbook"]["fileName"], "sheet": "Candidates132", "row": item["ownerReviewWorkbookRow"]},
+        "workbookProvenance": {"path": record["sourceWorkbook"]["fileName"], "sheet": record["sourceWorkbook"]["candidateSheet"], "row": item["ownerReviewWorkbookRow"]},
     } for item in approved]
     overlay["rows"] = [*prior_overlay, *overlay_rows]
     overlay["counts"] = {"ownerApprovedRows": len(overlay["rows"]), "byBatch": {batch: sum(row["batchId"] == batch for row in overlay["rows"]) for batch in sorted({row["batchId"] for row in overlay["rows"]})}}
