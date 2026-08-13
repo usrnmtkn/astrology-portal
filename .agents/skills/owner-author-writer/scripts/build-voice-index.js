@@ -78,7 +78,7 @@ function beatFromHeading(heading) {
   return "body";
 }
 
-function baseEntry({ sourceId, text, sourcePath, author, origin, surface, planet = "", sign = "", house = "", articleBeat, structuralFunction, authorityClass, ownerAuthored, ownerApproved, reviewStatus, editorialStatus, canonical, useAsPositiveVoiceEvidence, useAsContextualEvidence = false, useAsNegativeEvidence, failureTags = [], provenance, governance, judgeLineage, workbookSourceRow }) {
+function baseEntry({ sourceId, text, sourcePath, author, origin, surface, planet = "", sign = "", house = "", articleBeat, structuralFunction, authorityClass, ownerAuthored, ownerApproved, reviewStatus, editorialStatus, canonical, useAsPositiveVoiceEvidence, useAsContextualEvidence = false, useAsNegativeEvidence, failureTags = [], provenance, governance, judgeLineage, workbookSourceRow, governedKey, planetA, aspect, planetB, placementType, placementValue }) {
   return {
     sourceId,
     text,
@@ -106,6 +106,12 @@ function baseEntry({ sourceId, text, sourcePath, author, origin, surface, planet
     ...(governance ? { governance } : {}),
     ...(judgeLineage ? { judgeLineage } : {}),
     ...(workbookSourceRow ? { workbookSourceRow } : {}),
+    ...(governedKey ? { governedKey } : {}),
+    ...(planetA ? { planetA } : {}),
+    ...(aspect ? { aspect } : {}),
+    ...(planetB ? { planetB } : {}),
+    ...(placementType ? { placementType } : {}),
+    ...(placementValue ? { placementValue } : {}),
     sourceSha256: sha256(text)
   };
 }
@@ -564,7 +570,14 @@ function llMatrixV13Entries() {
       canonical: true,
       useAsPositiveVoiceEvidence: true,
       useAsContextualEvidence: true,
-      provenance: `Canonical owner-approved LL matrix V13 row (2026-08-10), workbook ${dataset.sourceWorkbook}, ${row.sheet} row ${row.workbookRow}. Copy preserved exactly; Gemini blind-edit path discarded. Runtime payload ${row.payloadSha256}.`
+      provenance: `Canonical owner-approved LL matrix V13 row (2026-08-10), workbook ${dataset.sourceWorkbook}, ${row.sheet} row ${row.workbookRow}. Copy preserved exactly; Gemini blind-edit path discarded. Runtime payload ${row.payloadSha256}.`,
+      governedKey: row.key,
+      workbookSourceRow: row.workbookRow,
+      planetA: row.sheet === "AspectMeanings" && parts.length === 3 ? tokens(parts[0]).join("-") : "",
+      aspect: row.sheet === "AspectMeanings" && parts.length === 3 ? tokens(parts[1]).join("-") : "",
+      planetB: row.sheet === "AspectMeanings" && parts.length === 3 ? tokens(parts[2]).join("-") : "",
+      placementType: row.sheet === "PlacementMeanings" && parts.length === 2 ? (house ? "house" : sign ? "sign" : "") : "",
+      placementValue: row.sheet === "PlacementMeanings" && parts.length === 2 ? (house || sign) : ""
     });
   });
 }
@@ -607,7 +620,14 @@ function llMatrixV13Wp1Entries() {
       canonical: true,
       useAsPositiveVoiceEvidence: true,
       useAsContextualEvidence: true,
-      provenance: `Owner-approved LL V13 WP-1 row, ${row.batchId}, approved ${row.approvedAt}. Copy preserved exactly. Runtime payload ${row.payloadSha256}.`
+      provenance: `Owner-approved LL V13 WP-1 row, ${row.batchId}, approved ${row.approvedAt}. Copy preserved exactly. Runtime payload ${row.payloadSha256}.`,
+      governedKey: row.key,
+      workbookSourceRow: row.workbookRow,
+      planetA: row.sheet === "AspectMeanings" && parts.length === 3 ? tokens(parts[0]).join("-") : "",
+      aspect: row.sheet === "AspectMeanings" && parts.length === 3 ? tokens(parts[1]).join("-") : "",
+      planetB: row.sheet === "AspectMeanings" && parts.length === 3 ? tokens(parts[2]).join("-") : "",
+      placementType: row.sheet === "PlacementMeanings" && parts.length === 2 ? (String(row.key).match(/\|\d+(?:st|nd|rd|th) house$/u) ? "house" : SIGNS.includes(placementSlug) ? "sign" : "") : "",
+      placementValue: row.sheet === "PlacementMeanings" && parts.length === 2 ? (String(row.key).match(/\|(\d+)(?:st|nd|rd|th) house$/u)?.[1] || (SIGNS.includes(placementSlug) ? placementSlug : "")) : ""
     });
   });
 }

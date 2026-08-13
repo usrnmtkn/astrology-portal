@@ -21,6 +21,7 @@ const ownerSelectedBenchmark = require(path.join(packageRoot, "review", "sky-pla
 const planetCycleFacts = require(path.join(packageRoot, "data", "modifiers", "planet-cycle-facts.json"));
 const { lintArticle } = require(path.join(packageRoot, "scripts", "lint-placement-voice.js"));
 const { renderOwnerVocabularySelection, selectOwnerVocabulary } = require(path.join(packageRoot, "scripts", "owner-vocabulary-prompt.js"));
+const { buildNatalWritingPacket, renderNatalModelInput } = require("./natal-writing-packet.js");
 const AFFINITY_POOL_ID = "sky-placement-owner-affinity-v1";
 const ACTIVE_FACT_STATUSES = new Set(["REVIEWED", "LIVE", "APPROVED"]);
 const UNSUPPORTED_DOMAIN_PATTERNS = {
@@ -985,6 +986,21 @@ function parseArgs(argv) {
 function main() {
   const args = parseArgs(process.argv.slice(2));
   if (!args.out) throw new Error("--out is required.");
+  if (["natal", "natal-aspect", "natal-placement"].includes(args.surface)) {
+    if (!args.id) throw new Error("--id is required for natal surfaces.");
+    const surface = args.surface === "natal" ? "natal-aspect" : args.surface;
+    const packet = buildNatalWritingPacket({ surface, key: args.id });
+    fs.mkdirSync(args.out, { recursive: true });
+    fs.writeFileSync(path.join(args.out, "packet.json"), `${JSON.stringify(packet, null, 2)}\n`);
+    if (!packet.generationAllowed) {
+      console.error(`Natal packet is insufficient-evidence: ${packet.evidenceSummary.reasons.join(", ")}`);
+      process.exitCode = 2;
+      return;
+    }
+    fs.writeFileSync(path.join(args.out, "model-input.md"), renderNatalModelInput(packet, { task: args.task, inputText: args.input || "" }));
+    console.log(`Compiled ${packet.ownerPassages.length}-passage natal packet at ${args.out}. No model call was made.`);
+    return;
+  }
   const engineFacts = args["engine-facts"] ? JSON.parse(fs.readFileSync(path.resolve(args["engine-facts"]), "utf8")) : {};
   const packet = buildPacket({ planet: args.planet, sign: args.sign, requestedBeat: args["requested-beat"] || args.beat, emphasisBeat: args["emphasis-beat"] || null, task: args.task, inputText: args.input || "", currentSky: args["current-sky"] !== "false", engineFacts });
   fs.mkdirSync(args.out, { recursive: true });
@@ -993,7 +1009,7 @@ function main() {
   console.log(`Compiled four-to-six-passage affinity packet at ${args.out}. No model call was made.`);
 }
 
-module.exports = { ACTIVE_FACT_STATUSES, AFFINITY_POOL_ID, PACKET_VERSION, RELEASE_ID, SUPPORTED_DOMAIN_PATTERNS, UNSUPPORTED_DOMAIN_PATTERNS, assertPacketQuotablesPassOutputBans, astrologyEvidence, buildFactGatedStructure, buildPacket, collectPacketQuotables, eligibleEntries, factStatusAllowsWriting, matchesRequestedOperation, operationSignals, passageSupportsTargetDomain, passageUsesIncompatibleCurrentSkyEvidence, passageUsesUnsupportedDomain, renderModelInput, selectAffinitySix, selectOwnerCorpusWarmthEvidence, selectSix, selectVoiceDevices, structureFor };
+module.exports = { ACTIVE_FACT_STATUSES, AFFINITY_POOL_ID, PACKET_VERSION, RELEASE_ID, SUPPORTED_DOMAIN_PATTERNS, UNSUPPORTED_DOMAIN_PATTERNS, assertPacketQuotablesPassOutputBans, astrologyEvidence, buildFactGatedStructure, buildNatalWritingPacket, buildPacket, collectPacketQuotables, eligibleEntries, factStatusAllowsWriting, matchesRequestedOperation, operationSignals, passageSupportsTargetDomain, passageUsesIncompatibleCurrentSkyEvidence, passageUsesUnsupportedDomain, renderModelInput, renderNatalModelInput, selectAffinitySix, selectOwnerCorpusWarmthEvidence, selectSix, selectVoiceDevices, structureFor };
 if (require.main === module) {
   try { main(); } catch (error) { console.error(error instanceof Error ? error.message : error); process.exitCode = 1; }
 }
