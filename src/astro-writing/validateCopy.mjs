@@ -72,6 +72,13 @@ const THERAPY_SUMMARY_TERMS = Object.freeze([
   "deep bonds", "emotional entanglements", "intuition", "leap of faith", "work ethic"
 ]);
 
+const GENERIC_ASTROLOGY_SUMMARY_PATTERNS = Object.freeze([
+  /\bin this karmic framework\b/iu,
+  /\b(?:philosophical|spiritual) lesson\b/iu,
+  /\bpast lives?\b/iu,
+  /\b(?:the|this) (?:gift|advantage|lesson|deeper path) is\b/iu
+]);
+
 const HOUSE_BLEED_NOUNS = Object.freeze({
   aries: ["appearance", "body image", "first impression", "identity", "self-presentation"],
   taurus: ["salary", "income", "budget", "bank", "wealth"],
@@ -224,6 +231,12 @@ export function validateCopy(copy, {
     if (therapyMatches.length >= 2 && !hasObservableTerm) {
       violations.push({ category: "astrology_summary", detail: `Abstract or therapy-register summary without lived action: ${therapyMatches.join(", ")}` });
     }
+    const sentences = proseSegments.flatMap((segment) => segment.split(/(?<=[.!?])\s+/u)).map((sentence) => sentence.trim()).filter(Boolean);
+    for (const sentence of sentences) {
+      if (!GENERIC_ASTROLOGY_SUMMARY_PATTERNS.some((pattern) => pattern.test(sentence))) continue;
+      violations.push({ category: "astrology_summary", detail: `Generic astrology-summary sentence: ${sentence}` });
+      violations.push({ category: "whole_passage_sentence_role", detail: `Sentence does not advance the lived scene, state a specific consequence, or provide necessary astrology-to-life perspective: ${sentence}` });
+    }
     for (const paragraph of proseSegments.flatMap((segment) => segment.split(/\n\s*\n/gu)).filter(Boolean)) {
       const normalizedParagraph = paragraph.toLowerCase();
       const cluster = THERAPY_CLUSTER_TERMS.filter((term) => hasBanned(normalizedParagraph, term));
@@ -256,6 +269,7 @@ export {
   DEFAULT_BANNED,
   HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS,
   HOUSE_BLEED_NOUNS,
+  GENERIC_ASTROLOGY_SUMMARY_PATTERNS,
   OBSERVABLE_TERMS,
   OBSERVABLE_ACTIONS,
   STOCK_TROPES,

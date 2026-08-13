@@ -70,5 +70,14 @@
       "defects": ["archetype_soup"],
       "diagnosis": "MC conjunct Mars is archetype soup: warriors, athletes, striving, rocket fuel, chariot, blades. It is cleverer than it is useful."
     }
-  ]
+  ],
+  "loopholeNegative": {
+    "id": "jupiter-conjunction-south-node-photograph-laundering",
+    "rowKey": "jupiter|conjunction|south_node",
+    "expected": "REVISE",
+    "photographTest": "PASS",
+    "defects": ["astrology_summary", "whole_passage_sentence_role"],
+    "copy": "A teacher, trip, disappointment, or opportunity shows up and you recognize the question almost immediately. The details are different, but the same belief is back on the table. In this karmic framework, repetition carries a philosophical or spiritual lesson.",
+    "diagnosis": "The opening clears the photograph-test minimum, but the final sentence is generic astrology-summary prose. One lived clause cannot make the whole passage pass."
+  }
 }
