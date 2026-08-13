@@ -7,6 +7,9 @@ const {
   buildAspectWarmthHarvest,
   foundationPromptBlock
 } = require("./aspect-corpus-warmth-harvest.js");
+const {
+  buildNatalWritingPacket
+} = require("../../../.agents/skills/marie-satori-writer/scripts/natal-writing-packet.js");
 
 const packageRoot = path.join(__dirname, "..");
 const DEFAULT_METHOD_PATH = "packages/astro-knowledge/docs/editorial-ai/method-corpus-warmth-harvest.md";
@@ -37,7 +40,15 @@ function loadEntry(options) {
   return { ...value, id: value.id || options.id || path.basename(filePath, path.extname(filePath)) };
 }
 
-function buildAspectWritingPacket({ surface, format = "full-card", entry }) {
+function buildAspectWritingPacket({ surface, format = "full-card", entry, indexEntries, factBoundaryLoader }) {
+  if (["natal", "natal-aspect"].includes(surface)) {
+    return buildNatalWritingPacket({
+      surface: "natal-aspect",
+      key: entry.id,
+      indexEntries,
+      factBoundaryLoader
+    });
+  }
   const warmthHarvest = buildAspectWarmthHarvest(entry, { surface, format });
   return {
     schemaVersion: 1,
