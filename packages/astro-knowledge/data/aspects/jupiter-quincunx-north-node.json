@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-quincunx-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter inconjunct North Node can make a teacher's own unfinished spiritual work seem like proof that their insight has no value.",
+  "astrologySupportSha256": "c9d7c0e43f94a51464e9dd3b5469f502da7717372d7e6613d8731b1be08f154c",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "quincunx",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 422,
+    "keyCell": "A422",
+    "pageRef": "PDF p.389",
+    "astrologySupportCell": "L422",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

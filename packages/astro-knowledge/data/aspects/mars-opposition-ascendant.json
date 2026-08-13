@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-opposition-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars opposite Ascendant can make other people the place where competitiveness becomes obvious.",
+  "astrologySupportSha256": "7da7478a230cb73a5e7629fb70319afeb045d1114e80429a7cea08ef18970f64",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "opposition",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 549,
+    "keyCell": "A549",
+    "pageRef": "PDF p.412-413",
+    "astrologySupportCell": "L549",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

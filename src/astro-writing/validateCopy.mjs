@@ -58,6 +58,10 @@ const ABSTRACT_OPENING_SUBJECTS = Object.freeze([
   "recognition", "responsibility", "sensitivity", "transformation", "work ethic"
 ]);
 
+const ABSTRACT_GRAMMATICAL_SUBJECTS = Object.freeze([
+  "meaning", "emotion", "sensitivity", "confidence", "intensity", "ambition", "imagination", "discipline"
+]);
+
 const THERAPY_CLUSTER_TERMS = Object.freeze([
   "empathy", "trauma", "nurturing", "healing", "growth", "potential", "energy", "journey"
 ]);
@@ -232,6 +236,18 @@ export function validateCopy(copy, {
       violations.push({ category: "astrology_summary", detail: `Abstract or therapy-register summary without lived action: ${therapyMatches.join(", ")}` });
     }
     const sentences = proseSegments.flatMap((segment) => segment.split(/(?<=[.!?])\s+/u)).map((sentence) => sentence.trim()).filter(Boolean);
+    const abstractGrammarPattern = new RegExp(
+      `^(?:the |your )?(?:${ABSTRACT_GRAMMATICAL_SUBJECTS.join("|")})(?:\\s+and\\s+(?:${ABSTRACT_GRAMMATICAL_SUBJECTS.join("|")}))*\\s+(?:[a-z]+(?:s|es|ed|ing)?|is|are|has|have|can|may|often|usually)\\b`,
+      "iu"
+    );
+    for (const sentence of sentences) {
+      if (abstractGrammarPattern.test(sentence)) {
+        violations.push({ category: "abstract_subject_grammar", detail: `Abstract quality acts as the grammatical subject: ${sentence}` });
+      }
+      if (/\bhere\b/iu.test(sentence)) {
+        violations.push({ category: "chart_deixis", detail: `Deictic "here" points at the chart instead of a lived situation: ${sentence}` });
+      }
+    }
     for (const sentence of sentences) {
       if (!GENERIC_ASTROLOGY_SUMMARY_PATTERNS.some((pattern) => pattern.test(sentence))) continue;
       violations.push({ category: "astrology_summary", detail: `Generic astrology-summary sentence: ${sentence}` });
@@ -265,6 +281,7 @@ export function validateCopy(copy, {
 export {
   ARCHETYPE_TERMS,
   ABSTRACT_OPENING_SUBJECTS,
+  ABSTRACT_GRAMMATICAL_SUBJECTS,
   CONCRETE_NOUNS,
   DEFAULT_BANNED,
   HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS,

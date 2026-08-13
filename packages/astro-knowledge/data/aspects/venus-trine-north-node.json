@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-trine-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus trine North Node can bring teachers who feel familiar and trustworthy.",
+  "astrologySupportSha256": "e605980c2d5ae3e8ead29b206eb6541b7f5a9e26c44cf632ee5df061a38017c8",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "trine",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 278,
+    "keyCell": "A278",
+    "pageRef": "PDF p.362",
+    "astrologySupportCell": "L278",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

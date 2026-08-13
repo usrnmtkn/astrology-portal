@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-trine-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun trine South Node can make karmic situations easier to accept as part of what the person is here to learn. In this framework, that willingness helps old ego habits loosen instead of being repeated automatically.",
+  "astrologySupportSha256": "3eae213d4172b30cd2b9d7c72e098296fcd395e97f79988393dba3c2d241f8bf",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "trine",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 79,
+    "keyCell": "A79",
+    "pageRef": "PDF p.315",
+    "astrologySupportCell": "L79",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

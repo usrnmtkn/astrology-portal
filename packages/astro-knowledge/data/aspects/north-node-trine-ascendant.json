@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "north-node-trine-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "North Node trine Ascendant can make a spiritual way of living feel natural.",
+  "astrologySupportSha256": "059dc0e023aa05b6ff09e24b424b886cc98c0b886a4219adb7c4e910cacffea9",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "north-node",
+      "aspect": "trine",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 596,
+    "keyCell": "A596",
+    "pageRef": "PDF p.417-418",
+    "astrologySupportCell": "L596",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

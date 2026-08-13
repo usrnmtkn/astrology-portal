@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-square-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto square South Node can make karmic situations frightening because they threaten to change the person's entire frame of understanding.",
+  "astrologySupportSha256": "17affdba467189b79633dc5d074dc278479ff9f5a010bdcb62090fb9af467857",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "square",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 511,
+    "keyCell": "A511",
+    "pageRef": "PDF p.409",
+    "astrologySupportCell": "L511",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

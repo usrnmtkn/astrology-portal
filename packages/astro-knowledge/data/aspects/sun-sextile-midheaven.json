@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-sextile-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun sextile Midheaven gives recognition a workable opening.",
+  "astrologySupportSha256": "9dbb59ef8c02f9a159d823a618e4df6889d53014110838568e618c8312c249ba",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "sextile",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 608,
+    "keyCell": "A608",
+    "pageRef": "PDF p.418-419",
+    "astrologySupportCell": "L608",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

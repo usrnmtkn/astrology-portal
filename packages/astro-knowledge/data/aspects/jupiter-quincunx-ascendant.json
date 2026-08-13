@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-quincunx-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter inconjunct Ascendant can make compromise feel more useful once the person sees how much is gained by helping other people.",
+  "astrologySupportSha256": "c65961ce4fdfb2aea23bf48de55f76bbe986d9a9772e1028b66d19071b9047b2",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "quincunx",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 555,
+    "keyCell": "A555",
+    "pageRef": "PDF p.413-414",
+    "astrologySupportCell": "L555",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

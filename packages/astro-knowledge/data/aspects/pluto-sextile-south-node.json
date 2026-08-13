@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-sextile-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto sextile South Node can make karmic situations easier to use for deeper change.",
+  "astrologySupportSha256": "bd9129cf57d82b9d60f641bb55fb612f5cb11b44bab343281dcc9a86eff35daa",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "sextile",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 510,
+    "keyCell": "A510",
+    "pageRef": "PDF p.409",
+    "astrologySupportCell": "L510",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-trine-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun trine North Node can bring a strong sense of recognition around spiritual teachers.",
+  "astrologySupportSha256": "943ec8c28dad10c8d5f9382c7a86ef422f6cd2f60e78e14c0dbb3083cc07b24d",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "trine",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 72,
+    "keyCell": "A72",
+    "pageRef": "PDF p.314",
+    "astrologySupportCell": "L72",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

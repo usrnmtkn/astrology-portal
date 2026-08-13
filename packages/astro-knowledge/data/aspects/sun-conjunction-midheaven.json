@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-conjunction-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun conjunct Midheaven can make public approval matter more than the person realizes.",
+  "astrologySupportSha256": "a7c6b1e47fb2359968c83fc42f87370cdf5fa883fc8d363b4029da904d1a970d",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "conjunction",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 606,
+    "keyCell": "A606",
+    "pageRef": "PDF p.418-419",
+    "astrologySupportCell": "L606",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

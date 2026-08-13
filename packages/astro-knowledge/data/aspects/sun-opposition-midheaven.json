@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "sun-opposition-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Sun opposite Midheaven can make the reason for wanting recognition impossible to ignore.",
+  "astrologySupportSha256": "7f94bfc0a9612067761ff56caf67934fa1496ecae3600b88bb50c4e728841da8",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "sun",
+      "aspect": "opposition",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 612,
+    "keyCell": "A612",
+    "pageRef": "PDF p.418-419",
+    "astrologySupportCell": "L612",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

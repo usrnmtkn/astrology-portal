@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-trine-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune trine Ascendant can make imagination, creativity, intuition, and responsiveness to other people feel natural.",
+  "astrologySupportSha256": "cce66e933b49ef4a2e53a92c33451d56f30c9395bc1a4d45da1ed17d42464e3c",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "trine",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 575,
+    "keyCell": "A575",
+    "pageRef": "PDF p.415-416",
+    "astrologySupportCell": "L575",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

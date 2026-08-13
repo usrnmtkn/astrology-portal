@@ -43,6 +43,8 @@ assert.match(ready.promptBlock, /The AstrologySupport field is the source\. The 
 assert.match(ready.promptBlock, /A passage does not pass because it contains one photographable clause\./u);
 assert.match(ready.promptBlock, /OWNER_CORRECTIONS\.md/u);
 assert.match(ready.promptBlock, /TLDR-BATCH-EDITORIAL-STANDARD-V2\.md/u);
+assert.match(ready.promptBlock, /TLDR-VOICE-ENTRY-POINT-RULING-OWNER\.md/u);
+assert.match(ready.promptBlock, /TWO INDEPENDENT AUTHORING TASKS/u);
 assert.equal(ready.factBoundary.sourcePath, "packages/astro-knowledge/data/insights/natal-aspects/moon-sextile-venus.json");
 assert.equal(ready.authoringSource.rowKey, "moon|sextile|venus");
 assert.ok(ready.authoringSource.astrologySupport.length > 0);
@@ -59,6 +61,19 @@ assert.throws(
   () => renderNatalModelInput(ready, { inputText: currentCopy }),
   /PRIOR_COPY_FORBIDDEN/u
 );
+const friendModelInput = renderNatalModelInput(ready, { voice: "friend", task: "Write Friend natal aspect copy." });
+assert.match(friendModelInput, /FRIEND ENTRY POINT/u);
+assert.match(friendModelInput, /observer/u);
+assert.doesNotMatch(friendModelInput, /SELF ENTRY POINT/u);
+assert.throws(() => renderNatalModelInput(ready, { voice: "friend", inputText: modelInput }), /PRIOR_COPY_FORBIDDEN/u);
+
+const pointReady = buildNatalWritingPacket({
+  surface: "natal-aspect",
+  key: "jupiter|conjunction|ascendant"
+});
+assert.equal(pointReady.generationAllowed, true);
+assert.equal(pointReady.factBoundary.sourcePath, "packages/astro-knowledge/data/aspects/jupiter-conjunction-ascendant.json");
+assert.equal(pointReady.factBoundary.registryKind, "natal-aspect-doctrine");
 
 const routed = buildAspectWritingPacket({
   surface: "natal",

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mercury-nonagen-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mercury semisextile Part of Fortune can make it harder to turn mental ability into money or tangible results until the old way of handling the houses involved starts to change.",
+  "astrologySupportSha256": "fd53e017c0497325a6316696aad6a9b6fc7a3ce2db2391de20f539a437bae5b1",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "nonagen",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 205,
+    "keyCell": "A205",
+    "pageRef": "PDF p.345",
+    "astrologySupportCell": "L205",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

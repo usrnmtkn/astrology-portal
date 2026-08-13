@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mercury-opposition-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mercury opposite South Node can make karmic repetition impossible to explain away.",
+  "astrologySupportSha256": "60f6051a3b4690f9e760765fd27f14cd83096ddc85617fe0f7cd4ac102228ad5",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "opposition",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 224,
+    "keyCell": "A224",
+    "pageRef": "PDF p.348",
+    "astrologySupportCell": "L224",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

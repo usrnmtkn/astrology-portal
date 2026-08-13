@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-trine-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon trine Midheaven can make emotional intelligence easy to use in public life.",
+  "astrologySupportSha256": "f87028a095cfa0ca91afbb4baa53ea3433d832a8b6fc7d35e0e913a117bc9ca6",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "trine",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 617,
+    "keyCell": "A617",
+    "pageRef": "PDF p.419-420",
+    "astrologySupportCell": "L617",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "part-of-fortune-semisextile-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Part of Fortune semisextile Midheaven can make recognition feel restricted while the person resists what experience is trying to teach.",
+  "astrologySupportSha256": "7a75269f8945591e9d16032f7045f0c98b43ad22c2c3cb933845018ba29f7453",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "part-of-fortune",
+      "aspect": "semisextile",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 677,
+    "keyCell": "A677",
+    "pageRef": "PDF p.426",
+    "astrologySupportCell": "L677",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "south-node-square-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "South Node square Ascendant can bring old personality habits back into the present response, especially the ones that caused problems before.",
+  "astrologySupportSha256": "cb772feaf0de73c77f3b9d56f415df56563c2115497a2a3782f961aa7c0a4ed3",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "south-node",
+      "aspect": "square",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 602,
+    "keyCell": "A602",
+    "pageRef": "PDF p.418",
+    "astrologySupportCell": "L602",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

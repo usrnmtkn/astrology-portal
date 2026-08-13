@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "saturn-sextile-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Saturn sextile the South Node can make a familiar limit easier to recognize without treating it like punishment.",
+  "astrologySupportSha256": "04a33fc3a173785bbcd72146408abfba279f6ed5f5f37d7a5e0aff88d7459719",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "sextile",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 447,
+    "keyCell": "A447",
+    "pageRef": "PDF p.398",
+    "astrologySupportCell": "L447",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

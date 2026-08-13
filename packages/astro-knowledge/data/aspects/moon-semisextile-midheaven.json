@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-semisextile-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon semisextile Midheaven can make emotional sensitivity hard to use professionally until the person gains more objectivity.",
+  "astrologySupportSha256": "6736150d97f0a14e727a2fd6c4fcc431b06822ecc828ad3e10ab17b8851bb72b",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "semisextile",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 614,
+    "keyCell": "A614",
+    "pageRef": "PDF p.419-420",
+    "astrologySupportCell": "L614",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

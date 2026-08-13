@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "part-of-fortune-conjunction-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Part of Fortune conjunct Ascendant can make personal success feel built directly into the way someone approaches life. In this karmic framework, the person is treated as having chosen conditions that make success more available through their own character and response.",
+  "astrologySupportSha256": "9a1dc50fdd6c91ac9ca19f707394def04fd578c581ae5ec20d7a81b745d60f70",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "part-of-fortune",
+      "aspect": "conjunction",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 585,
+    "keyCell": "A585",
+    "pageRef": "PDF p.417",
+    "astrologySupportCell": "L585",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

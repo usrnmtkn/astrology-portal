@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-trine-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars trine Part of Fortune can make it easier to attract what is wanted after the desire itself has already changed in a healthier direction. In this karmic framework, that ease is treated as something carried forward from earlier work.",
+  "astrologySupportSha256": "a84f7f33460c75b85e57b5198f81ca7820445ba3e0eba26d25789269210d6f50",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "trine",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 393,
+    "keyCell": "A393",
+    "pageRef": "PDF p.376",
+    "astrologySupportCell": "L393",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

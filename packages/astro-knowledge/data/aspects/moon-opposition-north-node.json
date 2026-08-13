@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-opposition-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon opposite North Node can make the need for emotional guidance increasingly obvious.",
+  "astrologySupportSha256": "db79c1383f67a8b1f77e7385c1a63e38abbf76ee5fd470912587c977ffd42655",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "opposition",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 151,
+    "keyCell": "A151",
+    "pageRef": "PDF p.332",
+    "astrologySupportCell": "L151",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

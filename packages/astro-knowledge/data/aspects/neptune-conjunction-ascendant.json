@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-conjunction-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune conjunct Ascendant makes sensitivity part of the first impression.",
+  "astrologySupportSha256": "abd3c3e4963fd0cce0ef8a086a32708866c4dd7ed8b3d5688cbea654368428f9",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "conjunction",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 571,
+    "keyCell": "A571",
+    "pageRef": "PDF p.415-416",
+    "astrologySupportCell": "L571",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

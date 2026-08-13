@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-trine-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon trine Part of Fortune can make the way the person is changing feel like a continuation of something already underway. In this karmic framework, that ease is treated as something carried forward from past-life work.",
+  "astrologySupportSha256": "ae90cc6fa44b4c8f5e9174c37a4981fd53b3560ee54c21d0a3a8680422b07435",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "trine",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 142,
+    "keyCell": "A142",
+    "pageRef": "PDF p.331",
+    "astrologySupportCell": "L142",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

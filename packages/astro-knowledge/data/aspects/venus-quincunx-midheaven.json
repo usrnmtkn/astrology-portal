@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-quincunx-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus inconjunct Midheaven can make feelings of unworthiness interfere with opportunities that are otherwise available.",
+  "astrologySupportSha256": "d7be97c1511f7d5f3846bee5249b1fd9f8bd02a71b7a7b29c17a4dd5967ba259",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "quincunx",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 632,
+    "keyCell": "A632",
+    "pageRef": "PDF p.421",
+    "astrologySupportCell": "L632",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

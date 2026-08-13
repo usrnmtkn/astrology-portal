@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "north-node-semisextile-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "North Node semisextile Midheaven can make career crowd out the deeper spiritual work for a while, especially while lessons connected to the North Node house are still unfinished.",
+  "astrologySupportSha256": "5d6aa31476b59a72694637c64bf9437c3245cd78e5df45f5e5299249d3fe6a4d",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "north-node",
+      "aspect": "semisextile",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 684,
+    "keyCell": "A684",
+    "pageRef": "PDF p.427",
+    "astrologySupportCell": "L684",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

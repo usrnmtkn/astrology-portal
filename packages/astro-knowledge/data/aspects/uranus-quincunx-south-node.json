@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "uranus-quincunx-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Uranus inconjunct South Node can make karmic situations difficult to accept because they threaten to open memories or patterns the person does not want to face.",
+  "astrologySupportSha256": "056a382616374a596a21914dbe0b68d600adfdfd9857b21ebf318381ca6115fe",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "uranus",
+      "aspect": "quincunx",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 471,
+    "keyCell": "A471",
+    "pageRef": "PDF p.404",
+    "astrologySupportCell": "L471",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

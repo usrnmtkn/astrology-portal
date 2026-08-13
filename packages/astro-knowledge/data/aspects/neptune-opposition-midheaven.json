@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-opposition-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune opposite Midheaven can make recognition possible without making it personally compelling.",
+  "astrologySupportSha256": "ffbdb9601fd3a1e2939a1ce15384ca51aba86e03e75b34d1e31bb8f3ec0318b2",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "opposition",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 668,
+    "keyCell": "A668",
+    "pageRef": "PDF p.425",
+    "astrologySupportCell": "L668",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

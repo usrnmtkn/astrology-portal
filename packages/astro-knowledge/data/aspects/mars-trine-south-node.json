@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-trine-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars trine South Node can make karmic situations easier to accept as part of changing what the person wants.",
+  "astrologySupportSha256": "588e8eb838d4d02d54791cb98dc472145e1751104e8b171f3277e81faa1a6609",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "trine",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 407,
+    "keyCell": "A407",
+    "pageRef": "PDF p.379",
+    "astrologySupportCell": "L407",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

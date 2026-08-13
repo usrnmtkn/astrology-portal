@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-trine-south-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune trine South Node can make karmic situations easier to welcome as part of developing psychic or astral perception. In this framework, the person is more willing to let the unknown teach them than to close it down immediately.",
+  "astrologySupportSha256": "5cf47491f6868157bd2510bacae7e378cf08e665afb6deea8da7bdc18abb82b2",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "trine",
+      "planetB": "south-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 491,
+    "keyCell": "A491",
+    "pageRef": "PDF p.407",
+    "astrologySupportCell": "L491",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

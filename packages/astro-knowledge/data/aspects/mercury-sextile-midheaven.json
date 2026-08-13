@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mercury-sextile-midheaven",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mercury sextile Midheaven gives intuition and logic a workable route into career success.",
+  "astrologySupportSha256": "bf1e9e1252ddbedfafafa678be7b8af54ec977e390eb6a0181888a4fcfe3d8f4",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mercury",
+      "aspect": "sextile",
+      "planetB": "midheaven"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 622,
+    "keyCell": "A622",
+    "pageRef": "PDF p.420-421",
+    "astrologySupportCell": "L622",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

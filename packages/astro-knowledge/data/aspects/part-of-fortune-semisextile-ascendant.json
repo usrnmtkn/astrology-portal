@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "part-of-fortune-semisextile-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Part of Fortune semisextile Ascendant can make success feel deliberately restricted while other lessons are being learned.",
+  "astrologySupportSha256": "0b5fc806f7e2aae91219395b835bf7329b47339ed19464b0ee181b2d129e23da",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "part-of-fortune",
+      "aspect": "semisextile",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 586,
+    "keyCell": "A586",
+    "pageRef": "PDF p.417",
+    "astrologySupportCell": "L586",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

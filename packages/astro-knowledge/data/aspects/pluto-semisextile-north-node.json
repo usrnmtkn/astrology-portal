@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "pluto-semisextile-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Pluto semisextile North Node can make helpful teachers harder to attract while an old rule about power and awareness stays fixed.",
+  "astrologySupportSha256": "e7d63d1d45b63b9796162e8000ec6f46c63c6bcfbc85ced345c7a8de31f4e5a3",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "pluto",
+      "aspect": "semisextile",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 502,
+    "keyCell": "A502",
+    "pageRef": "PDF p.408",
+    "astrologySupportCell": "L502",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

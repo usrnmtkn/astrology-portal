@@ -4,7 +4,7 @@ Status: deterministic pre-drafting coverage record. No model call was made. No r
 
 ## Result
 
-A compliant, registry-bounded packet can be built today for **266 of 713** unapproved LL V13 rows (37.31%). The remaining **447** rows are fail-closed. All **713 of 713** rows have exact-key AstrologySupport; the fail-closed remainder is caused by absent, inactive, or unsupported registry boundaries, not missing mechanism source.
+A compliant, registry-bounded packet can be built today for **579 of 713** unapproved LL V13 rows (81.21%). The remaining **134** rows are fail-closed. All **713 of 713** rows have exact-key AstrologySupport; the fail-closed remainder is caused by absent, inactive, or unsupported registry boundaries, not missing mechanism source.
 
 ## Batch coverage
 
@@ -12,14 +12,14 @@ A compliant, registry-bounded packet can be built today for **266 of 713** unapp
 | --- | ---: | ---: | ---: |
 | WP1-B04 | 72 | 26 | 36.11% |
 | WP1-B03 | 116 | 78 | 67.24% |
-| WP1-B02 | 131 | 45 | 34.35% |
-| WP1-B05 | 131 | 66 | 50.38% |
-| WP1-B06 | 131 | 0 | 0% |
-| WP1-B01 | 132 | 51 | 38.64% |
+| WP1-B02 | 131 | 125 | 95.42% |
+| WP1-B05 | 131 | 127 | 96.95% |
+| WP1-B06 | 131 | 91 | 69.47% |
+| WP1-B01 | 132 | 132 | 100% |
 
 ## Fail-closed reasons
 
-- missing-registry-row: 371
+- missing-registry-row: 58
 - unverified-registry-row: 53
 - unsupported-key-shape: 23
 

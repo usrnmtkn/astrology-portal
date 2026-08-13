@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "mars-square-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Mars square Part of Fortune can make desire interfere with the very growth it is supposed to support.",
+  "astrologySupportSha256": "239cd5ad3f7216ea536316c7daad524b8b25641a71e7f6830c8f7f1ff8fa1960",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "mars",
+      "aspect": "square",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 392,
+    "keyCell": "A392",
+    "pageRef": "PDF p.376",
+    "astrologySupportCell": "L392",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

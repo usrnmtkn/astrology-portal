@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "neptune-quincunx-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Neptune inconjunct Ascendant can make generosity into a bid for love before the person realizes what is happening.",
+  "astrologySupportSha256": "4e2ff995010d7907b21a0556d72f77275bf3cf2ebf06847327db1d059275d008",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "neptune",
+      "aspect": "quincunx",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 576,
+    "keyCell": "A576",
+    "pageRef": "PDF p.415-416",
+    "astrologySupportCell": "L576",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

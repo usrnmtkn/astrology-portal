@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-quincunx-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon inconjunct Ascendant can make emotional discipline look stronger than it feels.",
+  "astrologySupportSha256": "f5a58d04ad8048f8441304ba0ff54ad674bff0805497de6b3dc891c3ef62c9b5",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "quincunx",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 527,
+    "keyCell": "A527",
+    "pageRef": "PDF p.410-411",
+    "astrologySupportCell": "L527",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

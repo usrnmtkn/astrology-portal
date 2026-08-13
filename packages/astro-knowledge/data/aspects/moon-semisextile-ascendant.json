@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "moon-semisextile-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Moon semisextile Ascendant can make emotional expression feel blocked.",
+  "astrologySupportSha256": "38b070bf1b1d518db12a3a8530a3bbd933596c6e08203191c79718bb431f8a47",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "moon",
+      "aspect": "semisextile",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 523,
+    "keyCell": "A523",
+    "pageRef": "PDF p.410-411",
+    "astrologySupportCell": "L523",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

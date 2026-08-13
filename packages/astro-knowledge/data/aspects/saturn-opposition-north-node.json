@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "saturn-opposition-north-node",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Saturn opposite North Node can make the need for guidance around humility difficult to avoid.",
+  "astrologySupportSha256": "f1b1d33266d38d3597dddd125cbd014557527952a076ef149bca1d9085ebba89",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "saturn",
+      "aspect": "opposition",
+      "planetB": "north-node"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 444,
+    "keyCell": "A444",
+    "pageRef": "PDF p.398",
+    "astrologySupportCell": "L444",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

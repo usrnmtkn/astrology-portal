@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "jupiter-conjunction-part-of-fortune",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Jupiter conjunct Part of Fortune ties emotional balance closely to a clearer sense of meaning.",
+  "astrologySupportSha256": "fd6e6f1435c2a7a2e739018d1d7a808b1b0ebea6fc5b3ece176f1e3f40375222",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "jupiter",
+      "aspect": "conjunction",
+      "planetB": "part-of-fortune"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 410,
+    "keyCell": "A410",
+    "pageRef": "PDF p.387",
+    "astrologySupportCell": "L410",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

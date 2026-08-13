@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "north-node-semisextile-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "North Node semisextile Ascendant can make a spiritual direction feel restricted while other lessons are still being learned.",
+  "astrologySupportSha256": "656097160cc0becbc343e96d01ef872cf8296686ed2cf818123d38743c6889f7",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "north-node",
+      "aspect": "semisextile",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 593,
+    "keyCell": "A593",
+    "pageRef": "PDF p.417-418",
+    "astrologySupportCell": "L593",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}

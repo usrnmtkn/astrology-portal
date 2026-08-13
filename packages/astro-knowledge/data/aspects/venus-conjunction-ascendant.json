@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "natal-point-angle-aspect-doctrine-v1",
+  "id": "venus-conjunction-ascendant",
+  "kind": "natal-aspect-doctrine",
+  "astrologySupport": "Venus conjunct Ascendant can make charm and appeal part of the first impression.",
+  "astrologySupportSha256": "d8685b04a77cf1cc8673a003bf6ab030942c0015b7c00ac2a77e5320b2e5779a",
+  "sourceFactors": [
+    {
+      "type": "natal-aspect",
+      "planetA": "venus",
+      "aspect": "conjunction",
+      "planetB": "ascendant"
+    }
+  ],
+  "provenance": {
+    "sourceWorkbook": "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V9-DIRECT-SECOND-PERSON-LIVED-PENDING-OWNER.xlsx",
+    "sourceWorkbookSha256": "08e66b948baadadba49b376665e8c3e8de2773e0947c28607d7553cda459da58",
+    "sheet": "AspectMeanings",
+    "workbookRow": 536,
+    "keyCell": "A536",
+    "pageRef": "PDF p.412",
+    "astrologySupportCell": "L536",
+    "surface": "natal"
+  },
+  "readerCopy": false,
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}
