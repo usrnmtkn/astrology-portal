@@ -21,6 +21,9 @@ const { candidateRow, deterministicChecks, judgeShape, lintShape, parseArticle }
 
 function main() {
   const index = buildIndex();
+  const wp1Overlay = JSON.parse(fs.readFileSync(path.join(packageRoot, "voice", "tldr-astro", "marie-satori-writer", "ll-matrix-v13", "wp1-owner-approved-locked.json"), "utf8"));
+  const wp1AspectCount = wp1Overlay.rows.filter((row) => row.sheet === "AspectMeanings").length;
+  const wp1PlacementCount = wp1Overlay.rows.length - wp1AspectCount;
   const ownerFeedbackAudit = fs.readFileSync(path.join(packageRoot, "voice", "tldr-astro", "marie-satori-owner-feedback-audit.md"), "utf8");
   assert.match(ownerFeedbackAudit, /OV-043[\s\S]*cross-batch action-template variety/u);
   assert(index.entries.length > 3000, "the owner corpus must be indexed at paragraph level");
@@ -106,12 +109,15 @@ function main() {
     && ["natal-placement", "natal-aspect"].includes(entry.surface)
     && entry.sourcePath.endsWith("knowledge-matrix-v13-owner-approved-locked.json")
   )));
-  assert.strictEqual(index.entries.length, 7695);
-  assert.strictEqual(index.summary.positiveVoiceEvidenceCount, 7198);
-  assert.strictEqual(index.summary.contextualEvidenceCount, 3844);
+  const wp1Entries = index.entries.filter((entry) => entry.origin === "owner-approved-ll-matrix-v13-wp1");
+  assert.strictEqual(wp1Entries.length, wp1Overlay.rows.length);
+  assert(wp1Entries.every((entry) => entry.authorityClass === "exact_owner_approved" && entry.ownerApproved && entry.useAsPositiveVoiceEvidence));
+  assert.strictEqual(index.entries.length, 7695 + wp1Overlay.rows.length);
+  assert.strictEqual(index.summary.positiveVoiceEvidenceCount, 7198 + wp1Overlay.rows.length);
+  assert.strictEqual(index.summary.contextualEvidenceCount, 3844 + wp1Overlay.rows.length);
   assert.strictEqual(index.summary.bySurface["sky-placement"], 3816);
-  assert.strictEqual(index.summary.bySurface["natal-placement"], 136);
-  assert.strictEqual(index.summary.bySurface["natal-aspect"], 165);
+  assert.strictEqual(index.summary.bySurface["natal-placement"], 136 + wp1PlacementCount);
+  assert.strictEqual(index.summary.bySurface["natal-aspect"], 165 + wp1AspectCount);
   const calibrationV3 = index.entries.filter((entry) => entry.sourceId.startsWith("sky-placement-uranus-cancer-collective-owner-approval-candidate-v3:"));
   assert(calibrationV3.length >= 5);
   assert(calibrationV3.every((entry) => entry.authorityClass === "exact_owner_approved" && entry.ownerApproved && !entry.useAsPositiveVoiceEvidence));
