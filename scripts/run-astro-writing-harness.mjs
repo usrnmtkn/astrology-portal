@@ -3,6 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { prepareAuthoringSource } from "../src/astro-writing/authoringSource.mjs";
 import { runWritingPipeline } from "../src/astro-writing/runWritingPipeline.mjs";
 import geminiInteractions from "../src/astro-writing/geminiInteractions.cjs";
 import localProviderKeys from "../src/astro-writing/localProviderKeys.cjs";
@@ -85,6 +86,7 @@ if (!requestPath || !outputPath) throw new Error("Usage: node scripts/run-astro-
 if (!process.argv.includes("--authorize-live")) throw new Error("No billed call was made. Pass --authorize-live only after explicit owner authorization.");
 
 const request = JSON.parse(fs.readFileSync(path.resolve(requestPath), "utf8"));
+prepareAuthoringSource(request.authoringSource);
 const writerConfig = normalizeProviderConfig(request.models?.writer, "writer");
 const judgeConfig = normalizeProviderConfig(request.models?.judge, "judge");
 const apiKeys = readLocalProviderKeys(repoRoot);

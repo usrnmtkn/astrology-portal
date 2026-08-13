@@ -31,6 +31,8 @@ export function retrieveOwnerContext(plan, {
     entry.ownerApproved === true
     && (!contentFamily || entry.family === contentFamily)
     && (!register || entry.register === register)
+    && entry.contentKey !== plan.source_row_key
+    && entry.id !== plan.source_row_key
   ));
   const ranked = (entries) => entries
     .map((entry, index) => ({ entry, index, score: overlapScore(entry, plan) }))

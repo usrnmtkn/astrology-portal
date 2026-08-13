@@ -4,6 +4,7 @@ import {
   HARD_REVISE_FIELDS,
   REVIEW_FIELDS
 } from "./canonicalInstructions.mjs";
+import { priorCopyStructuralCorrespondence } from "./authoringSource.mjs";
 import { validateCopy } from "./validateCopy.mjs";
 
 const CHECK_RESULT_SCHEMA = Object.freeze({
@@ -80,7 +81,7 @@ function valueAt(copy, location) {
   return typeof copy === "string" ? copy : String(copy?.[location] ?? "");
 }
 
-function semanticPatternFailures(copy) {
+function semanticPatternFailures(copy, priorCopy = null) {
   const text = copyText(copy);
   const normalized = text.toLowerCase();
   const failures = [];
@@ -108,6 +109,14 @@ function semanticPatternFailures(copy) {
   }
   if (normalized.includes("the dishes")) {
     add("example_proves_astrology", "The domestic prop does not demonstrate the astrological mechanism.", "Replace the prop with the delayed refusal and its accumulated consequence.");
+  }
+  if (/\b(?:your creativity and empathy|you crave answers to life's biggest questions|moments of catharsis are your greatest teachers|you have faith in things that can't be explained|you have a talent for knowing what to do with the resources of others)\b/iu.test(text)) {
+    add("trait_entry", "The passage describes the reader from across the room instead of entering through something happening.", "Start with an observable action, situation, or consequence supported by AstrologySupport.");
+    add("astrology_summary", "The sentence reads like a personality profile rather than lived interpretation.", "Delete the summary sentence and author fresh from the mechanism.");
+  }
+  const priorMatch = priorCopyStructuralCorrespondence(text, priorCopy);
+  if (priorMatch.matched) {
+    add("paraphrase_of_prior", `${priorMatch.reason} (${priorMatch.score.toFixed(3)}).`, "Re-enter through a different lived situation derived from AstrologySupport; do not preserve the prior movement.");
   }
   return failures;
 }
@@ -140,7 +149,8 @@ export function deterministicEditorialReview({
   register,
   expectedPlaceholders,
   requiredFields,
-  protectedOwnerLines
+  protectedOwnerLines,
+  priorCopy
 }) {
   const lint = validateCopy(draft, {
     family,
@@ -149,12 +159,13 @@ export function deterministicEditorialReview({
     expectedPlaceholders,
     requiredFields,
     protectedOwnerLines,
+    priorCopy,
     ownerCorrections: context?.corrections ?? []
   });
   const violations = lint.violations.map((item) => {
     return violationRecord(draft, item.category, item.detail, `Correct only the failed ${locationFor(draft, item.category)} material.`);
   });
-  for (const failure of semanticPatternFailures(draft)) {
+  for (const failure of semanticPatternFailures(draft, priorCopy)) {
     violations.push(violationRecord(draft, failure.category, failure.reason, failure.instruction, failure.location));
   }
   const deduped = [...new Map(violations.map((item) => [
@@ -226,10 +237,11 @@ export async function reviewDraft({
   modelClient,
   expectedPlaceholders = [],
   requiredFields = ["tagline", "hook", "lived", "turn"],
-  protectedOwnerLines = []
+  protectedOwnerLines = [],
+  priorCopy = null
 }) {
   const mechanical = deterministicEditorialReview({
-    draft, plan, context, family, register, expectedPlaceholders, requiredFields, protectedOwnerLines
+    draft, plan, context, family, register, expectedPlaceholders, requiredFields, protectedOwnerLines, priorCopy
   });
   if (!modelClient) {
     const missingColdReview = violationRecord(
@@ -260,7 +272,14 @@ export async function reviewDraft({
     stage: "review",
     role: "REVIEWER",
     instructions: canonicalAstrologyReviewInstructions,
-    input: JSON.stringify({ plan, family, register, draft }, null, 2),
+    input: JSON.stringify({
+      plan,
+      family,
+      register,
+      draft,
+      prior_copy_for_structure_comparison: priorCopy || null,
+      prior_copy_rule: "Downstream comparison only. Fail structural paraphrase; never use prior prose to repair the candidate."
+    }, null, 2),
     schema: REVIEW_SCHEMA
   });
   validateModelReview(modelReview);
