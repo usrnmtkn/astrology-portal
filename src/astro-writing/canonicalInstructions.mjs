@@ -5,9 +5,9 @@
 import { REVIEWER_GOLD_EXEMPLARS } from "./reviewerGoldExemplars.generated.mjs";
 import { buildCardWriterInstructions } from "./cardWritingStandard.mjs";
 
-export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v2-2026-08-09";
-export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v3-owner-standard-candidate-2026-08-09";
-export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v4-cold-rendered-prose-2026-08-11";
+export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v3-author-from-mechanism-2026-08-13";
+export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v4-author-from-mechanism-2026-08-13";
+export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v5-author-from-mechanism-2026-08-13";
 
 export const COLD_RENDERED_PROSE_RULE = `Read the copy cold, rendered, and line by line as prose. Judge the final text exactly as a
 reader would encounter it in the product. Do not use the prompt, source notes, astrology
@@ -56,6 +56,8 @@ approve, or serve copy. Do not rewrite the copy; identify the exact failed line 
 a narrowly scoped revision instruction.`;
 
 export const canonicalAstrologyWritingInstructions = `CODEX INSTRUCTION (owner-designated canonical form): Translate every astrological idea into lived cause and consequence. Begin with the specific human experience, behavior, conflict, decision, or consequence the astrology describes. Use concrete stakes such as work, money, home, body, time, access, recognition, and relationships. For aspects, show one force acting on another. For synastry, show one person doing something and the other reacting. For placements, describe the recurring behavior and need rather than predicting an event. Add perspective, warmth, or advice only after the truth has been clearly named. Never make the reader decode astrology language to understand what is happening.
+
+AUTHOR-FROM-MECHANISM RULING: The AstrologySupport field is the source. The existing prose is not the draft. Never paraphrase current V2/V3 copy or preserve its sentence structure. For every row: reduce AstrologySupport to one plain internal mechanism sentence; find an ordinary human situation; enter through something happening rather than a trait; show what gets overbooked, misunderstood, spent, delayed, strained, missed, or made easier; add perspective only after the scene; delete astrology-summary prose. Ask: could some part of the interpretation be photographed or overheard? If not, it still needs work. Keep the row key, AstrologySupport mechanism, and source constraints. Author the reader copy fresh against the lived benchmark.
 
 Concrete does not mean adding a random object or domestic scene. Concrete means naming the observable behavior, circumstance, decision, or consequence produced by the astrology. Paraphrase test: could a reader paraphrase the sentence literally after one read? If not, rewrite it.
 
@@ -140,6 +142,24 @@ Does the copy rely on familiar domestic, dating, therapy, workplace, or self-hel
 Can the tagline be understood without the body?
 Reject cryptic compression.
 
+9. PHOTOGRAPH OR OVERHEAR TEST
+Does at least one clause name an observable action, situation, exchange, object, time, place, or consequence? Abstract personality description alone fails.
+
+10. TRAIT ENTRY
+Does the passage enter through something happening? Reject openings such as "Your creativity and empathy...", "You crave...", "You have faith...", or "You have a talent..." that describe the reader from across the room.
+
+11. INTERCHANGEABLE COPY
+Could the passage describe many different placements without material change? If so, it has not expressed this supplied mechanism.
+
+12. ASTROLOGY SUMMARY
+Could a sentence appear unchanged in a generic horoscope, personality profile, therapy worksheet, or spiritual social post? Delete it rather than polishing it.
+
+13. ARCHETYPE SOUP
+Do warriors, chariots, blades, rocket fuel, the underworld, catharsis, death and rebirth, or similar imagery stand in for behavior? If so, fail it.
+
+14. PARAPHRASE OF PRIOR
+When prior copy is supplied for downstream comparison, does the candidate track its sentence structure or narrative movement? Prior prose is evidence of what not to use as a draft. Structural paraphrase fails even when the vocabulary changes.
+
 OTHER CHECKS
 
 clinical shorthand
@@ -200,6 +220,12 @@ export const REVIEW_FIELDS = Object.freeze([
   "clinical_shorthand",
   "advocacy_register_drift",
   "tagline_stands_alone",
+  "photograph_test",
+  "trait_entry",
+  "interchangeable",
+  "astrology_summary",
+  "archetype_soup",
+  "paraphrase_of_prior",
   "voice_match",
   "register_consistency",
   "redundancy"
@@ -215,5 +241,11 @@ export const HARD_REVISE_FIELDS = Object.freeze([
   "invented_motive",
   "stock_trope",
   "metaphor_requires_translation",
-  "tagline_stands_alone"
+  "tagline_stands_alone",
+  "photograph_test",
+  "trait_entry",
+  "interchangeable",
+  "astrology_summary",
+  "archetype_soup",
+  "paraphrase_of_prior"
 ]);

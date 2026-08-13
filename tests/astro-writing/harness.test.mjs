@@ -7,6 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   buildMeaningPlan,
+  buildDraftInput,
   buildCardWriterInstructions,
   applyOwnerApproval,
   applyRenderedSampleApproval,
@@ -32,11 +33,15 @@ import {
   HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS,
   HOUSE_BLEED_NOUNS,
   MEANING_PLAN_SCHEMA,
+  prepareAuthoringSource,
+  priorCopyStructuralCorrespondence,
   generatedApprovalState,
   markPipelineReady,
   promoteCandidateWriter,
   REVIEW_SCHEMA,
   REVIEW_FIELDS,
+  resolveAstrology,
+  retrieveOwnerContext,
   reviewDraft,
   runWritingPipeline,
   stageRenderedSample,
@@ -56,6 +61,7 @@ const rubric = read("docs/writing/REVIEW_RUBRIC.md");
 const ownerDoctrine = read("packages/astro-knowledge/review/writing-harness-v1/TLDR-Owner-Writing-Doctrine.md");
 const cardStandard = read("tldr-astro-phrasebank/TLDR-CARD-TRANSIT-WRITING-STANDARD-OWNER.md");
 const cardChecklist = read("tldr-astro-phrasebank/TLDR-CARD-CRITIQUE-CHECKLIST-V3-DRAFT.md");
+const authorFromMechanismRuling = read("tldr-astro-phrasebank/TLDR-AUTHOR-FROM-MECHANISM-RULING-OWNER.md");
 const normalizedAstrologyContract = astrologyContract.replace(/\s+/gu, " ");
 const normalizedLiteralRules = literalRules.replace(/\s+/gu, " ");
 for (const required of [
@@ -86,6 +92,9 @@ assert.equal(read("data/writing/owner-corrections.jsonl"), read("packages/astro-
 assert.ok(voiceContract.startsWith(ownerDoctrine));
 assert.ok(voiceContract.endsWith(read("tldr-astro-phrasebank/MARIE-VOICE-BANK.md")));
 assert.equal(sha256(cardStandard), "20ebf9edc5143c7f7dc04672bb1d107f7b480dcac61043db17b19432c6491175", "Card transit writing standard must remain byte-for-byte owner supplied.");
+assert.equal(sha256(authorFromMechanismRuling), "b68255fca1e49c716250d924c7cb5544e1ee8005baaa82cf1f2b82a6cef2e8c8", "Author-from-mechanism ruling must remain byte-for-byte owner supplied.");
+assert.match(authorFromMechanismRuling, /The AstrologySupport field is the source\. The existing prose is not the draft\./u);
+assert.match(authorFromMechanismRuling, /That whole mode needs to be rejected, not polished\./u);
 assert.equal(cardTransitWritingStandard, cardStandard);
 assert.equal(cardCritiqueChecklist, cardChecklist);
 assert.match(cardStandard, /Status: owner ruling, 2026-08-09[\s\S]*Generation rule, not reader-facing copy/u);
@@ -288,6 +297,9 @@ assert.equal(validateCopy(protectedOwnerLine, { protectedOwnerLines: [protectedO
 assert.ok(validateCopy(protectedOwnerLine).violations.some((entry) => entry.category === "banned_language"), "Protected owner vocabulary must remain banned outside its exact approved line.");
 
 const meaningInput = {
+  rowKey: "authoring-fixture/lilith/sagittarius",
+  astrologySupport: "Lilith in Sagittarius can turn a protected belief into a certainty that resists contrary evidence.",
+  sourceConstraints: ["Do not invent biography.", "Do not substitute the ninth house for Sagittarius."],
   object: "lilith",
   sign: "sagittarius",
   objectFunction: "the preference or refusal that was kept quiet",
@@ -297,10 +309,102 @@ const meaningInput = {
   likelyConsequences: ["the belief either survives new information or loses authority"],
   risks: ["disagreement gets treated as bad character"]
 };
+const authoringSource = prepareAuthoringSource({
+  rowKey: meaningInput.rowKey,
+  astrologySupport: meaningInput.astrologySupport,
+  sourceConstraints: meaningInput.sourceConstraints
+});
 const plan = buildMeaningPlan(meaningInput);
+assert.equal(plan.source_row_key, authoringSource.rowKey);
+assert.equal(plan.astrology_support, authoringSource.astrologySupport);
+assert.deepEqual(plan.source_constraints, authoringSource.sourceConstraints);
 assert.equal(plan.house, null);
 assert.ok(plan.prohibitedDomainAssumptions.includes("travel/education/legal"));
 assert.ok(plan.DO_NOT_ASSUME.includes("a house or life domain that was not supplied"));
+let capturedPlannerInput = null;
+const plannedFromGovernedSource = await resolveAstrology({
+  ...meaningInput,
+  coreTension: "FORBIDDEN PRECOMPOSED INTERPRETATION"
+}, {
+  plannerClient: async ({ input }) => {
+    capturedPlannerInput = JSON.parse(input);
+    return Object.fromEntries(MEANING_PLAN_SCHEMA.required.map((field) => [field, plan[field]]));
+  }
+});
+assert.equal(capturedPlannerInput.astrology_support, meaningInput.astrologySupport);
+assert.equal(capturedPlannerInput.coreTension, undefined, "Precomposed interpretation fields must not enter the meaning-planner prompt.");
+assert.equal(plannedFromGovernedSource.astrology_support, meaningInput.astrologySupport);
+const contextWithoutCurrentRow = retrieveOwnerContext(plan, {
+  examples: [{
+    id: "current-row-evidence",
+    contentKey: plan.source_row_key,
+    family: "sky-placement",
+    register: "collective",
+    ownerApproved: true,
+    text: "Prior row prose that must not re-enter the writer prompt."
+  }, {
+    id: "different-row-evidence",
+    contentKey: "different/row",
+    family: "sky-placement",
+    register: "collective",
+    ownerApproved: true,
+    text: "A different governed example."
+  }],
+  contentFamily: "sky-placement",
+  register: "collective"
+});
+assert.deepEqual(contextWithoutCurrentRow.examples.map((entry) => entry.contentKey), ["different/row"]);
+
+assert.throws(() => prepareAuthoringSource({
+  ...authoringSource,
+  currentCopy: "You have a talent for knowing what to do."
+}), /prior prose is downstream comparison evidence/iu);
+assert.throws(() => prepareAuthoringSource({ rowKey: "missing/support", sourceConstraints: ["Keep the mechanism."] }), /AstrologySupport/u);
+assert.throws(() => prepareAuthoringSource({ rowKey: "missing/constraints", astrologySupport: "A mechanism." }), /source constraint/iu);
+assert.equal(priorCopyStructuralCorrespondence("The same sentence remains here.", "The same sentence remains here.").matched, true);
+assert.equal(priorCopyStructuralCorrespondence(
+  { hook: "The same sentence remains here." },
+  { hook: "The same sentence remains here." }
+).matched, true);
+
+const priorCopy = "Your intuition gives you the ability to understand the mysteries of life.";
+const draftInput = buildDraftInput({
+  plan,
+  context: { examples: [], corrections: [] },
+  task: "Write one governed placement.",
+  family: "sky-placement",
+  register: "collective"
+});
+assert.ok(draftInput.includes(authoringSource.astrologySupport));
+assert.ok(draftInput.includes("WITHHELD FROM WRITER"));
+assert.ok(!draftInput.includes(priorCopy));
+
+for (const bad of [
+  "Your creativity and empathy give you the ability to hold compassion.",
+  "You crave answers to life's biggest questions.",
+  "Moments of catharsis are your greatest teachers.",
+  "You have faith in things that can't be explained.",
+  "You have a talent for knowing what to do with the resources of others."
+]) {
+  const lint = validateCopy(bad, { plan, register: "second_person" });
+  assert.ok(lint.violations.some((entry) => entry.category === "trait_entry"), `Across-the-room trait copy must fail: ${bad}`);
+  assert.ok(lint.violations.some((entry) => entry.category === "photograph_test"), `Unobservable summary must fail: ${bad}`);
+  assert.ok(lint.violations.some((entry) => entry.category === "astrology_summary"), `Personality-profile summary must fail: ${bad}`);
+}
+const archetypeSoup = validateCopy("Warriors drive a chariot through the underworld with rocket fuel.", { plan });
+assert.ok(archetypeSoup.violations.some((entry) => entry.category === "archetype_soup"));
+const priorParaphrase = validateCopy(priorCopy, { plan, priorCopy });
+assert.ok(priorParaphrase.violations.some((entry) => entry.category === "paraphrase_of_prior"));
+for (const benchmark of [
+  "You sign up for the course, book the trip, volunteer for the project, and only then look at the week you already had planned.",
+  "A grieving friend gets a text that does not demand an answer. A tense email gets rewritten once before you send it.",
+  "You remember the coffee order, bring food when someone has had a terrible week, and notice when the room would feel better with the lamp on."
+]) {
+  const lint = validateCopy(benchmark, { plan, register: "second_person", protectedOwnerLines: [benchmark] });
+  for (const category of ["photograph_test", "trait_entry", "astrology_summary", "archetype_soup"]) {
+    assert.ok(!lint.violations.some((entry) => entry.category === category), `Owner benchmark must clear ${category}: ${benchmark}`);
+  }
+}
 
 assert.ok(validateCopy({ body: "Someone checks the source before repeating the claim.", DO_NOT_ASSUME: plan.DO_NOT_ASSUME }, {
   plan,
@@ -321,6 +425,9 @@ const writerClient = async ({ stage, instructions, input }) => {
   assert.equal(instructions, cardWriterInstructions);
   assert.ok(instructions.includes(cardStandard));
   if (stage === "draft") {
+    assert.ok(input.includes(authoringSource.astrologySupport));
+    assert.ok(input.includes("WITHHELD FROM WRITER"));
+    assert.ok(!input.includes(priorCopy));
     assert.match(input, /CARD WRITER SEVEN-PASS CHAIN[\s\S]*full_file_consistency/u);
     assert.match(input, /CARD CRITIQUE CHECKLIST[\s\S]*Fifteen-question editorial test/u);
     assert.match(input, /DO_NOT_ASSUME and do_not_assume values are internal generation constraints/u);
@@ -381,6 +488,7 @@ const reviewerClient = async ({ stage, instructions, input }) => {
   }
   assert.equal(stage, "review");
   assert.equal(instructions, canonicalAstrologyReviewInstructions);
+  assert.equal(JSON.parse(input).prior_copy_for_structure_comparison, priorCopy);
   contextualReviewCount += 1;
   return reviewValue(contextualReviewCount === 1 ? "REVISE" : "PASS");
 };
@@ -392,6 +500,8 @@ reviewerClient.model = "gpt-judge-fixture";
 reviewerClient.reasoningEffort = "medium";
 const pipeline = await runWritingPipeline({
   meaningInput,
+  authoringSource,
+  priorCopyForReview: priorCopy,
   examples: approvedExamples.filter((entry) => entry.family === "sky-placement" && entry.register === "collective").slice(0, 5),
   corrections: [],
   task: "Write one Lilith in Sagittarius placement.",

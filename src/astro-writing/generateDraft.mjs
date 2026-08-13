@@ -33,10 +33,14 @@ export function buildDraftInput({
     `SURFACE\n${surface}`,
     `CONTENT FAMILY\n${family}`,
     `REGISTER\n${register}`,
+    `SOURCE ROW KEY\n${plan.source_row_key}`,
+    `ASTROLOGY SUPPORT SOURCE\n${plan.astrology_support}`,
+    `SOURCE CONSTRAINTS\n${JSON.stringify(plan.source_constraints, null, 2)}`,
+    "PRIOR CANDIDATE PROSE\nWITHHELD FROM WRITER. The existing prose is not the draft and must not supply sentence structure.",
     `ASTROLOGY MEANING PLAN\n${JSON.stringify(plan, null, 2)}`,
     `OWNER-APPROVED EXAMPLES\n${JSON.stringify(context.examples, null, 2)}`,
     `OWNER CORRECTIONS\n${JSON.stringify(context.corrections, null, 2)}`,
-    "Write from the meaning plan. Owner material establishes voice and judgment; do not cosmetically paraphrase its narrative."
+    "Author fresh from the AstrologySupport mechanism. Enter through an observable human situation, show its consequence, and add perspective only afterward. Owner material establishes voice and judgment; do not cosmetically paraphrase its narrative."
   ];
   if (isCardWritingSurface({ surface, family })) {
     sections.push(

@@ -1,5 +1,6 @@
 export * from "./buildMeaningPlan.mjs";
 export * from "./approvalGovernance.mjs";
+export * from "./authoringSource.mjs";
 export * from "./cardJudgeV3.mjs";
 export * from "./cardJudgeV31.mjs";
 export * from "./cardWritingStandard.mjs";
