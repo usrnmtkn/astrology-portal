@@ -9,6 +9,7 @@ import { ReportCalculationApiClientError } from "../api/_lib/report-facts.ts";
 import { REPORT_JUDGE_CATEGORIES, reportJudgeOverall, reportJudgeVerdict } from "../api/_lib/report-judge.ts";
 import { authorizeReportGeneration, grantCompEntitlement, revokeEntitlement } from "../api/_lib/report-entitlements.ts";
 import { verifyReportFactLock } from "../api/_lib/report-fact-lock.ts";
+import { assembleDeterministicReportKeyDates } from "../api/_lib/report-key-dates.ts";
 import { createReportMailProvider } from "../api/_lib/report-mail.ts";
 import { reportUrl } from "../api/_lib/report-http.ts";
 import { estimateReportModelCost, estimateReportPlanningProfile, reportModelPricing } from "../api/_lib/report-model-pricing.ts";
@@ -23,10 +24,12 @@ import {
   reportDraftMovementApplicable, reportUnitSentenceAddresses, sentenceAddressedReportUnit
 } from "../api/_lib/report-evaluation-packet.ts";
 import {
+  assertReportOwnerVoiceEvidence,
   enforceReportRevisionStopRule, ReportRevisionScopeError, ReportStopRuleError,
   mergeOverlappingReportDefects, reportValidationIssuesToNamedDefects,
   normalizeReportColdReadCritique, reviseReportDraftForNamedDefects, runReportWriterChain, spliceReportRevision
 } from "../api/_lib/report-writer-chain.ts";
+import { validateAssembledReport, validateReportKeyDateFormat } from "../api/_lib/report-assembly.ts";
 
 process.env.REPORT_AUTO_PUBLISH = "false";
 const frozen = JSON.parse(fs.readFileSync(new URL("./fixtures/marie-report-frozen-facts.json", import.meta.url), "utf8"));
@@ -68,10 +71,12 @@ delete process.env.REPORT_BILLING_MODE;
 process.env.REPORT_AUTO_PUBLISH = "true";
 delete process.env.REPORT_AUTOMATION_OWNER_RULING_VERSION;
 assert.equal(reportCallEstimate("12_months").redundancyPassCalls, 1);
-assert.equal(reportCallEstimate("12_months").coldReadCalls, 11);
-assert.equal(reportCallEstimate("12_months").expectedCallBudget, 56);
-assert.equal(reportCallEstimate("12_months").safetyMarginCalls, 11);
-assert.equal(reportCallEstimate("12_months").recommendedCallBudget, 67);
+assert.equal(reportCallEstimate("12_months").writerUnitCount, 10);
+assert.equal(reportCallEstimate("12_months").coldReadCalls, 10);
+assert.equal(reportCallEstimate("12_months").cleanPathCalls, 41);
+assert.equal(reportCallEstimate("12_months").expectedCallBudget, 51);
+assert.equal(reportCallEstimate("12_months").safetyMarginCalls, 10);
+assert.equal(reportCallEstimate("12_months").recommendedCallBudget, 61);
 assert.equal(reportFulfillmentConfig().authorizationTokenBudget, 1_450_000);
 assert.equal(reportFulfillmentConfig().reportLifetimeTokenBudget, 1_450_000);
 assert.equal(reportFulfillmentConfig().workerBatchSize, 1, "The 300-second worker may claim only one report per invocation.");
@@ -142,6 +147,76 @@ delete process.env.REPORT_AUTOMATION_OWNER_RULING_VERSION;
 
 const draft = { headline: "FIXTURE_ONLY.", body: "FIRST_SENTENCE. SECOND_SENTENCE.", sections: [] };
 const namedRevision = { ...draft, body: "FIRST_SENTENCE. REVISED_SECOND_SENTENCE." };
+
+const productionColdReadDefect1 = {
+  result: "defects",
+  applicability: { interpretive_movement: "applicable", reason: "The rendered key-dates unit contains multiple records." },
+  defects: [{
+    id: "defect-1",
+    category: "owner_voice_drift",
+    location: "body",
+    sentence_index: 0,
+    scope_start: 0,
+    scope_end: 0,
+    quote: "A supported key-date sentence.",
+    evidence: "On a cold read, the sentence sounds assembled.",
+    evidence_ids: [],
+    instruction: "Replace only the named sentence."
+  }]
+};
+assert.doesNotThrow(() => assertReportOwnerVoiceEvidence(productionColdReadDefect1, [], "cold_read"),
+  "The recorded defect-1 cold-read payload is evidence by construction and must not require comparison passages.");
+assert.throws(() => assertReportOwnerVoiceEvidence(productionColdReadDefect1, [], "context_aware_critique"),
+  /defect-1 lacks eligible comparison evidence/u,
+  "The same uncited owner-voice finding must still fail in the context-aware critique.");
+
+const productionKeyDatesDraft = assembleDeterministicReportKeyDates({
+  reportHorizon: "12_months",
+  frozenFacts: {
+    slowTransitArcs: [{
+      id: "jupiter-conjunction-jupiter",
+      transitPlanet: "Jupiter",
+      natalPoint: "Jupiter",
+      aspect: "conjunction",
+      isReturn: true,
+      passes: [{ motion: "direct", exactAt: "2026-07-04T15:07:02Z" }]
+    }, {
+      id: "jupiter-square-moon",
+      transitPlanet: "Jupiter",
+      natalPoint: "Moon",
+      aspect: "square",
+      isReturn: false,
+      passes: [{ motion: "direct", exactAt: "2026-08-27T16:35:38Z" }]
+    }],
+    lunarEvents: [{
+      id: "solar_eclipse-2026-08-12",
+      kind: "solar_eclipse",
+      occursAt: "2026-08-12T17:36:45Z",
+      natalHouse: 3,
+      natalContacts: []
+    }]
+  },
+  sourceUnits: [{
+    unitId: "summer",
+    draft: {
+      headline: "SUMMER: Your work reaches other people, but new opportunities strain your daily schedule",
+      body: "Summer is when work you have been developing privately starts reaching other people. Jupiter returns to its natal position in your 3rd house, beginning a new 12-year cycle around writing, learning, speaking, teaching, and everyday communication. You may begin writing regularly, take a course, send a proposal, or develop an idea that will occupy you for years.\n\nThe 3rd-house solar eclipse may bring privately developed work to submission, publication, or announcement. An application, announcement, piece of writing, or decision may reach the point where someone else can respond.\n\nNear the end of summer, all the new communication starts competing with your daily capacity. Jupiter squares your 6th-house Moon. Each new opportunity can look manageable by itself.",
+      sections: []
+    }
+  }]
+});
+assert.deepEqual(validateReportKeyDateFormat(productionKeyDatesDraft), [],
+  "Production-shaped deterministic key dates must pass the existing four-field Markdown format contract.");
+assert.equal(verifyReportFactLock(productionKeyDatesDraft, {
+  slowTransitArcs: [{ id: "jupiter-conjunction-jupiter", transitPlanet: "Jupiter", natalPoint: "Jupiter", aspect: "conjunction", isReturn: true, passes: [{ exactAt: "2026-07-04T15:07:02Z" }] },
+    { id: "jupiter-square-moon", transitPlanet: "Jupiter", natalPoint: "Moon", aspect: "square", passes: [{ exactAt: "2026-08-27T16:35:38Z" }] }],
+  lunarEvents: [{ id: "solar_eclipse-2026-08-12", kind: "solar_eclipse", occursAt: "2026-08-12T17:36:45Z", natalHouse: 3, natalContacts: [] }]
+}).passed, true, "Deterministic date labels and technical attributions must remain traceable to the frozen facts.");
+assert.match(productionKeyDatesDraft.body, /JUL 4 · Your work reaches other people[\s\S]*You may begin writing regularly/u);
+assert.match(productionKeyDatesDraft.body, /AUG 12 · Your work reaches other people[\s\S]*someone else can respond/u);
+assert.match(productionKeyDatesDraft.body, /AUG 27 · Your work reaches other people[\s\S]*Each new opportunity can look manageable by itself/u);
+assert.equal(productionKeyDatesDraft.sections.length, 0, "Key dates must be one deterministic formatted assembly, not a writer-created section tree.");
+
 assert.equal(enforceReportRevisionStopRule(draft, namedRevision, [{
   id: "d1", category: "unlived_abstraction", location: "body", sentence_index: 1,
   quote: "SECOND_SENTENCE.", evidence: "FIXTURE_ONLY", instruction: "FIXTURE_ONLY"
@@ -848,11 +923,14 @@ assert.equal(reportJudgeOverall(shortUnitScores, false), 1);
 assert.equal(reportJudgeVerdict(shortUnitScores, 0.85, false), "pass", "Movement is excluded when a short unit marks it not applicable.");
 function fixtureUnitDraft(unitId) {
   const unitFingerprint = crypto.createHash("sha256").update(unitId).digest("hex").slice(0, 10).toUpperCase();
+  const deterministicKeyDateSources = new Set(["what-matters-most", "development:1", "phase-1", "winter-current"]);
   return {
     headline: `FIXTURE_ONLY ${unitFingerprint} HEADLINE.`,
     tldr: `FIXTURE_ONLY ${unitFingerprint} TLDR.`,
     summary: `FIXTURE_ONLY ${unitFingerprint} SUMMARY.`,
-    body: `FIXTURE_ONLY ${unitFingerprint} BODY.`,
+    body: deterministicKeyDateSources.has(unitId)
+      ? `FIXTURE_ONLY ${unitFingerprint}: Saturn trines your natal Jupiter. A supported calendar consequence may belong to ${unitFingerprint}.`
+      : `FIXTURE_ONLY ${unitFingerprint} BODY.`,
     action: `FIXTURE_ONLY ${unitFingerprint} ACTION.`,
     timing: `FIXTURE_ONLY ${unitFingerprint} TIMING.`,
     sections: unitId === "key-dates" ? [{
@@ -957,7 +1035,7 @@ for (const [index, sku] of activeSkus.entries()) {
   assert.equal(store.reports.get(reportId).status, "needs_review");
   if (isCompEndToEnd) {
     completedCompReport = structuredClone(store.reports.get(reportId));
-    assert.equal(providerMock.count(), reportCallEstimate("12_months").cleanPathCalls, "The comp mock must traverse draft, critique, and judge for all 12-month units.");
+    assert.equal(providerMock.count(), reportCallEstimate("12_months").cleanPathCalls, "The comp mock must traverse draft, critique, and judge for written 12-month units while assembling key dates without provider calls.");
     assert.equal(store.facts.get(`calls:job-${index}`), reportCallEstimate("12_months").cleanPathCalls);
     assert.ok(providerMock.count() <= reportCallEstimate("12_months").recommendedCallBudget);
   }
@@ -1311,7 +1389,7 @@ await assert.rejects(processReportFulfillmentJob({ job: authorizedJob({ id: "res
 assert.ok(resumeStore.units.has("resume-report:overview"));
 const resumeCall = modelCallWithCrash();
 await processReportFulfillmentJob({ job: authorizedJob({ id: "resume-job", report_id: resumeReport.id, entitlement_id: "resume-ent", state: "running", step: "writing", attempt: 2 }), store: resumeStore, calculateFacts, callModel: resumeCall, judgeCall });
-assert.equal(resumeCall.count(), 10, "Resume must skip the completed unit, make draft, critique, and cold-read calls for each of three remaining units, and run one report-level redundancy pass.");
+assert.equal(resumeCall.count(), 7, "Resume must skip the completed unit, run the two remaining writer chains, assemble key dates deterministically, and run one report-level redundancy pass.");
 
 function assemblyReadyReport(id) {
   return {
@@ -1335,7 +1413,7 @@ async function seedAssemblyUnits(targetStore, report, bodyByUnit = {}) {
       headline: `FIXTURE ${marker} HEADING.`,
       tldr: `FIXTURE ${marker} TLDR.`,
       summary: `A distinct summary belongs to marker ${marker}.`,
-      body: bodyByUnit[unitId] ?? `A distinct body consequence belongs to marker ${marker}.`,
+      body: unitId === "key-dates" ? "" : (bodyByUnit[unitId] ?? `A distinct body consequence belongs to marker ${marker}.`),
       action: `A distinct action belongs to marker ${marker}.`,
       timing: `A distinct timing note belongs to marker ${marker}.`,
       sections: unitId === "key-dates" ? [{
@@ -1381,6 +1459,8 @@ const redundancyFindingCall = async (input) => {
   const attempt = { provider: input.provider, model: input.model, schemaName: input.schemaName };
   await input.beforeProviderCall?.(attempt);
   assert.equal(input.schemaName, "report_redundancy_pass");
+  assert.doesNotMatch(input.prompt, /FIXTURE KEY DATES|FEB 18 · FIXTURE TITLE/u,
+    "Deterministically copied key-date material must not enter any prose-evaluation provider call.");
   const quote = "A distinct body consequence belongs to marker 222.";
   const result = {
     value: {
@@ -1492,9 +1572,9 @@ const persistenceResume = await runReportFulfillmentBatch({
   persistenceRetry: { attempts: 3, baseDelayMs: 10, sleep: async () => {} }
 });
 assert.equal(persistenceResume.processed[0].result.status, "needs_review");
-assert.equal(secondPersistenceModel.count(), 10, "The retry must persist cached overview work without re-entering its writer chain, generate only three remaining units with cold reads, and run one report-level redundancy pass.");
-assert.equal(firstPersistenceModel.count() + secondPersistenceModel.count(), 13, "Infrastructure retry must not add any calls above the clean four-unit path plus cold reads and its report-level redundancy pass.");
-assert.equal(persistenceJudgeCalls, 4, "Infrastructure retry must not re-bill the cached overview judge.");
+assert.equal(secondPersistenceModel.count(), 7, "The retry must persist cached overview work, generate only two remaining written units, assemble key dates without calls, and run one report-level redundancy pass.");
+assert.equal(firstPersistenceModel.count() + secondPersistenceModel.count(), 10, "Infrastructure retry must not add calls above the clean three-writer-unit path and its report-level redundancy pass.");
+assert.equal(persistenceJudgeCalls, 3, "Infrastructure retry must not re-bill the cached overview judge or judge deterministic key dates.");
 assert.deepEqual(persistenceStore.jobs.get(persistenceJob.id).passing_unit_cache, {}, "A cached unit clears only after its write and report accounting succeed.");
 assert.deepEqual(persistenceStore.units.get("persistence-report:overview").source_snapshot.judge.scores, passingJudgeScores);
 assert.equal(persistenceStore.units.get("persistence-report:overview").source_snapshot.writerReviews[0].coldCritique.result, "no_defects",
@@ -1557,8 +1637,8 @@ const resumedChainBatch = await runReportFulfillmentBatch({
   judgeCall
 });
 assert.equal(resumedChainBatch.processed[0].result.status, "needs_review");
-assert.equal(resumedChainModel.count(), 11,
-  "The resumed overview starts at cold read, then only the other three unit chains and report-level pass are billed.");
+assert.equal(resumedChainModel.count(), 8,
+  "The resumed overview starts at cold read, then only the other two writer chains and report-level pass are billed; key dates remain deterministic.");
 assert.deepEqual(chainCheckpointStore.jobs.get(chainCheckpointJob.id).passing_unit_cache, {},
   "The in-progress checkpoint clears only after the resumed unit passes and persists.");
 assert.deepEqual(
@@ -1625,8 +1705,8 @@ const judgeRetryResume = await processReportFulfillmentJob({
   judgeCall
 });
 assert.equal(judgeRetryResume.status, "needs_review");
-assert.equal(judgeRetryResumeModel.count(), 10,
-  "A retry chain checkpoint with a judge-derived key must resume at judging; only the other three unit chains and report-level pass are billed.");
+assert.equal(judgeRetryResumeModel.count(), 7,
+  "A retry chain checkpoint with a judge-derived key must resume at judging; only the other two writer chains and report-level pass are billed.");
 assert.deepEqual(judgeRetryCheckpointStore.units.get(`${judgeRetryCheckpointReport.id}:overview`).body, judgeRetryDraft.body,
   "The completed judge-retry draft must persist byte-identically without another draft call.");
 

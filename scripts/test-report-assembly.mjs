@@ -31,11 +31,8 @@ const validKeyDates = [{
   draft: {
     headline: "KEY DATES",
     summary: "FIXTURE_ONLY summary.",
-    body: "FIXTURE_ONLY context.",
-    sections: [{
-      heading: "SUMMER 2026",
-      body: "AUG 12 · FIXTURE_ONLY TITLE · A supported event may need an answer. · Solar eclipse in the third house.\n\nAUG 28 · FIXTURE_ONLY TITLE · Public wording may require revision. · Lunar eclipse on natal Mercury."
-    }]
+    body: "AUG 12 · FIXTURE_ONLY TITLE · A supported event may need an answer. · Solar eclipse in the third house.\n\nAUG 28 · FIXTURE_ONLY TITLE · Public wording may require revision. · Lunar eclipse on natal Mercury.",
+    sections: []
   }
 }];
 assert.ok(!validateAssembledReport(validKeyDates).some((entry) => /key_date|markdown/u.test(entry.code)),

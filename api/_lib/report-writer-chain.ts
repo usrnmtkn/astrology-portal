@@ -79,6 +79,26 @@ export type ReportWriterChainResult = {
   promptVersion: string;
 };
 
+export type ReportFindingEvidenceContext = "context_aware_critique" | "cold_read";
+
+export function assertReportOwnerVoiceEvidence(
+  critique: Pick<ReportCritique, "defects">,
+  eligibleEvidenceIds: Iterable<string>,
+  context: ReportFindingEvidenceContext
+) {
+  // A cold-read finding is evidence by construction: its packet deliberately
+  // excludes comparison passages and every other form of drafting context.
+  // Only the context-aware critique may be required to cite the supplied
+  // owner comparison set.
+  if (context === "cold_read") return;
+  const eligibleEvidence = new Set(eligibleEvidenceIds);
+  for (const defect of critique.defects.filter((candidate) => candidate.category === "owner_voice_drift")) {
+    if (!defect.evidence_ids.length || defect.evidence_ids.some((id) => !eligibleEvidence.has(id))) {
+      throw new Error(`V3 owner_voice_drift defect ${defect.id} lacks eligible comparison evidence.`);
+    }
+  }
+}
+
 export type ReportRevisionReplacement = {
   defect_id: string;
   location: string;
@@ -721,12 +741,11 @@ export async function runReportWriterChain(input: {
     if (!movementApplicable && critique.defects.some((defect) => defect.category === "interpretive_gap")) {
       throw new Error("V3 critique returned interpretive_gap for a unit where interpretive movement is not applicable.");
     }
-    const eligibleEvidence = new Set(packet.ownerComparisonSet.map((passage) => passage.evidenceId));
-    for (const defect of critique.defects.filter((candidate) => candidate.category === "owner_voice_drift")) {
-      if (!defect.evidence_ids.length || defect.evidence_ids.some((id) => !eligibleEvidence.has(id))) {
-        throw new Error(`V3 owner_voice_drift defect ${defect.id} lacks eligible comparison evidence.`);
-      }
-    }
+    assertReportOwnerVoiceEvidence(
+      critique,
+      packet.ownerComparisonSet.map((passage) => passage.evidenceId),
+      "context_aware_critique"
+    );
     await persist({ completedStage: "critique", draft, critique, calls });
   }
 
@@ -769,6 +788,7 @@ export async function runReportWriterChain(input: {
     });
     calls.push({ stage: "cold_read", model: coldResult.model, provider: coldResult.provider, usage: coldResult.usage });
     coldCritique = normalizeReportSentenceAddressedCritique(revised, coldResult.value, coldMovementApplicable);
+    assertReportOwnerVoiceEvidence(coldCritique, [], "cold_read");
     await persist({ completedStage: "cold_read", draft, critique, revised, coldCritique, calls });
   }
   if (coldCritique.result !== "no_defects" && coldCritique.defects.length > 0) {

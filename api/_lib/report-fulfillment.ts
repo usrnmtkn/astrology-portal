@@ -16,6 +16,7 @@ import {
 import { reportSystemPromptVersions } from "./report-prompt-versions.js";
 import {
   runReportRedundancyPass,
+  validateReportKeyDateFormat,
   validateAssembledReport,
   type AssembledReportUnit,
   type ReportAssemblyIssue
@@ -36,6 +37,10 @@ import {
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
 import { natalPointLongitudesFromChart, ReportBirthDataError, requireReportBirthProfile, type BirthProfile } from "./report-billing-window.js";
 import { reportUrl } from "./report-http.js";
+import {
+  assembleDeterministicReportKeyDates,
+  reportKeyDateSourceUnitIds
+} from "./report-key-dates.js";
 
 const unitsByHorizon = {
   "1_month": ["overview", "what-matters-most", "domain:main", "key-dates"],
@@ -463,6 +468,8 @@ export async function processReportFulfillmentJob(input: {
   const passingUnitCache = parsedPassingUnitCache(input.job.passing_unit_cache);
   let writerChainCheckpoint = parsedWriterChainCheckpoint(input.job.passing_unit_cache);
   let generatedUnitsThisCycle = 0;
+  const orderedUnitIds = [...fulfillmentUnitIds(report.report_domain, report.report_horizon)];
+  const writerUnitIds = orderedUnitIds.filter((unitId) => unitId !== "key-dates");
 
   const durableJobCache = () => ({
     ...passingUnitCache,
@@ -527,7 +534,7 @@ export async function processReportFulfillmentJob(input: {
     Object.assign(promptVersions, entry.sourceSnapshot.promptVersions);
   };
 
-  for (const unitId of fulfillmentUnitIds(report.report_domain, report.report_horizon)) {
+  for (const unitId of writerUnitIds) {
     const cachedPassingUnit = passingUnitCache[unitId];
     if (cachedPassingUnit) {
       await input.store.updateJob(input.job.id, { step: "delivery" });
@@ -715,7 +722,77 @@ export async function processReportFulfillmentJob(input: {
     generatedUnitsThisCycle += 1;
   }
 
-  const orderedUnitIds = [...fulfillmentUnitIds(report.report_domain, report.report_horizon)];
+  if (orderedUnitIds.includes("key-dates")) {
+    const existingKeyDates = await input.store.unit(report.id, "key-dates");
+    if (existingKeyDates?.source_snapshot?.fulfillmentPassed === true) {
+      const snapshot = existingKeyDates.source_snapshot;
+      validatorSummary.push({
+        unitId: "key-dates",
+        passed: true,
+        issues: Array.isArray(snapshot.validatorResults) ? snapshot.validatorResults : []
+      });
+      if (snapshot.promptVersions && typeof snapshot.promptVersions === "object") {
+        Object.assign(promptVersions, snapshot.promptVersions);
+      }
+    } else {
+      const sourceRows = await input.store.unitRows(report.id);
+      const sourceUnitIds = new Set(reportKeyDateSourceUnitIds(report.report_horizon));
+      const sourceUnits = sourceRows.flatMap((row) => {
+        const unitId = row.content_key.replace(`report:${report.id}:`, "");
+        if (!sourceUnitIds.has(unitId) || row.source_snapshot?.fulfillmentPassed !== true) return [];
+        return [{
+          unitId,
+          draft: {
+            headline: row.headline,
+            summary: row.summary,
+            body: row.body,
+            sections: Array.isArray(row.sections) ? row.sections as Array<{ heading?: string; body?: string }> : []
+          }
+        }];
+      });
+      const keyDatesDraft = assembleDeterministicReportKeyDates({
+        reportHorizon: report.report_horizon,
+        frozenFacts: report.facts,
+        sourceUnits
+      });
+      const formatIssues = validateReportKeyDateFormat(keyDatesDraft);
+      const factLock = verifyReportFactLock(keyDatesDraft, report.facts);
+      const keyDateIssues = [...formatIssues, ...factLock.issues];
+      if (keyDateIssues.length) {
+        throw new Error(`REPORT_KEY_DATES_FORMAT_CONTRACT: ${JSON.stringify(keyDateIssues)}`);
+      }
+      writerChainCheckpoint = null;
+      await withPersistenceBackoff("key-dates", async () => {
+        await input.store.saveUnit(report, "key-dates", keyDatesDraft, {
+          fulfillmentPassed: true,
+          deterministicAssembly: {
+            schema: "report-key-dates-assembly.v1",
+            sourceUnitIds: sourceUnits.map((unit) => unit.unitId),
+            writerChainSkipped: true,
+            coldReadSkipped: true,
+            judgeSkipped: true,
+            formatContractValidated: true
+          },
+          validatorResults: keyDateIssues,
+          writerReviews: [],
+          promptVersions: {},
+          factsHash: report.facts_hash,
+          attemptCounts: { validator: validatorAttempts, judge: judgeAttempts },
+          tokenAccounting: {
+            acceptedTokens: 0,
+            totalTokens: 0,
+            retryTokens: 0,
+            estimatedUsd: 0,
+            acceptedEstimatedUsd: 0,
+            retryEstimatedUsd: 0
+          }
+        });
+        await input.store.updateJob(input.job.id, { passing_unit_cache: durableJobCache() });
+      }, input.persistenceRetry);
+      validatorSummary.push({ unitId: "key-dates", passed: true, issues: keyDateIssues });
+    }
+  }
+
   const unitRows = await input.store.unitRows(report.id);
   const unitById = new Map(unitRows.map((row) => [row.content_key.replace(`report:${report.id}:`, ""), row]));
   const assembledUnits: AssembledReportUnit[] = orderedUnitIds.map((unitId) => {
@@ -768,7 +845,14 @@ export async function processReportFulfillmentJob(input: {
     unitId: orderedUnitIds[0],
     frozenFacts: report.facts
   });
-  const redundancy = await runReportRedundancyPass({ units: assembledUnits, payload: reportPayload, callModel: authorizedCall });
+  const redundancy = await runReportRedundancyPass({
+    // Key dates are a deterministic assembly of sentences that already passed
+    // in their source season units. Re-sending that copied material to the
+    // prose evaluator would manufacture duplication findings by design.
+    units: assembledUnits.filter((unit) => unit.unitId !== "key-dates"),
+    payload: reportPayload,
+    callModel: authorizedCall
+  });
   tokenCount += redundancy.usage.totalTokens;
   promptVersions.redundancy = redundancy.promptVersion;
   if (redundancy.findings.length) {
