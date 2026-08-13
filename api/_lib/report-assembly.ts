@@ -362,7 +362,7 @@ export function validateAssembledReport(units: AssembledReportUnit[]) {
   return issues;
 }
 
-const redundancySchema = {
+export const REPORT_REDUNDANCY_SCHEMA = {
   type: "object",
   additionalProperties: false,
   required: ["result", "findings"],
@@ -435,7 +435,7 @@ export async function runReportRedundancyPass(input: {
       "Return findings only. Never write replacement prose."
     ].join("\n\n"),
     schemaName: "report_redundancy_pass",
-    schema: redundancySchema
+    schema: REPORT_REDUNDANCY_SCHEMA
   });
   const findings = response.value.result === "no_findings" ? [] : response.value.findings;
   assertFindingLocations(input.units, findings);
