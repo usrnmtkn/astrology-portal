@@ -173,7 +173,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-13a");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-13b");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -724,7 +724,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const openFriendHouseTransitDetail[\s\S]*?sections: exactOwnerApprovedTransitSections\([\s\S]*?card\.normalized\.detailSections,[\s\S]*?\)\.map\(\(section\) => \(\{[\s\S]*?heading: "",/u,
+  /const openFriendHouseTransitDetail[\s\S]*?const eligibleSections = acceptedOwnerApprovedTransitSections\([\s\S]*?card\.normalized\.detailSections,[\s\S]*?sections: eligibleSections\.map\(\(section\) => \(\{[\s\S]*?heading: "",/u,
   "Friend house-transit details must not repeat the resolver headline below the page title."
 );
 assert.match(
@@ -759,7 +759,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const openBondTransitDetail[\s\S]*?body: exactOwnerApprovedTransitBody\([\s\S]*?card\.effectBody,[\s\S]*?card\.effectContentKey,[\s\S]*?\)[\s\S]*?heading: index === 0 \? "What this activates"/u,
+  /const openBondTransitDetail[\s\S]*?body: acceptedOwnerApprovedTransitBody\([\s\S]*?card\.effectBody,[\s\S]*?card\.effectContentKey,[\s\S]*?\)[\s\S]*?heading: index === 0 \? "What this activates"/u,
   "Connection-transit detail views must show the effect once and expand the activated synastry connections."
 );
 assert.ok(
@@ -774,7 +774,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const openFriendTransitDetail[\s\S]*?sections: exactOwnerApprovedTransitSections\([\s\S]*?normalized\.sections,[\s\S]*?\)\.map\(\(section\) => \(\{[\s\S]*?body: section\.body/u,
+  /const openFriendTransitDetail[\s\S]*?const eligibleSections = acceptedOwnerApprovedTransitSections\([\s\S]*?normalized\.sections,[\s\S]*?sections: eligibleSections\.map\(\(section\) => \(\{[\s\S]*?body: section\.body/u,
   "Friend personal-transit detail views must retain only exact-owner-approved normalized write-ups."
 );
 assert.match(

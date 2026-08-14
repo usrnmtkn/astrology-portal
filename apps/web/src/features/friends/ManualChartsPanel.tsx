@@ -75,8 +75,8 @@ import {
   normalizeRelationshipContextKey
 } from "../../services/relationshipContext";
 import {
-  exactOwnerApprovedTransitBody,
-  exactOwnerApprovedTransitSections
+  acceptedOwnerApprovedTransitBody,
+  acceptedOwnerApprovedTransitSections
 } from "./transitDetailApproval";
 import type { PronounChoice } from "../../services/personReferences";
 import {
@@ -1468,7 +1468,11 @@ export function ManualChartsPanel({
       termLabel: longTransitPlanets.has(card.transit.transitPlanet) ? "Long-term" : "Short-term",
       keywords: houseLifeAreaKeywords(card.activation.house),
       house: card.activation.house,
-      houseLabel: `${ordinalHouse(card.activation.house)} house`
+      houseLabel: `${ordinalHouse(card.activation.house)} house`,
+      detailAvailable: acceptedOwnerApprovedTransitSections(
+        card.normalized.detailSections,
+        fallbackV3ApprovalLevelForContentKey
+      ).length > 0
     }))
   ), [selectedFriendHouseTransitCards]);
   const selectedFriendPersonalTransitGroups = useMemo<FriendPersonalTransitGroup[]>(() => {
@@ -1488,6 +1492,11 @@ export function ManualChartsPanel({
         label: durationClass === "short" ? "Short-term themes" : "Long-term themes",
         transits: transits.map((transit) => {
           const timing = transitItemTimingDisplay(transit, currentSky.generatedAt);
+          const normalized = normalizePersonalTransitSurface(
+            transit,
+            currentSky.generatedAt,
+            selectedChart.displayName
+          );
 
           return {
             id: transit.id,
@@ -1502,7 +1511,11 @@ export function ManualChartsPanel({
               selectedChart.pronouns,
               currentSky.generatedAt
             ),
-            orb: transit.orb
+            orb: transit.orb,
+            detailAvailable: acceptedOwnerApprovedTransitSections(
+              normalized.sections,
+              fallbackV3ApprovalLevelForContentKey
+            ).length > 0
           };
         })
       }];
@@ -1842,6 +1855,15 @@ export function ManualChartsPanel({
       return;
     }
 
+    const eligibleSections = acceptedOwnerApprovedTransitSections(
+      card.normalized.detailSections,
+      fallbackV3ApprovalLevelForContentKey
+    );
+
+    if (eligibleSections.length === 0) {
+      return;
+    }
+
     onOpenDetail({
       routePath: friendDetailRoutePath(
         selectedChart.id,
@@ -1857,10 +1879,7 @@ export function ManualChartsPanel({
         houseLifeAreas[card.activation.house] ?? ""
       ].filter(Boolean).join(" · "),
       body: [],
-      sections: exactOwnerApprovedTransitSections(
-        card.normalized.detailSections,
-        fallbackV3ApprovalLevelForContentKey
-      ).map((section) => ({
+      sections: eligibleSections.map((section) => ({
         // The page-level title already names this house transit. Repeating the
         // resolver headline here creates a near-identical second title.
         heading: "",
@@ -1903,7 +1922,7 @@ export function ManualChartsPanel({
       title: card.headline,
       meta: [card.transitSign, card.timingRange].filter(Boolean).join(" · "),
       bodyBeforeSections: activatedConnectionSections.length > 0,
-      body: exactOwnerApprovedTransitBody(
+      body: acceptedOwnerApprovedTransitBody(
         card.effectBody,
         card.effectContentKey,
         fallbackV3ApprovalLevelForContentKey
@@ -1971,6 +1990,14 @@ export function ManualChartsPanel({
     const directionSentence = transit.direction
       ? ` The aspect is ${transit.direction}.`
       : "";
+    const eligibleSections = acceptedOwnerApprovedTransitSections(
+      normalized.sections,
+      fallbackV3ApprovalLevelForContentKey
+    );
+
+    if (eligibleSections.length === 0) {
+      return;
+    }
 
     onOpenDetail({
       routePath: friendDetailRoutePath(
@@ -1988,10 +2015,7 @@ export function ManualChartsPanel({
         transit.natalPoint
       ].filter(Boolean).join(" · "),
       body: [],
-      sections: exactOwnerApprovedTransitSections(
-        normalized.sections,
-        fallbackV3ApprovalLevelForContentKey
-      ).map((section) => ({
+      sections: eligibleSections.map((section) => ({
         heading: "",
         body: section.body,
         sourceKeys: section.sourceKeys
