@@ -5,6 +5,14 @@ export type ReportKeyDateSourceUnit = {
   draft: ReportDraft;
 };
 
+export type ReportKeyDateEventManifestEntry = {
+  eventId: string;
+  occursAt: string;
+  dateLabel: string;
+  attribution: string;
+  sourceUnitId: string | null;
+};
+
 type FactRecord = Record<string, unknown>;
 
 type LocatedSentence = {
@@ -188,44 +196,88 @@ export function reportKeyDateSourceUnitIds(horizon: ReportHorizon) {
   return SOURCE_UNIT_IDS[horizon];
 }
 
+function eventSourceUnitId(root: FactRecord, horizon: ReportHorizon, sortAt: number) {
+  const sourceIds = reportKeyDateSourceUnitIds(horizon);
+  const periods = Array.isArray(root.periods) ? root.periods.map(record).filter(Boolean) as FactRecord[] : [];
+  if (periods.length >= sourceIds.length) {
+    const index = periods.slice(0, sourceIds.length).findIndex((period) => {
+      const startsAt = Date.parse(words(period.startsAt));
+      const endsAt = Date.parse(words(period.endsAt));
+      return Number.isFinite(startsAt) && Number.isFinite(endsAt) && sortAt >= startsAt && sortAt < endsAt;
+    });
+    if (index >= 0) return sourceIds[index];
+  }
+  const startsAt = Date.parse(words(root.startsAt));
+  const endsAt = Date.parse(words(root.endsAt));
+  if (!Number.isFinite(startsAt) || !Number.isFinite(endsAt) || sortAt < startsAt || sortAt > endsAt) return null;
+  if (horizon === "12_months") {
+    const startYear = new Date(startsAt).getUTCFullYear();
+    const endYear = new Date(endsAt).getUTCFullYear();
+    const ranges = [
+      [startsAt, Date.UTC(startYear, 2, 31, 23, 59, 59, 999)],
+      [Date.UTC(startYear, 3, 1), Date.UTC(startYear, 5, 30, 23, 59, 59, 999)],
+      [Date.UTC(startYear, 6, 1), Date.UTC(startYear, 8, 30, 23, 59, 59, 999)],
+      [Date.UTC(startYear, 9, 1), Date.UTC(startYear, 11, 31, 23, 59, 59, 999)],
+      [Date.UTC(endYear, 0, 1), endsAt]
+    ];
+    const index = ranges.findIndex(([start, end]) => sortAt >= start && sortAt <= end);
+    return index >= 0 ? sourceIds[index] : null;
+  }
+  const progress = Math.min(0.999999, Math.max(0, (sortAt - startsAt) / Math.max(1, endsAt - startsAt)));
+  return sourceIds[Math.floor(progress * sourceIds.length)] ?? null;
+}
+
+export function reportKeyDateEventManifest(
+  frozenFacts: Record<string, unknown>,
+  reportHorizon: ReportHorizon
+): ReportKeyDateEventManifestEntry[] {
+  const root = record(frozenFacts.reportWindow) ?? frozenFacts;
+  return [...slowTransitEvents(root), ...eclipseEvents(root)]
+    .filter((event) => Number.isFinite(event.sortAt))
+    .sort((left, right) => left.sortAt - right.sortAt || left.id.localeCompare(right.id))
+    .map((event) => ({
+      eventId: event.id,
+      occursAt: event.occursAt,
+      dateLabel: dateLabel(event.occursAt),
+      attribution: event.attribution,
+      sourceUnitId: eventSourceUnitId(root, reportHorizon, event.sortAt)
+    }));
+}
+
 export function assembleDeterministicReportKeyDates(input: {
   reportHorizon: ReportHorizon;
   frozenFacts: Record<string, unknown>;
   sourceUnits: ReportKeyDateSourceUnit[];
 }): ReportDraft {
-  const root = record(input.frozenFacts.reportWindow) ?? input.frozenFacts;
   const allowedSourceIds = new Set(reportKeyDateSourceUnitIds(input.reportHorizon));
-  const orderedSourceIds = reportKeyDateSourceUnitIds(input.reportHorizon);
-  const sourceSentences = input.sourceUnits
+  const events = reportKeyDateEventManifest(input.frozenFacts, input.reportHorizon);
+  const eventById = new Map(events.map((event) => [event.eventId, event]));
+  const selected = input.sourceUnits
     .filter((unit) => allowedSourceIds.has(unit.unitId))
-    .flatMap(locatedSentences);
-  const events = [...slowTransitEvents(root), ...eclipseEvents(root)]
-    .filter((event) => Number.isFinite(event.sortAt))
-    .sort((left, right) => left.sortAt - right.sortAt || left.id.localeCompare(right.id));
+    .flatMap((unit) => (unit.draft.keyDates ?? []).map((entry) => ({ ...entry, unitId: unit.unitId })));
+  if (!selected.length) {
+    throw new Error("REPORT_KEY_DATES_SOURCE_GAP: source units emitted no structured key-date entries.");
+  }
   const records: string[] = [];
   const seenEvents = new Set<string>();
-  const periods = Array.isArray(root.periods) ? root.periods.map(record).filter(Boolean) as FactRecord[] : [];
-  const periodSourceUnitId = periods.length >= orderedSourceIds.length
-    ? (sortAt: number) => {
-      const index = periods.slice(0, orderedSourceIds.length).findIndex((period) => {
-        const startsAt = Date.parse(words(period.startsAt));
-        const endsAt = Date.parse(words(period.endsAt));
-        return Number.isFinite(startsAt) && Number.isFinite(endsAt) && sortAt >= startsAt && sortAt < endsAt;
-      });
-      return index >= 0 ? orderedSourceIds[index] : null;
+  for (const entry of selected.sort((left, right) => {
+    const leftEvent = eventById.get(left.eventId);
+    const rightEvent = eventById.get(right.eventId);
+    return (leftEvent ? Date.parse(leftEvent.occursAt) : Number.MAX_SAFE_INTEGER)
+      - (rightEvent ? Date.parse(rightEvent.occursAt) : Number.MAX_SAFE_INTEGER)
+      || left.eventId.localeCompare(right.eventId);
+  })) {
+    const event = eventById.get(entry.eventId);
+    if (!event) throw new Error(`REPORT_KEY_DATES_FACT_GAP: unknown structured event '${entry.eventId}'.`);
+    if (event.sourceUnitId && event.sourceUnitId !== entry.unitId) {
+      throw new Error(`REPORT_KEY_DATES_UNIT_MISMATCH: '${entry.eventId}' belongs to ${event.sourceUnitId}, not ${entry.unitId}.`);
     }
-    : () => null;
-  for (const event of events) {
-    const seasonalSourceId = periodSourceUnitId(event.sortAt);
-    const source = sourceSentences.find((sentence) => (
-      (!seasonalSourceId || sentence.unitId === seasonalSourceId) && event.matches(sentence.text)
-    ));
-    if (!source || seenEvents.has(event.id)) continue;
-    seenEvents.add(event.id);
-    records.push(`**${dateLabel(event.occursAt)} · ${source.title}** · ${readerSentence(source)} · *${event.attribution}*`);
-  }
-  if (!records.length) {
-    throw new Error("REPORT_KEY_DATES_SOURCE_GAP: no frozen event could be matched to an approved source-unit entry.");
+    if (seenEvents.has(entry.eventId)) throw new Error(`REPORT_KEY_DATES_DUPLICATE_EVENT: '${entry.eventId}'.`);
+    seenEvents.add(entry.eventId);
+    const title = entry.title.trim();
+    const sentence = entry.sentence.trim();
+    if (!title || !sentence) throw new Error(`REPORT_KEY_DATES_EMPTY_COPY: '${entry.eventId}'.`);
+    records.push(`**${event.dateLabel} · ${title}** · ${sentence} · *${event.attribution}*`);
   }
   return {
     headline: "KEY DATES",
