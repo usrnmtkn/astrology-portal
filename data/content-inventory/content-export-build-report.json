@@ -2,7 +2,7 @@
   "schemaVersion": "content-export-report-v1",
   "result": "PASS",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "43aeea97f9208d3f69e4bbb739c3598700acf046",
+  "sourceCommit": "ad5dd53a2b6345df73c0504eb2ca32a90c1ee7ea",
   "contentFingerprint": "8204f0355d662e204a2d37bacee9dff035948d4726837a47ed9f4e0321fc6052",
   "approvedProductionRecords": 9537,
   "exportedRecords": 9537,
