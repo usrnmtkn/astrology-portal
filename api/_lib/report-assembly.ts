@@ -36,6 +36,15 @@ export type ReportAssemblyCoherenceScope = {
   reasons: Array<"internal_whitespace" | "dangling_connector" | "orphaned_pronoun" | "interior_sentence_removed">;
 };
 
+export type ReportAssemblyMechanicalRepair = {
+  unitId: string;
+  location: string;
+  paragraphIndex: number;
+  reasons: Array<"internal_whitespace" | "dangling_connector">;
+  before: string;
+  after: string;
+};
+
 export type ReportRedundancyFinding = {
   id: string;
   category: "semantic_duplication" | "menu_repetition" | "signature_phrase_repetition" | "mechanism_certainty" | "eclipse_arc_continuity" | "stop_after_landing";
@@ -251,6 +260,26 @@ function validateKeyDates(units: AssembledReportUnit[], issues: ReportAssemblyIs
           }));
         }
         if (parts.length === 4) {
+          const titleWords = parts[1].match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)?/gu)?.length ?? 0;
+          if (titleWords < 2 || titleWords > 6) {
+            issues.push(issue({
+              code: "key_date_title_length",
+              message: `Key-date title '${parts[1]}' must contain 2–6 words.`,
+              unitId: unit.unitId, location: field.location, sentenceIndex: recordIndex,
+              scopeStart: recordIndex, scopeEnd: recordIndex, quote: record
+            }, "error"));
+          }
+          const readerSentence = parts[2];
+          if (!/^\p{Lu}/u.test(readerSentence)
+            || !/[.!?]["'’”)]?$/u.test(readerSentence)
+            || /^(?:together,|saturn also\b|this sextile\b)/iu.test(readerSentence)) {
+            issues.push(issue({
+              code: "key_date_incomplete_sentence",
+              message: "Key-date reader sentence must be complete, standalone prose with no dangling connector.",
+              unitId: unit.unitId, location: field.location, sentenceIndex: recordIndex,
+              scopeStart: recordIndex, scopeEnd: recordIndex, quote: record
+            }, "error"));
+          }
           const titleKey = normalizedText(parts[1]);
           const sentenceKey = normalizedText(parts[2]);
           if (titleKey && parentHeadings.has(titleKey)) {
@@ -530,6 +559,56 @@ export function normalizeAssembledReportWhitespace(units: AssembledReportUnit[])
     }
     return { ...unit, draft };
   });
+}
+
+function capitalizeFirstLetter(value: string) {
+  return value.replace(/\p{Ll}/u, (letter) => letter.toLocaleUpperCase());
+}
+
+/**
+ * Repairs only representation damage left by deterministic sentence removal:
+ * repeated whitespace and a connector stranded at the start of a paragraph.
+ * No astrology, interpretation, or substantive sentence text is generated.
+ */
+export function repairMechanicalPostDedupSeams(
+  units: AssembledReportUnit[],
+  removals: ReportAssemblyDeduplication[] = []
+) {
+  const repaired = structuredClone(units);
+  const repairs: ReportAssemblyMechanicalRepair[] = [];
+  const scopes = detectPostDedupCoherenceScopes(repaired, removals);
+  for (const scope of scopes) {
+    if (scope.reasons.some((reason) => reason === "orphaned_pronoun" || reason === "interior_sentence_removed")) continue;
+    const unit = repaired.find((candidate) => candidate.unitId === scope.unitId);
+    if (!unit) continue;
+    const field = fields(unit).find((candidate) => candidate.location === scope.location);
+    if (!field) continue;
+    const paragraphs = field.text.split(/\n\s*\n/gu);
+    const before = paragraphs[scope.paragraphIndex] ?? "";
+    let after = before.replace(/[ \t]+/gu, " ").trim();
+    if (scope.reasons.includes("dangling_connector")) {
+      after = after.replace(/^(?:but|and|so|however|therefore|also)(?:,\s*|\s+)/iu, "");
+      after = capitalizeFirstLetter(after);
+    }
+    if (!after || after === before) continue;
+    paragraphs[scope.paragraphIndex] = after;
+    setDraftField(unit.draft, scope.location, paragraphs.map((paragraph) => paragraph.trim()).filter(Boolean).join("\n\n"));
+    repairs.push({
+      unitId: scope.unitId,
+      location: scope.location,
+      paragraphIndex: scope.paragraphIndex,
+      reasons: scope.reasons.filter((reason): reason is "internal_whitespace" | "dangling_connector" => (
+        reason === "internal_whitespace" || reason === "dangling_connector"
+      )),
+      before,
+      after
+    });
+  }
+  return {
+    units: repaired,
+    repairs,
+    remaining: detectPostDedupCoherenceScopes(repaired, removals)
+  };
 }
 
 /**

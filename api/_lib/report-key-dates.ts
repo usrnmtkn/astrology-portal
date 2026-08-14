@@ -279,6 +279,10 @@ export function assembleDeterministicReportKeyDates(input: {
     if (!title || !sentence) throw new Error(`REPORT_KEY_DATES_EMPTY_COPY: '${entry.eventId}'.`);
     records.push(`**${event.dateLabel} · ${title}** · ${sentence} · *${event.attribution}*`);
   }
+  const missingEvents = events.filter((event) => event.sourceUnitId && !seenEvents.has(event.eventId));
+  if (missingEvents.length) {
+    throw new Error(`REPORT_KEY_DATES_MISSING_EVENTS: ${missingEvents.map((event) => `${event.dateLabel}:${event.eventId}`).join(", ")}`);
+  }
   return {
     headline: "KEY DATES",
     summary: "",
