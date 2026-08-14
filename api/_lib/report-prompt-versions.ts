@@ -10,6 +10,9 @@ export const REPORT_NO_CLEVERNESS_RULING_PATH = "tldr-astro-phrasebank/TLDR-REPO
 export const REPORT_OWNER_REVIEW_EVIDENCE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-OWNER-REVIEW-EVIDENCE-2026-08-11.md";
 export const REPORT_REDUNDANCY_PROMPT_PATH = "tldr-astro-phrasebank/TLDR-REPORT-REDUNDANCY-PASS-V1-OWNER.md";
 export const REPORT_COLD_PROSE_RULE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-COLD-PROSE-RULE-OWNER.md";
+export const REPORT_EARNED_SENTENCE_RULING_PATH = "tldr-astro-phrasebank/TLDR-REPORT-EARNED-SENTENCE-RULING-OWNER.md";
+export const REPORT_CRITIQUE_V6_CANDIDATE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V6-DRAFT.md";
+export const REPORT_JUDGE_V33_CANDIDATE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3.3-DRAFT.md";
 export const REPORT_CRITIQUE_PROMPT_VERSION = "report-critique-checklist-v5";
 export const REPORT_JUDGE_PROMPT_VERSION = "report-judge-rubric-v3.2";
 
@@ -46,6 +49,23 @@ export function loadActiveReportJudgePrompt() {
     REPORT_JUDGE_BASELINE_PROMPT_PATH,
     REPORT_JUDGE_PROMPT_PATH
   ], REPORT_JUDGE_PROMPT_VERSION);
+}
+
+/** Review-only package. Active production loaders above remain v5 and v3.2. */
+export function loadReportVoiceRestorationCandidatePrompts() {
+  return {
+    earnedSentence: loadVersionedReportPrompt(REPORT_EARNED_SENTENCE_RULING_PATH),
+    critique: loadLayeredReportPrompt([
+      REPORT_CRITIQUE_BASELINE_PROMPT_PATH,
+      REPORT_CRITIQUE_PROMPT_PATH,
+      REPORT_CRITIQUE_V6_CANDIDATE_PATH
+    ], "report-critique-checklist-v6-draft"),
+    judge: loadLayeredReportPrompt([
+      REPORT_JUDGE_BASELINE_PROMPT_PATH,
+      REPORT_JUDGE_PROMPT_PATH,
+      REPORT_JUDGE_V33_CANDIDATE_PATH
+    ], "report-judge-rubric-v3.3-draft")
+  };
 }
 
 export function reportSystemPromptVersions(canonicalPath: string) {
