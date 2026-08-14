@@ -12836,7 +12836,7 @@ export function App() {
   const todaySkyDate = dateInputValue();
   const tomorrowSkyDate = dateInputValue(new Date(localDayStart(new Date()).getTime() + 86_400_000));
   const transitDateButtonLabel = isPersonalTransitDateMode && skyDate === todaySkyDate
-    ? "Pick Date"
+    ? "Today"
     : formatSkyHeaderDateLabel(skyDate);
   const skyFullChartTitleId = "sky-full-chart-title";
   const skyFullChartMeta = `${formatSkyFullChartDate(skyDate)} · ${compactCityLabel(location.label)}`;

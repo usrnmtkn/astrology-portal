@@ -1053,7 +1053,7 @@ test.describe("client-facing user flow case studies", () => {
 
     const dateTrigger = page.locator(".sky-header-date-button");
     await expect(dateTrigger).toBeVisible();
-    await expect(dateTrigger).toContainText("Pick Date");
+    await expect(dateTrigger).toContainText("Today");
     await dateTrigger.click();
     await expect(page.getByRole("region", { name: "Pick Date" })).toBeVisible();
     await page.getByRole("gridcell", { name: "Monday, July 20, 2026" }).click();
