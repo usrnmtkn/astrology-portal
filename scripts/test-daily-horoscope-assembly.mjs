@@ -199,7 +199,7 @@ assert.match(
 );
 assert.match(
   youPageSource,
-  /dailyUpdateSummary\.moonContext[\s\S]*?>Moon in<\/span>[\s\S]*?dailyUpdateSummary\.moonContext\.topic/u,
+  /dailyUpdateSummary\.moonContext[\s\S]*?<DailyMoonContextTags context=\{dailyUpdateSummary\.moonContext\}/u,
   "You > Transits must show the chart-specific Moon sign, house, and approved topic as bottom tags."
 );
 assert.doesNotMatch(youPageSource, /aria-label="Personal timing summary"/u);
