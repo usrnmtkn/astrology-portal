@@ -108,7 +108,7 @@ assert.throws(
 const selfSoftMars = renderDailyGlance({ natal: "mars", aspect: "trine" });
 assert.equal(
   selfSoftMars.body,
-  "For the next few hours, it is easier to act on what you want instead of just thinking about it. The task, conversation, or decision you have been putting off may still be annoying, but it feels more possible now. Give it thirty minutes before your mind starts making the case for waiting again."
+  "The task you have been putting off may take less energy than all the time you have spent thinking about it. The conversation, decision, or errand may still be annoying, but it feels more possible once you start. Give it thirty minutes before you decide to put it off again."
 );
 
 // Mirrored legacy body_they cannot enter the authored friend path.

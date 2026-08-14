@@ -37,7 +37,7 @@
   "precedence": "V13 rows replace earlier same-contentKey LL rows; one canonical row remains for every contentKey.",
   "invariants": {
     "existingApprovedRowsChanged": 0,
-    "existingApprovedRowsSha256": "1f6bbd2b368a51a5036ca09e3d05b49d21774d659b37dd6999658253df854935",
+    "existingApprovedRowsSha256": "cef9eb86e536647fd32949431627a6d1c71454b164f3f6e6c521feb50ad5f683",
     "snapshotRepin": "Container-only re-pin for v3-2026-08-11b after the owner-approved soft/Uranus revision changed exactly two approved daily rows; all 301 governed V13 rows remain byte-identical to the locked workbook projection.",
     "sameKeyRepairRecord": "packages/astro-knowledge/review/v13-duplicate-contentkey-repair-2026-08-11.json",
     "sourceExportSha256": "a85593bdfb90b136054768bfa9c3c4dbaabe5aee103f2ba371f2d42161c1cd03",
