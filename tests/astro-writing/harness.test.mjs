@@ -245,9 +245,9 @@ assert.ok(!concreteOutcomeLint.violations.some((violation) => violation.category
 const approvedExamples = jsonl("data/writing/OWNER_APPROVED_EXAMPLES.jsonl");
 const ownerRegisterGold = JSON.parse(read("data/writing/owner-register-gold.json"));
 const ownerPositiveEvidence = ownerPositiveEvidenceFromSurfaceQualifiedPool(JSON.parse(read(
-  "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/surface-qualified-positive-exemplars-v2.json"
+  "packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json"
 )));
-const writerVoiceIndex = JSON.parse(read("packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/voice-index.json"));
+const writerVoiceIndex = JSON.parse(read("packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json"));
 const matrixEvidenceRows = jsonl("data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl");
 const matrixCoverage = JSON.parse(read("data/writing/matrix-evidence-index/TLDR-Matrix-Coverage-By-Placement.json"));
 const ownerPhraseEvidence = loadPhraseEvidenceIndex(path.join(repoRoot, "data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl"));
@@ -308,14 +308,15 @@ const venusLibraSceneEvidence = sceneEvidenceForTarget({
   }
 });
 assert.equal(matrixSceneCatalog.primary.length, 41, "Higher-governance matrix scene inventory must remain 41 unique rows.");
-assert.equal(servingSceneCatalog.length, 47, "Approved serving scene inventory must remain 47 rows.");
+assert.equal(servingSceneCatalog.length, 48, "Approved serving scene inventory must remain 48 rows.");
 assert.equal(venusLibraHouseCoreScenes.length, 12);
 assert.equal(venusLibraSceneEvidence.counts.samePlanetSignHouseCoreSelected, 12);
-assert.equal(venusLibraSceneEvidence.counts.samePlanetSignSceneAvailable, 14);
-assert.equal(venusLibraSceneEvidence.counts.servingSelected, 0);
+assert.equal(venusLibraSceneEvidence.counts.samePlanetSignSceneAvailable, 15);
+assert.equal(venusLibraSceneEvidence.counts.servingSelected, 1);
 assert.equal(venusLibraSceneEvidence.counts.matrixSelected, 1);
 assert.ok(venusLibraSceneEvidence.selected.slice(0, 12).every((entry) => entry.sourceKind === "approved_house_horoscope_core"));
-assert.ok(venusLibraSceneEvidence.selected.slice(12).every((entry) => entry.sourceKind === "owner_approved_knowledge_matrix_scene_index"));
+assert.equal(venusLibraSceneEvidence.selected[12]?.sourceKind, "approved_serving_row");
+assert.ok(venusLibraSceneEvidence.selected.slice(13).every((entry) => entry.sourceKind === "owner_approved_knowledge_matrix_scene_index"));
 for (const expected of [
   "reread the text before you send it",
   "One quick favor turns into your whole afternoon",

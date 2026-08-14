@@ -23,7 +23,7 @@ register-gold page.
 ## Extended role counts by source
 
 - `approved_house_horoscope_core`: meaning 0, register 0, scene 24, argument 0, phrase 0
-- `approved_serving_row`: meaning 0, register 0, scene 225, argument 0, phrase 0
+- `approved_serving_row`: meaning 0, register 0, scene 226, argument 0, phrase 0
 - `current-owner-approved-placement-article`: meaning 0, register 0, scene 0, argument 56, phrase 0
 - `owner_corpus_fixture_scene`: meaning 0, register 0, scene 3, argument 0, phrase 0
 - `owner-approved-knowledge-matrix-argument_candidate`: meaning 0, register 0, scene 0, argument 454, phrase 0

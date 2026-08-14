@@ -8,20 +8,20 @@ Index key: `planet|sign; *|* is globally eligible register evidence`
 
 - Meaning: **1876**
 - Register: **1710**
-- Scene: **418**
+- Scene: **419**
 - Argument: **510**
 - Phrase: **346**
-- Total entries: **4860** across **190** planet-sign keys
+- Total entries: **4861** across **190** planet-sign keys
 
 Scene precedence is fixed as: same-planet-sign owner-approved house cores; approved serving
 rows; knowledge-matrix scene rows. Governance precedence still applies within each source tier.
 
 ## Stores indexed
 
-- `packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/voice-index.json`
+- `packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json`
 - `data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl`
 - `data/writing/matrix-evidence-index/TLDR-Matrix-Coverage-By-Placement.json`
-- `packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/surface-qualified-positive-exemplars-v2.json`
+- `packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json`
 - `data/writing/OWNER_APPROVED_EXAMPLES.jsonl`
 - `data/writing/owner-register-gold.json`
 - `data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl`
@@ -109,6 +109,7 @@ None among the stores represented by the approved-example export.
 - `fallback-hook/sky-lunation-close`
 - `fallback-hook/sky-lunation-opener`
 - `fallback-hook/sky-newmoon-sign`
+- `fallback-hook/sky-planet-education`
 - `fallback-hook/sky-season-close`
 - `fallback-hook/sky-season-lore`
 - `fallback-hook/sky-season-opener`
@@ -168,6 +169,7 @@ None among the stores represented by the approved-example export.
 - `fallback-vocab/transit-label-noun`
 - `knowledge-matrix-house`
 - `knowledge-matrix-transit`
+- `sky-aspect`
 - `sky.ingress.jupiter.leo`
 - `sky.retrograde.venus.scorpio.retrograde_passage`
 - `sky.station.chiron.taurus.retrograde`

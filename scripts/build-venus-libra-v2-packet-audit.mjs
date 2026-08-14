@@ -29,11 +29,11 @@ const corrections = [
 ];
 const registerGoldExamples = JSON.parse(fs.readFileSync(path.join(repoRoot, "data/writing/owner-register-gold.json"), "utf8"));
 const surfaceQualifiedPool = JSON.parse(fs.readFileSync(
-  path.join(repoRoot, "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/surface-qualified-positive-exemplars-v2.json"),
+  path.join(repoRoot, "packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json"),
   "utf8"
 ));
 const voiceIndex = JSON.parse(fs.readFileSync(
-  path.join(repoRoot, "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/voice-index.json"),
+  path.join(repoRoot, "packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json"),
   "utf8"
 ));
 const approvedExamples = jsonl("data/writing/OWNER_APPROVED_EXAMPLES.jsonl");

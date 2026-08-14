@@ -110,11 +110,11 @@ const corrections = [
 ];
 const registerGoldExamples = JSON.parse(fs.readFileSync(path.resolve("data/writing/owner-register-gold.json"), "utf8"));
 const surfaceQualifiedPool = JSON.parse(fs.readFileSync(
-  path.resolve("packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/surface-qualified-positive-exemplars-v2.json"),
+  path.resolve("packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json"),
   "utf8"
 ));
 const voiceIndex = JSON.parse(fs.readFileSync(
-  path.resolve("packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/voice-index.json"),
+  path.resolve("packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json"),
   "utf8"
 ));
 const approvedExamples = readJsonl(path.resolve("data/writing/OWNER_APPROVED_EXAMPLES.jsonl"));

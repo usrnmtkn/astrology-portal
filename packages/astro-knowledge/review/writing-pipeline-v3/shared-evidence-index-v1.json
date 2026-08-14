@@ -1,6 +1,6 @@
 {
   "version": "shared-evidence-standard-v1-2026-08-13",
-  "generatedAt": "2026-08-14T04:54:48.424Z",
+  "generatedAt": "2026-08-14T06:51:29.431Z",
   "keyFormat": "planet|sign; *|* is globally eligible register evidence",
   "rolePriority": {
     "scene": [
@@ -17,10 +17,10 @@
     "data/writing/owner-register-gold.json"
   ],
   "counts": {
-    "entries": 4860,
+    "entries": 4861,
     "meaning": 1876,
     "register": 1710,
-    "scene": 418,
+    "scene": 419,
     "argument": 510,
     "phrase": 346,
     "planetSignKeys": 190
@@ -4273,7 +4273,8 @@
         "scene:serving:house-horoscope-core/venus/libra/house-9",
         "scene:serving:house-horoscope-core/venus/libra/house-10",
         "scene:serving:house-horoscope-core/venus/libra/house-11",
-        "scene:serving:house-horoscope-core/venus/libra/house-12"
+        "scene:serving:house-horoscope-core/venus/libra/house-12",
+        "scene:serving:fallback-hook/sky-sign-copy/venus/libra"
       ],
       "argument": [
         "argument:matrix:argument_candidate:3a67f4b7a5ef",
@@ -127918,7 +127919,7 @@
         "text"
       ],
       "eligibleForWriterRegister": true,
-      "text": "It is the energy spent rebuilding your whole day around it. A text confirms an appointment, so you reschedule a work call and squeeze your remaining hours into a tight corner. Then another ask comes in before you have even settled the first change. The weight does not just come from showing up. It comes from constantly tearing down and rearranging your life whenever someone else needs help. Pick the most important request you can actually manage today, adjust the schedule once, and say no to the rest."
+      "text": "A text confirms an appointment, so you reschedule a work call and now have to fit the rest of your work into fewer hours. Then another request comes in before you have adjusted to the first one. The burden is not only showing up. It is rearranging your day every time someone else needs help. Pick the most important request you can actually manage today, adjust the schedule once, and say no to the rest."
     },
     {
       "id": "scene:serving:fallback-hook/daily-body/house/3",
@@ -127949,7 +127950,7 @@
         "email"
       ],
       "eligibleForWriterRegister": true,
-      "text": "The group chat moves dinner from seven to eight, then back again. A quick email sprouts six replies. You get halfway through an errand before realizing one key detail changed; and suddenly your whole afternoon is swallowed by back-and-forth. Give the small exchanges your full attention today. Confirm the time. Answer the exact question in front of you. Put the important details somewhere everyone can actually find them. A little precision right now will save you from a much bigger problem later. Say what needs to be said, make it clear, and let that be enough."
+      "text": "The group chat moves dinner from seven to eight, then back again. A quick email turns into six replies. You get halfway through an errand before realizing one key detail changed, and suddenly the afternoon is disappearing into back-and-forth. Confirm the time. Answer the exact question. Put the important detail somewhere everyone can find it. A little precision now can save you from a much bigger problem later."
     },
     {
       "id": "scene:serving:fallback-hook/daily-body/house/6",
@@ -128047,7 +128048,7 @@
         "reply"
       ],
       "eligibleForWriterRegister": true,
-      "text": "You open the email you have been avoiding and realize the reply takes five minutes. The bill gets paid, the appointment gets booked, or the form finally leaves the pile on your desk. None of it is exciting, but carrying it in your head every day was taking more energy than finishing it. Take advantage of the slower rhythm to clear just one loose end."
+      "text": "You open the email you have been avoiding and realize the reply takes five minutes. The bill gets paid, the appointment gets booked, or the form finally leaves the pile on your desk. None of it is exciting, but carrying it in your head every day was taking more energy than finishing it. Use the quieter day to clear one loose end."
     },
     {
       "id": "scene:serving:fallback-hook/daily-body/soft/south-node",
@@ -128078,7 +128079,7 @@
         "messages"
       ],
       "eligibleForWriterRegister": true,
-      "text": "Experience taught you how to spot the problem before anyone else does. When the plan falls apart, the deadline moves, or someone else's panic fills the room, you may already be answering messages, assigning the next steps, and calming everyone down before you have even decided to help. Use what you know. Organize the part that is actually yours. Then stop before competence becomes another way to prove that you deserve your place. That instinct may have kept you useful. It may even have kept you safe. But usefulness is not the same as belonging. Keep the skill. Put down the job of holding everyone together."
+      "text": "Experience taught you how to spot the problem before anyone else does. When the plan falls apart, the deadline moves, or someone else's panic fills the room, you may already be answering messages, assigning the next steps, and calming everyone down before you have even decided to help. Use what you know. Organize the part that is actually yours. Then stop before helping becomes another attempt to prove that you deserve to be there. Keep the skill. Put down the job of holding everyone together."
     },
     {
       "id": "scene:serving:fallback-hook/daily-body/soft/uranus",
@@ -128171,7 +128172,7 @@
         "schedule"
       ],
       "eligibleForWriterRegister": true,
-      "text": "You sit down to handle a single tedious administrative form or look at one annoying obligation on your calendar, and expect restlessness. It is easy to let one frustrating task make your whole day feel suffocating, convincing you that you preach balance while practicing burnout and need to scrap the entire schedule. You don't have to optimize every second of your existence, nor do you need to tear everything down just to get some breathing room. Adjust the single commitment that is actually causing the friction and leave the rest intact. You're allowed to change your direction as you learn more about who you are."
+      "text": "You sit down to handle one tedious administrative form or one annoying obligation on your calendar, and five minutes later the whole day feels suffocating. It is easy to let that one task convince you that you preach balance while practicing burnout and need to scrap the entire schedule. You do not need to change everything because one part of it is making you miserable. Adjust the single commitment that is actually causing the friction and leave the rest intact. You're allowed to change your direction as you learn more about who you are."
     },
     {
       "id": "scene:serving:fallback-hook/empty-house/base/3:friend",
@@ -131085,6 +131086,38 @@
       "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Leo on {{entryDate}}, and affection becomes easier to see. Venus governs relationships, creativity, and what we value. Leo is the sign of visibility, creative pride, and being seen. The compliment gets specific. The invitation feels like an occasion. We dress with more nerve, choose gifts with a flourish, and want love to arrive with enough warmth that its meaning is unmistakable. Venus in Leo draws us toward what feels proud, creative, generous, and fully alive.\n\nVisible appreciation gives affection a form. Soon, only the biggest response feels convincing. We give more than was asked, spend more than planned, or turn a simple celebration into a test of how much someone cares. If the reaction is smaller than expected, generosity hardens into scorekeeping. A quiet kindness can disappear beside a grand gesture, and admiration starts carrying more weight than the relationship itself.\n\nA beautiful purchase can feel satisfying until the bill remains after the pleasure fades. A creative offering can feel free until a muted response makes the effort seem worthless. In love, steady care may be overlooked because it does not arrive with ceremony. We start choosing what reflects admiration back to us and miss what has been real without being loud.\n\nBy {{exitDate}}, Venus in Leo can leave real affection sitting in plain sight while the search for a bigger reaction continues."
     },
     {
+      "id": "scene:serving:fallback-hook/sky-sign-copy/venus/libra",
+      "indexKey": "venus|libra",
+      "planet": "venus",
+      "sign": "libra",
+      "role": "scene",
+      "sourcePath": "data/writing/OWNER_APPROVED_EXAMPLES.jsonl",
+      "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+      "family": "owner-approved-scene-evidence",
+      "governanceTier": "serving-review-status-approved",
+      "ownerApproved": true,
+      "ownerAuthored": false,
+      "generated": false,
+      "evidenceRole": "approved_serving_scene",
+      "sourceKind": "approved_serving_row",
+      "house": null,
+      "eventType": null,
+      "register": "second_person",
+      "store": null,
+      "themes": [],
+      "subjectTags": [],
+      "failureTags": [],
+      "copySha": null,
+      "sceneNouns": [
+        "bill",
+        "shift",
+        "shifts",
+        "split"
+      ],
+      "eligibleForWriterRegister": true,
+      "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them.\n\nVenus rules Libra, so compromise comes easily here. You can see both sides, find the middle ground, and make an arrangement work without much friction. That is useful until your own preference disappears somewhere inside the compromise.\n\nThe problem starts when you keep saying yes because it feels easier than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left. The loudest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility. Resentment builds because the agreement only works by asking one person to keep giving more. You did not agree. You accommodated, and everyone called it agreement.\n\nBeing easy to work with is rewarded everywhere. It gets called low maintenance, flexible, a good partner. Nobody mentions that it is also free. A collaborator chooses the direction, you say it works, and before anyone assigns the follow-up, you offer to rewrite the draft, send the updates, and deliver the final version. The decision takes five minutes; carrying it out costs you several more hours. When you finally say you preferred another version, their response tells you which one it was: they reopen the decision and split the revisions, or they expect you to keep carrying the plan you never picked.\n\nA shared purchase hides the same imbalance. You agree to split the cost, put the charge on your card, and accept a smaller repayment because asking for the exact difference feels awkward. You save the receipt, calculate what is still owed, and send another reminder. The agreement stays easy because you carry the missing money and the work of collecting it.\n\nSay what you want before you hear what everyone else wants. Name the number. Ask who is doing the follow-up. Let the plan change once you are actually in it. Then watch what happens: who adjusts, who covers the difference, and who takes on the work their choice created.\n\nThe connections worth keeping are the ones that survive you asking for something."
+    },
+    {
       "id": "scene:serving:fallback-hook/sky-sign-copy/venus/sagittarius",
       "indexKey": "venus|sagittarius",
       "planet": "venus",
@@ -132765,7 +132798,7 @@
       "sourceKind": "current-owner-approved-placement-article",
       "house": null,
       "eventType": null,
-      "register": "collective",
+      "register": "second_person",
       "store": null,
       "themes": [],
       "subjectTags": [],
@@ -132773,7 +132806,7 @@
       "copySha": null,
       "sceneNouns": [],
       "eligibleForWriterRegister": true,
-      "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra on {{entryDate}}, and we pay closer attention to whether interest, effort, and consideration are being returned. Venus governs relationships, creativity, and what we value. Libra is the sign of balance, connection, and how we get along with each other. A shared decision includes both preferences. A purchase feels worth making because it is useful and beautiful. Affection becomes easier to trust when care does not have to be requested every time.\n\nThe cost appears when agreement matters more than an honest answer. We ask what works for everyone else before admitting what works for us. We revise a preference until nobody can object, accept an arrangement because it looks even, and keep the peace after the effort stops being mutual. The decision then belongs to whoever was clearest, while the more accommodating side carries the extra cost. Resentment enters a relationship that still looks perfectly calm.\n\nThe issue may be a relationship where the same person always chooses the harmless answer, a shared expense left unequal because asking for the exact amount feels rude, or an attraction sustained by being admired rather than being known. Each compromise seems small. Together they teach others that our preferences can be moved and our limits can wait. By the time a real disagreement arrives, nobody knows which agreement was sincere.\n\nBefore {{exitDate}}, an arrangement may strain when the person who kept agreeing can no longer accept what they do not want."
+      "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them.\n\nVenus rules Libra, so compromise comes easily here. You can see both sides, find the middle ground, and make an arrangement work without much friction. That is useful until your own preference disappears somewhere inside the compromise.\n\nThe problem starts when you keep saying yes because it feels easier than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left. The loudest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility. Resentment builds because the agreement only works by asking one person to keep giving more. You did not agree. You accommodated, and everyone called it agreement.\n\nBeing easy to work with is rewarded everywhere. It gets called low maintenance, flexible, a good partner. Nobody mentions that it is also free. A collaborator chooses the direction, you say it works, and before anyone assigns the follow-up, you offer to rewrite the draft, send the updates, and deliver the final version. The decision takes five minutes; carrying it out costs you several more hours. When you finally say you preferred another version, their response tells you which one it was: they reopen the decision and split the revisions, or they expect you to keep carrying the plan you never picked.\n\nA shared purchase hides the same imbalance. You agree to split the cost, put the charge on your card, and accept a smaller repayment because asking for the exact difference feels awkward. You save the receipt, calculate what is still owed, and send another reminder. The agreement stays easy because you carry the missing money and the work of collecting it.\n\nSay what you want before you hear what everyone else wants. Name the number. Ask who is doing the follow-up. Let the plan change once you are actually in it. Then watch what happens: who adjusts, who covers the difference, and who takes on the work their choice created.\n\nThe connections worth keeping are the ones that survive you asking for something."
     },
     {
       "id": "argument:fallback-hook/sky-sign-copy/venus/pisces",
@@ -146055,10 +146088,10 @@
   ],
   "sourceStores": {
     "included": [
-      "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/voice-index.json",
+      "packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json",
       "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
       "data/writing/matrix-evidence-index/TLDR-Matrix-Coverage-By-Placement.json",
-      "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/surface-qualified-positive-exemplars-v2.json",
+      "packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json",
       "data/writing/OWNER_APPROVED_EXAMPLES.jsonl",
       "data/writing/owner-register-gold.json",
       "data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl",
@@ -146168,6 +146201,7 @@
       "fallback-hook/sky-lunation-close",
       "fallback-hook/sky-lunation-opener",
       "fallback-hook/sky-newmoon-sign",
+      "fallback-hook/sky-planet-education",
       "fallback-hook/sky-season-close",
       "fallback-hook/sky-season-lore",
       "fallback-hook/sky-season-opener",
@@ -146234,6 +146268,7 @@
       "knowledge-matrix-transit",
       "natal",
       "sky-article/saturn",
+      "sky-aspect",
       "sky-placement",
       "sky.ingress.jupiter.leo",
       "sky.retrograde.venus.scorpio.retrograde_passage",
@@ -146342,6 +146377,7 @@
       "fallback-hook/sky-lunation-close",
       "fallback-hook/sky-lunation-opener",
       "fallback-hook/sky-newmoon-sign",
+      "fallback-hook/sky-planet-education",
       "fallback-hook/sky-season-close",
       "fallback-hook/sky-season-lore",
       "fallback-hook/sky-season-opener",
@@ -146401,6 +146437,7 @@
       "fallback-vocab/transit-label-noun",
       "knowledge-matrix-house",
       "knowledge-matrix-transit",
+      "sky-aspect",
       "sky.ingress.jupiter.leo",
       "sky.retrograde.venus.scorpio.retrograde_passage",
       "sky.station.chiron.taurus.retrograde",

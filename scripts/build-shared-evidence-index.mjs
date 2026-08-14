@@ -16,8 +16,8 @@ const reviewRoot = path.join(repoRoot, "packages/astro-knowledge/review/writing-
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), "utf8"));
 const readJsonl = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8").trim().split("\n").filter(Boolean).map(JSON.parse);
 
-const voiceIndex = readJson("packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/voice-index.json");
-const surfacePool = readJson("packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/surface-qualified-positive-exemplars-v2.json");
+const voiceIndex = readJson("packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json");
+const surfacePool = readJson("packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json");
 const approvedExamples = readJsonl("data/writing/OWNER_APPROVED_EXAMPLES.jsonl");
 const matrixEvidenceRows = readJsonl("data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl");
 const matrixCoverage = readJson("data/writing/matrix-evidence-index/TLDR-Matrix-Coverage-By-Placement.json");
@@ -66,10 +66,10 @@ const artifact = {
   generatedAt: new Date().toISOString(),
   sourceStores: {
     included: [
-      "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/voice-index.json",
+      "packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json",
       "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
       "data/writing/matrix-evidence-index/TLDR-Matrix-Coverage-By-Placement.json",
-      "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/surface-qualified-positive-exemplars-v2.json",
+      "packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json",
       "data/writing/OWNER_APPROVED_EXAMPLES.jsonl",
       "data/writing/owner-register-gold.json",
       "data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl",

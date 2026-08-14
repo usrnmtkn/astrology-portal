@@ -21,7 +21,7 @@ const approvedExamples = jsonl("data/writing/OWNER_APPROVED_EXAMPLES.jsonl")
   .filter((entry) => entry.ownerApproved === true && typeof entry.text === "string" && entry.text.trim());
 const ownerCorrections = jsonl("data/writing/owner-corrections.jsonl")
   .filter((entry) => typeof entry.corrected === "string" && entry.corrected.trim() && !entry.corrected.trim().startsWith("["));
-const voiceIndex = JSON.parse(read("packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/voice-index.json"));
+const voiceIndex = JSON.parse(read("packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json"));
 const ownerCorpus = voiceIndex.entries.filter((entry) => (
   entry.ownerAuthored === true
   && entry.ownerApproved === true

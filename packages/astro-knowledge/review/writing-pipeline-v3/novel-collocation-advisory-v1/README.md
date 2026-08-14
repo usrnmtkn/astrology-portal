@@ -4,28 +4,28 @@ Status: experimental, advisory-only, inactive pending owner review.
 
 ## Source build
 
-- Approved example rows read: 11,386
+- Approved example rows read: 11,388
 - Positive owner-corpus passages read: 3,390 across 47 source documents
 - Owner-directed corrected lines used: 22
-- Deduplicated approved sources used: 9,764
+- Deduplicated approved sources used: 9,766
 - Duplicate texts removed before measurement: 1,691
-- Approved sentences represented: 49,287
-- Unique adjective-noun and verb-noun pairs: 48,366
+- Approved sentences represented: 49,284
+- Unique adjective-noun and verb-noun pairs: 48,375
 
 ## Honest false-positive test
 
 Method: leave one approved source out. Each source is checked only against pairs found in other approved sources. Because every evaluated source is owner-approved, every flag is counted as a false positive.
 
-- Approved sources flagged: 5,634 of 9,764 (57.70%)
-- Approved sentences flagged: 17,520 of 49,287 (35.55%)
-- Pair occurrences flagged: 29,030 of 111,851 (25.95%)
+- Approved sources flagged: 5,632 of 9,766 (57.67%)
+- Approved sentences flagged: 17,516 of 49,284 (35.54%)
+- Pair occurrences flagged: 29,038 of 111,878 (25.96%)
 
 | Source | Sources | Sources flagged | Source FP rate | Sentence FP rate | Pair FP rate |
 |---|---:|---:|---:|---:|---:|
-| approved_serving | 7,820 | 5,029 | 64.31% | 36.99% | 24.80% |
+| approved_serving | 7,822 | 5,027 | 64.27% | 36.97% | 24.80% |
 | knowledge_matrix | 1,876 | 558 | 29.74% | 21.13% | 12.11% |
-| owner_corpus | 47 | 46 | 97.87% | 37.36% | 38.35% |
-| owner_correction | 21 | 1 | 4.76% | 3.85% | 5.66% |
+| owner_corpus | 47 | 46 | 97.87% | 37.39% | 38.38% |
+| owner_correction | 21 | 1 | 4.76% | 3.85% | 1.89% |
 
 ## Target probes
 
