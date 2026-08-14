@@ -1,8 +1,11 @@
 # Daily Glance Moon-conjunction-North-Node / House 4 owner ruling
 
 Date: 2026-08-14  
-Status: APPROVED FOR WRITER LICENSES ONLY  
+Status: SUPERSEDED BY `daily-glance-scene-license-ruling-2026-08-14.md`
 Serving-copy approval: none
+
+This earlier ruling is retained as governance history. The later field-level
+ruling on the same date is the active authority and replaces these meanings.
 
 ## Exact owner ruling
 

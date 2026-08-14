@@ -2,7 +2,7 @@
 
 Status: non-serving writer-input pilot. Four v1 licenses were approved as
 revised by the owner on 2026-08-11. The Moon-conjunction-North-Node mechanism
-and its context-guarded House-4 subset were approved on 2026-08-14. All six are
+and the revised House-4 arena were approved on 2026-08-14. All six are
 `writerEligible: true` and remain `renderEligible: false`; approval authorizes
 candidate construction, not serving reader copy. Approved source evidence never
 automatically approves a normalization.
@@ -124,8 +124,13 @@ provenance grant records the matching scope role (`mechanism`, `arena`, or `mann
 A house license may be narrowed by an exact aspect `contextGuard`. Such a license
 must carry its causal guard and cannot execute for a different planet, aspect,
 target, or an unreliable house calculation. The compiled writer boundary carries
-both the causal guard and the owner-ruled disallowed inferences. The House-4 pilot
-is therefore not a global House-4 master license.
+both the causal guard and the owner-ruled disallowed inferences.
+
+Evidence can also be retained as a `supporting-reference`. Supporting references
+are drift-checked but may not appear in value-level provenance or grant executable
+meaning. The approved Moon-conjunction-North-Node license uses this distinction:
+the authored transit row remains visible as context while the executable grants
+come only from the dedicated 2026-08-14 owner-doctrine source.
 
 The active Daily Glance writer lane also requires a calculation-resolved chart
 context for every requested key. If either the context or explicitly approved
