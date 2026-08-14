@@ -265,6 +265,26 @@ export async function signUpWithEmail({
   };
 }
 
+export async function resendEmailSignupConfirmation(email: string) {
+  const supabase = await getSupabaseClient();
+
+  if (!supabase) {
+    throw new Error("Supabase auth is not configured.");
+  }
+
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email: email.trim(),
+    options: {
+      emailRedirectTo: redirectTo()
+    }
+  });
+
+  if (error) {
+    throw error;
+  }
+}
+
 export async function signInWithEmail({
   email,
   password
