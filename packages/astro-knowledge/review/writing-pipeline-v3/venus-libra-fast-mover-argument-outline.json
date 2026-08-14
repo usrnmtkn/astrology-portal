@@ -1,0 +1,238 @@
+{
+  "target": "venus-in-libra",
+  "status": "superseded-unapproved",
+  "supersededBy": "venus-libra-fast-mover-argument-outline-v2.json",
+  "proseDrafted": false,
+  "billedCalls": 0,
+  "meaningPlan": {
+    "content_type": "placement_article",
+    "object": "venus",
+    "sign": "libra",
+    "house": null,
+    "event_type": null,
+    "object_function": [
+      "Venus governs relationships, creativity, attraction, and what is valued."
+    ],
+    "sign_mechanics": [
+      "Libra notices balance, exchange, connection, and how a shared choice is made."
+    ],
+    "actual_house_domain": null,
+    "core_tension": "Agreement can look fair while one side keeps adjusting.",
+    "what_changes": "The clearest voice makes the decision while the more accommodating side absorbs the cost.",
+    "constructive_expression": "A preference is withheld until everyone else has answered.",
+    "overcorrection": "Fairness is reduced to avoiding disagreement.",
+    "observable_behaviors": [
+      "A preference is withheld until everyone else has answered.",
+      "A shared cost or responsibility stays uneven because naming the exact difference feels impolite.",
+      "A connection changes once both sides can state what they want without punishment."
+    ],
+    "possible_consequences": [
+      "The clearest voice makes the decision while the more accommodating side absorbs the cost.",
+      "Resentment grows inside an arrangement that still looks calm.",
+      "Honesty shows which connections can hold an actual preference."
+    ],
+    "allowed_life_domain_examples": [
+      "relationships",
+      "work",
+      "money",
+      "creative decisions",
+      "access"
+    ],
+    "do_not_assume": [
+      "a house or life domain that was not supplied",
+      "a specific event, motive, relationship type, or biography not present in governed facts"
+    ],
+    "house_bleed_risks": [
+      "relationship status"
+    ],
+    "stock_trope_risks": [],
+    "unearned_motives": [],
+    "eventType": null,
+    "objectFunction": "Venus governs relationships, creativity, attraction, and what is valued.",
+    "signMechanics": "Libra notices balance, exchange, connection, and how a shared choice is made.",
+    "actualHouseDomain": null,
+    "allowedLivedDomains": [
+      "relationships",
+      "work",
+      "money",
+      "creative decisions",
+      "access"
+    ],
+    "prohibitedDomainAssumptions": [
+      "relationship status"
+    ],
+    "coreTension": "Agreement can look fair while one side keeps adjusting.",
+    "likelyObservableBehaviors": [
+      "A preference is withheld until everyone else has answered.",
+      "A shared cost or responsibility stays uneven because naming the exact difference feels impolite.",
+      "A connection changes once both sides can state what they want without punishment."
+    ],
+    "likelyConsequences": [
+      "The clearest voice makes the decision while the more accommodating side absorbs the cost.",
+      "Resentment grows inside an arrangement that still looks calm.",
+      "Honesty shows which connections can hold an actual preference."
+    ],
+    "risks": [
+      "Fairness is reduced to avoiding disagreement."
+    ],
+    "DO_NOT_ASSUME": [
+      "a house or life domain that was not supplied",
+      "a specific event, motive, relationship type, or biography not present in governed facts"
+    ]
+  },
+  "argumentOutline": {
+    "version": "argument-outline-v1-2026-08-12",
+    "status": "owner-review-pending",
+    "ownerApproved": false,
+    "family": "fast-mover-article",
+    "surface": "sky-placement-page",
+    "meaningPlanObject": "venus",
+    "meaningPlanSign": "libra",
+    "meaningPlanHash": "c1bb6370a6a72d43b28b11e0c91fae2bcc0116dba5663d59c6e515ac63e3acc0",
+    "thesis": "Agreement is not proof that an arrangement is fair.",
+    "cultural_rule": "Keeping an exchange pleasant is treated as more important than naming who keeps adjusting.",
+    "transit_job": "Show which side keeps giving up time, money, effort, or a stated preference to keep the connection easy.",
+    "failure_mechanism": "A clear preference is withheld to avoid friction, so the choice defaults to the first or strongest answer.",
+    "lived_scene_1": "A shared decision where one side waits for every other preference before naming its own.",
+    "lived_scene_2": "A shared cost or workload that looks even until the exact amounts and follow-up work are named.",
+    "lived_scene_3": "A collaboration or friendship gets stronger or ends after both sides give an honest answer.",
+    "strategy": "State the preference, limit, and unequal cost early enough for the other side to respond to the truth.",
+    "intended_close": "A connection that requires one side to keep yielding was never balanced by agreement alone.",
+    "scope_guard": "Do not make romance, dinner planning, scheduling, or Libra's associated seventh house the whole article.",
+    "outlineHash": "44dda69737e7c989a759b7ea2fd072d100398199b4db3d1f6731d2db8c4faa6f"
+  },
+  "spine": {
+    "requestedFamily": "fast-mover-article",
+    "status": "missing",
+    "effect": "The argument may be reviewed, but drafting remains fail-closed until this family has an owner-recorded spine."
+  },
+  "selectedCorrectionPairsForFuturePrompt": {
+    "pairs": [
+      {
+        "before": "states the point plainly",
+        "after": "gets to the point quickly",
+        "owner_reason": "Ordinary spoken English over technically correct phrasing.",
+        "category": "natural_language",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 126,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "before the remaining information arrives",
+        "after": "before the rest of the information comes in",
+        "owner_reason": "Ordinary word order; the first sounds written, not said.",
+        "category": "natural_language",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 126,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "a conclusion may be repeated before the reasoning behind it is complete",
+        "after": "the conclusion may get shared before the explanation is finished",
+        "owner_reason": "'Repeated' is the strange word here; the mechanism is that it gets shared before the reasoning is done.",
+        "category": "natural_language",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 126,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "silence can make a practical concern sound like a refusal",
+        "after": "silence can make a practical concern read like a refusal",
+        "owner_reason": "Silence does not sound like anything.",
+        "category": "natural_language",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 126,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "It makes separate facts easier to connect",
+        "after": "Two details that seemed unrelated can suddenly make sense together",
+        "owner_reason": "Name what the reader would actually notice.",
+        "category": "abstraction_over_consequence",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 125,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "Comparing accounts can correct a decision based on only one version of events",
+        "after": "Hearing both sides can expose the part of the agreement that only worked for one person",
+        "owner_reason": "Move from procedural fairness into the actual inequity.",
+        "category": "abstraction_over_consequence",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 125,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "a broader conclusion / the available information / the original question / the speaker / the listener / the reasoning / the next step",
+        "after": "name the actual consequence: the email gets resent, the wrong version stays in circulation, the first proposal becomes the plan",
+        "owner_reason": "These are clear but they make the writing sound like a very good communications handbook.",
+        "category": "abstraction_over_consequence",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 125,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "The same speed that ends a delay can create another one.",
+        "after": "Answering quickly can save time until one missing detail sends everyone back to the beginning.",
+        "owner_reason": "Technically good but sounds constructed.",
+        "category": "constructed_sentence",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 124,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      }
+    ],
+    "logic": {
+      "requested": 8,
+      "selected": 8,
+      "deduplicatedCorpusCount": 57,
+      "family": "fast-mover-article",
+      "priority": [
+        "same content family",
+        "requested failure mode",
+        "that family's historical failure categories",
+        "adjacent family",
+        "stable source order"
+      ]
+    }
+  }
+}
