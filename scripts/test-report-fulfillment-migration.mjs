@@ -35,6 +35,7 @@ const authorizationTokenBudgetMigration = fs.readFileSync(new URL("../apps/web/s
 const deadlineWorkerRecoveryMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811130000_report_deadline_worker_recovery.sql", import.meta.url), "utf8");
 const validatorSpliceRecoveryMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811140000_report_validator_splice_recovery.sql", import.meta.url), "utf8");
 const workerDeadlineLeaseMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260811150000_report_worker_deadline_leases.sql", import.meta.url), "utf8");
+const generationLineageMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260814100000_report_generation_lineage.sql", import.meta.url), "utf8");
 assert.match(authorizationTokenBudgetMigration, /74951c07-64fe-461d-ac49-e81858af3296/u, "The migration must carry the owner ruling for the exact Production report.");
 assert.match(authorizationTokenBudgetMigration, /token_budget_lifetime = 3000000/u, "The exact Production report must receive its owner-approved 3M lifetime backstop.");
 assert.match(authorizationTokenBudgetMigration, /set authorized_call_budget = 55,[\s\S]*authorized_token_budget = 1450000/u, "The current authorization must retain its approved 55-call and 1.45M-token budgets.");
@@ -347,9 +348,57 @@ try {
     authorizationToken: strandedAuthorization, callBudget: 100, lifetimeCalls: 32, scopedCalls: 32,
     tokenBudget: 2600000, scopedTokens: 1234680
   }, "Reclaim must preserve report 8b3e266e's current authorization identity, counters, and ledger totals.");
+
+  const sourceEvidenceBefore = (await db.query(`select id, user_id, subject_id, report_type, report_domain,
+    report_horizon, period_start, period_end, facts, facts_engine, facts_hash, status, fulfillment_status,
+    entitlement_id, token_count, token_count_total, token_spend_usd_estimate, attempt_counts, failure_history
+    from public.user_reports where id = $1`, [strandedReportId])).rows[0];
+  await db.exec(generationLineageMigration);
+  const createdGeneration = (await db.query(
+    "select * from public.create_fresh_report_generation($1)", [strandedReportId]
+  )).rows[0];
+  assert.equal(createdGeneration.generation_number, 2);
+  const sourceEvidenceAfter = (await db.query(`select id, user_id, subject_id, report_type, report_domain,
+    report_horizon, period_start, period_end, facts, facts_engine, facts_hash, status, fulfillment_status,
+    entitlement_id, token_count, token_count_total, token_spend_usd_estimate, attempt_counts, failure_history
+    from public.user_reports where id = $1`, [strandedReportId])).rows[0];
+  assert.deepEqual(sourceEvidenceAfter, sourceEvidenceBefore, "Creating a fresh generation must not mutate its review-evidence source report.");
+  const freshReport = (await db.query(`select generation_number, supersedes_report_id, status, fulfillment_status,
+    facts, facts_engine, facts_hash, token_count, token_count_total, token_spend_usd_estimate
+    from public.user_reports where id = $1`, [createdGeneration.report_id])).rows[0];
+  assert.deepEqual({
+    generationNumber: freshReport.generation_number,
+    supersedesReportId: freshReport.supersedes_report_id,
+    status: freshReport.status,
+    fulfillmentStatus: freshReport.fulfillment_status,
+    facts: freshReport.facts,
+    factsEngine: freshReport.facts_engine,
+    factsHash: freshReport.facts_hash,
+    acceptedTokens: Number(freshReport.token_count),
+    totalTokens: Number(freshReport.token_count_total),
+    estimatedUsd: Number(freshReport.token_spend_usd_estimate)
+  }, {
+    generationNumber: 2, supersedesReportId: strandedReportId,
+    status: "draft", fulfillmentStatus: "awaiting_authorization",
+    facts: sourceEvidenceBefore.facts, factsEngine: sourceEvidenceBefore.facts_engine, factsHash: sourceEvidenceBefore.facts_hash,
+    acceptedTokens: 0, totalTokens: 0, estimatedUsd: 0
+  });
+  const freshJob = (await db.query(`select id, state, step, attempt, model_call_count, authorization_call_count,
+    authorization_token, authorized_call_budget, authorized_token_budget, authorization_token_count
+    from public.report_fulfillment_jobs where id = $1`, [createdGeneration.job_id])).rows[0];
+  assert.deepEqual({
+    id: freshJob.id, state: freshJob.state, step: freshJob.step, attempt: freshJob.attempt,
+    lifetimeCalls: freshJob.model_call_count, scopedCalls: freshJob.authorization_call_count,
+    authorizationToken: freshJob.authorization_token, callBudget: freshJob.authorized_call_budget,
+    tokenBudget: freshJob.authorized_token_budget, scopedTokens: Number(freshJob.authorization_token_count)
+  }, {
+    id: createdGeneration.job_id, state: "paused", step: "calculating", attempt: 0,
+    lifetimeCalls: 0, scopedCalls: 0, authorizationToken: null, callBudget: null,
+    tokenBudget: null, scopedTokens: 0
+  }, "A fresh envelope must begin with clean counters behind the authorization gate.");
   await db.exec("rollback");
 } catch (error) {
   await db.exec("rollback");
   throw error;
 }
-console.log("Report fulfillment migration passed: Stripe idempotency, comp grants without Stripe references, authorization parking, authorization-scoped call/token budgets, owner-adjustable lifetime backstop, exact Production timeout/Summer-validator/call-32 lease recovery, durable object-shaped passing-unit cache, immutable call ledger/accounting, atomic call-budget exhaustion, birth-data parking, exclusive facts claim, and rollback.");
+console.log("Report fulfillment migration passed: Stripe idempotency, comp grants without Stripe references, immutable fresh-generation lineage, authorization parking, authorization-scoped call/token budgets, owner-adjustable lifetime backstop, exact Production timeout/Summer-validator/call-32 lease recovery, durable object-shaped passing-unit cache, immutable call ledger/accounting, atomic call-budget exhaustion, birth-data parking, exclusive facts claim, and rollback.");
