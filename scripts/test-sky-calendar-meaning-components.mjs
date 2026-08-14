@@ -3,6 +3,7 @@
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
+import { assertManifestationShapeCap } from "./sky-calendar-manifestation-shape.mjs";
 
 const registryPath = "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/sky-calendar-meaning-components-v1.json";
 const fallbackPath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
@@ -52,10 +53,36 @@ assert.equal(registry.policy.failClosed, true);
 assert.equal(registry.evidenceLayerSha256, "0ceb85f5897fb42238dfdd69e7b02271f87befe202f009da8659add9b9337c23");
 assert.equal(registry.wordingQuality.maximumOpeningConstructionUse <= registry.wordingQuality.caps.openingConstruction, true);
 assert.equal(registry.wordingQuality.maximumManifestationUse <= registry.wordingQuality.caps.repeatedManifestation, true);
+assert.equal(registry.wordingQuality.caps.manifestationShape, 3);
+assert.equal(registry.wordingQuality.maximumManifestationShapeUse <= registry.wordingQuality.caps.manifestationShape, true);
+assert.ok(Array.isArray(registry.wordingQuality.manifestationShapeDistribution));
+assert.equal(
+  registry.wordingQuality.manifestationShapeDistribution.reduce((total, row) => total + (row.occurrences * row.distinctValues), 0),
+  432,
+);
 assert.equal(registry.wordingQuality.maximumDetailsLanguageUse <= registry.wordingQuality.caps.repeatedDetailsLanguage, true);
 assert.equal(registry.wordingQuality.maximumConnectiveNgramUse <= registry.wordingQuality.caps.connectiveNgram, true);
 assert.deepEqual(registry.wordingQuality.detailsCopiedFromCombinedPosition, []);
 assert.deepEqual(registry.wordingQuality.mechanicalJoinRows, []);
+assert.equal(
+  sha256(JSON.stringify({
+    signUnits: registry.signUnits.map(({ reader_manifestations: _manifestations, ...row }) => row),
+    aspectMechanisms: registry.aspectMechanisms,
+    modalityUnits: registry.modalityUnits,
+    elementUnits: registry.elementUnits,
+  })),
+  "e9e948cd75277ab19b20fe2cfc69d881bdc068270452ff36ac466b0188a5238b",
+  "owner-approved-in-substance component layers must remain byte-identical",
+);
+assert.throws(
+  () => assertManifestationShapeCap([
+    { key: "sky-sign/sun/aries", reader_manifestations: ["credit being claimed before others agree"] },
+    { key: "sky-sign/moon/aries", reader_manifestations: ["care being claimed before others agree"] },
+    { key: "sky-sign/mercury/aries", reader_manifestations: ["information being claimed before others agree"] },
+    { key: "sky-sign/venus/aries", reader_manifestations: ["value being claimed before others agree"] },
+  ], 3),
+  /Reader manifestation shape cap exceeded/u,
+);
 
 const all = [
   ...registry.signUnits,
