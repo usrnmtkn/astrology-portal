@@ -1567,6 +1567,51 @@ assert.equal(coherenceCalls, 0, "A whitespace-only post-dedup seam must be repai
 assert.doesNotMatch(coherenceStore.units.get("coherence-report:domain:main").body, /[ \t]{2,}/u);
 assert.equal(coherenceStore.units.get("coherence-report:domain:main").source_snapshot.assemblyValidation.mechanicalCoherenceRepairs.length, 1);
 
+const seamStore = createMemoryStore();
+const seamReport = assemblyReadyReport("bounded-seam-report");
+seamStore.reports.set(seamReport.id, seamReport);
+seamStore.entitlements.set("bounded-seam-ent", { id: "bounded-seam-ent", user_id: seamReport.user_id, status: "active", product_key: "general_1m" });
+const repeatedInteriorSentence = "The repeated sentence is removed from the later unit.";
+await seedAssemblyUnits(seamStore, seamReport, {
+  overview: repeatedInteriorSentence,
+  "domain:main": `The paragraph begins with a distinct consequence. ${repeatedInteriorSentence} The paragraph ends with another distinct consequence.`
+});
+let seamCalls = 0;
+const seamModel = async (input) => {
+  seamCalls += 1;
+  assert.equal(input.schemaName, "report_unit_revision_spans");
+  assert.match(input.prompt, /interior_sentence_removed/u);
+  const defectId = /"id":"([^"]*assembly-coherence[^"]*)"/u.exec(input.prompt)?.[1];
+  const result = {
+    value: { replacements: [{
+      defect_id: defectId, location: "body", scope_start: 0, scope_end: 1,
+      replacement: "The paragraph begins with a distinct consequence. The paragraph ends with another distinct consequence, so the remaining thought still reads continuously."
+    }] },
+    model: input.model, provider: input.provider,
+    usage: { inputTokens: 2, outputTokens: 2, totalTokens: 4 }
+  };
+  await input.beforeProviderCall?.({ provider: input.provider, model: input.model, schemaName: input.schemaName });
+  await input.afterProviderCall?.({ provider: input.provider, model: input.model, schemaName: input.schemaName }, result);
+  return result;
+};
+const seamJob = authorizedJob({ id: "bounded-seam-job", report_id: seamReport.id, entitlement_id: "bounded-seam-ent", state: "running", step: "validating", attempt: 1 });
+const seamRepairResult = await processReportFulfillmentJob({
+  job: seamJob, store: seamStore, calculateFacts, callModel: seamModel, judgeCall
+});
+assert.equal(seamRepairResult.status, "queued", "A bounded dedup-seam splice persists and requeues before final assembly.");
+assert.equal(seamCalls, 1, "Interior-sentence dedup damage permits exactly one bounded seam-repair call.");
+const seamRepairRecord = seamStore.units.get("bounded-seam-report:domain:main").source_snapshot.assemblyCoherenceRepairs.at(-1);
+assert.equal(seamRepairRecord.repairClass, "bounded_dedup_seam_splice");
+assert.equal(seamRepairRecord.unitRegeneration, false, "A seam splice must be recorded distinctly from unit regeneration.");
+assert.equal(seamRepairRecord.boundedCallCount, 1);
+const seamResumeModel = modelCallWithCrash();
+const seamComplete = await processReportFulfillmentJob({
+  job: { ...seamJob, state: "running", step: "writing", attempt: 2 },
+  store: seamStore, calculateFacts, callModel: seamResumeModel, judgeCall
+});
+assert.equal(seamComplete.status, "needs_review");
+assert.equal(seamResumeModel.count(), 0, "A persisted seam splice must not reopen any passing unit on resume.");
+
 const persistenceStore = createMemoryStore();
 const persistenceReport = {
   ...structuredClone(resumeReport),

@@ -886,6 +886,10 @@ export async function processReportFulfillmentJob(input: {
   const mechanicalCoherence = repairMechanicalPostDedupSeams(deduplication.units, deduplication.removals);
   assembledUnits = mechanicalCoherence.units;
   if (mechanicalCoherence.remaining.length) {
+    // Owner ruling 2026-08-14: this is an assembly repair, not unit
+    // regeneration. Deduplication may damage one paragraph by removing an
+    // interior sentence; the permitted repair is a single bounded splice of
+    // that named paragraph. It must never reopen or rewrite the passing unit.
     const scope = mechanicalCoherence.remaining[0];
     const unit = assembledUnits.find((candidate) => candidate.unitId === scope.unitId);
     const row = unitById.get(scope.unitId);
@@ -929,6 +933,8 @@ export async function processReportFulfillmentJob(input: {
           ...(Array.isArray(row.source_snapshot?.assemblyCoherenceRepairs) ? row.source_snapshot.assemblyCoherenceRepairs : []),
           {
             schema: "report-assembly-coherence-repair.v1",
+            repairClass: "bounded_dedup_seam_splice",
+            unitRegeneration: false,
             location: scope.location,
             paragraphIndex: scope.paragraphIndex,
             reasons: scope.reasons,
