@@ -4,31 +4,31 @@
   "generatedBy": "scripts/compile-satori-editorial-decisions.js",
   "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
   "decisionSourceId": "satori-editorial-decisions-v1",
-  "decisionSourceSha256": "308769ccd546e88d9cd89d8fc4aafa437cd7afad61fe9c2beb2c8e3e46ecc3d5",
+  "decisionSourceSha256": "d2a94f8656e00ca6372d46bbd55cf7592c7f3a0984433fff04e086786218e8a2",
   "rules": [
     {
-      "id": "ED-003",
+      "id": "ED-028",
       "category": "surface",
       "scope": {
         "surfaces": [
-          "current-sky"
+          "sky-aspect-calendar"
         ]
       },
-      "rule": "Current Sky never uses you, your, yours, yourself, or yourselves; natal and transit-to-natal may use second person.",
-      "rationale": "Current Sky describes shared weather while natal surfaces address the reader directly.",
+      "rule": "Calendar Sky aspect copy never uses you, your, yours, yourself, or yourselves; Sky placement copy may address the reader directly.",
+      "rationale": "Calendar Sky aspects describe collective events, while Sky placement pages may speak directly to the reader under the owner-approved page register.",
       "effect": "prohibit",
       "examplesAllowed": [
-        "We notice the disagreement sooner."
+        "The aspect changes what the group can agree to."
       ],
       "examplesRejected": [
-        "You notice the disagreement sooner."
+        "You notice the agreement changing."
       ],
       "mechanical": {
         "kind": "regex",
         "pattern": "\\b(?:you|your|yours|yourself|yourselves|you(?:'|’)?re|you(?:'|’)?ve|you(?:'|’)?ll|you(?:'|’)?d)\\b",
         "flags": "i",
         "severity": "fail",
-        "message": "Current Sky is collective; second person belongs to natal or transit-to-natal copy."
+        "message": "Calendar Sky aspect copy is collective; second person belongs to Sky placement, natal, or transit-to-natal copy."
       }
     },
     {

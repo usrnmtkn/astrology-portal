@@ -1,10 +1,10 @@
 # Satori editorial propagation report
 
 Decision source: `voice/tldr-astro/satori-editorial-decisions.yaml`
-Source SHA-256: `308769ccd546e88d9cd89d8fc4aafa437cd7afad61fe9c2beb2c8e3e46ecc3d5`
+Source SHA-256: `d2a94f8656e00ca6372d46bbd55cf7592c7f3a0984433fff04e086786218e8a2`
 Approved active decisions: 44
 Unresolved decisions: 0
-Retired or superseded decisions: 2
+Retired or superseded decisions: 3
 Active regression cases: 63
 
 ## Generated artifacts
@@ -21,14 +21,15 @@ Active regression cases: 63
 
 ## Retired and superseded records
 
+- `ED-003` (superseded) → `ED-028`: Current Sky never uses you, your, yours, yourself, or yourselves; natal and transit-to-natal may use second person.
 - `LEG-001` (superseded) → `ED-003`: Historical Current Sky examples may use second person as active positive evidence.
 - `LEG-002` (retired) → `CF-006`: Stop calling silence peace is an approved tagline.
 
 ## Runtime traceability
 
-Runtime rules inspected: 118
+Runtime rules inspected: 117
 Traced to an approved authoritative decision: 8
-Not yet traced to an approved authoritative decision: 110
+Not yet traced to an approved authoritative decision: 109
 
 - TRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `—` ← `ED-004`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `for everyone at once`
@@ -132,7 +133,6 @@ Not yet traced to an approved authoritative decision: 110
 - UNTRACED `voice/banned-constructions.json#bannedConstructions` `[alliterative rule-of-three: tricky, testy, and tedious]`
 - UNTRACED `voice/banned-constructions.json#bannedConstructions` `(aka ...)`
 - UNTRACED `voice/banned-constructions.json#bannedConstructions` `You got this. / There's no finish line.`
-- UNTRACED `voice/banned-constructions.json#bannedConstructions` `X is not Y. It is Z.`
 - TRACED `voice/banned-constructions.json#bannedConstructions` `Welcome to another powerful week` ← `CF-016`
 - TRACED `voice/banned-constructions.json#bannedConstructions` `Let's dive into what the stars have in store` ← `CF-016`
 - UNTRACED `voice/banned-constructions.json#bannedConstructions` `Here is to a week of [noun], [noun], and [phrase]`

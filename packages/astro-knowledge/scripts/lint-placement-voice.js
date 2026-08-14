@@ -383,22 +383,6 @@ function lintArticle(article) {
   const planet = article?.planet ? String(article.planet).toLowerCase() : null;
   const sign = article?.sign ? String(article.sign).toLowerCase() : null;
 
-  // Current Sky is collective. Historical originals live in a separate fixture
-  // file and never enter this active linter path. Transit-to-natal copy belongs
-  // to a different surface and linter.
-  if (!article?.allowLegacySecondPerson) {
-    const secondPerson = full.match(/\b(?:you|your|yours|yourself|yourselves|you(?:'|’)?re|you(?:'|’)?ve|you(?:'|’)?ll|you(?:'|’)?d)\b/i);
-    if (secondPerson) {
-      findings.push({
-        severity: "fail",
-        source: "current-sky-person",
-        term: "second-person",
-        match: secondPerson[0],
-        reason: "Current Sky placement copy is collective; second person belongs to transit-to-natal copy"
-      });
-    }
-  }
-
   // -- missing slots are hard fails: the renderer needs all three.
   for (const slot of SLOTS) {
     if (!slots[slot]) {
