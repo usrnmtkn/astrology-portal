@@ -1,0 +1,42 @@
+{
+  "job": "slow-mover-era-layer-v1",
+  "verifiedAt": "2026-08-12",
+  "enginePath": "apps/web/src/services/ephemeris.ts#getSkyPlacementTransitFacts",
+  "templateFacts": [
+    "priorSign",
+    "priorSignEntryDate",
+    "priorSignExitDate",
+    "previousResidency.entryDate",
+    "previousResidency.exitDate"
+  ],
+  "slowMoverCoverage": {
+    "saturn": "verified",
+    "uranus": "verified",
+    "neptune": "verified",
+    "pluto": "prior_sign_verified_previous_same_sign_unavailable_before_1800_boundary",
+    "chiron": "verified",
+    "north-node": "verified",
+    "south-node": "verified"
+  },
+  "saturnCapricorn": {
+    "transitStart": "2047-01-24T15:40:42.999Z",
+    "transitEnd": "2050-01-21T13:15:43.999Z",
+    "priorSign": "Sagittarius",
+    "priorSignEntryDate": "2044-10-31T12:52:22.999Z",
+    "priorSignExitDate": "2047-01-24T15:40:42.999Z",
+    "previousResidency": {
+      "sign": "Capricorn",
+      "entryDate": "2017-12-20T04:48:42.999Z",
+      "exitDate": "2020-12-17T05:04:02.999Z"
+    }
+  },
+  "plutoBoundary": {
+    "status": "open_engine_data_gap",
+    "reason": "The shipped Swiss planetary file begins at 1800. Pluto's previous Aquarius residency predates that verified boundary, so the engine returns null instead of falling back or guessing.",
+    "runtimeBehavior": "An approved Pluto era layer requiring a prior occurrence will fail closed until older verified Swiss data is deliberately added."
+  },
+  "tests": {
+    "scripts/test-sky-placement-engine-facts.mjs": "PASS",
+    "scripts/test-slow-mover-era-layer.mjs": "PASS"
+  }
+}

@@ -54,7 +54,7 @@ const skyPlacementBatchApprovals = [2, 3, 4].map((batch) => JSON.parse(fs.readFi
   "utf8"
 )));
 const skyPlacementCurrentApproval = JSON.parse(fs.readFileSync(
-  path.join(repoRoot, "packages/astro-knowledge/review/sun-leo-fallback-v3/approval-record.json"),
+  path.join(repoRoot, "packages/astro-knowledge/review/sky-placement-approved-serving-snapshot-2026-08-14.json"),
   "utf8"
 ));
 const skyPlanetFrames = readPackageJson("source-rows/sky-planet-frames-v1.json");
@@ -64,8 +64,8 @@ const pairDailyClauses = readPackageJson("source-rows/pair-daily-clauses-v1.json
 const timingEventRows = readPackageJson("source-rows/timing-event-reader-copy-v2.json");
 const weeklyRows = readPackageJson("source-rows/station-cards-week-openers-v1.json");
 
-assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 56);
-assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 56);
+assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 58);
+assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 58);
 assert.ok(skyPlacementOwnerApprovedFallbacks.rows.every((row) => row.review_status === "approved"));
 const runtimeEligibleApprovedArticles = skyPlacementBatchApprovals.flatMap((approval) => approval.articles);
 assert.ok(skyPlacementBatchApprovals.every((approval) => approval.ownerApproved === true));
@@ -92,7 +92,7 @@ assert.equal(
   skyPlacementCurrentApproval.articlesSha256,
   "The exact serving articles must match the owner-approved Sun-in-Leo V3 snapshot."
 );
-for (const servingRow of skyPlacementOwnerApprovedFallbacks.rows) {
+for (const servingRow of skyPlacementOwnerApprovedFallbacks.rows.filter((row) => Object.hasOwn(row, "body_you"))) {
   assert.equal(
     servingRow.body_you,
     [
@@ -122,13 +122,13 @@ assert.ok(skyPlacementOwnerApprovedReaderFallbacks.rows.every((row) => (
   && !Object.hasOwn(row, "approved_via")
   && !Object.hasOwn(row, "body_you")
 )), "Reader serving rows must exclude editorial provenance metadata.");
-assert.ok(skyPlacementOwnerApprovedReaderFallbacks.rows.every((row) => !/\b(?:you|your|yours|yourself|yourselves)\b/iu.test([
-    row.opening,
-    row.tension,
-    row.development,
-    row.close,
-    ...(row.try_this ?? [])
-  ].join("\n"))), "Legacy body_you storage must not introduce second-person Current Sky copy.");
+assert.ok(
+  skyPlacementOwnerApprovedReaderFallbacks.rows.some((row) => (
+    row.contentKey === "fallback-hook/sky-sign-copy/venus/libra"
+    && /\byou\b/iu.test([row.opening, row.tension, row.development, row.close].join("\n"))
+  )),
+  "Sky placement articles must preserve owner-approved direct address while still stripping the legacy body_you field."
+);
 
 const moonTaurusEntry = sourceRows.hookRows.find((row) => (
   row.contentKey === "fallback-hook/sky-placement-hook/moon/taurus"
@@ -173,7 +173,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-14d");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-14e");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -1026,9 +1026,19 @@ try {
   for (const row of skyPlacementOwnerApprovedFallbacks.rows) {
     const materializedRow = materializedByKey.get(row.contentKey);
     assert.ok(materializedRow, `${row.contentKey} must materialize for reader distribution.`);
-    assert.equal(materializedRow.body, row.body_you);
+    const expectedMaterializedBody = row.body ?? row.body_you ?? [
+      row.opening,
+      row.tension,
+      row.development,
+      row.era_layer?.frame,
+      row.era_layer?.handoff,
+      row.era_layer?.recurrence,
+      row.era_layer?.collective_lesson,
+      row.close
+    ].filter(Boolean).join("\n\n");
+    assert.equal(materializedRow.body, expectedMaterializedBody);
     assert.equal(materializedRow.source_snapshot.review_status, "approved");
-    assert.equal(materializedRow.sections.packageRecord.render_policy, "sky-placement-continuous-v2");
+    assert.equal(materializedRow.sections.packageRecord.render_policy, row.render_policy);
   }
 
   for (const row of sunLeoHouseCores.rows) {

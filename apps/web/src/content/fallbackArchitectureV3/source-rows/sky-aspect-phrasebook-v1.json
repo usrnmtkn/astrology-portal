@@ -1264,13 +1264,14 @@
       "contentKey": "fallback-hook/sky-aspect-sign/venus/virgo/trine/saturn/capricorn",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Virgo trine Saturn in Capricorn makes a careful effort easier to respect. The edit gets finished, the appointment is kept, and the small responsibility is handled before it becomes someone else's emergency. Affection and appreciation grow around competence because the work removes a burden people were already tired of carrying.",
-      "body_they": "Venus in Virgo trine Saturn in Capricorn makes a careful effort easier to respect. The edit gets finished, the appointment is kept, and the small responsibility is handled before it becomes someone else's emergency. Affection and appreciation grow around competence because the work removes a burden people were already tired of carrying.",
-      "review_status": "reviewed",
+      "body_you": "Venus in Virgo trine Saturn in Capricorn puts affection into the details people can actually rely on. The edit gets finished, the appointment is kept, and the small responsibility is handled before it becomes someone else's emergency. People notice when your work makes their day easier. A finished task can feel surprisingly affectionate when it takes one burden off someone else's list.",
+      "body_they": "Venus in Virgo trine Saturn in Capricorn puts affection into the details people can actually rely on. The edit gets finished, the appointment is kept, and the small responsibility is handled before it becomes someone else's emergency. People notice when your work makes their day easier. A finished task can feel surprisingly affectionate when it takes one burden off someone else's list.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "packages/astro-knowledge/review/saturn-capricorn-article-v3/OWNER-APPROVAL-2026-08-13.md"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "approved_via": "packages/astro-knowledge/review/saturn-capricorn-article-v3/OWNER-APPROVAL-2026-08-13.md",
+      "note": "Exact owner-approved Venus in Virgo trine Saturn in Capricorn replacement."
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/libra/trine/saturn/gemini",
