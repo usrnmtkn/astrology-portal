@@ -121,10 +121,18 @@ const priorApprovedRows = sourceRows.hookRows.filter((row) => (
   && !row.contentKey.startsWith("fallback-hook/empty-house/")
   && servingApprovedReviews.has(row.review_status)
 ));
+const priorApprovedRowsAtV13Baseline = priorApprovedRows.map((row) => {
+  const approvalMigration = row.approval?.verifiedBy === "fallback-approval-metadata-reconciliation-2026-08-13"
+    || row.approval?.migratedBy === "fallback-approval-metadata-reconciliation-2026-08-13";
+  if (!approvalMigration) return row;
+
+  const { approval: _approval, ...baselineRow } = row;
+  return baselineRow;
+});
 assert.equal(
-  sha256(JSON.stringify(priorApprovedRows)),
+  sha256(JSON.stringify(priorApprovedRowsAtV13Baseline)),
   manifest.invariants.existingApprovedRowsSha256,
-  "Every approved row that predates V13 must remain byte-identical.",
+  "Every approved row that predates V13 must retain its byte-identical V13 baseline apart from the documented approval-metadata reconciliation.",
 );
 assert.equal(manifest.invariants.existingApprovedRowsChanged, 0);
 
