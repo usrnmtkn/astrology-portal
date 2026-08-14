@@ -1858,7 +1858,7 @@ export function ManualChartsPanel({
       ].filter(Boolean).join(" · "),
       body: [],
       sections: exactOwnerApprovedTransitSections(
-        card.normalized.sections,
+        card.normalized.detailSections,
         fallbackV3ApprovalLevelForContentKey
       ).map((section) => ({
         // The page-level title already names this house transit. Repeating the

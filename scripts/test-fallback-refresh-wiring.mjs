@@ -724,7 +724,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const openFriendHouseTransitDetail[\s\S]*?sections: exactOwnerApprovedTransitSections\([\s\S]*?card\.normalized\.sections,[\s\S]*?\)\.map\(\(section\) => \(\{[\s\S]*?heading: "",/u,
+  /const openFriendHouseTransitDetail[\s\S]*?sections: exactOwnerApprovedTransitSections\([\s\S]*?card\.normalized\.detailSections,[\s\S]*?\)\.map\(\(section\) => \(\{[\s\S]*?heading: "",/u,
   "Friend house-transit details must not repeat the resolver headline below the page title."
 );
 assert.match(

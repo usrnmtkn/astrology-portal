@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "recordType": "transit_house_serving_exact_approval",
+  "approvalId": "saturn-house-owner-approved-2026-07-28-transit-house-intro-3",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "approvedAt": "2026-07-28",
+  "recordedAt": "2026-08-13",
+  "surface": "you|friends",
+  "contentKey": "authored/transit-house-intro/saturn/3",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "387143b0af5f24789f128d7512db5a1061e08cc497090478ede29116cfecd9d3",
+  "payload": {
+    "body_you": "Your words start creating more consequences. The text sent too quickly. The opinion you keep repeating because it has always been yours. The conversation you avoid because explaining yourself feels like unpaid labor. Saturn moving through your 3rd house shows you where communication has become rushed, defensive, or unnecessarily complicated.\n\nThis is a good period for learning how to say less and mean more. Finish the course. Organize the paperwork. Answer messages at set times instead of letting every notification interrupt your day. Stop writing five paragraphs when one honest sentence would tell the truth.",
+    "body_they": "{{Name}}'s words start creating more consequences. The text sent too quickly. The opinion repeated because it has always been theirs. The conversation avoided because explaining themselves feels like unpaid labor. Saturn moving through their 3rd house shows where their communication has become rushed, defensive, or unnecessarily complicated.\n\nTheir communication becomes clearer when they say less and mean more. The course gets finished, the paperwork gets organized, and messages stop interrupting every part of the day. One honest sentence can begin doing the work of five defensive paragraphs."
+  },
+  "historicalEvidence": {
+    "readerRewriteCommit": "133e2332c48c147876f352290891ab55a83fde8e",
+    "friendVoiceReviewCommit": "102631f0a3b5851898935c43d6bb9d39f89decf4",
+    "sourceRowApprovalNote": "owner-rewritten full 12-house set, chat 2026-07-28"
+  },
+  "ownerConfirmationStatement": "the writing that was being shown in the natal chart was approved",
+  "ownerConfirmationSource": "owner_chat_2026-08-13_source_metadata_correction",
+  "approvalEffect": "exact_wording_approval",
+  "copyMutation": "none"
+}

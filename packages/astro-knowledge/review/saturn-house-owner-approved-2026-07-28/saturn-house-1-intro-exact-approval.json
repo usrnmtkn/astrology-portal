@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "recordType": "transit_house_serving_exact_approval",
+  "approvalId": "saturn-house-owner-approved-2026-07-28-transit-house-intro-1",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "approvedAt": "2026-07-28",
+  "recordedAt": "2026-08-13",
+  "surface": "you|friends",
+  "contentKey": "authored/transit-house-intro/saturn/1",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "d4cb5d0928c508d46ed6a5d9eceaf232d25a0219c1227072d1499ad4a6533bcf",
+  "payload": {
+    "body_you": "You are entering a period where your life stops rewarding effort spent proving yourself to other people. The version of you that answers every request, defends every decision, and keeps moving so no one can question your competence starts costing more than it gives back. You may have less energy for being available on demand, less patience for people who expect the old version of you, and a much sharper sense of what deserves your time.\n\nDo not rush the plan that is supposed to carry the next several years. Give it the skills, money, support, and proof it needs before asking it to hold more weight. But do not confuse preparation with waiting. Finish the work already in front of you. Keep the appointment. Send the application. Build the part you can build now.",
+    "body_they": "{{Name}} is entering a period where life stops rewarding effort spent proving themselves to other people. The version of them that answers every request, defends every decision, and keeps moving so no one can question their competence starts costing more than it gives back. They may have less energy for being available on demand, less patience for people who expect the old version of them, and a much sharper sense of what deserves their time.\n\nThe life they are building needs more than determination. It needs enough money, support, skill, and time to remain possible after the first push. Work already in motion can continue, but they may become less willing to keep proving themselves through exhaustion."
+  },
+  "historicalEvidence": {
+    "readerRewriteCommit": "133e2332c48c147876f352290891ab55a83fde8e",
+    "friendVoiceReviewCommit": "102631f0a3b5851898935c43d6bb9d39f89decf4",
+    "sourceRowApprovalNote": "owner-rewritten full 12-house set, chat 2026-07-28"
+  },
+  "ownerConfirmationStatement": "the writing that was being shown in the natal chart was approved",
+  "ownerConfirmationSource": "owner_chat_2026-08-13_source_metadata_correction",
+  "approvalEffect": "exact_wording_approval",
+  "copyMutation": "none"
+}
