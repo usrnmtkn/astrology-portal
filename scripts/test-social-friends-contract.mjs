@@ -907,6 +907,16 @@ assert.match(
   "Email confirmation guidance must describe invite continuation only when an invitation is actually pending."
 );
 assert.match(
+  authService,
+  /resendEmailSignupConfirmation[\s\S]*supabase\.auth\.resend\(\{[\s\S]*type: "signup"[\s\S]*emailRedirectTo: redirectTo\(\)/,
+  "Pending email accounts must be able to request a fresh confirmation link with the configured app redirect."
+);
+assert.match(
+  signupView,
+  /email_not_confirmed[\s\S]*setEmailConfirmationPending\(form\.email\.trim\(\)\)[\s\S]*resendEmailSignupConfirmation\(emailConfirmationPending\)[\s\S]*Resend confirmation email/,
+  "An unconfirmed login must recover into a self-service confirmation resend flow."
+);
+assert.match(
   service,
   /pendingSocialInvitationConfirmationTtlMs[\s\S]*preservePendingSocialInvitationForEmailConfirmation[\s\S]*window\.localStorage\.setItem[\s\S]*pendingSocialInvitationConfirmationExpiryKey/,
   "Pending invitations must survive an email confirmation opening in a new tab for a bounded period."
