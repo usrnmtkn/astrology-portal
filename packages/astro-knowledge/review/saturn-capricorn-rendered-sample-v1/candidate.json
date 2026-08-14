@@ -1,0 +1,122 @@
+{
+  "schema": "tldrastro-sky-placement-rendered-sample-v1",
+  "candidateId": "sky-placement-saturn-capricorn-rendered-sample-v1",
+  "planet": "saturn",
+  "sign": "capricorn",
+  "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+  "contentRole": "fallback_hook",
+  "grammarFrame": "continuous_editorial_unit",
+  "renderPolicy": "sky-placement-continuous-v2",
+  "reviewStatus": "needs_review",
+  "editorialStatus": "writer_authorship_candidate",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidenceAuthorized": false,
+  "servingAuthorized": false,
+  "apiCalls": 0,
+  "ownerVocabularyAudit": {
+    "sourceBankId": "owner-vocabulary-bank-v1",
+    "voiceIndexStatus": "current",
+    "voiceIndexEntryCount": 7695,
+    "matchedOwnerCoreWords": [
+      "time",
+      "feel",
+      "work",
+      "home",
+      "show"
+    ],
+    "matchedOwnerSignaturePhrases": [],
+    "use": "register_evidence_not_quota"
+  },
+  "warmthHarvest": {
+    "emotionalCore": "rest must be earned through overwork",
+    "harvestMode": "matched_not_used",
+    "foundationText": "Rest does not have to be earned through exhaustion. Burnout is not a badge of honor. It is just burnout.",
+    "sourceId": "new-moon-solar-eclipse-in-virgo",
+    "reasonNotUsed": "The proposed close already lands the cost. Adding a separate reassurance line would create a stacked ending."
+  },
+  "meaningPlan": {
+    "object": "saturn",
+    "sign": "capricorn",
+    "eventType": "sign-residency",
+    "house": null,
+    "objectFunction": [
+      "time",
+      "structure",
+      "boundaries",
+      "responsibility",
+      "limits",
+      "discipline"
+    ],
+    "signMechanics": [
+      "long-range effort",
+      "responsibility",
+      "standards",
+      "authority",
+      "building something that can last"
+    ],
+    "dignity": "domicile",
+    "coreTension": "A plan can look successful while its knowledge, deadlines, and unpaid cost remain concentrated in one person.",
+    "observableBehaviors": [
+      "one person remembers every deadline and catches every mistake",
+      "work continues through evenings, weekends, and days off",
+      "the plan stops when the person carrying its hidden work becomes unavailable",
+      "delegated work is taken back instead of allowing responsibility to be shared"
+    ],
+    "likelyConsequences": [
+      "the work depends on unpaid time",
+      "nobody else learns the process",
+      "responsibility remains concentrated",
+      "rest is postponed to keep the result on schedule"
+    ],
+    "allowedLivedDomains": [
+      "work",
+      "projects",
+      "household administration",
+      "time",
+      "shared responsibility"
+    ],
+    "doNotAssume": [
+      "Capricorn means career or status in every sentence",
+      "the reader is living one specific workplace crisis",
+      "overwork proves dedication",
+      "a named house or life domain is known"
+    ]
+  },
+  "article": {
+    "fact_line": "{{entryDate}} to {{exitDate}}",
+    "aspect_insert": "{{aspectInsert}}",
+    "opening": "Ambition stops looking impressive when the person holding everything together cannot take a day off. Saturn in Capricorn exposes the plans that only work because someone remembers every deadline, catches every mistake, and stays late to make up the difference.",
+    "tension": "A project can win praise while one person sends corrections at midnight, covers a vacant role, and logs in on vacation. The same problem can show up at home: a household looks organized because the same person remembers every appointment, payment, and form. When that person stops doing all of it, deadlines slip, messages go unanswered, and everyone discovers how much of the plan depended on work nobody else was prepared to do.",
+    "development": "Being needed can feel like proof of competence until every problem belongs to the same person. We take the task back when someone else does it differently, answer messages during dinner, and postpone rest so the work stays on schedule. The deadline gets met, but the knowledge and responsibility stay in one set of hands.",
+    "close": "Work that holds its value over time cannot depend on one person giving up every evening, weekend, and day off."
+  },
+  "sourceAuthority": [
+    {
+      "id": "planetary-saturn-reviewed",
+      "path": "packages/astro-knowledge/data/planetary/saturn.json",
+      "use": "governed Saturn function and cycle boundary"
+    },
+    {
+      "id": "ll-matrix-v13-saturn-capricorn",
+      "path": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json",
+      "use": "governed Saturn-in-Capricorn topics only; no narrative borrowed"
+    },
+    {
+      "id": "OW-003",
+      "path": "packages/astro-knowledge/voice/tldr-astro/marie-satori-owner-feedback-audit.md",
+      "use": "owner-preferred direction and exact sentences; directional authority only"
+    },
+    {
+      "id": "gold-lilith-virgo-v5",
+      "path": "data/writing/owner-approved-examples.jsonl",
+      "use": "collective placement register and observable overwork pattern"
+    },
+    {
+      "id": "saturn-aries-continuous-serving",
+      "path": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+      "use": "current continuous placement article structure"
+    }
+  ]
+}

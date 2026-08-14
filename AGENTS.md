@@ -23,7 +23,7 @@ reader copy, load the canonical repository skill at
 repository context alone. The skill routes every task through the versioned
 meaning-plan, owner-context, draft, separate-review, surgical-revision, and
 deterministic-validation pipeline. The existing Marie Satori evidence compiler
-at `.agents/skills/marie-satori-writer/SKILL.md` remains the governed retrieval
+at `.agents/skills/satori-writer/SKILL.md` remains the governed retrieval
 implementation used by that pipeline.
 
 A writer result remains `needs_review` unless the owner explicitly approves
@@ -39,6 +39,7 @@ Open PRs touching `apps/web/src/content/fallbackArchitectureV3/**` or `packages/
 3. Every scope PR must leave all `review_status: approved` rows byte-identical, unless the PR description quotes the owner's explicit approval for the specific change. Diff the approved rows before merging to verify. Violations are a hard stop.
 4. Stop-and-report is reserved for: (a) a source-file conflict with another open PR that rebasing cannot resolve, (b) any change to approved copy without quoted owner approval, (c) CI failures not on the known pre-existing list. Everything else proceeds through the queue.
 5. A scope PR idle 3+ days must be rebased or closed by its owning session before that session opens another scope PR.
+6. Gate-relevant checks must run in an isolated worktree with its own dependencies installed by `npm ci`. Never symlink or reuse `node_modules` across worktrees. Before reporting a content gate, build `@tldr/astro-knowledge` locally in that worktree and regenerate every affected artifact there; confirm workspace package links resolve inside the isolated worktree.
 
 ### Sky aspect surface
 

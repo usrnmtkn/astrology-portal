@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "policyId": "satori-voice-authority-v1",
+  "classes": {
+    "owner_authored_final": {
+      "rank": 1,
+      "positiveVoiceDefault": true,
+      "description": "Published or otherwise author-final Marie Satori writing. Voice evidence only; historical facts are never runtime facts."
+    },
+    "exact_owner_approved": {
+      "rank": 2,
+      "positiveVoiceDefault": false,
+      "description": "Exact wording explicitly approved by the owner. Positive writer use still depends on the approval scope; calibration-only approval is not generation authorization."
+    },
+    "owner_revised_candidate": {
+      "rank": 3,
+      "positiveVoiceDefault": false,
+      "description": "Owner-written or owner-directed revision that has not received exact full-unit approval. Contextual and contrastive evidence only."
+    },
+    "positive_direction_not_approved": {
+      "rank": 4,
+      "positiveVoiceDefault": false,
+      "description": "Positive feedback such as preferred direction or 'this is better.' Never exact approval."
+    },
+    "ai_candidate_unreviewed": {
+      "rank": 5,
+      "positiveVoiceDefault": false,
+      "description": "AI-authored candidate awaiting owner review. It may be audited or contrasted but never retrieved as positive voice evidence."
+    },
+    "owner_rejected": {
+      "rank": 6,
+      "positiveVoiceDefault": false,
+      "description": "Wording explicitly rejected or replaced by the owner. Negative and contrastive evidence."
+    },
+    "historical_only": {
+      "rank": 7,
+      "positiveVoiceDefault": false,
+      "description": "Preserved for provenance but incompatible with the active surface contract or evaluation state."
+    },
+    "third_party_source": {
+      "rank": 8,
+      "positiveVoiceDefault": false,
+      "description": "CC, SD, AC, or other outside material. Knowledge or individual-word reference only; never Marie Satori voice evidence."
+    }
+  },
+  "hardRules": [
+    "Only owner_authored_final and in-scope exact_owner_approved records may set useAsPositiveVoiceEvidence true.",
+    "Calibration-only approval never authorizes writer or generation evidence.",
+    "A judge score never changes an authority class.",
+    "Positive feedback never becomes exact approval.",
+    "Historical dates and numerical claims in voice excerpts never become runtime facts.",
+    "Third-party phrasing, cadence, metaphors, and signature constructions are never positive Marie Satori voice evidence."
+  ]
+}

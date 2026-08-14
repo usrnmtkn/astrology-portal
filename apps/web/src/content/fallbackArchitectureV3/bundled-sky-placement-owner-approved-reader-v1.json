@@ -3,6 +3,34 @@
   "generatedFrom": "source-rows/sky-placement-owner-approved-fallbacks-v1.json",
   "rows": [
     {
+      "contentKey": "fallback-hook/sky-planet-education/saturn",
+      "content_role": "fallback_hook",
+      "grammar_frame": "collective_editorial_unit",
+      "render_policy": "sky-placement-planet-education-v1",
+      "body": "Saturn stands at the threshold where a choice becomes a consequence. The deadline arrives, the bill comes due, and a weak structure reveals itself in the person who has to absorb the extra hours, missing money, or unfinished work. Saturn governs time, limits, and responsibility. Under pressure, the true cost of keeping something going becomes visible, along with who has been expected to carry it.",
+      "review_status": "approved"
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+      "content_role": "fallback_hook",
+      "grammar_frame": "continuous_editorial_unit",
+      "render_policy": "sky-placement-continuous-v2",
+      "release_batch": "saturn-capricorn-v3",
+      "fact_line": "{{entryDate}} to {{exitDate}}",
+      "aspect_insert": "{{aspectInsert}}",
+      "opening": "Saturn rules Capricorn, so the sign sharpens what Saturn already cares about: hierarchy, endurance, and consequence. The sea-goat gives Capricorn a body built for two environments: hooves for the climb and a tail that still belongs to the water. The danger is not ambition. It is reaching the top by spending more time, money, health, and human effort than the climb can justify.\n\nThe job of Saturn in Capricorn is not to prove how much weight one person can carry. It is to build a structure that still works after the most reliable person leaves the room.\n\nYou have been taught to mistake endurance for ability. The person who remembers every deadline, answers after hours, and never drops the ball gets called reliable, and the arrangement is cheaper than hiring anyone else. Saturn in Capricorn asks a harder question: is the system actually working, or has one person become the system?",
+      "tension": "A project can win praise while one person sends corrections at midnight, covers a vacant role, and logs in on vacation. You may recognize the same pattern at home: a household looks organized because one person remembers every appointment, payment, and form. When they stop doing all of it, deadlines slip, messages go unanswered, and everyone discovers how much of the plan depended on work nobody else was prepared to do. If everything falls apart when one person takes a day off, that person was the infrastructure.\n\nBeing needed can feel like proof of ability until every problem belongs to you. You take the task back when someone else does it differently, answer messages during dinner, and postpone rest so the work stays on schedule. The deadline gets met, but the knowledge stays in one mind and the responsibility in one set of hands.\n\nThe reward for fixing the problem is often another problem. The person who handles it well becomes the default person everyone calls when something goes wrong. More responsibility arrives without more authority, more money, or anyone learning how to do the work without them. At some point, being indispensable stops looking like recognition and starts looking like a system that never bothered to build a backup.",
+      "development": "Before you expand the plan, make sure somebody else can run it. Fix the handoff. Train someone else to do the work. Fund the repair. Document what only one person knows. If training, funding, documentation, or another set of hands fixes the problem, reinforce it. If the structure still requires permanent overwork to function, stop calling it stable.",
+      "era_layer": {
+        "frame": "Saturn in Capricorn begins a period when standards get stricter and authority has to answer for the cost of its decisions. Rules, budgets, deadlines, and chains of responsibility become harder to treat as background details. A title cannot substitute for accountability. If the person making the decision can hand off the extra hours, missed weekends, and financial cost to everyone below them, the hierarchy may be clear, but the responsibility is not.",
+        "handoff": "Saturn moved through {{priorSign}} from {{priorSignEntryDateWithYear}} to {{priorSignExitDateWithYear}}. That transit tested the beliefs and long-range promises used to justify a plan. Capricorn changes the question from what everyone says they believe to who does the work, who has authority, and what happens when the plan meets a limit.",
+        "recurrence": "Saturn takes about 29 years to move through all twelve signs, spending around two and a half years in each. Saturn last moved through Capricorn from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}. By the end of that transit, the pandemic had made hidden work impossible to ignore. Hospitals, schools, households, and workplaces all discovered how quickly a system can strain when the people carrying its invisible work are pushed past what their staffing, hours, bodies, and resources can sustain.\n\nEarlier Saturn-in-Capricorn periods also arrived during years when major systems were being dismantled, reinforced, or rebuilt. From 1929 to 1933, financial collapse exposed weaknesses in banks and markets and forced a new argument over how much responsibility government should carry for economic stability. From 1959 to 1962, colonial rule was breaking apart across Africa while the Cold War hardened into new borders and confrontations, including the Berlin Wall. From 1989 to 1992, the Berlin Wall fell, Germany reunified, the Soviet Union dissolved, and the Maastricht Treaty began building a new political structure for Europe. The events are different, and the same disorientation runs through all of them: a structure everyone had organized their lives around stopped being permanent. The recurring question begins once everyone can see that the old structure no longer holds: what gets rebuilt, who takes responsibility for it, and what is no longer worth preserving?",
+        "collective_lesson": "Responsibility has to be visible before it can be shared. A company, family, or institution is not stable if the person setting the standard never has to answer for the time, money, and work it requires. The simplest test is what happens when the person who usually catches everything stops catching it."
+      },
+      "close": "A structure is not stable if it only works when one person never rests.",
+      "review_status": "approved"
+    },
+    {
       "contentKey": "fallback-hook/sky-sign-copy/jupiter/libra",
       "content_role": "fallback_hook",
       "grammar_frame": "continuous_editorial_unit",
@@ -27,15 +55,14 @@
       "render_policy": "sky-placement-continuous-v2",
       "fact_line": "{{entryDate}} to {{exitDate}}",
       "aspect_insert": "{{aspectInsert}}",
-      "primary_hook": "You may understand the message before you can explain how you understood it.",
-      "opening_heading": "Notice what the words did not say",
-      "opening": "Pisces changes Mercury’s way of gathering information. The literal sentence is only one part of the message. Attention moves toward tone, imagery, memory, hesitation, emotional undercurrents, and the connection that becomes obvious before the reasoning has fully formed.",
-      "tension_heading": "Intuition can catch the missing context",
-      "tension": "This works well when the important part of a message is difficult to state directly. You hear uncertainty inside an agreeable answer, find the image that finally makes a complicated idea understandable, or recognize the connection between two experiences before you can explain every step that led there. Mercury in Pisces can notice what is present before language has organized it neatly.",
-      "development_heading": "A strong impression can still be incomplete",
-      "development": "The complication is treating a feeling as proof because it arrived with conviction. Hope or fear slips into the gap where the missing fact should be. You understand the connection so quickly that you assume everybody else sees it too. The impression may contain real information while the explanation still needs to change.",
-      "close_heading": "Give the feeling enough language to test",
-      "close": "While Mercury is in Pisces, notice the impression before forcing a conclusion. Write it down. Ask the question that would confirm it. Find the words that make the connection understandable to somebody else. A feeling can be real without being the final answer.",
+      "opening": "Mercury enters Pisces on {{entryDate}}, and ordinary conversations may carry more in the pauses than in the sentences. Mercury governs the mind: language, curiosity, and how we make sense of things. Pisces is the sign of imagination, compassion, and the edges that blur. Someone reads a reply twice and says the tone does not match the words; after sitting with that feeling, we finally ask the useful question: “Did the answer change?” That sensitivity can catch a mixed signal before we act on it. Mercury moves through all twelve signs in about 1 year because it stays near the Sun. It usually spends roughly 2 weeks to 2 months in each sign, and a retrograde in that sign can extend the stay.",
+      "tension": "The trouble begins when the feeling itself gets treated as the answer. A pause sounds like refusal to one of us and uncertainty to another, but nobody checks. We soften a reply to avoid pressing, the next response stays just as vague, and we act on a decision that was never made. Everyone can explain what the exchange felt like, while the facts remain unsettled.",
+      "development": "Clarity now needs a small amount of structure, not a demand that every thought arrive fully formed. We can return to the exact words, say what we think we heard, and ask one plain question: “Was that a no, or is this still undecided?” Then a short message can state what we understood and what remains open. If the answer changes the story, we revise the decision. If no clear answer arrives, we leave it undecided instead of filling the silence ourselves.",
+      "close": "Before {{exitDate}}, we can reopen one unsettled exchange and ask for the answer we have been trying to infer.",
+      "try_this": [
+        "We can reread one confusing message and copy the exact sentence that is shaping our interpretation.",
+        "We can send “Still deciding” instead of another maybe that could be read as yes or no."
+      ],
       "review_status": "approved"
     },
     {
@@ -81,15 +108,15 @@
       "render_policy": "sky-placement-continuous-v2",
       "fact_line": "{{entryDate}} to {{exitDate}}",
       "aspect_insert": "{{aspectInsert}}",
-      "primary_hook": "One answer opens three more questions.",
-      "opening_heading": "Let the information move",
-      "opening": "Gemini changes Mercury’s range. One fact rarely stays alone for long. A question leads to another source. A side comment reveals the missing connection. Two separate conversations suddenly turn out to be about the same problem.",
-      "tension_heading": "Change your mind when the facts improve",
-      "tension": "This works well when the answer depends on comparison. You can hold two explanations at once, notice where they overlap, and revise the conclusion without treating the first answer like a personal commitment. Mercury in Gemini makes room for the possibility that better information should change what gets said next.",
-      "development_heading": "Too many open loops create their own confusion",
-      "development": "The complication is moving on before the useful thought is finished. The new question becomes more interesting than the answer already in progress. The connection gets found, but nobody else understands it because the explanation skipped the middle. By the end, there may be more facts on the table and less agreement about what any of them mean.",
-      "close_heading": "Finish enough to be understood",
-      "close": "While Mercury is in Gemini, follow the question that changes the answer. Share the source. Revise the conclusion when the evidence improves. Then finish the explanation before the next interesting idea pulls the conversation somewhere else.",
+      "opening": "Mercury enters Gemini on {{entryDate}}, and one question becomes five before the first answer is finished. Mercury governs the mind: language, curiosity, and how we make sense of things. Gemini is the sign of curiosity, conversation, and options. The original source gets found. A contradiction appears. The group chat fills with links, screenshots, and a version of the story that changes every ten minutes.",
+      "tension": "Mercury in Gemini moves quickly because every answer opens another route. That speed can find the missing fact, connect two ideas, or give a stuck conversation somewhere new to go. It can also outrun the point. More tabs open, side questions take over, and the quickest summary gets repeated while the slower source that contradicts it goes unread. The conversation stays lively after it has stopped helping.",
+      "development": "The cost shows up when a choice has to be made and nobody can tell which version is current. The confirmed detail is buried under commentary. Without grounding, curiosity becomes avoidance. Words become noise. The original question disappears under all the interesting questions that came after it.",
+      "close": "By {{exitDate}}, the useful answer may be the one we almost missed while proving how much else we could find.",
+      "try_this": [
+        "We can read the original source before repeating the quickest summary.",
+        "We can answer the question that was asked before adding another one.",
+        "We can let one interesting link wait until the decision in front of us is made."
+      ],
       "review_status": "approved"
     },
     {
@@ -99,15 +126,15 @@
       "render_policy": "sky-placement-continuous-v2",
       "fact_line": "{{entryDate}} to {{exitDate}}",
       "aspect_insert": "{{aspectInsert}}",
-      "primary_hook": "Find the part that keeps making everyone do the work twice.",
-      "opening_heading": "Find the part that keeps breaking",
-      "opening": "Virgo changes Mercury’s focus. Attention moves toward the sentence everyone misreads, the number that does not match, the instruction that leaves out a step, or the routine that keeps creating the same mistake. The question is not simply what is wrong. It is where the process stopped working.",
-      "tension_heading": "Small corrections can save a lot of time",
-      "tension": "This works well when the problem is specific enough to fix. You catch the error before it gets copied into the next version, rewrite the directions so nobody has to guess, or notice that the decision rests on a detail nobody confirmed. The correction may take two minutes. The mistake it prevents may have been costing hours.",
-      "development_heading": "Precision can become its own delay",
-      "development": "The complication is treating every flaw like it carries the same consequence. The draft stays open because one sentence could be cleaner. The answer waits because one more fact might matter. The work keeps getting a little better while the people waiting for it continue using the wrong version.",
-      "close_heading": "Fix what changes the result",
-      "close": "While Mercury is in Virgo, correct the error that actually matters. Clarify the instruction people keep misreading. Check the number the decision depends on. Then send the useful version. The tiny flaw you can still see does not deserve the same attention as the mistake that sends everyone back to the beginning.",
+      "opening": "Mercury enters Virgo on {{entryDate}}, and the sentence that almost went out wrong gets caught in time. Mercury governs the mind: language, curiosity, and how we make sense of things. Virgo is the sign of precision, service, and the details that keep life working. A number does not match. Two messages describe the same decision differently. Someone notices before the mistake becomes the version everyone remembers.",
+      "tension": "Mercury in Virgo is good at finding what needs to be corrected. The trouble begins when every detail starts to feel equally dangerous. A clear answer gets checked for tone, then punctuation, then every possible exception. Everyone is still waiting while the useful reply becomes a perfect reply that arrives too late.",
+      "development": "A mistake that changes the meaning deserves attention. A sentence that could simply be prettier does not carry the same risk. When that difference disappears, precision becomes a way to avoid being wrong in public. Perfectionism destroys more trust than an imperfect answer ever could. The extra checking creates the confusion it was supposed to prevent.",
+      "close": "Before {{exitDate}}, the late answer may cause more confusion than the imperfect one.",
+      "try_this": [
+        "We can compare the two messages and mark the detail that changes the decision.",
+        "We can ask the factual question underneath one recurring worry.",
+        "We can leave a harmless wording preference alone when the meaning is already clear."
+      ],
       "review_status": "approved"
     },
     {
@@ -206,15 +233,15 @@
       "render_policy": "sky-placement-continuous-v2",
       "fact_line": "{{entryDate}} to {{exitDate}}",
       "aspect_insert": "{{aspectInsert}}",
-      "primary_hook": "The answer comes quickly. Make sure the rest of the question gets a chance to arrive.",
-      "opening_heading": "Get to the point",
-      "opening": "Aries changes Mercury’s pace. Long explanations become harder to tolerate when the useful part can be said in one sentence. Questions get sharper. Replies come faster. The hesitation that kept a conversation stuck can disappear as soon as somebody finally says what they actually think.",
-      "tension_heading": "Move what has been stalled",
-      "tension": "This works well when delay has become more complicated than the decision itself. The email gets answered instead of rewritten six times. The call gets made. A vague discussion turns into a clear yes, no, or not yet. Mercury in Aries can cut through the part of the conversation that only exists because nobody wanted to go first.",
-      "development_heading": "Speed can miss what matters",
-      "development": "The problem begins when confidence gets mistaken for complete information. You skim the instructions because the task looks familiar, interrupt because the ending seems obvious, or answer the first question so quickly that the second one barely registers. Then the decision has to be reopened because the detail that looked small was the part everything depended on.",
-      "close_heading": "Keep the directness, lose the rush",
-      "close": "While Mercury is in Aries, say what you mean and make the first move when the facts are clear. Then keep listening. A fast answer is only useful if it does not create another round of cleanup.",
+      "opening": "Mercury in Aries says the part everyone else is still trying to phrase. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mercury enters Aries on {{entryDate}}, and conversations become faster and more direct. Mercury governs the mind: language, curiosity, and how we make sense of things. Aries is the sign of courage, beginnings, and going first. The question comes out before the moment gets awkward. A muddled exchange gets a clean answer. When information does not add up, we spot the gap and say what needs saying.",
+      "tension": "The answer can arrive so quickly that it outruns the information. We interrupt because the point seems obvious. We treat a question as resistance and a correction as a challenge. Then the exchange becomes about defending the first conclusion instead of finding out what is true. A decision clears the immediate pressure, but the missing detail returns later and changes what everyone thought had been settled.",
+      "development": "Now a strong idea can win quick agreement before anyone checks what it depends on. We hear the first half of an explanation, decide we know the rest, and answer a point that was never made. A direct question can cut through vague talk. When certainty closes the exchange, new information has no chance to change the answer. Once every objection sounds like delay, we keep defending a decision even after the facts no longer support it.",
+      "close": "Before {{exitDate}}, a quick answer may end the argument while the real question stays open.",
+      "try_this": [
+        "We can ask one direct question in a conversation where guessing has replaced information.",
+        "We can let someone finish one full explanation before answering the part that sounds wrong.",
+        "We can check the original source behind one claim that immediately makes us angry."
+      ],
       "review_status": "approved"
     },
     {
@@ -224,15 +251,14 @@
       "render_policy": "sky-placement-continuous-v2",
       "fact_line": "{{entryDate}} to {{exitDate}}",
       "aspect_insert": "{{aspectInsert}}",
-      "primary_hook": "A reliable answer still has to survive new information.",
-      "opening_heading": "Let the answer prove itself",
-      "opening": "Taurus changes Mercury’s standard. New information does not earn trust just because it is new. The question becomes more practical: Does this hold up? What will it cost? Can people rely on it a month from now? The answer has to make sense after the excitement wears off.",
-      "tension_heading": "Choose what can last",
-      "tension": "This works well when a decision needs more than enthusiasm behind it. You compare the proposal with what has already worked, look at the real expense instead of the optimistic estimate, or wait until the terms are clear before agreeing. Mercury in Taurus is good at noticing the difference between an idea that sounds reassuring and one that can actually support the life built around it.",
-      "development_heading": "Stability can turn into resistance",
-      "development": "The complication is keeping the old answer because it once worked well. New facts get added without changing the conclusion. The familiar method stays in place because replacing it feels more disruptive than admitting it no longer fits. At that point, caution is not protecting the decision. It is protecting the comfort of not having to make a new one.",
-      "close_heading": "Update what no longer fits",
-      "close": "While Mercury is in Taurus, take enough time to know what can be relied on. Then notice when the evidence has actually changed. A thoughtful answer can still become outdated.",
+      "opening": "Mercury in Taurus makes quick answers less satisfying than well-tested ones. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mercury enters Taurus on {{entryDate}}, and immediate reactions give way to slower consideration. Mercury governs the mind: language, curiosity, and how we make sense of things. Taurus is the sign of steadiness, comfort, and the tangible pleasures of life. A question gets another look. We check the details before we answer. A complicated idea gets pared down until it is clear enough to use.",
+      "tension": "Time gives an answer weight. Then the answer can become hard to move. We repeat a point because it was carefully considered, even after a new detail changes what it means. Someone offers a different reading, and changing our minds feels less reliable than repeating the old answer. The conversation slows from useful care into refusal. A decision meant to be dependable stops matching the information in front of us.",
+      "development": "Old answers can stay in circulation because everyone already understands them. A familiar fact gets repeated even after a newer detail complicates the picture. In writing, another round of edits improves the wording but never touches the assumption underneath it. During a conversation, we restate a careful explanation instead of considering the reply. Each choice sounds reasonable by itself. Together, they leave us defending a version of events that has stopped being accurate.",
+      "close": "Before {{exitDate}}, the facts may have changed while the old answer still sounds certain.",
+      "try_this": [
+        "We can ask what has changed since we last looked at one thing we consider settled.",
+        "We can answer one complicated question in three plain sentences and include one concrete example."
+      ],
       "review_status": "approved"
     },
     {
@@ -242,15 +268,15 @@
       "render_policy": "sky-placement-continuous-v2",
       "fact_line": "{{entryDate}} to {{exitDate}}",
       "aspect_insert": "{{aspectInsert}}",
-      "primary_hook": "The message is new. Your memory may already have an opinion.",
-      "opening_heading": "Read the history in the words",
-      "opening": "Cancer changes Mercury’s context. A sentence does not arrive alone. Tone matters. Timing matters. Who said it matters. The same five words can land very differently because of the promise that came before them, the argument nobody resolved, or the way this person usually sounds when something is wrong.",
-      "tension_heading": "Memory can catch what the literal wording misses",
-      "tension": "This works well when the important part of a conversation is not stated directly. You notice that the reply is shorter than usual, remember the commitment that makes the current answer significant, or hear the emotional shift before anybody names it. Mercury in Cancer can hold the history that explains why a small exchange feels much larger than it looks.",
-      "development_heading": "The past can answer before the present does",
-      "development": "The complication is letting recognition become proof. A pause sounds like the last pause. A neutral message feels like the beginning of the old disagreement. You start preparing for the ending you remember before checking if the same problem is actually happening again.",
-      "close_heading": "Give the present its own chance",
-      "close": "While Mercury is in Cancer, take the reaction seriously, then look at what is happening now. Memory is useful context. It should not get to decide the ending before the current conversation has spoken for itself.",
+      "opening": "After Mercury moves through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, it enters Cancer on {{entryDate}}, and the feeling behind the words gets harder to miss. Mercury governs the mind: language, curiosity, and how we make sense of things. Cancer is the sign of care, memory, and what feels like home. A short reply feels loaded. An old story comes back because it says what a plain fact cannot. We remember the tone, not just the sentence. We notice when someone says they are fine while trying not to expose what still hurts.",
+      "tension": "That sensitivity catches what literal words miss, but it can make direct speech feel exposed. We circle the point, soften a refusal, or answer the tone we expected instead of the words that were actually said. A current question starts carrying an old argument. The reply becomes defensive before we have named the need underneath it. The conversation starts confirming the fear that shaped the sentence.",
+      "development": "The pressure shows up in the way a remembered slight becomes evidence, the way concern becomes a question that already contains its answer, the way silence becomes a test we never explained. When memory supplies the missing facts, intuition becomes hard to separate from assumption. A caring question can become an argument when the answer does not match what was expected. An explanation meant to protect someone can keep the current issue from being named at all. The exchange gets longer without getting clearer.",
+      "close": "By {{exitDate}}, the original question can be forgotten while we are still defending ourselves against the old argument it brought back.",
+      "try_this": [
+        "We can ask one plain follow-up when a tone feels loaded instead of guessing at the meaning.",
+        "We can write down the exact sentence that upset us, then add the older situation it brought to mind.",
+        "We can replace one hint with a plain request for what we need."
+      ],
       "review_status": "approved"
     },
     {
@@ -260,15 +286,15 @@
       "render_policy": "sky-placement-continuous-v2",
       "fact_line": "{{entryDate}} to {{exitDate}}",
       "aspect_insert": "{{aspectInsert}}",
-      "primary_hook": "If the point matters to you, it will probably sound like it.",
-      "opening_heading": "Put your voice behind the point",
-      "opening": "Leo changes Mercury’s delivery. Detached language loses some of its appeal. Ideas want personality behind them. A strong opinion, vivid story, or clear point of view can make the message easier to remember because the person saying it is visibly invested.",
-      "tension_heading": "Make the information matter",
-      "tension": "This works well when the facts need a reason to matter. A dry explanation becomes easier to follow once somebody says why the result matters. A thank-you feels more generous when it sounds personal. A difficult truth can land more cleanly when the speaker stops hiding behind language so neutral that nobody knows what they actually believe.",
-      "development_heading": "Pride can take over the conversation",
-      "development": "The complication is confusing disagreement with disrespect. A correction to the idea starts to feel like a correction to the person. The discussion moves away from the evidence and toward who was embarrassed, interrupted, or not given enough credit. Once that happens, being seen as right can matter more than finding out what is right.",
-      "close_heading": "Keep the point bigger than the applause",
-      "close": "While Mercury is in Leo, let your voice show and say what you actually believe. Make the message memorable. Then let useful feedback improve the idea without turning every correction into a judgment of you.",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mercury enters Leo on {{entryDate}}, and even an uncertain thought gets a confident delivery. Mercury governs the mind: language, curiosity, and how we make sense of things. Leo is the sign of visibility, creative pride, and being seen. A half-formed idea finds its opening line. Someone tells a story that makes a complicated point easy to remember. We ask direct questions, explain ideas with color, and stop burying the point under extra context.",
+      "tension": "A flat response can feel like failure, so Mercury in Leo pushes harder. The claim gets bigger, and the story picks up details that were never there. Questions sound like challenges. A correction feels like disrespect. Being heard starts to matter more than being understood, and the conversation narrows around the version that protects our pride.",
+      "development": "The same pressure returns wherever conviction carries more weight than accuracy. It shows in the way a clear opinion becomes the final answer, the way a vivid story crowds out a plain fact, and the way warmth disappears when attention moves elsewhere. We may remember the line that landed and miss the question it did not answer. Decisions then follow the most compelling version of events, while quieter details remain unexamined. Once admiration becomes the test, honest confusion sounds like criticism. Fewer voices say that something does not add up.",
+      "close": "By {{exitDate}}, the most confident version may be guiding a decision even though it never answered the question that mattered.",
+      "try_this": [
+        "We can explain one complicated idea with a simple example and keep every detail true.",
+        "We can ask one follow-up question after making a strong point and listen to the full answer.",
+        "We can name the fact that changed our mind and credit whoever brought it up."
+      ],
       "review_status": "approved"
     },
     {
@@ -278,15 +304,14 @@
       "render_policy": "sky-placement-continuous-v2",
       "fact_line": "{{entryDate}} to {{exitDate}}",
       "aspect_insert": "{{aspectInsert}}",
-      "primary_hook": "A conversation is not balanced if the same person keeps doing all the adjusting.",
-      "opening_heading": "Listen for who keeps giving ground",
-      "opening": "Libra changes Mercury’s measure. The wording matters because the relationship between the people speaking matters. Attention moves toward fairness, tone, competing versions of events, and the point where keeping the peace begins to change the actual agreement.",
-      "tension_heading": "A better conversation can reveal a worse deal",
-      "tension": "This works well when two people remember the same agreement differently. Comparing both versions can expose the assumption nobody noticed the first time. A clearer phrase can make a difficult point easier to hear. A slower reply can keep the conflict from becoming cruel without pretending the disagreement is smaller than it is.",
-      "development_heading": "Compromise can erase the person doing most of it",
-      "development": "The complication is over-adjustment. The message gets softened until the point disappears. The decision waits for one more opinion while the first proposal quietly becomes the default. A plan that sounded fair looks different once the same person keeps changing their time, preference, or expectations to make it work.",
-      "close_heading": "Keep your position in the room",
-      "close": "While Mercury is in Libra, listen carefully and make room for nuance. Then state your position clearly enough that it remains part of the decision. Fairness is not everybody leaving pleased. It is nobody being edited out of the agreement.",
+      "opening": "Mercury in Libra makes an answer easier to improve and harder to finish. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mercury enters Libra on {{entryDate}} and shifts conversation toward comparison, response, and common ground. Mercury governs the mind: language, curiosity, and how we make sense of things. Libra is the sign of balance, connection, and how we get along with each other. We ask one more question before choosing. A sharp point gets reworded so it can be heard. We compare two accounts of the same exchange before deciding what happened. At its best, this makes room for information that certainty would have missed.",
+      "tension": "Mercury in Libra keeps an answer open for another view. Another view arrives, so we reopen the decision. Then another arrives, and we add another condition. A direct objection gets softened so no one feels cornered, then softened again until it sounds like agreement. The decision goes forward without the fact that might have changed it. Later, frustration lands on an arrangement built from a yes that no one meant.",
+      "development": "Now comparison keeps producing context, and context keeps postponing the sentence that would settle the matter. We can spend longer perfecting the wording than deciding what is true. In one conversation, a careful question shows what was missing. In another, the search for graceful phrasing keeps a basic disagreement unnamed. Once everyone is responding to a softened version, a later correction feels sudden. The decision may be reversible, but the confidence behind it is not easily restored.",
+      "close": "By {{exitDate}}, the decision is harder to revisit because the objection inside it was mistaken for agreement.",
+      "try_this": [
+        "We can state one real disagreement in a full sentence without adding \"but either is fine.\"",
+        "We can put two competing choices side by side, name what each one costs, and choose without asking for one more opinion."
+      ],
       "review_status": "approved"
     },
     {
@@ -296,15 +321,15 @@
       "render_policy": "sky-placement-continuous-v2",
       "fact_line": "{{entryDate}} to {{exitDate}}",
       "aspect_insert": "{{aspectInsert}}",
-      "primary_hook": "The first explanation is not always the whole explanation.",
-      "opening_heading": "Look beneath the first answer",
-      "opening": "Scorpio changes Mercury’s method. Mercury becomes less interested in taking the first explanation at face value. Attention goes toward what is missing, what changed, what was left unanswered, and what shows up when separate pieces of information are compared.",
-      "tension_heading": "Follow what does not add up",
-      "tension": "This works well for research, hard conversations, and any situation where the surface story is incomplete. One contradiction can undo hours of reassurance. The right follow-up question often uncovers the detail everyone else missed. Staying with a problem long enough brings the pattern beneath the obvious explanation into view.",
-      "development_heading": "When depth turns into suspicion",
-      "development": "The complication is suspicion. An incomplete answer can look deliberate before there is proof that anyone is hiding something. Privacy gets mistaken for deception. A single mismatch can spark an elaborate theory that the facts never supported. Depth is useful when it sharpens perception, not when fear starts filling in the blanks.",
-      "close_heading": "Let the facts be enough",
-      "close": "While Mercury is in Scorpio, ask the harder question and compare the responses. Keep looking while the evidence is incomplete. Once the facts are sufficient, let them be enough.",
+      "opening": "Mercury enters Scorpio on {{entryDate}}, and small inconsistencies become hard to ignore. Mercury governs the mind: language, curiosity, and how we make sense of things. Scorpio is the sign of depth, truth, and what happens beneath the surface. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mercury arrives in Scorpio with a more private, probing style. We notice the pause before an answer, compare what was said with what actually happened, or ask the question that gets beneath a polished explanation. Conversation gets more useful when the real motive can be named.",
+      "tension": "That focus can keep searching after the facts run out. A missing detail becomes proof of secrecy, and a careful answer starts to sound rehearsed. Instead of asking directly, we test someone with a loaded question, hold back what we know, or use silence to make them say more. The search for truth then changes the conversation itself. Someone starts protecting every word, and that caution looks like confirmation.",
+      "development": "A sharp observation can catch a contradiction or name the part of a story everyone avoided. But suspicion can keep an old explanation on trial after new information arrives. We remember the phrase that did not add up and treat every later phrase as evidence. Cutting words end the uncertainty quickly, but they also make honesty more expensive. When every admission may be used to gain an advantage, less gets said, not more.",
+      "close": "Before {{exitDate}}, repeated tests and sharp questions can leave a conversation so guarded that even a direct answer no longer sounds believable.",
+      "try_this": [
+        "We can write down one troubling detail, then separate what happened from what we inferred.",
+        "We can ask one direct question about a contradiction without adding an accusation.",
+        "We can tell someone one relevant fact we have been withholding while waiting for them to speak first."
+      ],
       "review_status": "approved"
     },
     {
@@ -314,15 +339,14 @@
       "render_policy": "sky-placement-continuous-v2",
       "fact_line": "{{entryDate}} to {{exitDate}}",
       "aspect_insert": "{{aspectInsert}}",
-      "primary_hook": "The big idea can arrive before the evidence is ready to support it.",
-      "opening_heading": "Name the larger point",
-      "opening": "Sagittarius changes Mercury’s scale. Individual facts become more interesting once they belong to a larger story. Attention moves toward meaning, direction, consequences, and the conclusion that explains why several separate updates matter together.",
-      "tension_heading": "Give the information a direction",
-      "tension": "This works well when everybody is buried in detail and nobody knows what to do with it. The conversation can move once somebody names what all the information adds up to. A long explanation becomes easier to remember when the central point is clear. The facts gain direction because people understand why they matter.",
-      "development_heading": "The conclusion can get ahead of the evidence",
-      "development": "The complication is giving one example the weight of an entire argument. A confident summary starts sounding settled before the supporting detail has been checked. The larger point may be correct, but certainty can make it look more proven than it is.",
-      "close_heading": "Check how much the facts really support",
-      "close": "While Mercury is in Sagittarius, make the connection and say the bigger point out loud. Then return to the evidence. The detail that complicates the story still counts, especially when it changes the conclusion.",
+      "opening": "Mercury enters Sagittarius on {{entryDate}}, after moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, and the conversation turns toward what it all means. Mercury governs the mind: language, curiosity, and how we make sense of things. Sagittarius is the sign of meaning, freedom, and the bigger story. A stray fact becomes a larger theory. One question opens into a conversation about what matters and why. Separate observations suddenly look connected, and the explanation comes out with confidence.",
+      "tension": "That reach has a cost when the conclusion arrives before the evidence. We remember the shape of what was said but lose the condition that made it accurate. A sincere opinion comes out as a fact. A correction sounds small beside the big point, so we wave it away and keep talking. The conversation that began with curiosity becomes a defense of what we already believe.",
+      "development": "The pattern returns in small ways. A summary gets cleaner and less true each time it is repeated. An explanation wins quick agreement, then falls apart when someone tries to use it. We may speak plainly to clear up confusion, only to find that bluntness makes the conversation defensive instead of curious. When conviction moves faster than the details, more explanation adds words without improving the information. The overstatement becomes harder to correct after it has been repeated.",
+      "close": "Before {{exitDate}}, Mercury in Sagittarius can leave us defending a larger story that one missing detail has already undone.",
+      "try_this": [
+        "We can trace one confident claim back to its original source and write down the condition the summary skipped.",
+        "We can ask someone what changed their mind and listen for the detail that does not fit our first explanation."
+      ],
       "review_status": "approved"
     },
     {
@@ -332,15 +356,15 @@
       "render_policy": "sky-placement-continuous-v2",
       "fact_line": "{{entryDate}} to {{exitDate}}",
       "aspect_insert": "{{aspectInsert}}",
-      "primary_hook": "A serious plan needs a date, a responsibility, and an actual answer.",
-      "opening_heading": "Put the terms on the table",
-      "opening": "Capricorn changes Mercury’s terms. Possibility becomes less interesting than requirement. Attention moves toward deadlines, standards, responsibilities, approvals, sequence, limits, and the exact point where an idea becomes a commitment.",
-      "tension_heading": "Make the plan accountable to reality",
-      "tension": "This works well when a vague proposal needs structure. The conversation changes once somebody names who is responsible, what happens first, and when the answer is due. A plan becomes easier to evaluate because the practical consequences are visible before anybody agrees.",
-      "development_heading": "Caution can become silence",
-      "development": "The complication is taking so long to prepare the responsible answer that the window closes. The reply stays in drafts while every possible consequence is considered. The person waiting cannot see the careful reasoning behind the delay. They only see that no answer came, and eventually they make a decision without it.",
-      "close_heading": "Say it while it can still matter",
-      "close": "While Mercury is in Capricorn, be clear about the terms. Put the important part in writing. Name the limit before it becomes a problem. Careful thinking helps most when the answer arrives in time to be used.",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mercury enters Capricorn on {{entryDate}}, and loose ideas start forming a plan. Mercury governs the mind: language, curiosity, and how we make sense of things. Capricorn is the sign of responsibility, structure, and what gets built to last. A vague concern becomes a direct question. Notes get sorted into steps. A conversation that has gone in circles finally ends with a decision someone can use.",
+      "tension": "The pressure begins when every thought has to prove its usefulness. Uncertainty starts to sound like failure. We choose words so carefully that nothing warm survives the edit. A cautious estimate gets repeated as a fixed outcome, and a useful plan becomes hard to change even after new information arrives. The silence may look responsible, but it leaves everyone else making decisions around what was never said.",
+      "development": "The same pattern can return anywhere facts need interpretation. An unfinished answer is treated as a bad answer. A practical concern becomes a reason to expect the worst. A plan is defended because changing it would admit that the first version was incomplete. Capricorn keeps Mercury focused on consequences and usable plans, but the mind can keep working the same conclusion long after the evidence has changed. By the time the missing words are finally spoken, their precision may no longer help. The other side has already filled in the silence.",
+      "close": "By {{exitDate}}, a precise explanation can arrive too late to change the decision made in its absence.",
+      "try_this": [
+        "We can ask one direct follow-up question where a missing fact is holding up a decision.",
+        "We can check one grim assumption against the facts before treating it as settled.",
+        "We can give one firm answer with the reason included instead of leaving the tone to carry it."
+      ],
       "review_status": "approved"
     },
     {
@@ -350,15 +374,14 @@
       "render_policy": "sky-placement-continuous-v2",
       "fact_line": "{{entryDate}} to {{exitDate}}",
       "aspect_insert": "{{aspectInsert}}",
-      "primary_hook": "The rule looks very different once you realize it is creating the problem.",
-      "opening_heading": "Question the system",
-      "opening": "Aquarius changes Mercury’s vantage point. Instead of treating each breakdown as a separate mistake, attention moves toward the rule, policy, or process producing the same outcome again and again. Repeated delays start to look connected. Arbitrary requirements become harder to defend. The question shifts from who got this wrong to why so many people keep running into the same problem.",
-      "tension_heading": "Find the pattern behind the problem",
-      "tension": "This works when individual fixes keep failing. If the same bottleneck appears across several teams, conversations, or parts of a process, correcting each case separately will only get you so far. Once the larger pattern becomes visible, changing the rule itself can solve more than another temporary workaround ever could.",
-      "development_heading": "A smarter system should actually improve people’s lives",
-      "development": "The complication is getting attached to an idea because it is clever, new, or elegant. A redesign that saves one group time while giving everyone else more work has not solved the problem. A cleaner policy that makes access harder, ignores the people most affected by it, or simply moves the burden somewhere less visible is not much of an improvement.\n\nAquarius is not interested in innovation for its own sake. The point is to build something better than what came before.",
-      "close_heading": "Look at who the change serves",
-      "close": "While Mercury is in Aquarius, question the rule that no longer makes sense and imagine a better one. Then look beyond the idea itself. Who benefits from the change? Who gets left carrying the cost? Does the new system actually improve life for the people inside it? A brilliant idea means very little if the answer is no.",
+      "opening": "Mercury in Aquarius makes the odd idea sound more useful than the familiar answer. After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mercury enters Aquarius on {{entryDate}}, and our attention shifts toward patterns, future possibilities, and unusual solutions. Mercury governs the mind: language, curiosity, and how we make sense of things. Aquarius is the sign of the future, the group, and ideas bigger than one name. A question opens a new route through a stuck conversation. Notes that seemed unrelated form a clear pattern. A strange suggestion becomes the first answer that fits.",
+      "tension": "The speed of that insight creates distance when everyone else is still catching up. We skip the explanation, point out the flaw, and move straight to a solution that feels obvious to us. If someone hesitates, we may argue harder or take the opposite side just to keep the thinking alive. The idea gets more interesting, but the exchange gets colder. What began as a useful break from convention ends with the person hearing it feeling treated like part of the problem.",
+      "development": "Now a group discussion can start chasing the most original take instead of the useful one. A writer can keep refining the theory while missing the sentence that would make it clear. We can spot the system behind a recurring problem and still lose trust by treating every objection as outdated. When every answer has to sound original, useful questions go unsaid. Decisions then rest on a clever pattern that nobody had enough time to examine.",
+      "close": "Before {{exitDate}}, the strongest idea may still go nowhere once questioning it feels like admitting we cannot keep up.",
+      "try_this": [
+        "We can lead with the example instead of the theory in one explanation this week.",
+        "We can try the unusual fix on something low-stakes and write down what changed."
+      ],
       "review_status": "approved"
     },
     {
@@ -853,16 +876,13 @@
       "content_role": "fallback_hook",
       "grammar_frame": "continuous_editorial_unit",
       "render_policy": "sky-placement-continuous-v2",
+      "release_batch": "venus-libra-owner-approved-v1",
       "fact_line": "{{entryDate}} to {{exitDate}}",
       "aspect_insert": "{{aspectInsert}}",
-      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra on {{entryDate}}, and we pay closer attention to whether interest, effort, and consideration are being returned. Venus governs relationships, creativity, and what we value. Libra is the sign of balance, connection, and how we get along with each other. A shared decision includes both preferences. A purchase feels worth making because it is useful and beautiful. Affection becomes easier to trust when care does not have to be requested every time.",
-      "tension": "The cost appears when agreement matters more than an honest answer. We ask what works for everyone else before admitting what works for us. We revise a preference until nobody can object, accept an arrangement because it looks even, and keep the peace after the effort stops being mutual. The decision then belongs to whoever was clearest, while the more accommodating side carries the extra cost. Resentment enters a relationship that still looks perfectly calm.",
-      "development": "The issue may be a relationship where the same person always chooses the harmless answer, a shared expense left unequal because asking for the exact amount feels rude, or an attraction sustained by being admired rather than being known. Each compromise seems small. Together they teach others that our preferences can be moved and our limits can wait. By the time a real disagreement arrives, nobody knows which agreement was sincere.",
-      "close": "Before {{exitDate}}, an arrangement may strain when the person who kept agreeing can no longer accept what they do not want.",
-      "try_this": [
-        "We can state our preferred option before asking anyone else to choose.",
-        "We can total one shared expense and request the exact amount still owed."
-      ],
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them.\n\nVenus rules Libra, so compromise comes easily here. You can see both sides, find the middle ground, and make an arrangement work without much friction. That is useful until your own preference disappears somewhere inside the compromise.",
+      "tension": "The problem starts when you keep saying yes because it feels easier than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left. The loudest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility. Resentment builds because the agreement only works by asking one person to keep giving more. You did not agree. You accommodated, and everyone called it agreement.",
+      "development": "Being easy to work with is rewarded everywhere. It gets called low maintenance, flexible, a good partner. Nobody mentions that it is also free. A collaborator chooses the direction, you say it works, and before anyone assigns the follow-up, you offer to rewrite the draft, send the updates, and deliver the final version. The decision takes five minutes; carrying it out costs you several more hours. When you finally say you preferred another version, their response tells you which one it was: they reopen the decision and split the revisions, or they expect you to keep carrying the plan you never picked.\n\nA shared purchase hides the same imbalance. You agree to split the cost, put the charge on your card, and accept a smaller repayment because asking for the exact difference feels awkward. You save the receipt, calculate what is still owed, and send another reminder. The agreement stays easy because you carry the missing money and the work of collecting it.\n\nSay what you want before you hear what everyone else wants. Name the number. Ask who is doing the follow-up. Let the plan change once you are actually in it. Then watch what happens: who adjusts, who covers the difference, and who takes on the work their choice created.",
+      "close": "The connections worth keeping are the ones that survive you asking for something.",
       "review_status": "approved"
     },
     {

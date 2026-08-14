@@ -1,0 +1,33 @@
+{
+ "schemaVersion": 1,
+ "name": "sky-aspect-owner-refinements-2026-08-11",
+ "approvedAt": "2026-08-11",
+ "approvalAuthority": "Owner-authored hybrid final version supplied verbatim in chat (supersedes the first draft staged earlier tonight)",
+ "exactWordingApproved": true,
+ "lockedPrinciple": "The astrology should explain why the event unfolds the way it does, while the prose shows what that looks like in ordinary life. The best version does both.",
+ "hashAlgorithm": "sha256(JSON.stringify(payload)) ensure_ascii=False separators(\",\",\":\")",
+ "note": "ownerText includes composed date/placement lead-in only where the owner wrote one (Saturn-Lilith). Shipping must determine the stored-body boundary against the render template; final rendered Exact Today output must reproduce the owner text. Sign references in lead-ins are templated header, not stored copy.",
+ "payloads": {
+  "sky.saturn.square.lilith": {
+   "payload": {
+    "ownerText": "On Tuesday, August 11, Saturn in Aries squares Lilith in Capricorn, and on a collective level, patience runs thin for rules, expectations, or responsibilities that have been demanding too much for too long. Shortcuts stop working. Pressure finds the weak point in a plan, agreement, or system and makes it harder to pretend the problem is manageable. What still works after the pressure is probably worth keeping. What buckles was already asking people to carry more than their share.",
+    "action": "new exact record (currently a documented gap; remove from gap list)"
+   },
+   "sha256": "dd52e010cd50327907e94346e07ba3c8be61ff0b788d16cbc84e7debf5ef14ae"
+  },
+  "sky.venus.trine.uranus": {
+   "payload": {
+    "ownerText": "An agreement that has become too rigid may need to change before people walk away from it. A payment plan stretches out. A deadline moves. A policy gets revised once the cost of the original terms becomes impossible to ignore. Venus keeps the conversation focused on fairness, while Uranus makes it easier to change the rule that caused the problem in the first place. The trine helps the terms change without putting the larger agreement at risk. Name what is not working, change the terms, and give everyone affected a real chance to respond. Relief comes when nobody has to keep pretending the old arrangement was fine.",
+    "action": "supersede existing approved record body"
+   },
+   "sha256": "4154b5839185b8fa681c866529914edd77891bd9892d3b986c4bde355998a4c8"
+  },
+  "sky.mercury.trine.neptune": {
+   "payload": {
+    "ownerText": "Mercury trine Neptune also helps difficult stories be told with honesty and care. Testimony, reporting, art, or a private conversation can hold the emotional truth while keeping dates, names, and responsibilities intact. Mercury keeps the account clear. Neptune keeps the grief, compassion, and emotional meaning present. Fact and feeling support each other instead of forcing people to choose one over the other. The facts do not need to be softened to make people care, and the emotions do not need to be exaggerated to make the truth matter. The story carries more weight because its emotional force does not depend on blurring what actually happened.",
+    "action": "supersede existing approved record body"
+   },
+   "sha256": "92d316646fc31317c83c2f2a4a855787e172b87b4cb7bf1a15bf4e1ee1c06063"
+  }
+ }
+}

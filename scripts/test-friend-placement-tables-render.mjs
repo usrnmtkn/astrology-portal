@@ -295,6 +295,7 @@ try {
 
   const emptyTransitsHtml = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     bondTransits: [],
+    dateLabel: "Today",
     friendName: "Alex",
     houseTransits: [],
     onOpenBondTransit() {},
@@ -315,10 +316,16 @@ try {
     }],
     dailyForecast: {
       headline: "An opening just appeared.",
-      body: "Alex gets an answer sooner than expected and can use the opening while it is here."
+      body: "Alex gets an answer sooner than expected and can use the opening while it is here.",
+      moonContext: {
+        sign: "Sagittarius",
+        houseLabel: "7th house",
+        topic: "partnership and one-to-one relationships"
+      }
     },
     dailyDoItems: ["Name the plan", "Keep it practical", "Leave room"],
     dailyDontItems: ["Force an answer", "Assume the worst", "Overpromise"],
+    dateLabel: "Today",
     friendName: "Alex",
     houseTransits: [{
       id: "house-1",
@@ -355,6 +362,10 @@ try {
   assert.match(populatedTransitsHtml, /Daily forecast for Alex/);
   assert.match(populatedTransitsHtml, /An opening just appeared/);
   assert.match(populatedTransitsHtml, /Alex gets an answer sooner than expected/);
+  assert.match(populatedTransitsHtml, />Moon in Sagittarius<\/span>/);
+  assert.match(populatedTransitsHtml, />7th house<\/span>/);
+  assert.match(populatedTransitsHtml, />Partnership<\/span>/);
+  assert.match(populatedTransitsHtml, />One-to-one relationships<\/span>/);
   assert.doesNotMatch(populatedTransitsHtml, /most relevant transit|friend-transit-focus/);
   assert.doesNotMatch(populatedTransitsHtml, /current weather|Start here|near-term theme|shared theme/);
   assert.match(populatedTransitsHtml, /Between you two/);
@@ -364,13 +375,38 @@ try {
   assert.match(populatedTransitsHtml, /Emotional momentum is easier to use/);
   assert.doesNotMatch(populatedTransitsHtml, /Read what this means/);
   assert.doesNotMatch(populatedTransitsHtml, /friend-transit-focus-card/);
-  assert.match(populatedTransitsHtml, /Today for Alex/);
+  assert.doesNotMatch(populatedTransitsHtml, /Today for Alex/);
   assert.match(populatedTransitsHtml, /Name the plan/);
   assert.match(populatedTransitsHtml, /Force an answer/);
   assert.ok(
     populatedTransitsHtml.indexOf("An opening just appeared") < populatedTransitsHtml.indexOf("Name the plan"),
     "The chart-specific daily write-up should lead the friend's daily guidance."
   );
+
+  const unknownBirthTimeTransitsHtml = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
+    bondTransits: [],
+    dailyForecast: {
+      headline: "Keep the pace simple.",
+      body: "Alex can leave one decision open until there is more information.",
+      moonContext: {
+        sign: "Sagittarius",
+        houseLabel: null,
+        topic: null
+      }
+    },
+    dateLabel: "Today",
+    friendName: "Alex",
+    houseTransits: [],
+    onOpenBondTransit() {},
+    onOpenHouseTransit() {},
+    onOpenPersonalTransit() {},
+    patternItems: [],
+    patternTimingOverrides: {},
+    personalTransitGroups: []
+  }));
+  assert.match(unknownBirthTimeTransitsHtml, />Moon in Sagittarius<\/span>/);
+  assert.doesNotMatch(unknownBirthTimeTransitsHtml, /7th house|Partnership|One-to-one relationships/);
+
   assert.ok(
     populatedTransitsHtml.indexOf("Between you two") < populatedTransitsHtml.indexOf("Mars trine Moon"),
     "Relationship context should lead the ranked short-term transit list."

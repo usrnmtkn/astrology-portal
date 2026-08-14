@@ -1,5 +1,121 @@
 # TLDR Astro Claude instructions
 
+## Writing registers (owner-stated; read before drafting any reader copy)
+
+The project has three reader-facing registers. They are not
+interchangeable, and copy written in the wrong one is rejected on sight.
+Check the register before writing a single sentence.
+
+### 1. Sky aspect (Calendar) — collective
+
+Two planets aspecting each other in the current sky. It is the same for
+everyone; the reader is not in it.
+
+Calendar cards have two parts (owner decision, 2026-08-14). Forecast
+first, astrology underneath.
+
+**Main copy: the forecast.** What may happen, why it matters, what can
+move. No astrology explanation required, and no placement or aspect names
+in it. The reader gets something usable before being asked to process
+planet, sign, aspect, modality.
+
+**Details: the astrology, in reader order.** Names the transit ("Sun in Leo
+opposite Saturn in Aquarius"), then follows the same message-first logic as
+the forecast. Details may sound like astrology education; the main copy may
+not. Details is NOT "Sun does X. Saturn does Y. Opposition means Z. Fixed
+means Q." That order makes the reader assemble the meaning themselves.
+
+Details beats, in this order (owner decision, 2026-08-14):
+
+1. **What may happen.** Compose both placements into one recognizable
+   situation.
+2. **Why it matters.** Explain both placements astrologically, in one
+   sentence.
+3. **Why it sticks or moves this way.** Add aspect, then modality or
+   element, only where useful.
+4. **What can move.** Translate the astrology back into the part of the
+   situation that can actually change.
+
+The astrology library governs the explanation. The reader logic governs
+the order of the prose.
+
+This split is also what removes the repetition problem: placements are
+named once, in Details.
+
+- The signs carry the substance. "Sun in Leo opposition Saturn in
+  Aquarius" and "Sun in Pisces opposition Saturn in Virgo" must not read
+  alike. If the copy would be unchanged by swapping the signs, it is wrong.
+  The signs determine what the tension is, so they change the forecast
+  itself, not just the Details.
+- Stay general enough that anyone recognizes it. A single narrow scene (one
+  bakery, one council meeting, one comment thread) is a personal-transit
+  move and does not belong here. Ordinary life is texture, not plot.
+- No second person. No standing-pattern claims.
+- Stored bodies begin lowercase; the Calendar composes the date lead-in.
+
+Approved shape (owner-authored, 2026-08-14):
+
+> On Tuesday, August 18, someone may want their effort recognized while
+> the answer coming back is that the same rule applies to everyone. That
+> can turn a quiet frustration into a direct disagreement about credit,
+> exceptions, or what the policy actually covers. Neither side is likely
+> to back down quickly. What can change is the agreement: what counts, who
+> gets recognized, and which rule applies here.
+>
+> **Details.** Sun in Leo opposite Saturn in Aquarius. Someone may want
+> their contribution recognized while the answer coming back is that the
+> same rule applies to everyone. The Sun in Leo puts more weight on
+> individual contribution and recognition, while Saturn in Aquarius holds
+> to the standard meant to apply across the group. The opposition makes
+> both positions difficult to ignore, and because both signs are fixed,
+> neither side is likely to give way quickly. What can move is the
+> agreement itself: what counts, who gets recognized, and which rule
+> applies here.
+
+Beats in the forecast: the tension in ordinary words, then what it turns
+into, then how it behaves, then what can actually change.
+
+Synonym sets naming one referent ("the policy, process, or rule") and
+facets of one question ("what counts, who gets recognized, which rule
+applies") are correct. They are not scene menus. A scene menu offers
+different situations ("a payment plan stretches, a deadline moves, a
+policy is revised") and is prohibited. Any deterministic gate that
+rejects the approved shape above is wrong and must be fixed.
+
+### 2. Personal transit (You, Friends) — event
+
+A moving planet contacting one person's natal point. Temporary, theirs.
+
+- Second person. A specific everyday scene is correct here.
+- The friend or other person is visible in the scene where one is involved.
+- Temporary event, never a permanent trait.
+
+### 3. Natal aspect (You) — standing pattern
+
+A pattern in the birth chart. Person first, "you tend to".
+
+- Shape: pattern, then why, then a way through.
+- Never reads like a transit or a passing mood.
+
+### Rules that apply to all three
+
+- One scene or condition per piece. No menus of alternatives ("a payment
+  plan stretches, a deadline moves, a policy is revised").
+- Planets are not characters. Do not write "Mercury puts... while Venus
+  refuses...".
+- No detachable aspect formulas ("The sextile opens a route...").
+  If a sentence would fit any other card of that aspect, it fails.
+- The mechanism names who does what in ordinary words. Not abstractions
+  colliding.
+- Endings state where things stand. They do not invent facts absent from
+  the piece, promise resolution, or deliver a moral.
+- Invent nothing. Concrete detail must come from governed source material.
+- Plain over clever; the meaning survives one read. No em dashes, ASCII
+  only, no "steady", no coaching or permission language. Contractions are
+  fine.
+- Voice exemplars must themselves pass every rule above. An exemplar that
+  violates a rule is a counter-example and must be removed from the packet.
+
 ## Serving-content merge model (v2, 2026-08-08 — replaces the flight rule)
 
 Scope: `apps/web/src/content/fallbackArchitectureV3/**` and
@@ -34,3 +150,10 @@ of a stop.
 
 5. **PR hygiene.** A scope PR idle for 3+ days must be rebased or closed by
    its owning session before that session opens another scope PR.
+
+6. **Isolated gate execution.** Every gate-relevant check runs in an isolated
+   worktree with dependencies installed locally by `npm ci`. Never symlink or
+   reuse `node_modules` across worktrees. Before reporting a content gate,
+   build `@tldr/astro-knowledge` locally in that worktree, regenerate every
+   affected artifact there, and confirm workspace package links resolve inside
+   that isolated worktree.

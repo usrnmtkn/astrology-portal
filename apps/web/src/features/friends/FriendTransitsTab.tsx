@@ -2,6 +2,7 @@ import type {
   NatalAspectPatternActivationTimingWindow,
   NatalAspectPatternReaderItem
 } from "../../services/natalAspectPatterns";
+import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
 import { DurationLabelText } from "../../components/charts/PlacementRows";
 import { pointGlyph } from "../../components/charts/chartAssets";
 import { NatalAspectPatternActivationsSection } from "../you/NatalAspectPatternsSection";
@@ -24,6 +25,7 @@ export type FriendHouseTransitView = {
   keywords: string[];
   house: number;
   houseLabel: string;
+  detailAvailable: boolean;
 };
 
 export type FriendPersonalTransitGroup = {
@@ -37,12 +39,14 @@ export type FriendPersonalTransitGroup = {
     timingLabel: string;
     summary: string;
     orb: string;
+    detailAvailable: boolean;
   }>;
 };
 
 export type FriendDailyForecastView = {
   headline: string;
   body: string;
+  moonContext: DailyMoonContext;
 };
 
 type FriendPersonalTransit = FriendPersonalTransitGroup["transits"][number];
@@ -56,8 +60,11 @@ function FriendPersonalTransitCard({
 }) {
   return (
     <button
-      aria-label={`Open full entry for ${transit.title}`}
+      aria-label={transit.detailAvailable
+        ? `Open full entry for ${transit.title}`
+        : `Full entry unavailable for ${transit.title}`}
       className="updates-aspect-row friend-transit-row"
+      disabled={!transit.detailAvailable}
       onClick={() => onOpen(transit.id)}
       type="button"
     >
@@ -70,6 +77,11 @@ function FriendPersonalTransitCard({
           <span>{transit.rangeLabel}</span>
         </span>
         <p className="updates-aspect-row__description transit-card-preview">{transit.summary}</p>
+        {!transit.detailAvailable ? (
+          <span className="updates-aspect-row__description" role="status">
+            Full interpretation unavailable pending source verification.
+          </span>
+        ) : null}
       </span>
       <span className="updates-aspect-row__meta" aria-label={`${transit.timingLabel}, ${transit.orb} orb`}>
         <span className="updates-aspect-row__dot" aria-hidden="true" />
@@ -86,6 +98,7 @@ export function FriendTransitsTab({
   dailyDontItems = [],
   friendName,
   houseTransits,
+  isLoading = false,
   onOpenBondTransit,
   onOpenHouseTransit,
   onOpenPersonalTransit,
@@ -97,8 +110,10 @@ export function FriendTransitsTab({
   dailyForecast?: FriendDailyForecastView | null;
   dailyDoItems?: string[];
   dailyDontItems?: string[];
+  dateLabel: string;
   friendName: string;
   houseTransits: FriendHouseTransitView[];
+  isLoading?: boolean;
   onOpenBondTransit: (id: string) => void;
   onOpenHouseTransit: (id: string) => void;
   onOpenPersonalTransit: (id: string) => void;
@@ -118,11 +133,16 @@ export function FriendTransitsTab({
   return (
     <div className="friend-tab-pane friend-compat-stage friend-transits-stage friend-transits-stage--full" aria-label={`${friendName} transits`}>
       <div className="friend-profile-copy-column">
+        {isLoading ? (
+          <div className="feature-loading-fallback" role="status">
+            Calculating transits for the selected date…
+          </div>
+        ) : null}
         {dailyForecast ? (
           <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Daily forecast for ${friendName}`}>
-            <span className="eyebrow section-label friend-section-label">Today for {friendName}</span>
             <h3>{dailyForecast.headline}</h3>
             <p>{dailyForecast.body}</p>
+            <DailyMoonContextTags context={dailyForecast.moonContext} />
           </section>
         ) : null}
         {hasDailyGuidance ? (
@@ -185,7 +205,11 @@ export function FriendTransitsTab({
             <div className="updates-aspect-list friend-transit-list">
               {houseTransits.map((card) => (
                 <button
+                  aria-label={card.detailAvailable
+                    ? `Open full entry for ${card.title}`
+                    : `Full entry unavailable for ${card.title}`}
                   className="updates-aspect-row updates-aspect-row--house"
+                  disabled={!card.detailAvailable}
                   key={card.id}
                   onClick={() => onOpenHouseTransit(card.id)}
                   type="button"
@@ -205,6 +229,11 @@ export function FriendTransitsTab({
                     </span>
                     {card.rowSummary ? (
                       <span className="updates-aspect-row__description transit-card-preview">{card.rowSummary}</span>
+                    ) : null}
+                    {!card.detailAvailable ? (
+                      <span className="updates-aspect-row__description" role="status">
+                        Full interpretation unavailable pending source verification.
+                      </span>
                     ) : null}
                     <span className="house-transit-keywords" aria-label="House keywords">
                       <span className="ui-pill house-transit-term-tag">{card.termLabel}</span>
@@ -242,7 +271,7 @@ export function FriendTransitsTab({
           items={patternItems}
           timingOverrides={patternTimingOverrides}
         />
-        {!hasAnyTransit && (
+        {!isLoading && !hasAnyTransit && (
           <article className="friends-logic-card">
             <span>Transits</span>
             <h3>No prioritized transits are active.</h3>

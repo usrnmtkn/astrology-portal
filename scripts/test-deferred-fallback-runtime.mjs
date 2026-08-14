@@ -46,11 +46,11 @@ const skyCoreRows = JSON.parse(fs.readFileSync(
 ));
 const skyCoreKeys = new Set(skyCoreRows.hookRows.map((row) => row.contentKey));
 const skyFacts = {
-  a: "uranus",
-  b: "neptune",
-  aspect: "sextile",
-  aSign: "gemini",
-  bSign: "aries"
+  a: "venus",
+  b: "saturn",
+  aspect: "square",
+  aSign: "aries",
+  bSign: "cancer"
 };
 const transitFacts = {
   transiting: "pluto",
@@ -83,7 +83,7 @@ assert.equal((await runtime.loadFallbackArchitectureV3BundledManifest()).keys.le
 assert.equal(runtime.isDeferredFallbackArchitectureV3BundleLoaded(), false);
 assert.equal(runtime.isEmptyHouseFallbackArchitectureV3BundleLoaded(), false);
 assert.equal(runtime.isRelationshipFallbackArchitectureV3BundleLoaded(), false);
-assert.ok(skyBefore.body, "Sky fallback copy must be available before the transit bundle loads.");
+assert.ok(skyBefore.body, "Approved specific Sky aspect copy must be available before the transit bundle loads.");
 assert.ok(skyPlacementBefore.body && skySeasonBefore.body && skyLunationBefore.body);
 assert.ok(dignityBefore, "Sky dignity copy must remain in the eager core.");
 assert.equal(placementBefore, "", "Natal and friend placement prose must remain deferred.");

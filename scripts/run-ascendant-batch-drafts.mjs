@@ -11,7 +11,8 @@
 // --dry-run performs everything except the billed API calls (writes model
 // inputs and packet artifacts, so the whole run is inspectable unbilled).
 //
-// Credential: OPENAI_API_KEY from the environment. Never logged, never written.
+// Credentials: OPENAI_API_KEY / GEMINI_API_KEY from apps/web/.env.local only.
+// They are never logged or written.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -20,6 +21,9 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const { callGeminiInteractions } = require("../src/astro-writing/geminiInteractions.cjs");
+const { readLocalProviderKeys } = require("../src/astro-writing/localProviderKeys.cjs");
+const { buildProviderRequest, normalizeProviderConfig } = require("../src/astro-writing/offlineProviderConfig.cjs");
 const { buildAspectWritingPacket, loadEntry } = require(
   path.join(repoRoot, "packages/astro-knowledge/scripts/build-aspect-writing-packet.js")
 );
@@ -43,10 +47,17 @@ if (!configPath) {
 }
 const config = JSON.parse(fs.readFileSync(path.resolve(configPath), "utf8"));
 const OUT_ROOT = path.join(repoRoot, config.outputDir);
-const API_KEY = process.env.OPENAI_API_KEY;
-if (!DRY && !API_KEY) {
-  console.error("OPENAI_API_KEY missing from environment. Aborting before any call.");
-  process.exit(1);
+const writerConfig = normalizeProviderConfig(config.models?.writer, "writer");
+const judgeConfig = normalizeProviderConfig(config.models?.judge, "judge");
+const providerKeys = readLocalProviderKeys(repoRoot);
+if (!DRY) {
+  for (const roleConfig of [writerConfig, judgeConfig]) {
+    const keyName = roleConfig.provider === "gemini" ? "GEMINI_API_KEY" : "OPENAI_API_KEY";
+    if (!providerKeys[keyName]) {
+      console.error(`${keyName} missing from apps/web/.env.local. Aborting before any call.`);
+      process.exit(1);
+    }
+  }
 }
 
 // ---------- helpers ----------
@@ -59,6 +70,8 @@ const writeArtifact = (dir, name, content) => {
 };
 const sentences = (t) => (t || "").trim().split(/(?<=[.!?])\s+/u).filter(Boolean);
 const sha256 = (obj) => crypto.createHash("sha256").update(JSON.stringify(obj)).digest("hex");
+const WRITER_SYSTEM_INSTRUCTION = "You are the Sol writing lane producing one TLDR Astro candidate for owner review. Return only the requested strict JSON. The candidate is always PENDING OWNER and may never self-approve or promote.";
+const JUDGE_SYSTEM_INSTRUCTION = "You are the Terra editorial judge for a TLDR Astro candidate. Return only the requested strict JSON. Your score supports owner review and can never approve, promote, or rewrite the candidate.";
 
 function titleCase(s) {
   return s.split("-").map((w) => w[0].toUpperCase() + w.slice(1)).join(" ");
@@ -247,8 +260,8 @@ function runChecks(t, packet, draft) {
     const supplied = packet.warmthHarvest.ownerFoundationLines.map((l) => l.sourceArticleId);
     const okSource = supplied.includes(draft.warmthSource.sourceArticleId);
     const okUse =
-      (draft.body_you || "").includes(draft.warmthSource?.usedForm?.body_you || " ") &&
-      (draft.body_they || "").includes(draft.warmthSource?.usedForm?.body_they || " ");
+      (draft.body_you || "").includes(draft.warmthSource?.usedForm?.body_you || "\u0000") &&
+      (draft.body_they || "").includes(draft.warmthSource?.usedForm?.body_they || "\u0000");
     okSource && okUse && draft.labels?.includes("owner-corpus-derived")
       ? pass("warmthRecord", { mode, sourceArticleId: draft.warmthSource.sourceArticleId })
       : fail("warmthRecord", { mode, okSource, okUse });
@@ -258,17 +271,27 @@ function runChecks(t, packet, draft) {
   return checks;
 }
 
-// ---------- API ----------
-async function callModel({ model, reasoningEffort, input, maxOutputTokens }) {
+// ---------- provider API ----------
+async function callModel({ roleConfig, systemInstruction, input }) {
+  if (roleConfig.provider === "gemini") {
+    return callGeminiInteractions({
+      apiKey: providerKeys.GEMINI_API_KEY,
+      model: roleConfig.model,
+      systemInstruction,
+      input,
+      thinkingLevel: roleConfig.thinkingLevel
+    });
+  }
+  const requestBody = requestForArtifact(
+    roleConfig,
+    roleConfig === judgeConfig ? "judge" : "writer",
+    systemInstruction,
+    input
+  );
   const res = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${API_KEY}` },
-    body: JSON.stringify({
-      model,
-      reasoning: { effort: reasoningEffort },
-      max_output_tokens: maxOutputTokens,
-      input,
-    }),
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${providerKeys.OPENAI_API_KEY}` },
+    body: JSON.stringify(requestBody),
   });
   const body = await res.json();
   if (!res.ok) {
@@ -289,16 +312,43 @@ async function callModel({ model, reasoningEffort, input, maxOutputTokens }) {
 const redactedCall = (kind, target, r, requested) => ({
   kind,
   target,
+  provider: requested.provider,
   responseId: r.responseId,
   status: r.status,
   billingStatus: "billed",
   credentialMaterialRecorded: false,
   requestedModel: requested.model,
   actualModel: r.model,
-  requestedReasoningEffort: requested.reasoningEffort,
-  actualReasoningEffort: requested.reasoningEffort,
+  requestedReasoningEffort: requested.provider === "openai" ? requested.reasoningEffort : null,
+  actualReasoningEffort: requested.provider === "openai" ? requested.reasoningEffort : null,
+  requestedThinkingLevel: requested.provider === "gemini" ? requested.thinkingLevel : null,
+  actualThinkingLevel: requested.provider === "gemini" ? requested.thinkingLevel : null,
   usage: r.usage,
 });
+
+function safeFailure(error) {
+  if (error?.body) return error.body;
+  return {
+    status: error?.status ?? null,
+    code: error?.code ?? null,
+    message: String(error?.message ?? "provider call failed")
+  };
+}
+
+const historyPath = path.join(OUT_ROOT, "workbook-candidate-history.json");
+const candidateHistory = fs.existsSync(historyPath)
+  ? JSON.parse(fs.readFileSync(historyPath, "utf8"))
+  : { schemaVersion: 1, candidates: [] };
+if (!Array.isArray(candidateHistory.candidates)) candidateHistory.candidates = [];
+
+function requestForArtifact(roleConfig, role, systemInstruction, input) {
+  return buildProviderRequest({
+    config: roleConfig,
+    role,
+    systemInstruction: roleConfig.provider === "gemini" ? systemInstruction : null,
+    input
+  });
+}
 
 // ---------- main ----------
 // The call log is cumulative across invocations: load and append, never replace.
@@ -332,35 +382,56 @@ for (const t of config.targets) {
   writeArtifact(dir, "writing-packet.json", packet);
   const sol = solPrompt(t, entry, packet);
   writeArtifact(dir, "sol-model-input.md", sol);
-
-  if (DRY) {
-    console.log(`[dry-run] ${t.id}: packet ${packet.warmthHarvest.harvest_mode}, sol input ready`);
-    continue;
-  }
+  writeArtifact(dir, "writer-request.json", requestForArtifact(
+    writerConfig, "writer", WRITER_SYSTEM_INSTRUCTION, sol
+  ));
 
   let draft;
+  let writerProvenance = {
+    provider: writerConfig.provider,
+    requestedModel: writerConfig.model,
+    actualModel: null
+  };
   const existingDraft = path.join(dir, "draft.json");
   if (REUSE && fs.existsSync(existingDraft)) {
     draft = JSON.parse(fs.readFileSync(existingDraft, "utf8"));
+    const priorResponsePath = path.join(dir, "writer-provider-response.json");
+    if (fs.existsSync(priorResponsePath)) {
+      const priorResponse = JSON.parse(fs.readFileSync(priorResponsePath, "utf8"));
+      writerProvenance = {
+        provider: priorResponse.provider ?? writerConfig.provider,
+        requestedModel: priorResponse.requestedModel ?? priorResponse.model ?? writerConfig.model,
+        actualModel: priorResponse.model ?? null
+      };
+    }
     console.log(`[reuse] ${t.id}: reusing preserved Sol draft, no writer call`);
+  } else if (DRY) {
+    console.log(`[dry-run] ${t.id}: packet ${packet.warmthHarvest.harvest_mode}, exact ${writerConfig.provider} writer request ready`);
+    continue;
   } else {
     // Sol call
     let solRes;
     try {
       solRes = await callModel({
-        model: config.models.writer.model,
-        reasoningEffort: config.models.writer.reasoningEffort,
+        roleConfig: writerConfig,
+        systemInstruction: WRITER_SYSTEM_INSTRUCTION,
         input: sol,
-        maxOutputTokens: config.models.writer.maxOutputTokens,
       });
     } catch (e) {
-      log.calls.push({ kind: "writer", target: t.id, status: "failed", billingStatus: "unbilled", error: e.body || String(e.message) });
+      log.calls.push({ kind: "writer", target: t.id, provider: writerConfig.provider, status: "failed", billingStatus: "unbilled", error: safeFailure(e) });
       console.error(`STOP ${t.id}: Sol call failed (${e.message}). Batch stops for direction.`);
       stopped = true;
       break;
     }
-    log.calls.push(redactedCall("writer", t.id, solRes, config.models.writer));
+    log.calls.push(redactedCall("writer", t.id, solRes, writerConfig));
+    writerProvenance = {
+      provider: writerConfig.provider,
+      requestedModel: writerConfig.model,
+      actualModel: solRes.model
+    };
     writeArtifact(dir, "writer-provider-response.json", {
+      provider: writerConfig.provider,
+      requestedModel: writerConfig.model,
       responseId: solRes.responseId,
       status: solRes.status,
       model: solRes.model,
@@ -383,6 +454,33 @@ for (const t of config.targets) {
   const normalized = normalizeDraft(draft);
   if (normalized.length) writeArtifact(dir, "draft-normalization.json", { target: t.id, renamesOnly: true, normalized });
   writeArtifact(dir, "draft.json", draft);
+  writeArtifact(dir, "draft-artifact.json", {
+    target: t.id,
+    status: "needs_review",
+    ownerStatus: "PENDING OWNER",
+    provider: writerProvenance.provider,
+    requestedModel: writerProvenance.requestedModel,
+    actualModel: writerProvenance.actualModel,
+    payloadSha256: sha256(draft),
+    draft,
+    approvalEffect: "none"
+  });
+  const historyEntry = {
+    target: t.id,
+    payloadSha256: sha256(draft),
+    ownerStatus: "PENDING OWNER",
+    writer: writerProvenance,
+    judge: {
+      provider: judgeConfig.provider,
+      requestedModel: judgeConfig.model,
+      actualModel: null
+    },
+    approvalEffect: "none"
+  };
+  if (!DRY) {
+    candidateHistory.candidates.push(historyEntry);
+    writeArtifact(OUT_ROOT, "workbook-candidate-history.json", candidateHistory);
+  }
 
   const checks = runChecks(t, packet, draft);
   writeArtifact(dir, "deterministic-checks.json", checks);
@@ -395,22 +493,30 @@ for (const t of config.targets) {
   // Terra call
   const terra = terraPrompt(t, entry, packet, draft, checks);
   writeArtifact(dir, "terra-model-input.md", terra);
+  writeArtifact(dir, "judge-request.json", requestForArtifact(
+    judgeConfig, "judge", JUDGE_SYSTEM_INSTRUCTION, terra
+  ));
+  if (DRY) {
+    console.log(`[dry-run] ${t.id}: exact ${writerConfig.provider} writer and ${judgeConfig.provider} judge requests ready; no call sent`);
+    continue;
+  }
   let terraRes;
   try {
     terraRes = await callModel({
-      model: config.models.judge.model,
-      reasoningEffort: config.models.judge.reasoningEffort,
+      roleConfig: judgeConfig,
+      systemInstruction: JUDGE_SYSTEM_INSTRUCTION,
       input: terra,
-      maxOutputTokens: config.models.judge.maxOutputTokens,
     });
   } catch (e) {
-    log.calls.push({ kind: "judge", target: t.id, status: "failed", billingStatus: "unbilled", error: e.body || String(e.message) });
+    log.calls.push({ kind: "judge", target: t.id, provider: judgeConfig.provider, status: "failed", billingStatus: "unbilled", error: safeFailure(e) });
     console.error(`STOP ${t.id}: Terra call failed (${e.message}). Batch stops for direction.`);
     stopped = true;
     break;
   }
-  log.calls.push(redactedCall("judge", t.id, terraRes, config.models.judge));
+  log.calls.push(redactedCall("judge", t.id, terraRes, judgeConfig));
   writeArtifact(dir, "judge-provider-response.json", {
+    provider: judgeConfig.provider,
+    requestedModel: judgeConfig.model,
     responseId: terraRes.responseId,
     status: terraRes.status,
     model: terraRes.model,
@@ -427,12 +533,25 @@ for (const t of config.targets) {
   writeArtifact(dir, "candidate-record.json", {
     target: t.id,
     status: "needs_review",
+    ownerStatus: "PENDING OWNER",
     payloadSha256: sha256(draft),
     harvest_mode: packet.warmthHarvest.harvest_mode,
     terraScore: verdict.score,
+    writer: writerProvenance,
+    judge: {
+      provider: judgeConfig.provider,
+      requestedModel: judgeConfig.model,
+      actualModel: terraRes.model
+    },
     approvalEffect: "none",
     note: "Candidate for owner exact-wording review. Not approved, promoted, or serving.",
   });
+  historyEntry.judge = {
+    provider: judgeConfig.provider,
+    requestedModel: judgeConfig.model,
+    actualModel: terraRes.model
+  };
+  writeArtifact(OUT_ROOT, "workbook-candidate-history.json", candidateHistory);
   console.log(`${t.id}: draft ok, checks pass, Terra ${verdict.score}/3`);
 }
 

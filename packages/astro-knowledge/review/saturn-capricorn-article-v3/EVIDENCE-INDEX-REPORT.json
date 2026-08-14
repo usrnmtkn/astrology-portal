@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "before": {
+    "entryCount": 7695,
+    "positiveVoiceEvidenceCount": 7198,
+    "contextualEvidenceCount": 3844,
+    "negativeEvidenceCount": 39,
+    "skyPlacementSurfaceCount": 3816,
+    "ownerAuthoredFinalCount": 3390
+  },
+  "after": {
+    "entryCount": 7702,
+    "positiveVoiceEvidenceCount": 7204,
+    "contextualEvidenceCount": 3845,
+    "negativeEvidenceCount": 39,
+    "skyPlacementSurfaceCount": 3823,
+    "ownerAuthoredFinalCount": 3397
+  },
+  "saturnAriesRegisterGold": {
+    "fullArticleAlreadyInCorpus": true,
+    "fullArticleIndexedExcerpts": 123,
+    "targetedPassFixturesAdded": 7,
+    "targetedPassFixturesPositive": 7,
+    "fourthWallExcerptsExcludedFromPositive": 1,
+    "fourthWallExcerptsPreservedAsContext": 1
+  },
+  "generatedAt": "2026-08-12",
+  "billedCalls": 0
+}

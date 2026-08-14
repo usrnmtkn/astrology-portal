@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -11,6 +12,18 @@ const transitDirectory = path.join(repoRoot, "packages/astro-knowledge/data/tran
 const bundleFile = path.join(os.tmpdir(), "tldrastro-calendar-exact-sky-aspect-routing.bundle.mjs");
 const registryBundleFile = path.join(os.tmpdir(), "tldrastro-approved-exact-sky-aspect-registry.bundle.mjs");
 const readJson = (filePath) => JSON.parse(fs.readFileSync(filePath, "utf8"));
+const canonicalPayloadPath = path.join(
+  repoRoot,
+  "packages/astro-knowledge/review/sky-aspect-owner-refinements-2026-08-11/sky-aspect-owner-refinements-payloads.json"
+);
+const canonicalPayloadBytes = fs.readFileSync(canonicalPayloadPath);
+const ownerRefinements = JSON.parse(canonicalPayloadBytes.toString("utf8"));
+
+assert.equal(
+  crypto.createHash("sha256").update(canonicalPayloadBytes).digest("hex"),
+  "88dba60e4a198298b9aad2c5989efd08a5c47b2be5d2b7d82bc3f599e6084299",
+  "The canonical owner-refinement payload file changed."
+);
 
 const exactRecords = fs.readdirSync(transitDirectory)
   .filter((name) => name.endsWith(".json"))
@@ -21,7 +34,12 @@ const exactRecords = fs.readdirSync(transitDirectory)
     && record.readerCopy.body.trim()
   ));
 
-assert.equal(exactRecords.length, 214, "The pinned reader-eligible exact Sky corpus changed.");
+assert.equal(exactRecords.length, 215, "The pinned reader-eligible exact Sky corpus changed.");
+
+for (const [key, entry] of Object.entries(ownerRefinements.payloads)) {
+  const payloadHash = crypto.createHash("sha256").update(JSON.stringify(entry.payload)).digest("hex");
+  assert.equal(payloadHash, entry.sha256, `${key}: approved payload hash drifted.`);
+}
 
 await build({
   bundle: true,
@@ -72,7 +90,8 @@ for (const record of exactRecords) {
     [record.transiting, record.other],
     [record.other, record.transiting]
   ]) {
-    const needsFactSlots = record.readerCopy.body.includes("{{");
+    const needsFactSlots = record.readerCopy.body.includes("{{")
+      || record.readerCopy.calendarLeadIn === "date-placements-collective-level";
     const normalized = normalizeCalendarEventSurface(
       aspectEvent({
         first,
@@ -105,7 +124,7 @@ for (const record of exactRecords) {
   }
 }
 
-assert.equal(routedDirections, 428, "Every reader-eligible exact record must route in both planet orders.");
+assert.equal(routedDirections, 430, "Every reader-eligible exact record must route in both planet orders.");
 
 const screenshotCases = [
   {
@@ -117,6 +136,7 @@ const screenshotCases = [
       toSign: "Gemini",
       id: "screenshot-venus-trine-uranus"
     }),
+    ownerKey: "sky.venus.trine.uranus",
     sourceId: "venus-trine-uranus"
   },
   {
@@ -128,12 +148,34 @@ const screenshotCases = [
       toSign: "Aries",
       id: "screenshot-mercury-trine-neptune"
     }),
+    ownerKey: "sky.mercury.trine.neptune",
     sourceId: "mercury-trine-neptune"
+  },
+  {
+    event: aspectEvent({
+      first: "Saturn",
+      second: "Lilith",
+      aspect: "square",
+      fromSign: "Aries",
+      toSign: "Capricorn",
+      id: "owner-saturn-square-lilith"
+    }),
+    ownerKey: "sky.saturn.square.lilith",
+    sourceId: "saturn-square-lilith"
   }
 ];
 
-for (const { event, sourceId } of screenshotCases) {
+const saturnCalendarLeadIn = "On Tuesday, August 11, Saturn in Aries squares Lilith in Capricorn, and on a collective level, ";
+const saturnOwnerText = ownerRefinements.payloads["sky.saturn.square.lilith"].payload.ownerText;
+assert.ok(
+  saturnOwnerText.startsWith(saturnCalendarLeadIn),
+  "The canonical Saturn-Lilith payload no longer matches the approved composed lead-in boundary."
+);
+const saturnStoredBody = saturnOwnerText.slice(saturnCalendarLeadIn.length);
+
+for (const { event, ownerKey, sourceId } of screenshotCases) {
   const record = exactRecords.find(({ id }) => id === sourceId);
+  const ownerText = ownerRefinements.payloads[ownerKey].payload.ownerText;
   const normalized = normalizeCalendarEventSurface(
     event,
     null,
@@ -144,8 +186,29 @@ for (const { event, sourceId } of screenshotCases) {
   const selected = normalized.sections[0];
 
   assert.equal(selected?.tier, "approved-exact-sky-aspect-v1");
-  assert.equal(selected?.body, record.readerCopy.body);
+  assert.equal(selected?.body, ownerText, `${ownerKey}: Calendar Exact today output drifted from owner text.`);
   assert.doesNotMatch(selected?.body ?? "", /untamed side|soften at the edges/iu);
+
+  if (ownerKey === "sky.saturn.square.lilith") {
+    assert.equal(
+      record.readerCopy.body,
+      saturnStoredBody,
+      "Saturn-Lilith stored body must be the byte-identical canonical payload remainder after the composed lead-in."
+    );
+    assert.equal(record.base, saturnStoredBody, "Saturn-Lilith base must not introduce prose outside the canonical payload.");
+    for (const field of ["business", "shadow", "arcApplying", "arcSeparating"]) {
+      assert.ok(
+        saturnStoredBody.includes(record[field]),
+        `Saturn-Lilith ${field} must be an exact sentence from the canonical payload.`
+      );
+    }
+    assert.equal(record.traditional, undefined);
+    assert.equal(record.modern, undefined);
+    assert.equal(record.cyclic, undefined);
+    assert.equal(record.readerCopy.calendarLeadIn, "date-placements-collective-level");
+  } else {
+    assert.equal(record.readerCopy.body, ownerText, `${ownerKey}: stored body must be byte-identical to owner text.`);
+  }
 }
 
 const signSpecificOverride = normalizeCalendarEventSurface(
@@ -188,7 +251,7 @@ const phrasebookBeforeGenerated = normalizeCalendarEventSurface(
 assert.equal(phrasebookBeforeGenerated.sections[0]?.tier, "reviewed-sky-aspect-phrasebook-v1");
 
 const generatedBeforeGeneric = normalizeCalendarEventSurface(
-  aspectEvent({ first: "Saturn", second: "Lilith", aspect: "square", id: "precedence-generated-over-generic" }),
+  aspectEvent({ first: "Chiron", second: "Lilith", aspect: "square", id: "precedence-generated-over-generic" }),
   {
     body: "Approved generated copy remains ahead of the general compositor.",
     contentKey: "generated/precedence-test",
@@ -200,15 +263,17 @@ const generatedBeforeGeneric = normalizeCalendarEventSurface(
 );
 
 assert.equal(generatedBeforeGeneric.sections[0]?.tier, "generated-sky-aspect-lint-v1");
+assert.equal(exactLookup("Chiron", "square", "Lilith"), null, "Remaining exact gaps must still fail closed.");
+assert.equal(exactLookup("Saturn", "square", "Lilith")?.sourceId, "saturn-square-lilith");
 
-const saturnLilith = normalizeCalendarEventSurface(
+const sourceGapWithoutGenericProse = normalizeCalendarEventSurface(
   aspectEvent({
-    first: "Saturn",
-    second: "Lilith",
-    aspect: "square",
-    fromSign: "Aries",
-    toSign: "Capricorn",
-    id: "documented-gap-saturn-square-lilith"
+    first: "Moon",
+    second: "Chiron",
+    aspect: "sextile",
+    fromSign: "Pisces",
+    toSign: "Taurus",
+    id: "source-gap-with-factual-shell"
   }),
   null,
   "On Tuesday, August 11",
@@ -216,20 +281,12 @@ const saturnLilith = normalizeCalendarEventSurface(
   exactLookup
 );
 
-assert.equal(
-  exactLookup("Saturn", "square", "Lilith"),
-  null,
-  "Saturn-Lilith must remain outside the exact corpus until separately approved."
-);
-assert.equal(
-  saturnLilith.sections[0]?.tier,
-  "v3-package",
-  "An exact-copy gap may use the approved general fallback but must not masquerade as an exact record."
-);
+assert.equal(sourceGapWithoutGenericProse.status, "not-servable");
+assert.deepEqual(sourceGapWithoutGenericProse.sections, []);
 
 console.log("Calendar exact Sky-aspect routing parity passed", {
   readerEligibleRecords: exactRecords.length,
   routedDirections,
   screenshotRegressions: screenshotCases.length,
-  documentedExactGap: "saturn-square-lilith"
+  remainingDocumentedExactGaps: 239
 });

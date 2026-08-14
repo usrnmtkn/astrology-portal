@@ -32,6 +32,7 @@ import {
 import { aspectGlyph, pointGlyph } from "../../components/charts/chartAssets";
 import type { InterChartAspectLine } from "../../components/charts/Wheels";
 import {
+  fallbackV3ApprovalLevelForContentKey,
   normalizeAspect as normalizeFallbackV3Aspect,
   SourceGapError as FallbackV3SourceGapError,
   transitSynastryFallbackRendererV3
@@ -73,6 +74,10 @@ import {
   isExplicitRomanticRelationship,
   normalizeRelationshipContextKey
 } from "../../services/relationshipContext";
+import {
+  acceptedOwnerApprovedTransitBody,
+  acceptedOwnerApprovedTransitSections
+} from "./transitDetailApproval";
 import type { PronounChoice } from "../../services/personReferences";
 import {
   contactsForBondTransitGroup,
@@ -139,6 +144,8 @@ import { useRelationshipCompare } from "./useRelationshipCompare";
 import { resolvedNatalAspectPatternSectionLabel } from "../you/natalAspectPatternLabels";
 import type { SkyDetail } from "../sky/SkyDetailArticle";
 import { wholeDegreeOrb } from "../sky/skyHelpers";
+import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
+import { friendDetailHasReaderFacingContent } from "./friendDetailAvailability";
 
 const FriendsWorkspaceShell = lazy(() =>
   import("./FriendsWorkspaceShell").then((module) => ({
@@ -208,6 +215,8 @@ export function ManualChartsPanel({
   profile,
   profileHandle,
   currentSky,
+  currentSkyLoading,
+  transitDateLabel,
   fallbackArchitectureV3Version,
   profileNatalSky,
   profileTransits,
@@ -228,6 +237,8 @@ export function ManualChartsPanel({
   profile: UserProfile;
   profileHandle: string | null;
   currentSky: SkySnapshot | null;
+  currentSkyLoading: boolean;
+  transitDateLabel: string;
   fallbackArchitectureV3Version: number;
   profileNatalSky: SkySnapshot | null;
   profileTransits: TransitItem[];
@@ -261,6 +272,7 @@ export function ManualChartsPanel({
     emptyHouseDetailArticle,
     emptyHouseTitle,
     friendTransitSummary,
+    genericPersonReferenceSlots,
     houseLifeAreaKeywords,
     houseLifeAreas,
     lifeAreaFocusScore,
@@ -312,7 +324,8 @@ export function ManualChartsPanel({
   function pairDailyDriver(
     currentSky: SkySnapshot,
     natalSky: SkySnapshot,
-    variant: number
+    variant: number,
+    birthTimeUnknown = false
   ) {
     const moon = currentSky.positions.find((position) => position.planet === "Moon");
 
@@ -320,11 +333,9 @@ export function ManualChartsPanel({
       return null;
     }
 
-    const house = typeof moon.house === "number" && moon.house >= 1 && moon.house <= 12
-      ? moon.house
-      : natalSky.ascendant
-        ? wholeSignHouseForSign(moon.sign, natalSky.ascendant)
-        : null;
+    const house = !birthTimeUnknown && natalSky.ascendant
+      ? wholeSignHouseForSign(moon.sign, natalSky.ascendant)
+      : null;
     const drivers = selectDailyGlanceDriverPool(
       moon.longitude,
       natalSky.positions,
@@ -361,43 +372,109 @@ export function ManualChartsPanel({
     currentSky: SkySnapshot,
     natalSky: SkySnapshot,
     ownerName: string,
+    ownerPreferredName?: string | null,
     ownerPronouns?: PronounChoice | null,
+    birthTimeUnknown = false,
     userId?: string | null
   ): FriendDailyForecastView | null {
-    const driver = dailyGlanceDriver(currentSky, natalSky);
+    const driver = dailyGlanceDriver(currentSky, natalSky, birthTimeUnknown);
+    const moon = currentSky.positions.find((position) => position.planet === "Moon") ?? null;
 
-    if (!driver) return null;
+    if (!driver || !moon) return null;
+
+    const moonHouse = !birthTimeUnknown && natalSky.ascendant
+      ? wholeSignHouseForSign(moon.sign, natalSky.ascendant)
+      : null;
+    const moonContext: FriendDailyForecastView["moonContext"] = {
+      sign: moon.sign,
+      houseLabel: moonHouse ? `${ordinalHouse(moonHouse)} house` : null,
+      topic: moonHouse ? houseLifeAreas[moonHouse] || null : null
+    };
+
+    // Follow-up after Friends daily parity ships: author 2–3 approved variants per
+    // driver and select one deterministically from chart id + date + driver.
 
     try {
       const dateKey = currentSky.generatedAt.slice(0, 10);
+      const reference = ownerDisplayPronouns(ownerName, ownerPronouns);
+      const preferredName = ownerPreferredName?.trim()
+        || ownerName.trim().split(/\s+/u)[0]
+        || ownerName;
+      const personSlots = {
+        ...genericPersonReferenceSlots(reference),
+        personPreferredName: preferredName,
+        personPreferredNamePossessive: possessiveLabel(preferredName)
+      };
       const rendered = driver.kind === "aspect"
-        ? transitSynastryFallbackRendererV3.renderDailyGlance({ natal: driver.natal, aspect: driver.aspect, dateKey, userId })
-        : transitSynastryFallbackRendererV3.renderDailyGlance({ house: driver.house, dateKey, userId });
-      const ownerAwareCopy = createNatalGeneratedCopyForOwnerConverter(ownerName, "person", ownerPronouns);
-      const headline = ownerAwareCopy(rendered.headline ?? "");
-      const body = repairSingularOwnerVerbAgreement(
-        ownerAwareCopy(rendered.body ?? ""),
-        ownerName,
-        ownerPronouns
-      );
+        ? transitSynastryFallbackRendererV3.renderDailyGlance({
+            natal: driver.natal,
+            aspect: driver.aspect,
+            dateKey,
+            userId,
+            voice: "they",
+            personSlots
+          })
+        : transitSynastryFallbackRendererV3.renderDailyGlance({
+            house: driver.house,
+            dateKey,
+            userId,
+            voice: "they",
+            personSlots
+          });
 
-      // Follow-up after Friends daily parity ships: author 2–3 approved variants per
-      // driver and select one deterministically from chart id + date + driver.
       return {
-        headline,
-        body
+        headline: rendered.headline ?? "",
+        body: rendered.body ?? "",
+        moonContext
       };
     } catch (error) {
-      if (error instanceof FallbackV3SourceGapError) {
-        console.warn("Friend Daily At-a-Glance source gap; hiding surface.", {
+      if (!(error instanceof FallbackV3SourceGapError)) {
+        throw error;
+      }
+
+      // Migration bridge: keep the friend's card visible without changing the
+      // grammar of author-final copy. The card header already identifies whose
+      // forecast this is, so unmigrated rows remain in their original second-person
+      // voice until an approved body_they replaces them. Never run sentence-wide
+      // pronoun substitution here.
+      try {
+        const dateKey = currentSky.generatedAt.slice(0, 10);
+        const rendered = driver.kind === "aspect"
+          ? transitSynastryFallbackRendererV3.renderDailyGlance({
+              natal: driver.natal,
+              aspect: driver.aspect,
+              dateKey,
+              userId
+            })
+          : transitSynastryFallbackRendererV3.renderDailyGlance({
+              house: driver.house,
+              dateKey,
+              userId
+            });
+
+        console.warn("Friend Daily At-a-Glance used the self-addressed migration bridge.", {
           ownerName,
           driver,
           error
         });
-        return null;
-      }
 
-      throw error;
+        return {
+          headline: rendered.headline ?? "",
+          body: rendered.body ?? "",
+          moonContext
+        };
+      } catch (legacyError) {
+        if (legacyError instanceof FallbackV3SourceGapError) {
+          console.warn("Friend Daily At-a-Glance source gap; hiding surface.", {
+            ownerName,
+            driver,
+            error: legacyError
+          });
+          return null;
+        }
+
+        throw legacyError;
+      }
     }
   }
 
@@ -1190,7 +1267,9 @@ export function ManualChartsPanel({
           currentSky,
           selectedChart.natalChart,
           selectedChart.displayName,
+          selectedChart.firstName,
           selectedChart.pronouns,
+          selectedChart.birthTimeUnknown,
           selectedChart.id
         )
       : null
@@ -1289,8 +1368,18 @@ export function ManualChartsPanel({
     // Pair Daily reuses the Daily At-a-Glance applying-contact selector, then
     // rotates only within its tightest three qualifying contacts. The canonical
     // selector returns the unchanged single house fallback when no contact applies.
-    const readerDriver = pairDailyDriver(currentSky, profileNatalSky, pairVariant);
-    const friendDriver = pairDailyDriver(currentSky, selectedChart.natalChart, pairVariant);
+    const readerDriver = pairDailyDriver(
+      currentSky,
+      profileNatalSky,
+      pairVariant,
+      profile.charts[0]?.birthTime === "Time unknown"
+    );
+    const friendDriver = pairDailyDriver(
+      currentSky,
+      selectedChart.natalChart,
+      pairVariant,
+      selectedChart.birthTimeUnknown
+    );
     if (!readerDriver || !friendDriver) return null;
 
     const driverSelection = { readerDriver, friendDriver, pairVariant };
@@ -1403,7 +1492,11 @@ export function ManualChartsPanel({
       termLabel: longTransitPlanets.has(card.transit.transitPlanet) ? "Long-term" : "Short-term",
       keywords: houseLifeAreaKeywords(card.activation.house),
       house: card.activation.house,
-      houseLabel: `${ordinalHouse(card.activation.house)} house`
+      houseLabel: `${ordinalHouse(card.activation.house)} house`,
+      detailAvailable: acceptedOwnerApprovedTransitSections(
+        card.normalized.detailSections,
+        fallbackV3ApprovalLevelForContentKey
+      ).length > 0
     }))
   ), [selectedFriendHouseTransitCards]);
   const selectedFriendPersonalTransitGroups = useMemo<FriendPersonalTransitGroup[]>(() => {
@@ -1423,6 +1516,11 @@ export function ManualChartsPanel({
         label: durationClass === "short" ? "Short-term themes" : "Long-term themes",
         transits: transits.map((transit) => {
           const timing = transitItemTimingDisplay(transit, currentSky.generatedAt);
+          const normalized = normalizePersonalTransitSurface(
+            transit,
+            currentSky.generatedAt,
+            selectedChart.displayName
+          );
 
           return {
             id: transit.id,
@@ -1437,17 +1535,51 @@ export function ManualChartsPanel({
               selectedChart.pronouns,
               currentSky.generatedAt
             ),
-            orb: transit.orb
+            orb: transit.orb,
+            detailAvailable: acceptedOwnerApprovedTransitSections(
+              normalized.sections,
+              fallbackV3ApprovalLevelForContentKey
+            ).length > 0
           };
         })
       }];
     });
   }, [currentSky, relationshipGeneratedContent, selectedChart, selectedFriendTransits]);
-  const selectedFriendPlacementRows = useMemo(() => (
-    friendProfileWork.natal && selectedChart?.natalChart
-      ? socialPlacementRows(selectedChart.natalChart)
-      : []
-  ), [friendProfileWork.natal, selectedChart?.natalChart]);
+  const selectedFriendPlacementRows = useMemo(() => {
+    if (!friendProfileWork.natal || !selectedChart?.natalChart) {
+      return [];
+    }
+
+    const natalChart = selectedChart.natalChart;
+    return socialPlacementRows(natalChart).map((row) => {
+      const position = planetPositionFromSocialRow(row, natalChart);
+      const detail = position
+        ? natalPlacementSkyDetail(
+            position,
+            natalChart,
+            null,
+            friendGeneratedContent,
+            undefined,
+            {
+              ownerName: selectedChart.displayName,
+              ownerKind: selectedChartIsEvent ? "chart" : "person",
+              ownerPronouns: selectedChart.pronouns
+            }
+          )
+        : null;
+
+      return {
+        ...row,
+        detailAvailable: Boolean(detail && friendDetailHasReaderFacingContent(detail))
+      };
+    });
+  }, [
+    fallbackArchitectureV3Version,
+    friendGeneratedContent,
+    friendProfileWork.natal,
+    selectedChart,
+    selectedChartIsEvent
+  ]);
   const selectedFriendBigThreeDisplayRows = useMemo<SocialPlacementRow[]>(() => {
     if (!friendProfileWork.natal) {
       return [];
@@ -1504,7 +1636,7 @@ export function ManualChartsPanel({
   }, [friendProfileWork.natal, selectedChart?.natalChart, selectedFriendPlacementRows]);
   const selectedFriendNatalAspectGroups = useMemo(() => (
     friendProfileWork.natal && selectedChart?.natalChart
-      ? groupFriendNatalAspects(selectedChart.natalChart.aspects)
+      ? groupFriendNatalAspects(canonicalNatalAspectsForSnapshot(selectedChart.natalChart))
       : []
   ), [friendProfileWork.natal, selectedChart?.natalChart]);
   const selectedFriendNatalAspectPatternItems = useMemo(() => (
@@ -1570,11 +1702,28 @@ export function ManualChartsPanel({
       const houseSign = signAtWholeSignHouse(friendNatalChart.ascendant, house);
       const title = emptyHouseTitle(house, friendNatalChart);
 
+      const article = emptyHouseDetailArticle(
+        house,
+        friendNatalChart,
+        "friend",
+        selectedChart.displayName,
+        selectedChart.pronouns,
+        selectedFriendEmptyHouses
+      );
+      const detailAvailable = friendDetailHasReaderFacingContent({
+        body: article.body ?? [],
+        sections: article.sections.map((section) => ({
+          heading: section.heading,
+          body: section.body
+        }))
+      });
+
       return {
         house,
         glyph: houseSign ? zodiacSignGlyphs[houseSign] ?? "○" : "○",
         title,
         ariaLabel: `Read more about ${title}`,
+        detailAvailable,
         description: emptyHouseCardDescription(
           house,
           friendNatalChart,
@@ -1585,7 +1734,7 @@ export function ManualChartsPanel({
         )
       };
     });
-  }, [selectedChart, selectedFriendEmptyHouses]);
+  }, [fallbackArchitectureV3Version, selectedChart, selectedFriendEmptyHouses]);
   const selectedFriendNatalAspectViewGroups = useMemo<FriendNatalViewAspectGroup[]>(() => (
     selectedFriendNatalAspectGroups.map((group) => ({
       key: group.key,
@@ -1605,17 +1754,38 @@ export function ManualChartsPanel({
           to: aspect.to,
           orb: aspect.orb,
           title: renderedSection?.heading ?? `${selectedChart?.displayName ?? "Friend"}'s ${aspect.from} ${aspect.type} ${aspect.to}`,
-          summary: normalizedSurfacePreview(normalized)
+          summary: normalizedSurfacePreview(normalized),
+          detailAvailable: friendDetailHasReaderFacingContent({
+            body: [],
+            sections: normalized.sections.map((section) => ({
+              heading: section.heading,
+              body: section.body
+            }))
+          })
         };
       })
     }))
-  ), [selectedChart?.displayName, selectedChart?.pronouns, selectedChartIsEvent, selectedFriendNatalAspectGroups]);
+  ), [
+    fallbackArchitectureV3Version,
+    selectedChart?.displayName,
+    selectedChart?.pronouns,
+    selectedChartIsEvent,
+    selectedFriendNatalAspectGroups
+  ]);
+  const openFriendDetail = (detail: SkyDetail) => {
+    if (!friendDetailHasReaderFacingContent(detail)) {
+      return false;
+    }
+
+    onOpenDetail(detail);
+    return true;
+  };
   const openFriendCompatibilityCardDetail = (card: CompatibilityPlanetCard, paragraphs: string[]) => {
     if (!selectedChart) {
       return;
     }
 
-    onOpenDetail({
+    openFriendDetail({
       routePath: friendDetailRoutePath(selectedChart.id, "compatibility", card.id),
       glyph: card.glyph,
       kicker: "Compatibility",
@@ -1636,7 +1806,7 @@ export function ManualChartsPanel({
       ownerPronouns: selectedChart?.pronouns
     });
 
-    onOpenDetail({
+    openFriendDetail({
       routePath: selectedChart ? friendDetailRoutePath(
         selectedChart.id,
         friendProfileTab,
@@ -1693,7 +1863,7 @@ export function ManualChartsPanel({
         }));
     });
 
-    onOpenDetail({
+    openFriendDetail({
       routePath: friendDetailRoutePath(
         selectedChart.id,
         "natal",
@@ -1721,7 +1891,7 @@ export function ManualChartsPanel({
       return;
     }
 
-    onOpenDetail({
+    openFriendDetail({
       ...natalPlacementSkyDetail(
       position,
       selectedChart.natalChart,
@@ -1751,7 +1921,7 @@ export function ManualChartsPanel({
       selectedFriendEmptyHouses
     );
 
-    onOpenDetail({
+    openFriendDetail({
       routePath: friendDetailRoutePath(selectedChart.id, friendProfileTab, `empty-house-${house}`),
       glyph: article.glyph || "○",
       kicker: "",
@@ -1777,7 +1947,16 @@ export function ManualChartsPanel({
       return;
     }
 
-    onOpenDetail({
+    const eligibleSections = acceptedOwnerApprovedTransitSections(
+      card.normalized.detailSections,
+      fallbackV3ApprovalLevelForContentKey
+    );
+
+    if (eligibleSections.length === 0) {
+      return;
+    }
+
+    openFriendDetail({
       routePath: friendDetailRoutePath(
         selectedChart.id,
         "transits",
@@ -1792,7 +1971,7 @@ export function ManualChartsPanel({
         houseLifeAreas[card.activation.house] ?? ""
       ].filter(Boolean).join(" · "),
       body: [],
-      sections: card.normalized.sections.map((section) => ({
+      sections: eligibleSections.map((section) => ({
         // The page-level title already names this house transit. Repeating the
         // resolver headline here creates a near-identical second title.
         heading: "",
@@ -1824,7 +2003,7 @@ export function ManualChartsPanel({
       return rendered ? [rendered] : [];
     });
 
-    onOpenDetail({
+    openFriendDetail({
       routePath: friendDetailRoutePath(
         selectedChart.id,
         "transits",
@@ -1835,7 +2014,11 @@ export function ManualChartsPanel({
       title: card.headline,
       meta: [card.transitSign, card.timingRange].filter(Boolean).join(" · "),
       bodyBeforeSections: activatedConnectionSections.length > 0,
-      body: card.effectBody ? [card.effectBody] : [],
+      body: acceptedOwnerApprovedTransitBody(
+        card.effectBody,
+        card.effectContentKey,
+        fallbackV3ApprovalLevelForContentKey
+      ),
       sections: activatedConnectionSections.map((connection, index) => ({
         heading: index === 0 ? "What this activates" : "",
         sourceTag: connection.headline,
@@ -1865,7 +2048,7 @@ export function ManualChartsPanel({
     const title = rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart.displayName}'s ${contact.friendPoint.name}`;
     const subtitle = rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect);
 
-    onOpenDetail({
+    openFriendDetail({
       routePath: friendDetailRoutePath(selectedChart.id, "synastry", `synastry-${contact.id}`),
       glyph: `${pointGlyph(contact.friendPoint.name)} ${aspectGlyph(contact.aspect)} ${pointGlyph(contact.yourPoint.name)}`,
       kicker: "Synastry",
@@ -1899,8 +2082,16 @@ export function ManualChartsPanel({
     const directionSentence = transit.direction
       ? ` The aspect is ${transit.direction}.`
       : "";
+    const eligibleSections = acceptedOwnerApprovedTransitSections(
+      normalized.sections,
+      fallbackV3ApprovalLevelForContentKey
+    );
 
-    onOpenDetail({
+    if (eligibleSections.length === 0) {
+      return;
+    }
+
+    openFriendDetail({
       routePath: friendDetailRoutePath(
         selectedChart.id,
         "transits",
@@ -1916,7 +2107,7 @@ export function ManualChartsPanel({
         transit.natalPoint
       ].filter(Boolean).join(" · "),
       body: [],
-      sections: normalized.sections.map((section) => ({
+      sections: eligibleSections.map((section) => ({
         heading: "",
         body: section.body,
         sourceKeys: section.sourceKeys
@@ -2425,16 +2616,18 @@ export function ManualChartsPanel({
           {friendProfileTab === "transits" && (
             <FriendTransitsTab
               bondTransits={selectedBondTransitViewCards}
+              isLoading={currentSkyLoading}
               dailyForecast={selectedFriendDailyForecast}
               dailyDoItems={selectedFriendDailyDoDont?.do ?? []}
               dailyDontItems={selectedFriendDailyDoDont?.dont ?? []}
+              dateLabel={transitDateLabel}
               friendName={selectedChart.displayName}
               houseTransits={selectedFriendHouseTransitViewCards}
               onOpenBondTransit={openBondTransitById}
               onOpenHouseTransit={openFriendHouseTransitById}
               onOpenPersonalTransit={openFriendTransitById}
-              patternItems={selectedFriendNatalAspectPatternItems}
-              patternTimingOverrides={selectedFriendNatalAspectPatternTimingOverrides}
+              patternItems={currentSkyLoading ? [] : selectedFriendNatalAspectPatternItems}
+              patternTimingOverrides={currentSkyLoading ? {} : selectedFriendNatalAspectPatternTimingOverrides}
               personalTransitGroups={selectedFriendPersonalTransitGroups}
             />
           )}

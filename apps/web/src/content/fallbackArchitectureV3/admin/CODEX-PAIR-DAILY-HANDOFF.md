@@ -78,7 +78,7 @@ spec's stated defaults.
 
 Day picker, themed synthesis headlines, composite daily readings (spec §Out of
 scope), and ALL copy authoring — the 15-row `pair-daily/*` queue belongs to the
-owner pipeline (marie-satori-writer), not this task.
+owner pipeline (satori-writer), not this task.
 
 ## Acceptance
 

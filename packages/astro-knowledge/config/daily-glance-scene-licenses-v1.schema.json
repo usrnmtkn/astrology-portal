@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/schemas/daily-glance-scene-licenses-v1.schema.json",
+  "title": "Daily Glance scene-license registry v1",
+  "type": "object",
+  "required": ["schemaVersion", "policy", "authoritySources", "closedVocabulary", "licenses"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "policy": {
+      "type": "object",
+      "required": ["sourcePrecedence", "unknownConcreteTerm", "servingStatuses"],
+      "additionalProperties": false,
+      "properties": {
+        "sourcePrecedence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "unknownConcreteTerm": { "enum": ["block", "owner_review_required"] },
+        "servingStatuses": {
+          "type": "array",
+          "items": { "enum": ["approved", "approved_reuse", "reviewed"] },
+          "uniqueItems": true
+        }
+      }
+    },
+    "authoritySources": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/authoritySource" },
+      "uniqueItems": true
+    },
+    "closedVocabulary": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "licenses": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/license" }
+    }
+  },
+  "$defs": {
+    "license": {
+      "type": "object",
+      "required": ["licenseId", "scope", "sourceIds", "evidence", "normalizedMeaning", "provenance", "approval"],
+      "additionalProperties": false,
+      "properties": {
+        "licenseId": { "type": "string", "pattern": "^scene-license/" },
+        "scope": {
+          "type": "object",
+          "required": ["type"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "enum": ["aspect", "house", "transit-sign", "natal-sign"] },
+            "transitPlanet": { "type": "string" },
+            "aspect": { "type": "string" },
+            "natalPoint": { "type": "string" },
+            "house": { "type": "integer", "minimum": 1, "maximum": 12 },
+            "sign": { "type": "string" }
+          }
+        },
+        "sourceIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["sourceId", "sourcePath", "selector", "match", "text", "sourceApproval"],
+            "additionalProperties": false,
+            "properties": {
+              "sourceId": { "type": "string" },
+              "sourcePath": { "type": "string" },
+              "selector": { "type": "string" },
+              "match": { "enum": ["exact", "includes"] },
+              "text": { "type": "string", "minLength": 1 },
+              "sourceApproval": { "enum": ["approved", "reviewed", "draft", "unapproved"] }
+            }
+          }
+        },
+        "normalizedMeaning": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["domains", "roles", "settings", "objects", "actions", "behaviors", "consequences"],
+          "properties": {
+            "domains": { "$ref": "#/$defs/strings" },
+            "roles": { "$ref": "#/$defs/strings" },
+            "settings": { "$ref": "#/$defs/strings" },
+            "objects": { "$ref": "#/$defs/strings" },
+            "actions": { "$ref": "#/$defs/strings" },
+            "behaviors": { "$ref": "#/$defs/strings" },
+            "consequences": { "$ref": "#/$defs/strings" }
+          }
+        },
+        "provenance": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/provenanceGrant" }
+        },
+        "approval": {
+          "type": "object",
+          "required": ["status", "inheritsSourceApproval", "ownerApproved", "writerEligible", "renderEligible"],
+          "additionalProperties": false,
+          "properties": {
+            "status": { "enum": ["review_needed", "approved", "approved_reuse", "reviewed", "rejected"] },
+            "inheritsSourceApproval": { "const": false },
+            "ownerApproved": { "type": "boolean" },
+            "writerEligible": { "type": "boolean" },
+            "renderEligible": { "const": false }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "scope": { "properties": { "type": { "const": "aspect" } } } } },
+          "then": {
+            "properties": {
+              "normalizedMeaning": {
+                "properties": {
+                  "domains": { "maxItems": 0 },
+                  "roles": { "maxItems": 0 },
+                  "settings": { "maxItems": 0 },
+                  "objects": { "maxItems": 0 }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "scope": { "properties": { "type": { "const": "house" } } } } },
+          "then": {
+            "properties": {
+              "normalizedMeaning": {
+                "properties": {
+                  "behaviors": { "maxItems": 0 },
+                  "consequences": { "maxItems": 0 }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "scope": { "properties": { "type": { "enum": ["transit-sign", "natal-sign"] } } }
+            }
+          },
+          "then": {
+            "properties": {
+              "normalizedMeaning": {
+                "properties": {
+                  "domains": { "maxItems": 0 },
+                  "roles": { "maxItems": 0 },
+                  "settings": { "maxItems": 0 },
+                  "objects": { "maxItems": 0 },
+                  "consequences": { "maxItems": 0 }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "authoritySource": {
+      "type": "object",
+      "required": ["sourceId", "sourcePath", "authorityClass", "approval", "verificationText"],
+      "additionalProperties": false,
+      "properties": {
+        "sourceId": { "type": "string", "pattern": "^owner-doctrine:" },
+        "sourcePath": { "type": "string", "minLength": 1 },
+        "authorityClass": { "const": "owner-doctrine" },
+        "approval": { "const": "approved" },
+        "verificationText": { "type": "string", "minLength": 1 }
+      }
+    },
+    "provenanceGrant": {
+      "type": "object",
+      "required": ["semanticClass", "value", "grantType", "scopeRole", "sourceIds"],
+      "additionalProperties": false,
+      "properties": {
+        "semanticClass": {
+          "enum": ["domains", "roles", "settings", "objects", "actions", "behaviors", "consequences"]
+        },
+        "value": { "type": "string", "minLength": 1 },
+        "grantType": { "enum": ["verbatim", "normalized", "normalized, owner-reviewed"] },
+        "scopeRole": { "enum": ["mechanism", "arena", "manner"] },
+        "sourceIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "strings": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    }
+  }
+}

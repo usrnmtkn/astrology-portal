@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "artifact": "regression-cases",
-  "generatedBy": "scripts/compile-marie-satori-editorial-decisions.js",
-  "decisionSource": "voice/tldr-astro/marie-satori-editorial-decisions.yaml",
-  "decisionSourceId": "marie-satori-editorial-decisions-v1",
-  "decisionSourceSha256": "8dfe6d6459f705689ee4267f2ae01b1262bff54bf5ffa0d822683bea0a2a7717",
+  "generatedBy": "scripts/compile-satori-editorial-decisions.js",
+  "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
+  "decisionSourceId": "satori-editorial-decisions-v1",
+  "decisionSourceSha256": "308769ccd546e88d9cd89d8fc4aafa437cd7afad61fe9c2beb2c8e3e46ecc3d5",
   "cases": [
     {
       "id": "natural-english-abstract-personification",

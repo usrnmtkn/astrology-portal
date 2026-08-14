@@ -1,0 +1,36 @@
+{
+  "id": "fast-mover-article-v1",
+  "status": "owner-approved",
+  "ownerApproved": true,
+  "ownerRulingDate": "2026-08-13",
+  "billedCalls": 0,
+  "derivedFrom": "slow-mover-article-v1",
+  "fields": [
+    "planet",
+    "condition_when_relevant",
+    "handoff",
+    "job",
+    "thesis",
+    "lived_evidence",
+    "failure",
+    "strategy",
+    "close"
+  ],
+  "conditionalRules": {
+    "condition_when_relevant": "Include dignity only when it materially changes how directly the planet can do its job. Venus rules Libra, so Venus in Libra receives this home-ground layer, parallel to Saturn in Capricorn.",
+    "handoff": "One opening sentence names the prior sign and its dates. Do not expand it into the standalone contrast paragraph used by slow movers.",
+    "collective_test": "May be folded into the close when earned; never required as a standalone layer."
+  },
+  "excludedLayers": [
+    "era_frame",
+    "recurrence",
+    "older_historical_analogs",
+    "standalone_collective_test"
+  ],
+  "governance": {
+    "registryChanged": true,
+    "venusLibraOutlineReissued": true,
+    "proseDrafted": false,
+    "servingChanged": false
+  }
+}

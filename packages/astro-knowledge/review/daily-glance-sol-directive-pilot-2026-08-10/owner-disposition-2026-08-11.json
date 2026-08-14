@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "recordType": "owner-candidate-disposition",
+  "recordedDate": "2026-08-11",
+  "authority": "explicit owner ruling in Codex chat",
+  "candidateCount": 12,
+  "ownerReportedLintCleanCount": 10,
+  "disposition": "RETAIN_AS_REGISTER_EVIDENCE / DO_NOT_SERVE",
+  "reason": "specificity exceeds what the key licenses; useful only as examples of scene construction, consequence, pacing, directness",
+  "registerEvidenceDimensions": [
+    "scene construction",
+    "consequence",
+    "pacing",
+    "directness"
+  ],
+  "serveEligible": false,
+  "promotionEligible": false,
+  "promotionAuthorized": false,
+  "candidatePoolEligible": false,
+  "regenerationPolicy": {
+    "blocked": true,
+    "until": [
+      "the scene-license layer is explicitly owner-approved",
+      "writer packets carry resolved chart context"
+    ]
+  },
+  "ownerRulings": [
+    "All 12 pilot candidates (10 lint-clean included): disposition RETAIN_AS_REGISTER_EVIDENCE / DO_NOT_SERVE. Reason: specificity exceeds what the key licenses; useful only as examples of scene construction, consequence, pacing, directness. Remove them from any pool a future promotion path could draw from.",
+    "No regeneration until the scene-license layer is approved and writer packets carry resolved chart context.",
+    "The provenance architecture applies to every chart-personalized surface. Friends natal may proceed on its own licenses (natal planet/sign/house inputs) without waiting for Daily Glance, if its surface exposes enough natal context.",
+    "The four pilot scene licenses are new governed editorial records requiring my explicit review; no inherited approval from source matrix passages."
+  ],
+  "candidates": [
+    {
+      "key": "conjunction/neptune",
+      "sample": 1,
+      "responseId": "resp_0066e556199cc758006a7a37aa53f881a0a46c8f5ed9a8d8a1",
+      "rawSha256": "b157ff2ebddbdf0629cb3823ffb711778763e5487a13ca3d951619ae81efae79"
+    },
+    {
+      "key": "conjunction/neptune",
+      "sample": 2,
+      "responseId": "resp_0d8c5674c3fca3b2006a7a37aa5eb8819e9e50b7d4f181b14c",
+      "rawSha256": "1c1cc7133779b25279a7856133881ab3ef343c04e405afa92c1d3528651c3df9"
+    },
+    {
+      "key": "conjunction/neptune",
+      "sample": 3,
+      "responseId": "resp_013935e916813e9d006a7a37aa5e14819f8825212d12d72c70",
+      "rawSha256": "a87fcdb475482f7c7c448d3f009fdf8bfe74d4fb764e568f3bccff8a9626bccd"
+    },
+    {
+      "key": "soft/chiron",
+      "sample": 1,
+      "responseId": "resp_06e7f59fce651d75006a7a382e7048819f9d0a4374e810cc5a",
+      "rawSha256": "5b7d670194e6be909316b1587e2344c847735b2f4039e10b795589067f5c5a7f"
+    },
+    {
+      "key": "soft/chiron",
+      "sample": 2,
+      "responseId": "resp_0b3c523a5e579f05006a7a382e71f8819cb3bd1f45e94c2f35",
+      "rawSha256": "169a1a104474d2fefe6a7b4440b92f102ca794e65d1fe5120a5f8be0cff1881f"
+    },
+    {
+      "key": "soft/chiron",
+      "sample": 3,
+      "responseId": "resp_0ffcee378d695734006a7a382e696081a181a7f0a50b93288e",
+      "rawSha256": "66a31216f29b1ac84490acfb4ad2a89f4b540d07735b8aec5d75da581ee05077"
+    },
+    {
+      "key": "square/uranus",
+      "sample": 1,
+      "responseId": "resp_0b382f510002c8cf006a7a3926c4088191b5765c74142e17bd",
+      "rawSha256": "d647f6e0e66b24f7ab5f75d0e41409778a68bd5c1e90a87712570eabcef2dec2"
+    },
+    {
+      "key": "square/uranus",
+      "sample": 2,
+      "responseId": "resp_02253ca006196b9a006a7a3926a114819e9c0c78df73267dce",
+      "rawSha256": "1fbbdc6b83b48e2463ed540c37d6033c2b2eeeced87f15a36c6f687b54ebb022"
+    },
+    {
+      "key": "square/uranus",
+      "sample": 3,
+      "responseId": "resp_068790dcd2570ee1006a7a3926c10881a094169fa2bd44eef3",
+      "rawSha256": "e6e262a6abf2d396b3d36b0f0ca052058f874b5e99b65267a4b60417874f2855"
+    },
+    {
+      "key": "conjunction/pluto",
+      "sample": 1,
+      "responseId": "resp_081a4124e2223e8f006a7a3982b84481a1978b98e53627d258",
+      "rawSha256": "187b0111fe2322655601ba0ea252a1f093bd807f33e15f72e8a58eb26481906e"
+    },
+    {
+      "key": "conjunction/pluto",
+      "sample": 2,
+      "responseId": "resp_01060e8d6074a431006a7a3982ad3081a3ac3a5d547d7d85f2",
+      "rawSha256": "b74169f4124a5dc064b77b0f4a27742ec46eb0f87c6f0503dd1c937f1123e223"
+    },
+    {
+      "key": "conjunction/pluto",
+      "sample": 3,
+      "responseId": "resp_033117c42236ee22006a7a3982edd481a0bad604659add830f",
+      "rawSha256": "3738a0ca478477f4dc6ce00dd1a2eef733f3c8b0b5e502dc676d3119310181ff"
+    }
+  ]
+}

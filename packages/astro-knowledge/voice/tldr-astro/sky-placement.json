@@ -123,7 +123,7 @@
 
   "formatExemplarPolicy": {
     "requiredAuthority": "exact owner approval for generation evidence",
-    "source": "voice/tldr-astro/marie-satori-writer/sky-placement-format-exemplars-v4.json",
+    "source": "voice/tldr-astro/satori-writer/sky-placement-format-exemplars-v4.json",
     "eligible": [
       "sky-placement-format-v4-mars-capricorn",
       "sky-placement-format-v4-saturn-capricorn",
@@ -178,7 +178,7 @@
 
   "movesExemplar": {
     "id": "sky-placement-format-v4-saturn-capricorn:moves",
-    "source": "voice/tldr-astro/marie-satori-writer/sky-placement-format-exemplars-v4.json",
+    "source": "voice/tldr-astro/satori-writer/sky-placement-format-exemplars-v4.json",
     "status": "owner_approved_voice_format_evidence",
     "ownerApproved": true,
     "generationEvidenceAuthorized": true,

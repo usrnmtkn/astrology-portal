@@ -1,0 +1,35 @@
+# Venus in Libra owner approval
+
+Status: exact owner-approved wording; non-serving until separately authorized  
+Date: 2026-08-14  
+Automatic edits: 0  
+Billed calls: 0
+
+## Exact owner instruction
+
+> Owner approval, Venus in Libra, exact wording. Replace the held draft with the
+> text below in full. It satisfies all eight spine elements; validate it against
+> the spine and report any element it fails rather than editing it.
+>
+> After moving through Virgo from July 9 to August 6, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them.
+>
+> Venus rules Libra, so compromise comes easily here. You can see both sides, find the middle ground, and make an arrangement work without much friction. That is useful until your own preference disappears somewhere inside the compromise.
+>
+> The problem starts when you keep saying yes because it feels easier than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left. The loudest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility. Resentment builds because the agreement only works by asking one person to keep giving more. You did not agree. You accommodated, and everyone called it agreement.
+>
+> Being easy to work with is rewarded everywhere. It gets called low maintenance, flexible, a good partner. Nobody mentions that it is also free. A collaborator chooses the direction, you say it works, and before anyone assigns the follow-up, you offer to rewrite the draft, send the updates, and deliver the final version. The decision takes five minutes; carrying it out costs you several more hours. When you finally say you preferred another version, their response tells you which one it was: they reopen the decision and split the revisions, or they expect you to keep carrying the plan you never picked.
+>
+> A shared purchase hides the same imbalance. You agree to split the cost, put the charge on your card, and accept a smaller repayment because asking for the exact difference feels awkward. You save the receipt, calculate what is still owed, and send another reminder. The agreement stays easy because you carry the missing money and the work of collecting it.
+>
+> Say what you want before you hear what everyone else wants. Name the number. Ask who is doing the follow-up. Let the plan change once you are actually in it. Then watch what happens: who adjusts, who covers the difference, and who takes on the work their choice created.
+>
+> The connections worth keeping are the ones that survive you asking for something.
+>
+> This close replaces the previously approved date-bound close by owner ruling.
+> Record the approval verbatim. Any copy drift is a hard stop.
+
+## Byte authority
+
+`article.txt` contains the owner-approved article body. It is the sole byte authority for this
+approval package. The earlier generated and owner-edited Venus artifacts remain diagnostic history
+only and are superseded by this approval.

@@ -18,16 +18,23 @@ import {
   Trash2,
   Users
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
-import { AspectPatternDiagnostics } from "./AspectPatternDiagnostics";
-import { AspectPatternWriteups } from "./AspectPatternWriteups";
-import { ReportFulfillmentAdminPanel } from "./ReportFulfillmentAdminPanel";
-import { fallbackArchitectureV3PackageVersion } from "../../web/src/content/fallbackArchitectureV3Runtime";
-import bundledDeferredCoreRowsV3 from "../../web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json";
-import bundledSkyCoreRowsV3 from "../../web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
 import "./admin.css";
+
+const AspectPatternDiagnostics = lazy(async () => {
+  const module = await import("./AspectPatternDiagnostics");
+  return { default: module.AspectPatternDiagnostics };
+});
+const AspectPatternWriteups = lazy(async () => {
+  const module = await import("./AspectPatternWriteups");
+  return { default: module.AspectPatternWriteups };
+});
+const ReportFulfillmentAdminPanel = lazy(async () => {
+  const module = await import("./ReportFulfillmentAdminPanel");
+  return { default: module.ReportFulfillmentAdminPanel };
+});
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier" | "friends";
@@ -1025,41 +1032,59 @@ function titleFromKey(contentKey: string) {
     || contentKey;
 }
 
-function packageHookSurface(key: string): GeneratedContentSurface {
-  if (key.includes("/friends") || key.includes("/relationship") || key.includes("/synastry") || key.includes("/composite")) return "friends";
-  if (key.includes("/you") || key.includes("/natal") || key.includes("/placement") || key.includes("/aspect")) return "you";
-  if (key.includes("/settings")) return "modifier";
-  return "sky";
+type AdminHookCatalogLoadState = "idle" | "loading" | "loaded" | "error";
+type AdminHookCatalogIndexPayload = {
+  schemaVersion: 1;
+  packageVersion: string;
+  rows: Array<{ key: string; surface: GeneratedContentSurface }>;
+};
+type AdminHookCatalogBodyPayload = {
+  schemaVersion: 1;
+  rows: Array<{ key: string; body: string }>;
+};
+
+const adminHookCatalogRoot = `${import.meta.env.BASE_URL}generated`;
+
+async function adminHookCatalogJson<T>(fileName: string): Promise<T> {
+  const response = await fetch(`${adminHookCatalogRoot}/${fileName}`, { cache: "no-cache" });
+  if (!response.ok) {
+    throw new Error(`Hook catalog package ${fileName} failed with HTTP ${response.status}.`);
+  }
+  return response.json() as Promise<T>;
 }
 
-function packageHookBody(row: Record<string, unknown>) {
-  const preferred = row.body_you ?? row.body ?? row.template ?? row.copy;
-  if (typeof preferred === "string") return preferred;
-  if (typeof row.body_they === "string") return row.body_they;
-  return "";
-}
+async function loadAdminHookCatalogIndex(): Promise<{ definitions: FallbackHookDefinition[]; packageVersion: string }> {
+  const payload = await adminHookCatalogJson<AdminHookCatalogIndexPayload>("admin-hook-catalog-index-v1.json");
+  if (payload.schemaVersion !== 1 || !Array.isArray(payload.rows)) {
+    throw new Error("Hook catalog index failed validation.");
+  }
 
-const fallbackHookDefinitions: FallbackHookDefinition[] = [...new Map(([
-  ...bundledSkyCoreRowsV3.hookRows,
-  ...bundledDeferredCoreRowsV3.hookRows
-] as Array<Record<string, unknown>>)
-  .map((row) => {
-    const key = typeof row.contentKey === "string" ? row.contentKey : "";
+  if (typeof payload.packageVersion !== "string" || !payload.packageVersion) {
+    throw new Error("Hook catalog index is missing its package version.");
+  }
+
+  const definitions = payload.rows.map(({ key, surface }) => {
     const label = titleFromKey(key);
     return {
       key,
       label,
-      surface: packageHookSurface(key),
+      surface,
       mode: "feed",
-      copy: {
-        headline: label,
-        summary: "",
-        body: packageHookBody(row)
-      }
+      copy: { headline: label, summary: "", body: "" }
     };
-  })
-  .filter((definition) => Boolean(definition.key))
-  .map((definition) => [definition.key, definition] as const)).values()];
+  });
+  return { definitions, packageVersion: payload.packageVersion };
+}
+
+async function loadAdminHookCatalogBodies(surface: GeneratedContentSurface): Promise<Map<string, string>> {
+  const domain = surface === "modifier" ? "modifier" : surface;
+  const payload = await adminHookCatalogJson<AdminHookCatalogBodyPayload>(`admin-hook-catalog-${domain}-v1.json`);
+  if (payload.schemaVersion !== 1 || !Array.isArray(payload.rows)) {
+    throw new Error(`Hook catalog ${domain} package failed validation.`);
+  }
+
+  return new Map(payload.rows.map(({ key, body }) => [key, body]));
+}
 
 function rowTitle(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserGeneratedContentRow) {
   if ("content_key" in row) {
@@ -1523,8 +1548,15 @@ export function GeneratedContentAdminDashboard() {
   const [bulkStatus, setBulkStatus] = useState<GeneratedContentStatus>("REVIEWED");
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
+  const [fallbackHookDefinitions, setFallbackHookDefinitions] = useState<FallbackHookDefinition[]>([]);
+  const [hookCatalogPackageVersion, setHookCatalogPackageVersion] = useState("loading");
+  const [hookCatalogLoadState, setHookCatalogLoadState] = useState<AdminHookCatalogLoadState>("idle");
+  const [hookCatalogError, setHookCatalogError] = useState<string | null>(null);
   const handledHashRef = useRef("");
   const editorRef = useRef<HTMLElement | null>(null);
+  const hookCatalogRequestRef = useRef<Promise<{ definitions: FallbackHookDefinition[]; packageVersion: string }> | null>(null);
+  const hookBodyPackagesRef = useRef(new Map<GeneratedContentSurface, Map<string, string>>());
+  const hookBodyRequestsRef = useRef(new Map<GeneratedContentSurface, Promise<Map<string, string>>>());
 
   const visibleRows = rows;
   const savedFallbackRows = useMemo(
@@ -1601,7 +1633,7 @@ export function GeneratedContentAdminDashboard() {
       section: fallbackSectionForKey(definition.key, definition.surface),
       definition
     }))
-  ], []);
+  ], [fallbackHookDefinitions]);
   const savedHookKeys = useMemo(
     () => new Set(savedFallbackRows.map((row) => hookKeyFromSavedRow(row)).concat(savedFallbackRows.map((row) => row.content_key))),
     [savedFallbackRows]
@@ -1754,12 +1786,71 @@ export function GeneratedContentAdminDashboard() {
   const hasAccessIssue = loadState === "accessDenied" || (!secret.trim() && loadState !== "loaded");
   const hasLoadFailure = loadState === "error";
 
+  async function refreshHookCatalog() {
+    setHookCatalogLoadState("loading");
+    setHookCatalogError(null);
+    if (!hookCatalogRequestRef.current) {
+      hookCatalogRequestRef.current = loadAdminHookCatalogIndex();
+    }
+    try {
+      const { definitions, packageVersion } = await hookCatalogRequestRef.current;
+      setFallbackHookDefinitions(definitions);
+      setHookCatalogPackageVersion(packageVersion);
+      setHookCatalogLoadState("loaded");
+    } catch (error) {
+      setFallbackHookDefinitions([]);
+      setHookCatalogPackageVersion("unavailable");
+      setHookCatalogLoadState("error");
+      setHookCatalogError(error instanceof Error ? error.message : "Could not load the hook catalog.");
+    } finally {
+      hookCatalogRequestRef.current = null;
+    }
+  }
+
+  async function hookBodyFor(item: HookCatalogItem) {
+    const surface = item.definition.surface;
+    let bodies = hookBodyPackagesRef.current.get(surface);
+    if (!bodies) {
+      let request = hookBodyRequestsRef.current.get(surface);
+      if (!request) {
+        request = loadAdminHookCatalogBodies(surface);
+        hookBodyRequestsRef.current.set(surface, request);
+      }
+      try {
+        bodies = await request;
+        hookBodyPackagesRef.current.set(surface, bodies);
+      } finally {
+        hookBodyRequestsRef.current.delete(surface);
+      }
+    }
+
+    if (!bodies.has(item.key)) {
+      throw new Error(`Hook catalog body is missing for ${item.key}.`);
+    }
+    return bodies.get(item.key) ?? "";
+  }
+
+  useEffect(() => {
+    let secondFrame = 0;
+    const firstFrame = window.requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      secondFrame = window.requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      });
+    });
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
+    };
+  }, [activePage]);
+
   useEffect(() => {
     function applyHash() {
       const hash = window.location.hash || "#home";
       if (handledHashRef.current === hash) return;
       handledHashRef.current = hash;
       const { page, params } = parseAdminHash();
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
       closeEditor();
       setActivePage(page);
 
@@ -1805,6 +1896,11 @@ export function GeneratedContentAdminDashboard() {
   }, []);
 
   useEffect(() => {
+    void refreshHookCatalog();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (secret.trim()) {
       void loadDashboardData();
     }
@@ -1829,6 +1925,7 @@ export function GeneratedContentAdminDashboard() {
 
   function navigateAdminPage(page: AdminDashboardPage, params?: URLSearchParams, options: { keepEditorOpen?: boolean } = {}) {
     setIsCreateMenuOpen(false);
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     if (!options.keepEditorOpen) {
       closeEditor();
     }
@@ -2037,14 +2134,32 @@ export function GeneratedContentAdminDashboard() {
     setDraft(draftFromRow(row));
   }
 
-  function openHookDraft(item: HookCatalogItem) {
-    navigateAdminPage("knowledge", undefined, { keepEditorOpen: true });
+  async function openHookDraft(item: HookCatalogItem) {
     const saved = savedFallbackRows.find((row) => row.content_key === canonicalFallbackContentKey(item.key) || hookKeyFromSavedRow(row) === item.key);
     if (saved) {
+      navigateAdminPage("knowledge", undefined, { keepEditorOpen: true });
       openRow(saved);
-    } else {
+      return;
+    }
+
+    setIsLoading(true);
+    setMessage(`Loading source wording for ${item.label}…`);
+    try {
+      const body = await hookBodyFor(item);
+      navigateAdminPage("knowledge", undefined, { keepEditorOpen: true });
       setSelectedRowId(null);
-      setDraft(emptyDraftForHook(item));
+      setDraft(emptyDraftForHook({
+        ...item,
+        definition: {
+          ...item.definition,
+          copy: { ...item.definition.copy, body }
+        }
+      }));
+      setMessage(`Source wording loaded for ${item.label}.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? `${error.message} Select Author to retry.` : "Could not load source wording. Select Author to retry.");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -2314,7 +2429,7 @@ export function GeneratedContentAdminDashboard() {
   function onCatalogKeyDown(event: ReactKeyboardEvent<HTMLElement>, item: HookCatalogItem) {
     if (event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
-    openHookDraft(item);
+    void openHookDraft(item);
   }
 
   function exportEditedFallbackArchitectureRows() {
@@ -2395,7 +2510,7 @@ export function GeneratedContentAdminDashboard() {
           {loadState === "loaded" ? "Access verified" : loadState === "loading" ? "Loading" : secret.trim() ? "Access saved" : "Local only"}
         </span>
         <small>{loadState === "loaded" ? `${rows.length} saved rows loaded` : "Rows not loaded"}</small>
-        <small>Fallback package {fallbackArchitectureV3PackageVersion}</small>
+        <small>Fallback package {hookCatalogPackageVersion}</small>
       </section>
     </aside>
   );
@@ -2766,10 +2881,25 @@ export function GeneratedContentAdminDashboard() {
             </div>
             {renderFallbackTabs()}
             <section className="admin-fallback-row-list" aria-label="Hook catalog">
+              {hookCatalogLoadState === "loading" && (
+                <div className="admin-empty-state" role="status">
+                  <RefreshCw size={18} aria-hidden="true" />
+                  <p>Loading hook catalog…</p>
+                </div>
+              )}
+              {hookCatalogLoadState === "error" && (
+                <div className="admin-empty-state" role="alert">
+                  <p>{hookCatalogError ?? "Could not load the hook catalog."}</p>
+                  <button type="button" onClick={() => void refreshHookCatalog()}>
+                    <RefreshCw size={15} aria-hidden="true" />
+                    Retry catalog
+                  </button>
+                </div>
+              )}
               {filteredHookCatalog.map((item) => {
                 const saved = savedHookKeys.has(item.key) || savedHookKeys.has(canonicalFallbackContentKey(item.key));
                 return (
-                  <article key={`${item.type}-${item.key}`} className="admin-fallback-row" role="button" tabIndex={0} onClick={() => openHookDraft(item)} onKeyDown={(event) => onCatalogKeyDown(event, item)}>
+                  <article key={`${item.type}-${item.key}`} className="admin-fallback-row" role="button" tabIndex={0} onClick={() => void openHookDraft(item)} onKeyDown={(event) => onCatalogKeyDown(event, item)}>
                     <div className="admin-fallback-row-main">
                       <p className="admin-eyebrow">{item.section} / {item.type}</p>
                       <h3>{item.label}</h3>
@@ -2777,7 +2907,7 @@ export function GeneratedContentAdminDashboard() {
                     </div>
                     <div className="admin-fallback-row-actions">
                       <span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved row" : "Needs row"}</span>
-                      <button type="button" onClick={(event) => { event.stopPropagation(); openHookDraft(item); }}>
+                      <button type="button" disabled={isLoading} onClick={(event) => { event.stopPropagation(); void openHookDraft(item); }}>
                         <Plus size={15} aria-hidden="true" />
                         Author
                       </button>
@@ -2979,11 +3109,23 @@ export function GeneratedContentAdminDashboard() {
           </section>
         )}
 
-        {activePage === "aspectPatternCoverage" && <AspectPatternWriteups initialKind="natal" secret={secret} />}
+        {activePage === "aspectPatternCoverage" && (
+          <Suspense fallback={<p className="admin-loading-state" role="status">Loading aspect-pattern tools…</p>}>
+            <AspectPatternWriteups initialKind="natal" secret={secret} />
+          </Suspense>
+        )}
 
-        {activePage === "aspectPatternActivationCoverage" && <AspectPatternWriteups initialKind="activation" secret={secret} />}
+        {activePage === "aspectPatternActivationCoverage" && (
+          <Suspense fallback={<p className="admin-loading-state" role="status">Loading aspect-pattern tools…</p>}>
+            <AspectPatternWriteups initialKind="activation" secret={secret} />
+          </Suspense>
+        )}
 
-        {activePage === "aspectDiagnostics" && <AspectPatternDiagnostics />}
+        {activePage === "aspectDiagnostics" && (
+          <Suspense fallback={<p className="admin-loading-state" role="status">Loading aspect diagnostics…</p>}>
+            <AspectPatternDiagnostics />
+          </Suspense>
+        )}
 
         {activePage === "users" && (
           <section className="admin-template-page">
@@ -3028,7 +3170,11 @@ export function GeneratedContentAdminDashboard() {
           </section>
         )}
 
-        {activePage === "reportFulfillment" && <ReportFulfillmentAdminPanel secret={secret} />}
+        {activePage === "reportFulfillment" && (
+          <Suspense fallback={<p className="admin-loading-state" role="status">Loading report fulfillment…</p>}>
+            <ReportFulfillmentAdminPanel secret={secret} />
+          </Suspense>
+        )}
 
         {activePage === "releaseNotes" && (
           <section className="admin-template-page">

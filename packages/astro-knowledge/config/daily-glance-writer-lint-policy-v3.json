@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 3,
+  "policyId": "daily-glance-writer-lint-policy-v3:scene-license-boundary",
+  "status": "owner-ruled-2026-08-11",
+  "baseline": {
+    "surface": "68 currently-serving owner-approved daily-glance pairs",
+    "cardCount": 68,
+    "advisoryWhenFailureRateGreaterThan": 0.1,
+    "ruleFailureCounts": {
+      "P4-headline-one-declarative-sentence": 1,
+      "P4-headline-word-count": 0,
+      "P4-body-sentence-count": 9,
+      "P4-body-word-count": 15,
+      "P4-one-final-instruction": 18,
+      "P4-body-supports-without-repeating": 0,
+      "global+VC-016+DG+SM-output-bans": 20,
+      "DG-R2-register": 28,
+      "DG-R3-no-slogan-or-restatement-closer": 0,
+      "DG-R4-no-outcome-promise": 1,
+      "DG-R7-varied-opener": 1,
+      "DG-R9-enumerated-instruction-allowed": 0,
+      "B1-L1-time-anchor-max-once": 0,
+      "B1-L2-may-inner-states-only": 16,
+      "B1-L3+L4-headline-group-grammar": 35,
+      "SM-DG-2-no-diagnostic-history": 0,
+      "DG-R11-unhedged-headline": 0,
+      "DG-R12-no-time-anchor-opener": 3,
+      "DG-R13-may-max-once": 2,
+      "DG-R14-scene-not-biographical": 0,
+      "DG-R15-action-repairs-moment": 0,
+      "DG-R16-owner-reserved-construction": 2,
+      "DG-R17-quoted-dialogue-max-one": 2,
+      "DG-R17-quoted-dialogue-earns-place-advisory": 0,
+      "OWNER-DIRECTIVE-short-blunt-line": 31,
+      "OWNER-TEST-morning-read": 15,
+      "OWNER-TEST-screenshot": 37
+    }
+  },
+  "batchRuleTiers": {
+    "batch-output-count": "blocking",
+    "DG-R1-recurring-sentence-frame": "advisory",
+    "DG-R7-opener-variety": "blocking"
+  },
+  "governance": {
+    "advisory": "Report the failure, but do not discard or block the candidate.",
+    "blocking": "A failure prevents the candidate from being lint-clean.",
+    "unknownRuleDefault": "blocking",
+    "servingCopyAuthority": "Owner approval remains authoritative; this policy changes lint disposition only and changes no serving text or review status.",
+    "retiredRules": [
+      "OWNER-TEST-specificity",
+      "OWNER-TEST-specificity-batch",
+      "SOL-DIRECTIVE-portability"
+    ],
+    "replacementBoundary": "Scene specificity is governed by calculation-resolved chart context and explicitly owner-approved scene licenses."
+  }
+}

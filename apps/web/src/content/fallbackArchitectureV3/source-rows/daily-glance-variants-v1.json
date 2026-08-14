@@ -8,7 +8,7 @@
       "headlines": [
         {
           "id": "primary",
-          "text": "The care is being offered, but the old hurt makes it hard to accept.",
+          "text": "The care is being offered, but part of you still expects to be disappointed.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -19,7 +19,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You type \"I'm fine\" after they offer to call, even though part of you wants to say yes. The need for care and the fear of being disappointed arrive at the same time, so refusing can feel safer than asking. Replace \"I'm fine\" with a quick check-in.",
+          "text": "You type \"I'm fine\" after they offer to call, even though part of you wants to say yes. Wanting the help and expecting to be disappointed can happen at the same time, so refusing feels safer than asking. Tell them you could use the call after all.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -55,7 +55,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You ask for a ride and get three offers, a meal plan, and enough enthusiasm to turn one quick errand into a full group project. The support is genuine, but managing the offers, coordinating the details, and keeping everyone happy takes more energy than doing the job yourself. Accept the single offer that makes your day simpler, say a polite no to the rest, and move on.",
+          "text": "You ask for a ride and get three offers, a meal plan, and enough enthusiasm to turn one quick errand into a full group project. The support is genuine, but managing the offers, coordinating the details, and keeping everyone happy takes more energy than doing the job yourself. Accept the offer that actually makes your day easier and decline the rest.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -80,7 +80,7 @@
       "headlines": [
         {
           "id": "primary",
-          "text": "The want you keep explaining away is still there.",
+          "text": "You still want the thing you keep talking yourself out of.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -91,7 +91,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You finish the task, close the tab, then reopen the option you saved. Your routine may be comfortable, but it has not erased the part of you that wants something else. Wanting more does not make your current life a failure. Finish the sentence \"What I want is…\" and stop before the justification.",
+          "text": "You finish the task, close the tab, then reopen the option you saved. Your routine may be comfortable, but it has not erased the part of you that wants something else. Wanting more does not make your current life a failure. Write down what you want before you start talking yourself out of it.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -127,7 +127,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You may walk out angry, make the worried call immediately, or jump into an argument that did not involve you. A quick response is not always the wrong one, but it gives you less time to decide whether you are solving the problem or making it bigger. Before you leave, call, or intervene, decide what you want the next ten minutes to accomplish.",
+          "text": "You may walk out angry, make the worried call immediately, or jump into an argument that did not involve you. A quick response is not always the wrong one, but it gives you less time to decide if you are solving the problem or making it bigger. Before you leave, call, or intervene, decide what you want the next ten minutes to accomplish.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -235,7 +235,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "A song can undo you. An old memory can color the whole afternoon. Someone else's mood may follow you home before you realize you picked it up. Give yourself less noise, fewer opinions, and more time before making a hard decision. Write, make something, take a long shower, or let yourself stare out the window for a while. Not every feeling needs to be solved, but it does need to be experienced.",
+          "text": "A song can undo you. An old memory can color the whole afternoon. Someone else's mood may follow you home before you realize you picked it up. Give yourself less noise, fewer opinions, and more time before making a hard decision. Write, make something, take a long shower, or let yourself stare out the window for a while. Give yourself enough quiet to figure out what you are actually feeling before you make a decision based on it.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -271,7 +271,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "The application, class, project, or responsibility you keep reopening deserves a closer look. That does not mean you need to overhaul your life. It does mean the choice deserves more than another closed tab. Write one sentence naming why you want it.",
+          "text": "The application, class, project, or responsibility you keep reopening deserves a closer look. That does not mean you need to overhaul your life. If you keep coming back to the same opportunity, find out what is keeping your attention there. Write one sentence naming why you want it.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -296,7 +296,7 @@
       "headlines": [
         {
           "id": "primary",
-          "text": "Stop weaponizing control to keep from admitting you were hurt.",
+          "text": "Trying to win is easier than admitting you're upset.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -307,7 +307,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "A small reaction may reveal a much larger need for control, recognition, or certainty. You may want to push, withhold, test, or win because admitting you are upset feels more exposing. Name the feeling before it turns into a power struggle. Intensity is useful when it tells the truth, not when it tries to force an outcome.",
+          "text": "A small reaction may reveal how much you want control, recognition, or certainty. You may want to push, withhold, test, or win because saying you are upset feels more exposing. Say what actually got to you before the argument turns into a fight over who has the upper hand. Getting control of the moment will not fix the part that upset you.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -343,7 +343,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "It is the energy spent rebuilding your whole day around it. A text confirms an appointment, so you reschedule a work call and squeeze your remaining hours into a tight corner. Then another ask comes in before you have even settled the first change. The weight does not just come from showing up. It comes from constantly tearing down and rearranging your life whenever someone else needs help. Pick the most important request you can actually manage today, adjust the schedule once, and say no to the rest.",
+          "text": "A text confirms an appointment, so you reschedule a work call and now have to fit the rest of your work into fewer hours. Then another request comes in before you have adjusted to the first one. The burden is not only showing up. It is rearranging your day every time someone else needs help. Pick the most important request you can actually manage today, adjust the schedule once, and say no to the rest.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -415,7 +415,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You might catch yourself hesitating over the plan you actually want to skip, or waiting for someone else to say the answer you are hoping for. Playing easygoing does not make you look flexible right now; it just looks like distance, because the desire shows through anyway. Hiding it does not convince anyone, least of all you. Say what you want, and move forward.",
+          "text": "You might catch yourself hesitating over the plan you actually want to skip, or waiting for someone else to say the answer you are hoping for. Acting like you are fine with whatever happens does not make you look flexible right now; it just looks like distance, because the desire shows through anyway. Hiding it does not convince anyone, least of all you. Say what you want, and move forward.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -451,7 +451,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You open a familiar service, find a higher price, and lose time comparing replacements. You may feel too restless to accept the new terms. You start questioning every routine built around it. You're allowed to change your plan once you know the new price. Write down the new total and one workable alternative before changing the service.",
+          "text": "You open an app you use all the time and see the price went up. Five minutes later you are comparing replacements and questioning every routine built around it. You're allowed to change your plan once you know the new price. Write down the new total and one workable alternative before you cancel anything.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -496,7 +496,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "Love usually looks pretty ordinary: a saved seat, a remembered coffee order, a text that hits right when you need a lift. You don't need a grand, dramatic gesture to know who's in your corner. Pay attention to who shows up without making it about them, and let them know you saw it. Let the small things count.",
+          "text": "Love usually looks pretty ordinary: a saved seat, a remembered coffee order, a text that arrives right when you need someone to check in. You don't need a grand, dramatic gesture to know who's in your corner. Pay attention to who shows up without making it about them, and let them know you saw it. Let the small things count.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -521,7 +521,7 @@
       "headlines": [
         {
           "id": "primary",
-          "text": "Blending in is not worth a first impression you do not recognize.",
+          "text": "Do not make yourself invisible just to make a good first impression.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -532,7 +532,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You dress down to blend in and leave out the one detail you actually wanted to share. Staying neutral may help you avoid attention, but it can leave you feeling invisible. Nobody can know you from the version that never shows up. Tell one person the detail you almost kept to yourself.",
+          "text": "You dress down to blend in and leave out the one detail you actually wanted to share. Staying neutral may help you avoid attention, but it can leave you feeling invisible. You may know exactly which version of yourself will go over well here. That does not mean you have to become it. Put back the detail you were about to hide.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -557,7 +557,7 @@
       "headlines": [
         {
           "id": "primary",
-          "text": "Lead from presence, not perfection.",
+          "text": "More responsibility should come with something you actually want.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -568,7 +568,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "A promotion comes up. Your name gets mentioned in a meeting. Another project lands on your desk because everyone knows you can carry it. Before you say yes, notice what the opportunity is actually rewarding. Does it move you toward work you want your name attached to, or does it rely on your ability to stay late, absorb the pressure, and make someone else's vision happen? You do not need to become polished beyond recognition to be taken seriously. Let your public life reflect more than what you can endure. Choose the work, title, and responsibility that sound like your own definition of success.",
+          "text": "A bigger project lands on your desk because everyone knows you can handle it. Before you treat that as recognition, look at what comes with it. More money, authority, credit, or access can make the extra work worth considering. Another pile of responsibility with the same title and the same pay is just more work. Ask what changes for you before you agree to carry more for them.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -604,7 +604,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "Notice how tempting it gets to nod along just because the room is moving in one direction. Slipping into consensus keeps things smooth now, but it locks you into commitments you never asked for. Speak up to one person: name what part of the plan actually works for you, and outline the one change that makes it worth your time.",
+          "text": "Everyone else may have decided what the plan is before you had much say in it. That puts you in the position of responding to terms you did not choose. Get clear on what is actually required, what can still be changed, and what needs to be clarified in writing. Do not make an imposed plan harder on yourself by quietly agreeing to expectations that were never realistic in the first place.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -640,7 +640,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You wake up, reach for your phone, and start clearing requests before anyone has asked for an immediate response. By breakfast, the quiet hour is gone, several conversations are open, and your mind is already multi-tasking the problems that could have waited. The cost is not only the time spent replying. It is how difficult it becomes to return to yourself. Send one message, put the phone down, and keep the morning you meant to have.",
+          "text": "You wake up, reach for your phone, and start answering messages before anyone has asked for an immediate response. By breakfast, the quiet hour is gone, several conversations are open, and you are already thinking about three problems that could have waited. The cost is not only the time you spent replying. It is how quickly your own morning disappears. Send one message if you need to, put the phone down, and keep the morning you meant to have.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -712,7 +712,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "The group chat moves dinner from seven to eight, then back again. A quick email sprouts six replies. You get halfway through an errand before realizing one key detail changed; and suddenly your whole afternoon is swallowed by back-and-forth. Give the small exchanges your full attention today. Confirm the time. Answer the exact question in front of you. Put the important details somewhere everyone can actually find them. A little precision right now will save you from a much bigger problem later. Say what needs to be said, make it clear, and let that be enough.",
+          "text": "The group chat moves dinner from seven to eight, then back again. A quick email turns into six replies. You get halfway through an errand before realizing one key detail changed, and suddenly the afternoon is disappearing into back-and-forth. Confirm the time. Answer the exact question. Put the important detail somewhere everyone can find it. A little precision now can save you from a much bigger problem later.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -737,7 +737,7 @@
       "headlines": [
         {
           "id": "primary",
-          "text": "Give your home the care it needs so it can carry you back.",
+          "text": "Make home easier to live in, not harder to maintain.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -845,7 +845,7 @@
       "headlines": [
         {
           "id": "primary",
-          "text": "Resentment is the receipt for a boundary you didn't set.",
+          "text": "The agreement can change after you realize what it is costing you.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -856,7 +856,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You agree before you check in with yourself. You take on the favor, go along with the plan, or make your preference smaller so the moment stays easy. Then the resentment arrives after everyone else thinks the decision is settled. Catch yourself before the yes leaves your mouth. Ask for more notice. Name the limit while there is still room to adjust. Your needs may inconvenience someone, but that does not make them unreasonable. A connection that only works when you are easy to accommodate is not making space for all of you.",
+          "text": "You said yes because the plan sounded reasonable at the time. Then the follow-up work lands, the schedule changes, or you realize you are the person expected to keep adjusting. You are not stuck with the first version just because the conversation already happened. Go back to the part that no longer works and tell them what needs to change.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -892,7 +892,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You split the check down the middle even though you barely ate, or keep quiet about a shared debt because bringing up money feels deeply uncomfortable. Someone else holds the password, the paperwork, or the final say, and you are left absorbing the friction. You don't have to stay in the dark to keep the peace. Bring the terms into the light. Ask who owes what, request the login, and get the exact numbers on paper. Asking for transparency does not make you weak or high maintenance. You are allowed to insist on clarity before you invest another dollar, hour, or ounce of faith.",
+          "text": "You split the check down the middle even though you barely ate, or keep quiet about a shared debt because bringing up money feels uncomfortable. Someone else holds the password, paperwork, or final say, and you are left working around information you should have access to. Ask who owes what, request the login, and get the exact numbers in writing. You can care about the relationship and still require clear terms before you put in more money, time, or trust.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -928,7 +928,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You feel the awkward friction when old rules no longer explain your current reality. Maybe a philosophy that kept you safe in your twenties feels restrictive now, or new information is asking you to turn a corner. You do not have to double down on an outdated worldview just to prove you were right in the first place. You are allowed to revise the course, change your mind, and learn in public. Wisdom is not holding a rigid stance. It is letting your life expand past what you used to think you knew.",
+          "text": "You read something that changes your mind, hear a teacher explain the subject differently, or realize the rule you have been following no longer fits the life you are living. You do not need to defend an old opinion just because you once believed it. Follow the new information far enough to see what it changes. You can revise the plan without pretending the earlier version of you was stupid for believing something else.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -964,7 +964,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "A loved one asks why you changed the evening plan, and you stop mid-sentence when their tone feels too familiar. You may want to stay quiet and wait for them to notice what you did not finish. That test backfires. You don't have to do it all alone. Finish your sentence: tell them what you needed when you changed the plan.",
+          "text": "A loved one asks why you changed the evening plan, and you stop halfway through the answer because their response makes you want to shut down. You may wait for them to notice what you did not finish saying, but they cannot respond to a need you never named. Finish the sentence. Tell them what you needed when you changed the plan.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1000,7 +1000,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "Someone else's high energy and appetite for more can easily pull you into an overcommitment you never intended to make. A quick catch-up turns into an afternoon of extra stops, and the temptation will be to move quickly, to grasp at what is returning, and to say yes before you understand the consequences. Their enthusiasm makes your limit look stingy, so you agree while mentally panicking about the work waiting at home. If it costs your peace, it's overpriced. Enjoy the first part of the plan, say a clear no to the additions, and remember that you don't have to be available for every crisis.",
+          "text": "Someone else keeps adding to the plan, and you keep agreeing before you check what you still have time or money for. A quick catch-up turns into an afternoon of extra stops. Their enthusiasm can make saying no feel harder than it should. If the extra plan takes time, money, or energy you already need somewhere else, it is too much. Enjoy the part you actually wanted and decline the additions.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1036,7 +1036,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You can't keep tiptoeing across a gap that is actively growing. Staying quiet only hides how much you've settled for routine over connection. Walking on eggshells doesn't prevent a mess; it just guarantees one. Staying polite isn't saving the relationship. It is just delaying the inevitable.",
+          "text": "You can keep calling the relationship fine because naming the problem would force a harder conversation. Meanwhile, the distance keeps growing and you keep giving up more of what you actually want to avoid the argument. Staying polite is not fixing the relationship. It is postponing the conversation that decides what happens next.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1072,7 +1072,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "Expect an urge to fire back when someone pushes a boundary or questions your judgment. Their edge can make instantaneous defense feel like self-preservation before you even hear them out. Ask one clear question, let them answer without interruption, and only then decide how much weight to give it.",
+          "text": "Expect an urge to fire back when someone pushes a boundary or questions your judgment. Their tone can make defending yourself feel urgent before you have even heard the whole point. Ask one clear question, let them answer without interruption, and then decide how much weight to give it.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1097,7 +1097,7 @@
       "headlines": [
         {
           "id": "primary",
-          "text": "You're reading too much into it.",
+          "text": "You can disagree without answering the argument they did not make.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1117,7 +1117,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "A blunt text, delayed reply, or clipped tone can feel loaded when you're already braced for friction. It's easy to spend twenty minutes dissecting two sentences and building an argument against a point the other person never made. Ask for clarification before you react to your worst-case assumption. Crossed wires only become a confrontation when you start fighting the story in your head instead of the words on the screen.",
+          "text": "A short message lands badly, and five minutes later you are responding to the tone, the timing, and everything you think they meant underneath it. Crossed wires only become a confrontation when you start fighting the story in your head instead of the words being said. Ask the question that clears up the missing part before you build a case around it.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1234,7 +1234,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "Someone gives you just enough soft reassurance to keep you from walking away or setting a boundary. You want to accept the explanation because accepting the pattern means making an uncomfortable decision. Stop evaluating their potential and start measuring their consistency. What people do after the discussion ends is the only data that matters.",
+          "text": "Someone gives you just enough soft reassurance to keep you from walking away or setting a boundary. You want to accept the explanation because accepting the pattern means making an uncomfortable decision. Stop making the decision based on what they say they could do. Pay attention to what they actually do after the conversation ends; that is the only data that matters.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1259,7 +1259,7 @@
       "headlines": [
         {
           "id": "primary",
-          "text": "Growth requires losing your favorite excuses.",
+          "text": "The old excuse is getting harder to believe.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1270,7 +1270,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "The people who actually help you grow will not always feel comfortable to be around. When someone calls you out on a bad habit, your instinct might be to pull back. But predictable dynamics are not the same as healthy ones. Pay attention to who supports the person you are becoming, versus who only likes you when you remain useful in the old way.",
+          "text": "Someone points out the same habit you thought you had already moved past, and your first instinct may be to avoid them instead of looking at the pattern. Familiar dynamics can feel easier because you already know how to behave inside them. Pay attention to who supports the choices you are trying to make now, not only the version of you that used to be easier for them.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1295,7 +1295,7 @@
       "headlines": [
         {
           "id": "primary",
-          "text": "Some feelings just want to be felt, not fixed.",
+          "text": "Your need does not disappear because someone else has the final say.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1306,7 +1306,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You bring a private need to the person who controls the money, the access, or the family decision, explaining what you need based on care and history while they point to ownership, rules, and consequences. Power dynamics in the relationship become obvious: who makes the decisions, who always gives in, and who holds the emotional cards. Are you the one who always compromises, always bends? The question is no longer \"What do I owe this person?\" but \"What do I owe myself?\" State the facts of what you need without letting them rewrite the exchange into a test of authority. Your vulnerability is not a weakness.",
+          "text": "You bring a private need to the person who controls the money, access, or family decision. You explain what you need, and they point to whose money it is, who controls access, or who gets the final say. The power difference becomes obvious fast: who keeps compromising, whose needs are treated like a problem, and who is expected to accept the answer. State the facts of what you need without letting the conversation turn into a test of who has more authority. Being vulnerable does not mean giving up your position.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1387,7 +1387,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You remember the details, show up when you said you would, and follow through, but still leave wondering what you did wrong. The other person stays distant or points to one more standard you have not met, so you keep working harder for a warmth they never promised to give. At some point, the problem is no longer your effort.",
+          "text": "You remember the details, show up when you said you would, and follow through, but still leave wondering what you did wrong. The other person stays distant or points to one more standard you have not met, so you keep trying harder for a response they never promised to give. At some point, the problem is no longer your effort.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1513,7 +1513,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You reorganized your life to make room for someone who just canceled, shifted the time, or went quiet. The mistake now is staying suspended in frustration. Take back the hours you set aside and put them toward your own life. They get to change their mind; they don't get to manage what you do next.",
+          "text": "You reorganized your life to make room for someone who just canceled, shifted the time, or went quiet. The mistake is letting their cancellation take the rest of your day with it. Take back the hours you set aside and put them toward your own life. They get to change their mind; they don't get to manage what you do next.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1558,7 +1558,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "Someone can care about you and still miss what you actually need. Your reflex is to hide your disappointment, convinced that making noise will make you a burden or push them away. All this does is teach people to treat your limits as optional while keeping them blind to what you actually need. Tell them what you need. Then give them the room to meet you, or show you that they won't.",
+          "text": "Someone can care about you and still miss what you actually need. Your reflex is to hide your disappointment, convinced that saying you are disappointed will make you difficult or push them away. All this does is teach people to treat your limits as optional while keeping them blind to what you actually need. Tell them what you need and pay attention to what they actually do with the information. Caring about you and being able to meet the need are not always the same thing.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1729,7 +1729,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "For the next few hours, it is easier to act on what you want instead of just thinking about it. The task, conversation, or decision you have been putting off may still be annoying, but it feels more possible now. Give it thirty minutes before your mind starts making the case for waiting again.",
+          "text": "The task you have been putting off may take less energy than all the time you have spent thinking about it. The conversation, decision, or errand may still be annoying, but it feels more possible once you start. Give it thirty minutes before you decide to put it off again.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1765,7 +1765,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You finally reach the exact reason a conversation went off the rails, and the words to explain it arrive without friction. Whether through a private meeting, a voice note, or a direct reply, you can name what hurt, what changed, and what answer is needed without starting another argument. Being direct is not cruel. Write the truth you need to say in one sentence, speak it once, calmly, and let the chips fall where they teach you. Say what you mean, say it like it matters, and let the opening do its job.",
+          "text": "You finally reach the exact reason a conversation went off the rails, and the words to explain it are right there. In a private meeting, voice note, or direct reply, you can name what upset you, what changed, and what answer you need without starting another argument. Say the part that matters and stop before the explanation turns into another point to fight over.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1819,7 +1819,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "Things are running smoothly, which might ironically make you nervous. The friction comes when ease makes you suspicious. Your reflex might be to brace for impact, look for the hidden catch, or deflect a simple thank you by listing everything you could have done better. Constantly bracing for trouble doesn't prevent it; it just ruins any peace of mind you actually have right now. Drop the guard and let the momentum work for you.",
+          "text": "Things are running smoothly, which might ironically make you nervous. The problem is that a quiet day can make you start looking for what is about to go wrong. Your reflex might be to brace for impact, look for the hidden catch, or deflect a simple thank you by listing everything you could have done better. Constantly bracing for trouble doesn't prevent it; it just ruins any peace of mind you actually have right now. Let the good day be a good day.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1891,7 +1891,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "It's the slow, quiet shift from bracing yourself to trusting your own response. You ask for help before you are overwhelmed. You choose the unfamiliar path without requiring a hundred-step guarantee that it will all work out. Each time you practice the boundary, it becomes a little less frightening and a little more familiar. Eventually, what once took all your courage becomes part of how you live.",
+          "text": "It's the slow, quiet shift from bracing yourself to trusting your own response. You ask for help before you are overwhelmed. You choose the unfamiliar path without needing to know exactly how every step will work. Each time you say no earlier, ask for help sooner, or choose the unfamiliar option, it gets easier to do it again. Eventually, what once took all your courage becomes part of how you live.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1927,7 +1927,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "A conversation about grief, anxiety, or old family history does not have to become a fight. You can say what affected you without explaining every detail or demanding an answer from anyone else. Tell someone you trust what happened and how it made you feel.",
+          "text": "Talking about something painful from the past does not have to turn into a fight about every detail. You can say what affected you without defending every part of the story or demanding an answer from anyone else. Tell someone you trust what happened and how it made you feel.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -1972,7 +1972,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You open the email you have been avoiding and realize the reply takes five minutes. The bill gets paid, the appointment gets booked, or the form finally leaves the pile on your desk. None of it is exciting, but carrying it in your head every day was taking more energy than finishing it. Take advantage of the slower rhythm to clear just one loose end.",
+          "text": "You open the email you have been avoiding and realize the reply takes five minutes. The bill gets paid, the appointment gets booked, or the form finally leaves the pile on your desk. None of it is exciting, but carrying it in your head every day was taking more energy than finishing it. Use the quieter day to clear one loose end.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -2008,7 +2008,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "Experience taught you how to spot the problem before anyone else does. When the plan falls apart, the deadline moves, or someone else's panic fills the room, you may already be answering messages, assigning the next steps, and calming everyone down before you have even decided to help. Use what you know. Organize the part that is actually yours. Then stop before competence becomes another way to prove that you deserve your place. That instinct may have kept you useful. It may even have kept you safe. But usefulness is not the same as belonging. Keep the skill. Put down the job of holding everyone together.",
+          "text": "Experience taught you how to spot the problem before anyone else does. When the plan falls apart, the deadline moves, or someone else's panic fills the room, you may already be answering messages, assigning the next steps, and calming everyone down before you have even decided to help. Use what you know. Organize the part that is actually yours. Then stop before helping becomes another attempt to prove that you deserve to be there. Keep the skill. Put down the job of holding everyone together.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -2044,7 +2044,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You don't have to pre-screen your thoughts or edit your preferences just to avoid making waves. You know who you are and what you bring to the table. You don't need the buffer. This is a good day to ask for what you want directly, put your name on your accomplishments, and skip the defensive backstory. Let things be straightforward for once.",
+          "text": "You know what you want before anyone asks you to justify it. Ask for the opportunity, state the limit, or say yes without adding a paragraph to make the answer easier for everyone else to accept. Put your name on the work. Let the sentence stand.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -2105,7 +2105,7 @@
       "headlines": [
         {
           "id": "primary",
-          "text": "You don't get extra credit for doing life the hard way.",
+          "text": "Let someone make your day easier.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -2125,7 +2125,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "A line clears out, a call gets canceled, or someone handles the exact errand you were dreading. Your instinct might be to wave off the ease or immediately find something else to stress over, as if comfort has to be bought with effort. Stop picking a fight with the flow. Let the break count in whatever form it takes.",
+          "text": "Someone covers the errand, moves the meeting, sends the introduction, or takes care of the part you were already dreading. Your first instinct may be to say you are fine or immediately fill the open time with another obligation. Let the help do what it was supposed to do. You do not get extra credit for turning relief into more work.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -2197,7 +2197,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "A rush of optimism can make every idea look manageable and every invitation feel worth saying yes to. You may add work, spend money, or promise time before finishing what is already in front of you. Check your calendar, bank balance, and actual energy before you expand. More will not help if the current plan is already asking too much.",
+          "text": "A rush of optimism can make every idea look manageable and every invitation look easier to fit in than it actually is. You may add work, spend money, or promise time before finishing what is already in front of you. Check your calendar, bank balance, and actual energy before you add anything else. More will not help if the current plan is already asking too much.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -2233,7 +2233,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "Pay attention to every trip to the kitchen today, because hunger is rarely the whole story. Before reaching for another snack, put a name on whatever desire you are trying to quiet down, even if it feels inconvenient, disruptive, or unlikely. If food is still what you want after that, enjoy it. Just stop using it to answer questions you are avoiding.",
+          "text": "You keep returning to the easier option even though it is not the one you want. You say the plan is fine, close the tab, or tell yourself it would be too disruptive to ask for more, then catch yourself thinking about the other choice again. Name what you actually want before you settle for the easiest option just because it causes the least trouble.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -2269,7 +2269,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "A last-minute demand lands on an already strained day, and someone pushes for an immediate answer while you are carrying private stress or sheer exhaustion. When they treat your capacity as if it is bottomless, it is easy to register the disrespect and lose your patience, spending twenty minutes in a reactive conflict that drains more energy than the task itself. That flare of anger isn't a character flaw to fix. It is a signal that your bandwidth is full. You don't owe anyone an immediate reaction just because they brought an immediate demand. State your timeline, step out of the argument, and protect what's left of your day.",
+          "text": "A last-minute demand lands on an already strained day, and someone pushes for an immediate answer while you are carrying private stress or sheer exhaustion. When they act like your time and energy are unlimited, it is easy to register the disrespect and lose your patience, spending twenty minutes in an argument you did not need to have and draining more energy than the task itself. You are already at your limit. You don't owe anyone an immediate reaction just because they brought an immediate demand. State your timeline, step out of the argument, and protect what's left of your day.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -2456,7 +2456,7 @@
       "headlines": [
         {
           "id": "primary",
-          "text": "Control is not the same as safety.",
+          "text": "Checking again is not going to make the answer safer.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -2476,7 +2476,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You may respond to uncertainty by reorganizing the schedule, checking the account again, watching everyone's mood so nothing catches you off guard. Micro-managing every detail doesn't quiet the anxiety; it only expands the list of things you have to monitor. Hyper-vigilance is not safety; it is just exhaustion. Decide what actually needs your intervention today, and let the situation breathe.",
+          "text": "You reopen the account, reread the message, or ask one more question because uncertainty makes you want another piece of information. The problem is that every new detail gives you something else to monitor. Check what actually needs checking, ask the direct question, and stop before trying to stay informed turns into trying to control an outcome you do not control.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -2501,7 +2501,7 @@
       "headlines": [
         {
           "id": "primary",
-          "text": "Your inner critic is working overtime.",
+          "text": "The deadline is not proof that you should be doing three jobs at once.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -2557,7 +2557,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "A slow start or unfinished task can make the whole day feel like proof that you are falling behind. You may respond by working through exhaustion and tightening every standard until nothing you finish feels good enough. Choose the work that actually matters today. Nobody has to earn rest, including you.",
+          "text": "Someone adds another request to a week that was already full, and your first response is to figure out how to squeeze it in. That is how an unreasonable workload starts looking like a personal time-management problem. Check what was already agreed to before you absorb the new work. Move the deadline, change the scope, or ask what should come off your list if this now takes priority.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -2602,7 +2602,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "Pressure pulls you straight into your oldest habit: retreat, take control, fix the mood, or handle the whole thing yourself. That impulse might protect you from temporary conflict, but it guarantees you end up carrying the exact burden you claim to be tired of. Pause before habit answers for you. You can draw on what past experience taught you without stepping back into the role that cost you so much.",
+          "text": "Pressure pulls you straight into your oldest habit: retreat, take control, smooth it over, or handle the whole thing yourself. That may end the argument right now, but it leaves you carrying the same burden again. Before you take over, give someone else a chance to answer, finish the task, or deal with the consequence. You can use what past experience taught you without stepping back into the role that cost you so much.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -2638,7 +2638,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "What would happen if you stopped managing everyone's perception of you? A quiet conflict is running under your day between who you know yourself to be and the version you present so people will take you seriously, approve of you, or leave you alone. That version may have helped you avoid criticism, rejection, or conflict. But forcing composure when you are burnt out, defensive, or uninspired is an exhausting way to live.",
+          "text": "What would happen if you stopped trying to control how everyone sees you? Part of you knows who you are, while another part is busy presenting the version that will be taken seriously, approved of, or left alone. That version may have helped you avoid criticism, rejection, or conflict. But forcing composure when you are burnt out, defensive, or uninspired is an exhausting way to live.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -2683,7 +2683,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "You sit down to handle a single tedious administrative form or look at one annoying obligation on your calendar, and expect restlessness. It is easy to let one frustrating task make your whole day feel suffocating, convincing you that you preach balance while practicing burnout and need to scrap the entire schedule. You don't have to optimize every second of your existence, nor do you need to tear everything down just to get some breathing room. Adjust the single commitment that is actually causing the friction and leave the rest intact. You're allowed to change your direction as you learn more about who you are.",
+          "text": "You sit down to handle one tedious administrative form or one annoying obligation on your calendar, and five minutes later the whole day feels suffocating. It is easy to let that one task convince you that you preach balance while practicing burnout and need to scrap the entire schedule. You do not need to change everything because one part of it is making you miserable. Adjust the single commitment that is actually causing the friction and leave the rest intact. You're allowed to change your direction as you learn more about who you are.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",

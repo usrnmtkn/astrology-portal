@@ -9,7 +9,7 @@ import { createKnowledgeMatrixV9Resolver } from "../apps/web/src/content/fallbac
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const writerRoot = path.join(
   repoRoot,
-  "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer",
+  "packages/astro-knowledge/voice/tldr-astro/satori-writer",
 );
 const deltaRoot = path.join(writerRoot, "knowledge-matrix-v9-governance");
 const canonicalRoot = path.join(writerRoot, "knowledge-matrix-v9");

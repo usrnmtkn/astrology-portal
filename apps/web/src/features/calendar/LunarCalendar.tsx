@@ -1170,9 +1170,8 @@ function calendarSkyAspectPackageCandidates(
 ): {
   signSpecific: CalendarSkyAspectCandidate | null;
   phrasebook: CalendarSkyAspectCandidate | null;
-  fallback: CalendarSkyAspectCandidate | null;
 } {
-  const empty = { signSpecific: null, phrasebook: null, fallback: null };
+  const empty = { signSpecific: null, phrasebook: null };
 
   if (event.type !== "aspect" || !event.planets || !event.aspect) {
     return empty;
@@ -1212,7 +1211,7 @@ function calendarSkyAspectPackageCandidates(
       return { ...empty, phrasebook: candidate };
     }
 
-    return { ...empty, fallback: candidate };
+    return empty;
   } catch (error) {
     calendarEventPackageFailure(event, error);
     return empty;
@@ -1272,6 +1271,7 @@ export function normalizeCalendarEventSurface(
       second,
       slots: {
         aspect: slugContentPart(event.aspect),
+        dateLine,
         planetA: first,
         planetATopic: fallbackV3PlanetTopic(first),
         planetB: second,
@@ -1292,8 +1292,7 @@ export function normalizeCalendarEventSurface(
       signSpecific: packageCandidates.signSpecific,
       exact,
       phrasebook: packageCandidates.phrasebook,
-      generated,
-      fallback: packageCandidates.fallback
+      generated
     });
 
     if (!selected) {

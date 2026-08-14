@@ -24,7 +24,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     const units = await admin.request<Array<{
       content_key: string; headline: string | null; summary: string | null; body: string | null; sections: Array<{ heading?: string; body?: string }> | null;
-    }>>(`user_generated_interpretations?subject_id=eq.${reportId}&subject_type=eq.report_unit&status=eq.DRAFT&select=content_key,headline,summary,body,sections&order=content_key.asc`);
+      source_snapshot: { renderMetadata?: { timing?: unknown } } | null;
+    }>>(`user_generated_interpretations?subject_id=eq.${reportId}&subject_type=eq.report_unit&status=eq.DRAFT&select=content_key,headline,summary,body,sections,source_snapshot&order=content_key.asc`);
     sendJson(res, 200, {
       ready: true,
       report: {
@@ -36,7 +37,12 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         factsEngine: report.facts_engine,
         factsHash: report.facts_hash,
         deliveredAt: report.delivered_at,
-        units
+        units: units.map(({ source_snapshot, ...unit }) => ({
+          ...unit,
+          timing: typeof source_snapshot?.renderMetadata?.timing === "string"
+            ? source_snapshot.renderMetadata.timing
+            : null
+        }))
       }
     });
   } catch (error) {

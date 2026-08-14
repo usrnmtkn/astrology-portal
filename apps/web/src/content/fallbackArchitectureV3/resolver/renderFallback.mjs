@@ -29,7 +29,16 @@ const vocab = rowsByKey(rowsFile.vocabularyRows);
 export class SourceGapError extends Error {}
 export class RoleViolationError extends Error {}
 
-function getVocab(key, { allowUnreviewed = false } = {}) {
+export function vocabularyBodyForVoice(row, voice) {
+  const body = voice === "you"
+    ? (row?.body_you ?? row?.body)
+    : (row?.body_they ?? row?.body);
+
+  if (typeof body !== "string" || !body.trim()) return null;
+  return body;
+}
+
+function getVocab(key, voice = "you", { allowUnreviewed = false } = {}) {
   const row = [...(vocab.get(key) ?? [])]
     .reverse()
     .find((candidate) => allowUnreviewed || READER_ELIGIBLE_STATUS.has(candidate.review_status));
@@ -38,12 +47,13 @@ function getVocab(key, { allowUnreviewed = false } = {}) {
     throw new RoleViolationError(`Row ${key} is fallback_source and can never fill a reader slot.`);
   }
   if (!allowUnreviewed && !READER_ELIGIBLE_STATUS.has(row.review_status)) return null;
-  checkFrame(row);
-  return row.body;
+  const body = vocabularyBodyForVoice(row, voice);
+  if (body == null) return null;
+  checkFrame(row, body);
+  return body;
 }
 
-function checkFrame(row) {
-  const b = row.body;
+function checkFrame(row, b = row.body) {
   if (/[.!?]$/.test(b) && row.grammar_frame !== "complete_sentence") {
     throw new RoleViolationError(`${row.contentKey}: trailing punctuation violates frame ${row.grammar_frame}`);
   }
@@ -97,10 +107,10 @@ function getReaderLivedRow(key, voice, { allowUnreviewed = false } = {}) {
   return typeof row.body === "string" && row.body.trim() ? row : null;
 }
 
-function getVocabList(prefix, opts = {}) {
+function getVocabList(prefix, voice = "you", opts = {}) {
   const out = [];
   for (let i = 0; i < 8; i++) {
-    const v = getVocab(`${prefix}/${i}`, opts);
+    const v = getVocab(`${prefix}/${i}`, voice, opts);
     if (v == null) break;
     out.push(v);
   }
@@ -151,14 +161,6 @@ export function renderNatalPlacement(facts, opts = {}) {
     ? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, { allowUnreviewed })
       ?? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, { allowUnreviewed })
     : null;
-  if (exactHouseLived) {
-    return {
-      headline: `${title(planet)} in the ${ordinal(house)} house`,
-      parts: [exactHouseLived.body],
-      body: exactHouseLived.body,
-      templateKey: exactHouseLived.contentKey,
-    };
-  }
   const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, { allowUnreviewed })
     ?? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, { allowUnreviewed });
 
@@ -170,19 +172,19 @@ export function renderNatalPlacement(facts, opts = {}) {
     planetRef: needsArticle ? `the ${title(planet)}` : title(planet),
     planetRefCap: needsArticle ? `The ${title(planet)}` : title(planet),
     signTitle: title(sign),
-    planetTopic: getVocab(`fallback-vocab/planet-topic/${planet}`, { allowUnreviewed }),
-    planetExcess: getVocab(`fallback-vocab/planet-excess/${planet}`, { allowUnreviewed }),
-    planetProductive: getVocab(`fallback-vocab/planet-productive/${planet}`, { allowUnreviewed }),
-    planetCore: getVocab(`fallback-vocab/planet-core/${planet}`, { allowUnreviewed }),
-    signStyle: getVocab(`fallback-vocab/sign-style/${sign}`, { allowUnreviewed }),
-    signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, { allowUnreviewed }),
-    planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, { allowUnreviewed }),
-    signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, { allowUnreviewed }),
+    planetTopic: getVocab(`fallback-vocab/planet-topic/${planet}`, voice, { allowUnreviewed }),
+    planetExcess: getVocab(`fallback-vocab/planet-excess/${planet}`, voice, { allowUnreviewed }),
+    planetProductive: getVocab(`fallback-vocab/planet-productive/${planet}`, voice, { allowUnreviewed }),
+    planetCore: getVocab(`fallback-vocab/planet-core/${planet}`, voice, { allowUnreviewed }),
+    signStyle: getVocab(`fallback-vocab/sign-style/${sign}`, voice, { allowUnreviewed }),
+    signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, voice, { allowUnreviewed }),
+    planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, voice, { allowUnreviewed }),
+    signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, voice, { allowUnreviewed }),
     planetIntro: getReaderLivedRow(`fallback-hook/planet-lived/${planet}`, voice, { allowUnreviewed })?.body
       ?? getHook(`fallback-hook/planet-intro/${planet}`, voice, { allowUnreviewed }),
     planetBest: getHook(`fallback-hook/planet-best/${planet}`, facts.voice === "you" ? "you" : "they", { allowUnreviewed }),
     placementSentences: getHook(`fallback-hook/placement-sentence/${planet}/${sign}`, voice, { allowUnreviewed }),
-    placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, { allowUnreviewed }).join(", or ") || null,
+    placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, voice, { allowUnreviewed }).join(", or ") || null,
   };
 
   // modifiers (attach to the house paragraph when present, else the sign paragraph)
@@ -205,38 +207,49 @@ export function renderNatalPlacement(facts, opts = {}) {
 
   const gapLabel = `${planet}/${sign}${house ? `/house-${house}` : ""}`;
   const parts = [];
+  const partKeys = [];
 
   const isNode = planet === "north-node" || planet === "south-node";
   if (isNode) {
     const j = getHook(`fallback-hook/node-journey/${planet}`, facts.voice === "you" ? "you" : "they", { allowUnreviewed });
     const oppSign = OPPOSITE_SIGN[sign];
-    const oppDir = getVocab(`fallback-vocab/node-direction/${oppSign}`, { allowUnreviewed });
+    const oppDir = getVocab(`fallback-vocab/node-direction/${oppSign}`, voice, { allowUnreviewed });
     ctx.nodeJourney = j ? j.replace(/\{\{oppositeSignTitle\}\}/g, title(oppSign)).replace(/\{\{oppositeDirection\}\}/g, oppDir ?? "") : null;
   }
   const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, { allowUnreviewed })
     ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
   parts.push(exactSignLived?.body ?? renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
+  partKeys.push(exactSignLived?.contentKey ?? signTemplate.contentKey);
 
   let headlineTemplate = signTemplate;
   if (house) {
-    const houseTemplate = getTemplate("fallback-template/natal.house-context");
-    const houseCtx = {
-      ...ctx,
-      houseOrdinal: ordinal(house),
-      houseMeaning: getHook(`fallback-hook/house-meaning/${house}`, voice, { allowUnreviewed }),
-      placementHouseSentences: getHook(`fallback-hook/placement-house-sentence/${planet}/${house}`, voice, { allowUnreviewed }),
-      modifierSentences: mods,
-    };
-    parts.push(renderTemplate(houseTemplate, houseCtx, gapLabel, voice));
-    headlineTemplate = houseTemplate;
-    ctx.houseOrdinal = houseCtx.houseOrdinal;
+    if (exactHouseLived) {
+      parts.push(exactHouseLived.body);
+      partKeys.push(exactHouseLived.contentKey);
+    } else {
+      const houseTemplate = getTemplate("fallback-template/natal.house-context");
+      const houseCtx = {
+        ...ctx,
+        houseOrdinal: ordinal(house),
+        houseMeaning: getHook(`fallback-hook/house-meaning/${house}`, voice, { allowUnreviewed }),
+        placementHouseSentences: getHook(`fallback-hook/placement-house-sentence/${planet}/${house}`, voice, { allowUnreviewed }),
+        modifierSentences: mods,
+      };
+      parts.push(renderTemplate(houseTemplate, houseCtx, gapLabel, voice));
+      partKeys.push(houseTemplate.contentKey);
+      headlineTemplate = houseTemplate;
+      ctx.houseOrdinal = houseCtx.houseOrdinal;
+    }
   }
 
   return {
-    headline: fixArticles(mustache(headlineTemplate.headline, ctx)),
+    headline: exactHouseLived
+      ? `${title(planet)} in the ${ordinal(house)} house`
+      : fixArticles(mustache(headlineTemplate.headline, ctx)),
     parts,
+    partKeys,
     body: parts.join("\n\n"),
-    templateKey: headlineTemplate.contentKey,
+    templateKey: exactHouseLived?.contentKey ?? headlineTemplate.contentKey,
   };
 }
 
@@ -290,11 +303,11 @@ export function renderNatalAspect(facts, opts = {}) {
     planetATitle: title(planetA),
     planetBTitle: title(planetB),
     aspectName: aspect,
-    aspectAdj: getVocab(`fallback-vocab/aspect-adj/${aspect}`, { allowUnreviewed }),
-    planetACore: getVocab(`fallback-vocab/planet-core/${planetA}`, { allowUnreviewed }),
-    planetBCore: getVocab(`fallback-vocab/planet-core/${planetB}`, { allowUnreviewed }),
+    aspectAdj: getVocab(`fallback-vocab/aspect-adj/${aspect}`, voice, { allowUnreviewed }),
+    planetACore: getVocab(`fallback-vocab/planet-core/${planetA}`, voice, { allowUnreviewed }),
+    planetBCore: getVocab(`fallback-vocab/planet-core/${planetB}`, voice, { allowUnreviewed }),
     aspectTypeLine: getHook(`fallback-hook/aspect-type/${aspect}`, voice, { allowUnreviewed }),
-    aspectMotion: getVocab(`fallback-vocab/aspect-motion/${aspect}`, { allowUnreviewed }),
+    aspectMotion: getVocab(`fallback-vocab/aspect-motion/${aspect}`, voice, { allowUnreviewed }),
     possessiveLow: facts.voice === "you" ? "your" : `${facts.voice}'s`,
     pairSentences: pair,
   };
@@ -332,6 +345,7 @@ const EMPTY_HOUSE_RULERS = { modern: EMPTY_HOUSE_V14_MODERN_RULER, traditional: 
 // detection engine stays in the app, the words come from here. ----
 const PATTERN_NAMES = { t_square: "T-Square", grand_square: "Grand Cross", grand_trine: "Grand Trine", kite: "Kite", yod: "Yod", mystic_rectangle: "Mystic Rectangle" };
 export function renderAspectPattern({ type, apexTitle, mode, element, activation = false, voice = "you" }) {
+  const vocabularyVoice = voice === "you" ? "you" : "they";
   const pick = (key) => { const r = hooks.get(key); return r ? (voice === "you" ? r.body_you : r.body_they) : null; };
   const body = pick(`fallback-hook/aspect-pattern${activation ? "-activation" : ""}/${type}`);
   if (!body) throw new SourceGapError(`SOURCE_GAP: aspect pattern ${type}${activation ? " activation" : ""}`);
@@ -342,9 +356,9 @@ export function renderAspectPattern({ type, apexTitle, mode, element, activation
   }
   if (!activation) {
     const qual = mode
-      ? getVocab(`fallback-vocab/pattern-mode/${mode}`, { allowUnreviewed })
+      ? getVocab(`fallback-vocab/pattern-mode/${mode}`, vocabularyVoice)
       : element
-        ? getVocab(`fallback-vocab/pattern-element/${element}`, { allowUnreviewed })
+        ? getVocab(`fallback-vocab/pattern-element/${element}`, vocabularyVoice)
         : null;
     if (qual) paras.push(`It runs as ${qual}.`);
   }
@@ -399,8 +413,8 @@ export function renderNatalEmptyHouse(facts, opts = {}) {
   const topicMKey = `fallback-vocab/empty-house-ruler-jurisdiction/${rulerHouse}`;
   const topicNKey = `fallback-vocab/empty-house-bridge-topic-short/${house}`;
   const bridgeTemplate = opts.includeEmptyHouseBridge ? findTemplate(bridgeTemplateKey, opts) : null;
-  const topicM = bridgeTemplate ? getVocab(topicMKey, opts) : null;
-  const topicN = house === 1 ? null : (bridgeTemplate ? getVocab(topicNKey, opts) : null);
+  const topicM = bridgeTemplate ? getVocab(topicMKey, v, opts) : null;
+  const topicN = house === 1 ? null : (bridgeTemplate ? getVocab(topicNKey, v, opts) : null);
   const planet = ruler === "sun" || ruler === "moon" ? `the ${title(ruler)}` : title(ruler);
   const bridge = bridgeTemplate && topicM && (house === 1 || topicN)
     ? renderTemplate(bridgeTemplate, {

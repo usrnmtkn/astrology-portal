@@ -1,5 +1,6 @@
 import { Fragment, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
+import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { AspectGiftLessonGroup } from "../../components/charts/AspectGiftLessonGroup";
@@ -19,6 +20,7 @@ import {
 import { resolvedNatalAspectPatternSectionLabel } from "./natalAspectPatternLabels";
 import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
+import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
 
 type YouTab = "transits" | "chart";
 type NatalChartViewMode = "circle" | "table";
@@ -36,6 +38,7 @@ export type PersonalTimingSummary = {
   headline: string;
   summary: string;
   secondary?: string;
+  moonContext?: DailyMoonContext;
   writeup?: Array<{
     heading?: string;
     body: string[];
@@ -125,6 +128,8 @@ export type YouPageProps = {
   signatureTitle: string;
   signaturesReady: boolean;
   standaloneTransitRows?: ReactNode[];
+  transitDateLabel: string;
+  transitsLoading?: boolean;
   weeklyTransitRows?: ReactNode[];
   transitArticle?: YouTransitArticle | null;
 };
@@ -490,6 +495,8 @@ function YouUpdatesTab({
   natalAspectPatternTimingOverrides,
   onCreateChart,
   standaloneTransitRows = [],
+  transitDateLabel,
+  transitsLoading = false,
   weeklyTransitRows = []
 }: {
   aspectRows: ReactNode[];
@@ -502,6 +509,8 @@ function YouUpdatesTab({
   onCreateChart: () => void;
   personalTimingSummary?: PersonalTimingSummary | null;
   standaloneTransitRows?: ReactNode[];
+  transitDateLabel: string;
+  transitsLoading?: boolean;
   weeklyTransitRows?: ReactNode[];
 }) {
   const dailyHeadline = dailyUpdateSummary?.headline.trim();
@@ -561,6 +570,9 @@ function YouUpdatesTab({
               ))}
             </div>
           )}
+          {dailyUpdateSummary.moonContext ? (
+            <DailyMoonContextTags context={dailyUpdateSummary.moonContext} />
+          ) : null}
         </section>
       )}
       {hasSavedCurrentCity
@@ -579,7 +591,7 @@ function YouUpdatesTab({
         ) : null}
       {dailyHoroscopeAssembly?.specialSections.map((section) => (
         <section className="daily-special-section" key={section.headline}>
-          <span className="eyebrow section-label">Today&apos;s Sky</span>
+          <span className="eyebrow section-label">{transitDateLabel} sky</span>
           <h3>{section.headline}</h3>
           {section.body.split(/\n{2,}/).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         </section>
@@ -593,7 +605,7 @@ function YouUpdatesTab({
         <section className="you-empty-card" aria-label="Current city needed">
           <span>Updates</span>
           <h3>Add your current city.</h3>
-          <p>We need your current city to localize today’s sky against your chart.</p>
+          <p>We need your current city to localize the selected date’s sky against your chart.</p>
           <button type="button" onClick={onCreateChart}>Add current city →</button>
         </section>
       )}
@@ -610,10 +622,15 @@ function YouUpdatesTab({
           </div>
         </>
       )}
-      {hasSavedCurrentCity && aspectRows.length === 0 && standaloneTransitRows.length === 0 && (
+      {hasSavedCurrentCity && transitsLoading && (
+        <div className="feature-loading-fallback" role="status">
+          Calculating transits for {transitDateLabel}…
+        </div>
+      )}
+      {hasSavedCurrentCity && !transitsLoading && aspectRows.length === 0 && standaloneTransitRows.length === 0 && (
         <section className="you-empty-card" aria-label="Transit setup">
           <span>Updates</span>
-          <h3>No major updates are active today.</h3>
+          <h3>No major updates are active for {transitDateLabel}.</h3>
           <p>The sky is still moving, but no major personalized transit is pressing on your natal placements in this window.</p>
           <button type="button" onClick={onCreateChart}>Edit details →</button>
         </section>
@@ -1081,18 +1098,21 @@ export function YouPage({
   signatureTitle,
   signaturesReady,
   standaloneTransitRows = [],
+  transitDateLabel,
+  transitsLoading = false,
   weeklyTransitRows = [],
   transitArticle
 }: YouPageProps) {
   const [profileTab, setProfileTab] = useState<YouTab>("transits");
   const [natalChartViewMode, setNatalChartViewMode] = useState<NatalChartViewMode>("circle");
   const [natalAspectPatternDetail, setNatalAspectPatternDetail] = useState<NatalAspectPatternDetailSelection | null>(null);
+  const natalOnlyAspects = canonicalNatalAspectsForSnapshot(natalSky);
   const natalChart = natalSky ? (
     <div className="wheel natal-wheel chart-shell" id="wheel-natal" aria-label="Natal chart wheel">
       <div className="chart-frame">
         <SkyWheel
           positions={natalSky.positions}
-          aspects={natalSky.aspects}
+          aspects={natalOnlyAspects}
           ascendant={natalSky.ascendant}
           ascendantLongitude={natalSky.ascendantLongitude}
           midheavenLongitude={natalSky.midheavenLongitude}
@@ -1215,6 +1235,8 @@ export function YouPage({
               onCreateChart={onCreateChart}
               personalTimingSummary={personalTimingSummary}
               standaloneTransitRows={standaloneTransitRows}
+              transitDateLabel={transitDateLabel}
+              transitsLoading={transitsLoading}
               weeklyTransitRows={weeklyTransitRows}
             />
           )}

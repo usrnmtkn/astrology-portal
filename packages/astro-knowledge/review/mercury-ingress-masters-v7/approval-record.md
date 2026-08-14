@@ -1,8 +1,21 @@
-# Mercury ingress article masters V7 approval record
+# Mercury ingress article masters V7 superseded approval record
 
 Date: 2026-08-11
+Status: `owner_rejected_for_serving` / `needs_review`
 
-## Owner ruling
+## Corrected owner ruling
+
+> “what happened to the sky placements? I didn't approve this, and it reverted
+> to a legacy fallback?”
+
+> “yes, proceed - restore”
+
+The V7 articles are not owner-approved serving copy. They are preserved unchanged
+only as unapproved review and derivation material. They must not be supplied as
+positive owner-approved generation evidence and must not replace the previously
+approved Mercury placement fallbacks.
+
+## Superseded interpretation
 
 > STEP 1 - Land the twelve article masters. Source of truth:
 > TLDR-Mercury-Ingress-Articles-V7.md (owner-ruled surgeries applied; governance
@@ -15,7 +28,10 @@ Date: 2026-08-11
 > placeholder conversion in the PR). Alternative hooks are stored as variant
 > rows for rotation, not rendered as body copy.
 
-## Landed authority
+The instruction below was incorrectly treated as exact-wording owner approval for
+the serving payload. It is retained for provenance, not authority.
+
+## Historical ingestion details (not serving authority)
 
 - Owner source SHA-256: `36185857dc2710b8e0e59e100a33fe8be225632285b0b0ad69e8037fa633a476`
 - Article masters: 12
@@ -24,4 +40,5 @@ Date: 2026-08-11
 - Date convention retained: `{{entryDate}} to {{exitDate}}` in the existing engine fact line
 - Non-target row digest before and after: `4591fba73e432d30e9edeea3f32fa972fcca643898a543748da9c1c05847ec5f`
 
-The copied Markdown file is the upstream derivation source. Step 2 derivations are not included in this change and receive no staging or approval from this record.
+The copied Markdown file remains available for review. Step 2 derivations remain
+documentation-only and receive no staging or approval from this record.

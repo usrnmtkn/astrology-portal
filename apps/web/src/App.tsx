@@ -186,7 +186,7 @@ import {
   comparisonPointRole,
   natalElementBalance,
   normalizedAngle,
-  selectDailyGlanceDriver,
+  selectDailyGlanceCivilDayDriver,
   transitAspectDefinitions,
   wholeSignHouseForSign,
   zodiacLongitude,
@@ -211,6 +211,7 @@ import {
 import { loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
 import { uniqueDisplayableNatalAspects as uniqueNatalAspectRows } from "./services/natalAspectDisplay";
 import { loadPlanetTopicVocabulary, planetTopicPhrase, signNeedPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
+import { canonicalNatalAspectsForSnapshot } from "./services/natalAspectFacts";
 import { interpolateTemplateString, type TemplateSlotValues } from "./services/templateInterpolation";
 import {
   compositeAspectContentKey,
@@ -232,9 +233,11 @@ import {
   clearPendingSocialInvitation,
   claimPendingSocialInvitation,
   declinePendingSocialInvitation,
+  hasPendingSocialInvitation,
   listSocialFriendRequests,
   loadOwnSocialProfile,
   previewPendingSocialInvitation,
+  preservePendingSocialInvitationForEmailConfirmation,
   subscribeToSocialChanges,
   syncOwnSocialProfile
 } from "./services/socialFriends";
@@ -550,6 +553,7 @@ type NormalizedTransitHouseArticle = {
   surface: "transit-house";
   status: NormalizedSurfaceStatus;
   sections: NormalizedTransitHouseSection[];
+  detailSections: NormalizedTransitHouseSection[];
 };
 
 type HouseOverlaySlot = "overlay-meaning";
@@ -1870,19 +1874,22 @@ function normalizeDailyTimingSurface(generated: LiveGeneratedContent | null, sum
   };
 }
 
-function dailyGlanceDriver(currentSky: SkySnapshot, natalSky: SkySnapshot) {
+function dailyGlanceDriver(currentSky: SkySnapshot, natalSky: SkySnapshot, birthTimeUnknown = false) {
   const moon = currentSky.positions.find((position) => position.planet === "Moon");
 
   if (!moon || typeof moon.longitude !== "number") {
     return null;
   }
 
-  const house = typeof moon.house === "number" && moon.house >= 1 && moon.house <= 12
-    ? moon.house
-    : natalSky.ascendant
-      ? wholeSignHouseForSign(moon.sign, natalSky.ascendant)
-      : null;
-  const driver = selectDailyGlanceDriver(moon.longitude, natalSky.positions, house);
+  const house = !birthTimeUnknown && natalSky.ascendant
+    ? wholeSignHouseForSign(moon.sign, natalSky.ascendant)
+    : null;
+  const driver = selectDailyGlanceCivilDayDriver(
+    moon.longitude,
+    moon.speed,
+    natalSky.positions,
+    house
+  );
 
   return driver?.kind === "aspect"
     ? { ...driver, natal: normalizeContentIdPart(driver.natal) }
@@ -1900,8 +1907,14 @@ const pairDailyAspectGroups: Record<string, string> = {
 
 
 
-function dailyGlanceGeneratedContent(profile: UserProfile, currentSky: SkySnapshot, natalSky: SkySnapshot, targetDate: string): LiveGeneratedContent | null {
-  const driver = dailyGlanceDriver(currentSky, natalSky);
+function dailyGlanceGeneratedContent(
+  profile: UserProfile,
+  currentSky: SkySnapshot,
+  natalSky: SkySnapshot,
+  targetDate: string,
+  birthTimeUnknown = false
+): LiveGeneratedContent | null {
+  const driver = dailyGlanceDriver(currentSky, natalSky, birthTimeUnknown);
 
   if (!driver) {
     return null;
@@ -2677,6 +2690,38 @@ function dateInputValue(date: Date = new Date()) {
 
 function dateFromInput(value: string) {
   return new Date(`${value}T12:00:00`);
+}
+
+function isDateInputValue(value: string | null): value is string {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/u.test(value)) {
+    return false;
+  }
+
+  const parsed = dateFromInput(value);
+  return !Number.isNaN(parsed.getTime()) && dateInputValue(parsed) === value;
+}
+
+function transitDateFromUrl() {
+  try {
+    const value = new URL(window.location.href).searchParams.get("date");
+    return isDateInputValue(value) ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+function getInitialTransitDate() {
+  return transitDateFromUrl() ?? dateInputValue();
+}
+
+function updateTransitDateUrl(value: string, mode: "push" | "replace" = "push") {
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.set("date", value);
+    window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
+  } catch {
+    // URL state is an enhancement; the selected date still works in memory.
+  }
 }
 
 function timeInZoneForInput(date: Date, timeZone = browserTimeZone()) {
@@ -4242,50 +4287,6 @@ function reviewedSkyAspectWritingSection(
   }
 }
 
-function fallbackSkyAspectWritingSection(
-  aspect: SkySnapshot["aspects"][number],
-  positions?: PlanetPosition[]
-): NormalizedSkyAspectSection | null {
-  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
-  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
-
-  try {
-    const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
-      a: normalizeContentIdPart(aspect.from),
-      b: normalizeContentIdPart(aspect.to),
-      aspect: normalizeContentIdPart(aspect.type),
-      aSign: firstSign ? normalizeContentIdPart(firstSign) : undefined,
-      bSign: secondSign ? normalizeContentIdPart(secondSign) : undefined
-    });
-
-    if (rendered.contentKey?.startsWith("fallback-hook/sky-aspect-")) {
-      return null;
-    }
-
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
-
-    if (!body || !isReaderFacingCopy(body)) {
-      return null;
-    }
-
-    return {
-      slot: "meaning",
-      required: true,
-      layer: "fallback",
-      tier: "fallback-architecture-v3",
-      sourceKeys: [rendered.templateKey],
-      heading: rendered.headline || skyAspectDisplayTitle(aspect),
-      body
-    };
-  } catch (error) {
-    if (error instanceof FallbackV3SourceGapError) {
-      return null;
-    }
-
-    throw error;
-  }
-}
-
 type SkyWritingAspectBeat = {
   aspect: string;
   applying?: boolean;
@@ -4309,13 +4310,11 @@ function normalizeSkyAspectSurface(
   const authoredSection = approvedExactSkyAspectWritingSection(aspect, positions);
   const reviewedSection = reviewedSkyAspectWritingSection(aspect, positions, "generic");
   const generatedSection = generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt);
-  const fallbackSection = fallbackSkyAspectWritingSection(aspect, positions);
   const selectedSection = selectSkyAspectCopyByPrecedence({
     signSpecific: signAwareSection,
     exact: authoredSection,
     phrasebook: reviewedSection,
-    generated: generatedSection,
-    fallback: fallbackSection
+    generated: generatedSection
   });
   const sections = selectedSection ? [selectedSection] : [];
 
@@ -5100,6 +5099,7 @@ function currentSkyPlacementDetailArticle({
   articleMode = "current",
   generatedAt,
   generatedContent,
+  onOpenDetail,
   position,
   positions
 }: {
@@ -5160,6 +5160,21 @@ function currentSkyPlacementDetailArticle({
         pointName: position.planet,
         positions
       });
+  const sourceGapAspectRows = isRegistryArticle
+    ? []
+    : relatedAspectRowsForPlacement({
+        aspects: aspects.filter((aspect) => (
+          normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt).sections.length === 0
+        )),
+        generatedAt,
+        generatedContent,
+        mode: "sky",
+        onOpenSkyAspect: onOpenDetail
+          ? (aspect) => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions))
+          : undefined,
+        pointName: position.planet,
+        positions
+      }).filter((row): row is SkyDetailRelatedAspectRow => Boolean(row));
   const articleSections = (placementSection?.articleSections ?? []).map((section) => ({
     heading: section.heading,
     body: section.body,
@@ -5190,6 +5205,12 @@ function currentSkyPlacementDetailArticle({
     suppressTldr: authoredBody.length > 0 && !isRetrograde,
     body: articleSections.length > 0 ? [] : body,
     sections: articleSections.length > 0 ? articleSections : relatedAspectSections,
+    relatedAspects: sourceGapAspectRows.length > 0
+      ? {
+          heading: "Aspect details",
+          rows: sourceGapAspectRows
+        }
+      : undefined,
     historicalLookback,
     astrologyDrilldown: null
   };
@@ -5277,7 +5298,7 @@ function skyDetailFromRoutePath(
       && skyRoutePartMatches(candidate.to, thirdPart)
     ));
 
-    if (!aspect || normalizeSkyAspectSurface(aspect, generatedContent, sky.positions, sky.generatedAt).sections.length === 0) {
+    if (!aspect) {
       return null;
     }
 
@@ -5375,10 +5396,6 @@ function relatedAspectRowsForPlacement({
       const normalizedSkySurface = mode === "sky" && generatedAt
         ? normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt)
         : null;
-
-      if (mode === "sky" && !normalizedSkySurface?.sections.length) {
-        return null;
-      }
 
       const otherPoint = aspectOtherPoint(aspect, pointName);
       const title = `${pointName} ${titleCase(aspect.type)} ${otherPoint}`;
@@ -7487,6 +7504,7 @@ function normalizeTransitHouseSurface(
   events: ReturnType<typeof transitHouseAspectEvents> = []
 ): NormalizedTransitHouseArticle {
   let section: NormalizedTransitHouseSection | null = null;
+  let detailSections: NormalizedTransitHouseSection[] = [];
 
   try {
     const rendered = transitSynastryFallbackRendererV3.renderTransitHouse({
@@ -7500,11 +7518,44 @@ function normalizeTransitHouseSurface(
       window: windowLabel,
       voice
     });
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
     const layer = rendered.templateKey.startsWith("authored/") ? "authored" : "fallback";
     const renderedWindow = typeof rendered.window === "string" && rendered.window.trim()
       ? rendered.window
       : windowLabel || null;
+    const fallbackSourceKeys = [
+      rendered.contentKey ?? "",
+      rendered.templateKey,
+      ...(layer === "fallback"
+        ? [
+            "fallback-template/transit.house",
+            `fallback-hook/transit-effect-house/${normalizeContentIdPart(transit.transitPlanet)}`,
+            `fallback-vocab/house-topic/${house}`
+          ]
+        : [])
+    ].filter(Boolean);
+    detailSections = (rendered.parts as string[]).flatMap((part: string, index: number): NormalizedTransitHouseSection[] => {
+      const partBody = readerFacingParagraphs([part]).join("\n\n");
+
+      return partBody
+        ? [{
+            slot: "house-activation" as const,
+            required: true,
+            layer,
+            tier: layer === "authored"
+              ? "fallback-architecture-v3-authored" as const
+              : "fallback-architecture-v3" as const,
+            sourceKeys: rendered.partSourceKeys?.[index] ?? fallbackSourceKeys,
+            heading: rendered.headline || (
+              voice === "you"
+                ? `${transit.transitPlanet} through your ${ordinalHouse(house)} house`
+                : `${transit.transitPlanet} through ${possessiveLabel(voice)} ${ordinalHouse(house)} house`
+            ),
+            body: partBody,
+            window: renderedWindow
+          }]
+        : [];
+    });
+    const body = detailSections.map((detailSection: NormalizedTransitHouseSection) => detailSection.body).join("\n\n");
 
     section = body && isReaderFacingCopy(body)
       ? {
@@ -7514,17 +7565,7 @@ function normalizeTransitHouseSurface(
           tier: layer === "authored"
             ? "fallback-architecture-v3-authored"
             : "fallback-architecture-v3",
-          sourceKeys: [
-            "tldrastro-fallback-architecture-v3",
-            rendered.contentKey ?? "",
-            rendered.templateKey,
-            ...(layer === "fallback"
-              ? [
-                  "fallback-template/transit.house",
-                  `fallback-vocab/house-topic/${house}`
-                ]
-              : [])
-          ].filter(Boolean),
+          sourceKeys: rendered.sourceKeys ?? fallbackSourceKeys,
           heading: rendered.headline || (
             voice === "you"
               ? `${transit.transitPlanet} through your ${ordinalHouse(house)} house`
@@ -7543,7 +7584,8 @@ function normalizeTransitHouseSurface(
   return {
     surface: "transit-house",
     status: section ? (section.layer === "authored" ? "servable" : "partial") : "not-servable",
-    sections: section ? [section] : []
+    sections: section ? [section] : [],
+    detailSections: section ? detailSections : []
   };
 }
 
@@ -10324,7 +10366,7 @@ export function App() {
   const [dyslexiaFriendlyFont, setDyslexiaFriendlyFont] = useState(getInitialDyslexiaFont);
   const [journalPromptsEnabled, setJournalPromptsEnabled] = useState(getInitialJournalPrompts);
   const [guestHouseSignLabelStyle, setGuestHouseSignLabelStyle] = useState<HouseSignLabelStyle>(getInitialHouseSignLabelStyle);
-  const [skyDate, setSkyDate] = useState(dateInputValue);
+  const [skyDate, setSkyDate] = useState(getInitialTransitDate);
   const [mode, setMode] = useState<PortalMode>(getInitialPortalMode);
   const [location, setLocation] = useState<LocationInput>(initialLocationState.location);
   const [manualLocation, setManualLocation] = useState(initialLocationState.location.label);
@@ -10365,6 +10407,7 @@ export function App() {
     setAccountIntentState(intent);
   }, []);
   const pendingInvitationCapturedRef = useRef(false);
+  const [pendingInvitationForSignup, setPendingInvitationForSignup] = useState(false);
   const [launchChartSetupAfterAuth, setLaunchChartSetupAfterAuth] = useState(false);
   const [chartModalOpen, setChartModalOpen] = useState(false);
   const [chartModalStep, setChartModalStep] = useState<"overview" | "birth" | "city">("overview");
@@ -10372,6 +10415,7 @@ export function App() {
   const [chartModalMessage, setChartModalMessage] = useState("");
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [profileTransits, setProfileTransits] = useState<TransitItem[]>([]);
+  const [profileTransitsTargetDate, setProfileTransitsTargetDate] = useState<string | null>(null);
   const [profileNatalSky, setProfileNatalSky] = useState<SkySnapshot | null>(null);
   const [profileNatalCalculationStatus, setProfileNatalCalculationStatus] = useState<NatalChartCalculationStatus>("idle");
   const [profileNatalCalculationError, setProfileNatalCalculationError] = useState("");
@@ -10386,7 +10430,7 @@ export function App() {
   const lastSocialProfileSaveRef = useRef("");
   const initialSkyCacheKey = skySnapshotCacheKey(
     withTimeZone(initialLocationState.location),
-    dateInputValue()
+    getInitialTransitDate()
   );
   const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey);
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
@@ -10426,6 +10470,10 @@ export function App() {
   const showNatalAspectPatterns = natalAspectPatternReaderEnabled();
   const showNatalAspectPatternActivation = showNatalAspectPatterns && natalAspectPatternActivationEnabled();
   const activeTransits = rankTransitsByLifeAreaFocus(profileTransits.length > 0 ? profileTransits : sampleTransits, userLifeAreaFocus);
+  const selectedDateSky = sky?.generatedAt.slice(0, 10) === skyDate ? sky : null;
+  const selectedDateTransits = profileTransitsTargetDate === skyDate
+    ? rankTransitsByLifeAreaFocus(profileTransits, userLifeAreaFocus)
+    : [];
   const selectedTransit = activeTransits.find((transit) => transit.id === selectedTransitId) ?? activeTransits[0] ?? sampleTransits[0];
   const isSignupMode = mode === "profile" && !userProfile;
   const isFriendsMode = mode === "friends";
@@ -10570,9 +10618,11 @@ export function App() {
 
   useEffect(() => {
     const capturedInvitation = captureSocialInvitationFromUrl();
+    const hasPendingInvitation = Boolean(capturedInvitation) || hasPendingSocialInvitation();
 
-    pendingInvitationCapturedRef.current = Boolean(capturedInvitation);
-    if (capturedInvitation && !userProfile) {
+    pendingInvitationCapturedRef.current = hasPendingInvitation;
+    setPendingInvitationForSignup(hasPendingInvitation);
+    if (hasPendingInvitation && !userProfile) {
       setAccountIntent("create");
       navigateToPortalMode("profile");
     }
@@ -10862,7 +10912,8 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
-    const friendDeferredFallbackRequested = friendRelationshipContentRequests.has("compatibility")
+    const friendDeferredFallbackRequested = friendNatalContentRequested
+      || friendRelationshipContentRequests.has("compatibility")
       || friendRelationshipContentRequests.has("transits")
       || friendRelationshipContentRequests.has("synastry")
       || friendRelationshipContentRequests.has("composite");
@@ -10890,7 +10941,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [friendRelationshipContentRequests, mode]);
+  }, [friendNatalContentRequested, friendRelationshipContentRequests, mode]);
 
   useEffect(() => {
     let cancelled = false;
@@ -10989,6 +11040,7 @@ export function App() {
   useEffect(() => {
     function handlePortalUrlChange() {
       const urlMode = portalModeFromUrl();
+      setSkyDate(transitDateFromUrl() ?? dateInputValue());
 
       if (!urlMode) {
         return;
@@ -11917,6 +11969,7 @@ export function App() {
     if (!birthDate || !birthCity || !birthTime || !primaryChart?.birthLocation?.timeZone) {
       profileNatalSkyRequestRef.current = null;
       setProfileNatalSky(null);
+      setProfileTransitsTargetDate(null);
       setProfileNatalCalculationStatus("idle");
       setProfileNatalCalculationError("");
       setProfileNatalAspectPatternStatus("idle");
@@ -11953,6 +12006,7 @@ export function App() {
           : "idle"
       );
       setProfileTransits(nextTransits);
+      setProfileTransitsTargetDate(sky?.generatedAt.slice(0, 10) ?? null);
       setTransitsDrawn(true);
       setSelectedTransitId((currentId) => (
         nextTransits.some((transit) => transit.id === currentId)
@@ -12052,6 +12106,7 @@ export function App() {
         profileNatalSkyRequestRef.current = null;
         setProfileNatalSky(null);
         setProfileTransits([]);
+        setProfileTransitsTargetDate(null);
         setTransitsDrawn(false);
         setProfileNatalCalculationStatus("error");
         setProfileNatalCalculationError(errorMessage);
@@ -12082,36 +12137,50 @@ export function App() {
   useEffect(() => {
     const primaryChart = userProfile?.charts[0];
 
-    if (!isProfileMode || !userProfile || !primaryChart || !sky || !profileNatalSky) {
+    if (!isProfileMode || !userProfile || !primaryChart || !selectedDateSky || !profileNatalSky) {
       setPersonalTimingGenerated(null);
       setPersonalTimingGeneratedStatus("idle");
       return;
     }
 
-    const rendered = dailyGlanceGeneratedContent(userProfile, sky, profileNatalSky, skyDate);
+    const rendered = dailyGlanceGeneratedContent(
+      userProfile,
+      selectedDateSky,
+      profileNatalSky,
+      skyDate,
+      primaryChart.birthTime === "Time unknown"
+    );
 
     setPersonalTimingGenerated(rendered);
     setPersonalTimingGeneratedStatus(rendered ? "ready" : "error");
   }, [
     isProfileMode,
-    sky,
+    selectedDateSky,
     skyDate,
     profileNatalSky,
     userProfile?.id,
-    userProfile?.charts[0]?.id
+    userProfile?.charts[0]?.id,
+    userProfile?.charts[0]?.birthTime
   ]);
 
   useEffect(() => {
     const primaryChart = userProfile?.charts[0];
 
-    if (!isProfileMode || !userProfile || !remoteAccountId || !primaryChart || !transitsDrawn) {
+    if (
+      !isProfileMode
+      || !userProfile
+      || !remoteAccountId
+      || !primaryChart
+      || !transitsDrawn
+      || profileTransitsTargetDate !== skyDate
+    ) {
       setPersonalTransitGeneratedContent(new Map());
       return;
     }
 
     const profile = userProfile;
     const subjectId = primaryChart.id;
-    const transits = rankTransitsByLifeAreaFocus(profileTransits.length > 0 ? profileTransits : sampleTransits, normalizeChartSettings(profile.settings).lifeAreaFocus).slice(0, 8);
+    const transits = rankTransitsByLifeAreaFocus(profileTransits, normalizeChartSettings(profile.settings).lifeAreaFocus).slice(0, 8);
 
     if (transits.length === 0) {
       setPersonalTransitGeneratedContent(new Map());
@@ -12241,6 +12310,7 @@ export function App() {
     };
   }, [
     profileTransits,
+    profileTransitsTargetDate,
     remoteAccountId,
     isProfileMode,
     skyDate,
@@ -12768,6 +12838,7 @@ export function App() {
           nextRising = natalBigThree.rising;
           nextChart = { ...nextChart, birthLocation: resolvedBirthLocation };
           setProfileTransits(nextTransits);
+          setProfileTransitsTargetDate(sky?.generatedAt.slice(0, 10) ?? null);
           setSelectedTransitId(nextTransits[0]?.id ?? sampleTransits[0].id);
         } catch {
           chartCalculationFailed = true;
@@ -12804,19 +12875,36 @@ export function App() {
 
   const isTodayMode = mode === "guest" || mode === "member";
   const isSkyLoading = isTodayMode && skyStatus === "loading";
-  const showSkyDateControls = isTodayMode && !selectedSkyDetail;
+  const isPersonalTransitDateMode = mode === "profile" || mode === "friends";
+  const isTransitDateMode = isTodayMode || isPersonalTransitDateMode;
+  const showTransitDateControls = isTransitDateMode && !selectedSkyDetail;
+  const showSkyLocationControl = isTodayMode;
   const needsChartSetup = Boolean(userProfile && !hasCompleteChartSetup(userProfile));
   const todaySkyDate = dateInputValue();
   const tomorrowSkyDate = dateInputValue(new Date(localDayStart(new Date()).getTime() + 86_400_000));
+  const transitDateButtonLabel = isPersonalTransitDateMode && skyDate === todaySkyDate
+    ? "Today"
+    : formatSkyHeaderDateLabel(skyDate);
   const skyFullChartTitleId = "sky-full-chart-title";
   const skyFullChartMeta = `${formatSkyFullChartDate(skyDate)} · ${compactCityLabel(location.label)}`;
 
-  function selectSkyDateFromMobileControls(nextDate: string) {
+  function selectTransitDate(nextDate: string) {
+    if (!isDateInputValue(nextDate)) {
+      return;
+    }
+
+    if (nextDate !== skyDate) {
+      updateTransitDateUrl(nextDate);
+    }
+
     setSkyDate(nextDate);
     setDatePickerOpen(false);
     setCityPickerOpen(false);
     setCityPickerOpenedFromMobileControls(false);
     setMobileSkyControlsOpen(false);
+    window.requestAnimationFrame(() => (
+      mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current
+    )?.focus());
   }
 
   function openMobileDatePicker() {
@@ -12949,15 +13037,26 @@ export function App() {
           </div>
 
         <div className="topbar-actions">
-          {showSkyDateControls && (
+          {showTransitDateControls && (
             <button
               className="sky-header-date-button"
               type="button"
               ref={mobileDatePickerTriggerRef}
-              aria-expanded={mobileSkyControlsOpen}
-              aria-controls="mobile-sky-controls"
-              aria-label={`${formatSkyHeaderDateLabel(skyDate)}, ${compactCityLabel(location.label)}`}
+              aria-expanded={isPersonalTransitDateMode ? datePickerOpen : mobileSkyControlsOpen}
+              aria-controls={isPersonalTransitDateMode ? "sky-date-picker" : "mobile-sky-controls"}
+              aria-label={showSkyLocationControl
+                ? `${formatSkyHeaderDateLabel(skyDate)}, ${compactCityLabel(location.label)}`
+                : `Pick Date. Viewing transits for ${formatSkyFullChartDate(skyDate)}`}
               onClick={() => {
+                if (isPersonalTransitDateMode) {
+                  if (datePickerOpen) {
+                    setDatePickerOpen(false);
+                  } else {
+                    openMobileDatePicker();
+                  }
+                  return;
+                }
+
                 setCityPickerOpen(false);
                 setCityPickerOpenedFromMobileControls(false);
                 setDatePickerOpen(false);
@@ -12965,17 +13064,17 @@ export function App() {
                 setMobileSkyControlsOpen((isOpen) => !isOpen);
               }}
             >
-              <span className="sky-header-date-button__date">{formatSkyHeaderDateLabel(skyDate)}</span>
+              <span className="sky-header-date-button__date">{transitDateButtonLabel}</span>
               <ChevronDown className="sky-header-date-button__chevron" size={16} aria-hidden="true" />
             </button>
           )}
-          {showSkyDateControls && mobileSkyControlsOpen && (
+          {showTransitDateControls && !isPersonalTransitDateMode && mobileSkyControlsOpen && (
             <div
               className="mobile-sky-controls"
               id="mobile-sky-controls"
               ref={mobileSkyControlsRef}
               role="dialog"
-              aria-label="Sky controls"
+              aria-label={showSkyLocationControl ? "Sky controls" : "Transit date controls"}
             >
               {cityPickerOpenedFromMobileControls ? (
                 <form
@@ -13025,18 +13124,18 @@ export function App() {
                 </form>
               ) : (
                 <>
-                  <div className="mobile-sky-controls__tabs" role="group" aria-label="Sky date shortcuts">
+                  <div className="mobile-sky-controls__tabs" role="group" aria-label="Transit date shortcuts">
                     <button
                       type="button"
                       className={skyDate === todaySkyDate ? "active" : ""}
-                      onClick={() => selectSkyDateFromMobileControls(todaySkyDate)}
+                      onClick={() => selectTransitDate(todaySkyDate)}
                     >
                       Today
                     </button>
                     <button
                       type="button"
                       className={skyDate === tomorrowSkyDate ? "active" : ""}
-                      onClick={() => selectSkyDateFromMobileControls(tomorrowSkyDate)}
+                      onClick={() => selectTransitDate(tomorrowSkyDate)}
                     >
                       Tomorrow
                     </button>
@@ -13049,16 +13148,20 @@ export function App() {
                       Date
                     </button>
                   </div>
-                  <span className="mobile-sky-controls__label">Location</span>
-                  <button
-                    type="button"
-                    className="mobile-sky-controls__location"
-                    ref={cityPickerTriggerRef}
-                    onClick={openMobileCityPicker}
-                  >
-                    <MapPin size={18} aria-hidden="true" />
-                    <span>{compactCityLabel(location.label)}</span>
-                  </button>
+                  {showSkyLocationControl && (
+                    <>
+                      <span className="mobile-sky-controls__label">Location</span>
+                      <button
+                        type="button"
+                        className="mobile-sky-controls__location"
+                        ref={cityPickerTriggerRef}
+                        onClick={openMobileCityPicker}
+                      >
+                        <MapPin size={18} aria-hidden="true" />
+                        <span>{compactCityLabel(location.label)}</span>
+                      </button>
+                    </>
+                  )}
                 </>
               )}
             </div>
@@ -13226,6 +13329,18 @@ export function App() {
         </header>
       )}
 
+      {showTransitDateControls && datePickerOpen && (
+        <SkyDatePicker
+          value={skyDate}
+          pickerRef={datePickerRef}
+          onClose={() => {
+            setDatePickerOpen(false);
+            (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
+          }}
+          onSelect={selectTransitDate}
+        />
+      )}
+
       {selectedSkyDetail ? (
         <>
           {skyPlacementFallbackStatus === "loading" ? (
@@ -13273,21 +13388,6 @@ export function App() {
             <section className={isCalendarMode ? "detail-panel calendar-content-column" : "detail-panel sky-content-column chart-layout__content"} aria-label="Portal details">
               {isTodayMode && (
                 <SkyRoute>
-                  {datePickerOpen && (
-                    <SkyDatePicker
-                      value={skyDate}
-                      pickerRef={datePickerRef}
-                      onClose={() => {
-                        setDatePickerOpen(false);
-                        (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
-                      }}
-                      onSelect={(nextDate) => {
-                        setSkyDate(nextDate);
-                        setDatePickerOpen(false);
-                        (mobileDatePickerTriggerRef.current ?? datePickerTriggerRef.current)?.focus();
-                      }}
-                    />
-                  )}
                   <section className="today-hero" aria-label="Today controls">
                     <div className="sky-intro">
                       <h1 className="sky-intro__lead">{formatSkyHeroTitle()}</h1>
@@ -13445,8 +13545,9 @@ export function App() {
                       profileHandle={ownSocialProfile?.handle}
                       targetDate={skyDate}
                       transitForm={transitForm}
-                      transitItems={activeTransits}
-                      currentSky={sky}
+                      transitItems={selectedDateTransits}
+                      currentSky={selectedDateSky}
+                      currentSkyLoading={!selectedDateSky && skyStatus !== "error"}
                       natalSky={profileNatalSky}
                       natalCalculationStatus={profileNatalCalculationStatus}
                       natalCalculationError={profileNatalCalculationError}
@@ -13459,7 +13560,7 @@ export function App() {
                       transitsDrawn={transitsDrawn}
                       selectedTransitId={selectedTransitId}
                       setSelectedTransitId={setSelectedTransitId}
-                      skyGeneratedAt={sky?.generatedAt ?? ""}
+                      skyGeneratedAt={selectedDateSky?.generatedAt ?? `${skyDate}T12:00:00`}
                       onCreateChart={() => openCreateChartModal({
                         prefill: true,
                         step: "birth"
@@ -13470,6 +13571,7 @@ export function App() {
                     <Suspense fallback={<FeatureLoadingFallback />}>
                       <SignupView
                         key={accountIntent}
+                        hasPendingInvitation={pendingInvitationForSignup}
                         initialForm={defaultSignupForm}
                         initialMode={accountIntent}
                         onAuthenticated={({ account, form, isNewAccount, provider }) => {
@@ -13488,6 +13590,7 @@ export function App() {
                           setAccountIntent("create");
                           navigateToPortalMode(userProfile ? "profile" : "guest");
                         }}
+                        onEmailConfirmationRequired={preservePendingSocialInvitationForEmailConfirmation}
                         onSavePendingForm={savePendingSignupForm}
                       />
                     </Suspense>
@@ -13499,10 +13602,12 @@ export function App() {
                   <ManualChartsPanel
                     profile={userProfile}
                     profileHandle={ownSocialProfile?.handle ?? null}
-                    currentSky={sky}
+                    currentSky={selectedDateSky}
+                    currentSkyLoading={friendCalculationNeeds.currentSky && !selectedDateSky && skyStatus !== "error"}
+                    transitDateLabel={formatSkyFullChartDate(skyDate)}
                     fallbackArchitectureV3Version={fallbackArchitectureV3Version}
                     profileNatalSky={profileNatalSky}
-                    profileTransits={activeTransits}
+                    profileTransits={selectedDateTransits}
                     natalGeneratedContent={natalGeneratedContent}
                     relationshipGeneratedContent={relationshipGeneratedContent}
                     landingKey={friendsLandingKey}
@@ -13821,7 +13926,7 @@ function SkyDatePicker({
   const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
-    <section className="date-picker" id="sky-date-picker" ref={pickerRef} aria-label="Select sky date">
+    <section className="date-picker" id="sky-date-picker" ref={pickerRef} aria-label="Pick Date">
       <div className="date-picker-header">
         <button className="date-picker-nav" type="button" aria-label="Previous month" onClick={() => setVisibleMonth((month) => addMonths(month, -1))}>
           <ChevronLeft size={16} aria-hidden="true" />
@@ -14220,36 +14325,33 @@ function natalPlacementV3NormalizedSections(
       "tldrastro-fallback-architecture-v3",
       rendered.templateKey
     ].filter(Boolean);
-    if (rendered.templateKey.startsWith("fallback-hook/placement-house-lived/")) {
-      const exactHouseSections: NormalizedNatalPlacementSection[] = [{
-        slot: "house",
-        required: true,
-        layer: "fallback",
-        tier: "fallback-architecture-v3",
-        sourceKeys,
-        heading: `${position.planet} in the ${ordinalHouse(position.house ?? 0)} house`,
-        body: parts[0] ?? ""
-      }];
-      return exactHouseSections.filter((section) => isReaderFacingCopy(section.body));
-    }
+    const sourceKeysForPart = (index: number) => Array.from(new Set([
+      ...sourceKeys,
+      rendered.partKeys?.[index]
+    ].filter((key): key is string => Boolean(key))));
     const sections: NormalizedNatalPlacementSection[] = [{
       slot: "sign",
       required: true,
       layer: "fallback",
       tier: "fallback-architecture-v3",
-      sourceKeys,
+      sourceKeys: sourceKeysForPart(0),
       heading: `${position.planet} in ${position.sign}`,
       body: parts[0] ?? ""
     }];
 
     if (position.house && parts[1]) {
+      const housePartKey = rendered.partKeys?.[1];
+      const isExactHouseCopy = housePartKey?.startsWith("fallback-hook/placement-house-lived/")
+        || housePartKey?.startsWith("fallback-hook/house-lived/");
       sections.push({
         slot: "house",
         required: true,
         layer: "fallback",
         tier: "fallback-architecture-v3",
-        sourceKeys,
-        heading: `${position.planet} in ${position.sign} in the ${ordinalHouse(position.house)} house`,
+        sourceKeys: sourceKeysForPart(1),
+        heading: isExactHouseCopy
+          ? `${position.planet} in the ${ordinalHouse(position.house)} house`
+          : `${position.planet} in ${position.sign} in the ${ordinalHouse(position.house)} house`,
         body: parts[1]
       });
     }
@@ -14391,7 +14493,7 @@ function natalPlacementDetailArticle(
   });
   const relatedAspectRows = natalSky
     ? relatedAspectRowsForPlacement({
-        aspects: natalSky.aspects,
+        aspects: canonicalNatalAspectsForSnapshot(natalSky),
         generatedContent,
         mode: "natal",
         onOpenNatalAspect,
@@ -15037,7 +15139,6 @@ function ActiveAspects({
           aspect,
           normalized: normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt)
         }))
-        .filter(({ normalized }) => normalized.sections.length > 0)
     }))
     .filter((group) => group.aspects.length > 0);
 
@@ -15665,6 +15766,7 @@ function ProfileView({
   transitForm,
   transitItems,
   currentSky,
+  currentSkyLoading,
   natalSky,
   natalCalculationStatus,
   natalCalculationError,
@@ -15687,6 +15789,7 @@ function ProfileView({
   transitForm: TransitForm;
   transitItems: TransitItem[];
   currentSky: SkySnapshot | null;
+  currentSkyLoading: boolean;
   natalSky: SkySnapshot | null;
   natalCalculationStatus: NatalChartCalculationStatus;
   natalCalculationError: string;
@@ -15749,7 +15852,7 @@ function ProfileView({
     setWeeklyHoroscopeAssembly((current) => current
       ? { ...current, status: "loading" }
       : null);
-    const dailyDriver = currentSky ? dailyGlanceDriver(currentSky, natalSky) : null;
+    const dailyDriver = currentSky ? dailyGlanceDriver(currentSky, natalSky, unknownBirthTime) : null;
     const dailyServedUnitsByDate = dailyDriver
       ? {
           [targetDate]: [
@@ -15768,6 +15871,7 @@ function ProfileView({
           natalSky,
           risingSign: displayRising,
           location: currentLocation,
+          now: dateFromInput(targetDate),
           dailyServedUnitsByDate
         })
           .then((assembly) => {
@@ -15799,6 +15903,7 @@ function ProfileView({
     natalSky?.generatedAt,
     currentSky?.generatedAt,
     displayRising,
+    unknownBirthTime,
     targetDate
   ]);
   const profileTiming = savedBirthDate && !unknownBirthTime && natalSky?.ascendant
@@ -15853,7 +15958,7 @@ function ProfileView({
   );
   const emptyNatalHouses = Array.from({ length: 12 }, (_, index) => index + 1)
     .filter((house) => !occupiedNatalHouses.has(house));
-  const natalAspectRows = uniqueNatalAspectRows(natalSky?.aspects ?? [])
+  const natalAspectRows = uniqueNatalAspectRows(canonicalNatalAspectsForSnapshot(natalSky))
     .slice()
     .sort((first, second) => first.orb - second.orb)
     .slice(0, 8);
@@ -16132,22 +16237,27 @@ function ProfileView({
     );
   });
   const dailyMoon = currentSky?.positions.find((position) => position.planet === "Moon") ?? null;
-  const dailyMoonDriver = currentSky && natalSky ? dailyGlanceDriver(currentSky, natalSky) : null;
+  const dailyMoonDriver = currentSky && natalSky
+    ? dailyGlanceDriver(currentSky, natalSky, unknownBirthTime)
+    : null;
   const dailyMoonHouse = dailyMoon
-    ? typeof dailyMoon.house === "number" && dailyMoon.house >= 1 && dailyMoon.house <= 12
-      ? dailyMoon.house
-      : natalSky?.ascendant
-        ? wholeSignHouseForSign(dailyMoon.sign, natalSky.ascendant)
-        : null
+    ? !unknownBirthTime && natalSky?.ascendant
+      ? wholeSignHouseForSign(dailyMoon.sign, natalSky.ascendant)
+      : null
     : null;
   const dailyMoonLabel = (() => {
     if (!dailyMoonDriver || dailyMoonDriver.kind !== "aspect") return null;
 
+    const civilDayExact = dailyMoonDriver.selectionScope === "civil-day-exact";
     const end = dateFromOffsetDays(
       targetDate,
-      Math.max(0.2, 5 - dailyMoonDriver.orb) / (averageDailyMotion.Moon ?? 13.176)
+      civilDayExact
+        ? 0.99
+        : Math.max(0.2, 5 - dailyMoonDriver.orb) / (averageDailyMotion.Moon ?? 13.176)
     );
-    const window = `Until ${formatEditorialDate(end, true)}`;
+    const window = civilDayExact
+      ? "Today"
+      : `Until ${formatEditorialDate(end, true)}`;
 
     try {
       const rendered = transitSynastryFallbackRendererV3.renderTransitLabel({
@@ -16587,6 +16697,13 @@ function ProfileView({
     ? {
         headline: generatedDailyHeadline,
         summary: generatedDailySummary,
+        moonContext: dailyMoon
+          ? {
+              sign: dailyMoon.sign,
+              houseLabel: dailyMoonHouse ? `${ordinalHouse(dailyMoonHouse)} house` : null,
+              topic: dailyMoonHouse ? houseLifeAreas[dailyMoonHouse] || null : null
+            }
+          : undefined,
         writeup: generatedDailyWriteup,
         keyFactors: [],
         status: "ready" as const
@@ -16602,7 +16719,7 @@ function ProfileView({
     : personalTimingStatus === "loading"
       ? {
           headline: "Calculating personal timing",
-          summary: "Checking today's sky against your chart and annual profection.",
+          summary: "Checking the selected date’s sky against your chart and annual profection.",
           keyFactors: [],
           status: personalTimingStatus
         }
@@ -16654,6 +16771,8 @@ function ProfileView({
         standaloneTransitRows={standaloneHouseTransitRows}
         weeklyTransitRows={weeklyTransitRows}
         transitArticle={transitArticle}
+        transitDateLabel={formatSkyFullChartDate(targetDate)}
+        transitsLoading={currentSkyLoading}
       />
     </Suspense>
   );
@@ -16675,6 +16794,7 @@ export const friendsViewModelDependencies = {
   emptyHouseDetailArticle,
   emptyHouseTitle,
   friendTransitSummary,
+  genericPersonReferenceSlots,
   houseLifeAreaKeywords,
   houseLifeAreas,
   lifeAreaFocusScore,

@@ -32,6 +32,11 @@ export const fallbackArchitectureV3PackageVersion = PACKAGE_VERSION;
 
 export type ReviewStatus = "approved" | "approved_reuse" | "reviewed" | string;
 
+export type StructuredApproval = {
+  approvalLevel?: string | null;
+  [key: string]: unknown;
+};
+
 export type AuthoredCard = {
   contentKey: string;
   content_role?: string | null;
@@ -271,8 +276,11 @@ function assertSkyAspectPhrasebookV1Import(phrasebook: typeof skyAspectPhraseboo
     ["fallback-hook/sky-aspect-sign/", 78]
   ]);
 
-  if (rows.length !== 148 || rows.some((row) => row.review_status !== "reviewed")) {
-    throw new Error("Sky aspect phrasebook must contain exactly 148 reviewed rows.");
+  if (
+    rows.length !== 148
+    || rows.some((row) => !["reviewed", "approved"].includes(row.review_status))
+  ) {
+    throw new Error("Sky aspect phrasebook must contain exactly 148 editorially eligible rows.");
   }
 
   for (const [prefix, expected] of expectedFamilies) {
@@ -648,6 +656,22 @@ export function fallbackV3SignRuler(sign: string) {
 
 export function transitV3AuthoredCardForContentKey(contentKey: string | null | undefined) {
   return contentKey ? transitAuthoredCardsByKey.get(contentKey) ?? null : null;
+}
+
+export function fallbackV3ApprovalLevelForContentKey(contentKey: string | null | undefined) {
+  if (!contentKey) return null;
+
+  const row = transitAuthoredCardsByKey.get(contentKey)
+    ?? hookRowsByKey.get(contentKey)
+    ?? vocabularyRowsByKey.get(contentKey);
+  if (!row) return null;
+
+  const approval = row.approval as StructuredApproval | null | undefined;
+  const approvalLevel = approval?.approvalLevel;
+
+  return typeof approvalLevel === "string" && approvalLevel.trim()
+    ? approvalLevel.trim()
+    : "ungated";
 }
 
 export function transitV3SameBeatKeyForContentKey(contentKey: string | null | undefined) {

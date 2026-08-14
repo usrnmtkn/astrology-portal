@@ -3,6 +3,7 @@ import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
 export type FulfillmentJobRow = {
   id: string; report_id: string; entitlement_id: string; state: string; step: string; attempt: number;
+  locked_at?: string | null; locked_by?: string | null; lease_expires_at?: string | null;
   authorization_token: string | null; authorized_call_budget: number | null; model_call_count: number;
   authorization_call_count: number; authorized_token_budget: number | null; authorization_token_count: number;
   passing_unit_cache?: Record<string, unknown>;
@@ -13,11 +14,17 @@ export type FulfillmentReportRow = {
   period_start: string; period_end: string; facts: Record<string, unknown>; facts_engine: string; facts_hash: string | null;
   fulfillment_status: string; prompt_versions: Record<string, unknown>; token_count: number; token_count_total?: number;
   token_budget_lifetime?: number;
-  token_spend_usd_estimate?: number; attempt_counts: { validator?: number; judge?: number };
+  token_spend_usd_estimate?: number; attempt_counts: { validator?: number; judge?: number; redundancy?: number };
   failure_history: unknown[];
 };
 export type FulfillmentEntitlementRow = {
   id: string; user_id: string; status: string; product_key: string; period_start: string; period_end: string; requires_birth_time?: boolean;
+};
+
+export type ReportModelCallTimingRow = {
+  schema_name: string;
+  created_at: string;
+  completed_at: string;
 };
 
 export type ReportFulfillmentStore = {
@@ -34,13 +41,14 @@ export type ReportFulfillmentStore = {
     state: "complete" | "error" | "interrupted"; inputTokens?: number; cachedInputTokens?: number; outputTokens?: number;
     totalTokens?: number; estimatedCostUsd?: number; responseId?: string; error?: string;
   }): Promise<boolean>;
+  callTimingHistory(jobId: string): Promise<ReportModelCallTimingRow[]>;
   reusableFacts(report: FulfillmentReportRow): Promise<{ facts: Record<string, unknown>; facts_hash: string; facts_engine: string } | null>;
   claimFacts(report: FulfillmentReportRow, workerId: string): Promise<boolean>;
   releaseFactsClaim(report: FulfillmentReportRow): Promise<void>;
   saveFacts(report: FulfillmentReportRow, bundle: { facts: Record<string, unknown>; facts_hash: string; facts_engine: string }): Promise<void>;
-  unit(reportId: string, unitId: string): Promise<{ id: string; body: string; sections: unknown; source_snapshot: Record<string, unknown> } | null>;
+  unit(reportId: string, unitId: string): Promise<{ id: string; headline: string; summary: string; body: string; sections: unknown; source_snapshot: Record<string, unknown> } | null>;
   saveUnit(report: FulfillmentReportRow, unitId: string, draft: unknown, sourceSnapshot: Record<string, unknown>): Promise<void>;
-  unitRows(reportId: string): Promise<Array<{ content_key: string; body: string; sections: unknown; source_snapshot: Record<string, unknown> }>>;
+  unitRows(reportId: string): Promise<Array<{ content_key: string; headline: string; summary: string; body: string; sections: unknown; source_snapshot: Record<string, unknown> }>>;
   countCombination(report: FulfillmentReportRow, promptVersions: Record<string, unknown>): Promise<number>;
   queueAudit(report: FulfillmentReportRow, reason: "random_sample" | "new_combination", promptVersions: Record<string, unknown>): Promise<void>;
   recordDelivery(reportId: string, patch: Record<string, unknown>): Promise<void>;
@@ -88,6 +96,7 @@ export function createReportFulfillmentStore(admin = createSupabaseReportAdmin()
         })
       });
     },
+    callTimingHistory: (jobId) => admin.request(`report_model_calls?job_id=eq.${encodeURIComponent(jobId)}&state=eq.complete&completed_at=not.is.null&select=schema_name,created_at,completed_at&order=call_number.asc`),
     reusableFacts: (report) => admin.selectOne("report_facts_bundles", new URLSearchParams({
       user_id: `eq.${report.user_id}`, subject_id: report.subject_id ? `eq.${report.subject_id}` : "is.null",
       report_horizon: `eq.${report.report_horizon}`, period_start: `eq.${report.period_start}`, period_end: `eq.${report.period_end}`,
@@ -108,19 +117,26 @@ export function createReportFulfillmentStore(admin = createSupabaseReportAdmin()
       await releaseFactsClaim(report);
     },
     unit: (reportId, unitId) => admin.selectOne("user_generated_interpretations", new URLSearchParams({
-      content_key: `eq.report:${reportId}:${unitId}`, subject_type: "eq.report_unit", select: "id,body,sections,source_snapshot"
+      content_key: `eq.report:${reportId}:${unitId}`, subject_type: "eq.report_unit", select: "id,headline,summary,body,sections,source_snapshot"
     })),
     async saveUnit(report, unitId, draft, sourceSnapshot) {
-      const value = draft as { headline?: string; summary?: string; body?: string; sections?: unknown };
+      const value = draft as { headline?: string; summary?: string; body?: string; timing?: string; sections?: unknown };
+      const existingRenderMetadata = sourceSnapshot.renderMetadata && typeof sourceSnapshot.renderMetadata === "object"
+        ? sourceSnapshot.renderMetadata as Record<string, unknown>
+        : {};
       await admin.insert("user_generated_interpretations", {
         user_id: report.user_id, subject_type: "report_unit", subject_id: report.id,
         content_key: `report:${report.id}:${unitId}`, target_date: report.period_start,
         surface: "year_ahead", mode: "report", status: "DRAFT",
         event_type: "report_unit", headline: value.headline ?? "", summary: value.summary ?? "", body: value.body ?? "",
-        sections: value.sections ?? [], facts: report.facts, source_snapshot: sourceSnapshot
+        sections: value.sections ?? [], facts: report.facts,
+        source_snapshot: {
+          ...sourceSnapshot,
+          renderMetadata: { ...existingRenderMetadata, timing: value.timing ?? "" }
+        }
       }, { onConflict: "user_id,subject_type,subject_id,content_key,target_date,mode" });
     },
-    unitRows: async (reportId) => admin.request(`user_generated_interpretations?subject_id=eq.${reportId}&subject_type=eq.report_unit&select=content_key,body,sections,source_snapshot&order=content_key.asc`),
+    unitRows: async (reportId) => admin.request(`user_generated_interpretations?subject_id=eq.${reportId}&subject_type=eq.report_unit&select=content_key,headline,summary,body,sections,source_snapshot&order=content_key.asc`),
     async countCombination(report, promptVersions) {
       const combinationKey = `${report.report_domain}:${report.report_horizon}:${String(promptVersions.canonical ?? "")}`;
       const rows = await admin.request<Array<{ id: string }>>(`report_audit_samples?select=id&combination_key=eq.${encodeURIComponent(combinationKey)}`);

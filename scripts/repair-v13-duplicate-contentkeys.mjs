@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sourceRelativePath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
-const lockedRelativePath = "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json";
+const lockedRelativePath = "packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json";
 const jsonRecordRelativePath = "packages/astro-knowledge/review/v13-duplicate-contentkey-repair-2026-08-11.json";
 const markdownRecordRelativePath = "packages/astro-knowledge/review/v13-duplicate-contentkey-repair-2026-08-11.md";
 const releaseId = "ll-matrix-v13-owner-approved-runtime";

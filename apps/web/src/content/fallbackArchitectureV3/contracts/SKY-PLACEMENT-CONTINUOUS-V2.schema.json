@@ -59,6 +59,34 @@
       "type": "string",
       "minLength": 1
     },
+    "era_layer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frame",
+        "handoff",
+        "recurrence",
+        "collective_lesson"
+      ],
+      "properties": {
+        "frame": {
+          "type": "string",
+          "minLength": 1
+        },
+        "handoff": {
+          "type": "string",
+          "minLength": 1
+        },
+        "recurrence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "collective_lesson": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
     "development_heading": {
       "type": "string",
       "minLength": 1

@@ -5,6 +5,10 @@ import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 import { SourceGapError } from "./renderFallback.mjs";
+import {
+  fillDailyGlancePersonSlots,
+  lintDailyGlanceFriendVoice
+} from "./dailyGlanceVoice.mjs";
 
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-synastry-rows-v1.json"), "utf8"));
@@ -546,7 +550,15 @@ const renderFinalSkyArticle = (candidate, facts) => {
     risingHoroscopes
   };
 };
-const result = (c, templateKey) => ({ headline: c.headline || "", body: c.body, parts: [c.body], templateKey, contentKey: c.contentKey });
+const result = (c, templateKey) => ({
+  headline: c.headline || "",
+  body: c.body,
+  parts: [c.body],
+  partSourceKeys: [[c.contentKey]],
+  sourceKeys: [c.contentKey],
+  templateKey,
+  contentKey: c.contentKey
+});
 
 const fillKeep = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).trim();
 
@@ -566,13 +578,18 @@ export function renderTransitHouse({ planet, house, sign, window: win, voice = "
       const pick = (c) => (v === "you" ? (c.body_you ?? c.body) : (c.body_they ?? c.body));
       const nameCtx = { Name: v === "they" ? voice : "" };
       const parts = [fillKeep(pick(intro), nameCtx), fillKeep(pick(synth), nameCtx)];
+      const partSourceKeys = [[intro.contentKey], [synth.contentKey]];
       const headline = v === "you"
         ? `${title(planet)} moving through your ${ordinal(house)} house`
         : `${title(planet)} moving through ${voice}'s ${ordinal(house)} house`;
       // Retrograde overlay: revise-not-redo framing appended when the engine flags Rx during the crossing.
       if (isRetrograde) {
-        const ro = hookVoice(`fallback-hook/transit-house-retro-overlay/${planet}`, v);
-        if (ro) parts.push(fillKeep(ro, { Name: v === "they" ? voice : "" }));
+        const retroKey = `fallback-hook/transit-house-retro-overlay/${planet}`;
+        const ro = hookVoice(retroKey, v);
+        if (ro) {
+          parts.push(fillKeep(ro, { Name: v === "they" ? voice : "" }));
+          partSourceKeys.push([retroKey]);
+        }
       }
       // Aspect events layer (sky-register composer, owner-calibrated 2026-07-27):
       // frame(+window) -> wants-pair sentence -> pair scenes (override row first, else the pair effect line).
@@ -581,22 +598,44 @@ export function renderTransitHouse({ planet, house, sign, window: win, voice = "
         try {
           const quality = EVENT_QUALITY[e.aspect];
           const cls = quality === "conjunction" ? (CONJ_SOFT.has(planet) ? "soft" : "hard") : quality;
-          const frameRaw = quality ? hookVoice(`fallback-hook/transit-house-event-frame/${planet}`, v) : null;
+          const frameKey = `fallback-hook/transit-house-event-frame/${planet}`;
+          const frameRaw = quality ? hookVoice(frameKey, v) : null;
           const windowClause = e.window ? (/^(until|through|till|before|by)\b/i.test(e.window) ? ` ${e.window.charAt(0).toLowerCase()}${e.window.slice(1)}` : ` until ${e.window}`) : "";
           const frame = frameRaw ? fillKeep(frameRaw, { houseOrdinal: ordinal(house), natalTitle: title(e.natal), Name: v === "they" ? voice : "", windowClause, aspectVerb: EVENT_VERB[e.aspect] }) : null;
-          const wants = sign ? hookVoice(`fallback-hook/transit-house-event-wants/${planet}/${sign}`, v) : null;
-          const holds = hookVoice(`fallback-hook/transit-house-event-natal/${e.natal}`, v);
-          const scenes = hookVoice(`fallback-hook/transit-house-event-scenes/${planet}/${e.natal}/${cls}`, v)
-            ?? hookVoice(`fallback-hook/transit-effect-${cls}/${planet}/${e.natal}`, v);
-          if (frame && wants && holds && scenes) {
+          const wantsKey = `fallback-hook/transit-house-event-wants/${planet}/${sign}`;
+          const holdsKey = `fallback-hook/transit-house-event-natal/${e.natal}`;
+          const sceneKeys = [
+            `fallback-hook/transit-house-event-scenes/${planet}/${e.natal}/${cls}`,
+            `fallback-hook/transit-effect-${cls}/${planet}/${e.natal}`
+          ];
+          const wants = sign ? hookVoice(wantsKey, v) : null;
+          const holds = hookVoice(holdsKey, v);
+          const sceneKey = sceneKeys.find((key) => Boolean(hookVoice(key, v))) ?? null;
+          const scenes = sceneKey ? hookVoice(sceneKey, v) : null;
+          if (frame && wants && holds && scenes && sceneKey) {
             parts.push(`${frame} ${wants}; ${holds}. ${scenes}`.trim());
+            partSourceKeys.push([frameKey, wantsKey, holdsKey, sceneKey]);
           } else {
             const asp = renderTransitAspect({ transiting: planet, natal: e.natal, aspect: e.aspect, voice, window: e.window ?? null });
             parts.push(frame ? `${frame} ${asp.body}` : asp.body);
+            partSourceKeys.push([
+              ...(frame ? [frameKey] : []),
+              ...(asp.contentKey ? [asp.contentKey] : []),
+              asp.templateKey
+            ]);
           }
         } catch { /* SOURCE_GAP on an event never blocks the house card */ }
       }
-      return { headline, body: parts.join("\n\n"), parts, templateKey: "authored/transit-house-layered", contentKey: synth.contentKey, window: win ?? WINDOW_HOUSE[planet] ?? null };
+      return {
+        headline,
+        body: parts.join("\n\n"),
+        parts,
+        partSourceKeys,
+        sourceKeys: [...new Set(partSourceKeys.flat())],
+        templateKey: "authored/transit-house-layered",
+        contentKey: synth.contentKey,
+        window: win ?? WINDOW_HOUSE[planet] ?? null
+      };
     }
   }
   if (v === "you") { const c = card(`authored/transit-house/${planet}/${house}`); if (c) return result(c, "authored/transit-house"); }
@@ -1352,6 +1391,16 @@ const SKY_PLACEMENT_CONTINUOUS_PLANETS = new Set([
   "north-node",
   "south-node"
 ]);
+const SKY_PLACEMENT_ERA_PLANETS = new Set([
+  "saturn",
+  "uranus",
+  "neptune",
+  "pluto",
+  "chiron",
+  "north-node",
+  "south-node",
+  "nodes"
+]);
 const RETIRED_SUN_IDENTITY_HOOKS = [
   "Somewhere along the way, you switched to autopilot.",
   "You keep rescheduling a decision.",
@@ -1393,7 +1442,8 @@ function continuousSkyPlacementDate(value, label) {
   }
   return {
     body: `${month} ${Number(match[2])}`,
-    year: match[3] ?? null
+    year: match[3] ?? null,
+    full: match[3] ? `${month} ${Number(match[2])}, ${match[3]}` : `${month} ${Number(match[2])}`
   };
 }
 
@@ -1437,11 +1487,44 @@ function renderContinuousSkyPlacement(signCopy, {
     priorSignEntryDate: priorSignEntryDate ? continuousSkyPlacementDate(priorSignEntryDate, "prior-sign entry").body : null,
     priorSignExitDate: priorSignExitDate ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").body : null,
     previousResidencyEntryDate: previousResidencyEntryDate ? continuousSkyPlacementDate(previousResidencyEntryDate, "previous-residency entry").body : null,
-    previousResidencyExitDate: previousResidencyExitDate ? continuousSkyPlacementDate(previousResidencyExitDate, "previous-residency exit").body : null
+    previousResidencyExitDate: previousResidencyExitDate ? continuousSkyPlacementDate(previousResidencyExitDate, "previous-residency exit").body : null,
+    priorSignEntryDateWithYear: priorSignEntryDate ? continuousSkyPlacementDate(priorSignEntryDate, "prior-sign entry").full : null,
+    priorSignExitDateWithYear: priorSignExitDate ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").full : null,
+    previousResidencyEntryDateWithYear: previousResidencyEntryDate ? continuousSkyPlacementDate(previousResidencyEntryDate, "previous-residency entry").full : null,
+    previousResidencyExitDateWithYear: previousResidencyExitDate ? continuousSkyPlacementDate(previousResidencyExitDate, "previous-residency exit").full : null
   };
   const factLine = dates.factLine;
+  const educationRow = hooks.get(`fallback-hook/sky-planet-education/${planet}`);
+  const educationBody = educationRow?.render_policy === "sky-placement-planet-education-v1"
+    ? educationRow.body
+    : null;
+  const planetEducation = typeof educationBody === "string" && educationBody.trim()
+    ? educationBody
+    : null;
   const collective = [signCopy.opening, signCopy.tension, signCopy.development]
     .map((part) => fillKeep(part, ctx));
+  const eraSource = signCopy.era_layer;
+  let eraLayer = [];
+  if (eraSource) {
+    if (!SKY_PLACEMENT_ERA_PLANETS.has(planet)) {
+      throw new SourceGapError(`SOURCE_GAP: slow-mover era layer ${planet}/${sign}`);
+    }
+    const eraFields = ["frame", "handoff", "recurrence", "collective_lesson"];
+    const hasCompleteEraCopy = eraFields.every((field) => (
+      typeof eraSource[field] === "string" && Boolean(eraSource[field].trim())
+    ));
+    const hasCompleteEraFacts = Boolean(
+      priorSign
+      && priorSignEntryDate
+      && priorSignExitDate
+      && previousResidencyEntryDate
+      && previousResidencyExitDate
+    );
+    if (!hasCompleteEraCopy || !hasCompleteEraFacts) {
+      throw new SourceGapError(`SOURCE_GAP: slow-mover era layer ${planet}/${sign}`);
+    }
+    eraLayer = eraFields.map((field) => fillKeep(eraSource[field], ctx));
+  }
   const close = fillKeep(signCopy.close, ctx);
   const masterHeadings = [
     signCopy.opening_heading,
@@ -1487,17 +1570,20 @@ function renderContinuousSkyPlacement(signCopy, {
     };
   }
 
-  const parts = [factLine, ...collective, ...aspectParts, close];
+  const parts = [factLine, ...(planetEducation ? [planetEducation] : []), ...collective, ...eraLayer, ...aspectParts, close];
   const articleSections = rendersArticleMaster
     ? [
+        ...(planetEducation ? [{ kind: "planet-education", heading: "", body: planetEducation }] : []),
         { kind: "collective-read", heading: fillKeep(signCopy.opening_heading, ctx), body: [factLine, collective[0]].join("\n\n") },
         { kind: "collective-read", heading: fillKeep(signCopy.tension_heading, ctx), body: collective[1] },
         { kind: "collective-read", heading: fillKeep(signCopy.development_heading, ctx), body: collective[2] },
+        ...(eraLayer.length ? [{ kind: "collective-era", heading: "", body: eraLayer.join("\n\n") }] : []),
         ...(aspectSection ? [aspectSection] : []),
         { kind: "exit-tone-shift", heading: fillKeep(signCopy.close_heading, ctx), body: close }
       ]
     : [
-        { kind: "collective-read", heading: "", body: [factLine, ...collective].join("\n\n") },
+        { kind: "collective-read", heading: "", body: [factLine, ...(planetEducation ? [planetEducation] : []), ...collective].join("\n\n") },
+        ...(eraLayer.length ? [{ kind: "collective-era", heading: "", body: eraLayer.join("\n\n") }] : []),
         ...(aspectSection ? [aspectSection] : []),
         { kind: "exit-tone-shift", heading: "", body: close }
       ];
@@ -1979,12 +2065,7 @@ export function renderSkyAspectCard({ a, b, aspect, aSign, bSign, dateLine }) {
     };
   }
 
-  const g = GROUP[aspect] ?? aspect;
-  const frame = hooks.get(`fallback-hook/sky-event/aspect-${g}`)?.body_you;
-  if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame aspect-${g}`);
-  const body = fill(frame, eventCtx({ type: "aspect", a, b, aspect, aSign, bSign, dateLine: dateLine ?? "Right now" }));
-  if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky aspect ${a}-${aspect}-${b} missing facts (${body})`);
-  return { headline: `${title(a)} ${title(aspect)} ${title(b)}`, body, parts: [body], templateKey: "fallback-template/sky.aspect-card" };
+  throw new SourceGapError(`SOURCE_GAP: no approved collective Sky aspect copy for ${a}-${aspect}-${b}`);
 }
 
 // ---- Transits to your bond: a transiting planet activating the synastry contact between
@@ -2141,25 +2222,81 @@ export function renderLunationEventCard({ eventDate, blendFallbackEnabled = fals
 // transiting Moon. Pass natal+aspect for the Moon's tightest applying aspect; pass house
 // (whole-sign house of the Moon) when no aspect is within orb. No astrology words render. ----
 const DAILY_GROUP = { conjunction: "conjunction", square: "square", opposition: "opposition", trine: "soft", sextile: "soft" };
-export function renderDailyGlance({ natal, aspect, house, dateKey, userId, previousVariantId }) {
+export function renderDailyGlance({
+  natal,
+  aspect,
+  house,
+  dateKey,
+  userId,
+  previousVariantId,
+  voice = "you",
+  personSlots = {}
+}) {
+  const renderFriendRow = (row, contentKey) => {
+    const raw = row?.body_they;
+    if (!raw) return null;
+
+    const findings = lintDailyGlanceFriendVoice(raw);
+    if (findings.length > 0) {
+      throw new SourceGapError(
+        `SOURCE_GAP: ${contentKey} friend voice failed ${findings.map((finding) => finding.id).join(",")}`
+      );
+    }
+
+    try {
+      return fillDailyGlancePersonSlots(raw, personSlots);
+    } catch (error) {
+      throw new SourceGapError(
+        `SOURCE_GAP: ${contentKey} friend voice slots ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  };
+
+  const renderForVoice = ({ headlineKey, bodyKey, contentKey }) => {
+    if (voice === "they") {
+      const headline = renderFriendRow(hooks.get(headlineKey), headlineKey);
+      const body = renderFriendRow(hooks.get(bodyKey), bodyKey);
+      return headline && body
+        ? { headline, body, parts: [body], templateKey: "fallback-template/daily.glance", variantId: "primary-they" }
+        : null;
+    }
+
+    const headline = hooks.get(headlineKey)?.body_you;
+    const body = hooks.get(bodyKey)?.body_you;
+    if (!headline || !body) return null;
+    const selected = selectDailyGlanceVariantSet({
+      variantSet: dailyGlanceVariants.keys[contentKey],
+      primary: { headline, body },
+      dateKey,
+      contentKey,
+      userId,
+      previousVariantId
+    });
+    return {
+      headline: selected.headline,
+      body: selected.body,
+      parts: [selected.body],
+      templateKey: "fallback-template/daily.glance",
+      variantId: selected.id
+    };
+  };
+
   if (natal && aspect) {
     const g = DAILY_GROUP[aspect] ?? aspect;
-    const h = hooks.get(`fallback-hook/daily-headline/${g}/${natal}`)?.body_you;
-    const b = hooks.get(`fallback-hook/daily-body/${g}/${natal}`)?.body_you;
-    if (h && b) {
-      const contentKey = `${g}/${natal}`;
-      const selected = selectDailyGlanceVariantSet({ variantSet: dailyGlanceVariants.keys[contentKey], primary: { headline: h, body: b }, dateKey, contentKey, userId, previousVariantId });
-      return { headline: selected.headline, body: selected.body, parts: [selected.body], templateKey: "fallback-template/daily.glance", variantId: selected.id };
-    }
+    const rendered = renderForVoice({
+      headlineKey: `fallback-hook/daily-headline/${g}/${natal}`,
+      bodyKey: `fallback-hook/daily-body/${g}/${natal}`,
+      contentKey: `${g}/${natal}`
+    });
+    if (rendered) return rendered;
   }
   if (house) {
-    const h = hooks.get(`fallback-hook/daily-headline/house/${house}`)?.body_you;
-    const b = hooks.get(`fallback-hook/daily-body/house/${house}`)?.body_you;
-    if (h && b) {
-      const contentKey = `house/${house}`;
-      const selected = selectDailyGlanceVariantSet({ variantSet: dailyGlanceVariants.keys[contentKey], primary: { headline: h, body: b }, dateKey, contentKey, userId, previousVariantId });
-      return { headline: selected.headline, body: selected.body, parts: [selected.body], templateKey: "fallback-template/daily.glance", variantId: selected.id };
-    }
+    const rendered = renderForVoice({
+      headlineKey: `fallback-hook/daily-headline/house/${house}`,
+      bodyKey: `fallback-hook/daily-body/house/${house}`,
+      contentKey: `house/${house}`
+    });
+    if (rendered) return rendered;
   }
   throw new SourceGapError(`SOURCE_GAP: daily glance ${aspect ?? "no-aspect"}/${natal ?? house}`);
 }

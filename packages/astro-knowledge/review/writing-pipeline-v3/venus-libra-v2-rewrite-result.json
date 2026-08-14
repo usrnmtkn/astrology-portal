@@ -1,0 +1,601 @@
+{
+  "draft": {
+    "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra on {{entryDate}}. You can leave a conversation with a clear decision and no argument, then realize that only one person ever said what they wanted. Venus governs relationships, creativity, attraction, and what you value. Libra notices balance, exchange, and how a shared choice gets made. Venus rules Libra, so comparing preferences and finding common ground can happen quickly. That ease can make an agreement look fair before you have stated what you prefer.",
+    "tension": "The job of Venus in Libra is not simply to produce agreement. It is to find out whether a connection can stay easy after both sides say what they actually want. Your skill at compromise becomes automatic adjustment when you wait for the other answer, reduce your own request, and offer to handle the inconvenient part before anyone asks. Because nobody argues, the result can pass for fairness. The clearest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility required to make it work. Resentment then grows inside an arrangement that still looks calm.",
+    "development": "A collaboration shows what automatic adjustment costs. You and another person are choosing between a five-page website built from a template and a custom version with extra features. They choose custom before you say that you wanted the simpler site, and you answer that custom is fine. The choice adds a $300 software fee and a second round of copy, image, and form testing. You cover the fee, rewrite the copy, resize the images, and test every form without reopening the decision. The site follows their preference; the bill and follow-up work belong to you.\n\nWhen you say that you want the five-page version unless the fee and testing are split, the other person’s response reveals what the original agreement could hold. If they divide the cost and take on half the testing, the collaboration becomes more honest because it can include your preference too. If they call you difficult, insist that the decision is already settled, or leave the same work with you, the earlier calm depended on your flexibility. State your preference before smoothing the arrangement. A real compromise needs two stated positions; otherwise, one person chooses and the other person adjusts.",
+    "close": "Before {{exitDate}}, an arrangement may strain when the person who kept agreeing can no longer accept what they do not want.",
+    "approvalStatus": "generated",
+    "approvalHistory": [
+      "generated"
+    ],
+    "ownerApproved": false,
+    "ownerLocked": false,
+    "renderedSampleStatus": "not-rendered",
+    "renderedSampleOwnerApproved": false,
+    "batchGenerationAuthorized": false,
+    "servingAuthorized": false,
+    "editorialStatus": "generated_candidate",
+    "reviewStatus": "needs_review",
+    "ownerStatus": "PENDING OWNER",
+    "promotionAuthorized": false,
+    "canonical": false,
+    "argumentOutline": {
+      "version": "argument-outline-v1-2026-08-12",
+      "status": "owner-approved",
+      "ownerApproved": true,
+      "family": "fast-mover-article",
+      "surface": "sky-placement-page",
+      "meaningPlanObject": "venus",
+      "meaningPlanSign": "libra",
+      "meaningPlanHash": "c1bb6370a6a72d43b28b11e0c91fae2bcc0116dba5663d59c6e515ac63e3acc0",
+      "thesis": "Add why the existing imbalance can be hard to notice: Venus works easily in Libra, so smooth agreement can look complete before both preferences are known.",
+      "cultural_rule": "Do not replace the approved fairness argument; add only the assumption that an easy agreement must be a fair one.",
+      "transit_job": "Add a condition-based test of Venus in Libra's home-ground skill: can the connection stay easy after both sides state what they actually want?",
+      "failure_mechanism": "Clarify the existing mechanism by showing skill at compromise becoming automatic adjustment before anyone asks for it.",
+      "lived_scene_1": "Consolidate the approved shared-decision material into one collaboration where one side waits for the other preference before naming its own.",
+      "lived_scene_2": "Continue the same collaboration when the accommodating side absorbs the follow-up work or cost required to keep the agreement easy.",
+      "lived_scene_3": "Finish the same sequence when the withheld preference is stated and the other side's response shows whether the connection can hold honesty.",
+      "strategy": "Add one strategic bias inside the article: state the preference before smoothing the arrangement; do not add a tip list.",
+      "intended_close": "Keep the approved close's consequence rather than adding a second moral: the arrangement strains when the person who kept agreeing stops accepting what they do not want.",
+      "scope_guard": "Retain the existing one-sentence handoff; add no slow-mover contrast paragraph, romance default, dinner or scheduling scene, seventh-house substitution, or retrograde look-back.",
+      "outlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49",
+      "exactOwnerRuling": "Venus in Libra v2 outline approved.",
+      "approvedOutlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49"
+    },
+    "argumentOutlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49",
+    "contentSpineId": "fast-mover-article-v1",
+    "generation_metadata": {
+      "role": "WRITER",
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "thinkingLevel": null,
+      "components": {
+        "pipeline": "writing-pipeline-v3-2026-08-12",
+        "argument_gate": "argument-outline-v1-2026-08-12",
+        "content_spines": "content-spines-v2-2026-08-13",
+        "correction_pair_selector": "owner-correction-pairs-v1-2026-08-12",
+        "deterministic_layer": "writing-deterministic-v3-2026-08-12",
+        "astrology_contract": "owner-contract-2026-08-09",
+        "writing_contract": "tldr-astro-writing-v2-2026-08-09",
+        "review_rubric": "tldr-astro-editorial-gate-v4-cold-rendered-prose-2026-08-11",
+        "owner_corpus": "owner-corpus-through-2026-08-09",
+        "fixture_set": "lilith-vertical-slice-v1-2026-08-09",
+        "writer_prompt": "tldr-astro-writing-v2-2026-08-09",
+        "reviewer_prompt": "tldr-astro-editorial-gate-v4-cold-rendered-prose-2026-08-11"
+      },
+      "sourceIds": [
+        "owner-article:libra-season-autumn-equinox:p095",
+        "register-gold:sky-placement:saturn-capricorn-v3",
+        "surface-qualified-v2:full-moon-taurus:work-instability-hook",
+        "surface-qualified-v2:libra-season:relationship-power-sequence",
+        "surface-qualified-v2:pisces-season:urgency-clarity-turn"
+      ]
+    }
+  },
+  "plan": {
+    "content_type": "placement_article",
+    "object": "venus",
+    "sign": "libra",
+    "house": null,
+    "event_type": null,
+    "object_function": [
+      "Venus governs relationships, creativity, attraction, and what is valued."
+    ],
+    "sign_mechanics": [
+      "Libra notices balance, exchange, connection, and how a shared choice is made."
+    ],
+    "actual_house_domain": null,
+    "core_tension": "Agreement can look fair while one side keeps adjusting.",
+    "what_changes": "The clearest voice makes the decision while the more accommodating side absorbs the cost.",
+    "constructive_expression": "A preference is withheld until everyone else has answered.",
+    "overcorrection": "Fairness is reduced to avoiding disagreement.",
+    "observable_behaviors": [
+      "A preference is withheld until everyone else has answered.",
+      "A shared cost or responsibility stays uneven because naming the exact difference feels impolite.",
+      "A connection changes once both sides can state what they want without punishment."
+    ],
+    "possible_consequences": [
+      "The clearest voice makes the decision while the more accommodating side absorbs the cost.",
+      "Resentment grows inside an arrangement that still looks calm.",
+      "Honesty shows which connections can hold an actual preference."
+    ],
+    "allowed_life_domain_examples": [
+      "relationships",
+      "work",
+      "money",
+      "creative decisions",
+      "access"
+    ],
+    "do_not_assume": [
+      "a house or life domain that was not supplied",
+      "a specific event, motive, relationship type, or biography not present in governed facts"
+    ],
+    "house_bleed_risks": [
+      "relationship status"
+    ],
+    "stock_trope_risks": [],
+    "unearned_motives": [],
+    "eventType": null,
+    "objectFunction": "Venus governs relationships, creativity, attraction, and what is valued.",
+    "signMechanics": "Libra notices balance, exchange, connection, and how a shared choice is made.",
+    "actualHouseDomain": null,
+    "allowedLivedDomains": [
+      "relationships",
+      "work",
+      "money",
+      "creative decisions",
+      "access"
+    ],
+    "prohibitedDomainAssumptions": [
+      "relationship status"
+    ],
+    "coreTension": "Agreement can look fair while one side keeps adjusting.",
+    "likelyObservableBehaviors": [
+      "A preference is withheld until everyone else has answered.",
+      "A shared cost or responsibility stays uneven because naming the exact difference feels impolite.",
+      "A connection changes once both sides can state what they want without punishment."
+    ],
+    "likelyConsequences": [
+      "The clearest voice makes the decision while the more accommodating side absorbs the cost.",
+      "Resentment grows inside an arrangement that still looks calm.",
+      "Honesty shows which connections can hold an actual preference."
+    ],
+    "risks": [
+      "Fairness is reduced to avoiding disagreement."
+    ],
+    "DO_NOT_ASSUME": [
+      "a house or life domain that was not supplied",
+      "a specific event, motive, relationship type, or biography not present in governed facts"
+    ]
+  },
+  "context": {
+    "examples": [
+      {
+        "id": "owner-article:libra-season-autumn-equinox:p095",
+        "contentKey": "owner-article:libra-season-autumn-equinox:p095",
+        "family": "sky-placement-current-sky-writer",
+        "sourceFamily": "sky-season",
+        "register": "second_person",
+        "text": "The New Moon in your sign on October 21 offers a powerful reset around how you show up in relationships. How do you balance being accommodating with being honest about your needs and opinions? Something genuine can grow from what initially feels like disappointing people.",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/libra-season-autumn-equinox.md",
+        "sourceRecordSha256": "f38c66ce0c4bb98266957bac6a3c3d7137ef5aa8760ef0da10c33064eea3d7c8",
+        "planet": null,
+        "sign": "libra",
+        "articleBeat": "body",
+        "structuralFunction": "paragraph under Libra / Libra Rising",
+        "authorityClass": "owner_authored_final",
+        "ownerAuthored": true,
+        "ownerApproved": true,
+        "useAsPositiveVoiceEvidence": true
+      },
+      {
+        "id": "surface-qualified-v2:libra-season:relationship-power-sequence",
+        "contentKey": "owner-article:libra-season-autumn-equinox:p016",
+        "family": "sky-placement-current-sky-writer",
+        "sourceFamily": "sky-season",
+        "register": "collective",
+        "text": "Power dynamics in relationships become obvious. Who makes the decisions? Who always gives in? Who holds the emotional cards? These patterns need to be seen before they can be changed.",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/libra-season-autumn-equinox.md",
+        "sourceRecordSha256": "83f9f786763aee3526ed931bd56f3520fb0b6d9448dfda38a5a12c00b22ae506",
+        "articleBeat": "body",
+        "structuralFunction": "lived_sequence",
+        "authorityClass": "owner_authored_final",
+        "ownerAuthored": true,
+        "ownerApproved": true,
+        "useAsPositiveVoiceEvidence": true
+      },
+      {
+        "id": "surface-qualified-v2:pisces-season:urgency-clarity-turn",
+        "contentKey": "owner-article:pisces-season-2025:p044",
+        "family": "sky-placement-current-sky-writer",
+        "sourceFamily": "sky-season",
+        "register": "collective",
+        "text": "This transit brings a sense of urgency, a need to say what’s been left unsaid, a push to initiate conversations that might otherwise linger too long in the background. But urgency is not always clarity. Sometimes it’s just heat, just impulse, just reaction. Mercury in Aries is a powerful tool when wielded with intention, but when left unchecked, it can ignite arguments, burn bridges, and speak truths that aren’t totally fully formed yet.",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/pisces-season-2025.md",
+        "sourceRecordSha256": "1a75cc9f93e4beeebc151b0fed5da6605cc91a95f14acd0403d0b0b4d827669c",
+        "articleBeat": "body",
+        "structuralFunction": "turn_or_ending",
+        "authorityClass": "owner_authored_final",
+        "ownerAuthored": true,
+        "ownerApproved": true,
+        "useAsPositiveVoiceEvidence": true
+      },
+      {
+        "id": "surface-qualified-v2:full-moon-taurus:work-instability-hook",
+        "contentKey": "owner-article:full-moon-in-taurus:p027",
+        "family": "sky-placement-current-sky-writer",
+        "sourceFamily": "sky-lunation",
+        "register": "collective",
+        "text": "If job loss or work instability is part of what's happening, the anxiety about money makes rest almost impossible. This Full Moon illuminates the cost of running on stress hormones and calling it productivity.",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/full-moon-in-taurus.md",
+        "sourceRecordSha256": "9fabf751bfdf98b6180312eb725b6856477837154d0d34d8615f3475994f6ab8",
+        "articleBeat": "body",
+        "structuralFunction": "recognizable_hook",
+        "authorityClass": "owner_authored_final",
+        "ownerAuthored": true,
+        "ownerApproved": true,
+        "useAsPositiveVoiceEvidence": true
+      },
+      {
+        "id": "register-gold:sky-placement:saturn-capricorn-v3",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "family": "register-gold/sky-placement-article",
+        "matchedFamily": "fast-mover-article:register-gold",
+        "register": "second_person",
+        "ownerApproved": true,
+        "evidenceRole": "register_gold",
+        "authority": "exact-owner-approved-rendered-page",
+        "sourcePath": "packages/astro-knowledge/review/saturn-capricorn-article-v3/OWNER-APPROVAL-2026-08-13.md",
+        "sourceCommit": "b3b98f08",
+        "sourceBranch": "codex/saturn-capricorn-approved-v1",
+        "sections": [
+          "Saturn stands at the threshold where a choice becomes a consequence. The deadline arrives, the bill comes due, and a weak structure reveals itself in the person who has to absorb the extra hours, missing money, or unfinished work. Saturn governs time, limits, and responsibility. Under pressure, the true cost of keeping something going becomes visible, along with who has been expected to carry it.",
+          "Saturn rules Capricorn, so the sign sharpens what Saturn already cares about: hierarchy, endurance, and consequence. The sea-goat gives Capricorn a body built for two environments: hooves for the climb and a tail that still belongs to the water. The danger is not ambition. It is reaching the top by spending more time, money, health, and human effort than the climb can justify.",
+          "The job of Saturn in Capricorn is not to prove how much weight one person can carry. It is to build a structure that still works after the most reliable person leaves the room.",
+          "You have been taught to mistake endurance for ability. The person who remembers every deadline, answers after hours, and never drops the ball gets called reliable, and the arrangement is cheaper than hiring anyone else. Saturn in Capricorn asks a harder question: is the system actually working, or has one person become the system?",
+          "A project can win praise while one person sends corrections at midnight, covers a vacant role, and logs in on vacation. You may recognize the same pattern at home: a household looks organized because one person remembers every appointment, payment, and form. When they stop doing all of it, deadlines slip, messages go unanswered, and everyone discovers how much of the plan depended on work nobody else was prepared to do. If everything falls apart when one person takes a day off, that person was the infrastructure.",
+          "Being needed can feel like proof of ability until every problem belongs to you. You take the task back when someone else does it differently, answer messages during dinner, and postpone rest so the work stays on schedule. The deadline gets met, but the knowledge stays in one mind and the responsibility in one set of hands.",
+          "The reward for fixing the problem is often another problem. The person who handles it well becomes the default person everyone calls when something goes wrong. More responsibility arrives without more authority, more money, or anyone learning how to do the work without them. At some point, being indispensable stops looking like recognition and starts looking like a system that never bothered to build a backup.",
+          "Before you expand the plan, make sure somebody else can run it. Fix the handoff. Train someone else to do the work. Fund the repair. Document what only one person knows. If training, funding, documentation, or another set of hands fixes the problem, reinforce it. If the structure still requires permanent overwork to function, stop calling it stable.",
+          "Saturn in Capricorn begins a period when standards get stricter and authority has to answer for the cost of its decisions. Rules, budgets, deadlines, and chains of responsibility become harder to treat as background details. A title cannot substitute for accountability. If the person making the decision can hand off the extra hours, missed weekends, and financial cost to everyone below them, the hierarchy may be clear, but the responsibility is not.",
+          "Saturn moved through {{priorSign}} from {{priorSignEntryDateWithYear}} to {{priorSignExitDateWithYear}}. That transit tested the beliefs and long-range promises used to justify a plan. Capricorn changes the question from what everyone says they believe to who does the work, who has authority, and what happens when the plan meets a limit.",
+          "Saturn takes about 29 years to move through all twelve signs, spending around two and a half years in each. Saturn last moved through Capricorn from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}. By the end of that transit, the pandemic had made hidden work impossible to ignore. Hospitals, schools, households, and workplaces all discovered how quickly a system can strain when the people carrying its invisible work are pushed past what their staffing, hours, bodies, and resources can sustain.",
+          "Earlier Saturn-in-Capricorn periods also arrived during years when major systems were being dismantled, reinforced, or rebuilt. From 1929 to 1933, financial collapse exposed weaknesses in banks and markets and forced a new argument over how much responsibility government should carry for economic stability. From 1959 to 1962, colonial rule was breaking apart across Africa while the Cold War hardened into new borders and confrontations, including the Berlin Wall. From 1989 to 1992, the Berlin Wall fell, Germany reunified, the Soviet Union dissolved, and the Maastricht Treaty began building a new political structure for Europe. The events are different, and the same disorientation runs through all of them: a structure everyone had organized their lives around stopped being permanent. The recurring question begins once everyone can see that the old structure no longer holds: what gets rebuilt, who takes responsibility for it, and what is no longer worth preserving?",
+          "Responsibility has to be visible before it can be shared. A company, family, or institution is not stable if the person setting the standard never has to answer for the time, money, and work it requires. The simplest test is what happens when the person who usually catches everything stops catching it.",
+          "A structure is not stable if it only works when one person never rests."
+        ],
+        "text": "Saturn stands at the threshold where a choice becomes a consequence. The deadline arrives, the bill comes due, and a weak structure reveals itself in the person who has to absorb the extra hours, missing money, or unfinished work. Saturn governs time, limits, and responsibility. Under pressure, the true cost of keeping something going becomes visible, along with who has been expected to carry it.\n\nSaturn rules Capricorn, so the sign sharpens what Saturn already cares about: hierarchy, endurance, and consequence. The sea-goat gives Capricorn a body built for two environments: hooves for the climb and a tail that still belongs to the water. The danger is not ambition. It is reaching the top by spending more time, money, health, and human effort than the climb can justify.\n\nThe job of Saturn in Capricorn is not to prove how much weight one person can carry. It is to build a structure that still works after the most reliable person leaves the room.\n\nYou have been taught to mistake endurance for ability. The person who remembers every deadline, answers after hours, and never drops the ball gets called reliable, and the arrangement is cheaper than hiring anyone else. Saturn in Capricorn asks a harder question: is the system actually working, or has one person become the system?\n\nA project can win praise while one person sends corrections at midnight, covers a vacant role, and logs in on vacation. You may recognize the same pattern at home: a household looks organized because one person remembers every appointment, payment, and form. When they stop doing all of it, deadlines slip, messages go unanswered, and everyone discovers how much of the plan depended on work nobody else was prepared to do. If everything falls apart when one person takes a day off, that person was the infrastructure.\n\nBeing needed can feel like proof of ability until every problem belongs to you. You take the task back when someone else does it differently, answer messages during dinner, and postpone rest so the work stays on schedule. The deadline gets met, but the knowledge stays in one mind and the responsibility in one set of hands.\n\nThe reward for fixing the problem is often another problem. The person who handles it well becomes the default person everyone calls when something goes wrong. More responsibility arrives without more authority, more money, or anyone learning how to do the work without them. At some point, being indispensable stops looking like recognition and starts looking like a system that never bothered to build a backup.\n\nBefore you expand the plan, make sure somebody else can run it. Fix the handoff. Train someone else to do the work. Fund the repair. Document what only one person knows. If training, funding, documentation, or another set of hands fixes the problem, reinforce it. If the structure still requires permanent overwork to function, stop calling it stable.\n\nSaturn in Capricorn begins a period when standards get stricter and authority has to answer for the cost of its decisions. Rules, budgets, deadlines, and chains of responsibility become harder to treat as background details. A title cannot substitute for accountability. If the person making the decision can hand off the extra hours, missed weekends, and financial cost to everyone below them, the hierarchy may be clear, but the responsibility is not.\n\nSaturn moved through {{priorSign}} from {{priorSignEntryDateWithYear}} to {{priorSignExitDateWithYear}}. That transit tested the beliefs and long-range promises used to justify a plan. Capricorn changes the question from what everyone says they believe to who does the work, who has authority, and what happens when the plan meets a limit.\n\nSaturn takes about 29 years to move through all twelve signs, spending around two and a half years in each. Saturn last moved through Capricorn from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}. By the end of that transit, the pandemic had made hidden work impossible to ignore. Hospitals, schools, households, and workplaces all discovered how quickly a system can strain when the people carrying its invisible work are pushed past what their staffing, hours, bodies, and resources can sustain.\n\nEarlier Saturn-in-Capricorn periods also arrived during years when major systems were being dismantled, reinforced, or rebuilt. From 1929 to 1933, financial collapse exposed weaknesses in banks and markets and forced a new argument over how much responsibility government should carry for economic stability. From 1959 to 1962, colonial rule was breaking apart across Africa while the Cold War hardened into new borders and confrontations, including the Berlin Wall. From 1989 to 1992, the Berlin Wall fell, Germany reunified, the Soviet Union dissolved, and the Maastricht Treaty began building a new political structure for Europe. The events are different, and the same disorientation runs through all of them: a structure everyone had organized their lives around stopped being permanent. The recurring question begins once everyone can see that the old structure no longer holds: what gets rebuilt, who takes responsibility for it, and what is no longer worth preserving?\n\nResponsibility has to be visible before it can be shared. A company, family, or institution is not stable if the person setting the standard never has to answer for the time, money, and work it requires. The simplest test is what happens when the person who usually catches everything stops catching it.\n\nA structure is not stable if it only works when one person never rests."
+      }
+    ],
+    "sameFamilyExamples": [
+      {
+        "id": "owner-article:libra-season-autumn-equinox:p095",
+        "contentKey": "owner-article:libra-season-autumn-equinox:p095",
+        "family": "sky-placement-current-sky-writer",
+        "sourceFamily": "sky-season",
+        "register": "second_person",
+        "text": "The New Moon in your sign on October 21 offers a powerful reset around how you show up in relationships. How do you balance being accommodating with being honest about your needs and opinions? Something genuine can grow from what initially feels like disappointing people.",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/libra-season-autumn-equinox.md",
+        "sourceRecordSha256": "f38c66ce0c4bb98266957bac6a3c3d7137ef5aa8760ef0da10c33064eea3d7c8",
+        "planet": null,
+        "sign": "libra",
+        "articleBeat": "body",
+        "structuralFunction": "paragraph under Libra / Libra Rising",
+        "authorityClass": "owner_authored_final",
+        "ownerAuthored": true,
+        "ownerApproved": true,
+        "useAsPositiveVoiceEvidence": true,
+        "matchedFamily": "sky-placement-current-sky-writer"
+      },
+      {
+        "id": "surface-qualified-v2:libra-season:relationship-power-sequence",
+        "contentKey": "owner-article:libra-season-autumn-equinox:p016",
+        "family": "sky-placement-current-sky-writer",
+        "sourceFamily": "sky-season",
+        "register": "collective",
+        "text": "Power dynamics in relationships become obvious. Who makes the decisions? Who always gives in? Who holds the emotional cards? These patterns need to be seen before they can be changed.",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/libra-season-autumn-equinox.md",
+        "sourceRecordSha256": "83f9f786763aee3526ed931bd56f3520fb0b6d9448dfda38a5a12c00b22ae506",
+        "articleBeat": "body",
+        "structuralFunction": "lived_sequence",
+        "authorityClass": "owner_authored_final",
+        "ownerAuthored": true,
+        "ownerApproved": true,
+        "useAsPositiveVoiceEvidence": true,
+        "matchedFamily": "sky-placement-current-sky-writer"
+      },
+      {
+        "id": "surface-qualified-v2:pisces-season:urgency-clarity-turn",
+        "contentKey": "owner-article:pisces-season-2025:p044",
+        "family": "sky-placement-current-sky-writer",
+        "sourceFamily": "sky-season",
+        "register": "collective",
+        "text": "This transit brings a sense of urgency, a need to say what’s been left unsaid, a push to initiate conversations that might otherwise linger too long in the background. But urgency is not always clarity. Sometimes it’s just heat, just impulse, just reaction. Mercury in Aries is a powerful tool when wielded with intention, but when left unchecked, it can ignite arguments, burn bridges, and speak truths that aren’t totally fully formed yet.",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/pisces-season-2025.md",
+        "sourceRecordSha256": "1a75cc9f93e4beeebc151b0fed5da6605cc91a95f14acd0403d0b0b4d827669c",
+        "articleBeat": "body",
+        "structuralFunction": "turn_or_ending",
+        "authorityClass": "owner_authored_final",
+        "ownerAuthored": true,
+        "ownerApproved": true,
+        "useAsPositiveVoiceEvidence": true,
+        "matchedFamily": "sky-placement-current-sky-writer"
+      },
+      {
+        "id": "surface-qualified-v2:full-moon-taurus:work-instability-hook",
+        "contentKey": "owner-article:full-moon-in-taurus:p027",
+        "family": "sky-placement-current-sky-writer",
+        "sourceFamily": "sky-lunation",
+        "register": "collective",
+        "text": "If job loss or work instability is part of what's happening, the anxiety about money makes rest almost impossible. This Full Moon illuminates the cost of running on stress hormones and calling it productivity.",
+        "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/full-moon-in-taurus.md",
+        "sourceRecordSha256": "9fabf751bfdf98b6180312eb725b6856477837154d0d34d8615f3475994f6ab8",
+        "articleBeat": "body",
+        "structuralFunction": "recognizable_hook",
+        "authorityClass": "owner_authored_final",
+        "ownerAuthored": true,
+        "ownerApproved": true,
+        "useAsPositiveVoiceEvidence": true,
+        "matchedFamily": "sky-placement-current-sky-writer"
+      }
+    ],
+    "registerGoldExamples": [
+      {
+        "id": "register-gold:sky-placement:saturn-capricorn-v3",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "family": "register-gold/sky-placement-article",
+        "matchedFamily": "fast-mover-article:register-gold",
+        "register": "second_person",
+        "ownerApproved": true,
+        "evidenceRole": "register_gold",
+        "authority": "exact-owner-approved-rendered-page",
+        "sourcePath": "packages/astro-knowledge/review/saturn-capricorn-article-v3/OWNER-APPROVAL-2026-08-13.md",
+        "sourceCommit": "b3b98f08",
+        "sourceBranch": "codex/saturn-capricorn-approved-v1",
+        "sections": [
+          "Saturn stands at the threshold where a choice becomes a consequence. The deadline arrives, the bill comes due, and a weak structure reveals itself in the person who has to absorb the extra hours, missing money, or unfinished work. Saturn governs time, limits, and responsibility. Under pressure, the true cost of keeping something going becomes visible, along with who has been expected to carry it.",
+          "Saturn rules Capricorn, so the sign sharpens what Saturn already cares about: hierarchy, endurance, and consequence. The sea-goat gives Capricorn a body built for two environments: hooves for the climb and a tail that still belongs to the water. The danger is not ambition. It is reaching the top by spending more time, money, health, and human effort than the climb can justify.",
+          "The job of Saturn in Capricorn is not to prove how much weight one person can carry. It is to build a structure that still works after the most reliable person leaves the room.",
+          "You have been taught to mistake endurance for ability. The person who remembers every deadline, answers after hours, and never drops the ball gets called reliable, and the arrangement is cheaper than hiring anyone else. Saturn in Capricorn asks a harder question: is the system actually working, or has one person become the system?",
+          "A project can win praise while one person sends corrections at midnight, covers a vacant role, and logs in on vacation. You may recognize the same pattern at home: a household looks organized because one person remembers every appointment, payment, and form. When they stop doing all of it, deadlines slip, messages go unanswered, and everyone discovers how much of the plan depended on work nobody else was prepared to do. If everything falls apart when one person takes a day off, that person was the infrastructure.",
+          "Being needed can feel like proof of ability until every problem belongs to you. You take the task back when someone else does it differently, answer messages during dinner, and postpone rest so the work stays on schedule. The deadline gets met, but the knowledge stays in one mind and the responsibility in one set of hands.",
+          "The reward for fixing the problem is often another problem. The person who handles it well becomes the default person everyone calls when something goes wrong. More responsibility arrives without more authority, more money, or anyone learning how to do the work without them. At some point, being indispensable stops looking like recognition and starts looking like a system that never bothered to build a backup.",
+          "Before you expand the plan, make sure somebody else can run it. Fix the handoff. Train someone else to do the work. Fund the repair. Document what only one person knows. If training, funding, documentation, or another set of hands fixes the problem, reinforce it. If the structure still requires permanent overwork to function, stop calling it stable.",
+          "Saturn in Capricorn begins a period when standards get stricter and authority has to answer for the cost of its decisions. Rules, budgets, deadlines, and chains of responsibility become harder to treat as background details. A title cannot substitute for accountability. If the person making the decision can hand off the extra hours, missed weekends, and financial cost to everyone below them, the hierarchy may be clear, but the responsibility is not.",
+          "Saturn moved through {{priorSign}} from {{priorSignEntryDateWithYear}} to {{priorSignExitDateWithYear}}. That transit tested the beliefs and long-range promises used to justify a plan. Capricorn changes the question from what everyone says they believe to who does the work, who has authority, and what happens when the plan meets a limit.",
+          "Saturn takes about 29 years to move through all twelve signs, spending around two and a half years in each. Saturn last moved through Capricorn from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}. By the end of that transit, the pandemic had made hidden work impossible to ignore. Hospitals, schools, households, and workplaces all discovered how quickly a system can strain when the people carrying its invisible work are pushed past what their staffing, hours, bodies, and resources can sustain.",
+          "Earlier Saturn-in-Capricorn periods also arrived during years when major systems were being dismantled, reinforced, or rebuilt. From 1929 to 1933, financial collapse exposed weaknesses in banks and markets and forced a new argument over how much responsibility government should carry for economic stability. From 1959 to 1962, colonial rule was breaking apart across Africa while the Cold War hardened into new borders and confrontations, including the Berlin Wall. From 1989 to 1992, the Berlin Wall fell, Germany reunified, the Soviet Union dissolved, and the Maastricht Treaty began building a new political structure for Europe. The events are different, and the same disorientation runs through all of them: a structure everyone had organized their lives around stopped being permanent. The recurring question begins once everyone can see that the old structure no longer holds: what gets rebuilt, who takes responsibility for it, and what is no longer worth preserving?",
+          "Responsibility has to be visible before it can be shared. A company, family, or institution is not stable if the person setting the standard never has to answer for the time, money, and work it requires. The simplest test is what happens when the person who usually catches everything stops catching it.",
+          "A structure is not stable if it only works when one person never rests."
+        ],
+        "text": "Saturn stands at the threshold where a choice becomes a consequence. The deadline arrives, the bill comes due, and a weak structure reveals itself in the person who has to absorb the extra hours, missing money, or unfinished work. Saturn governs time, limits, and responsibility. Under pressure, the true cost of keeping something going becomes visible, along with who has been expected to carry it.\n\nSaturn rules Capricorn, so the sign sharpens what Saturn already cares about: hierarchy, endurance, and consequence. The sea-goat gives Capricorn a body built for two environments: hooves for the climb and a tail that still belongs to the water. The danger is not ambition. It is reaching the top by spending more time, money, health, and human effort than the climb can justify.\n\nThe job of Saturn in Capricorn is not to prove how much weight one person can carry. It is to build a structure that still works after the most reliable person leaves the room.\n\nYou have been taught to mistake endurance for ability. The person who remembers every deadline, answers after hours, and never drops the ball gets called reliable, and the arrangement is cheaper than hiring anyone else. Saturn in Capricorn asks a harder question: is the system actually working, or has one person become the system?\n\nA project can win praise while one person sends corrections at midnight, covers a vacant role, and logs in on vacation. You may recognize the same pattern at home: a household looks organized because one person remembers every appointment, payment, and form. When they stop doing all of it, deadlines slip, messages go unanswered, and everyone discovers how much of the plan depended on work nobody else was prepared to do. If everything falls apart when one person takes a day off, that person was the infrastructure.\n\nBeing needed can feel like proof of ability until every problem belongs to you. You take the task back when someone else does it differently, answer messages during dinner, and postpone rest so the work stays on schedule. The deadline gets met, but the knowledge stays in one mind and the responsibility in one set of hands.\n\nThe reward for fixing the problem is often another problem. The person who handles it well becomes the default person everyone calls when something goes wrong. More responsibility arrives without more authority, more money, or anyone learning how to do the work without them. At some point, being indispensable stops looking like recognition and starts looking like a system that never bothered to build a backup.\n\nBefore you expand the plan, make sure somebody else can run it. Fix the handoff. Train someone else to do the work. Fund the repair. Document what only one person knows. If training, funding, documentation, or another set of hands fixes the problem, reinforce it. If the structure still requires permanent overwork to function, stop calling it stable.\n\nSaturn in Capricorn begins a period when standards get stricter and authority has to answer for the cost of its decisions. Rules, budgets, deadlines, and chains of responsibility become harder to treat as background details. A title cannot substitute for accountability. If the person making the decision can hand off the extra hours, missed weekends, and financial cost to everyone below them, the hierarchy may be clear, but the responsibility is not.\n\nSaturn moved through {{priorSign}} from {{priorSignEntryDateWithYear}} to {{priorSignExitDateWithYear}}. That transit tested the beliefs and long-range promises used to justify a plan. Capricorn changes the question from what everyone says they believe to who does the work, who has authority, and what happens when the plan meets a limit.\n\nSaturn takes about 29 years to move through all twelve signs, spending around two and a half years in each. Saturn last moved through Capricorn from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}. By the end of that transit, the pandemic had made hidden work impossible to ignore. Hospitals, schools, households, and workplaces all discovered how quickly a system can strain when the people carrying its invisible work are pushed past what their staffing, hours, bodies, and resources can sustain.\n\nEarlier Saturn-in-Capricorn periods also arrived during years when major systems were being dismantled, reinforced, or rebuilt. From 1929 to 1933, financial collapse exposed weaknesses in banks and markets and forced a new argument over how much responsibility government should carry for economic stability. From 1959 to 1962, colonial rule was breaking apart across Africa while the Cold War hardened into new borders and confrontations, including the Berlin Wall. From 1989 to 1992, the Berlin Wall fell, Germany reunified, the Soviet Union dissolved, and the Maastricht Treaty began building a new political structure for Europe. The events are different, and the same disorientation runs through all of them: a structure everyone had organized their lives around stopped being permanent. The recurring question begins once everyone can see that the old structure no longer holds: what gets rebuilt, who takes responsibility for it, and what is no longer worth preserving?\n\nResponsibility has to be visible before it can be shared. A company, family, or institution is not stable if the person setting the standard never has to answer for the time, money, and work it requires. The simplest test is what happens when the person who usually catches everything stops catching it.\n\nA structure is not stable if it only works when one person never rests."
+      }
+    ],
+    "corrections": [
+      {
+        "before": "secrets, leverage, debts, favors, and the facts everyone knows but nobody names",
+        "after": "secrets, leverage, private agreements, and the facts everyone knows but nobody names",
+        "owner_reason": "Debts pushed Scorpio toward an 8th-house delineation; sign is not its associated house.",
+        "category": "sign_house_separation",
+        "family": "lilith-placement-hook",
+        "rule": "SIGN-DOMAIN INTEGRITY",
+        "selection_score": 86,
+        "selection_reasons": [
+          "same_surface_family",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "Until {{exitDate}}, the hierarchy gets harder to accept without question. The person doing the boss's job asks for that pay. Someone turns down the promotion that was really just more work in a nicer chair.",
+        "after": "Until {{exitDate}}, the rules get harder to accept without question. The reliable person stops covering for someone else's lack of planning. Someone asks why the same standard changes depending on who broke it. A promotion gets turned down because it comes with more responsibility and no more authority.",
+        "owner_reason": "Capricorn had collapsed into boss/title/career, functioning as the 10th house; broadened to responsibility, standards, legitimacy.",
+        "category": "sign_house_separation",
+        "family": "lilith-placement-lived",
+        "rule": "SIGN-DOMAIN INTEGRITY",
+        "selection_score": 86,
+        "selection_reasons": [
+          "same_surface_family",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "A teacher, institution, publication, or public voice gets challenged over the version of the truth it has been presenting as settled.",
+        "after": "A claim that everyone has been repeating as fact gets challenged when somebody checks what it is actually based on.",
+        "owner_reason": "House bleed survived good prose: teacher/education/publication/institution cluster defined Sagittarius through the 9th-house inventory instead of belief-and-conviction behavior. Judge by nouns, not by how natural the paragraph sounds.",
+        "category": "sign_house_separation",
+        "family": "lilith-placement-lived",
+        "rule": "NOUN-LEVEL HOUSE-BLEED TEST",
+        "selection_score": 86,
+        "selection_reasons": [
+          "same_surface_family",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "states the point plainly",
+        "after": "gets to the point quickly",
+        "owner_reason": "Ordinary spoken English over technically correct phrasing.",
+        "category": "natural_language",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 86,
+        "selection_reasons": [
+          "same_surface_family",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "before the remaining information arrives",
+        "after": "before the rest of the information comes in",
+        "owner_reason": "Ordinary word order; the first sounds written, not said.",
+        "category": "natural_language",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 86,
+        "selection_reasons": [
+          "same_surface_family",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "a conclusion may be repeated before the reasoning behind it is complete",
+        "after": "the conclusion may get shared before the explanation is finished",
+        "owner_reason": "'Repeated' is the strange word here; the mechanism is that it gets shared before the reasoning is done.",
+        "category": "natural_language",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 86,
+        "selection_reasons": [
+          "same_surface_family",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "silence can make a practical concern sound like a refusal",
+        "after": "silence can make a practical concern read like a refusal",
+        "owner_reason": "Silence does not sound like anything.",
+        "category": "natural_language",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 86,
+        "selection_reasons": [
+          "same_surface_family",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "boss / promotion / title / career / public status throughout a Capricorn passage",
+        "after": "responsibility, rules, standards, authority, legitimacy, who carries more",
+        "owner_reason": "The sign became its associated house. Inspect the nouns, not how natural it sounds.",
+        "category": "sign_house_separation",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 86,
+        "selection_reasons": [
+          "same_surface_family",
+          "family_failure_history"
+        ]
+      }
+    ],
+    "correctionSelection": {
+      "requested": 8,
+      "selected": 8,
+      "deduplicatedCorpusCount": 57,
+      "family": "fast-mover-article",
+      "priority": [
+        "same content family",
+        "requested failure mode",
+        "that family's historical failure categories",
+        "adjacent family",
+        "stable source order"
+      ]
+    },
+    "evidencePolicy": {
+      "family": "fast-mover-article",
+      "mappedFamilies": [
+        "sky-placement-current-sky-writer"
+      ],
+      "allowedRegisters": [
+        "collective",
+        "second_person"
+      ],
+      "minimumSameFamilyPassages": 3,
+      "minimumRegisterGoldPassages": 1,
+      "excludedEvidenceContentKeys": [
+        "fallback-hook/sky-sign-copy/venus/libra",
+        "owner-article:gemini-season-2025:p018"
+      ],
+      "preferredEvidenceContentKeys": [
+        "owner-article:libra-season-autumn-equinox:p016",
+        "owner-article:libra-season-autumn-equinox:p095"
+      ]
+    },
+    "counts": {
+      "examples": 5,
+      "sameFamilyExamples": 4,
+      "registerGoldExamples": 1,
+      "corrections": 8
+    }
+  },
+  "argumentOutline": {
+    "version": "argument-outline-v1-2026-08-12",
+    "status": "owner-approved",
+    "ownerApproved": true,
+    "family": "fast-mover-article",
+    "surface": "sky-placement-page",
+    "meaningPlanObject": "venus",
+    "meaningPlanSign": "libra",
+    "meaningPlanHash": "c1bb6370a6a72d43b28b11e0c91fae2bcc0116dba5663d59c6e515ac63e3acc0",
+    "thesis": "Add why the existing imbalance can be hard to notice: Venus works easily in Libra, so smooth agreement can look complete before both preferences are known.",
+    "cultural_rule": "Do not replace the approved fairness argument; add only the assumption that an easy agreement must be a fair one.",
+    "transit_job": "Add a condition-based test of Venus in Libra's home-ground skill: can the connection stay easy after both sides state what they actually want?",
+    "failure_mechanism": "Clarify the existing mechanism by showing skill at compromise becoming automatic adjustment before anyone asks for it.",
+    "lived_scene_1": "Consolidate the approved shared-decision material into one collaboration where one side waits for the other preference before naming its own.",
+    "lived_scene_2": "Continue the same collaboration when the accommodating side absorbs the follow-up work or cost required to keep the agreement easy.",
+    "lived_scene_3": "Finish the same sequence when the withheld preference is stated and the other side's response shows whether the connection can hold honesty.",
+    "strategy": "Add one strategic bias inside the article: state the preference before smoothing the arrangement; do not add a tip list.",
+    "intended_close": "Keep the approved close's consequence rather than adding a second moral: the arrangement strains when the person who kept agreeing stops accepting what they do not want.",
+    "scope_guard": "Retain the existing one-sentence handoff; add no slow-mover contrast paragraph, romance default, dinner or scheduling scene, seventh-house substitution, or retrograde look-back.",
+    "outlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49",
+    "exactOwnerRuling": "Venus in Libra v2 outline approved.",
+    "approvedOutlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49"
+  },
+  "spine": {
+    "id": "fast-mover-article-v1",
+    "status": "recorded",
+    "ownerApproved": true,
+    "ownerRulingDate": "2026-08-13",
+    "fields": [
+      "planet",
+      "condition_when_relevant",
+      "handoff",
+      "job",
+      "thesis",
+      "lived_evidence",
+      "failure",
+      "strategy",
+      "close"
+    ],
+    "rules": {
+      "condition_when_relevant": "Include dignity only when it materially changes how directly the planet can do its job. Venus rules Libra, so Venus in Libra receives this home-ground layer, parallel to Saturn in Capricorn.",
+      "handoff": "One opening sentence names the prior sign and its dates. Do not expand it into the standalone contrast paragraph used by slow movers.",
+      "collective_test": "May be folded into the close when earned; never required as a standalone layer."
+    }
+  },
+  "lint": {
+    "passed": false,
+    "violations": [
+      {
+        "category": "banned_language",
+        "detail": "whether"
+      },
+      {
+        "category": "literal_evidence_requirements",
+        "detail": "abstract placeholder in development: one person"
+      },
+      {
+        "category": "literal_evidence_requirements",
+        "detail": "abstract placeholder in development: the other"
+      }
+    ],
+    "advisories": []
+  },
+  "status": "human-review-required",
+  "report": {
+    "drafted": 1,
+    "writerCalls": 1,
+    "billedCalls": 1,
+    "proseModelGateCalls": 0,
+    "automaticallyRevised": 0,
+    "failureCategories": [
+      "banned_language",
+      "literal_evidence_requirements"
+    ],
+    "finalLintStatus": "REVISE",
+    "finalEvalStatus": "OWNER_GATE_REQUIRED",
+    "modelUsage": {
+      "input_tokens": 8485,
+      "input_tokens_details": {
+        "cache_write_tokens": 8482,
+        "cached_tokens": 0
+      },
+      "output_tokens": 4817,
+      "output_tokens_details": {
+        "reasoning_tokens": 4313
+      },
+      "total_tokens": 13302
+    },
+    "transmittedPacket": "packages/astro-knowledge/review/writing-pipeline-v3/venus-libra-v2-transmitted-packet.json"
+  },
+  "ownerStatus": "PENDING OWNER",
+  "candidateHistory": {
+    "writer": {
+      "provider": "openai",
+      "model": "gpt-5.6-sol"
+    },
+    "proseModelGate": "none_owner_gate_permanent",
+    "ownerStatus": "PENDING OWNER",
+    "approvalEffect": "none"
+  }
+}

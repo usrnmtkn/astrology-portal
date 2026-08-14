@@ -62,6 +62,55 @@ Sun-in-Leo core is the owner-designated calibration sample.
 Register note: the owner's own examples use "people" naturally in this second-person surface;
 the no-"people" rule remains Current Sky (collective) only.
 
+COLD RENDERED PROSE RULE (owner verbatim, 2026-08-11, written after the V7 Mercury masters
+failed her cold read; BLOCKING for all reader-facing copy):
+
+Read the copy cold, rendered, and line by line as prose. Judge the final text exactly as a
+reader would encounter it in the product. Do not use the prompt, source notes, astrology
+logic, intended meaning, or drafting context to help the writing make sense.
+
+Every sentence must: make sense on the first read; flow naturally from the sentence before
+it; lead naturally into the sentence after it; use normal, everyday language; sound like
+something a human writer would actually say; state the intended meaning directly enough
+that the reader does not have to decode it.
+
+Prefer the ordinary word when it is more natural. Use work instead of labor unless labor is
+literally the subject. Do not choose a more formal, abstract, clever, or literary word just
+because it sounds elevated.
+
+A sentence fails if the judge has to stop and ask what it means, mentally translate it into
+simpler English, infer a missing connection, or rely on knowledge of the astrology to
+understand the prose.
+
+Also judge the paragraph as a whole. Flag: abrupt jumps between ideas; sentences that
+technically make sense alone but do not connect; vague referents such as it, this, that,
+the change when the reader may not know what they refer to; report-heavy transitions;
+clever compression; abstract summaries where the actual behavior could be named; repeated
+setup or explanation; sentences that sound assembled rather than written; unnecessarily
+formal vocabulary; a strong sentence followed by another sentence that explains the same
+point again.
+
+Cold-read test: after drafting, ignore what the writer intended and read only the rendered
+copy. If any line produces "Wait, what does that mean?", "Why are we suddenly talking about
+this?", or "A normal person would say this more simply," the line is not approved.
+
+Final judge instruction: Do not reward a sentence for being astrologically correct if it is
+awkward prose. Correct astrology expressed in unnatural language still fails the writing
+judge.
+
+RENDERED-SAMPLE GATE (companion governance, same date): rulings on a file authorize
+drafting and staging; batch generation and serving require the owner's read of ONE fully
+rendered sample page on the product surface first. No batch proceeds on document review
+alone.
+
+FINAL COLD-RENDERED-PROSE CALIBRATION OUTCOME (owner-directed, 2026-08-11):
+
+The TRAIN/HOLDOUT calibration caught all 8 owner-rejected holdout pages but incorrectly rejected
+one of the 2 owner-approved holdout golds. Under the owner's acceptance rule, this check is
+permanently advisory-only. It may identify lines for the owner's attention, but it cannot block,
+revise, approve, promote, stage, or serve copy. Cold prose judgment is an owner gate by design.
+No further calibration spend is authorized without a new owner instruction.
+
 
 NO-VAGUENESS GOVERNOR (owner verbatim, 2026-08-08, applies across TLDR Astro):
 Every sentence must tell the reader what the astrology could look like in an actual life. Do
@@ -307,3 +356,176 @@ exact, settled, or locked until the owner explicitly approves that exact wording
 Stop rule: Once the structure, astrology, specificity, and natural language are correct, stop
 broad rewriting. Switch to surgical edits and do not reopen strong sentences without a
 concrete reason.
+
+---
+
+## SPINE SLOTS AND NEGATION PIVOTS (owner rulings, 2026-08-13, verbatim)
+
+SPINE SLOTS ARE CHECKS, NOT TEMPLATES (owner ruling, 2026-08-13): a spine
+element is satisfied when its content is present in the prose, not when a
+sentence announces it. Structural vocabulary from the spine or outline
+("the job of," "this is a period for," "the collective lesson is") must not
+appear in reader copy unless it earns its place as a line. A construction
+approved once does not license its reuse; repeating it across a set turns a
+strong line into machinery.
+
+NEGATION-PIVOT CAP (owner ruling, same date): the "X is not Y. It is Z."
+family, including "the problem is not," "X is not the problem," and "not X but
+Y," is owner voice and stays available, but it currently appears 84 times
+across approved copy and has become the default pivot for every argument.
+Cap: at most one negation pivot per page, and no more than three across a
+twelve-item set. When the cap is reached, the turn must find another way in:
+state the consequence directly, ask the question, or name what happens next.
+Deterministic check reports the count per page and per set.
+
+---
+
+## SPINE QUALITY GATES (owner ruling, 2026-08-14, verbatim)
+
+SPINE QUALITY GATES: the spine is not satisfied by presence alone.
+
+Cause: the Venus in Libra draft contained every fast-mover spine element and
+was still flat. The slots were filled with keyword lists, hedged sentences,
+and a single long advisory sentence. Structural presence is not the standard;
+Saturn in Capricorn is. Add a QUALITY REQUIREMENT to each spine element, with
+Saturn as the reference and the Venus failures as the negative examples.
+
+1. PLANET
+   Required: name where the planet becomes visible in ordinary life.
+   Saturn: "Saturn stands at the threshold where a choice becomes a
+   consequence. The deadline arrives, the bill comes due, and a weak structure
+   reveals itself in the person who has to absorb the extra hours."
+   Fails: a keyword list of domains with no verb of appearance ("Venus governs
+   relationships, creativity, attraction, and what we value" standing alone).
+   Deterministic check: flag a planet block whose only content is a
+   comma-separated list of abstract nouns.
+
+2. CONDITION
+   Required when the planet has dignity in the sign: explain the rulership
+   through consequence, not as a label. AND, when the sign has a symbol, the
+   symbol must do interpretive work.
+   Saturn: "Saturn rules Capricorn, so the sign sharpens what Saturn already
+   cares about" plus "The sea-goat gives Capricorn a body built for two
+   environments: hooves for the climb and a tail that still belongs to the
+   water."
+   Fails: dignity stated as a fact with no consequence; sign symbol absent
+   entirely (Libra's scales never appeared in the Venus draft).
+   Deterministic check: if the target sign has a recorded symbol and the draft
+   never references it, flag for review. Mythology and symbolism are allowed
+   when they interpret the mechanism, banned when they decorate.
+
+3. HANDOFF
+   Required: name the shift, not only the dates.
+   Saturn: "Capricorn changes the question from what everyone says they
+   believe to who does the work."
+   Fails: dates followed by generic theme language.
+
+4. THESIS
+   Required: the cultural rule being challenged AND who benefits from it.
+   Saturn: "You have been taught to mistake endurance for ability... and the
+   arrangement is cheaper than hiring anyone else."
+   Fails: a thesis with no beneficiary named. The Venus draft never said who
+   profits from the reader's accommodation.
+
+5. LIVED EVIDENCE
+   Required: two or three quick situations with nameable objects; none may
+   carry the argument alone; and at least one PULL-QUOTE line, a short
+   standalone sentence that states the whole argument.
+   Saturn: "If everything falls apart when one person takes a day off, that
+   person was the infrastructure."
+   Fails: one extended scenario (the website project), or correct scenes with
+   no memorable line.
+   Deterministic check: flag when a single scenario spans more than one
+   paragraph; flag when no sentence under 20 words in the lived section could
+   stand alone.
+
+6. FAILURE MECHANISM
+   Required: how the useful skill becomes the problem, stated as behavior the
+   reader performs, not as a category.
+
+7. STRATEGY
+   Required: short imperatives in sequence, a drumbeat.
+   Saturn: "Fix the handoff. Train someone else to do the work. Fund the
+   repair. Document what only one person knows."
+   Fails: one long advisory sentence.
+   Deterministic check: require at least two imperative sentences in the
+   strategy element.
+
+8. CLOSE
+   Required: unhedged. States the condition or consequence flatly.
+   Saturn: "A structure is not stable if it only works when one person never
+   rests."
+   Fails: hedged or date-bound closes ("an arrangement may strain when...").
+   Deterministic check: flag hedging modals (may, might, can) in the final
+   sentence.
+
+9. INHERITED-CLOSE RULE
+   A close carried over from an existing approved article is NOT automatically
+   current. Approved before the current standard does not mean approved
+   against it. Any inherited element must be judged against these gates and
+   flagged when it fails, rather than passed through because it once carried
+   approval.
+
+---
+
+## SKY PLACEMENT ARTICLE SPINE (owner ruling, 2026-08-14, verbatim)
+
+This is the canonical unified article spine. It supersedes the earlier separate fast-mover
+and slow-mover field lists while retaining their recorded quality gates.
+
+SKY PLACEMENT ARTICLE SPINE
+
+Every element below is required. Each element is satisfied only when it meets
+its stated requirement.
+
+1. PLANET
+Name what the planet governs, and name where it becomes visible in ordinary
+life. The reader learns both what it rules and how they would recognize it.
+
+2. CONDITION
+Include when the planet has dignity in the sign. State the rulership and
+explain what it changes about how directly the planet operates. When the sign
+has a symbol, the symbol interprets the mechanism of the transit.
+
+3. HANDOFF
+One opening sentence naming the prior sign and its dates, and what the focus
+shifts from and to.
+
+4. THESIS
+Name the cultural rule or familiar assumption the transit challenges, and name
+who benefits from that rule.
+
+5. LIVED EVIDENCE
+Two or three quick situations containing nameable objects, decisions, costs,
+and follow-up work. No single situation carries the argument. Include one
+short standalone sentence that states the whole argument in one line.
+
+6. FAILURE MECHANISM
+State how the useful impulse becomes the problem, described as behavior the
+reader performs.
+
+7. STRATEGY
+Short imperative sentences in sequence. Each names one action.
+
+8. CLOSE
+One unhedged sentence stating the consequence or condition that completes the
+thesis.
+
+SLOW MOVERS ADD, between 7 and 8:
+9. ERA FRAME. What the multi-year transit means at collective scale, with one
+line the reader can carry.
+10. RECURRENCE. The prior transit's dates and what that period revealed.
+11. OLDER ANALOGS. Included when verified dates and sourced historical
+material advance the thesis.
+12. COLLECTIVE LESSON. What the transit teaches at group scale, with a test
+the reader can apply.
+
+STANDING RULES
+Register: the page speaks to the reader. Direct address is used; the fourth
+wall stays intact.
+Inherited elements are judged against this spine. Prior approval under an
+earlier standard does not satisfy it.
+One negation pivot per page.
+Structural vocabulary from this spine does not appear in reader copy.
+Mythology and symbolism appear when they interpret the mechanism.
+Every sentence is judged as rendered prose, read cold.

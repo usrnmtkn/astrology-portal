@@ -10,10 +10,10 @@ const configPath = path.join(packageRoot, "config", "daily-glance-writer-sol-xhi
 const batch1ConfigPath = path.join(packageRoot, "config", "daily-glance-writer-sol-xhigh-batch-1-v1.json");
 const batch2ConfigPath = path.join(packageRoot, "config", "daily-glance-writer-sol-xhigh-batch-2-v1.json");
 const batch3ConfigPath = path.join(packageRoot, "config", "daily-glance-writer-sol-xhigh-batch-3-v1.json");
-const voiceIndexPath = path.join(packageRoot, "voice", "tldr-astro", "marie-satori-writer", "voice-index.json");
+const voiceIndexPath = path.join(packageRoot, "voice", "tldr-astro", "satori-writer", "voice-index.json");
 const bannedWordsPath = path.join(packageRoot, "voice", "banned-words.json");
 const placementVoicePath = path.join(packageRoot, "voice", "tldr-astro", "sky-placement.json");
-const servingLintPolicyPath = path.join(packageRoot, "config", "daily-glance-writer-lint-policy-v2.json");
+const servingLintPolicyPath = path.join(packageRoot, "config", "daily-glance-writer-lint-policy-v3.json");
 
 function readJson(filePath) {
   const parsed = JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -474,8 +474,13 @@ function packetLint(packet, modelInput, config = readJson(configPath)) {
   if (isBatch2(config)) {
     add("owner-prompt-core", packet.ownerPromptCore === config.ownerPromptCore && modelInput.includes(`## Owner packet prompt core (verbatim)\n${config.ownerPromptCore}`), "Owner closing instruction is present verbatim as the writing instruction.");
     add("owner-nine-step-guidance", packet.ownerGuidance.filter((entry) => String(entry.id || "").startsWith("OWNER-STEP-")).map((entry) => entry.id).join("|") === "OWNER-STEP-1|OWNER-STEP-2|OWNER-STEP-3|OWNER-STEP-4|OWNER-STEP-5|OWNER-STEP-6|OWNER-STEP-7|OWNER-STEP-8|OWNER-STEP-9", "Nine owner steps present as guidance; PL- phrase-library rules ride alongside.");
-    add("owner-three-final-tests", packet.ownerFinalTests.map((entry) => entry.id).join("|") === "OWNER-TEST-specificity|OWNER-TEST-morning-read|OWNER-TEST-screenshot", "Specificity, morning-read, and screenshot tests present.");
-    add("specificity-profile", Boolean(packet.specificity && packet.specificity.minimumGroups >= 1 && packet.specificity.cueGroups?.length >= packet.specificity.minimumGroups), "Mechanical swap-test profile present.");
+    const expectedFinalTests = config.sceneContextGate?.required
+      ? "OWNER-TEST-morning-read|OWNER-TEST-screenshot"
+      : "OWNER-TEST-specificity|OWNER-TEST-morning-read|OWNER-TEST-screenshot";
+    add("owner-final-tests", packet.ownerFinalTests.map((entry) => entry.id).join("|") === expectedFinalTests, config.sceneContextGate?.required ? "Morning-read and screenshot tests present; the retired portability/swap test is absent." : "Specificity, morning-read, and screenshot tests present.");
+    if (!config.sceneContextGate?.required) {
+      add("specificity-profile", Boolean(packet.specificity && packet.specificity.minimumGroups >= 1 && packet.specificity.cueGroups?.length >= packet.specificity.minimumGroups), "Mechanical swap-test profile present.");
+    }
   }
   add("routing", packet.routing.model === "gpt-5.6-sol" && packet.routing.reasoningEffort === "xhigh" && packet.routing.writerCalls === config.keys.length && packet.routing.judgeCalls === 0 && packet.routing.terraEnabled === false, `Sol xhigh writer-only route for ${config.keys.length} calls; Terra disabled.`);
   const forbiddenMetadata = JSON.stringify(packet).match(/(?:ai_candidate|judge report|rejected copy|negative example)/giu) || [];
@@ -682,7 +687,7 @@ function lintOutput(candidate, key, config = readJson(configPath)) {
     { id: "DG-R17-quoted-dialogue-max-one", passed: quotedDialogueLines.length <= 1, details: quotedDialogueLines.length ? quotedDialogueLines : "No quoted-dialogue line used." },
     { id: "DG-R17-quoted-dialogue-earns-place-advisory", passed: true, advisory: true, details: quotedDialogueLines.length === 1 ? "One quoted-dialogue line used; owner review determines whether it earns its place." : "No quoted-dialogue judgment needed." },
     { id: "OWNER-DIRECTIVE-short-blunt-line", passed: !isBatch2(config) || shortBluntLines.length >= 1, details: shortBluntLines.length ? shortBluntLines : "No 2-8 word body sentence found." },
-    { id: "OWNER-TEST-specificity", passed: !isBatch2(config) || target?.specificityAdvisory || specificity.passed, advisory: Boolean(target?.specificityAdvisory), details: target?.specificityAdvisory ? { measuredPassed: specificity.passed, ...specificity.details } : specificity.details },
+    ...(!config.sceneContextGate?.required ? [{ id: "OWNER-TEST-specificity", passed: !isBatch2(config) || target?.specificityAdvisory || specificity.passed, advisory: Boolean(target?.specificityAdvisory), details: target?.specificityAdvisory ? { measuredPassed: specificity.passed, ...specificity.details } : specificity.details }] : []),
     { id: "OWNER-TEST-morning-read", passed: !isBatch2(config) || morningReadFailures.length === 0, details: morningReadFailures.length ? morningReadFailures : "Every body sentence is 28 words or fewer and avoids semicolons/parentheses." },
     { id: "OWNER-TEST-screenshot", passed: !isBatch2(config) || screenshotLines.length >= 1, details: screenshotLines.length ? screenshotLines : "No candidate body line detected." }
   ]);
@@ -730,7 +735,7 @@ function batchLint(outputs, { expectedCount = outputs.length, config = null } = 
     { id: "batch-output-count", passed: outputs.length === expectedCount, details: `${outputs.length}/${expectedCount} outputs` },
     { id: "DG-R1-recurring-sentence-frame", passed: repeated.length === 0, details: repeated.length ? repeated : "No three-word sentence frame appears in more than two outputs." },
     { id: "DG-R7-opener-variety", passed: repeatedOpeners.length === 0 && openers.size === outputs.length, details: repeatedOpeners.length ? repeatedOpeners : `${openers.size} distinct opener constructions.` },
-    ...(config && isBatch2(config) ? [{
+    ...(config && isBatch2(config) && !config.sceneContextGate?.required ? [{
       id: "OWNER-TEST-specificity-batch",
       passed: specificityResults.every((entry) => config.keys.find((target) => target.key === entry.key)?.specificityAdvisory || entry.passed),
       details: specificityResults
@@ -743,7 +748,7 @@ function batchLint(outputs, { expectedCount = outputs.length, config = null } = 
     rules: {
       "DG-R1": "A recurring sentence frame may not appear in more than two outputs.",
       "DG-R7": "No body opener construction may repeat within the batch.",
-      ...(config && isBatch2(config) ? { "OWNER-TEST-specificity": "Every body must match its key profile and fail non-advisory swap profiles; same-target sibling swaps are advisory where configured." } : {})
+      ...(config && isBatch2(config) && !config.sceneContextGate?.required ? { "OWNER-TEST-specificity": "Every body must match its key profile and fail non-advisory swap profiles; same-target sibling swaps are advisory where configured." } : {})
     },
     checks,
     openerConstructions: outputs.map(({ key, candidate }) => ({ key, frame: openerConstruction(candidate.body) })),
