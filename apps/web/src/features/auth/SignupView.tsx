@@ -4,6 +4,7 @@ import { CitySearchField } from "../../components/CitySearchField";
 import {
   isAuthConfigured,
   isPhoneAuthEnabled,
+  resendEmailSignupConfirmation,
   sendPhoneSignInCode,
   signInWithEmail,
   signInWithProvider,
@@ -76,6 +77,8 @@ export function SignupView({
   const [authStatus, setAuthStatus] = useState<"idle" | "loading">("idle");
   const [authMessage, setAuthMessage] = useState("");
   const [emailConfirmationPending, setEmailConfirmationPending] = useState("");
+  const [emailConfirmationResendStatus, setEmailConfirmationResendStatus] = useState<"idle" | "loading" | "sent">("idle");
+  const [emailConfirmationResendMessage, setEmailConfirmationResendMessage] = useState("");
   const [phoneAuthOpen, setPhoneAuthOpen] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneCode, setPhoneCode] = useState("");
@@ -206,9 +209,43 @@ export function SignupView({
       onEmailConfirmationRequired();
       setEmailConfirmationPending(form.email.trim());
     } catch (error) {
+      const errorCode = error && typeof error === "object" && "code" in error
+        ? String(error.code)
+        : "";
+      const errorMessage = error instanceof Error ? error.message : "";
+
+      if (
+        isLogin
+        && (errorCode === "email_not_confirmed" || /email not confirmed/i.test(errorMessage))
+      ) {
+        onEmailConfirmationRequired();
+        setEmailConfirmationPending(form.email.trim());
+        return;
+      }
+
       setAuthMessage(error instanceof Error ? error.message : "Email signup failed.");
     } finally {
       setAuthStatus("idle");
+    }
+  }
+
+  async function resendEmailConfirmation() {
+    if (!emailConfirmationPending || emailConfirmationResendStatus === "loading") {
+      return;
+    }
+
+    setEmailConfirmationResendStatus("loading");
+    setEmailConfirmationResendMessage("");
+
+    try {
+      await resendEmailSignupConfirmation(emailConfirmationPending);
+      setEmailConfirmationResendStatus("sent");
+      setEmailConfirmationResendMessage("A new confirmation email was sent.");
+    } catch (error) {
+      setEmailConfirmationResendStatus("idle");
+      setEmailConfirmationResendMessage(
+        error instanceof Error ? error.message : "The confirmation email could not be resent."
+      );
     }
   }
 
@@ -233,10 +270,29 @@ export function SignupView({
               You will not have a public handle or appear in Friends until your email is confirmed.
             </p>
             <button
+              className="auth-primary-button auth-confirmation-resend-button"
+              type="button"
+              disabled={emailConfirmationResendStatus !== "idle"}
+              onClick={() => void resendEmailConfirmation()}
+            >
+              {emailConfirmationResendStatus === "loading"
+                ? "Sending..."
+                : emailConfirmationResendStatus === "sent"
+                  ? "Confirmation email sent"
+                  : "Resend confirmation email"}
+            </button>
+            {emailConfirmationResendMessage && (
+              <p className="auth-message" aria-live="polite">
+                {emailConfirmationResendMessage}
+              </p>
+            )}
+            <button
               className="phone-auth-text-button"
               type="button"
               onClick={() => {
                 setEmailConfirmationPending("");
+                setEmailConfirmationResendStatus("idle");
+                setEmailConfirmationResendMessage("");
                 setAuthMessage("");
               }}
             >
