@@ -211,6 +211,23 @@ const lilithAries = renderer.renderSkyPlacement({
   entryDate: "August 25, 2026",
   exitDate: "May 21, 2027"
 });
+const lilithAriesQuincunxFacts = {
+  planet: "lilith",
+  sign: "aries",
+  entryDate: "August 25, 2026",
+  exitDate: "May 21, 2027",
+  events: [{
+    type: "aspect",
+    a: "lilith",
+    aSign: "aries",
+    b: "mercury",
+    bSign: "virgo",
+    aspect: "quincunx",
+    exactDate: "August 27, 2026"
+  }]
+};
+const lilithAriesQuincunx = renderer.renderSkyPlacement(lilithAriesQuincunxFacts);
+const lilithAriesQuincunxReference = renderSkyPlacementReference(lilithAriesQuincunxFacts);
 const saturnPiscesDirect = renderer.renderSkyPlacement({
   planet: "saturn",
   sign: "pisces",
@@ -630,6 +647,16 @@ assert.deepEqual(
   "The serving manifest must carry the exact owner-approved Venus replacement record."
 );
 assert.equal(lilithAries.tagline, "Anger stops going somewhere else", "Owner-approved Lilith placement taglines must be reader-eligible.");
+assert.equal(
+  lilithAriesQuincunx.body,
+  lilithAries.body,
+  "An unsupported optional quincunx insert must not erase approved Lilith placement copy."
+);
+assert.equal(
+  lilithAriesQuincunxReference.body,
+  lilithAries.body,
+  "The Node reference resolver must match the browser resolver when an optional quincunx insert is unavailable."
+);
 assert.match(
   lilithAries.body,
   /^Someone finally says no to the demand they have agreed to a hundred times before/u,

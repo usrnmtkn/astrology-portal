@@ -147,6 +147,11 @@ import {
   wholeDegreeOrb
 } from "./features/sky/skyHelpers";
 import {
+  shouldLoadSkyPlacementContent,
+  skyPlacementDescriptionState,
+  type SkyPlacementContentStatus
+} from "./features/sky/skyPlacementContentState";
+import {
   getAuthAccount,
   isAuthConfigured,
   loadPersistedProfile,
@@ -10269,7 +10274,14 @@ function withNatalChartCalculationTimeout(request: Promise<SkySnapshot>) {
 }
 
 function FeatureLoadingFallback() {
-  return <div className="feature-loading-fallback" aria-hidden="true" />;
+  return (
+    <div className="feature-loading-fallback" role="status" aria-label="Loading page">
+      <span className="summary-skeleton feature-loading-fallback__lines" aria-hidden="true">
+        <span />
+        <span />
+      </span>
+    </div>
+  );
 }
 
 function SkyLoadingWheel() {
@@ -10449,7 +10461,7 @@ export function App() {
     idleFriendCalculationReadiness
   );
   const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);
-  const [skyPlacementFallbackStatus, setSkyPlacementFallbackStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
+  const [skyPlacementFallbackStatus, setSkyPlacementFallbackStatus] = useState<SkyPlacementContentStatus>("idle");
   const [skyPlacementFallbackRetryKey, setSkyPlacementFallbackRetryKey] = useState(0);
   const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
   const [, setPlanetTopicVocabularyVersion] = useState(0);
@@ -10992,8 +11004,13 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
+    const shouldLoadPlacementContent = shouldLoadSkyPlacementContent({
+      mode,
+      hasSky: Boolean(sky),
+      detailRoutePath: skyDetailRoutePath
+    });
 
-    if (!skyDetailRoutePath || !/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath)) {
+    if (!shouldLoadPlacementContent) {
       setSkyPlacementFallbackStatus("idle");
       return () => {
         cancelled = true;
@@ -11035,7 +11052,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [skyDetailRoutePath, skyPlacementFallbackRetryKey]);
+  }, [mode, sky, skyDetailRoutePath, skyPlacementFallbackRetryKey]);
 
   useEffect(() => {
     function handlePortalUrlChange() {
@@ -13496,6 +13513,7 @@ export function App() {
                       aspects={sky.aspects}
                       generatedAt={sky.generatedAt}
                       generatedContent={skyGeneratedContent}
+                      contentStatus={skyPlacementFallbackStatus}
                       lifeAreaFocus={[]}
                       onOpenDetail={openSkyDetail}
                     />
@@ -13506,6 +13524,7 @@ export function App() {
                       aspects={sky.aspects}
                       generatedAt={sky.generatedAt}
                       generatedContent={skyGeneratedContent}
+                      contentStatus={skyPlacementFallbackStatus}
                       lifeAreaFocus={userLifeAreaFocus}
                       onOpenDetail={openSkyDetail}
                     />
@@ -15067,6 +15086,7 @@ function TodayView({
   aspects,
   generatedAt,
   generatedContent,
+  contentStatus,
   lifeAreaFocus,
   onOpenDetail
 }: {
@@ -15074,6 +15094,7 @@ function TodayView({
   aspects: SkySnapshot["aspects"];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
+  contentStatus: SkyPlacementContentStatus;
   lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
@@ -15085,6 +15106,7 @@ function TodayView({
           aspects={aspects}
           generatedAt={generatedAt}
           generatedContent={generatedContent}
+          contentStatus={contentStatus}
           lifeAreaFocus={lifeAreaFocus}
           onOpenDetail={onOpenDetail}
         />
@@ -15199,6 +15221,7 @@ function PlacementTable({
   aspects,
   generatedAt,
   generatedContent,
+  contentStatus,
   lifeAreaFocus,
   onOpenDetail
 }: {
@@ -15206,6 +15229,7 @@ function PlacementTable({
   aspects: SkySnapshot["aspects"];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
+  contentStatus: SkyPlacementContentStatus;
   lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
@@ -15268,6 +15292,7 @@ function PlacementTable({
               { aspects, positions: displayPositions }
             )
           );
+          const descriptionState = skyPlacementDescriptionState(rowSummary, contentStatus);
           const openDetail = () => onOpenDetail(currentSkyPlacementDetailArticle({
             aspects,
             generatedAt,
@@ -15283,6 +15308,7 @@ function PlacementTable({
                 ariaLabel={`Read more about ${title}`}
                 degree={formatPlanetDegree(position)}
                 description={rowSummary}
+                descriptionLoading={descriptionState === "loading"}
                 dignity={dignity}
                 durationLabel={durationLabel}
                 glyph={position.glyph}

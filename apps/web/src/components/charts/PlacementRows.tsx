@@ -666,6 +666,7 @@ export function PlanetPlacementRow({
   ariaLabel,
   degree,
   description,
+  descriptionLoading = false,
   dignity,
   durationLabel,
   glyph,
@@ -683,6 +684,7 @@ export function PlanetPlacementRow({
   ariaLabel?: string;
   degree: string;
   description?: string | null;
+  descriptionLoading?: boolean;
   dignity?: PlacementDignity | PlacementDignity[] | null;
   durationLabel?: string | null;
   glyph: string;
@@ -765,6 +767,11 @@ export function PlanetPlacementRow({
         )}
         {description ? (
           <span className="planet-placement-row__description">{description}</span>
+        ) : descriptionLoading ? (
+          <span className="summary-skeleton planet-placement-row__description-loading" aria-hidden="true">
+            <span />
+            <span />
+          </span>
         ) : null}
         {hasFooterTags ? (
           <span className="planet-placement-row__tags">
@@ -786,6 +793,7 @@ export function PlanetPlacementRow({
         className={rowClassName}
         type="button"
         aria-label={ariaLabel ?? title}
+        aria-busy={descriptionLoading || undefined}
         onClick={onClick}
       >
         {content}
@@ -794,7 +802,7 @@ export function PlanetPlacementRow({
   }
 
   return (
-    <article className={rowClassName} aria-label={ariaLabel ?? title}>
+    <article className={rowClassName} aria-label={ariaLabel ?? title} aria-busy={descriptionLoading || undefined}>
       {content}
     </article>
   );
