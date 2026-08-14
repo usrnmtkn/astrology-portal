@@ -121,7 +121,19 @@ const appSource = [
 const driverStart = appSource.indexOf("function dailyGlanceDriver(");
 const driverEnd = appSource.indexOf("\nfunction dailyGlanceGeneratedContent(", driverStart);
 const driverSource = appSource.slice(driverStart, driverEnd);
+const skyDateTimeStart = appSource.indexOf("function skyDateTimeFromInput(");
+const skyDateTimeEnd = appSource.indexOf("\nfunction skyFactValidation(", skyDateTimeStart);
+const skyDateTimeSource = appSource.slice(skyDateTimeStart, skyDateTimeEnd);
 assert.ok(driverStart >= 0 && driverEnd > driverStart, "The Daily At-a-Glance driver must exist.");
+assert.ok(
+  skyDateTimeStart >= 0 && skyDateTimeEnd > skyDateTimeStart,
+  "The selected-date sky timestamp helper must exist."
+);
+assert.match(
+  skyDateTimeSource,
+  /withTimeZone\(location\)[\s\S]*?zonedDateTimeToUtc\(value, "12:00 PM", resolvedLocation\.timeZone\)/u,
+  "The Moon scan anchor must be noon in the reader's selected location timezone, not UTC noon."
+);
 assert.match(
   driverSource,
   /selectDailyGlanceCivilDayDriver\([\s\S]*?moon\.longitude,[\s\S]*?moon\.speed,[\s\S]*?natalSky\.positions,[\s\S]*?house/u,
@@ -183,6 +195,7 @@ const vite = await createServer({
 
 try {
   const { defaultLocation, getAstrodienstSky } = await vite.ssrLoadModule("/apps/web/src/services/ephemeris.ts");
+  const { zonedDateTimeToUtc } = await vite.ssrLoadModule("/apps/web/src/services/timezones.ts");
   const ephemerisCases = [
     {
       noon: "2026-08-30T16:00:00.000Z",
@@ -218,6 +231,59 @@ try {
     assert.equal(selected?.natal, "Mercury");
     assert.equal(selected?.aspect, "sextile");
   }
+
+  const utcMinusEightZone = "Etc/GMT+8";
+  const utcMinusEightLocation = {
+    ...defaultLocation,
+    timeZone: utcMinusEightZone
+  };
+  const localDate = "2026-01-15";
+  const localNoon = zonedDateTimeToUtc(localDate, "12:00 PM", utcMinusEightZone);
+  const sameLocalDayAfterUtcMidnight = zonedDateTimeToUtc(localDate, "11:00 PM", utcMinusEightZone);
+  const priorLocalDayAfterUtcMidnight = zonedDateTimeToUtc("2026-01-14", "11:00 PM", utcMinusEightZone);
+
+  assert.equal(localNoon.toISOString(), "2026-01-15T20:00:00.000Z");
+  assert.equal(sameLocalDayAfterUtcMidnight.toISOString(), "2026-01-16T07:00:00.000Z");
+  assert.equal(priorLocalDayAfterUtcMidnight.toISOString(), "2026-01-15T07:00:00.000Z");
+
+  const [localNoonSky, sameLocalDaySky, priorLocalDaySky] = await Promise.all([
+    getAstrodienstSky(utcMinusEightLocation, localNoon),
+    getAstrodienstSky(utcMinusEightLocation, sameLocalDayAfterUtcMidnight),
+    getAstrodienstSky(utcMinusEightLocation, priorLocalDayAfterUtcMidnight)
+  ]);
+  const localNoonMoon = localNoonSky.positions.find((position) => position.planet === "Moon");
+  const sameLocalDayMoon = sameLocalDaySky.positions.find((position) => position.planet === "Moon");
+  const priorLocalDayMoon = priorLocalDaySky.positions.find((position) => position.planet === "Moon");
+  assert.equal(typeof localNoonMoon?.longitude, "number");
+  assert.equal(typeof localNoonMoon?.speed, "number");
+  assert.equal(typeof sameLocalDayMoon?.longitude, "number");
+  assert.equal(typeof priorLocalDayMoon?.longitude, "number");
+
+  const sameLocalDayNatalLongitude = ((sameLocalDayMoon.longitude - 60) % 360 + 360) % 360;
+  const priorLocalDayNatalLongitude = ((priorLocalDayMoon.longitude - 60) % 360 + 360) % 360;
+  const sameLocalDaySelection = selectDailyGlanceCivilDayDriver(
+    localNoonMoon.longitude,
+    localNoonMoon.speed,
+    [{ planet: "Mercury", longitude: sameLocalDayNatalLongitude }],
+    11
+  );
+  const priorLocalDaySelection = selectDailyGlanceCivilDayDriver(
+    localNoonMoon.longitude,
+    localNoonMoon.speed,
+    [{ planet: "Mercury", longitude: priorLocalDayNatalLongitude }],
+    11
+  );
+
+  assert.equal(
+    sameLocalDaySelection?.selectionScope,
+    "civil-day-exact",
+    "At UTC-8, a contact after UTC midnight but before local midnight must remain on the selected local date."
+  );
+  assert.deepEqual(
+    priorLocalDaySelection,
+    { kind: "house", house: 11 },
+    "At UTC-8, a contact after UTC midnight on the prior local evening must not leak into the selected local date."
+  );
 } finally {
   await vite.close();
 }
