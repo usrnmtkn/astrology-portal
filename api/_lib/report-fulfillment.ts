@@ -16,6 +16,8 @@ import {
 import { reportSystemPromptVersions } from "./report-prompt-versions.js";
 import {
   deduplicateAssembledReport,
+  detectPostDedupCoherenceScopes,
+  normalizeAssembledReportWhitespace,
   validateReportKeyDateFormat,
   validateAssembledReport,
   type AssembledReportUnit,
@@ -111,6 +113,7 @@ type PassingUnitCacheEntry = {
     validatorResults: unknown[];
     judge: ReportJudgeResult;
     writerReviews: Array<{ critique: unknown; coldCritique: unknown }>;
+    keyDateEntries?: Array<{ eventId: string; title: string; sentence: string }>;
     promptVersions: Record<string, unknown>;
     factsHash: string | null;
     attemptCounts: { validator: number; judge: number };
@@ -715,6 +718,7 @@ export async function processReportFulfillmentJob(input: {
     const sourceSnapshot: PassingUnitCacheEntry["sourceSnapshot"] = {
       fulfillmentPassed: true, validatorResults, judge: judged.result, promptVersions,
       writerReviews,
+      keyDateEntries: draft.keyDates ?? [],
       factsHash: report.facts_hash, attemptCounts: { validator: validatorAttempts, judge: judgeAttempts },
       tokenAccounting: {
         acceptedTokens: unitAcceptedTokens,
@@ -743,7 +747,8 @@ export async function processReportFulfillmentJob(input: {
 
   if (orderedUnitIds.includes("key-dates")) {
     const existingKeyDates = await input.store.unit(report.id, "key-dates");
-    if (existingKeyDates?.source_snapshot?.fulfillmentPassed === true) {
+    if (existingKeyDates?.source_snapshot?.fulfillmentPassed === true
+      && (existingKeyDates.source_snapshot.deterministicAssembly as { schema?: unknown } | undefined)?.schema === "report-key-dates-assembly.v2") {
       const snapshot = existingKeyDates.source_snapshot;
       validatorSummary.push({
         unitId: "key-dates",
@@ -765,7 +770,10 @@ export async function processReportFulfillmentJob(input: {
             headline: row.headline,
             summary: row.summary,
             body: row.body,
-            sections: Array.isArray(row.sections) ? row.sections as Array<{ heading?: string; body?: string }> : []
+            sections: Array.isArray(row.sections) ? row.sections as Array<{ heading?: string; body?: string }> : [],
+            keyDates: Array.isArray(row.source_snapshot?.keyDateEntries)
+              ? row.source_snapshot.keyDateEntries as Array<{ eventId: string; title: string; sentence: string }>
+              : []
           }
         }];
       });
@@ -774,7 +782,7 @@ export async function processReportFulfillmentJob(input: {
         frozenFacts: report.facts,
         sourceUnits
       });
-      const formatIssues = validateReportKeyDateFormat(keyDatesDraft);
+      const formatIssues = validateReportKeyDateFormat(keyDatesDraft, sourceUnits);
       const factLock = verifyReportFactLock(keyDatesDraft, report.facts);
       const keyDateIssues = [...formatIssues, ...factLock.issues];
       if (keyDateIssues.length) {
@@ -785,7 +793,7 @@ export async function processReportFulfillmentJob(input: {
         await input.store.saveUnit(report, "key-dates", keyDatesDraft, {
           fulfillmentPassed: true,
           deterministicAssembly: {
-            schema: "report-key-dates-assembly.v1",
+            schema: "report-key-dates-assembly.v2",
             sourceUnitIds: sourceUnits.map((unit) => unit.unitId),
             writerChainSkipped: true,
             coldReadSkipped: true,
@@ -850,6 +858,68 @@ export async function processReportFulfillmentJob(input: {
   };
   const deduplication = deduplicateAssembledReport(assembledUnits);
   assembledUnits = deduplication.units;
+  if (deduplication.coherenceScopes.length) {
+    const scope = deduplication.coherenceScopes[0];
+    const unit = assembledUnits.find((candidate) => candidate.unitId === scope.unitId);
+    const row = unitById.get(scope.unitId);
+    if (!unit || !row) throw new Error(`REPORT_ASSEMBLY_COHERENCE_UNIT_MISSING: ${scope.unitId}`);
+    const payload = assembleReportGenerationPayload({
+      reportId: report.id,
+      reportDomain: report.report_domain,
+      reportHorizon: report.report_horizon,
+      unitId: scope.unitId,
+      frozenFacts: report.facts
+    });
+    const revision = await reviseReportDraftForNamedDefects({
+      payload,
+      draft: unit.draft,
+      defects: [{
+        id: `assembly-coherence:${scope.unitId}:${scope.location}:${scope.paragraphIndex}`,
+        category: "unnatural_phrasing",
+        location: scope.location,
+        sentence_index: scope.scopeStart,
+        scope_start: scope.scopeStart,
+        scope_end: scope.scopeEnd,
+        quote: scope.quote,
+        evidence: `Mechanical deduplication left a paragraph with ${scope.reasons.join(", ")}.`,
+        evidence_ids: [],
+        instruction: "Repair only this paragraph so every remaining sentence connects continuously after the removed duplicate. Remove any dangling connector or orphaned pronoun. Preserve every astrology fact, date, degree, aspect, house, certainty level, and attribution. Do not add a new interpretation or conclusion."
+      }],
+      callModel: authorizedCall
+    });
+    const normalized = normalizeAssembledReportWhitespace([{ ...unit, draft: revision.revised }])[0];
+    const remaining = detectPostDedupCoherenceScopes([normalized]);
+    if (remaining.length) {
+      throw new Error(`REPORT_ASSEMBLY_COHERENCE_REPAIR_REJECTED: ${JSON.stringify(remaining)}`);
+    }
+    const repairTokens = totalTokens(revision.calls);
+    tokenCount += repairTokens;
+    await withPersistenceBackoff(`${scope.unitId}:assembly-coherence`, async () => {
+      await input.store.saveUnit(report, scope.unitId, normalized.draft, {
+        ...row.source_snapshot,
+        fulfillmentPassed: true,
+        assemblyCoherenceRepairs: [
+          ...(Array.isArray(row.source_snapshot?.assemblyCoherenceRepairs) ? row.source_snapshot.assemblyCoherenceRepairs : []),
+          {
+            schema: "report-assembly-coherence-repair.v1",
+            location: scope.location,
+            paragraphIndex: scope.paragraphIndex,
+            reasons: scope.reasons,
+            boundedCallCount: 1,
+            usage: revision.calls[0]?.usage ?? null
+          }
+        ]
+      });
+      await input.store.updateReport(report.id, {
+        ...nowPatch("writing"),
+        token_count: tokenCount,
+        token_count_total: tokenCountTotal,
+        token_spend_usd_estimate: estimatedCostTotal
+      });
+    }, input.persistenceRetry);
+    return requeueForContinuation();
+  }
+  assembledUnits = normalizeAssembledReportWhitespace(assembledUnits);
   const structuralIssues = validateAssembledReport(assembledUnits);
   const structuralErrors = structuralIssues.filter((entry) => entry.severity === "error");
   const assemblyWarnings = structuralIssues.filter((entry) => entry.severity !== "error");
