@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Google+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Noto+Sans+Symbols:wght@400;500&display=swap");
-
 :root {
   /*
   DESIGN SYSTEM NOTE
@@ -17,7 +15,7 @@
   --color-black: #1c1e28;
   --color-ink: var(--color-black);
   --color-ink-2: #4e5360;
-  --color-gray-500: #6c7280;
+  --color-gray-500: #4e5360;
   --color-muted: var(--color-gray-500);
   --color-faint: #9aa0ae;
   --color-soft: #d7dae3;
@@ -43,6 +41,13 @@
   --color-retrograde-bg: rgba(118, 82, 232, 0.16);
   --color-moon-phase-light: #f0cf6a;
   --color-moon-phase-shadow: #d8d7cf;
+  --color-lunar-element-air: #6ea8d8;
+  --color-lunar-element-earth: #6f9467;
+  --color-lunar-element-fire: #d18a54;
+  --color-lunar-element-water: #4f78b9;
+  --color-lunar-moon-dark: #171923;
+  --color-lunar-moon-dark-edge: #0e1118;
+  --color-lunar-moon-dark-soft: #242735;
   --filter-glyph-current: none;
   --filter-glyph-neutral: brightness(0) saturate(100%);
   --filter-relationship-tool-glyph: var(--filter-glyph-current);
@@ -59,11 +64,11 @@
   --color-aspect-muted: rgba(20, 20, 20, 0.22);
   --color-synastry-accent: var(--color-muted);
 
-  --serif: "Newsreader", Georgia, "Times New Roman", serif;
-  --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --google-sans: "Google Sans", var(--sans);
-  --mono: "Geist Mono", ui-monospace, "Space Mono", monospace;
-  --symbols: "Apple Symbols", "Noto Sans Symbols 2", "Noto Sans Symbols", "Segoe UI Symbol", Symbola, serif;
+  --serif: "Newsreader Variable", Newsreader, Georgia, "Times New Roman", serif;
+  --sans: "Geist Variable", Geist, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --google-sans: var(--sans);
+  --mono: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --symbols: "Noto Sans Symbols 2", "Apple Symbols", "Segoe UI Symbol", Symbola, sans-serif;
   --font-serif: var(--serif);
   --font-sans: var(--sans);
   --font-mono: var(--mono);
@@ -98,6 +103,14 @@
   --accent: var(--color-accent);
   --accent-bg: var(--color-accent-bg);
   --danger: var(--color-danger);
+  --danger-fg: var(--color-white);
+  --lunar-element-air: var(--color-lunar-element-air);
+  --lunar-element-earth: var(--color-lunar-element-earth);
+  --lunar-element-fire: var(--color-lunar-element-fire);
+  --lunar-element-water: var(--color-lunar-element-water);
+  --lunar-moon-dark: var(--color-lunar-moon-dark);
+  --lunar-moon-dark-edge: var(--color-lunar-moon-dark-edge);
+  --lunar-moon-dark-soft: var(--color-lunar-moon-dark-soft);
   --article-link: var(--ink);
   --wheel-line: var(--color-wheel-line);
   --wheel-tick: var(--color-wheel-tick);
@@ -216,10 +229,11 @@
 
   --font-display: var(--font-serif);
   --font-body: var(--font-sans);
-  --font-label: var(--font-mono);
-  --font-ui: var(--font-label);
+  --font-label: var(--font-sans);
+  --font-ui: var(--font-sans);
+  --font-data: var(--font-mono);
   --font-glyph: var(--font-symbol);
-  --font-brand: var(--font-label);
+  --font-brand: var(--font-sans);
 
   --tracking-body: normal;
   --tracking-normal: normal;
@@ -250,17 +264,17 @@
 
   --type-display-size: clamp(34px, 8vw, 42px);
   --type-h1-size: clamp(30px, 4vw, 46px);
-  --type-h2-size: clamp(20px, 2.4vw, 24px);
-  --type-title-size: 18px;
-  --type-body-size: 15px;
-  --type-description-size: 14px;
+  --type-h2-size: clamp(22px, 2.4vw, 26px);
+  --type-title-size: 20px;
+  --type-body-size: 16px;
+  --type-description-size: 15px;
   --type-meta-size: 13px;
   --type-degree-size: 13px;
-  --type-label-size: 11px;
-  --type-pill-size: 11px;
+  --type-label-size: 12px;
+  --type-pill-size: 12px;
   --type-hint-size: 12px;
-  --type-wordmark-size: 15px;
-  --type-nav-size: 16px;
+  --type-wordmark-size: 16px;
+  --type-nav-size: 15px;
   --type-glyph-size: 22px;
   --type-section-heading-size: 18px;
   --type-small-display-size: 20px;
@@ -271,26 +285,26 @@
   --sign-degree-offset-y: 0.02em;
   --lunar-card-copy-gap: var(--sp-1);
   --lunar-card-title-gap: var(--sp-1);
-  --lunar-type-micro: 8px;
-  --lunar-type-micro-plus: 8.5px;
-  --lunar-type-tiny: 9px;
-  --lunar-type-label: 10px;
-  --lunar-type-label-plus: 10.5px;
-  --lunar-type-eyebrow: 11px;
-  --lunar-type-caption: 12px;
-  --lunar-type-fine: 12.5px;
-  --lunar-type-meta: 13px;
-  --lunar-type-body: 14px;
-  --lunar-type-action: 15px;
-  --lunar-type-title: 16px;
-  --lunar-type-card-title: 16.5px;
-  --lunar-type-phase-title: 17px;
-  --lunar-type-section-title: 18px;
-  --lunar-type-large: 20px;
-  --lunar-type-moon-title: 21px;
-  --lunar-type-display: 22px;
-  --lunar-type-display-lg: 24px;
-  --lunar-type-display-xl: 25px;
+  --lunar-type-micro: var(--type-hint-size);
+  --lunar-type-micro-plus: var(--type-hint-size);
+  --lunar-type-tiny: var(--type-hint-size);
+  --lunar-type-label: var(--type-label-size);
+  --lunar-type-label-plus: var(--type-label-size);
+  --lunar-type-eyebrow: var(--type-label-size);
+  --lunar-type-caption: var(--type-meta-size);
+  --lunar-type-fine: var(--type-meta-size);
+  --lunar-type-meta: var(--type-meta-size);
+  --lunar-type-body: var(--type-body-size);
+  --lunar-type-action: var(--type-description-size);
+  --lunar-type-title: var(--type-title-size);
+  --lunar-type-card-title: var(--type-title-size);
+  --lunar-type-phase-title: var(--type-title-size);
+  --lunar-type-section-title: var(--type-h2-size);
+  --lunar-type-large: var(--type-large-title-size);
+  --lunar-type-moon-title: var(--type-h2-size);
+  --lunar-type-display: var(--type-large-title-size);
+  --lunar-type-display-lg: clamp(26px, 3vw, 30px);
+  --lunar-type-display-xl: clamp(28px, 4vw, 34px);
   --lunar-type-glyph-emphasis: 1.08em;
   --lunar-selected-title-size: clamp(26px, 2.4vw, 34px);
   --lunar-selected-subtitle-size: var(--lunar-type-body);
@@ -391,7 +405,7 @@
 
   --text-display: var(--type-display-size);
   --text-title: var(--type-display-size);
-  --sky-title-size: clamp(27px, 6vw, 34px);
+  --sky-title-size: var(--type-display-size);
   --text-card-title: var(--type-title-size);
   --text-wordmark: var(--type-wordmark-size);
   --text-nav: var(--type-nav-size);
@@ -441,8 +455,8 @@
   --text-compact-caption: var(--type-label-size);
   --text-verification-code-size: 1.25rem;
   --text-auth-code-slot-size: 1.35rem;
-  --text-nav-badge-size: 0.65rem;
-  --label-eyebrow-font-family: var(--google-sans);
+  --text-nav-badge-size: var(--type-label-size);
+  --label-eyebrow-font-family: var(--font-label);
   --label-eyebrow-font-size: var(--text-section-label-size);
   --label-eyebrow-font-weight: var(--weight-semibold);
   --label-eyebrow-line-height: var(--leading-label);
@@ -451,14 +465,14 @@
   --label-eyebrow-padding: 0;
   --section-label-gap-after: var(--space-2);
   --section-stack-gap: var(--space-6);
-  --surface-card-padding: clamp(22px, 3vw, 34px);
+  --surface-card-padding: clamp(20px, 2.5vw, 28px);
   --surface-card-padding-compact: var(--card-row-padding);
   --duration-badge-bg: var(--surface-2);
   --duration-badge-fg: var(--ink);
   --duration-pill-bg: transparent;
   --duration-pill-border-color: color-mix(in srgb, var(--card-meta-color) 48%, var(--line));
   --duration-pill-fg: var(--card-meta-color);
-  --badge-font-family: var(--font-label);
+  --badge-font-family: var(--font-ui);
   --badge-font-size: var(--type-pill-size);
   --badge-font-weight: var(--weight-semibold);
   --badge-padding: calc(var(--space-1) + var(--space-1) / 2) calc(var(--space-3) - var(--space-1) / 4);
@@ -481,9 +495,9 @@
   --weight-bold: 600;
 
   /*
-   * Type scale: 11, 12, 13, 14, 15, 16, 18, 20, 24,
-   * plus display clamp() values. Newsreader is for titles;
-   * Geist Mono is for body, UI, data, labels, and the wordmark.
+   * Type scale: 12, 13, 15, 16, 18, 20, 24, plus display clamp() values.
+   * Newsreader is for titles; Geist is for body and interface text.
+   * Monospace is reserved for compact data.
    */
   --type-ui-size: var(--text-button-size);
   --type-caption-size: var(--type-hint-size);
@@ -541,7 +555,7 @@
   --card-stack-gap: var(--space-2);
   --card-row-gap: var(--sp-2);
   --card-row-min-height: 0px;
-  --card-row-padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-5) var(--space-5);
+  --card-row-padding: var(--space-4) var(--space-5);
   --card-row-padding-compact: var(--space-3) var(--space-4);
   --card-row-padding-comfortable: calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-5) + var(--space-1) / 2);
   --form-field-padding: calc(var(--space-4) + var(--space-1) / 2);
@@ -589,7 +603,7 @@
   --natal-card-border: var(--card-border);
   --natal-card-radius: var(--card-radius);
   --natal-card-shadow: var(--card-shadow);
-  --natal-card-padding: var(--space-6) var(--space-5);
+  --natal-card-padding: var(--space-5);
   --natal-card-gap: var(--sp-2);
   --natal-card-min-height: 0px;
   --natal-card-title-size: var(--text-card-title);
@@ -604,7 +618,7 @@
   --aspect-card-border: var(--card-border);
   --aspect-card-radius: var(--card-radius);
   --aspect-card-shadow: var(--card-shadow);
-  --aspect-card-padding: var(--space-6) calc(var(--space-5) + var(--space-1) / 2);
+  --aspect-card-padding: var(--space-5);
   --aspect-card-gap: var(--card-row-gap);
   --aspect-card-min-height: 0px;
   --aspect-card-title-size: var(--text-card-title);
@@ -694,6 +708,12 @@
   --friend-avatar-highlight: rgba(255, 255, 255, 0.16);
   --friend-directory-secondary-text: var(--ink-2);
   --friend-directory-subtle-text: color-mix(in srgb, var(--ink-2) 76%, var(--muted));
+  --friend-directory-copy-text: var(--ink-2);
+  --friend-directory-highlight-bg: color-mix(in srgb, var(--surface-2) 58%, var(--color-moon-phase-light) 42%);
+  --friend-directory-disabled-border: color-mix(in srgb, var(--control-border) 72%, var(--ink-2));
+  --friend-directory-action-fg: var(--color-retrograde-accent);
+  --friend-directory-claimed-bg: color-mix(in srgb, var(--color-dig-good) 15%, var(--surface));
+  --friend-directory-claimed-fg: var(--color-dig-good);
   --friend-request-border: color-mix(in srgb, #77a67f 34%, var(--card-border));
   --friend-request-bg: #edf7ee;
   --friend-request-fg: #264d31;
@@ -715,23 +735,23 @@
   --friend-directory-toast-radius: 10px;
   --friend-directory-invite-card-radius: 14px;
   --friend-directory-mark-radius: 3px;
-  --friend-directory-status-size: 0.78rem;
-  --friend-directory-control-size: 0.75rem;
-  --friend-directory-count-size: 0.68rem;
-  --friend-directory-group-label-size: 0.72rem;
-  --friend-directory-message-size: 0.85rem;
-  --friend-directory-avatar-size: 0.74rem;
-  --friend-directory-row-title-size: 1.05rem;
-  --friend-directory-tertiary-size: 0.7rem;
-  --friend-directory-pattern-size: 0.64rem;
-  --friend-directory-action-size: 0.76rem;
-  --friend-directory-menu-size: 0.8rem;
-  --friend-directory-empty-title-size: 1.25rem;
-  --friend-directory-dialog-title-size: 1.35rem;
-  --friend-directory-input-size: 0.9rem;
-  --friend-directory-section-title-size: 1.1rem;
-  --friend-directory-accept-title-size: 1.4rem;
-  --friend-directory-toast-avatar-size: 0.6rem;
+  --friend-directory-status-size: var(--type-meta-size);
+  --friend-directory-control-size: var(--type-meta-size);
+  --friend-directory-count-size: var(--type-label-size);
+  --friend-directory-group-label-size: var(--type-label-size);
+  --friend-directory-message-size: var(--type-description-size);
+  --friend-directory-avatar-size: var(--type-label-size);
+  --friend-directory-row-title-size: var(--type-title-size);
+  --friend-directory-tertiary-size: var(--type-meta-size);
+  --friend-directory-pattern-size: var(--type-label-size);
+  --friend-directory-action-size: var(--type-meta-size);
+  --friend-directory-menu-size: var(--type-meta-size);
+  --friend-directory-empty-title-size: var(--type-title-size);
+  --friend-directory-dialog-title-size: var(--type-large-title-size);
+  --friend-directory-input-size: var(--type-description-size);
+  --friend-directory-section-title-size: var(--type-title-size);
+  --friend-directory-accept-title-size: var(--type-large-title-size);
+  --friend-directory-toast-avatar-size: var(--type-label-size);
   --friend-directory-row-title-leading: 1.15;
   --friend-directory-dialog-copy-leading: 1.55;
   --friend-directory-heading-leading: 1.1;
@@ -870,11 +890,11 @@
 }
 
 :root[data-dyslexia-font="true"] {
-  --font-display: "Atkinson Hyperlegible", "Verdana", "Arial", system-ui, sans-serif;
-  --font-body: "Atkinson Hyperlegible", "Verdana", "Arial", system-ui, sans-serif;
-  --font-ui: "Atkinson Hyperlegible", "Verdana", "Arial", system-ui, sans-serif;
-  --font-label: "Atkinson Hyperlegible", "Verdana", "Arial", system-ui, sans-serif;
-  --label-eyebrow-font-family: "Atkinson Hyperlegible", "Verdana", "Arial", system-ui, sans-serif;
+  --font-display: "Atkinson Hyperlegible", Verdana, Arial, system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", Verdana, Arial, system-ui, sans-serif;
+  --font-ui: "Atkinson Hyperlegible", Verdana, Arial, system-ui, sans-serif;
+  --font-label: "Atkinson Hyperlegible", Verdana, Arial, system-ui, sans-serif;
+  --label-eyebrow-font-family: var(--font-label);
 }
 
 /* Friends layout shell. Component rules live with their canonical blocks below. */

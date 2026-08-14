@@ -241,6 +241,46 @@ test.describe("visual regression baseline", () => {
     await expect(page).toHaveScreenshot("client-calendar-desktop-light.png", screenshotOptions);
 
     await page.setViewportSize({ width: 390, height: 844 });
+    await expectRouteLoadsWithin(page, "/#calendar", "client calendar mobile light", async () => {
+      await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: routeReadyTimeoutMs });
+    });
+    await page.evaluate(() => {
+      window.scrollTo(0, 0);
+      for (const element of document.querySelectorAll("*")) {
+        if (element.scrollTop > 0) element.scrollTop = 0;
+      }
+    });
+    const mobileWeekStrip = page.locator(".lunar-week-strip");
+    await expect(mobileWeekStrip).toBeVisible();
+    const mobileWeekMetrics = await mobileWeekStrip.evaluate((strip) => ({
+      clientWidth: strip.clientWidth,
+      scrollWidth: strip.scrollWidth,
+      overflowX: getComputedStyle(strip).overflowX
+    }));
+    expect(mobileWeekMetrics.scrollWidth).toBeGreaterThan(mobileWeekMetrics.clientWidth);
+    expect(mobileWeekMetrics.overflowX).toBe("auto");
+    const overflowingMobileWeekLabels = await page.locator(
+      ".lunar-week-day__marker, .lunar-week-day__events .event-void span:last-child"
+    ).evaluateAll((labels) => (
+      labels
+        .filter((label) => label.scrollWidth > label.clientWidth + 1)
+        .map((label) => ({
+          text: label.textContent?.trim() ?? "",
+          clientWidth: label.clientWidth,
+          scrollWidth: label.scrollWidth,
+          clientHeight: label.clientHeight,
+          scrollHeight: label.scrollHeight
+        }))
+    ));
+    expect(overflowingMobileWeekLabels).toEqual([]);
+    await page.evaluate(() => {
+      window.scrollTo(0, 0);
+      for (const element of document.querySelectorAll("*")) {
+        if (element.scrollTop > 0) element.scrollTop = 0;
+      }
+    });
+    await expect(page).toHaveScreenshot("client-calendar-mobile-light.png", screenshotOptions);
+
     await expectRouteLoadsWithin(page, "/#friends?tab=charts", "client friends mobile light", async () => {
       await expect(page.getByRole("heading", { name: "friends." })).toBeVisible({
         timeout: routeReadyTimeoutMs
