@@ -18,11 +18,10 @@ const detailsBeats = {
   whatMayHappen: "recognition meets a shared rule",
   whyItMatters: "credit and equal application both matter",
   whyItSticksOrMoves: "both positions hold under pressure",
-  whatCanMove: "the agreement can become more specific",
 };
 
 const ownerForecast = "On Tuesday, August 18, someone may want their effort recognized while the answer coming back is that the same rule applies to everyone. That can turn a quiet frustration into a direct disagreement about credit, exceptions, or what the policy actually covers. Neither side is likely to back down quickly. What can change is the agreement: what counts, who gets recognized, and which rule applies here.";
-const ownerDetails = "Sun in Leo opposite Saturn in Aquarius. Someone may want their contribution recognized while the answer coming back is that the same rule applies to everyone. The Sun in Leo puts more weight on individual contribution and recognition, while Saturn in Aquarius holds to the standard meant to apply across the group. The opposition makes both positions difficult to ignore, and because both signs are fixed, neither side is likely to give way quickly. What can move is the agreement itself: what counts, who gets recognized, and which rule applies here.";
+const ownerDetails = "Sun in Leo opposite Saturn in Aquarius. Someone may want their contribution recognized while the answer coming back is that the same rule applies to everyone. The Sun in Leo puts more weight on individual contribution and recognition, while Saturn in Aquarius holds to the standard meant to apply across the group. The opposition makes both positions difficult to ignore, and because both signs are fixed, pressure alone is unlikely to change either side.";
 
 const ownerShapeResult = auditSkyCalendarFrameUniqueness([{
   key: "owner-approved-shape",
