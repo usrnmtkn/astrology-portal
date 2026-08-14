@@ -1,12 +1,15 @@
+/* Self-hosted font assets load before the app styles that consume them. */
+@import url("./styles/fonts.css");
+
 /*
 Type system:
-Newsreader is for display and titles. Geist Mono is for body, UI, data,
-labels, and the TLDR Astro wordmark. Noto Sans Symbols is reserved for
-astrological glyphs.
+Newsreader is for display and titles. Geist is for body, UI, labels, pills,
+and the TLDR Astro wordmark. The system monospace stack is reserved for
+compact data. Noto Sans Symbols 2 is reserved for astrological glyphs.
 
 Type scale:
-Text sizes snap to 11 / 12 / 13 / 14 / 15 / 16 / 18 / 20 / 24px, plus
-intentional display clamp() values.
+Readable interface text uses 12 / 13 / 15 / 16 / 18 / 20 / 24px, plus
+intentional display clamp() values. Text below 12px is chart-only.
 */
 
 @import url("./styles/theme.css");
@@ -35,6 +38,6 @@ intentional display clamp() values.
 @import url("./styles/settings-overrides.css");
 @import url("./styles/dark-normalize.css");
 @import url("./styles/pill.css");
-@import url("./styles/consistency.css");
 @import url("./styles/responsive.css");
 @import url("./styles/card-systems.css");
+@import url("./styles/consistency.css");
