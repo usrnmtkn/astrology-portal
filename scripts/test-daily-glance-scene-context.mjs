@@ -4,7 +4,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
-import { selectDailyGlanceChartContext } from "../apps/web/src/services/chartMath.ts";
+import {
+  dailyGlanceChartContextFromSelection,
+  selectDailyGlanceChartContext,
+  selectDailyGlanceCivilDayDriver
+} from "../apps/web/src/services/chartMath.ts";
 
 const require = createRequire(import.meta.url);
 const {
@@ -142,6 +146,51 @@ const contextWithoutHouses = selectDailyGlanceChartContext(
 assert.equal(contextWithoutHouses.kind, "aspect");
 assert.equal(contextWithoutHouses.transitHouse, null);
 assert.equal(contextWithoutHouses.natalHouse, null);
+
+const civilDayTargets = [
+  { planet: "North Node", longitude: 314, sign: "Cancer", house: 11 },
+  { planet: "Mars", longitude: 327, sign: "Leo", house: 12 }
+];
+const civilDayDriver = selectDailyGlanceCivilDayDriver(7, 14, civilDayTargets, 4);
+assert.deepEqual(civilDayDriver, {
+  kind: "aspect",
+  natal: "North Node",
+  aspect: "sextile",
+  orb: 0,
+  selectionScope: "civil-day-exact",
+  exactOffsetDays: 0.5
+});
+const civilDayContext = selectDailyGlanceChartContext(
+  { longitude: 7, speed: 14, sign: "Virgo", house: 4 },
+  civilDayTargets,
+  4,
+  true
+);
+assert.deepEqual(civilDayContext, {
+  kind: "aspect",
+  transitPlanet: "moon",
+  transitSign: "Virgo",
+  transitHouse: 4,
+  natalPoint: "North Node",
+  natalSign: "Cancer",
+  natalHouse: 11,
+  aspect: "sextile",
+  aspectGroup: "soft",
+  orb: 0,
+  housesReliable: true
+});
+assert.equal(dailyGlanceKeyForContext(civilDayContext), "soft/north-node");
+assert.deepEqual(
+  dailyGlanceChartContextFromSelection(
+    civilDayDriver,
+    { sign: "Virgo", house: 4 },
+    civilDayTargets,
+    4,
+    true
+  ),
+  civilDayContext,
+  "Writer context must be derivable from the exact driver already selected for serving."
+);
 
 const exactMechanism = getApprovedLlMechanism(context);
 assert.equal(exactMechanism.sourceId, "ll:moon|conjunction|neptune");
