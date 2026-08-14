@@ -1,5 +1,5 @@
 import type { ReportDraft, ReportGenerationPayload, ReportValidationIssue } from "./report-generation.ts";
-import { reportCandidatePromptFromPayload, reportPromptFromPayload, validateReportDraft } from "./report-generation.js";
+import { reportLegacyPromptFromPayload, reportPromptFromPayload, validateReportDraft } from "./report-generation.js";
 import {
   assertReportEvaluationPacketReady, completeReportUnit, reportEvaluationPacket,
   reportDraftMovementApplicable, reportSentenceSpans, reportUnitSentenceAddresses,
@@ -7,7 +7,7 @@ import {
 } from "./report-evaluation-packet.js";
 import { verifyReportFactLock } from "./report-fact-lock.js";
 import { callReportModel, type ReportModelCall, type ReportModelUsage, writerModelTarget } from "./report-model-client.js";
-import { loadActiveReportCritiquePrompt, loadCandidateReportCritiquePrompt, type ReportPromptMode } from "./report-prompt-versions.js";
+import { loadActiveReportCritiquePrompt, loadLegacyReportCritiquePrompt, type ReportPromptMode } from "./report-prompt-versions.js";
 import { scopeReportPayloadToUnit } from "./report-unit-scope.js";
 
 export const REPORT_DEFECT_CATEGORIES = [
@@ -645,9 +645,6 @@ export async function reviseReportDraftForNamedDefects(input: {
   const callModel = input.callModel ?? callReportModel;
   const target = writerModelTarget();
   const payload = scopeReportPayloadToUnit(input.payload);
-  if (input.promptMode === "naturalness_candidate" && !payload.naturalnessRuling) {
-    throw new Error("REPORT_NATURALNESS_RULING_MISSING: candidate revision requires the governed naturalness ruling.");
-  }
   assertReportEvaluationPacketReady(payload);
   const defects = mergeOverlappingReportDefects(input.draft, input.defects);
   if (!defects.length) return { revised: input.draft, defects, calls: [] as ReportWriterChainResult["calls"] };
@@ -661,8 +658,8 @@ export async function reviseReportDraftForNamedDefects(input: {
       `NAMED_DEFECTS_AND_INSTRUCTIONS\n${JSON.stringify(defects)}`,
       `CANONICAL_OWNER_RULING\n${payload.canonicalOwnerPrompt.text}`,
       `LIVED_PROSE_OWNER_RULING\n${payload.livedProseStandard.text}`,
-      input.promptMode === "naturalness_candidate"
-        ? `NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING\n${payload.naturalnessRuling?.text}`
+      (input.promptMode ?? "active") === "active"
+        ? `NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING\n${payload.naturalnessRuling.text}`
         : ""
     ].filter(Boolean).join("\n\n"),
     schemaName: "report_unit_revision_spans",
@@ -690,12 +687,9 @@ export async function runReportWriterChain(input: {
   // must never consume a billed provider call.
   assertReportEvaluationPacketReady(payload);
   const promptMode = input.promptMode ?? "active";
-  if (promptMode === "naturalness_candidate" && !payload.naturalnessRuling) {
-    throw new Error("REPORT_NATURALNESS_RULING_MISSING: candidate writer chain requires the governed naturalness ruling.");
-  }
-  const critiquePrompt = promptMode === "naturalness_candidate"
-    ? loadCandidateReportCritiquePrompt()
-    : loadActiveReportCritiquePrompt();
+  const critiquePrompt = promptMode === "active"
+    ? loadActiveReportCritiquePrompt()
+    : loadLegacyReportCritiquePrompt();
   const chainKey = input.chainKey ?? "standalone";
   const resumable = input.checkpoint?.schema === "report-writer-chain-checkpoint.v1"
     && input.checkpoint.chainKey === chainKey
@@ -719,7 +713,7 @@ export async function runReportWriterChain(input: {
     const draftResult = await callModel<ReportDraft>({
       ...target,
       prompt: [
-        promptMode === "naturalness_candidate" ? reportCandidatePromptFromPayload(payload) : reportPromptFromPayload(payload),
+        promptMode === "active" ? reportPromptFromPayload(payload) : reportLegacyPromptFromPayload(payload),
         input.failureContext?.length ? `FAILURE_CONTEXT\n${input.failureContext.join("\n")}` : "",
         "Return one report unit using the structured output contract."
       ].filter(Boolean).join("\n\n"),
@@ -735,8 +729,10 @@ export async function runReportWriterChain(input: {
   let critique = resumable?.critique;
   if (!critique) {
     const deterministicIssues = [
-      ...validateReportDraft(draft, payload, { enforceSeasonStructure: promptMode === "naturalness_candidate" }),
-      ...verifyReportFactLock(draft, payload.frozenFacts).issues
+      ...validateReportDraft(draft, payload, { enforceSeasonStructure: promptMode === "active" }),
+      ...verifyReportFactLock(draft, payload.frozenFacts, {
+        trustedTiming: payload.structuralRequirements?.dateRange
+      }).issues
     ];
     const movementApplicable = reportDraftMovementApplicable(draft);
     const critiqueResult = await callModel<ReportSentenceAddressedCritique>({
@@ -748,8 +744,8 @@ export async function runReportWriterChain(input: {
         `NO_CLEVERNESS_TAX_OWNER_RULING\n${payload.noClevernessRuling.text}`,
         `OWNER_REVIEW_EVIDENCE\n${payload.ownerReviewEvidence.text}`,
         `EARNED_SENTENCE_OWNER_RULING\n${payload.earnedSentenceRuling.text}`,
-        promptMode === "naturalness_candidate"
-          ? `NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING\n${payload.naturalnessRuling?.text}`
+        promptMode === "active"
+          ? `NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING\n${payload.naturalnessRuling.text}`
           : "",
         FLATNESS_DIAGNOSTIC_ROUTING,
         "SENTENCE_ADDRESS_CONTRACT\nEvery finding must reference one or more supplied sentence_ids. The runtime owns source segmentation and resolves those IDs to exact replacement spans. quote is informational only and is never used as an address or compared for byte equality.",

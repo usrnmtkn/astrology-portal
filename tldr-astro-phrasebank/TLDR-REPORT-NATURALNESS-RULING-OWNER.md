@@ -1,6 +1,18 @@
 # Naturalness and judging-restraint ruling (owner ruling, canonical)
 
-**Status: DRAFT FOR OWNER APPROVAL, 2026-08-13. `needs_review`. REPORT register. Third companion to the clarity floor (`TLDR-REPORT-NO-CLEVERNESS-TAX-RULING-OWNER.md`) and the aliveness floor (`TLDR-REPORT-EARNED-SENTENCE-RULING-OWNER.md`). Origin: the owner's line edits on generation 2 of report `e7da0406`. All six before/after pairs below are owner-authored corrections of generated prose the judge passed; they are labeled corpus evidence for the critique checklist and judge rubric.**
+**Status:** `owner_approved`
+**Version:** `report-naturalness-ruling-v1`
+**Approved:** 2026-08-14
+**Owner approved:** `true`
+**Active in production:** `true`
+**Promotion authorized:** `true`
+**Approved source SHA-256:** `d14433fb6bdee571a36460792f6527b98d3ad94072a178dfdb3d876aed8476db`
+**Register:** REPORT
+**Companions:** `TLDR-REPORT-NO-CLEVERNESS-TAX-RULING-OWNER.md` sets the clarity floor; `TLDR-REPORT-EARNED-SENTENCE-RULING-OWNER.md` sets the aliveness floor. This ruling governs naturalness and judging restraint. None overrides another.
+**Origin:** The owner's line edits on generation 2 of report `e7da0406`. All six before/after pairs below are owner-authored corrections of generated prose the judge passed; they are labeled corpus evidence for the critique checklist and judge rubric.
+**Governance:** Owner-approved and active in the report draft, critique, revision, and judge packets. Any later revision requires a new version and fresh owner approval.
+
+> I explicitly approve the Report Naturalness and Judging-Restraint ruling at SHA-256 d14433fb6bdee571a36460792f6527b98d3ad94072a178dfdb3d876aed8476db, Report critique checklist v7 at SHA-256 e339c3a6a1bfce28032113994767b893e783cf219653fbd7ecabde20d1e0cb86, and Report judge rubric v3.4 at SHA-256 bfaca50bb8c4d156d9181b6134debb7ef21002685b690b6286f1ff43a0e78508. I authorize their activation; the judge threshold remains 0.85. This approval does not authorize generation calls.
 
 ## The governing rule
 

@@ -333,8 +333,8 @@ export async function processReportFulfillmentJob(input: {
   random?: () => number;
   persistenceRetry?: ReportPersistenceRetryOptions;
   continuationPolicy?: ReportWorkerContinuationPolicy;
-  /** Candidate mode is test/review-only until its governed documents receive
-   * fresh SHA-pinned owner approval. Production callers omit this field. */
+  /** Legacy mode exists only for deterministic historical contracts. Owner-
+   * approved Production fulfillment uses the active naturalness stack. */
   promptMode?: ReportPromptMode;
 }) {
   const config = reportFulfillmentConfig();
@@ -503,7 +503,7 @@ export async function processReportFulfillmentJob(input: {
   let generatedUnitsThisCycle = 0;
   const orderedUnitIds = [...fulfillmentUnitIds(report.report_domain, report.report_horizon)];
   const writerUnitIds = orderedUnitIds.filter((unitId) => unitId !== "key-dates");
-  const initialPersistedRows = promptMode === "naturalness_candidate"
+  const initialPersistedRows = promptMode === "active"
     ? await input.store.unitRows(report.id)
     : [];
   const persistedDrafts = new Map(initialPersistedRows.flatMap((row) => {
@@ -610,7 +610,7 @@ export async function processReportFulfillmentJob(input: {
     }
     await input.store.updateJob(input.job.id, { step: "writing" });
     const unitIndex = orderedUnitIds.indexOf(unitId);
-    const priorUnitContext = promptMode === "naturalness_candidate"
+    const priorUnitContext = promptMode === "active"
       ? orderedUnitIds.slice(0, unitIndex).flatMap((priorUnitId) => {
         const prior = persistedDrafts.get(priorUnitId);
         return prior ? [{
@@ -629,8 +629,7 @@ export async function processReportFulfillmentJob(input: {
       reportHorizon: report.report_horizon,
       unitId,
       frozenFacts: report.facts,
-      priorUnitContext,
-      naturalnessCandidate: promptMode === "naturalness_candidate"
+      priorUnitContext
     });
     if (payload.sourceGaps.length) throw new Error(`SOURCE_GAP: ${payload.sourceGaps.map((gap) => gap.requestedKey).join(", ")}`);
     const versions = reportSystemPromptVersions(payload.canonicalOwnerPrompt.sourcePath, promptMode);
@@ -692,9 +691,11 @@ export async function processReportFulfillmentJob(input: {
         await input.store.updateJob(input.job.id, { step: "validating" });
         validatorAttempts += 1;
         const validation = validateReportDraft(candidate, payload, {
-          enforceSeasonStructure: promptMode === "naturalness_candidate"
+          enforceSeasonStructure: promptMode === "active"
         });
-        const factLock = verifyReportFactLock(candidate, payload.frozenFacts);
+        const factLock = verifyReportFactLock(candidate, payload.frozenFacts, {
+          trustedTiming: payload.structuralRequirements?.dateRange
+        });
         issues = [...validation, ...factLock.issues];
         if (issues.length === 0) return { draft: candidate, acceptedTokens, acceptedEstimatedUsd, issues };
         if (attempt + 1 >= validatorAttemptCap) break;
@@ -940,7 +941,7 @@ export async function processReportFulfillmentJob(input: {
     });
   };
   const deduplication = deduplicateAssembledReport(assembledUnits, {
-    allowSynthesisRepetition: promptMode === "naturalness_candidate"
+    allowSynthesisRepetition: promptMode === "active"
   });
   const mechanicalCoherence = repairMechanicalPostDedupSeams(deduplication.units, deduplication.removals);
   assembledUnits = mechanicalCoherence.units;
@@ -1013,8 +1014,8 @@ export async function processReportFulfillmentJob(input: {
   }
   assembledUnits = normalizeAssembledReportWhitespace(assembledUnits);
   const structuralIssues = validateAssembledReport(assembledUnits, {
-    enforceSeasonStructure: promptMode === "naturalness_candidate",
-    allowSynthesisRepetition: promptMode === "naturalness_candidate"
+    enforceSeasonStructure: promptMode === "active",
+    allowSynthesisRepetition: promptMode === "active"
   });
   const structuralErrors = structuralIssues.filter((entry) => entry.severity === "error");
   const assemblyWarnings = structuralIssues.filter((entry) => entry.severity !== "error");

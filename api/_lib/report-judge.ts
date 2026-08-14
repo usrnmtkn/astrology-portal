@@ -2,7 +2,7 @@ import fs from "node:fs";
 import type { ReportDraft, ReportGenerationPayload } from "./report-generation.ts";
 import { reportDraftMovementApplicable, reportEvaluationPacket } from "./report-evaluation-packet.js";
 import { callReportModel, judgeModelTarget, type ReportModelCall, type ReportModelUsage } from "./report-model-client.js";
-import { loadActiveReportJudgePrompt, loadCandidateReportJudgePrompt, type ReportPromptMode } from "./report-prompt-versions.js";
+import { loadActiveReportJudgePrompt, loadLegacyReportJudgePrompt, type ReportPromptMode } from "./report-prompt-versions.js";
 
 export const REPORT_JUDGE_CATEGORIES = [
   "astrology_chronology",
@@ -75,12 +75,7 @@ export async function judgeReportUnit(input: {
   promptMode?: ReportPromptMode;
 }): Promise<{ result: ReportJudgeResult; usage: ReportModelUsage; model: string; promptVersion: string }> {
   const promptMode = input.promptMode ?? "active";
-  if (promptMode === "naturalness_candidate" && !input.payload.naturalnessRuling) {
-    throw new Error("REPORT_NATURALNESS_RULING_MISSING: candidate judge requires the governed naturalness ruling.");
-  }
-  const prompt = promptMode === "naturalness_candidate"
-    ? loadCandidateReportJudgePrompt()
-    : loadActiveReportJudgePrompt();
+  const prompt = promptMode === "active" ? loadActiveReportJudgePrompt() : loadLegacyReportJudgePrompt();
   const target = judgeModelTarget();
   const packet = reportEvaluationPacket(input.payload, input.draft);
   const response = await (input.callModel ?? callReportModel)<ReportJudgeResult>({
@@ -92,8 +87,8 @@ export async function judgeReportUnit(input: {
       `NO_CLEVERNESS_TAX_OWNER_RULING\n${input.payload.noClevernessRuling.text}`,
       `OWNER_REVIEW_EVIDENCE\n${input.payload.ownerReviewEvidence.text}`,
       `EARNED_SENTENCE_OWNER_RULING\n${input.payload.earnedSentenceRuling.text}`,
-      promptMode === "naturalness_candidate"
-        ? `NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING\n${input.payload.naturalnessRuling?.text}`
+      promptMode === "active"
+        ? `NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING\n${input.payload.naturalnessRuling.text}`
         : "",
       `PRODUCTION_LOCATION_CONTRACT\n${packet.locationContract}`,
       `COMPLETE_UNIT\n${packet.completeUnit}`,
