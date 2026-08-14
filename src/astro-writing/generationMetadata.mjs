@@ -18,7 +18,8 @@ export const WRITING_COMPONENT_VERSIONS = Object.freeze({
   fixture_set: "lilith-vertical-slice-v1-2026-08-09",
   writer_prompt: CANONICAL_WRITING_INSTRUCTIONS_VERSION,
   reviewer_prompt: CANONICAL_REVIEWER_INSTRUCTIONS_VERSION,
-  shared_evidence: "shared-evidence-standard-v1-2026-08-13"
+  shared_evidence: "shared-evidence-standard-v1-2026-08-13",
+  surface_register_contract: "surface-register-contract-v1-2026-08-15"
 });
 
 export function writeGenerationMetadata({ role, provider = null, model = null, reasoningEffort = null, thinkingLevel = null, sourceIds = [], evidencePacket = null } = {}) {

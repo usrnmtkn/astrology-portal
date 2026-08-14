@@ -23,6 +23,7 @@ export * from "./runWritingPipeline.mjs";
 export * from "./sourceGovernance.mjs";
 export * from "./spineRegistry.mjs";
 export * from "./spineQuality.mjs";
+export * from "./surfaceRegisterContract.mjs";
 export * from "./validateCopy.mjs";
 export * from "./verticalSliceEval.mjs";
 export * from "./writerRegistry.mjs";
