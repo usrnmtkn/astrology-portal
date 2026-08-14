@@ -10,7 +10,7 @@ function documentFromDelivery(payload: NonNullable<ReportDeliveryPayload["report
   const overview = payload.units.find((unit) => unit.content_key.endsWith(":overview")) ?? payload.units[0];
   const chapters = payload.units.filter((unit) => unit !== overview).flatMap((unit, index) => {
     const unitId = unit.content_key.split(":").at(-1) ?? String(index);
-    const primary = { id: unitId, kicker: payload.reportDomain.replaceAll("_", " "), title: unit.headline ?? "", paragraphs: [unit.summary ?? "", unit.body ?? ""].filter(Boolean) };
+    const primary = { id: unitId, kicker: payload.reportDomain.replaceAll("_", " "), title: unit.headline ?? "", paragraphs: [unit.timing ?? "", unit.summary ?? "", unit.body ?? ""].filter(Boolean) };
     const sections = (unit.sections ?? []).map((section, sectionIndex) => ({ id: `${unitId}-${sectionIndex}`, kicker: payload.reportHorizon.replaceAll("_", " "), title: section.heading ?? "", paragraphs: [section.body ?? ""].filter(Boolean) }));
     return [primary, ...sections];
   });

@@ -671,12 +671,13 @@ for (const unitId of ["overview", "year-theme", "domain:main", "winter-current",
     `Candidate ${unitId} evidence must be same-unit-type.`);
   assert.ok(comparisons.every((passage) => passage.provenance.sourceType === "owner_authored_final"));
 }
-assert.match(loadActiveReportCritiquePrompt().version, /^report-critique-checklist-v6:/u);
-assert.match(loadActiveReportJudgePrompt().version, /^report-judge-rubric-v3\.3:/u);
+assert.match(loadActiveReportCritiquePrompt().version, /^report-critique-checklist-v7:/u);
+assert.match(loadActiveReportJudgePrompt().version, /^report-judge-rubric-v3\.4:/u);
 assert.match(loadActiveReportCritiquePrompt().text, /no_earned_sentence/u);
 assert.match(loadActiveReportJudgePrompt().text, /owner_voice_drift[\s\S]*evidence IDs/u);
 assert.match(personalHealthPayload.earnedSentenceRuling.text, /Clarity is the floor, not the goal\./u);
+assert.match(personalHealthPayload.naturalnessRuling.text, /Do not flag a sentence because it is stylish\./u);
 assert.equal(personalHealthPayload.ownerComparisonSet.length, 3);
 assert.ok(personalHealthPayload.ownerComparisonSet.every((passage) => passage.unitType === reportVoiceUnitType(personalHealthPayload.unit.unitId)));
 
-console.log(`Report generation passed: four domains, active earned-sentence ruling, same-unit owner comparison evidence, tiered selection, return dedupe, and ${voiceCorpusV2.length} owner-voice corpus passages.`);
+console.log(`Report generation passed: four domains, active earned-sentence and naturalness rulings, same-unit owner comparison evidence, tiered selection, return dedupe, and ${voiceCorpusV2.length} owner-voice corpus passages.`);

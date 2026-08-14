@@ -2,7 +2,7 @@ import fs from "node:fs";
 import type { ReportDraft, ReportGenerationPayload } from "./report-generation.ts";
 import { reportDraftMovementApplicable, reportEvaluationPacket } from "./report-evaluation-packet.js";
 import { callReportModel, judgeModelTarget, type ReportModelCall, type ReportModelUsage } from "./report-model-client.js";
-import { loadActiveReportJudgePrompt } from "./report-prompt-versions.js";
+import { loadActiveReportJudgePrompt, loadLegacyReportJudgePrompt, type ReportPromptMode } from "./report-prompt-versions.js";
 
 export const REPORT_JUDGE_CATEGORIES = [
   "astrology_chronology",
@@ -72,8 +72,10 @@ export async function judgeReportUnit(input: {
   validatorResults: unknown;
   threshold: number;
   callModel?: ReportModelCall;
+  promptMode?: ReportPromptMode;
 }): Promise<{ result: ReportJudgeResult; usage: ReportModelUsage; model: string; promptVersion: string }> {
-  const prompt = loadActiveReportJudgePrompt();
+  const promptMode = input.promptMode ?? "active";
+  const prompt = promptMode === "active" ? loadActiveReportJudgePrompt() : loadLegacyReportJudgePrompt();
   const target = judgeModelTarget();
   const packet = reportEvaluationPacket(input.payload, input.draft);
   const response = await (input.callModel ?? callReportModel)<ReportJudgeResult>({
@@ -85,6 +87,9 @@ export async function judgeReportUnit(input: {
       `NO_CLEVERNESS_TAX_OWNER_RULING\n${input.payload.noClevernessRuling.text}`,
       `OWNER_REVIEW_EVIDENCE\n${input.payload.ownerReviewEvidence.text}`,
       `EARNED_SENTENCE_OWNER_RULING\n${input.payload.earnedSentenceRuling.text}`,
+      promptMode === "active"
+        ? `NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING\n${input.payload.naturalnessRuling.text}`
+        : "",
       `PRODUCTION_LOCATION_CONTRACT\n${packet.locationContract}`,
       `COMPLETE_UNIT\n${packet.completeUnit}`,
       `UNIT_FACTS\n${JSON.stringify(packet.unitFacts)}`,
@@ -93,7 +98,7 @@ export async function judgeReportUnit(input: {
       `LABELED_NEGATIVE_EXAMPLES\n${JSON.stringify(packet.labeledNegativeExamples)}`,
       `VALIDATOR_RESULTS\n${JSON.stringify(input.validatorResults)}`,
       `CONFIGURED_THRESHOLD\n${input.threshold}`
-    ].join("\n\n"),
+    ].filter(Boolean).join("\n\n"),
     schemaName: "report_fulfillment_judge",
     schema: REPORT_JUDGE_SCHEMA
   });
