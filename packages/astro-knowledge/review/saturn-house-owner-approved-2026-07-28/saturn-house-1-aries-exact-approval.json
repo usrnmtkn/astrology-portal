@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "recordType": "transit_house_serving_exact_approval",
+  "approvalId": "saturn-house-owner-approved-2026-07-28-transit-house-sign-1-aries",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "approvedAt": "2026-07-28",
+  "recordedAt": "2026-08-13",
+  "surface": "you|friends",
+  "contentKey": "authored/transit-house-sign/saturn/1/aries",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "4fc3223cb253bd211fcf966cce42cd919386aa29c3e0e76cac048964301e3415",
+  "payload": {
+    "body_you": "Saturn moving through Aries puts pressure on speed and impulse. You may have to wait for an answer, save more money, finish an obligation, or work inside a timeline you did not choose. That can make you want to quit just to feel in control again. The delay shows you whether you want the change itself, or only relief from the pressure of the moment. The reaction wants control back. The decision has to support the life you are building.",
+    "body_they": "Saturn moving through Aries puts pressure on their speed and impulse. They may have to wait for an answer, save more money, finish an obligation, or work inside a timeline they did not choose, and that can make them want to quit just to feel in control again. The delay shows whether they want the change itself or only relief from the pressure of the moment. The urge to quit may be about getting control back quickly. The decision has to work after that feeling passes."
+  },
+  "historicalEvidence": {
+    "readerRewriteCommit": "133e2332c48c147876f352290891ab55a83fde8e",
+    "friendVoiceReviewCommit": "102631f0a3b5851898935c43d6bb9d39f89decf4",
+    "sourceRowApprovalNote": "owner-rewritten full 12-house set, chat 2026-07-28 (Aries layer)"
+  },
+  "ownerConfirmationStatement": "the writing that was being shown in the natal chart was approved",
+  "ownerConfirmationSource": "owner_chat_2026-08-13_source_metadata_correction",
+  "approvalEffect": "exact_wording_approval",
+  "copyMutation": "none"
+}

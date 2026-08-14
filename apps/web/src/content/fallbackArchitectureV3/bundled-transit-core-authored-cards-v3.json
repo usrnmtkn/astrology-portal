@@ -16021,7 +16021,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer A slow-register intro (owner-calibrated sample)"
+      "editorial_notes": "Layer A slow-register intro (owner-calibrated sample)",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-1-intro-exact-approval.json",
+        "payloadSha256": "d4cb5d0928c508d46ed6a5d9eceaf232d25a0219c1227072d1499ad4a6533bcf",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/1/aries",
@@ -16035,7 +16041,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer B slow-register synthesis (owner-calibrated sample)"
+      "editorial_notes": "Layer B slow-register synthesis (owner-calibrated sample)",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-1-aries-exact-approval.json",
+        "payloadSha256": "4fc3223cb253bd211fcf966cce42cd919386aa29c3e0e76cac048964301e3415",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/1/taurus",
@@ -16203,7 +16215,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer A slow-register intro, Hand-grounded"
+      "editorial_notes": "Layer A slow-register intro, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-2-intro-exact-approval.json",
+        "payloadSha256": "fbb921c4fd3db168baf46665541f193986357d77aad08eb5bbc841c6af73125d",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/2/aries",
@@ -16217,7 +16235,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded"
+      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-2-aries-exact-approval.json",
+        "payloadSha256": "c77db778b2e5a62192ce1883248cf5a3bc19e0adf52175950c8b2c5d2781fb1f",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/2/taurus",
@@ -16385,7 +16409,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer A slow-register intro, Hand-grounded"
+      "editorial_notes": "Layer A slow-register intro, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-3-intro-exact-approval.json",
+        "payloadSha256": "387143b0af5f24789f128d7512db5a1061e08cc497090478ede29116cfecd9d3",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/3/aries",
@@ -16399,7 +16429,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded"
+      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-3-aries-exact-approval.json",
+        "payloadSha256": "af05b3a126514d20058b3152374fcb7d7ccba6602077cfeef352506afafb80cb",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/3/taurus",
@@ -16567,7 +16603,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer A slow-register intro, Hand-grounded"
+      "editorial_notes": "Layer A slow-register intro, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-4-intro-exact-approval.json",
+        "payloadSha256": "a55b2b6dad2f83d760f9fba083c4b2cb948db55d981a9dc0b5ac767479b6c2b9",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/4/aries",
@@ -16581,7 +16623,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded"
+      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-4-aries-exact-approval.json",
+        "payloadSha256": "6cd3b3f10075ed6d7ec77c3719391345e0bf2674d18bac43d3cbc13e59f06bad",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/4/taurus",
@@ -16749,7 +16797,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer A slow-register intro, Hand-grounded"
+      "editorial_notes": "Layer A slow-register intro, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-5-intro-exact-approval.json",
+        "payloadSha256": "5d8dec0be56c56bf3836800003403cf30d59b3fa161c5e7dad70b90e65862095",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/5/aries",
@@ -16763,7 +16817,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded"
+      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-5-aries-exact-approval.json",
+        "payloadSha256": "c7b5494e2fd7a725fe2600cd062982cec2a1ec983943d179911c7f9a49f2d447",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/5/taurus",
@@ -16931,7 +16991,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer A slow-register intro, Hand-grounded"
+      "editorial_notes": "Layer A slow-register intro, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-6-intro-exact-approval.json",
+        "payloadSha256": "7f60400c56f8917ab55bea96705cd985463b12e37fc9df37e6f1b5f35ebe235a",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/6/aries",
@@ -16945,7 +17011,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded"
+      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-6-aries-exact-approval.json",
+        "payloadSha256": "afc10e47deaaa7cb6d3d2064df59acd84242b0859c15fad439243fd1257f41fa",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/6/taurus",
@@ -17113,7 +17185,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer A slow-register intro, Hand-grounded"
+      "editorial_notes": "Layer A slow-register intro, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-7-intro-exact-approval.json",
+        "payloadSha256": "dd6e28d7a0cf3184dad197eb1bc753cf59511b1b4b25974f910c79c8353d1006",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/7/aries",
@@ -17127,7 +17205,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded"
+      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-7-aries-exact-approval.json",
+        "payloadSha256": "f034fd508c566c309ef5efd83a8c285ba99aa5bdc197ea4ed87bbadf75bb335a",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/7/taurus",
@@ -17295,7 +17379,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer A slow-register intro, Hand-grounded"
+      "editorial_notes": "Layer A slow-register intro, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-8-intro-exact-approval.json",
+        "payloadSha256": "190a688ea4746ce54d0cd88a94052c6c8c7b7409996fa35793dc0a93ecf4ba90",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/8/aries",
@@ -17309,7 +17399,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded"
+      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-8-aries-exact-approval.json",
+        "payloadSha256": "5abc8b2563851eda4e4a569e98a626141747c5fc40e90c1cfb2724733b5e326e",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/8/taurus",
@@ -17477,7 +17573,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer A slow-register intro, Hand-grounded"
+      "editorial_notes": "Layer A slow-register intro, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-9-intro-exact-approval.json",
+        "payloadSha256": "c196a3a5da9fda0b7b58da73b1316e910117228c2c8dcca0296879d5b27168a3",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/9/aries",
@@ -17491,7 +17593,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded"
+      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-9-aries-exact-approval.json",
+        "payloadSha256": "121af098d5daa076729e02c2ed55027b75bf16bf6da23ebc7377404b3d8a8e8e",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/9/taurus",
@@ -17659,7 +17767,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer A slow-register intro, Hand-grounded"
+      "editorial_notes": "Layer A slow-register intro, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-10-intro-exact-approval.json",
+        "payloadSha256": "e276fc86caba09e3c2807794804af9f47b8bc0893a35aae52252849f598d1a2f",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/10/aries",
@@ -17673,7 +17787,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded"
+      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-10-aries-exact-approval.json",
+        "payloadSha256": "d8fcdb706f45000998cb55be52711f7ba1c2323a1b238361621b696938cacfda",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/10/taurus",
@@ -17841,7 +17961,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer A slow-register intro, Hand-grounded"
+      "editorial_notes": "Layer A slow-register intro, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-11-intro-exact-approval.json",
+        "payloadSha256": "1a5639f5338435ce3d3651ea7e9c9b535affaf1a43c5cc4d5fdc4cd61a3ccc4f",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/11/aries",
@@ -17855,7 +17981,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded"
+      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-11-aries-exact-approval.json",
+        "payloadSha256": "3a2878cd1c7fac2cec8e222901792d0e46287c4673f7655cb9607a748a82bd77",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/11/taurus",
@@ -18023,7 +18155,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer A slow-register intro, Hand-grounded"
+      "editorial_notes": "Layer A slow-register intro, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-12-intro-exact-approval.json",
+        "payloadSha256": "1e100650b795f68681a7967ded5a1e41197c7d596f50f04de4ebabde78a8a748",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/12/aries",
@@ -18037,7 +18175,13 @@
         "TLDR-Jupiter-Saturn-House-Transits-V1.md",
         "hand/planets-in-transit Saturn house chapters"
       ],
-      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded"
+      "editorial_notes": "Layer B slow-register synthesis, Hand-grounded",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/saturn-house-owner-approved-2026-07-28/saturn-house-12-aries-exact-approval.json",
+        "payloadSha256": "cf869eb08a0b22168ec4706f2bd02ab4f659c8c1cb9cfc6bd05fdde4efed822f",
+        "approvedAt": "2026-07-28"
+      }
     },
     {
       "contentKey": "authored/transit-house-sign/saturn/12/taurus",
