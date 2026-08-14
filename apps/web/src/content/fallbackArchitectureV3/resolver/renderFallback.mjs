@@ -11,10 +11,6 @@ const here = path.dirname(url.fileURLToPath(import.meta.url));
 const templates = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallback-templates-v3.json"), "utf8"));
 const rowsFile = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/fallback-source-rows-v3.json"), "utf8"));
 const placementInterim = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/placement-interim-fixes-v1.json"), "utf8"));
-const friendNatalSecondPersonVocabulary = JSON.parse(fs.readFileSync(
-  path.join(here, "../contracts/FRIEND-NATAL-SECOND-PERSON-VOCABULARY-V1.json"),
-  "utf8"
-));
 
 templates.templates.push(...placementInterim.templates);
 rowsFile.vocabularyRows.push(...placementInterim.vocabularyRows);
@@ -33,17 +29,12 @@ const vocab = rowsByKey(rowsFile.vocabularyRows);
 export class SourceGapError extends Error {}
 export class RoleViolationError extends Error {}
 
-export const FRIEND_NATAL_SECOND_PERSON_VOCABULARY_KEYS = new Set(
-  friendNatalSecondPersonVocabulary.contentKeys
-);
-
 export function vocabularyBodyForVoice(row, voice) {
   const body = voice === "you"
     ? (row?.body_you ?? row?.body)
     : (row?.body_they ?? row?.body);
 
   if (typeof body !== "string" || !body.trim()) return null;
-  if (voice === "they" && row && FRIEND_NATAL_SECOND_PERSON_VOCABULARY_KEYS.has(row.contentKey)) return null;
   return body;
 }
 
