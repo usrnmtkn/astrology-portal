@@ -30,6 +30,7 @@ export type SocialPlacementRow = {
   house: number | null;
   retrograde: boolean;
   description?: string;
+  detailAvailable?: boolean;
 };
 
 type EssentialDignity = "domicile" | "exaltation" | "detriment" | "fall";
