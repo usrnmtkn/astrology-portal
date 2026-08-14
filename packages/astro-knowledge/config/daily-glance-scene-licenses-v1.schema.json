@@ -63,7 +63,8 @@
             "aspect": { "type": "string" },
             "natalPoint": { "type": "string" },
             "house": { "type": "integer", "minimum": 1, "maximum": 12 },
-            "sign": { "type": "string" }
+            "sign": { "type": "string" },
+            "contextGuard": { "$ref": "#/$defs/contextGuard" }
           }
         },
         "sourceIds": {
@@ -83,6 +84,8 @@
               "sourceId": { "type": "string" },
               "sourcePath": { "type": "string" },
               "selector": { "type": "string" },
+              "field": { "enum": ["copy", "body_you"] },
+              "evidenceRole": { "enum": ["executable", "supporting-reference"] },
               "match": { "enum": ["exact", "includes"] },
               "text": { "type": "string", "minLength": 1 },
               "sourceApproval": { "enum": ["approved", "reviewed", "draft", "unapproved"] }
@@ -106,6 +109,19 @@
         "provenance": {
           "type": "array",
           "items": { "$ref": "#/$defs/provenanceGrant" }
+        },
+        "constraints": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["causalGuard", "disallowedInferences"],
+          "properties": {
+            "causalGuard": { "type": "string", "minLength": 1 },
+            "disallowedInferences": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "uniqueItems": true
+            }
+          }
         },
         "approval": {
           "type": "object",
@@ -152,6 +168,14 @@
         {
           "if": {
             "properties": {
+              "scope": { "required": ["contextGuard"] }
+            }
+          },
+          "then": { "required": ["constraints"] }
+        },
+        {
+          "if": {
+            "properties": {
               "scope": { "properties": { "type": { "enum": ["transit-sign", "natal-sign"] } } }
             }
           },
@@ -181,6 +205,16 @@
         "authorityClass": { "const": "owner-doctrine" },
         "approval": { "const": "approved" },
         "verificationText": { "type": "string", "minLength": 1 }
+      }
+    },
+    "contextGuard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transitPlanet", "aspect", "natalPoint"],
+      "properties": {
+        "transitPlanet": { "type": "string", "minLength": 1 },
+        "aspect": { "type": "string", "minLength": 1 },
+        "natalPoint": { "type": "string", "minLength": 1 }
       }
     },
     "provenanceGrant": {

@@ -1,0 +1,17 @@
+{
+  "$schema": "./daily-glance-contextual-overrides-v1.schema.json",
+  "schemaVersion": 1,
+  "policy": {
+    "referenceOnly": true,
+    "servingEnabled": false,
+    "precedence": [
+      "two-house-intersection",
+      "natal-house",
+      "transit-house",
+      "sign-specificity",
+      "approved-base-card"
+    ],
+    "eligibleStatuses": ["approved", "approved_reuse", "reviewed"]
+  },
+  "overrides": []
+}
