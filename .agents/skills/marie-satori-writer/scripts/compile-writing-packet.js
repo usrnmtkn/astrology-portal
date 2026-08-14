@@ -437,7 +437,7 @@ function verifyOwnerPassage(entry, index) {
   const sourceId = entry.parentSourceId || entry.sourceId;
   const sourceEntry = index.entries.find((candidate) => candidate.sourceId === sourceId);
   if (!sourceEntry) throw new Error(`Missing indexed owner source for ${entry.sourceId}.`);
-  if (!["owner-published-site", "owner-published-active-fixture", "owner-published-register-gold"].includes(sourceEntry.origin)) {
+  if (!["owner-published-site", "owner-published-active-fixture"].includes(sourceEntry.origin)) {
     throw new Error(`Affinity passage is not directly owner-published: ${entry.sourceId}.`);
   }
   if (sourceEntry.authorityClass !== "owner_authored_final" || sourceEntry.ownerAuthored !== true || sourceEntry.ownerApproved !== true) {

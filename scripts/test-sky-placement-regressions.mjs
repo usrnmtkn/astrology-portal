@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -10,6 +11,7 @@ import skyArticleV1 from "../apps/web/src/content/fallbackArchitectureV3/source-
 import skySignCopySunV1 from "../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json" with { type: "json" };
 import skyPlacementOwnerApprovedSourceV1 from "../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json" with { type: "json" };
 import skyPlacementOwnerApprovedFallbacksV1 from "../apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-owner-approved-reader-v1.json" with { type: "json" };
+import skyPlacementServingManifest from "../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-placement-serving-manifest-v1.json" with { type: "json" };
 import contentRoleContract from "../apps/web/src/content/fallbackArchitectureV3/contracts/CONTENT-ROLE-CONTRACT.json" with { type: "json" };
 import {
   createTransitSynastryRenderer,
@@ -589,6 +591,43 @@ assert.equal(
   sunLeoV3.body_you,
   [sunLeoV3.opening, sunLeoV3.tension, sunLeoV3.development, sunLeoV3.close].join("\n\n"),
   "The legacy editorial mirror must remain a mechanical join of the four approved V3 fields."
+);
+const venusLibraOwnerArticle = read("packages/astro-knowledge/review/venus-libra-owner-approved-v1/article.txt");
+const venusLibraV1 = skyPlacementOwnerApprovedSourceV1.rows.find((row) => (
+  row.contentKey === "fallback-hook/sky-sign-copy/venus/libra"
+));
+assert.ok(venusLibraV1, "The exact owner-approved Venus-in-Libra source row must exist.");
+assert.equal(venusLibraV1.review_status, "approved");
+assert.equal(Object.hasOwn(venusLibraV1, "try_this"), false, "Venus in Libra must not revive the retired Try this section.");
+assert.equal(
+  venusLibraV1.close,
+  "The connections worth keeping are the ones that survive you asking for something.",
+  "The owner-approved close must replace the earlier date-bound close."
+);
+const renderedVenusLibraArticle = `${venusLibraV1.body_you
+  .replaceAll("{{priorSign}}", "Virgo")
+  .replaceAll("{{priorSignEntryDate}}", "July 9")
+  .replaceAll("{{priorSignExitDate}}", "August 6")}\n`;
+assert.equal(renderedVenusLibraArticle, venusLibraOwnerArticle, "The source row must reproduce the approved Venus-in-Libra article byte-for-byte after engine slot filling.");
+assert.equal(
+  crypto.createHash("sha256").update(renderedVenusLibraArticle).digest("hex"),
+  "2306bbd9d80e99c9dc1c1939c0c82ca962263b3bdf0e778d2c46085352b39d8e",
+  "The rendered Venus-in-Libra article must retain its owner-approved SHA-256."
+);
+const sunVenusServingRelease = skyPlacementServingManifest.releases.find((release) => (
+  release.release_id === "sky-placement-sun-venus-chiron-nodes-26"
+));
+assert.ok(sunVenusServingRelease, "The existing Sun/Venus serving release must remain present.");
+assert.deepEqual(
+  sunVenusServingRelease.approved_payload_replacements,
+  [{
+    contentKey: "fallback-hook/sky-sign-copy/venus/libra",
+    statement: "Owner approval, Venus in Libra, exact wording.",
+    approved_at: "2026-08-14",
+    source: "packages/astro-knowledge/review/venus-libra-owner-approved-v1/OWNER-APPROVAL-2026-08-14.md",
+    approved_render_sha256: "2306bbd9d80e99c9dc1c1939c0c82ca962263b3bdf0e778d2c46085352b39d8e"
+  }],
+  "The serving manifest must carry the exact owner-approved Venus replacement record."
 );
 assert.equal(lilithAries.tagline, "Anger stops going somewhere else", "Owner-approved Lilith placement taglines must be reader-eligible.");
 assert.match(

@@ -264,7 +264,16 @@
           "fallback-hook/sky-sign-copy/chiron/aries",
           "fallback-hook/sky-sign-copy/nodes/aquarius-leo"
         ]
-      }
+      },
+      "approved_payload_replacements": [
+        {
+          "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+          "statement": "Owner approval, Venus in Libra, exact wording.",
+          "approved_at": "2026-08-14",
+          "source": "packages/astro-knowledge/review/venus-libra-owner-approved-v1/OWNER-APPROVAL-2026-08-14.md",
+          "approved_render_sha256": "2306bbd9d80e99c9dc1c1939c0c82ca962263b3bdf0e778d2c46085352b39d8e"
+        }
+      ]
     }
   ]
 }

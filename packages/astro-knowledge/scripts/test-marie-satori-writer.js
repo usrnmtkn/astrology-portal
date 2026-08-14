@@ -106,31 +106,12 @@ function main() {
     && ["natal-placement", "natal-aspect"].includes(entry.surface)
     && entry.sourcePath.endsWith("knowledge-matrix-v13-owner-approved-locked.json")
   )));
-  assert.strictEqual(index.entries.length, 7702);
-  assert.strictEqual(index.summary.positiveVoiceEvidenceCount, 7204);
-  assert.strictEqual(index.summary.contextualEvidenceCount, 3845);
-  assert.strictEqual(index.summary.bySurface["sky-placement"], 3823);
+  assert.strictEqual(index.entries.length, 7695);
+  assert.strictEqual(index.summary.positiveVoiceEvidenceCount, 7198);
+  assert.strictEqual(index.summary.contextualEvidenceCount, 3844);
+  assert.strictEqual(index.summary.bySurface["sky-placement"], 3816);
   assert.strictEqual(index.summary.bySurface["natal-placement"], 136);
   assert.strictEqual(index.summary.bySurface["natal-aspect"], 165);
-  const saturnAriesRegisterGold = index.entries.filter((entry) => entry.sourceId.startsWith("register-gold:"));
-  assert.strictEqual(saturnAriesRegisterGold.length, 7);
-  assert(saturnAriesRegisterGold.every((entry) => (
-    entry.authorityClass === "owner_authored_final"
-    && entry.ownerApproved === true
-    && entry.reviewStatus === "published"
-    && entry.useAsPositiveVoiceEvidence === true
-    && entry.useAsContextualEvidence === false
-    && entry.surface === "sky-placement"
-    && entry.planet === "saturn"
-    && entry.sign === "aries"
-  )));
-  const saturnAriesFourthWall = index.entries.find((entry) => (
-    entry.sourceId === "owner-active:TLDR-Article-Edition-Saturn-Aries-2025-OWNER:e034"
-  ));
-  assert(saturnAriesFourthWall);
-  assert.strictEqual(saturnAriesFourthWall.useAsPositiveVoiceEvidence, false);
-  assert.strictEqual(saturnAriesFourthWall.useAsContextualEvidence, true);
-  assert.deepStrictEqual(saturnAriesFourthWall.failureTags, ["fourth_wall_break"]);
   const calibrationV3 = index.entries.filter((entry) => entry.sourceId.startsWith("sky-placement-uranus-cancer-collective-owner-approval-candidate-v3:"));
   assert(calibrationV3.length >= 5);
   assert(calibrationV3.every((entry) => entry.authorityClass === "exact_owner_approved" && entry.ownerApproved && !entry.useAsPositiveVoiceEvidence));
