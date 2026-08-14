@@ -20,10 +20,10 @@
     "argument_candidate": 788
   },
   "deduplicatedSharedIndexCounts": {
-    "entries": 4860,
+    "entries": 4861,
     "meaning": 1876,
     "register": 1710,
-    "scene": 418,
+    "scene": 419,
     "argument": 510,
     "phrase": 346,
     "planetSignKeys": 190
@@ -81,7 +81,7 @@
     "approved_serving_row": {
       "meaning": 0,
       "register": 0,
-      "scene": 225,
+      "scene": 226,
       "argument": 0,
       "phrase": 0
     },

@@ -4303,12 +4303,13 @@
       "extended": {
         "meaning": 21,
         "register": 14,
-        "scene": 14,
+        "scene": 15,
         "argument": 15,
         "phrase": 0
       },
       "sceneBySource": {
         "approved_house_horoscope_core": 12,
+        "approved_serving_row": 1,
         "owner-approved-knowledge-matrix-scene": 2
       },
       "registerBySource": {
