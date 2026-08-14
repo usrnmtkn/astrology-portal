@@ -1,0 +1,276 @@
+{
+  "target": "venus-in-libra",
+  "version": "v2-reissued-against-fast-mover-article-v1",
+  "status": "argument-approved-prose-not-drafted",
+  "proseDrafted": false,
+  "billedCalls": 0,
+  "existingApprovedArticle": {
+    "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+    "reviewStatus": "approved",
+    "bodySha256": "6da22c74491a2f63b47a5707bf9a0de52d126a3d65fbf0a21eabf74d59fc5fa2",
+    "source": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json"
+  },
+  "addsToExistingApprovedArticle": [
+    "Adds the home-ground condition: Venus rules Libra, so its relational tools operate easily and that ease can hide an incomplete agreement.",
+    "Keeps the existing handoff exactly as the light one-sentence opening move required by the approved spine.",
+    "Turns the existing list of decision, expense, and relationship examples into one continuous collaboration sequence.",
+    "Adds a strategy inside the argument: state the preference before smoothing the arrangement.",
+    "Keeps the existing consequence at the close instead of adding another summary or moral."
+  ],
+  "doesNotAdd": [
+    "No new fairness thesis.",
+    "No slow-mover era, recurrence, or handoff paragraph.",
+    "No romance, dinner-plan, or scheduling default.",
+    "No retrograde look-back. The separate degree-matched proposal is unapproved and excluded from this writer packet."
+  ],
+  "meaningPlan": {
+    "content_type": "placement_article",
+    "object": "venus",
+    "sign": "libra",
+    "house": null,
+    "event_type": null,
+    "object_function": [
+      "Venus governs relationships, creativity, attraction, and what is valued."
+    ],
+    "sign_mechanics": [
+      "Libra notices balance, exchange, connection, and how a shared choice is made."
+    ],
+    "actual_house_domain": null,
+    "core_tension": "Agreement can look fair while one side keeps adjusting.",
+    "what_changes": "The clearest voice makes the decision while the more accommodating side absorbs the cost.",
+    "constructive_expression": "A preference is withheld until everyone else has answered.",
+    "overcorrection": "Fairness is reduced to avoiding disagreement.",
+    "observable_behaviors": [
+      "A preference is withheld until everyone else has answered.",
+      "A shared cost or responsibility stays uneven because naming the exact difference feels impolite.",
+      "A connection changes once both sides can state what they want without punishment."
+    ],
+    "possible_consequences": [
+      "The clearest voice makes the decision while the more accommodating side absorbs the cost.",
+      "Resentment grows inside an arrangement that still looks calm.",
+      "Honesty shows which connections can hold an actual preference."
+    ],
+    "allowed_life_domain_examples": [
+      "relationships",
+      "work",
+      "money",
+      "creative decisions",
+      "access"
+    ],
+    "do_not_assume": [
+      "a house or life domain that was not supplied",
+      "a specific event, motive, relationship type, or biography not present in governed facts"
+    ],
+    "house_bleed_risks": [
+      "relationship status"
+    ],
+    "stock_trope_risks": [],
+    "unearned_motives": [],
+    "eventType": null,
+    "objectFunction": "Venus governs relationships, creativity, attraction, and what is valued.",
+    "signMechanics": "Libra notices balance, exchange, connection, and how a shared choice is made.",
+    "actualHouseDomain": null,
+    "allowedLivedDomains": [
+      "relationships",
+      "work",
+      "money",
+      "creative decisions",
+      "access"
+    ],
+    "prohibitedDomainAssumptions": [
+      "relationship status"
+    ],
+    "coreTension": "Agreement can look fair while one side keeps adjusting.",
+    "likelyObservableBehaviors": [
+      "A preference is withheld until everyone else has answered.",
+      "A shared cost or responsibility stays uneven because naming the exact difference feels impolite.",
+      "A connection changes once both sides can state what they want without punishment."
+    ],
+    "likelyConsequences": [
+      "The clearest voice makes the decision while the more accommodating side absorbs the cost.",
+      "Resentment grows inside an arrangement that still looks calm.",
+      "Honesty shows which connections can hold an actual preference."
+    ],
+    "risks": [
+      "Fairness is reduced to avoiding disagreement."
+    ],
+    "DO_NOT_ASSUME": [
+      "a house or life domain that was not supplied",
+      "a specific event, motive, relationship type, or biography not present in governed facts"
+    ]
+  },
+  "argumentOutline": {
+    "version": "argument-outline-v1-2026-08-12",
+    "status": "owner-approved",
+    "ownerApproved": true,
+    "family": "fast-mover-article",
+    "surface": "sky-placement-page",
+    "meaningPlanObject": "venus",
+    "meaningPlanSign": "libra",
+    "meaningPlanHash": "c1bb6370a6a72d43b28b11e0c91fae2bcc0116dba5663d59c6e515ac63e3acc0",
+    "thesis": "Add why the existing imbalance can be hard to notice: Venus works easily in Libra, so smooth agreement can look complete before both preferences are known.",
+    "cultural_rule": "Do not replace the approved fairness argument; add only the assumption that an easy agreement must be a fair one.",
+    "transit_job": "Add a condition-based test of Venus in Libra's home-ground skill: can the connection stay easy after both sides state what they actually want?",
+    "failure_mechanism": "Clarify the existing mechanism by showing skill at compromise becoming automatic adjustment before anyone asks for it.",
+    "lived_scene_1": "Consolidate the approved shared-decision material into one collaboration where one side waits for the other preference before naming its own.",
+    "lived_scene_2": "Continue the same collaboration when the accommodating side absorbs the follow-up work or cost required to keep the agreement easy.",
+    "lived_scene_3": "Finish the same sequence when the withheld preference is stated and the other side's response shows whether the connection can hold honesty.",
+    "strategy": "Add one strategic bias inside the article: state the preference before smoothing the arrangement; do not add a tip list.",
+    "intended_close": "Keep the approved close's consequence rather than adding a second moral: the arrangement strains when the person who kept agreeing stops accepting what they do not want.",
+    "scope_guard": "Retain the existing one-sentence handoff; add no slow-mover contrast paragraph, romance default, dinner or scheduling scene, seventh-house substitution, or retrograde look-back.",
+    "outlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49",
+    "exactOwnerRuling": "Venus in Libra v2 outline approved.",
+    "approvedOutlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49"
+  },
+  "spine": {
+    "id": "fast-mover-article-v1",
+    "status": "recorded",
+    "ownerApproved": true,
+    "ownerRulingDate": "2026-08-13",
+    "fields": [
+      "planet",
+      "condition_when_relevant",
+      "handoff",
+      "job",
+      "thesis",
+      "lived_evidence",
+      "failure",
+      "strategy",
+      "close"
+    ],
+    "rules": {
+      "condition_when_relevant": "Include dignity only when it materially changes how directly the planet can do its job. Venus rules Libra, so Venus in Libra receives this home-ground layer, parallel to Saturn in Capricorn.",
+      "handoff": "One opening sentence names the prior sign and its dates. Do not expand it into the standalone contrast paragraph used by slow movers.",
+      "collective_test": "May be folded into the close when earned; never required as a standalone layer."
+    }
+  },
+  "selectedCorrectionPairsForFuturePrompt": {
+    "pairs": [
+      {
+        "before": "states the point plainly",
+        "after": "gets to the point quickly",
+        "owner_reason": "Ordinary spoken English over technically correct phrasing.",
+        "category": "natural_language",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 126,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "before the remaining information arrives",
+        "after": "before the rest of the information comes in",
+        "owner_reason": "Ordinary word order; the first sounds written, not said.",
+        "category": "natural_language",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 126,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "a conclusion may be repeated before the reasoning behind it is complete",
+        "after": "the conclusion may get shared before the explanation is finished",
+        "owner_reason": "'Repeated' is the strange word here; the mechanism is that it gets shared before the reasoning is done.",
+        "category": "natural_language",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 126,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "silence can make a practical concern sound like a refusal",
+        "after": "silence can make a practical concern read like a refusal",
+        "owner_reason": "Silence does not sound like anything.",
+        "category": "natural_language",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 126,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "It makes separate facts easier to connect",
+        "after": "Two details that seemed unrelated can suddenly make sense together",
+        "owner_reason": "Name what the reader would actually notice.",
+        "category": "abstraction_over_consequence",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 125,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "Comparing accounts can correct a decision based on only one version of events",
+        "after": "Hearing both sides can expose the part of the agreement that only worked for one person",
+        "owner_reason": "Move from procedural fairness into the actual inequity.",
+        "category": "abstraction_over_consequence",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 125,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "a broader conclusion / the available information / the original question / the speaker / the listener / the reasoning / the next step",
+        "after": "name the actual consequence: the email gets resent, the wrong version stays in circulation, the first proposal becomes the plan",
+        "owner_reason": "These are clear but they make the writing sound like a very good communications handbook.",
+        "category": "abstraction_over_consequence",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 125,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      },
+      {
+        "before": "The same speed that ends a delay can create another one.",
+        "after": "Answering quickly can save time until one missing detail sends everyone back to the beginning.",
+        "owner_reason": "Technically good but sounds constructed.",
+        "category": "constructed_sentence",
+        "family": "sky-placement",
+        "rule": null,
+        "selection_score": 124,
+        "selection_reasons": [
+          "same_surface_family",
+          "requested_failure_mode",
+          "family_failure_history"
+        ]
+      }
+    ],
+    "logic": {
+      "requested": 8,
+      "selected": 8,
+      "deduplicatedCorpusCount": 57,
+      "family": "fast-mover-article",
+      "priority": [
+        "same content family",
+        "requested failure mode",
+        "that family's historical failure categories",
+        "adjacent family",
+        "stable source order"
+      ]
+    }
+  }
+}

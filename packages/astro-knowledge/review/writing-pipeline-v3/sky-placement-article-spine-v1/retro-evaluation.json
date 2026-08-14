@@ -1,0 +1,116 @@
+{
+  "version": "spine-quality-gates-retro-audit-v1-2026-08-14",
+  "billedCalls": 0,
+  "automaticRewrites": 0,
+  "qualityRequirements": {
+    "planet": "Name what the planet governs and where it becomes visible in ordinary life, so the reader learns both what it rules and how to recognize it.",
+    "condition": "When the planet has dignity in the sign, state the rulership and explain how it changes the planet's directness. When the sign has a symbol, use it to interpret the mechanism.",
+    "handoff": "Use one opening sentence naming the prior sign and its dates and what the focus shifts from and to.",
+    "thesis": "Name the cultural rule or familiar assumption the transit challenges and who benefits from it.",
+    "lived_evidence": "Use two or three quick situations with nameable objects, decisions, costs, and follow-up work; no single situation carries the argument; include one short standalone sentence stating the whole argument.",
+    "failure_mechanism": "Show how the useful impulse becomes the problem through behavior the reader performs.",
+    "strategy": "Use short imperative sentences in sequence, each naming one action.",
+    "era_frame": "For a slow mover, state what the multi-year transit means at collective scale and include one line the reader can carry.",
+    "recurrence": "For a slow mover, state the prior transit's dates and what that period revealed.",
+    "older_analogs": "For a slow mover, include older analogs only when verified dates and sourced historical material advance the thesis.",
+    "collective_lesson": "For a slow mover, state what the transit teaches at group scale and give the reader a test they can apply.",
+    "close": "Use one unhedged sentence stating the consequence or condition that completes the thesis; inherited approval does not bypass this gate."
+  },
+  "pages": {
+    "venus_libra_owner_approved": {
+      "version": "sky-placement-article-spine-v1-2026-08-14",
+      "family": "fast-mover-article",
+      "status": "spine-quality-complete",
+      "complete": true,
+      "failedElementCount": 0,
+      "failedElements": [],
+      "failures": [],
+      "elements": {
+        "planet": {
+          "text": "After moving through Virgo from July 9 to August 6, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them."
+        },
+        "condition": {
+          "text": "After moving through Virgo from July 9 to August 6, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them.\n\nVenus rules Libra, so compromise comes easily here. You can see both sides, find the middle ground, and make an arrangement work without much friction. That is useful until your own preference disappears somewhere inside the compromise."
+        },
+        "handoff": {
+          "text": "After moving through Virgo from July 9 to August 6, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them."
+        },
+        "thesis": {
+          "text": "The problem starts when you keep saying yes because it feels easier than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left. The loudest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility. Resentment builds because the agreement only works by asking one person to keep giving more. You did not agree. You accommodated, and everyone called it agreement.\n\nBeing easy to work with is rewarded everywhere. It gets called low maintenance, flexible, a good partner. Nobody mentions that it is also free. A collaborator chooses the direction, you say it works, and before anyone assigns the follow-up, you offer to rewrite the draft, send the updates, and deliver the final version. The decision takes five minutes; carrying it out costs you several more hours. When you finally say you preferred another version, their response tells you which one it was: they reopen the decision and split the revisions, or they expect you to keep carrying the plan you never picked."
+        },
+        "lived_evidence": {
+          "text": "Being easy to work with is rewarded everywhere. It gets called low maintenance, flexible, a good partner. Nobody mentions that it is also free. A collaborator chooses the direction, you say it works, and before anyone assigns the follow-up, you offer to rewrite the draft, send the updates, and deliver the final version. The decision takes five minutes; carrying it out costs you several more hours. When you finally say you preferred another version, their response tells you which one it was: they reopen the decision and split the revisions, or they expect you to keep carrying the plan you never picked.\n\nA shared purchase hides the same imbalance. You agree to split the cost, put the charge on your card, and accept a smaller repayment because asking for the exact difference feels awkward. You save the receipt, calculate what is still owed, and send another reminder. The agreement stays easy because you carry the missing money and the work of collecting it.",
+          "scenarioCount": 2,
+          "scenarioParagraphSpans": [
+            1,
+            1
+          ]
+        },
+        "failure_mechanism": {
+          "text": "Venus rules Libra, so compromise comes easily here. You can see both sides, find the middle ground, and make an arrangement work without much friction. That is useful until your own preference disappears somewhere inside the compromise.\n\nThe problem starts when you keep saying yes because it feels easier than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left. The loudest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility. Resentment builds because the agreement only works by asking one person to keep giving more. You did not agree. You accommodated, and everyone called it agreement.\n\nBeing easy to work with is rewarded everywhere. It gets called low maintenance, flexible, a good partner. Nobody mentions that it is also free. A collaborator chooses the direction, you say it works, and before anyone assigns the follow-up, you offer to rewrite the draft, send the updates, and deliver the final version. The decision takes five minutes; carrying it out costs you several more hours. When you finally say you preferred another version, their response tells you which one it was: they reopen the decision and split the revisions, or they expect you to keep carrying the plan you never picked."
+        },
+        "strategy": {
+          "text": "Say what you want before you hear what everyone else wants. Name the number. Ask who is doing the follow-up. Let the plan change once you are actually in it. Then watch what happens: who adjusts, who covers the difference, and who takes on the work their choice created."
+        },
+        "close": {
+          "text": "The connections worth keeping are the ones that survive you asking for something."
+        }
+      }
+    },
+    "saturn_capricorn_owner_gold": {
+      "version": "sky-placement-article-spine-v1-2026-08-14",
+      "family": "slow-mover-article",
+      "status": "spine-quality-complete",
+      "complete": true,
+      "failedElementCount": 0,
+      "failedElements": [],
+      "failures": [],
+      "elements": {
+        "planet": {
+          "text": "Saturn stands at the threshold where a choice becomes a consequence. The deadline arrives, the bill comes due, and a weak structure reveals itself in the person who has to absorb the extra hours, missing money, or unfinished work. Saturn governs time, limits, and responsibility. Under pressure, the true cost of keeping something going becomes visible, along with who has been expected to carry it."
+        },
+        "condition": {
+          "text": "Saturn rules Capricorn, so the sign sharpens what Saturn already cares about: hierarchy, endurance, and consequence. The sea-goat gives Capricorn a body built for two environments: hooves for the climb and a tail that still belongs to the water. The danger is not ambition. It is reaching the top by spending more time, money, health, and human effort than the climb can justify."
+        },
+        "handoff": {
+          "text": "Saturn moved through {{priorSign}} from {{priorSignEntryDateWithYear}} to {{priorSignExitDateWithYear}}. That transit tested the beliefs and long-range promises used to justify a plan. Capricorn changes the question from what everyone says they believe to who does the work, who has authority, and what happens when the plan meets a limit."
+        },
+        "thesis": {
+          "text": "You have been taught to mistake endurance for ability. The person who remembers every deadline, answers after hours, and never drops the ball gets called reliable, and the arrangement is cheaper than hiring anyone else. Saturn in Capricorn asks a harder question: is the system actually working, or has one person become the system?"
+        },
+        "lived_evidence": {
+          "text": "A project can win praise while one person sends corrections at midnight, covers a vacant role, and logs in on vacation. You may recognize the same pattern at home: a household looks organized because one person remembers every appointment, payment, and form. When they stop doing all of it, deadlines slip, messages go unanswered, and everyone discovers how much of the plan depended on work nobody else was prepared to do. If everything falls apart when one person takes a day off, that person was the infrastructure.",
+          "scenarioCount": 2,
+          "scenarioParagraphSpans": [
+            1,
+            1
+          ]
+        },
+        "failure_mechanism": {
+          "text": "Being needed can feel like proof of ability until every problem belongs to you. You take the task back when someone else does it differently, answer messages during dinner, and postpone rest so the work stays on schedule. The deadline gets met, but the knowledge stays in one mind and the responsibility in one set of hands. The reward for fixing the problem is often another problem. The person who handles it well becomes the default person everyone calls when something goes wrong. More responsibility arrives without more authority, more money, or anyone learning how to do the work without them. At some point, being indispensable stops looking like recognition and starts looking like a system that never bothered to build a backup."
+        },
+        "strategy": {
+          "text": "Before you expand the plan, make sure somebody else can run it. Fix the handoff. Train someone else to do the work. Fund the repair. Document what only one person knows. If training, funding, documentation, or another set of hands fixes the problem, reinforce it. If the structure still requires permanent overwork to function, stop calling it stable."
+        },
+        "era_frame": {
+          "text": "Saturn in Capricorn begins a period when standards get stricter and authority has to answer for the cost of its decisions. Rules, budgets, deadlines, and chains of responsibility become harder to treat as background details. A title cannot substitute for accountability. If the person making the decision can hand off the extra hours, missed weekends, and financial cost to everyone below them, the hierarchy may be clear, but the responsibility is not."
+        },
+        "recurrence": {
+          "text": "Saturn takes about 29 years to move through all twelve signs, spending around two and a half years in each. Saturn last moved through Capricorn from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}. By the end of that transit, the pandemic had made hidden work impossible to ignore. Hospitals, schools, households, and workplaces all discovered how quickly a system can strain when the people carrying its invisible work are pushed past what their staffing, hours, bodies, and resources can sustain."
+        },
+        "older_analogs": {
+          "text": "Earlier Saturn-in-Capricorn periods also arrived during years when major systems were being dismantled, reinforced, or rebuilt. From 1929 to 1933, financial collapse exposed weaknesses in banks and markets and forced a new argument over how much responsibility government should carry for economic stability. From 1959 to 1962, colonial rule was breaking apart across Africa while the Cold War hardened into new borders and confrontations, including the Berlin Wall. From 1989 to 1992, the Berlin Wall fell, Germany reunified, the Soviet Union dissolved, and the Maastricht Treaty began building a new political structure for Europe. The events are different, and the same disorientation runs through all of them: a structure everyone had organized their lives around stopped being permanent. The recurring question begins once everyone can see that the old structure no longer holds: what gets rebuilt, who takes responsibility for it, and what is no longer worth preserving?",
+          "verifiedSourceIds": [
+            "saturn-capricorn-recurrence-library:older-analogs"
+          ]
+        },
+        "collective_lesson": {
+          "text": "Responsibility has to be visible before it can be shared. A company, family, or institution is not stable if the person setting the standard never has to answer for the time, money, and work it requires. The simplest test is what happens when the person who usually catches everything stops catching it."
+        },
+        "close": {
+          "text": "A structure is not stable if it only works when one person never rests."
+        }
+      }
+    }
+  }
+}
