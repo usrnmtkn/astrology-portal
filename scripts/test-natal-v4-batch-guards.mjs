@@ -2,7 +2,7 @@
 
 import assert from "node:assert/strict";
 import { validateCopy } from "../src/astro-writing/validateCopy.mjs";
-import { BANNED_FRIEND_SENTENCES, validateBatchCadence, validateCrossRowUniqueness, validateFriendPair } from "../src/astro-writing/natalBatchGuards.mjs";
+import { BANNED_FRIEND_SENTENCES, validateBatchCadence, validateCrossRowUniqueness, validateFriendPair, validatePassageShape } from "../src/astro-writing/natalBatchGuards.mjs";
 
 const fixtures = [
   "Meaning often arrives through tone and association before it arrives as a clean list of facts.",
@@ -42,6 +42,29 @@ for (const copy of newlyCaught) {
   assert.ok(result.violations.some((item) => item.category === "abstract_subject_grammar"), copy);
 }
 
+const v5MissedAbstractSubjects = [
+  "Hope becomes expensive when the bill arrives.",
+  "Ambition loses ground when the workplace remembers the conversation.",
+  "Pride can protect a vulnerable feeling during the argument.",
+  "Confidence returns from inside the response after the meeting.",
+  "Feeling and reason remain available together during the appointment.",
+  "Warmth appears in the exchange while the coffee gets cold.",
+  "Ambition returns when the project serves an ideal."
+];
+for (const copy of v5MissedAbstractSubjects) {
+  const result = validateCopy(copy, { family: "natal-aspect-exact", register: "collective", plan: { astrologySupport: "present" } });
+  assert.ok(result.violations.some((item) => item.category === "abstract_subject_grammar"), copy);
+}
+
+const shortAbstractFriend = "Friends experience Name as generous. Warmth appears in the exchange.";
+const shortShape = validatePassageShape(shortAbstractFriend);
+assert.equal(shortShape.passed, false);
+assert.ok(shortShape.violations.some((item) => item.category === "passage_shape"));
+assert.ok(shortShape.violations.some((item) => item.category === "passage_length"));
+assert.ok(shortShape.violations.some((item) => item.category === "observable_noun_floor"));
+const fullShape = validatePassageShape("A coworker sees Name rewrite the message before lunch, after the first version brings a manager to the desk. The document loses its sharpest accusation and keeps the useful fact everyone needs for the afternoon decision. A manager can act on the corrected version without reopening yesterday's argument or asking the whole office to choose sides. Name still has to say the difficult part, but the meeting no longer begins with damage that a careful email could have prevented.");
+assert.equal(fullShape.passed, true);
+
 const exactFailure = validateCrossRowUniqueness([
   { rowKey: "one", copy: "People see Name finish the report." },
   { rowKey: "two", copy: "People see Name finish the report." }
@@ -66,4 +89,4 @@ const bannedFailure = validateCrossRowUniqueness([
 assert.equal(bannedFailure.passed, false);
 assert.equal(bannedFailure.bannedFindings.length, 1);
 
-console.log("Natal batch guards passed: grammatical subjects, chart deixis, cadence, independent Friend entry, exact/near uniqueness, shared-series, and banned fixtures.");
+console.log("Natal batch guards passed: parse-based grammatical subjects, chart deixis, passage shape, distinct observable nouns, cadence, independent Friend entry, exact/near uniqueness, shared-series, and banned fixtures.");
