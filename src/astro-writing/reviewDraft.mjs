@@ -5,6 +5,11 @@ import {
   REVIEW_FIELDS
 } from "./canonicalInstructions.mjs";
 import { priorCopyStructuralCorrespondence } from "./authoringSource.mjs";
+import { reviewLiteralEvent } from "./literalEventReview.mjs";
+import {
+  classifyNatalDeterministicFindings,
+  isNatalAuthoringFamily
+} from "./natalWritingGatePolicy.mjs";
 import { validateCopy } from "./validateCopy.mjs";
 
 const CHECK_RESULT_SCHEMA = Object.freeze({
@@ -159,6 +164,7 @@ export function deterministicEditorialReview({
   protectedOwnerLines,
   priorCopy
 }) {
+  const natalPolicy = isNatalAuthoringFamily(family);
   const lint = validateCopy(draft, {
     family,
     register,
@@ -169,11 +175,16 @@ export function deterministicEditorialReview({
     priorCopy,
     ownerCorrections: context?.corrections ?? []
   });
+  const lintClassification = natalPolicy ? classifyNatalDeterministicFindings(lint.violations) : null;
+  const advisoryCategories = new Set(lintClassification?.advisory.map((item) => item.category) ?? []);
   const violations = lint.violations.map((item) => {
-    return violationRecord(draft, item.category, item.detail, `Correct only the failed ${locationFor(draft, item.category)} material.`);
+    const record = violationRecord(draft, item.category, item.detail, `Correct only the failed ${locationFor(draft, item.category)} material.`);
+    return advisoryCategories.has(item.category) ? { ...record, severity: "nonblocking" } : record;
   });
   for (const failure of semanticPatternFailures(draft, priorCopy)) {
-    violations.push(violationRecord(draft, failure.category, failure.reason, failure.instruction, failure.location));
+    const record = violationRecord(draft, failure.category, failure.reason, failure.instruction, failure.location);
+    const classified = natalPolicy ? classifyNatalDeterministicFindings([{ category: failure.category }]) : null;
+    violations.push(classified?.advisory.length ? { ...record, severity: "nonblocking" } : record);
   }
   const deduped = [...new Map(violations.map((item) => [
     `${item.category}|${item.location}|${item.reason}`,
@@ -189,8 +200,9 @@ export function deterministicEditorialReview({
   const blocking = deduped.some((item) => item.severity === "blocking");
   return {
     ...checks,
-    decision: blocking || deduped.length > 0 ? "REVISE" : "PASS",
+    decision: blocking || (!natalPolicy && deduped.length > 0) ? "REVISE" : "PASS",
     violations: deduped,
+    deterministicPolicy: natalPolicy ? lintClassification : null,
     required_revisions: deduped.map((item) => ({ field: item.location, instruction: item.revision_instruction }))
   };
 }
@@ -275,6 +287,11 @@ export async function reviewDraft({
   });
   validateColdModelReview(coldModelReview);
 
+  const natalPolicy = isNatalAuthoringFamily(family);
+  const literalEventReview = natalPolicy
+    ? await reviewLiteralEvent({ copy: copyText(draft), modelClient })
+    : null;
+
   const modelReview = await modelClient({
     stage: "review",
     role: "REVIEWER",
@@ -293,6 +310,7 @@ export async function reviewDraft({
   const mergedViolations = [...new Map([
     ...mechanical.violations,
     ...coldModelReview.violations,
+    ...(literalEventReview?.violations ?? []),
     ...modelReview.violations.filter((item) => item.category !== "cold_rendered_prose")
   ].map((item) => [`${item.category}|${item.location}|${item.reason}`, item])).values()];
   const failed = new Set(mergedViolations.map((item) => canonicalCategory(item.category)));
@@ -305,17 +323,24 @@ export async function reviewDraft({
       field === "cold_rendered_prose" ? coldModelReview[field].reason : modelReview[field].reason
     ].filter(Boolean).join(" ")
   }]));
-  const blocking = mergedViolations.some((item) => item.severity === "blocking")
-    || HARD_REVISE_FIELDS.some((field) => checks[field].status === "FAIL");
+  const blockingViolation = mergedViolations.some((item) => item.severity === "blocking");
+  const semanticHardFailure = HARD_REVISE_FIELDS.some((field) => (
+    field === "cold_rendered_prose"
+      ? coldModelReview[field].status === "FAIL"
+      : modelReview[field].status === "FAIL"
+  ));
+  const blocking = blockingViolation || semanticHardFailure;
   const anyFailedCheck = REVIEW_FIELDS.some((field) => field !== "cold_rendered_prose" && checks[field].status === "FAIL");
   const actionableViolation = mergedViolations.some((item) => item.category !== "cold_rendered_prose");
   return {
     ...checks,
     decision: blocking
-      || anyFailedCheck
-      || actionableViolation
-      || modelReview.decision !== "PASS" ? "REVISE" : "PASS",
+      || literalEventReview?.decision === "REVISE"
+      || modelReview.decision !== "PASS"
+      || (!natalPolicy && (anyFailedCheck || actionableViolation)) ? "REVISE" : "PASS",
     violations: mergedViolations,
+    literal_event_review: literalEventReview,
+    deterministic_policy: natalPolicy ? mechanical.deterministicPolicy : null,
     required_revisions: mergedViolations.map((item) => ({ field: item.location, instruction: item.revision_instruction }))
   };
 }
