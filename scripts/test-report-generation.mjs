@@ -16,10 +16,8 @@ import {
 import { reportOwnerVoiceComparisonSetV2, reportOwnerVoiceCorpusV2, reportVoiceUnitType } from "../api/_lib/report-owner-voice-corpus-v2.ts";
 import {
   loadActiveReportCritiquePrompt,
-  loadActiveReportJudgePrompt,
-  loadReportVoiceRestorationCandidatePrompts
+  loadActiveReportJudgePrompt
 } from "../api/_lib/report-prompt-versions.ts";
-import { reportVoiceRestorationCandidatePacket } from "../api/_lib/report-voice-restoration-candidate.ts";
 
 const facts = JSON.parse(fs.readFileSync(new URL("./fixtures/marie-report-frozen-facts.json", import.meta.url), "utf8"));
 const snapshots = JSON.parse(fs.readFileSync(new URL("./fixtures/report-generation-dry-run-snapshots.json", import.meta.url), "utf8"));
@@ -351,7 +349,11 @@ assert.deepEqual([...new Set(personalHealthSelection.selection.map((item) => ite
 assert.equal(personalHealthPayload.canonicalOwnerPrompt.sourcePath, snapshots.personal_health_12_months.canonicalPromptSource);
 assert.equal(personalHealthPayload.generationStandard?.sourcePath, snapshots.personal_health_12_months.generationStandardSource);
 assert.equal(personalHealthPayload.voiceEvidence[0].sourcePath, snapshots.personal_health_12_months.voiceEvidenceSource);
-assert.deepEqual(personalHealthPayload.ownerComparisonSet.map((passage) => passage.evidenceId), snapshots.personal_health_12_months.ownerComparisonIds);
+assert.deepEqual(
+  personalHealthPayload.ownerComparisonSet.map((passage) => passage.evidenceId),
+  reportOwnerVoiceComparisonSetV2("personal_health", personalHealthPayload.unit.unitId).map((passage) => passage.evidenceId)
+);
+assert.ok(personalHealthPayload.ownerComparisonSet.every((passage) => passage.unitType === reportVoiceUnitType(personalHealthPayload.unit.unitId)));
 
 const factors = reportFactors(facts);
 assert.deepEqual(reportFactors({ reportWindow: facts }), factors);
@@ -670,19 +672,12 @@ for (const unitId of ["overview", "year-theme", "domain:main", "winter-current",
     `Candidate ${unitId} evidence must be same-unit-type.`);
   assert.ok(comparisons.every((passage) => passage.provenance.sourceType === "owner_authored_final"));
 }
-assert.match(loadActiveReportCritiquePrompt().version, /^report-critique-checklist-v5:/u);
-assert.match(loadActiveReportJudgePrompt().version, /^report-judge-rubric-v3\.2:/u);
-const restorationCandidates = loadReportVoiceRestorationCandidatePrompts();
-assert.match(restorationCandidates.critique.version, /^report-critique-checklist-v6-draft:/u);
-assert.match(restorationCandidates.judge.version, /^report-judge-rubric-v3\.3-draft:/u);
-assert.match(restorationCandidates.earnedSentence.text, /Clarity is the floor, not the goal\./u);
-assert.match(restorationCandidates.critique.text, /no_earned_sentence/u);
-assert.match(restorationCandidates.judge.text, /owner_voice_drift[\s\S]*evidence IDs/u);
-const candidatePacket = reportVoiceRestorationCandidatePacket("general", "summer");
-assert.deepEqual(candidatePacket.governance, {
-  status: "needs_review", ownerApproved: false, promotionAuthorized: false, activeInProduction: false
-});
-assert.deepEqual(candidatePacket.defectCategories, ["no_earned_sentence"]);
-assert.equal(candidatePacket.ownerComparisonSet.length, 3);
+assert.match(loadActiveReportCritiquePrompt().version, /^report-critique-checklist-v6:/u);
+assert.match(loadActiveReportJudgePrompt().version, /^report-judge-rubric-v3\.3:/u);
+assert.match(loadActiveReportCritiquePrompt().text, /no_earned_sentence/u);
+assert.match(loadActiveReportJudgePrompt().text, /owner_voice_drift[\s\S]*evidence IDs/u);
+assert.match(personalHealthPayload.earnedSentenceRuling.text, /Clarity is the floor, not the goal\./u);
+assert.equal(personalHealthPayload.ownerComparisonSet.length, 3);
+assert.ok(personalHealthPayload.ownerComparisonSet.every((passage) => passage.unitType === reportVoiceUnitType(personalHealthPayload.unit.unitId)));
 
-console.log(`Report generation passed: four domains, shared lived-prose standard, tiered selection, return dedupe, domain validators, and ${voiceCorpusV2.length} inactive owner-voice corpus passages.`);
+console.log(`Report generation passed: four domains, active earned-sentence ruling, same-unit owner comparison evidence, tiered selection, return dedupe, and ${voiceCorpusV2.length} owner-voice corpus passages.`);

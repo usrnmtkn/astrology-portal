@@ -297,7 +297,7 @@ const artifactBase = {
   version: "report-judge-v3-calibration-v2",
   runAt,
   authorization: {
-    approvedDocuments: ["report-judge-rubric-v3.2", "report-critique-checklist-v5"],
+    approvedDocuments: ["report-judge-rubric-v3.3", "report-critique-checklist-v6"],
     threshold,
     requestedCalls: 9,
     judgeCalls: 8,

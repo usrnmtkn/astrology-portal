@@ -1,9 +1,15 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { reportOwnerComparisonSet, type ReportOwnerComparisonPassage } from "./report-owner-comparison.js";
+import type { ReportOwnerComparisonPassage } from "./report-owner-comparison.js";
+import { reportOwnerVoiceComparisonSetV2 } from "./report-owner-voice-corpus-v2.js";
 import { reportKeyDateEventManifest, reportKeyDateSourceUnitIds, type ReportKeyDateEventManifestEntry } from "./report-key-dates.js";
-import { REPORT_COLD_PROSE_RULE_PATH, REPORT_NO_CLEVERNESS_RULING_PATH, REPORT_OWNER_REVIEW_EVIDENCE_PATH } from "./report-prompt-versions.js";
+import {
+  REPORT_COLD_PROSE_RULE_PATH,
+  REPORT_EARNED_SENTENCE_RULING_PATH,
+  REPORT_NO_CLEVERNESS_RULING_PATH,
+  REPORT_OWNER_REVIEW_EVIDENCE_PATH
+} from "./report-prompt-versions.js";
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
 export type { ReportDomain, ReportHorizon } from "./report-types.ts";
@@ -96,6 +102,10 @@ export type ReportGenerationPayload = {
     text: string;
   };
   coldProseRuling: {
+    sourcePath: string;
+    text: string;
+  };
+  earnedSentenceRuling: {
     sourcePath: string;
     text: string;
   };
@@ -1167,6 +1177,10 @@ export function assembleReportGenerationPayload(
       sourcePath: REPORT_COLD_PROSE_RULE_PATH,
       text: readRepoText(REPORT_COLD_PROSE_RULE_PATH)
     },
+    earnedSentenceRuling: {
+      sourcePath: REPORT_EARNED_SENTENCE_RULING_PATH,
+      text: readRepoText(REPORT_EARNED_SENTENCE_RULING_PATH)
+    },
     sharedInvariants: [...SHARED_INVARIANTS],
     domainRelevanceModel: reportDomainRelevanceModel(input.reportDomain),
     frozenFacts: JSON.parse(JSON.stringify(input.frozenFacts)) as Record<string, unknown>,
@@ -1188,7 +1202,7 @@ export function assembleReportGenerationPayload(
       eligible: true,
       text: readRepoText(configuration.voiceEvidencePath)
     }],
-    ownerComparisonSet: reportOwnerComparisonSet(input.reportDomain),
+    ownerComparisonSet: reportOwnerVoiceComparisonSetV2(input.reportDomain, input.unitId),
     outputGovernance: {
       status: "DRAFT",
       review_status: "needs_review",
@@ -1213,13 +1227,17 @@ It must never appear in reader-facing report output, headings, metadata, attribu
 Its purpose is to force reasoning before prose, not to create visible report structure.`;
 
 export function reportPromptFromPayload(payload: ReportGenerationPayload) {
-  const { canonicalOwnerPrompt, livedProseStandard, noClevernessRuling, ownerReviewEvidence, coldProseRuling, ...taskPayload } = payload;
+  const {
+    canonicalOwnerPrompt, livedProseStandard, noClevernessRuling,
+    ownerReviewEvidence, coldProseRuling, earnedSentenceRuling, ...taskPayload
+  } = payload;
   return [
     canonicalOwnerPrompt.text,
     `LIVED_PROSE_STANDARD\n${livedProseStandard.text}`,
     `NO_CLEVERNESS_TAX_OWNER_RULING\n${noClevernessRuling.text}`,
     `OWNER_REVIEW_EVIDENCE\n${ownerReviewEvidence.text}`,
     `COLD_RENDERED_PROSE_OWNER_RULING\n${coldProseRuling.text}`,
+    `EARNED_SENTENCE_OWNER_RULING\n${earnedSentenceRuling.text}`,
     reportKeyDateSourceUnitIds(payload.reportHorizon).includes(payload.unit.unitId)
       ? `STRUCTURED_KEY_DATE_CONTRACT\nThe supplied events are fact-valid candidates, not a mandatory checklist. For each supplied event that this unit substantively interprets in its reader prose, return exactly one keyDates entry with the exact supplied eventId, a unique date-specific title, and one date-specific reader sentence. Omit events the unit does not interpret. Never create fact-only placeholder copy to make the calendar complete. Never reuse the unit headline or a section heading as the title. Never lift a body sentence as the key-date sentence. Do not repeat a title or sentence. The runtime owns the date label and technical attribution. Eligible candidate events for this unit:\n${JSON.stringify(payload.keyDateRequirements, null, 2)}`
       : "STRUCTURED_KEY_DATE_CONTRACT\nReturn keyDates as an empty array for this unit.",
