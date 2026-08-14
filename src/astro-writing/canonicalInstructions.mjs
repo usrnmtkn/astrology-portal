@@ -5,7 +5,7 @@
 import { REVIEWER_GOLD_EXEMPLARS } from "./reviewerGoldExemplars.generated.mjs";
 import { buildCardWriterInstructions } from "./cardWritingStandard.mjs";
 
-export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v2-2026-08-09";
+export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v3-sky-placement-spine-2026-08-14";
 export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v3-owner-standard-candidate-2026-08-09";
 export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v4-cold-rendered-prose-2026-08-11";
 
@@ -76,6 +76,14 @@ Before accepting a line, run three tests:
 If any answer is no, revise the line.
 
 House bleed can survive even when the prose is good. Do not judge sign-house separation by how natural the paragraph sounds. Inspect the nouns. Apply the same noun-level test to every sign before PASS.
+
+SPINE SLOTS ARE CHECKS, NOT TEMPLATES: a spine element is satisfied when its content is present in the prose, not when a sentence announces it. Structural vocabulary from the spine or outline ("the job of," "this is a period for," "the collective lesson is") must not appear in reader copy unless it earns its place as a line. A construction approved once does not license its reuse; repeating it across a set turns a strong line into machinery.
+
+SPINE QUALITY GATES: structural presence is not enough. Planet must become visible in ordinary life rather than end as an abstract keyword list. A dignity condition must explain its consequence, and a recorded sign symbol must interpret the mechanism rather than decorate it. Handoff must name the shift. Thesis must name the challenged cultural rule and who benefits. Lived evidence needs two or three distinct, nameable situations plus a short standalone line that carries the argument. Failure must be performed behavior. Strategy needs at least two short imperatives in sequence. Close must land without a hedging modal or date-bound escape. An inherited close receives the same current review as new copy.
+
+SKY PLACEMENT ARTICLE SPINE: every element is required and is satisfied only when it meets its stated quality requirement. Every placement article must satisfy planet, condition when dignity applies, one-sentence dated handoff with the shift, thesis with cultural rule and beneficiary, two or three distinct lived situations with objects, decisions, costs, follow-up work and a pull-quote line, performed failure mechanism, imperative strategy sequence, and one unhedged close. Slow movers add era frame, recurrence, verified-and-sourced older analogs when they advance the thesis, and collective lesson with a test. The page speaks directly to the reader without breaking the fourth wall. Structural vocabulary never becomes reader copy merely because it names a slot. Mythology and symbolism must interpret the mechanism. Judge every sentence cold as rendered prose.
+
+NEGATION-PIVOT CAP: the "X is not Y. It is Z." family, including "the problem is not," "X is not the problem," and "not X but Y," stays available. Use at most one negation pivot per page and no more than three across a twelve-item set. When the cap is reached, state the consequence directly, ask the question, or name what happens next.
 
 Governance: Never label generated or refined wording as owner-authored, owner-approved, exact, settled, or locked until the owner explicitly approves that exact wording.`;
 

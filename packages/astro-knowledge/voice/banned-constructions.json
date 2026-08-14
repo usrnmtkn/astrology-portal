@@ -93,12 +93,6 @@
       "source": "CC"
     },
     {
-      "pattern": "X is not Y. It is Z.",
-      "reason": "SD's most frequent construction (40+ instances in corpus); already a warn as not-X-but-Y.",
-      "useInstead": "State what it is without the negation setup.",
-      "source": "SD"
-    },
-    {
       "pattern": "Welcome to another powerful week",
       "reason": "SD verbatim weekly opener.",
       "useInstead": "Open on what changes this week.",

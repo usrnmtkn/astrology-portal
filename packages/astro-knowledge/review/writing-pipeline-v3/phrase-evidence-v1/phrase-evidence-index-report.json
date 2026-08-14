@@ -1,0 +1,573 @@
+{
+  "version": "owner-phrase-evidence-v1-2026-08-14",
+  "generatedAt": "2026-08-14T04:54:47.166Z",
+  "role": "phrase",
+  "sourceCounts": {
+    "voiceBankEntries": 87,
+    "voiceBankThemes": 15,
+    "phrasebankFiles": 63,
+    "phrasebankFilesWithEligibleOwnerMaterial": 5,
+    "phrasebankFilesExcluded": 58,
+    "phrasebankConfirmedRowsExamined": 273,
+    "phrasebankPartialRowsExcluded": 10,
+    "phrasebankEligibleRows": 263,
+    "totalBeforeCopyDedupe": 350,
+    "totalAfterCopyDedupe": 346,
+    "voiceBankUniqueAfterCopyDedupe": 87,
+    "phrasebankUniqueAfterCopyDedupe": 259
+  },
+  "tagCoverage": {
+    "entries": 346,
+    "withTheme": 346,
+    "withSubjectTags": 346,
+    "withFailureTags": 346,
+    "missingAnyRequiredTag": 0
+  },
+  "governance": {
+    "sourceFilesEdited": false,
+    "referenceAndWorkingMaterialExcluded": true,
+    "reviewedWithoutExplicitOwnerSignoffExcluded": true,
+    "promptUse": "AVAILABLE LINES may be used verbatim or adapted; distinct from register examples and correction pairs",
+    "completeSourceFieldRequired": true,
+    "sourceFieldsNeverSplitOrJoined": true
+  },
+  "integrity": {
+    "retainedPhrasebankRowsAreWholeSourceFields": true,
+    "sourceByteMismatches": 0,
+    "builderCreatedJoinedSegments": 0,
+    "partialRowsExcluded": [
+      {
+        "sourcePath": "tldr-astro-phrasebank/phrasebank/marie-confirmed-quotes.json",
+        "contentKey": "cc/quote/marie/032-pull-quote",
+        "text": "Where your worth was measured by what you could offer, not who you are.",
+        "reason": "dependent Where-clause without a main clause"
+      },
+      {
+        "sourcePath": "tldr-astro-phrasebank/phrasebank/marie-confirmed-quotes.json",
+        "contentKey": "cc/quote/marie/044-pull-quote",
+        "text": "Where work meets worth.",
+        "reason": "headline fragment rather than a complete line"
+      },
+      {
+        "sourcePath": "tldr-astro-phrasebank/phrasebank/marie-confirmed-quotes.json",
+        "contentKey": "cc/quote/marie/058-pull-quote",
+        "text": "A lesson in worth, love, and what must be left behind in order to move forward.",
+        "reason": "noun-phrase fragment without a finite verb"
+      },
+      {
+        "sourcePath": "tldr-astro-phrasebank/phrasebank/marie-confirmed-quotes.json",
+        "contentKey": "cc/quote/marie/059-pull-quote",
+        "text": "Revisiting Past Relationships Love doesn’t always end with finality.",
+        "reason": "heading and sentence joined in one source field"
+      },
+      {
+        "sourcePath": "tldr-astro-phrasebank/phrasebank/marie-confirmed-quotes.json",
+        "contentKey": "cc/quote/marie/065-pull-quote",
+        "text": "You are adaptable, you like choices, and a curious mind that enjoys exploring multiple subjects.",
+        "reason": "damaged coordination with a missing finite verb"
+      },
+      {
+        "sourcePath": "tldr-astro-phrasebank/phrasebank/marie-confirmed-quotes.json",
+        "contentKey": "cc/quote/marie/068-pull-quote",
+        "text": "Not failure, failure has never scared you.",
+        "reason": "damaged contrast construction"
+      },
+      {
+        "sourcePath": "tldr-astro-phrasebank/phrasebank/marie-confirmed-quotes.json",
+        "contentKey": "cc/quote/marie/073-pull-quote",
+        "text": "The ones you said you were done with, but never really left behind.",
+        "reason": "dependent noun-phrase fragment"
+      },
+      {
+        "sourcePath": "tldr-astro-phrasebank/phrasebank/marie-confirmed-quotes.json",
+        "contentKey": "cc/quote/marie/076-pull-quote",
+        "text": "A release of something that was never truly yours.",
+        "reason": "noun-phrase fragment without a finite verb"
+      },
+      {
+        "sourcePath": "tldr-astro-phrasebank/phrasebank/marie-confirmed-quotes.json",
+        "contentKey": "cc/quote/marie/080-pull-quote",
+        "text": "The pressure to always be strong.",
+        "reason": "noun-phrase fragment without a finite verb"
+      },
+      {
+        "sourcePath": "tldr-astro-phrasebank/phrasebank/ms-satori-articles-confirmed.json",
+        "contentKey": "ms/quote/venus-virgo/daily-practice",
+        "text": "Love as a daily practice of care, attention, and sacred service.",
+        "reason": "noun-phrase fragment without a finite verb"
+      }
+    ]
+  },
+  "themeCoverage": {
+    "authenticity-self-expression": {
+      "total": 33,
+      "voiceBank": 14,
+      "phrasebankJson": 19
+    },
+    "self-worth-personal-power": {
+      "total": 29,
+      "voiceBank": 6,
+      "phrasebankJson": 23
+    },
+    "retrograde-review": {
+      "total": 21,
+      "voiceBank": 16,
+      "phrasebankJson": 5
+    },
+    "boundaries-energy-protection": {
+      "total": 18,
+      "voiceBank": 7,
+      "phrasebankJson": 11
+    },
+    "health": {
+      "total": 24,
+      "voiceBank": 2,
+      "phrasebankJson": 22
+    },
+    "relationships-compromise": {
+      "total": 19,
+      "voiceBank": 6,
+      "phrasebankJson": 13
+    },
+    "empathy-emotional-labor": {
+      "total": 18,
+      "voiceBank": 4,
+      "phrasebankJson": 14
+    },
+    "credit-ownership-creative-theft": {
+      "total": 8,
+      "voiceBank": 6,
+      "phrasebankJson": 2
+    },
+    "family-roles-accountability-patterns": {
+      "total": 8,
+      "voiceBank": 6,
+      "phrasebankJson": 2
+    },
+    "family-chaos-career-livelihood-boundaries": {
+      "total": 10,
+      "voiceBank": 7,
+      "phrasebankJson": 3
+    },
+    "strategy": {
+      "total": 23,
+      "voiceBank": 4,
+      "phrasebankJson": 19
+    },
+    "financial-growth-security": {
+      "total": 7,
+      "voiceBank": 3,
+      "phrasebankJson": 4
+    },
+    "self-worth-earning-power": {
+      "total": 11,
+      "voiceBank": 3,
+      "phrasebankJson": 8
+    },
+    "career-business-boundaries": {
+      "total": 19,
+      "voiceBank": 2,
+      "phrasebankJson": 17
+    },
+    "channeling-creativity": {
+      "total": 9,
+      "voiceBank": 1,
+      "phrasebankJson": 8
+    },
+    "general-owner-language": {
+      "total": 157,
+      "voiceBank": 0,
+      "phrasebankJson": 157
+    }
+  },
+  "phrasebankFiles": [
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-aspect-leadins.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-aspect-pair-reviewed-angles.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-aspect-pair-reviewed-batch2.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-aspect-pair-reviewed-chiron-angles.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-aspect-pair-reviewed-fast.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-aspect-pair-reviewed-jupiter.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-aspect-pair-reviewed-outer-angles.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-aspect-pair-reviewed-outer.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-aspect-pair-reviewed-saturn.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-aspect-pair-reviewed.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-authored-content.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-chiron-reviewed.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-compatibility-cards.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "working or pending-review material"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-compatibility-writeups.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "working or pending-review material"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-composite-aspect.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-composite-reviewed.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-composite-typed.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-dignity-paragraphs.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-empty-house-model.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "support, resolver, model, or reference data rather than approved AVAILABLE LINES"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-fallback-hooks.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-horoscope-surface-templates.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-intercepted-authored.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-lunation-by-sign-authored.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-marie-site-templates.json",
+      "classification": "mixed-confirmed-lines-included-templates-excluded",
+      "eligibleRows": 27,
+      "confirmedRowsExamined": 27,
+      "partialRowsExcluded": 0,
+      "reason": "only exact.tier=CONFIRMED lines qualify; REVIEWED_TEMPLATE forms are excluded"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-moon-phase-bank.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-moon-reviewed.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-natal-angle-reviewed.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-natal-angles-authored.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-natal-aspect.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-natal-retrograde-authored.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-natal-source-grounded-bundle.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "working or pending-review material"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-node-reviewed.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-planet-in-house-reviewed.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-planet-in-sign-reviewed.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-planetary-horoscope.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-ruler-bridge.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-ruler-sign-clauses.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-ruling-planet-advice-drafts.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "working or pending-review material"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-ruling-planet-advice.json",
+      "classification": "reader-facing-owner-approved-included",
+      "eligibleRows": 24,
+      "confirmedRowsExamined": 24,
+      "partialRowsExcluded": 0,
+      "reason": "tier=CONFIRMED and may serve verbatim"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-sect-paragraphs.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-served-fields.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "support, resolver, model, or reference data rather than approved AVAILABLE LINES"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-sky-collective-card-reviewed.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-sky-collective-detail-reviewed.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-sky-events-reviewed.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-sky-points-authored.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-slot-resolution-map.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "support, resolver, model, or reference data rather than approved AVAILABLE LINES"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-slot-templates.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-stellium-authored.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-synastry-overlay-full.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-synastry-reviewed.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "working or pending-review material"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-synastry-web-bundle.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "working or pending-review material"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-tails-reviewed.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-transit-activation-model.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "support, resolver, model, or reference data rather than approved AVAILABLE LINES"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-transit-house-model.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "support, resolver, model, or reference data rather than approved AVAILABLE LINES"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-transit-house.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/cc-vocab.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/houses.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "support, resolver, model, or reference data rather than approved AVAILABLE LINES"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/marie-confirmed-quotes.json",
+      "classification": "reader-facing-owner-approved-included",
+      "eligibleRows": 182,
+      "confirmedRowsExamined": 191,
+      "partialRowsExcluded": 9,
+      "reason": "tier=CONFIRMED and may serve verbatim"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/moon-compatibility-library.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/ms-lunation-by-sign-confirmed.json",
+      "classification": "reader-facing-owner-approved-included",
+      "eligibleRows": 16,
+      "confirmedRowsExamined": 16,
+      "partialRowsExcluded": 0,
+      "reason": "tier=CONFIRMED and may serve verbatim"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/ms-satori-articles-confirmed.json",
+      "classification": "reader-facing-owner-approved-included",
+      "eligibleRows": 14,
+      "confirmedRowsExamined": 15,
+      "partialRowsExcluded": 1,
+      "reason": "tier=CONFIRMED and may serve verbatim"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/reviewed-clauses.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "support, resolver, model, or reference data rather than approved AVAILABLE LINES"
+    },
+    {
+      "file": "tldr-astro-phrasebank/phrasebank/sky-historical-lookback.json",
+      "classification": "reference-or-working-excluded",
+      "eligibleRows": 0,
+      "reason": "reviewed-or-authored copy without explicit owner approval; excluded until exact owner sign-off"
+    }
+  ]
+}
