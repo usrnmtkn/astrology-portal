@@ -26,6 +26,16 @@ export type ReportAssemblyDeduplication = {
   quote: string;
 };
 
+export type ReportAssemblyCoherenceScope = {
+  unitId: string;
+  location: string;
+  paragraphIndex: number;
+  scopeStart: number;
+  scopeEnd: number;
+  quote: string;
+  reasons: Array<"internal_whitespace" | "dangling_connector" | "orphaned_pronoun" | "interior_sentence_removed">;
+};
+
 export type ReportRedundancyFinding = {
   id: string;
   category: "semantic_duplication" | "menu_repetition" | "signature_phrase_repetition" | "mechanism_certainty" | "eclipse_arc_continuity" | "stop_after_landing";
@@ -191,8 +201,13 @@ function plainKeyDateRecord(value: string) {
 }
 
 function validateKeyDates(units: AssembledReportUnit[], issues: ReportAssemblyIssue[]) {
+  const parentHeadings = new Set(units
+    .filter((unit) => unit.unitId !== "key-dates")
+    .flatMap((unit) => fields(unit).filter((field) => field.heading && field.text.trim()).map((field) => normalizedText(field.text))));
   for (const unit of units) {
     const seenLabels = new Map<string, LocatedField>();
+    const seenTitles = new Map<string, LocatedField>();
+    const seenSentences = new Map<string, LocatedField>();
     for (const field of fields(unit).filter((candidate) => candidate.keyDateBlock && candidate.text.trim())) {
       const records = field.text.split(/\n\s*\n/u).map((record) => record.trim()).filter(Boolean);
       for (const [recordIndex, record] of records.entries()) {
@@ -235,6 +250,38 @@ function validateKeyDates(units: AssembledReportUnit[], issues: ReportAssemblyIs
             scopeStart: recordIndex, scopeEnd: recordIndex, quote: record
           }));
         }
+        if (parts.length === 4) {
+          const titleKey = normalizedText(parts[1]);
+          const sentenceKey = normalizedText(parts[2]);
+          if (titleKey && parentHeadings.has(titleKey)) {
+            issues.push(issue({
+              code: "key_date_title_reuses_section_heading",
+              message: `Key-date title '${parts[1]}' repeats a report section heading.`,
+              unitId: unit.unitId, location: field.location, sentenceIndex: recordIndex,
+              scopeStart: recordIndex, scopeEnd: recordIndex, quote: record
+            }, "error"));
+          }
+          if (titleKey) {
+            if (seenTitles.has(titleKey)) {
+              issues.push(issue({
+                code: "duplicate_key_date_title",
+                message: `Key-date title '${parts[1]}' repeats within ${unit.unitId}.`,
+                unitId: unit.unitId, location: field.location, sentenceIndex: recordIndex,
+                scopeStart: recordIndex, scopeEnd: recordIndex, quote: record
+              }, "error"));
+            } else seenTitles.set(titleKey, field);
+          }
+          if (sentenceKey) {
+            if (seenSentences.has(sentenceKey)) {
+              issues.push(issue({
+                code: "duplicate_key_date_sentence",
+                message: "Key-date reader sentence repeats within the report.",
+                unitId: unit.unitId, location: field.location, sentenceIndex: recordIndex,
+                scopeStart: recordIndex, scopeEnd: recordIndex, quote: record
+              }, "error"));
+            } else seenSentences.set(sentenceKey, field);
+          }
+        }
       }
     }
   }
@@ -255,8 +302,8 @@ function validateMarkdown(units: AssembledReportUnit[], issues: ReportAssemblyIs
   }
 }
 
-export function validateReportKeyDateFormat(draft: ReportDraft) {
-  const units = [{ unitId: "key-dates", draft }];
+export function validateReportKeyDateFormat(draft: ReportDraft, sourceUnits: AssembledReportUnit[] = []) {
+  const units = [...sourceUnits, { unitId: "key-dates", draft }];
   const issues: ReportAssemblyIssue[] = [];
   validateKeyDates(units, issues);
   validateMarkdown(units, issues);
@@ -417,6 +464,74 @@ function removeSentence(draft: ReportDraft, location: string, sentenceIndex: num
   setDraftField(draft, location, next);
 }
 
+function coherenceScopesForField(unitId: string, location: string, value: string, removalIndexes: number[] = []): ReportAssemblyCoherenceScope[] {
+  const spans = sentenceSpans(value);
+  let sentenceOffset = 0;
+  return value.split(/\n\s*\n/gu).flatMap((rawParagraph, paragraphIndex) => {
+    const paragraph = rawParagraph.trim();
+    if (!paragraph) return [];
+    const paragraphSentences = sentenceSpans(paragraph);
+    const scopeStart = sentenceOffset;
+    const scopeEnd = sentenceOffset + Math.max(0, paragraphSentences.length - 1);
+    const reasons: ReportAssemblyCoherenceScope["reasons"] = [];
+    if (/[ \t]{2,}/u.test(paragraph)) reasons.push("internal_whitespace");
+    if (/^(?:but|and|so|however|therefore|also)\b/iu.test(paragraph)) reasons.push("dangling_connector");
+    if (removalIndexes.length && /^(?:this|that|these|those|it|they)\b/iu.test(paragraph)) reasons.push("orphaned_pronoun");
+    if (removalIndexes.some((index) => index > scopeStart && index <= scopeStart + paragraphSentences.length)) {
+      reasons.push("interior_sentence_removed");
+    }
+    if (!reasons.length) {
+      sentenceOffset += paragraphSentences.length;
+      return [];
+    }
+    sentenceOffset += paragraphSentences.length;
+    // Keep the full-field parser and paragraph parser in lockstep. A mismatch
+    // means the paragraph cannot be safely addressed for a bounded splice.
+    if (!spans[scopeStart] || !spans[scopeEnd]) {
+      throw new Error(`REPORT_ASSEMBLY_COHERENCE_SCOPE_INVALID: ${unitId}:${location}:${paragraphIndex}`);
+    }
+    return [{ unitId, location, paragraphIndex, scopeStart, scopeEnd, quote: paragraph, reasons }];
+  });
+}
+
+/**
+ * Finds post-dedup holes without interpreting astrology. Only mechanical
+ * evidence is eligible here: whitespace left at a cut boundary, a connector
+ * with no preceding sentence, or a pronoun whose antecedent was removed.
+ */
+export function detectPostDedupCoherenceScopes(
+  units: AssembledReportUnit[],
+  removals: ReportAssemblyDeduplication[] = []
+) {
+  const removalIndexes = new Map<string, number[]>();
+  for (const removal of removals) {
+    const key = `${removal.unitId}\u0000${removal.location}`;
+    removalIndexes.set(key, [...(removalIndexes.get(key) ?? []), removal.sentenceIndex]);
+  }
+  return units.flatMap((unit) => fields(unit).flatMap((field) => (
+    field.heading || field.keyDateBlock || !field.text.trim()
+      ? []
+      : coherenceScopesForField(unit.unitId, field.location, field.text, removalIndexes.get(`${unit.unitId}\u0000${field.location}`) ?? [])
+  )));
+}
+
+export function normalizePostDedupWhitespace(value: string) {
+  return value.split(/\n\s*\n/gu)
+    .map((paragraph) => paragraph.replace(/[ \t]+/gu, " ").trim())
+    .filter(Boolean)
+    .join("\n\n");
+}
+
+export function normalizeAssembledReportWhitespace(units: AssembledReportUnit[]) {
+  return units.map((unit) => {
+    const draft = structuredClone(unit.draft);
+    for (const field of fields({ unitId: unit.unitId, draft }).filter((entry) => !entry.heading && !entry.keyDateBlock && entry.text.trim())) {
+      setDraftField(draft, field.location, normalizePostDedupWhitespace(field.text));
+    }
+    return { ...unit, draft };
+  });
+}
+
 /**
  * Removes only the later sentence in blocking cross-unit exact/near-exact
  * pairs. No prose is generated: every operation is a deletion at a
@@ -430,7 +545,11 @@ export function deduplicateAssembledReport(units: AssembledReportUnit[]) {
       entry.severity === "error"
       && (entry.code === "repeated_exact_sentence" || entry.code === "repeated_near_sentence")
     ));
-    if (!repeated.length) return { units: deduplicated, removals };
+    if (!repeated.length) return {
+      units: deduplicated,
+      removals,
+      coherenceScopes: detectPostDedupCoherenceScopes(deduplicated, removals)
+    };
     const grouped = new Map<string, ReportAssemblyIssue[]>();
     for (const entry of repeated) {
       const key = `${entry.unitId}\u0000${entry.location}`;

@@ -121,11 +121,19 @@ const EXACT_SENTENCE_LINT_CODES = new Set([
 export const REPORT_DRAFT_SCHEMA = {
   type: "object",
   additionalProperties: false,
-  required: ["headline", "tldr", "summary", "body", "action", "timing", "sections"],
+  required: ["headline", "tldr", "summary", "body", "action", "timing", "sections", "keyDates"],
   properties: {
     headline: { type: "string" }, tldr: { type: "string" }, summary: { type: "string" },
     body: { type: "string" }, action: { type: "string" }, timing: { type: "string" },
-    sections: { type: "array", items: { type: "object", additionalProperties: false, required: ["heading", "body"], properties: { heading: { type: "string" }, body: { type: "string" } } } }
+    sections: { type: "array", items: { type: "object", additionalProperties: false, required: ["heading", "body"], properties: { heading: { type: "string" }, body: { type: "string" } } } },
+    keyDates: {
+      type: "array",
+      items: {
+        type: "object", additionalProperties: false,
+        required: ["eventId", "title", "sentence"],
+        properties: { eventId: { type: "string" }, title: { type: "string" }, sentence: { type: "string" } }
+      }
+    }
   }
 };
 
