@@ -8,6 +8,10 @@ import {
 import { resolveAstrology } from "./resolveAstrology.mjs";
 import { retrieveOwnerContext } from "./retrieveOwnerContext.mjs";
 import { generateDraft } from "./generateDraft.mjs";
+import {
+  classifyNatalDeterministicFindings,
+  isNatalAuthoringFamily
+} from "./natalWritingGatePolicy.mjs";
 import { reviewDraft } from "./reviewDraft.mjs";
 import { reviseDraft } from "./reviseDraft.mjs";
 import { validateCopy } from "./validateCopy.mjs";
@@ -94,8 +98,11 @@ export async function runWritingPipeline({
     ownerCorrections: context.corrections,
     priorCopy: priorText
   });
+  const lintPolicy = isNatalAuthoringFamily(family)
+    ? classifyNatalDeterministicFindings(lint.violations)
+    : { passed: lint.passed, blocking: lint.violations, advisory: [] };
   const failureCategories = [...new Set(reviews[0].violations.map((item) => item.category))];
-  if (review.decision !== "PASS" || !lint.passed) {
+  if (review.decision !== "PASS" || !lintPolicy.passed) {
     return {
       draft,
       plan,
@@ -107,7 +114,8 @@ export async function runWritingPipeline({
         passedFirstReview: 0,
         automaticallyRevised: revisionAttempts,
         failureCategories,
-        finalLintStatus: lint.passed ? "PASS" : "REVISE",
+        finalLintStatus: lintPolicy.passed ? "PASS" : "REVISE",
+        finalLintAdvisories: lintPolicy.advisory,
         finalEvalStatus: "HUMAN_REVIEW_REQUIRED",
         authoringSource: {
           rowKey: source.rowKey,
@@ -137,6 +145,7 @@ export async function runWritingPipeline({
       automaticallyRevised: revisionAttempts,
       failureCategories,
       finalLintStatus: "PASS",
+      finalLintAdvisories: lintPolicy.advisory,
       finalEvalStatus: "PASS",
       authoringSource: {
         rowKey: source.rowKey,

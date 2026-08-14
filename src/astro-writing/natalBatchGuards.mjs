@@ -63,11 +63,47 @@ function threeItemSeries(sentence) {
   return matches;
 }
 
-export function validateCrossRowUniqueness(rows, {
+function containsTerm(sentence, terms) {
+  const normalized = String(sentence || "").toLowerCase();
+  return terms.some((term) => new RegExp(`\\b${term.replaceAll(" ", "\\s+")}\\b`, "iu").test(normalized));
+}
+
+export function observableSentenceProfile(copy) {
+  const items = sentences(copy);
+  const observable = items.filter((sentence) => containsTerm(sentence, [...CONCRETE_NOUNS, ...OBSERVABLE_ACTIONS]));
+  return {
+    sentenceCount: items.length,
+    observableSentenceCount: observable.length,
+    onlyOneObservableSentence: items.length > 1 && observable.length === 1
+  };
+}
+
+export function assessPassageShape(copy, {
+  minSentences = 4,
+  minWords = 55,
+  minObservableSentences = 2
+} = {}) {
+  const profile = observableSentenceProfile(copy);
+  const wordCount = textWords(copy).length;
+  const findings = [];
+  if (profile.sentenceCount < minSentences) findings.push({ category: "passage_shape", classification: "advisory", detail: `Fewer than ${minSentences} sentences.` });
+  if (wordCount < minWords) findings.push({ category: "passage_length", classification: "advisory", detail: `Fewer than ${minWords} words.` });
+  if (profile.observableSentenceCount < minObservableSentences) findings.push({ category: "observable_noun_floor", classification: "advisory", detail: `Fewer than ${minObservableSentences} sentences contain observable language.` });
+  return {
+    passed: true,
+    advisoryPassed: findings.length === 0,
+    policy: "advisory-only",
+    wordCount,
+    ...profile,
+    findings
+  };
+}
+
+export function assessCrossRowReuse(rows, {
   copyField = "copy",
   keyField = "rowKey",
   nearDuplicateThreshold = 0.85,
-  bannedSentences = []
+  bannedSentences = BANNED_FRIEND_SENTENCES
 } = {}) {
   const entries = rows.flatMap((row, rowIndex) => sentences(row?.[copyField]).map((sentence, sentenceIndex) => ({
     rowKey: row?.[keyField] ?? String(rowIndex),
@@ -82,8 +118,7 @@ export function validateCrossRowUniqueness(rows, {
   }
   const exactDuplicateGroups = [...bySentence.values()]
     .filter((group) => new Set(group.map((entry) => entry.rowKey)).size > 1)
-    .map((group) => ({ sentence: group[0].sentence, count: group.length, rows: [...new Set(group.map((entry) => entry.rowKey))] }))
-    .sort((left, right) => right.count - left.count || left.sentence.localeCompare(right.sentence));
+    .map((group) => ({ sentence: group[0].sentence, count: group.length, rows: [...new Set(group.map((entry) => entry.rowKey))] }));
   const uniqueEntries = [...bySentence.values()].map((group) => group[0]);
   const nearDuplicates = [];
   let highestNearDuplicatePairScore = 0;
@@ -101,7 +136,6 @@ export function validateCrossRowUniqueness(rows, {
       if (score > nearDuplicateThreshold) nearDuplicates.push({ left: left.sentence, leftRow: left.rowKey, right: right.sentence, rightRow: right.rowKey, score });
     }
   }
-  nearDuplicates.sort((left, right) => right.score - left.score);
   const seriesByText = new Map();
   for (const entry of entries) {
     for (const series of threeItemSeries(entry.sentence)) {
@@ -115,16 +149,14 @@ export function validateCrossRowUniqueness(rows, {
   const normalizedBanned = new Set(bannedSentences.map(normalizedSentence));
   const bannedFindings = entries
     .filter((entry) => normalizedBanned.has(entry.normalized))
-    .map((entry) => ({ rowKey: entry.rowKey, sentence: entry.sentence }));
-  const repeatedOccurrences = exactDuplicateGroups.reduce((count, group) => count + group.count, 0);
+    .map((entry) => ({ rowKey: entry.rowKey, sentence: entry.sentence, category: "owner_banned_string", classification: "blocking" }));
   return {
-    passed: entries.length > 0 && exactDuplicateGroups.length === 0 && nearDuplicates.length === 0 && sharedThreeItemSeries.length === 0 && bannedFindings.length === 0,
+    passed: entries.length > 0 && bannedFindings.length === 0,
+    policy: "reuse-metrics-advisory-owner-banned-strings-blocking",
     rowCount: rows.length,
     sentenceCount: entries.length,
     uniqueSentenceCount: bySentence.size,
     uniqueSentenceRatio: entries.length ? bySentence.size / entries.length : 0,
-    repeatedOccurrenceCount: repeatedOccurrences,
-    repeatedOccurrenceRate: entries.length ? repeatedOccurrences / entries.length : 0,
     nearDuplicateThreshold,
     highestNearDuplicatePairScore,
     highestNearDuplicatePair,
@@ -132,57 +164,6 @@ export function validateCrossRowUniqueness(rows, {
     nearDuplicates,
     sharedThreeItemSeries,
     bannedFindings
-  };
-}
-
-function containsTerm(sentence, terms) {
-  const normalized = String(sentence || "").toLowerCase();
-  return terms.some((term) => new RegExp(`\\b${term.replaceAll(" ", "\\s+")}\\b`, "iu").test(normalized));
-}
-
-function containsObservableNoun(text, term) {
-  const escaped = term.replaceAll(" ", "\\s+");
-  const suffix = term.includes(" ") || /s$/u.test(term) ? "" : "(?:s|es)?";
-  return new RegExp(`\\b${escaped}${suffix}\\b`, "iu").test(String(text || ""));
-}
-
-export function observableSentenceProfile(copy) {
-  const items = sentences(copy);
-  const observable = items.filter((sentence) => containsTerm(sentence, [...CONCRETE_NOUNS, ...OBSERVABLE_ACTIONS]));
-  const distinctObservableNouns = CONCRETE_NOUNS.filter((term) => containsObservableNoun(copy, term));
-  return {
-    sentenceCount: items.length,
-    observableSentenceCount: observable.length,
-    onlyOneObservableSentence: items.length > 1 && observable.length === 1,
-    distinctObservableNouns,
-    distinctObservableNounCount: distinctObservableNouns.length,
-    zeroObservableNouns: distinctObservableNouns.length === 0
-  };
-}
-
-export function validatePassageShape(copy, {
-  minSentences = 4,
-  minWords = 55,
-  minDistinctObservableNouns = 2
-} = {}) {
-  const sentenceItems = sentences(copy);
-  const wordCount = textWords(copy).length;
-  const observable = observableSentenceProfile(copy);
-  const violations = [];
-  if (sentenceItems.length < minSentences) violations.push({ category: "passage_shape", detail: `Requires at least ${minSentences} sentences; found ${sentenceItems.length}.` });
-  if (wordCount < minWords) violations.push({ category: "passage_length", detail: `Requires at least ${minWords} words; found ${wordCount}.` });
-  if (observable.distinctObservableNounCount < minDistinctObservableNouns) {
-    violations.push({ category: "observable_noun_floor", detail: `Requires at least ${minDistinctObservableNouns} distinct observable nouns; found ${observable.distinctObservableNounCount}.` });
-  }
-  return {
-    passed: violations.length === 0,
-    sentenceCount: sentenceItems.length,
-    wordCount,
-    ...observable,
-    minSentences,
-    minWords,
-    minDistinctObservableNouns,
-    violations
   };
 }
 
@@ -209,7 +190,9 @@ export function validateBatchCadence(rows, { limit = 0.15, copyField = "copy" } 
   const openingViolations = openings.filter(exceeds);
   const closingViolations = closings.filter(exceeds);
   return {
-    passed: copies.length > 0 && openingViolations.length === 0 && closingViolations.length === 0,
+    passed: copies.length > 0,
+    advisoryPassed: openingViolations.length === 0 && closingViolations.length === 0,
+    policy: "advisory-only",
     rowCount: copies.length,
     limit,
     maxOpening: openings[0] ? { construction: openings[0][0], count: openings[0][1], rate: openings[0][1] / copies.length } : null,
@@ -220,17 +203,50 @@ export function validateBatchCadence(rows, { limit = 0.15, copyField = "copy" } 
 }
 
 const FRIEND_INTERIOR = /\bName (?:feels?|thinks?|knows?|believes?|wants?|needs?|hopes?|fears?|worries?|imagines?|remembers?)\b/iu;
-const FRIEND_COACHING = /\b(?:you should|you need to|try to|remember to|give Name|let Name|ask Name to)\b/iu;
-const OBSERVER_OPENING = /\b(?:people|the room|a meeting|a conversation|a group|a shared task|coworkers?|friends?|family|clients?|a manager|a team|a coach|a teacher|a helpful teacher|a spiritual teacher|a mentor|a colleague|close relationships?|close partners?|a spiritually familiar teacher|someone|others?|you (?:see|hear|notice|watch|find|learn))\b/iu;
+const FRIEND_COACHING = /\b(?:you should|you need to|try to|remember to|give Name|let Name|ask Name to|do not|don't)\b/iu;
+const OBSERVER_OPENING = /\b(?:people|the room|a meeting|coworkers?|friends?|family|clients?|a manager|someone|others?|you (?:see|hear|notice|watch|find|learn))\b/iu;
+const SECOND_PERSON = /\b(?:you|your|yours|yourself)\b/iu;
+
+function personNeutralTokens(copy) {
+  return textWords(String(copy || "")
+    .replace(/\b(?:Name|you|your|yours|yourself)\b/giu, "person"))
+    .map((token) => {
+      if (token.length > 4 && token.endsWith("ies")) return `${token.slice(0, -3)}y`;
+      if (token.length > 4 && token.endsWith("es")) return token.slice(0, -2);
+      if (token.length > 3 && token.endsWith("s")) return token.slice(0, -1);
+      return token;
+    });
+}
+
+function pronounSwapSimilarity(selfCopy, friendCopy) {
+  const selfTokens = personNeutralTokens(selfCopy);
+  const friendTokens = personNeutralTokens(friendCopy);
+  const denominator = Math.max(selfTokens.length, friendTokens.length);
+  return denominator ? 1 - tokenEditDistance(selfTokens, friendTokens) / denominator : 0;
+}
 
 export function validateFriendPair({ selfCopy, friendCopy }) {
   const first = sentences(friendCopy)[0] || "";
   const structural = priorCopyStructuralCorrespondence(friendCopy, selfCopy);
+  const swapSimilarity = pronounSwapSimilarity(selfCopy, friendCopy);
   const violations = [];
   if (!OBSERVER_OPENING.test(first)) violations.push({ category: "friend_entry_position", detail: "Friend opening does not locate the reader at an observable position in the room." });
-  if (structural.matched) violations.push({ category: "pronoun_swap_derivation", detail: `${structural.reason} (${structural.score.toFixed(3)}).` });
+  if (structural.matched || swapSimilarity >= 0.85) violations.push({ category: "pronoun_swap_derivation", detail: `${structural.matched ? structural.reason : "person-neutral sentence structure matches the Self passage"} (${Math.max(structural.score, swapSimilarity).toFixed(3)}).` });
   if (FRIEND_INTERIOR.test(friendCopy)) violations.push({ category: "friend_interior_access", detail: "Friend copy asserts an interior state that the observer cannot verify." });
   if (FRIEND_COACHING.test(friendCopy)) violations.push({ category: "friend_coaching", detail: "Friend copy coaches the reader about how to manage the other person." });
+  if (SECOND_PERSON.test(friendCopy)) violations.push({ category: "friend_second_person_leakage", detail: "Friend copy contains second-person language." });
   if (!/\bName\b/u.test(friendCopy)) violations.push({ category: "friend_entry_position", detail: "Friend copy omitted the Name token." });
-  return { passed: violations.length === 0, structuralSimilarity: structural.score, violations };
+  return { passed: violations.length === 0, structuralSimilarity: Math.max(structural.score, swapSimilarity), violations };
+}
+
+export function validateFriendAuthoringMethod({ friendCopy, sharedParagraphSkeletonAvailable = false }) {
+  const reuse = assessCrossRowReuse([{ rowKey: "candidate", copy: friendCopy }]);
+  const violations = [...reuse.bannedFindings];
+  if (sharedParagraphSkeletonAvailable) {
+    violations.push({ category: "shared_friend_paragraph_skeleton", classification: "blocking", detail: "A shared Friend paragraph skeleton is available to the authoring path." });
+  }
+  if (SECOND_PERSON.test(friendCopy)) {
+    violations.push({ category: "friend_second_person_leakage", classification: "blocking", detail: "Friend copy contains second-person language." });
+  }
+  return { passed: violations.length === 0, violations };
 }
