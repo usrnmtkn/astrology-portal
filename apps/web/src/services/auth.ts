@@ -12,6 +12,11 @@ export type AuthAccount = {
   avatarUrl?: string;
 };
 
+export type EmailSignupResult = {
+  account: AuthAccount | null;
+  sessionEstablished: boolean;
+};
+
 export type PersistedProfileData = unknown;
 
 function recordValue(value: unknown): Record<string, unknown> | null {
@@ -232,7 +237,7 @@ export async function signUpWithEmail({
   email: string;
   password: string;
   fullName: string;
-}) {
+}): Promise<EmailSignupResult> {
   const supabase = await getSupabaseClient();
 
   if (!supabase) {
@@ -254,7 +259,10 @@ export async function signUpWithEmail({
     throw error;
   }
 
-  return data.user ? authAccountFromUser(data.user) : null;
+  return {
+    account: data.user ? authAccountFromUser(data.user) : null,
+    sessionEstablished: Boolean(data.session)
+  };
 }
 
 export async function signInWithEmail({
