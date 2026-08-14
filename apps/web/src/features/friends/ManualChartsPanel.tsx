@@ -375,11 +375,24 @@ export function ManualChartsPanel({
     ownerName: string,
     ownerPreferredName?: string | null,
     ownerPronouns?: PronounChoice | null,
+    birthTimeUnknown = false,
     userId?: string | null
   ): FriendDailyForecastView | null {
     const driver = dailyGlanceDriver(currentSky, natalSky);
+    const moon = currentSky.positions.find((position) => position.planet === "Moon") ?? null;
 
-    if (!driver) return null;
+    if (!driver || !moon) return null;
+
+    const moonHouse = !birthTimeUnknown && natalSky.ascendant
+      ? wholeSignHouseForSign(moon.sign, natalSky.ascendant)
+      : null;
+    const moonContext: FriendDailyForecastView["moonContext"] = {
+      sign: moon.sign,
+      houseLabel: moonHouse
+        ? `${possessiveLabel(ownerName)} ${ordinalHouse(moonHouse)} house`
+        : null,
+      topic: moonHouse ? houseLifeAreas[moonHouse] || null : null
+    };
 
     // Follow-up after Friends daily parity ships: author 2–3 approved variants per
     // driver and select one deterministically from chart id + date + driver.
@@ -414,7 +427,8 @@ export function ManualChartsPanel({
 
       return {
         headline: rendered.headline ?? "",
-        body: rendered.body ?? ""
+        body: rendered.body ?? "",
+        moonContext
       };
     } catch (error) {
       if (!(error instanceof FallbackV3SourceGapError)) {
@@ -449,7 +463,8 @@ export function ManualChartsPanel({
 
         return {
           headline: rendered.headline ?? "",
-          body: rendered.body ?? ""
+          body: rendered.body ?? "",
+          moonContext
         };
       } catch (legacyError) {
         if (legacyError instanceof FallbackV3SourceGapError) {
@@ -1257,6 +1272,7 @@ export function ManualChartsPanel({
           selectedChart.displayName,
           selectedChart.firstName,
           selectedChart.pronouns,
+          selectedChart.birthTimeUnknown,
           selectedChart.id
         )
       : null
