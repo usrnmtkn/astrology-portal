@@ -50,7 +50,7 @@ for (const requiredInput of [
   "api/health.ts",
   "api/_lib/content-generation.ts",
   "api/_lib/report-generation.ts",
-  "api/_lib/report-owner-comparison.ts"
+  "api/_lib/report-owner-voice-corpus-v2.ts"
 ]) {
   assert.equal(
     bundledInputs.has(requiredInput),

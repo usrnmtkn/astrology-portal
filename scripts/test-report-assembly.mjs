@@ -368,4 +368,4 @@ for (const term of ["grief when an emotionally significant ending supports it", 
 assert.ok(twelfthHouse.possibleLivedManifestations.some((entry) => entry.includes("wanted or necessary")));
 assert.ok(!JSON.stringify(twelfthHouse).includes("protect your energy"));
 
-console.log(`Report assembly passed: ${issues.length} exact-review findings, report-level budgets, owner-ruling wiring, and activated v2/v3.2/v5 prompts.`);
+console.log(`Report assembly passed: ${issues.length} exact-review findings, report-level budgets, owner-ruling wiring, and activated v2/v3.3/v6 prompts.`);
