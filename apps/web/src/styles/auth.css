@@ -127,6 +127,22 @@
   min-height: 44px;
 }
 
+.auth-card--confirmation .auth-confirmation-resend-button {
+  min-height: 54px;
+  height: auto;
+  margin-top: 0;
+  padding: var(--space-3) var(--space-5);
+}
+
+.auth-card--confirmation .auth-confirmation-resend-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.auth-card--confirmation .auth-message {
+  margin: 0;
+}
+
 .phone-auth-fields {
   display: grid;
   gap: 26px;
