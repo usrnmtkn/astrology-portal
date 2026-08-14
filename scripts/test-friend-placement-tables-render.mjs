@@ -318,9 +318,9 @@ try {
       headline: "An opening just appeared.",
       body: "Alex gets an answer sooner than expected and can use the opening while it is here.",
       moonContext: {
-        sign: "Gemini",
-        houseLabel: "Alex's 11th house",
-        topic: "friends, community, and long-term hopes"
+        sign: "Virgo",
+        houseLabel: "4th house",
+        topic: "home, family, and private foundation"
       }
     },
     dailyDoItems: ["Name the plan", "Keep it practical", "Leave room"],
@@ -360,11 +360,10 @@ try {
   }));
   assert.match(populatedTransitsHtml, /friend-profile-copy-column"><section class="daily-horoscope-summary friend-daily-forecast"/);
   assert.match(populatedTransitsHtml, /Daily forecast for Alex/);
-  assert.match(populatedTransitsHtml, /Moon in Gemini/);
-  assert.match(populatedTransitsHtml, /Alex&#x27;s 11th house/);
-  assert.match(populatedTransitsHtml, /friends, community, and long-term hopes/);
   assert.match(populatedTransitsHtml, /An opening just appeared/);
   assert.match(populatedTransitsHtml, /Alex gets an answer sooner than expected/);
+  assert.match(populatedTransitsHtml, />Moon in<\/span>/);
+  assert.match(populatedTransitsHtml, /Virgo · 4th house · home, family, and private foundation/);
   assert.doesNotMatch(populatedTransitsHtml, /most relevant transit|friend-transit-focus/);
   assert.doesNotMatch(populatedTransitsHtml, /current weather|Start here|near-term theme|shared theme/);
   assert.match(populatedTransitsHtml, /Between you two/);
@@ -374,7 +373,7 @@ try {
   assert.match(populatedTransitsHtml, /Emotional momentum is easier to use/);
   assert.doesNotMatch(populatedTransitsHtml, /Read what this means/);
   assert.doesNotMatch(populatedTransitsHtml, /friend-transit-focus-card/);
-  assert.match(populatedTransitsHtml, /Today for Alex/);
+  assert.doesNotMatch(populatedTransitsHtml, /Today for Alex/);
   assert.match(populatedTransitsHtml, /Name the plan/);
   assert.match(populatedTransitsHtml, /Force an answer/);
   assert.ok(
@@ -388,7 +387,7 @@ try {
       headline: "Keep the pace simple.",
       body: "Alex can leave one decision open until there is more information.",
       moonContext: {
-        sign: "Gemini",
+        sign: "Virgo",
         houseLabel: null,
         topic: null
       }
@@ -403,8 +402,9 @@ try {
     patternTimingOverrides: {},
     personalTransitGroups: []
   }));
-  assert.match(unknownBirthTimeTransitsHtml, /Moon in Gemini/);
-  assert.doesNotMatch(unknownBirthTimeTransitsHtml, /house/);
+  assert.match(unknownBirthTimeTransitsHtml, />Virgo<\/span>/);
+  assert.doesNotMatch(unknownBirthTimeTransitsHtml, /4th house|private foundation/);
+
   assert.ok(
     populatedTransitsHtml.indexOf("Between you two") < populatedTransitsHtml.indexOf("Mars trine Moon"),
     "Relationship context should lead the ranked short-term transit list."
