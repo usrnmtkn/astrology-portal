@@ -24,13 +24,6 @@ body:has(.app-shell.mode-calendar),
   --lunar-calendar-title-size: var(--text-page-title-size);
   --lunar-card-radius: 18px;
   --lunar-control-radius: 14px;
-  --lunar-element-air: #6ea8d8;
-  --lunar-element-earth: #6f9467;
-  --lunar-element-fire: #d18a54;
-  --lunar-element-water: #4f78b9;
-  --lunar-moon-dark: #171923;
-  --lunar-moon-dark-edge: #0e1118;
-  --lunar-moon-dark-soft: #242735;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--lunar-space-14);
@@ -1015,7 +1008,7 @@ a.tx-card.has-article:hover {
   min-width: 0;
   padding-top: calc(var(--space-1) / 4);
   color: var(--ink);
-  font-family: "Noto Sans Symbols", "Segoe UI Symbol", var(--font-glyph), serif;
+  font-family: var(--font-glyph);
   font-size: var(--lunar-type-moon-title);
   line-height: var(--leading-label);
   white-space: nowrap;
@@ -3114,5 +3107,63 @@ a.tx-card.has-article:hover .tx-more {
   .lunar-calendar-body.is-month .lunar-calendar-event-more {
     color: var(--muted);
     line-height: var(--lunar-event-more-leading);
+  }
+
+  /* Preserve readable week-day content on narrow screens instead of
+     compressing seven columns until their labels clip. */
+  .mode-calendar .lunar-calendar-body .lunar-week-strip {
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    scroll-padding-inline: var(--space-2);
+    scroll-snap-type: inline proximity;
+    scrollbar-width: thin;
+  }
+
+  .lunar-week-day {
+    flex: 0 0 112px;
+    width: 112px;
+    min-width: 112px;
+    height: auto;
+    padding-inline: calc(var(--space-1) + var(--space-1) / 2);
+    scroll-snap-align: start;
+  }
+
+  .lunar-week-day__marker {
+    min-height: var(--space-4);
+    overflow: visible;
+    overflow-wrap: break-word;
+    text-overflow: initial;
+    white-space: normal;
+  }
+
+  .lunar-week-day__events {
+    overflow: visible;
+  }
+
+  .lunar-week-day__events .lunar-calendar-event-pill {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mode-calendar .lunar-week-day__events .lunar-calendar-event-pill.event-void {
+    max-width: 100%;
+    min-height: var(--space-5);
+    height: auto;
+    padding-inline: calc(var(--space-1) + var(--space-1) / 2);
+    font-size: var(--type-label-size);
+    line-height: var(--leading-label);
+  }
+
+  .lunar-week-day__events .lunar-calendar-event-pill > span,
+  .lunar-week-day__events .lunar-calendar-event-pill.event-void span:last-child {
+    text-overflow: ellipsis;
+  }
+
+  .mode-calendar .lunar-week-day__events .lunar-calendar-event-pill.event-void span:last-child {
+    overflow: visible;
+    text-overflow: initial;
+    line-height: inherit;
   }
 }

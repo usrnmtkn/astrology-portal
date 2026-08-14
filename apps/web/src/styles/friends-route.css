@@ -800,7 +800,7 @@
   outline: 0;
   background: transparent;
   color: var(--ink);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-meta-size);
 }
 
@@ -867,7 +867,7 @@
   border-radius: var(--radius-pill);
   background: transparent;
   color: var(--friend-directory-secondary-text);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--friend-directory-control-size);
   font-weight: var(--weight-medium);
   white-space: nowrap;
@@ -967,7 +967,7 @@
   margin: 0;
   padding: 0 var(--space-5);
   color: var(--friend-directory-subtle-text);
-  font-family: var(--font-mono);
+  font-family: var(--font-label);
   font-size: var(--friend-directory-group-label-size);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-compact-label);
@@ -1032,7 +1032,7 @@
   border-radius: var(--radius-circle);
   background: var(--surface-2);
   color: var(--ink);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--friend-directory-input-size);
   font-weight: var(--weight-semibold);
 }
@@ -1068,7 +1068,7 @@
 .friends-remove-identity small {
   overflow: hidden;
   color: var(--friend-directory-secondary-text);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--friend-directory-group-label-size);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1076,7 +1076,7 @@
 
 .friends-person-identity mark {
   border-radius: var(--friend-directory-mark-radius);
-  background: color-mix(in srgb, var(--surface-2) 58%, #f1d58a 42%);
+  background: var(--friend-directory-highlight-bg);
   color: inherit;
 }
 
@@ -1086,7 +1086,7 @@
   gap: 8px;
   overflow: hidden;
   color: var(--friend-directory-secondary-text);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--friend-directory-tertiary-size);
   line-height: var(--leading-meta);
   text-overflow: ellipsis;
@@ -1110,7 +1110,7 @@
   border-radius: var(--radius-pill);
   background: color-mix(in srgb, var(--surface-2) 82%, var(--card-bg) 18%);
   color: var(--card-title-color);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--friend-directory-pattern-size);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-compact-pill);
@@ -1145,7 +1145,7 @@
 }
 
 .friends-unified-panel .social-secondary-button:disabled {
-  border-color: #a8adb4;
+  border-color: var(--friend-directory-disabled-border);
   color: var(--friend-directory-secondary-text);
 }
 
@@ -1153,7 +1153,7 @@
   padding: calc(var(--space-1) + var(--space-1) / 4) calc(var(--space-1) * 0.75);
   border: 0;
   background: transparent;
-  color: #5448be;
+  color: var(--friend-directory-action-fg);
   font: inherit;
   font-size: var(--friend-directory-action-size);
   font-weight: var(--weight-semibold);
@@ -1359,7 +1359,7 @@
 .friends-unified-panel .manual-chart-signatures {
   gap: 5px 10px;
   color: var(--friend-directory-secondary-text);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--friend-directory-count-size);
 }
 
@@ -1401,7 +1401,7 @@
 
 .friends-remove-dialog > p {
   margin: 0;
-  color: #5f6670;
+  color: var(--friend-directory-copy-text);
   line-height: var(--friend-directory-dialog-copy-leading);
 }
 
@@ -1494,7 +1494,7 @@
 
 .friends-invite-heading p,
 .friends-invite-ready p {
-  color: #5f6670;
+  color: var(--friend-directory-copy-text);
   line-height: var(--leading-description);
 }
 
@@ -1516,7 +1516,7 @@
 .friends-invite-link-note {
   max-width: 46ch;
   margin: 0;
-  color: #5f6670;
+  color: var(--friend-directory-copy-text);
   line-height: var(--leading-description);
 }
 
@@ -1672,8 +1672,8 @@
 }
 
 .friends-invite-history-row small {
-  color: #656c76;
-  font-family: var(--font-mono);
+  color: var(--friend-directory-copy-text);
+  font-family: var(--font-ui);
   font-size: var(--friend-directory-tertiary-size);
 }
 
@@ -1694,8 +1694,8 @@
 }
 
 .friends-invite-status.is-claimed {
-  background: color-mix(in srgb, #4f8b62 15%, var(--surface));
-  color: #3f7550;
+  background: var(--friend-directory-claimed-bg);
+  color: var(--friend-directory-claimed-fg);
 }
 
 .friends-invite-status.is-expired,
@@ -1761,12 +1761,12 @@
 }
 
 .social-invitation-accept-identity small {
-  color: #656c76;
-  font-family: var(--font-mono);
+  color: var(--friend-directory-copy-text);
+  font-family: var(--font-ui);
 }
 
 .social-invitation-accept-modal > p {
-  color: #5f6670;
+  color: var(--friend-directory-copy-text);
   line-height: var(--friend-directory-dialog-copy-leading);
 }
 

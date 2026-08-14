@@ -336,7 +336,9 @@ for (const filePath of files) {
 
   spacingFindings.push(...collectDeclarationFindings({ pattern: spacingDeclarationPattern, source, relative }));
   fontSizeFindings.push(...collectDeclarationFindings({ pattern: fontSizeDeclarationPattern, source, relative }));
-  fontWeightFindings.push(...collectFontWeightFindings({ source, relative }));
+  if (path.basename(relative) !== "fonts.css") {
+    fontWeightFindings.push(...collectFontWeightFindings({ source, relative }));
+  }
   lineHeightFindings.push(...collectLineHeightFindings({ source, relative }));
   radiusFindings.push(...collectDeclarationFindings({ pattern: radiusDeclarationPattern, source, relative }));
   shadowFindings.push(...collectDeclarationFindings({ pattern: shadowDeclarationPattern, source, relative, allowZero: false }));
