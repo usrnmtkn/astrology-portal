@@ -216,11 +216,19 @@ function validateLicenseRegistry(registry) {
     }
     const evidenceById = new Map((license.evidence || []).map((entry) => [entry.sourceId, entry]));
     const evidenceIds = new Set(evidenceById.keys());
+    const supportingReferenceIds = new Set(
+      (license.evidence || [])
+        .filter((entry) => entry.evidenceRole === "supporting-reference")
+        .map((entry) => entry.sourceId)
+    );
     const availableSourceIds = new Set([...evidenceIds, ...authoritySources.keys()]);
     for (const sourceId of license.sourceIds || []) {
       if (!availableSourceIds.has(sourceId)) errors.push(`${license.licenseId} lacks evidence or owner doctrine for ${sourceId}`);
     }
     for (const evidence of license.evidence || []) {
+      if (!["executable", "supporting-reference"].includes(evidence.evidenceRole || "executable")) {
+        errors.push(`${license.licenseId} has unsupported evidence role ${evidence.evidenceRole}`);
+      }
       const verified = verifyEvidence(evidence);
       if (!verified.passed) errors.push(`${license.licenseId}: ${verified.reason}`);
     }
@@ -236,6 +244,9 @@ function validateLicenseRegistry(registry) {
         if (!availableSourceIds.has(sourceId)) {
           errors.push(`${license.licenseId} provenance for ${grant.semanticClass}:${grant.value} cites unknown source ${sourceId}`);
         }
+        if (supportingReferenceIds.has(sourceId)) {
+          errors.push(`${license.licenseId} provenance for ${grant.semanticClass}:${grant.value} cites supporting-only reference ${sourceId}`);
+        }
       }
       if (grant.grantType.startsWith("normalized")) {
         const doctrineIds = (grant.sourceIds || []).filter((sourceId) => authoritySources.get(sourceId)?.authorityClass === "owner-doctrine");
@@ -244,7 +255,9 @@ function validateLicenseRegistry(registry) {
         }
       }
       if (grant.grantType === "verbatim") {
-        const supportingEvidence = (grant.sourceIds || []).map((sourceId) => evidenceById.get(sourceId)).filter(Boolean);
+        const supportingEvidence = (grant.sourceIds || [])
+          .map((sourceId) => evidenceById.get(sourceId))
+          .filter((evidence) => evidence && evidence.evidenceRole !== "supporting-reference");
         if (!supportingEvidence.some((evidence) => normalized(evidence.text).includes(normalized(grant.value)))) {
           errors.push(`${license.licenseId} verbatim grant ${grant.semanticClass}:${grant.value} is not literal in its cited matrix evidence`);
         }

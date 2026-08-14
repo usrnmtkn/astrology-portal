@@ -40,7 +40,7 @@ assert.ok(registry.licenses.every((license) => license.approval.renderEligible =
 assert.equal(registry.authoritySources[0].sourceId, "owner-doctrine:daily-glance-scene-license-ruling-2026-08-11");
 assert.equal(
   registry.authoritySources[1].sourceId,
-  "owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"
+  "owner-doctrine:daily-glance-scene-license-ruling-2026-08-14"
 );
 
 const licensesById = new Map(registry.licenses.map((license) => [license.licenseId, license]));
@@ -48,7 +48,7 @@ const neptuneLicense = licensesById.get("scene-license/aspect/moon-conjunction-n
 const house6License = licensesById.get("scene-license/house/6/v1");
 const house10License = licensesById.get("scene-license/house/10/v1");
 const northNodeLicense = licensesById.get("scene-license/aspect/moon-conjunction-north-node/v1");
-const guardedHouse4License = licensesById.get("scene-license/house/4/moon-conjunction-north-node/v1");
+const house4License = licensesById.get("scene-license/house/4/v1");
 const moonVirgoLicense = licensesById.get("scene-license/transit-sign/moon-virgo/v1");
 assert.deepEqual(neptuneLicense.normalizedMeaning.actions, [
   "notice another person's mood",
@@ -81,37 +81,24 @@ assert.equal(
   house10License.provenance.find((grant) => grant.value === "manager / authority figure").grantType,
   "normalized, owner-reviewed"
 );
+assert.deepEqual(northNodeLicense.normalizedMeaning.actions, [
+  "notice an unfamiliar possibility",
+  "return attention to a plan they have barely admitted they want"
+]);
 assert.deepEqual(northNodeLicense.normalizedMeaning.behaviors, [
-  "an immediate emotional or familiar response meets a next step that asks for a different response"
+  "treat a temporary emotional opening as information rather than a decision"
 ]);
-assert.deepEqual(northNodeLicense.normalizedMeaning.consequences, [
-  "the feeling and the next step are harder to separate"
-]);
-assert.deepEqual(guardedHouse4License.scope.contextGuard, {
-  transitPlanet: "moon",
-  aspect: "conjunction",
-  natalPoint: "north-node"
-});
-assert.deepEqual(guardedHouse4License.normalizedMeaning.domains, [
-  "home",
-  "family",
-  "private life",
-  "household responsibilities",
-  "family roles",
-  "caregiving at home",
-  "living arrangement",
-  "comfort / livability of the home",
-  "belonging",
-  "roots / family history"
-]);
-assert.deepEqual(guardedHouse4License.normalizedMeaning.roles, []);
-assert.deepEqual(guardedHouse4License.normalizedMeaning.settings, ["home"]);
-assert.deepEqual(guardedHouse4License.normalizedMeaning.actions, [
-  "have a household conversation",
-  "make a household decision"
-]);
-assert.ok(guardedHouse4License.constraints.disallowedInferences.includes("mother"));
-assert.ok(guardedHouse4License.constraints.disallowedInferences.includes("changing who has a key"));
+assert.deepEqual(northNodeLicense.normalizedMeaning.consequences, []);
+assert.equal(northNodeLicense.evidence[0].evidenceRole, "supporting-reference");
+assert.ok(northNodeLicense.provenance.every((grant) => (
+  grant.sourceIds.length === 1
+  && grant.sourceIds[0] === "owner-doctrine:daily-glance-scene-license-ruling-2026-08-14"
+)));
+assert.deepEqual(house4License.scope, { type: "house", house: 4 });
+assert.deepEqual(house4License.normalizedMeaning.domains, ["private life", "home", "family"]);
+assert.deepEqual(house4License.normalizedMeaning.roles, ["family member"]);
+assert.deepEqual(house4License.normalizedMeaning.settings, ["home"]);
+assert.deepEqual(house4License.normalizedMeaning.actions, []);
 assert.deepEqual(moonVirgoLicense.normalizedMeaning.actions, ["check details"]);
 assert.deepEqual(moonVirgoLicense.normalizedMeaning.behaviors, ["responds by trying to make the feeling useful or correctable"]);
 
@@ -260,24 +247,20 @@ assert.deepEqual(
   northNodePacket.licenses.map((license) => license.licenseId),
   [
     "scene-license/aspect/moon-conjunction-north-node/v1",
-    "scene-license/house/4/moon-conjunction-north-node/v1",
+    "scene-license/house/4/v1",
     "scene-license/transit-sign/moon-virgo/v1"
   ]
 );
 assert.ok(northNodePacket.permissions.domains.home);
 assert.ok(northNodePacket.permissions.domains["private life"]);
-assert.ok(northNodePacket.permissions.actions["have a household conversation"]);
-assert.ok(northNodePacket.permissions.actions["make a household decision"]);
+assert.ok(northNodePacket.permissions.roles["family member"]);
+assert.ok(northNodePacket.permissions.actions["notice an unfamiliar possibility"]);
+assert.ok(northNodePacket.permissions.actions["return attention to a plan they have barely admitted they want"]);
 assert.ok(northNodePacket.permissions.behaviors[
-  "an immediate emotional or familiar response meets a next step that asks for a different response"
+  "treat a temporary emotional opening as information rather than a decision"
 ]);
-assert.equal(northNodePacket.permissions.roles["family member"], undefined);
-assert.ok(northNodePacket.writerBoundary.causalGuards.includes(
-  "The scene must involve a current home/family/private-life situation in which the person's first emotional or familiar response is not automatically the same as the next useful response."
-));
-assert.ok(northNodePacket.writerBoundary.disallowedInferences.includes("destiny"));
-assert.ok(northNodePacket.writerBoundary.disallowedInferences.includes("mother"));
-assert.ok(northNodePacket.writerBoundary.disallowedInferences.includes("property sale"));
+assert.deepEqual(northNodePacket.writerBoundary.causalGuards, []);
+assert.deepEqual(northNodePacket.writerBoundary.disallowedInferences, []);
 
 const northNodeNoHousePacket = compileSceneContext(
   { ...northNodeContext, transitHouse: null, natalHouse: null, housesReliable: false },
@@ -292,16 +275,17 @@ const northNodeSquareHouse4Packet = compileSceneContext(
   { ...northNodeContext, aspect: "square", aspectGroup: "square" },
   { mode: "production", registry }
 );
-assert.ok(!northNodeSquareHouse4Packet.licenses.some((license) => license.licenseId.includes("house/4")));
-assert.equal(northNodeSquareHouse4Packet.permissions.domains.home, undefined);
+assert.ok(northNodeSquareHouse4Packet.licenses.some((license) => license.licenseId === "scene-license/house/4/v1"));
+assert.ok(northNodeSquareHouse4Packet.permissions.domains.home);
+assert.ok(northNodeSquareHouse4Packet.permissions.roles["family member"]);
 assert.equal(northNodeSquareHouse4Packet.canGenerateContextualCandidate, false);
 
 const neptuneHouse4Packet = compileSceneContext(
   { ...context, transitHouse: 4, natalHouse: 11 },
   { mode: "production", registry }
 );
-assert.ok(!neptuneHouse4Packet.licenses.some((license) => license.licenseId.includes("house/4")));
-assert.equal(neptuneHouse4Packet.permissions.domains.home, undefined);
+assert.ok(neptuneHouse4Packet.licenses.some((license) => license.licenseId === "scene-license/house/4/v1"));
+assert.ok(neptuneHouse4Packet.permissions.domains.home);
 
 const exactMechanism = getApprovedLlMechanism(context);
 assert.equal(exactMechanism.sourceId, "ll:moon|conjunction|neptune");
@@ -521,12 +505,28 @@ assert.equal(aspectContextGuardLeakResult.passed, false);
 assert.ok(aspectContextGuardLeakResult.errors.some((error) => error.includes("contextGuard only to narrow a house arena")));
 
 const missingCausalGuard = structuredClone(registry);
-delete missingCausalGuard.licenses
-  .find((license) => license.licenseId === "scene-license/house/4/moon-conjunction-north-node/v1")
-  .constraints;
+missingCausalGuard.licenses
+  .find((license) => license.licenseId === "scene-license/house/4/v1")
+  .scope.contextGuard = { transitPlanet: "moon", aspect: "conjunction", natalPoint: "north-node" };
 const missingCausalGuardResult = validateLicenseRegistry(missingCausalGuard);
 assert.equal(missingCausalGuardResult.passed, false);
 assert.ok(missingCausalGuardResult.errors.some((error) => error.includes("must carry a causal guard")));
+
+const supportingReferencePromotion = structuredClone(registry);
+supportingReferencePromotion.licenses
+  .find((license) => license.licenseId === "scene-license/aspect/moon-conjunction-north-node/v1")
+  .provenance[0].sourceIds = ["authored:transit-aspect/moon/north-node/conjunction"];
+const supportingReferencePromotionResult = validateLicenseRegistry(supportingReferencePromotion);
+assert.equal(supportingReferencePromotionResult.passed, false);
+assert.ok(supportingReferencePromotionResult.errors.some((error) => error.includes("cites supporting-only reference")));
+
+const invalidEvidenceRole = structuredClone(registry);
+invalidEvidenceRole.licenses
+  .find((license) => license.licenseId === "scene-license/aspect/moon-conjunction-north-node/v1")
+  .evidence[0].evidenceRole = "executable-ish";
+const invalidEvidenceRoleResult = validateLicenseRegistry(invalidEvidenceRole);
+assert.equal(invalidEvidenceRoleResult.passed, false);
+assert.ok(invalidEvidenceRoleResult.errors.some((error) => error.includes("unsupported evidence role")));
 
 const contextDir = fs.mkdtempSync(path.join(os.tmpdir(), "daily-glance-scene-context-"));
 fs.writeFileSync(path.join(contextDir, "conjunction-neptune.context.json"), `${JSON.stringify(context)}\n`);
