@@ -17,7 +17,7 @@ import {
   reportPromptFromPayload,
   validateReportDraft
 } from "../api/_lib/report-generation.ts";
-import { assembleDeterministicReportKeyDates, reportKeyDateEventManifest } from "../api/_lib/report-key-dates.ts";
+import { assembleDeterministicReportKeyDates, filterReportKeyDateAssemblyEligibility, reportKeyDateEventManifest } from "../api/_lib/report-key-dates.ts";
 
 const reviewFixture = JSON.parse(fs.readFileSync(new URL("./fixtures/report-assembly-review-74951c07.json", import.meta.url), "utf8"));
 const frozen = JSON.parse(fs.readFileSync(new URL("./fixtures/marie-report-frozen-facts.json", import.meta.url), "utf8"));
@@ -47,6 +47,27 @@ const validKeyDates = [{
 }];
 assert.ok(!validateAssembledReport(validKeyDates).some((entry) => /key_date|markdown/u.test(entry.code)),
   "Two well-formed key-date records must pass the assembled format contract.");
+
+const ownerApprovedEightWordTitles = [{
+  unitId: "key-dates",
+  draft: {
+    headline: "KEY DATES",
+    body: [
+      "APR 14 · Revise the role around your current life · A role may need different terms now. · *Uranus squares your natal Sun.*",
+      "MAY 1 · Confirm what your contribution allows you to decide · Clarify how decisions will be made. · *Jupiter squares your natal Pluto.*",
+      "MAY 12 · Use the communication method that works now · Try the method under ordinary conditions. · *Uranus sextiles your natal Jupiter.*",
+      "MAY 14 · Give the revised workflow a practical test · Test the schedule during a normal week. · *Jupiter trines your natal Uranus.*",
+      "JUN 5 · Name the direction without defending the past · Discuss the changed plan without treating the former version as an obligation. · *FIXTURE_ONLY eligible attribution.*"
+    ].join("\n\n")
+  }
+}];
+assert.ok(!validateAssembledReport(ownerApprovedEightWordTitles).some((entry) => entry.code === "key_date_title_length"),
+  "All five owner-approved seven/eight-word titles must pass the 2–8-word contract.");
+assert.ok(validateAssembledReport([{
+  unitId: "key-dates",
+  draft: { body: "APR 15 · This title contains nine words and must fail here · The sentence remains complete. · *FIXTURE_ONLY attribution.*" }
+}]).some((entry) => entry.code === "key_date_title_length"),
+"A nine-word key-date title must still fail while the other title rules remain unchanged.");
 
 const exactBrokenKeyDates = [{
   unitId: "spring",
@@ -242,6 +263,40 @@ for (const ineligibleTargetEvent of [
   assert.ok(!factorEligibleManifest.some((entry) => entry.eventId === ineligibleTargetEvent),
     `Transit-target eligibility must remove ${ineligibleTargetEvent} before the writing packet.`);
 }
+const productionShapedChironFact = {
+  id: "chiron-sextile-sun",
+  score: 90,
+  aspect: "sextile",
+  passes: [{ motion: "direct", exactAt: "2026-06-05T19:52:30Z" }],
+  category: "SELF",
+  isReturn: false,
+  natalSign: "Aquarius",
+  passCount: 2,
+  natalHouse: 9,
+  natalPoint: "Sun",
+  knowledgeIds: [],
+  transitPlanet: "Chiron"
+};
+assert.ok(!reportFactors({ profections: {}, solarReturn: {}, lunarEvents: [], slowTransitArcs: [productionShapedChironFact] })
+  .some((factor) => factor.id === "chiron-sextile-sun"),
+"The raw Production-shaped JUN 5 Chiron transit must be excluded before key-date selection.");
+const staleChironAssembly = filterReportKeyDateAssemblyEligibility({
+  sourceUnits: [{
+    unitId: "spring",
+    draft: { keyDates: [{
+      eventId: "chiron-sextile-sun:0",
+      title: "Name the direction without defending the past",
+      sentence: "A changed plan may be easier to discuss once you stop treating the former version as an obligation."
+    }] }
+  }],
+  eligibleEventIds: ["chiron-sextile-sun:0"],
+  interpretedEventIds: ["chiron-sextile-sun:0"],
+  canonicalEligibleEventIds: []
+});
+assert.deepEqual(staleChironAssembly.sourceUnits[0].draft.keyDates, [],
+  "A stale persisted JUN 5 Chiron entry must be removed during no-regeneration assembly.");
+assert.deepEqual(staleChironAssembly.eligibleEventIds, []);
+assert.deepEqual(staleChironAssembly.interpretedEventIds, []);
 const interpretedEventIds = factorEligibleManifest
   .filter((entry) => entry.eventId !== "jupiter-sextile-pluto:0")
   .map((entry) => entry.eventId);

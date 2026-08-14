@@ -8,6 +8,7 @@ import { createReportMailProvider, type ReportMailProvider } from "./report-mail
 import {
   assertReportDomainFulfillmentReady,
   assembleReportGenerationPayload,
+  reportFactors,
   validateReportDraft,
   type ReportDomain,
   type ReportDraft,
@@ -42,6 +43,8 @@ import { natalPointLongitudesFromChart, ReportBirthDataError, requireReportBirth
 import { reportUrl } from "./report-http.js";
 import {
   assembleDeterministicReportKeyDates,
+  filterReportKeyDateAssemblyEligibility,
+  reportKeyDateEventManifest,
   reportKeyDateSourceUnitIds
 } from "./report-key-dates.js";
 
@@ -767,7 +770,7 @@ export async function processReportFulfillmentJob(input: {
     } else {
       const sourceRows = await input.store.unitRows(report.id);
       const sourceUnitIds = new Set(reportKeyDateSourceUnitIds(report.report_horizon));
-      const sourceUnits = sourceRows.flatMap((row) => {
+      const storedSourceUnits = sourceRows.flatMap((row) => {
         const unitId = row.content_key.replace(`report:${report.id}:`, "");
         if (!sourceUnitIds.has(unitId) || row.source_snapshot?.fulfillmentPassed !== true) return [];
         return [{
@@ -783,10 +786,21 @@ export async function processReportFulfillmentJob(input: {
           }
         }];
       });
-      const eligibleEventIds = sourceRows.flatMap((row) => Array.isArray(row.source_snapshot?.keyDateEligibleEventIds)
+      const storedEligibleEventIds = sourceRows.flatMap((row) => Array.isArray(row.source_snapshot?.keyDateEligibleEventIds)
         ? row.source_snapshot.keyDateEligibleEventIds as string[] : []);
-      const interpretedEventIds = sourceRows.flatMap((row) => Array.isArray(row.source_snapshot?.keyDateInterpretedEventIds)
+      const storedInterpretedEventIds = sourceRows.flatMap((row) => Array.isArray(row.source_snapshot?.keyDateInterpretedEventIds)
         ? row.source_snapshot.keyDateInterpretedEventIds as string[] : []);
+      const canonicalEligibleEventIds = reportKeyDateEventManifest(
+        report.facts,
+        report.report_horizon,
+        reportFactors(report.facts).map((factor) => factor.id)
+      ).map((event) => event.eventId);
+      const { sourceUnits, eligibleEventIds, interpretedEventIds } = filterReportKeyDateAssemblyEligibility({
+        sourceUnits: storedSourceUnits,
+        eligibleEventIds: storedEligibleEventIds,
+        interpretedEventIds: storedInterpretedEventIds,
+        canonicalEligibleEventIds
+      });
       const keyDatesDraft = assembleDeterministicReportKeyDates({
         reportHorizon: report.report_horizon,
         frozenFacts: report.facts,

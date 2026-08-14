@@ -5,6 +5,26 @@ export type ReportKeyDateSourceUnit = {
   draft: ReportDraft;
 };
 
+export function filterReportKeyDateAssemblyEligibility(input: {
+  sourceUnits: ReportKeyDateSourceUnit[];
+  eligibleEventIds: Iterable<string>;
+  interpretedEventIds: Iterable<string>;
+  canonicalEligibleEventIds: Iterable<string>;
+}) {
+  const canonical = new Set(input.canonicalEligibleEventIds);
+  return {
+    sourceUnits: input.sourceUnits.map((unit) => ({
+      ...unit,
+      draft: {
+        ...unit.draft,
+        keyDates: (unit.draft.keyDates ?? []).filter((entry) => canonical.has(entry.eventId))
+      }
+    })),
+    eligibleEventIds: [...new Set(input.eligibleEventIds)].filter((eventId) => canonical.has(eventId)),
+    interpretedEventIds: [...new Set(input.interpretedEventIds)].filter((eventId) => canonical.has(eventId))
+  };
+}
+
 export type ReportKeyDateEventManifestEntry = {
   eventId: string;
   factorId: string;

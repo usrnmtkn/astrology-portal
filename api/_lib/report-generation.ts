@@ -859,7 +859,8 @@ function transitFactors(facts: Record<string, unknown>): ReportFactor[] {
     const natalPoint = stringValue(arc.natalPoint);
     const aspect = stringValue(arc.aspect);
     const house = numberValue(arc.natalHouse);
-    if (slowTransitExcludedTargetTokens.has(pointToken(natalPoint))) return [];
+    if (slowTransitExcludedTargetTokens.has(pointToken(transitPlanet))
+      || slowTransitExcludedTargetTokens.has(pointToken(natalPoint))) return [];
     const selfConjunction = transitPlanet === natalPoint && aspect === "conjunction";
     if (selfConjunction && !RETURN_ELIGIBLE.has(transitPlanet)) return [];
     const returnEligible = selfConjunction && RETURN_ELIGIBLE.has(transitPlanet);
