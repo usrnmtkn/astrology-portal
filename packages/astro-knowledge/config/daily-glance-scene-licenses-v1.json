@@ -20,6 +20,13 @@
       "authorityClass": "owner-doctrine",
       "approval": "approved",
       "verificationText": "these exact field-level changes constitute approval of the revised meanings"
+    },
+    {
+      "sourceId": "owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14",
+      "sourcePath": "packages/astro-knowledge/review/daily-glance-house4-north-node-owner-ruling-2026-08-14.md",
+      "authorityClass": "owner-doctrine",
+      "approval": "approved",
+      "verificationText": "Approve the Moon conjunct North Node mechanism as: an immediate emotional or familiar response meeting a next step that asks for a different response."
     }
   ],
   "closedVocabulary": {
@@ -33,7 +40,15 @@
       "professional achievement": ["professional achievement"],
       "communication": ["communication", "conversation", "information"],
       "home": ["home", "household", "living situation"],
-      "family": ["family", "parent", "parents"],
+      "family": ["family"],
+      "private life": ["private life", "private situation"],
+      "household responsibilities": ["household responsibility", "household responsibilities"],
+      "family roles": ["family role", "family roles"],
+      "caregiving at home": ["caregiving at home", "care at home"],
+      "living arrangement": ["living arrangement", "living arrangements"],
+      "comfort / livability of the home": ["comfort at home", "livability of the home", "home easier to live in"],
+      "belonging": ["belonging", "feel at home"],
+      "roots / family history": ["roots", "family history"],
       "shared money": ["shared money", "debt", "taxes", "inheritance"],
       "travel": ["travel", "trip", "flight"],
       "health": ["health", "symptom", "symptoms", "medical"]
@@ -46,6 +61,7 @@
       "family member": ["family member", "parent", "sibling", "child"]
     },
     "settings": {
+      "home": ["at home", "inside the home", "in the household"],
       "work that can be evaluated publicly or professionally": [
         "work that can be evaluated publicly or professionally",
         "publicly evaluated work",
@@ -69,7 +85,9 @@
       "notice another person's mood": ["notice somebody else's mood", "notice someone else's mood", "someone else seems uneasy"],
       "form an explanation before the other person has explained what happened": [
         "form an explanation before the other person has explained what happened"
-      ]
+      ],
+      "have a household conversation": ["household conversation", "conversation at home"],
+      "make a household decision": ["household decision", "decision at home"]
     },
     "behaviors": {
       "absorb another person's mood as their own": ["absorb another person's mood as their own"],
@@ -78,10 +96,15 @@
       ],
       "responds by trying to make the feeling useful or correctable": [
         "responds by trying to make the feeling useful or correctable"
+      ],
+      "an immediate emotional or familiar response meets a next step that asks for a different response": [
+        "an immediate emotional response meets a next step that asks for a different response",
+        "a familiar response meets a next step that asks for a different response"
       ]
     },
     "consequences": {
-      "confusion about which feelings belong to them": ["confusion about which feelings belong to them"]
+      "confusion about which feelings belong to them": ["confusion about which feelings belong to them"],
+      "the feeling and the next step are harder to separate": ["the feeling and the next step are harder to separate"]
     }
   },
   "licenses": [
@@ -302,6 +325,233 @@
           "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
         }
       ],
+      "approval": {
+        "status": "approved",
+        "inheritsSourceApproval": false,
+        "ownerApproved": true,
+        "writerEligible": true,
+        "renderEligible": false
+      }
+    },
+    {
+      "licenseId": "scene-license/aspect/moon-conjunction-north-node/v1",
+      "scope": {
+        "type": "aspect",
+        "transitPlanet": "moon",
+        "aspect": "conjunction",
+        "natalPoint": "north-node"
+      },
+      "sourceIds": [
+        "authored:transit-aspect/moon/north-node/conjunction",
+        "owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"
+      ],
+      "evidence": [
+        {
+          "sourceId": "authored:transit-aspect/moon/north-node/conjunction",
+          "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json",
+          "selector": "authoredCards[contentKey=authored/transit-aspect/moon/north-node/conjunction]",
+          "field": "body_you",
+          "match": "includes",
+          "text": "You may also feel unexpectedly protective of a plan you have barely admitted you want.",
+          "sourceApproval": "approved"
+        }
+      ],
+      "normalizedMeaning": {
+        "domains": [],
+        "roles": [],
+        "settings": [],
+        "objects": [],
+        "actions": [],
+        "behaviors": [
+          "an immediate emotional or familiar response meets a next step that asks for a different response"
+        ],
+        "consequences": ["the feeling and the next step are harder to separate"]
+      },
+      "provenance": [
+        {
+          "semanticClass": "behaviors",
+          "value": "an immediate emotional or familiar response meets a next step that asks for a different response",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "mechanism",
+          "sourceIds": ["owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "consequences",
+          "value": "the feeling and the next step are harder to separate",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "mechanism",
+          "sourceIds": ["owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"]
+        }
+      ],
+      "constraints": {
+        "causalGuard": "The Moon makes the reaction immediate and personal; the North Node points toward the next response or direction that is less automatic. In conjunction, both arrive in the same moment, so the feeling and the next step are harder to separate.",
+        "disallowedInferences": ["destiny", "karmic certainty"]
+      },
+      "approval": {
+        "status": "approved",
+        "inheritsSourceApproval": false,
+        "ownerApproved": true,
+        "writerEligible": true,
+        "renderEligible": false
+      }
+    },
+    {
+      "licenseId": "scene-license/house/4/moon-conjunction-north-node/v1",
+      "scope": {
+        "type": "house",
+        "house": 4,
+        "contextGuard": {
+          "transitPlanet": "moon",
+          "aspect": "conjunction",
+          "natalPoint": "north-node"
+        }
+      },
+      "sourceIds": [
+        "ll:4th house",
+        "owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"
+      ],
+      "evidence": [
+        {
+          "sourceId": "ll:4th house",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json",
+          "selector": "rows[key=4th house]",
+          "match": "includes",
+          "text": "The 4th house is your private life, the part other people do not see. It holds the home you return to, the family atmosphere that trained your nervous system, the memories that still color reactions, and the private self that does not need an audience. Roots can be comforting, complicated, or both at once.",
+          "sourceApproval": "approved"
+        }
+      ],
+      "normalizedMeaning": {
+        "domains": [
+          "home",
+          "family",
+          "private life",
+          "household responsibilities",
+          "family roles",
+          "caregiving at home",
+          "living arrangement",
+          "comfort / livability of the home",
+          "belonging",
+          "roots / family history"
+        ],
+        "roles": [],
+        "settings": ["home"],
+        "objects": [],
+        "actions": ["have a household conversation", "make a household decision"],
+        "behaviors": [],
+        "consequences": []
+      },
+      "provenance": [
+        {
+          "semanticClass": "domains",
+          "value": "home",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "family",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "private life",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "household responsibilities",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "family roles",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "caregiving at home",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "living arrangement",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "comfort / livability of the home",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "belonging",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "roots / family history",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "settings",
+          "value": "home",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "actions",
+          "value": "have a household conversation",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "actions",
+          "value": "make a household decision",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-house4-north-node-ruling-2026-08-14"]
+        }
+      ],
+      "constraints": {
+        "causalGuard": "The scene must involve a current home/family/private-life situation in which the person's first emotional or familiar response is not automatically the same as the next useful response.",
+        "disallowedInferences": [
+          "destiny",
+          "karmic certainty",
+          "childhood history",
+          "parent-specific events",
+          "mother",
+          "childhood trauma",
+          "family secrets",
+          "moving",
+          "pregnancy",
+          "property sale",
+          "reconciliation",
+          "caregiving crisis",
+          "changing who has a key",
+          "household-access events"
+        ]
+      },
       "approval": {
         "status": "approved",
         "inheritsSourceApproval": false,
