@@ -33,7 +33,7 @@ Every slot must survive absence. A You > Transits day with no qualifying non-Moo
 
 ## 2. Day computation
 
-- Compute the transit stack once per user per day at LOCAL NOON for the user's stored location (the baseline's reconstruction used a fixed clock time; noon keeps the Moon's sign/house honest for the majority of the waking day).
+- Compute the transit stack once per user per day at LOCAL NOON for the user's stored location (the baseline's reconstruction used a fixed clock time; noon keeps the Moon's sign/house honest for the majority of the waking day). For At a Glance only, the noon Moon position and speed also define the local civil-day arc used by the exact-contact rule in section 3.
 - The Moon changes sign mid-day roughly every third day. Use the noon position; do not split the day into two moods.
 - 5-day selector window per the baseline skeleton: today plus 4 days ahead, future days computed the same way.
 
@@ -42,6 +42,7 @@ Every slot must survive absence. A You > Transits day with no qualifying non-Moo
 Driver: the transiting Moon. Its tightest applying aspect to a supported natal target selects the aspect-group/target copy (square = self-friction, opposition = other-friction, conjunction = saturation, trine/sextile = ease). The Moon's whole-sign house supplies the topic only when no supported applying contact is within orb. Baseline sections 2-4 define the grammar.
 
 - SHIPPED (Copy Batch A, 2026-07-23): call `renderDailyGlance({ natal, aspect })` with the Moon's tightest applying aspect to a supported natal planet or point; returns `{ headline, body }`, both engine-hidden per the baseline grammars. Aspect groups: conjunction, square, opposition, soft (trine/sextile collapse). Ascendant and Descendant are excluded because this content model has no angle keys. If no supported applying contact is within 5 degrees, including when every in-orb contact is separating, call `renderDailyGlance({ house: moonWholeSignHouse })` for the house fallback. 136 rows: 4 groups x 14 natal targets x 2 slots, plus 12 houses x 2.
+- OWNER DIRECTION (2026-08-14, back-to-back Moon repeats): the noon applying winner remains first. When noon would otherwise fall through to the house, inspect the Moon's ephemeris-derived motion across that local civil day. Select the first supported contact that becomes exact after noon; if none does, select the latest supported contact that became exact after local midnight. The contact is valid because it crosses the existing applying 5-degree gate during that date. Never carry a separating contact in from a prior date, widen the orb, or rotate copy to conceal duplicate facts. Use the house fallback only when no supported contact becomes exact anywhere in the civil day.
 - Show the Moon's `renderTransitLabel` in the Behind-this-forecast stack so the driver is still discoverable; the At-a-Glance surface itself never names the astrology.
 - Never invent an aphorism headline in the app layer; the resolver returns the only approved copy.
 

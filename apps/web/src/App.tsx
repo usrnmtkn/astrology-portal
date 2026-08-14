@@ -186,7 +186,7 @@ import {
   comparisonPointRole,
   natalElementBalance,
   normalizedAngle,
-  selectDailyGlanceDriver,
+  selectDailyGlanceCivilDayDriver,
   transitAspectDefinitions,
   wholeSignHouseForSign,
   zodiacLongitude,
@@ -1884,7 +1884,12 @@ function dailyGlanceDriver(currentSky: SkySnapshot, natalSky: SkySnapshot, birth
   const house = !birthTimeUnknown && natalSky.ascendant
     ? wholeSignHouseForSign(moon.sign, natalSky.ascendant)
     : null;
-  const driver = selectDailyGlanceDriver(moon.longitude, natalSky.positions, house);
+  const driver = selectDailyGlanceCivilDayDriver(
+    moon.longitude,
+    moon.speed,
+    natalSky.positions,
+    house
+  );
 
   return driver?.kind === "aspect"
     ? { ...driver, natal: normalizeContentIdPart(driver.natal) }
@@ -16243,11 +16248,16 @@ function ProfileView({
   const dailyMoonLabel = (() => {
     if (!dailyMoonDriver || dailyMoonDriver.kind !== "aspect") return null;
 
+    const civilDayExact = dailyMoonDriver.selectionScope === "civil-day-exact";
     const end = dateFromOffsetDays(
       targetDate,
-      Math.max(0.2, 5 - dailyMoonDriver.orb) / (averageDailyMotion.Moon ?? 13.176)
+      civilDayExact
+        ? 0.99
+        : Math.max(0.2, 5 - dailyMoonDriver.orb) / (averageDailyMotion.Moon ?? 13.176)
     );
-    const window = `Until ${formatEditorialDate(end, true)}`;
+    const window = civilDayExact
+      ? "Today"
+      : `Until ${formatEditorialDate(end, true)}`;
 
     try {
       const rendered = transitSynastryFallbackRendererV3.renderTransitLabel({
