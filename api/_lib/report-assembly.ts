@@ -511,6 +511,17 @@ function assertFindingLocations(units: AssembledReportUnit[], findings: ReportRe
   }
 }
 
+function discardStaleRedundancyFindings(units: AssembledReportUnit[], findings: ReportRedundancyFinding[]) {
+  const unitMap = new Map(units.map((unit) => [unit.unitId, unit]));
+  return findings.filter((finding) => {
+    const unit = unitMap.get(finding.unit_id);
+    if (!unit) return true;
+    const quote = finding.quote.trim();
+    if (!quote) return true;
+    return fields(unit).some((field) => field.text.includes(quote));
+  });
+}
+
 export async function runReportRedundancyPass(input: {
   units: AssembledReportUnit[];
   payload: ReportGenerationPayload;
@@ -532,7 +543,10 @@ export async function runReportRedundancyPass(input: {
     schemaName: "report_redundancy_pass",
     schema: REPORT_REDUNDANCY_SCHEMA
   });
-  const findings = response.value.result === "no_findings" ? [] : response.value.findings;
+  const findings = discardStaleRedundancyFindings(
+    input.units,
+    response.value.result === "no_findings" ? [] : response.value.findings
+  );
   assertFindingLocations(input.units, findings);
   return { findings, usage: response.usage, promptVersion: prompt.version };
 }

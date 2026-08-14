@@ -472,6 +472,8 @@ export function normalizeReportSentenceAddressedCritique(
     // The dynamic provider schema excludes this category. Suppression here is
     // the fail-safe for mocks or providers that bypass structured validation.
     if (!movementApplicable && finding.category === "interpretive_gap") continue;
+    const quote = finding.quote.trim();
+    if (quote && !completeReportUnit(draft).includes(quote)) continue;
     if (!Array.isArray(finding.sentence_ids) || !finding.sentence_ids.length) {
       throw new ReportRevisionScopeError(`Finding '${finding.id}' did not reference a supplied sentence ID.`);
     }
