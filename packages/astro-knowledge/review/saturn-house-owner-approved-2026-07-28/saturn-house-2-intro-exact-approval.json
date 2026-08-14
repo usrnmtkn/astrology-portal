@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "recordType": "transit_house_serving_exact_approval",
+  "approvalId": "saturn-house-owner-approved-2026-07-28-transit-house-intro-2",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "approvedAt": "2026-07-28",
+  "recordedAt": "2026-08-13",
+  "surface": "you|friends",
+  "contentKey": "authored/transit-house-intro/saturn/2",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "fbb921c4fd3db168baf46665541f193986357d77aad08eb5bbc841c6af73125d",
+  "payload": {
+    "body_you": "Money gets personal here. The rate you never raised. The subscription still charging every month. The job that pays enough on paper but takes your whole nervous system with it. The purchase meant to make a difficult week feel better. Saturn moving through your 2nd house makes it harder to avoid what your life actually costs.\n\nYou need numbers you can trust. Know what comes in, what goes out, what you owe, and which expenses are still there because canceling them felt easier to postpone. Ask for the rate. Send the invoice. Save toward the choice you keep saying you cannot afford yet. The point is not deprivation. It is making sure your money supports the life you say you want.",
+    "body_they": "Money gets personal for {{Name}}. The rate they never raised. The subscription still charging every month. The job that covers the bills but takes their whole nervous system with it. Saturn moving through their 2nd house makes it harder for them to avoid what their life actually costs.\n\nClear numbers become harder to avoid: what comes in, what goes out, what they owe, and which charges remain only because canceling them kept getting postponed. Their money needs to support the life they say they want, not only keep the current arrangement running."
+  },
+  "historicalEvidence": {
+    "readerRewriteCommit": "133e2332c48c147876f352290891ab55a83fde8e",
+    "friendVoiceReviewCommit": "102631f0a3b5851898935c43d6bb9d39f89decf4",
+    "sourceRowApprovalNote": "owner-rewritten full 12-house set, chat 2026-07-28"
+  },
+  "ownerConfirmationStatement": "the writing that was being shown in the natal chart was approved",
+  "ownerConfirmationSource": "owner_chat_2026-08-13_source_metadata_correction",
+  "approvalEffect": "exact_wording_approval",
+  "copyMutation": "none"
+}

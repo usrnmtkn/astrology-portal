@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "recordType": "transit_house_serving_exact_approval",
+  "approvalId": "saturn-house-owner-approved-2026-07-28-transit-house-intro-12",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "approvedAt": "2026-07-28",
+  "recordedAt": "2026-08-13",
+  "surface": "you|friends",
+  "contentKey": "authored/transit-house-intro/saturn/12",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "1e100650b795f68681a7967ded5a1e41197c7d596f50f04de4ebabde78a8a748",
+  "payload": {
+    "body_you": "You begin noticing what has already ended, even when the habit, paperwork, or emotional attachment has not caught up. The role you no longer believe in. The project you keep reopening out of guilt. The method that once worked and now gives less back every time you use it. Saturn moving through your 12th house makes unfinished endings harder to ignore.\n\nFinish what can be finished. Close the account. Complete the paperwork. Leave the role properly. Admit when a plan has ended instead of keeping it alive through maintenance alone. You may need more privacy and more rest, but that does not mean disappearing from your life. Keep the responsibilities that still belong to you. Stop feeding the ones that are already over.",
+    "body_they": "{{Name}} begins noticing what has already ended, even when the habit, paperwork, or emotional attachment has not caught up. The role they no longer believe in. The project reopened out of guilt. The method that once worked and now gives less back every time. Saturn moving through their 12th house makes unfinished endings harder to ignore.\n\nWhat can be finished gets finished now: the account closed, the paperwork completed, the role left properly. They may need more privacy and more rest, but that is not disappearing from their life. The responsibilities that still belong to them remain. The roles, projects, and obligations that have already ended stop receiving more time out of guilt."
+  },
+  "historicalEvidence": {
+    "readerRewriteCommit": "133e2332c48c147876f352290891ab55a83fde8e",
+    "friendVoiceReviewCommit": "102631f0a3b5851898935c43d6bb9d39f89decf4",
+    "sourceRowApprovalNote": "owner-rewritten full 12-house set, chat 2026-07-28"
+  },
+  "ownerConfirmationStatement": "the writing that was being shown in the natal chart was approved",
+  "ownerConfirmationSource": "owner_chat_2026-08-13_source_metadata_correction",
+  "approvalEffect": "exact_wording_approval",
+  "copyMutation": "none"
+}

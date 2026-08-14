@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "recordType": "transit_house_serving_exact_approval",
+  "approvalId": "saturn-house-owner-approved-2026-07-28-transit-house-sign-5-aries",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "approvedAt": "2026-07-28",
+  "recordedAt": "2026-08-13",
+  "surface": "you|friends",
+  "contentKey": "authored/transit-house-sign/saturn/5/aries",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "c7b5494e2fd7a725fe2600cd062982cec2a1ec983943d179911c7f9a49f2d447",
+  "payload": {
+    "body_you": "Saturn in Aries puts pressure on the chase. The first spark feels important. The slower middle feels like rejection. You may lose interest when attention, novelty, or praise stops arriving on command. Return anyway. The spark gets you started. What you return to tells you what you actually love.",
+    "body_they": "Saturn in Aries puts pressure on their chase. The first spark feels important, the slower middle feels like rejection, and they may lose interest when attention or novelty stops arriving on command. What they return to after the spark fades is what they actually love."
+  },
+  "historicalEvidence": {
+    "readerRewriteCommit": "133e2332c48c147876f352290891ab55a83fde8e",
+    "friendVoiceReviewCommit": "102631f0a3b5851898935c43d6bb9d39f89decf4",
+    "sourceRowApprovalNote": "owner-rewritten full 12-house set, chat 2026-07-28 (Aries layer)"
+  },
+  "ownerConfirmationStatement": "the writing that was being shown in the natal chart was approved",
+  "ownerConfirmationSource": "owner_chat_2026-08-13_source_metadata_correction",
+  "approvalEffect": "exact_wording_approval",
+  "copyMutation": "none"
+}

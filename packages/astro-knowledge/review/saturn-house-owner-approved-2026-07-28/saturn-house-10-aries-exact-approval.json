@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "recordType": "transit_house_serving_exact_approval",
+  "approvalId": "saturn-house-owner-approved-2026-07-28-transit-house-sign-10-aries",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "approvedAt": "2026-07-28",
+  "recordedAt": "2026-08-13",
+  "surface": "you|friends",
+  "contentKey": "authored/transit-house-sign/saturn/10/aries",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "d8fcdb706f45000998cb55be52711f7ba1c2323a1b238361621b696938cacfda",
+  "payload": {
+    "body_you": "Saturn in Aries puts pressure on ambition's timeline. You may want the title now, release the work before it is ready, challenge the person above you, or quit because recognition is taking too long. Let the work make the case before frustration takes over. A title can arrive quickly. A reputation takes longer to repair.",
+    "body_they": "Saturn in Aries puts pressure on their ambition's timeline. They may want the title now, release work before it is ready, challenge the person above them, or quit because recognition is taking too long. The work has to make the case before frustration does. A title can arrive quickly; a reputation takes longer to repair."
+  },
+  "historicalEvidence": {
+    "readerRewriteCommit": "133e2332c48c147876f352290891ab55a83fde8e",
+    "friendVoiceReviewCommit": "102631f0a3b5851898935c43d6bb9d39f89decf4",
+    "sourceRowApprovalNote": "owner-rewritten full 12-house set, chat 2026-07-28 (Aries layer)"
+  },
+  "ownerConfirmationStatement": "the writing that was being shown in the natal chart was approved",
+  "ownerConfirmationSource": "owner_chat_2026-08-13_source_metadata_correction",
+  "approvalEffect": "exact_wording_approval",
+  "copyMutation": "none"
+}
