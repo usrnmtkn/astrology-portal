@@ -37,6 +37,11 @@ export type PersonalTimingSummary = {
   headline: string;
   summary: string;
   secondary?: string;
+  moonContext?: {
+    sign: string;
+    houseLabel: string | null;
+    topic: string | null;
+  };
   writeup?: Array<{
     heading?: string;
     body: string[];
@@ -568,6 +573,25 @@ function YouUpdatesTab({
               ))}
             </div>
           )}
+          {dailyUpdateSummary.moonContext ? (
+            <div
+              aria-label={[
+                `Moon in ${dailyUpdateSummary.moonContext.sign}`,
+                dailyUpdateSummary.moonContext.houseLabel,
+                dailyUpdateSummary.moonContext.topic
+              ].filter(Boolean).join(", ")}
+              className="updates-aspect-row__meta-line daily-horoscope-summary__moon-tags"
+            >
+              <span className="ui-pill ui-pill--neutral ui-pill--mixed">Moon in</span>
+              <span className="ui-pill ui-pill--neutral ui-pill--mixed">
+                {[
+                  dailyUpdateSummary.moonContext.sign,
+                  dailyUpdateSummary.moonContext.houseLabel,
+                  dailyUpdateSummary.moonContext.topic
+                ].filter(Boolean).join(" · ")}
+              </span>
+            </div>
+          ) : null}
         </section>
       )}
       {hasSavedCurrentCity

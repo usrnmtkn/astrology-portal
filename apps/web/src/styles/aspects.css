@@ -330,6 +330,16 @@
   line-height: var(--leading-body);
 }
 
+.daily-horoscope-summary__moon-tags {
+  justify-self: start;
+}
+
+.daily-horoscope-summary__moon-tags .ui-pill:last-child {
+  height: auto;
+  text-align: left;
+  white-space: normal;
+}
+
 .daily-horoscope-summary__secondary {
   color: var(--card-meta-color);
   font-size: var(--text-meta-size);
