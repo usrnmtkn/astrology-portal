@@ -1,49 +1,49 @@
 {
   "sourceSummary": {
-    "approvedExampleRowsRead": 11386,
+    "approvedExampleRowsRead": 11388,
     "ownerCorpusEntriesRead": 3390,
     "ownerCorpusDocuments": 47,
     "ownerCorrectionsUsed": 22,
-    "deduplicatedSourcesUsed": 9764,
+    "deduplicatedSourcesUsed": 9766,
     "duplicateTextsRemoved": 1691,
     "bySourceType": {
-      "approved_serving": 7820,
+      "approved_serving": 7822,
       "knowledge_matrix": 1876,
       "owner_corpus": 47,
       "owner_correction": 21
     }
   },
   "tableCounts": {
-    "sources": 9764,
-    "sentences": 49287,
-    "collocationOccurrences": 111851,
-    "uniquePairs": 48366
+    "sources": 9766,
+    "sentences": 49284,
+    "collocationOccurrences": 111878,
+    "uniquePairs": 48375
   },
   "falsePositiveReport": {
     "method": "leave-one-source-out",
     "interpretation": "Every flag on owner-approved held-out copy is counted as a false positive.",
     "totals": {
-      "sourcesEvaluated": 9764,
-      "sourcesFlagged": 5634,
-      "sourceFalsePositiveRate": 0.5770176157312576,
-      "sentencesEvaluated": 49287,
-      "sentencesFlagged": 17520,
-      "sentenceFalsePositiveRate": 0.35546898776553654,
-      "pairOccurrencesEvaluated": 111851,
-      "pairOccurrencesFlagged": 29030,
-      "pairFalsePositiveRate": 0.25954171174151325
+      "sourcesEvaluated": 9766,
+      "sourcesFlagged": 5632,
+      "sourceFalsePositiveRate": 0.5766946549252508,
+      "sentencesEvaluated": 49284,
+      "sentencesFlagged": 17516,
+      "sentenceFalsePositiveRate": 0.35540946351757163,
+      "pairOccurrencesEvaluated": 111878,
+      "pairOccurrencesFlagged": 29038,
+      "pairFalsePositiveRate": 0.2595505818838377
     },
     "bySourceType": {
       "approved_serving": {
-        "sources": 7820,
-        "sourcesFlagged": 5029,
-        "sentences": 30103,
-        "sentencesFlagged": 11136,
-        "pairs": 76334,
-        "pairsFlagged": 18933,
-        "sourceFalsePositiveRate": 0.6430946291560102,
-        "sentenceFalsePositiveRate": 0.36992990731820746,
-        "pairFalsePositiveRate": 0.24802840149867686
+        "sources": 7822,
+        "sourcesFlagged": 5027,
+        "sentences": 30100,
+        "sentencesFlagged": 11128,
+        "pairs": 76361,
+        "pairsFlagged": 18936,
+        "sourceFalsePositiveRate": 0.642674507798517,
+        "sentenceFalsePositiveRate": 0.36970099667774087,
+        "pairFalsePositiveRate": 0.24797998978536165
       },
       "knowledge_matrix": {
         "sources": 1876,
@@ -60,12 +60,12 @@
         "sources": 47,
         "sourcesFlagged": 46,
         "sentences": 14388,
-        "sentencesFlagged": 5375,
+        "sentencesFlagged": 5379,
         "pairs": 22101,
-        "pairsFlagged": 8476,
+        "pairsFlagged": 8483,
         "sourceFalsePositiveRate": 0.9787234042553191,
-        "sentenceFalsePositiveRate": 0.3735752015568529,
-        "pairFalsePositiveRate": 0.38351205827790597
+        "sentenceFalsePositiveRate": 0.3738532110091743,
+        "pairFalsePositiveRate": 0.38382878602778153
       },
       "owner_correction": {
         "sources": 21,
@@ -73,10 +73,10 @@
         "sentences": 26,
         "sentencesFlagged": 1,
         "pairs": 53,
-        "pairsFlagged": 3,
+        "pairsFlagged": 1,
         "sourceFalsePositiveRate": 0.047619047619047616,
         "sentenceFalsePositiveRate": 0.038461538461538464,
-        "pairFalsePositiveRate": 0.05660377358490566
+        "pairFalsePositiveRate": 0.018867924528301886
       }
     },
     "sampleFalsePositives": [
