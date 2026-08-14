@@ -3,6 +3,54 @@ var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
 };
+var FRIEND_NATAL_SECOND_PERSON_VOCABULARY_KEYS = /* @__PURE__ */ new Set([
+  "fallback-vocab/house-jurisdiction/1",
+  "fallback-vocab/house-jurisdiction/3",
+  "fallback-vocab/house-jurisdiction/7",
+  "fallback-vocab/house-jurisdiction/11",
+  "fallback-vocab/house-jurisdiction/12",
+  "fallback-vocab/planet-excess/sun",
+  "fallback-vocab/planet-productive/sun",
+  "fallback-vocab/planet-function/sun",
+  "fallback-vocab/planet-function/moon",
+  "fallback-vocab/planet-function/mercury",
+  "fallback-vocab/planet-function/venus",
+  "fallback-vocab/planet-excess/jupiter",
+  "fallback-vocab/planet-function/chiron",
+  "fallback-vocab/planet-productive/north-node",
+  "fallback-vocab/planet-productive/south-node",
+  "fallback-vocab/house-pressure/1",
+  "fallback-vocab/placement-gerund/chiron/aries/0",
+  "fallback-vocab/placement-gerund/chiron/gemini/0",
+  "fallback-vocab/placement-gerund/chiron/leo/0",
+  "fallback-vocab/placement-gerund/chiron/virgo/0",
+  "fallback-vocab/placement-gerund/chiron/libra/0",
+  "fallback-vocab/placement-gerund/chiron/scorpio/0",
+  "fallback-vocab/placement-gerund/chiron/sagittarius/0",
+  "fallback-vocab/placement-gerund/chiron/capricorn/0",
+  "fallback-vocab/placement-gerund/chiron/aquarius/0",
+  "fallback-vocab/placement-gerund/chiron/pisces/0",
+  "fallback-vocab/dodont-do/mercury/libra",
+  "fallback-vocab/dodont-do/mercury/aquarius",
+  "fallback-vocab/dodont-reward/moon",
+  "fallback-vocab/dodont-moon-dont/taurus",
+  "fallback-vocab/dodont-moon-do/gemini",
+  "fallback-vocab/dodont-moon-do/cancer",
+  "fallback-vocab/dodont-moon-dont/libra",
+  "fallback-vocab/sky-planet-function/chiron",
+  "fallback-vocab/sky-planet-function/jupiter",
+  "fallback-vocab/sky-planet-function/mercury",
+  "fallback-vocab/sky-planet-function/moon",
+  "fallback-vocab/sky-planet-function/north-node",
+  "fallback-vocab/sky-planet-function/south-node",
+  "fallback-vocab/sky-planet-function/sun"
+]);
+function vocabularyBodyForVoice(row, voice) {
+  const body = voice === "you" ? row?.body_you ?? row?.body : row?.body_they ?? row?.body;
+  if (typeof body !== "string" || !body.trim()) return null;
+  if (voice === "they" && row && FRIEND_NATAL_SECOND_PERSON_VOCABULARY_KEYS.has(row.contentKey)) return null;
+  return body;
+}
 var READER_ELIGIBLE = /* @__PURE__ */ new Set(["approved_reuse", "approved", "reviewed"]);
 var OPPOSITE_SIGN = { aries: "libra", taurus: "scorpio", gemini: "sagittarius", cancer: "capricorn", leo: "aquarius", virgo: "pisces", libra: "aries", scorpio: "taurus", sagittarius: "gemini", capricorn: "cancer", aquarius: "leo", pisces: "virgo" };
 var ASPECT_GROUP = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
@@ -34,17 +82,17 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     vocab.set(row.contentKey, candidates);
   }
   const hooks = new Map((rowsFile.hookRows ?? []).map((r) => [r.contentKey, r]));
-  const getVocab = (key, opts2 = {}) => {
+  const getVocab = (key, voice = "you", opts2 = {}) => {
     const row = [...vocab.get(key) ?? []].reverse().find((candidate) => opts2.allowUnreviewed || READER_ELIGIBLE.has(candidate.review_status));
     if (!row) return null;
     if (row.content_role === "fallback_source") throw new RoleViolationError(`Row ${key} is fallback_source and can never fill a reader slot.`);
     if (!opts2.allowUnreviewed && !READER_ELIGIBLE.has(row.review_status)) return null;
-    return row.body;
+    return vocabularyBodyForVoice(row, voice);
   };
-  const getVocabList = (prefix, opts2 = {}) => {
+  const getVocabList = (prefix, voice = "you", opts2 = {}) => {
     const out = [];
     for (let i = 0; i < 8; i++) {
-      const v = getVocab(`${prefix}/${i}`, opts2);
+      const v = getVocab(`${prefix}/${i}`, voice, opts2);
       if (v == null) break;
       out.push(v);
     }
@@ -104,18 +152,18 @@ function createFallbackRenderer(templatesFile, rowsFile) {
       planetRef: needsArticle ? `the ${title(planet)}` : title(planet),
       planetRefCap: needsArticle ? `The ${title(planet)}` : title(planet),
       signTitle: title(sign),
-      planetTopic: getVocab(`fallback-vocab/planet-topic/${planet}`, opts2),
-      planetExcess: getVocab(`fallback-vocab/planet-excess/${planet}`, opts2),
-      planetProductive: getVocab(`fallback-vocab/planet-productive/${planet}`, opts2),
-      planetCore: getVocab(`fallback-vocab/planet-core/${planet}`, opts2),
-      signStyle: getVocab(`fallback-vocab/sign-style/${sign}`, opts2),
-      signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, opts2),
-      planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, opts2),
-      signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, opts2),
+      planetTopic: getVocab(`fallback-vocab/planet-topic/${planet}`, voice, opts2),
+      planetExcess: getVocab(`fallback-vocab/planet-excess/${planet}`, voice, opts2),
+      planetProductive: getVocab(`fallback-vocab/planet-productive/${planet}`, voice, opts2),
+      planetCore: getVocab(`fallback-vocab/planet-core/${planet}`, voice, opts2),
+      signStyle: getVocab(`fallback-vocab/sign-style/${sign}`, voice, opts2),
+      signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, voice, opts2),
+      planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, voice, opts2),
+      signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, voice, opts2),
       planetIntro: getReaderLivedRow(`fallback-hook/planet-lived/${planet}`, voice, opts2)?.body ?? getHook(`fallback-hook/planet-intro/${planet}`, voice, opts2),
       planetBest: getHook(`fallback-hook/planet-best/${planet}`, voice, opts2),
       placementSentences: getHook(`fallback-hook/placement-sentence/${planet}/${sign}`, voice, opts2),
-      placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, opts2).join(", or ") || null
+      placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, voice, opts2).join(", or ") || null
     };
     const mods = [];
     const mod = (key, extra = {}) => {
@@ -140,7 +188,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     if (isNode) {
       const j = getHook(`fallback-hook/node-journey/${planet}`, voice, opts2);
       const oppSign = OPPOSITE_SIGN[sign];
-      const oppDir = getVocab(`fallback-vocab/node-direction/${oppSign}`, opts2);
+      const oppDir = getVocab(`fallback-vocab/node-direction/${oppSign}`, voice, opts2);
       ctx.nodeJourney = j ? j.replace(/\{\{oppositeSignTitle\}\}/g, title(oppSign)).replace(/\{\{oppositeDirection\}\}/g, oppDir ?? "") : null;
     }
     const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, opts2) ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
@@ -209,11 +257,11 @@ function createFallbackRenderer(templatesFile, rowsFile) {
       planetATitle: title(facts.planetA),
       planetBTitle: title(facts.planetB),
       aspectName: aspect,
-      aspectAdj: getVocab(`fallback-vocab/aspect-adj/${aspect}`, opts2),
-      planetACore: getVocab(`fallback-vocab/planet-core/${facts.planetA}`, opts2),
-      planetBCore: getVocab(`fallback-vocab/planet-core/${facts.planetB}`, opts2),
+      aspectAdj: getVocab(`fallback-vocab/aspect-adj/${aspect}`, voice, opts2),
+      planetACore: getVocab(`fallback-vocab/planet-core/${facts.planetA}`, voice, opts2),
+      planetBCore: getVocab(`fallback-vocab/planet-core/${facts.planetB}`, voice, opts2),
       aspectTypeLine: getHook(`fallback-hook/aspect-type/${aspect}`, voice, opts2),
-      aspectMotion: getVocab(`fallback-vocab/aspect-motion/${aspect}`, opts2),
+      aspectMotion: getVocab(`fallback-vocab/aspect-motion/${aspect}`, voice, opts2),
       possessiveLow: facts.voice === "you" ? "your" : `${facts.voice}'s`,
       pairSentences: pair
     };
@@ -226,6 +274,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
   const EMPTY_HOUSE_RULERS = { modern: EMPTY_HOUSE_V14_MODERN_RULER, traditional: SIGN_RULER };
   const PATTERN_NAMES = { t_square: "T-Square", grand_square: "Grand Cross", grand_trine: "Grand Trine", kite: "Kite", yod: "Yod", mystic_rectangle: "Mystic Rectangle" };
   function renderAspectPattern({ type, apexTitle, mode, element, activation = false, voice = "you" }) {
+    const vocabularyVoice = voice === "you" ? "you" : "they";
     const pick = (key) => {
       const r = hooks.get(key);
       return r ? voice === "you" ? r.body_you : r.body_they : null;
@@ -238,7 +287,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
       if (apex) paras.push(apex.replace(/\{\{apexTitle\}\}/g, apexTitle));
     }
     if (!activation) {
-      const qual = mode ? getVocab(`fallback-vocab/pattern-mode/${mode}`, opts) : element ? getVocab(`fallback-vocab/pattern-element/${element}`, opts) : null;
+      const qual = mode ? getVocab(`fallback-vocab/pattern-mode/${mode}`, vocabularyVoice, opts) : element ? getVocab(`fallback-vocab/pattern-element/${element}`, vocabularyVoice, opts) : null;
       if (qual) paras.push(`It runs as ${qual}.`);
     }
     return { headline: PATTERN_NAMES[type] ?? type, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/natal.aspect-pattern" };
@@ -278,8 +327,8 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     const topicMKey = `fallback-vocab/empty-house-ruler-jurisdiction/${rulerHouse}`;
     const topicNKey = `fallback-vocab/empty-house-bridge-topic-short/${house}`;
     const bridgeTemplate = opts2.includeEmptyHouseBridge ? findTemplate(bridgeTemplateKey, opts2) : null;
-    const topicM = bridgeTemplate ? getVocab(topicMKey, opts2) : null;
-    const topicN = house === 1 ? null : bridgeTemplate ? getVocab(topicNKey, opts2) : null;
+    const topicM = bridgeTemplate ? getVocab(topicMKey, v, opts2) : null;
+    const topicN = house === 1 ? null : bridgeTemplate ? getVocab(topicNKey, v, opts2) : null;
     const planet = ruler === "sun" || ruler === "moon" ? `the ${title(ruler)}` : title(ruler);
     const bridge = bridgeTemplate && topicM && (house === 1 || topicN) ? renderTemplate(bridgeTemplate, {
       houseN: ordinal(house),
@@ -2553,7 +2602,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-14a";
+var PACKAGE_VERSION = "v3-2026-08-14b";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
@@ -2613,6 +2662,7 @@ function createPackageManifest(bundle, packageVersion = PACKAGE_VERSION) {
   };
 }
 export {
+  FRIEND_NATAL_SECOND_PERSON_VOCABULARY_KEYS,
   PACKAGE_VERSION,
   RoleViolationError,
   SourceGapError,
@@ -2626,5 +2676,6 @@ export {
   normalizeAspect,
   selectDailyGlanceVariantSet,
   skyPlacementKeyDates,
-  skyPlacementKeyDatesIntro
+  skyPlacementKeyDatesIntro,
+  vocabularyBodyForVoice
 };
