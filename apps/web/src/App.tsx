@@ -16732,6 +16732,7 @@ export const friendsViewModelDependencies = {
   emptyHouseDetailArticle,
   emptyHouseTitle,
   friendTransitSummary,
+  genericPersonReferenceSlots,
   houseLifeAreaKeywords,
   houseLifeAreas,
   lifeAreaFocusScore,
