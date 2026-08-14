@@ -7,7 +7,14 @@ import {
   DEFAULT_FRAME_CAP,
 } from "./sky-calendar-frame-uniqueness.mjs";
 
-const beats = {
+const forecastBeats = {
+  whatMayHappen: "recognition meets a shared rule",
+  whatItTurnsInto: "credit and equal application both matter",
+  howItBehaves: "both positions hold under pressure",
+  whatCanMove: "the agreement can become more specific",
+};
+
+const detailsBeats = {
   whatMayHappen: "recognition meets a shared rule",
   whyItMatters: "credit and equal application both matter",
   whyItSticksOrMoves: "both positions hold under pressure",
@@ -21,8 +28,9 @@ const ownerShapeResult = auditSkyCalendarFrameUniqueness([{
   key: "owner-approved-shape",
   forecast: ownerForecast,
   details: ownerDetails,
-  forecastBeats: beats,
-  detailsBeats: beats,
+  detailsTransitLabel: "Sun in Leo opposite Saturn in Aquarius.",
+  forecastBeats,
+  detailsBeats,
 }]);
 assert.equal(ownerShapeResult.pass, true, JSON.stringify(ownerShapeResult.defects, null, 2));
 
@@ -30,8 +38,8 @@ const repeatedFrameCards = Array.from({ length: DEFAULT_FRAME_CAP + 1 }, (_, ind
   key: `repeat-${index + 1}`,
   forecast: `On Tuesday, August ${18 + index}, someone may want item ${index + 1} recognized while the answer coming back is that rule ${index + 1} applies. This produces consequence ${index + 1}. The pressure remains visible in version ${index + 1}. Movement changes term ${index + 1}.`,
   details: `Example ${index + 1} names both positions. Situation ${index + 1} becomes visible. Explanation ${index + 1} covers both sources. Pressure ${index + 1} shows the mechanism. Movement ${index + 1} identifies the changed term.`,
-  forecastBeats: beats,
-  detailsBeats: beats,
+  forecastBeats,
+  detailsBeats,
 }));
 const repeatedFrameResult = auditSkyCalendarFrameUniqueness(repeatedFrameCards);
 assert.equal(repeatedFrameResult.pass, false);
@@ -42,15 +50,15 @@ const duplicateSentenceResult = auditSkyCalendarFrameUniqueness([
     key: "duplicate-a",
     forecast: "One condition becomes visible. Shared exact sentence.",
     details: "First details construction explains both positions. A distinct ending remains.",
-    forecastBeats: beats,
-    detailsBeats: beats,
+    forecastBeats,
+    detailsBeats,
   },
   {
     key: "duplicate-b",
     forecast: "Another condition becomes visible. Shared exact sentence.",
     details: "Second details construction explains both positions. Another distinct ending remains.",
-    forecastBeats: beats,
-    detailsBeats: beats,
+    forecastBeats,
+    detailsBeats,
   },
 ]);
 assert.equal(duplicateSentenceResult.pass, false);
@@ -60,8 +68,8 @@ const verbatimComponentResult = auditSkyCalendarFrameUniqueness([{
   key: "verbatim-component",
   forecast: "A shared condition becomes visible. Both positions become difficult to ignore.",
   details: "A composed explanation names both positions. The terms remain under review.",
-  forecastBeats: beats,
-  detailsBeats: beats,
+  forecastBeats,
+  detailsBeats,
 }], {
   componentValues: ["Both positions become difficult to ignore."],
 });
