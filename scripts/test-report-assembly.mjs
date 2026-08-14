@@ -14,7 +14,7 @@ import {
   assembleReportGenerationPayload,
   isAstrologyMechanismStatement,
   reportFactors,
-  reportCandidatePromptFromPayload,
+  reportLegacyPromptFromPayload,
   reportPromptFromPayload,
   validateReportDraft
 } from "../api/_lib/report-generation.ts";
@@ -238,7 +238,7 @@ assert.equal(validateAssembledReport(synthesisExemptionUnits, {
 }).filter((entry) => entry.code === "repeated_exact_sentence").length, 0,
 "Candidate assembly must permit one canonical sentence in Overview/Year-in-Review and its introducing unit.");
 assert.equal(validateAssembledReport(synthesisExemptionUnits).filter((entry) => entry.code === "repeated_exact_sentence").length, 2,
-"The active assembly path must remain byte-for-byte governed by the pre-candidate repetition rules.");
+"Optionless assembly validation remains strict; fulfillment must opt into the approved synthesis exemption explicitly.");
 const nonSynthesisRepeat = [{ unitId: "spring", draft: { body: grief } }, {
   unitId: "autumn", draft: { body: grief }
 }];
@@ -383,8 +383,9 @@ assert.equal(payload.coldProseRuling.sourcePath, "tldr-astro-phrasebank/TLDR-REP
 assert.match(payload.noClevernessRuling.text, /New report rule: no cleverness tax/u);
 assert.match(payload.ownerReviewEvidence.text, /Each new opportunity can look manageable by itself\./u);
 assert.match(reportPromptFromPayload(payload), /NO_CLEVERNESS_TAX_OWNER_RULING[\s\S]*OWNER_REVIEW_EVIDENCE[\s\S]*COLD_RENDERED_PROSE_OWNER_RULING/u);
-assert.equal(payload.naturalnessRuling, null, "The active payload must not load or depend on an unapproved naturalness ruling.");
-assert.doesNotMatch(reportPromptFromPayload(payload), /NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING/u);
+assert.equal(payload.naturalnessRuling.sourcePath, "tldr-astro-phrasebank/TLDR-REPORT-NATURALNESS-RULING-OWNER.md");
+assert.match(reportPromptFromPayload(payload), /NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING/u);
+assert.doesNotMatch(reportLegacyPromptFromPayload(payload), /NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING/u);
 
 const candidatePayload = assembleReportGenerationPayload({
   reportId: "fixture-report-naturalness-candidate",
@@ -392,7 +393,6 @@ const candidatePayload = assembleReportGenerationPayload({
   reportHorizon: "12_months",
   unitId: "autumn",
   frozenFacts: frozen,
-  naturalnessCandidate: true,
   priorUnitContext: [{
     unitId: "spring",
     synthesis: false,
@@ -402,17 +402,17 @@ const candidatePayload = assembleReportGenerationPayload({
     sections: [{ heading: "FIXTURE_ONLY", body: "A prior manifestation menu names a class, contract, and application." }]
   }]
 });
-const candidatePrompt = reportCandidatePromptFromPayload(candidatePayload);
-assert.equal(candidatePayload.naturalnessRuling?.sourcePath,
+const candidatePrompt = reportPromptFromPayload(candidatePayload);
+assert.equal(candidatePayload.naturalnessRuling.sourcePath,
   "tldr-astro-phrasebank/TLDR-REPORT-NATURALNESS-RULING-OWNER.md");
 assert.match(candidatePrompt, /PRIOR_UNIT_REPETITION_PREVENTION[\s\S]*The earlier persisted sentence must be visible to the later writer\./u,
-  "A later candidate unit must receive the exact persisted text of earlier units.");
+  "A later active unit must receive the exact persisted text of earlier units.");
 assert.match(candidatePrompt, /Do not repeat their sentences or re-run their manifestation menus/u);
 assert.match(candidatePrompt, /The only synthesis units are overview and review-current-year/u);
 assert.match(candidatePrompt, /The reply you wanted can still create more work than the silence did\./u,
   "The naturalness do-not-flag control must be present in the writer exemplar packet.");
 for (const evidence of ["REJECTED:", "OWNER:", "SHARPER OWNER ALTERNATIVE:", "KEEP EXACTLY", "ACCEPTABLE IN CONTEXT", "OWNER STANDALONE VERSION"]) {
-  assert.ok(candidatePrompt.includes(evidence), `Candidate writer prompt is missing naturalness evidence label ${evidence}.`);
+  assert.ok(candidatePrompt.includes(evidence), `Active writer prompt is missing naturalness evidence label ${evidence}.`);
 }
 
 const winterCandidate = assembleReportGenerationPayload({
@@ -420,10 +420,9 @@ const winterCandidate = assembleReportGenerationPayload({
   reportDomain: "general",
   reportHorizon: "12_months",
   unitId: "winter-next",
-  frozenFacts: frozen,
-  naturalnessCandidate: true
+  frozenFacts: frozen
 });
-assert.deepEqual(winterCandidate.structuralRequirements, { headingPrefix: "WINTER 2027", dateRangeRequired: true });
+assert.deepEqual(winterCandidate.structuralRequirements, { headingPrefix: "WINTER 2027", dateRange: "Dec 21 - Feb 17" });
 const missingWinterStructure = validateReportDraft({
   headline: "The year closes on a different schedule",
   body: "FIXTURE_ONLY body."
@@ -432,7 +431,7 @@ assert.ok(missingWinterStructure.some((entry) => entry.code === "missing_season_
 assert.ok(missingWinterStructure.some((entry) => entry.code === "missing_season_date_range"));
 const completeWinterDraft = {
   headline: "WINTER 2027: The year closes on a different schedule",
-  timing: "Dec 21, 2026 - Feb 17, 2027",
+  timing: "Dec 21 - Feb 17",
   body: "FIXTURE_ONLY body."
 };
 assert.ok(!validateReportDraft(completeWinterDraft, winterCandidate, {
@@ -442,7 +441,7 @@ assert.ok(!validateAssembledReport([{ unitId: "winter-next", draft: completeWint
   enforceSeasonStructure: true,
   allowSynthesisRepetition: true
 }).some((entry) => entry.code === "missing_season_heading" || entry.code === "missing_season_date_range"),
-"WINTER 2027 and its explicit date range must survive candidate assembly.");
+"WINTER 2027 and its explicit date range must survive active assembly.");
 
 const unitCodes = (body) => validateReportDraft({ body }, payload).map((entry) => entry.code);
 for (const [body, code] of [
@@ -505,4 +504,4 @@ for (const term of ["grief when an emotionally significant ending supports it", 
 assert.ok(twelfthHouse.possibleLivedManifestations.some((entry) => entry.includes("wanted or necessary")));
 assert.ok(!JSON.stringify(twelfthHouse).includes("protect your energy"));
 
-console.log(`Report assembly passed: ${issues.length} exact-review findings, report-level budgets, owner-ruling wiring, and activated v2/v3.3/v6 prompts.`);
+console.log(`Report assembly passed: ${issues.length} exact-review findings, report-level budgets, owner-ruling wiring, and activated naturalness/v3.4/v7 prompts.`);

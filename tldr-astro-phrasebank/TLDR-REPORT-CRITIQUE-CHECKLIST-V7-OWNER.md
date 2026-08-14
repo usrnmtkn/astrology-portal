@@ -1,13 +1,17 @@
-# Report critique checklist v7 draft
+# Report critique checklist v7
 
-**Status:** `needs_review`
-**Version:** `report-critique-checklist-v7-draft`
-**Owner approved:** `false`
-**Active in production:** `false`
-**Promotion authorized:** `false`
+**Status:** `owner_approved`
+**Version:** `report-critique-checklist-v7`
+**Approved:** 2026-08-14
+**Owner approved:** `true`
+**Active in production:** `true`
+**Promotion authorized:** `true`
+**Approved source SHA-256:** `e339c3a6a1bfce28032113994767b893e783cf219653fbd7ecabde20d1e0cb86`
 **Baseline:** `report-critique-checklist-v6`
-**Amendment source:** `TLDR-REPORT-NATURALNESS-RULING-OWNER.md`, awaiting owner approval.
-**Governance:** Candidate v7 amendment layered over the active v6 checklist. V6 remains active. This draft cannot be activated or promoted without fresh SHA-pinned owner approval.
+**Amendment source:** `TLDR-REPORT-NATURALNESS-RULING-OWNER.md`, owner-approved 2026-08-14.
+**Governance:** Owner-approved v7 successor layered over the active v6 checklist and its earlier governed layers. V7 is active in production. Any later revision requires a new version and fresh owner approval.
+
+> I explicitly approve the Report Naturalness and Judging-Restraint ruling at SHA-256 d14433fb6bdee571a36460792f6527b98d3ad94072a178dfdb3d876aed8476db, Report critique checklist v7 at SHA-256 e339c3a6a1bfce28032113994767b893e783cf219653fbd7ecabde20d1e0cb86, and Report judge rubric v3.4 at SHA-256 bfaca50bb8c4d156d9181b6134debb7ef21002685b690b6286f1ff43a0e78508. I authorize their activation; the judge threshold remains 0.85. This approval does not authorize generation calls.
 
 The complete v6 checklist remains in force. Add the following naturalness-and-restraint pass.
 

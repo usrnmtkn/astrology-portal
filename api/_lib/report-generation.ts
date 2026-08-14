@@ -113,7 +113,7 @@ export type ReportGenerationPayload = {
   naturalnessRuling: {
     sourcePath: string;
     text: string;
-  } | null;
+  };
   priorUnitContext: ReportPriorUnitContext[];
   structuralRequirements: ReportStructuralRequirements | null;
   sharedInvariants: string[];
@@ -153,7 +153,7 @@ export type ReportPriorUnitContext = {
 
 export type ReportStructuralRequirements = {
   headingPrefix: string;
-  dateRangeRequired: true;
+  dateRange: string;
 };
 
 export type AssembleReportPayloadInput = {
@@ -163,7 +163,6 @@ export type AssembleReportPayloadInput = {
   unitId: string;
   frozenFacts: Record<string, unknown>;
   priorUnitContext?: ReportPriorUnitContext[];
-  naturalnessCandidate?: boolean;
 };
 
 export type ReportDraft = {
@@ -1186,7 +1185,21 @@ function reportStructuralRequirements(
   const endYear = Number(stringValue(window.endsAt).slice(0, 4));
   const year = unitId === "winter-next" ? endYear : startYear;
   if (!Number.isFinite(year) || year < 1900) return null;
-  return { headingPrefix: `${season} ${year}`, dateRangeRequired: true };
+  const monthDay = (value: unknown, dayOffset = 0) => {
+    const parsed = new Date(stringValue(value));
+    if (!Number.isFinite(parsed.getTime())) return "";
+    parsed.setUTCDate(parsed.getUTCDate() + dayOffset);
+    return `${parsed.toLocaleString("en-US", { month: "short", timeZone: "UTC" })} ${parsed.getUTCDate()}`;
+  };
+  const dateRange = ({
+    "winter-current": `${monthDay(window.startsAt)} - Mar 20`,
+    spring: "Mar 20 - Jun 21",
+    summer: "Jun 21 - Sep 22",
+    autumn: "Sep 22 - Dec 21",
+    "winter-next": `Dec 21 - ${monthDay(window.endsAt, -1)}`
+  } as Record<string, string>)[unitId];
+  if (!dateRange || dateRange.startsWith(" -") || dateRange.endsWith("- ")) return null;
+  return { headingPrefix: `${season} ${year}`, dateRange };
 }
 
 export function assembleReportGenerationPayload(
@@ -1232,10 +1245,10 @@ export function assembleReportGenerationPayload(
       sourcePath: REPORT_EARNED_SENTENCE_RULING_PATH,
       text: readRepoText(REPORT_EARNED_SENTENCE_RULING_PATH)
     },
-    naturalnessRuling: input.naturalnessCandidate ? {
+    naturalnessRuling: {
       sourcePath: REPORT_NATURALNESS_RULING_PATH,
       text: readRepoText(REPORT_NATURALNESS_RULING_PATH)
-    } : null,
+    },
     priorUnitContext: structuredClone(input.priorUnitContext ?? []),
     structuralRequirements: reportStructuralRequirements(input.unitId, input.frozenFacts),
     sharedInvariants: [...SHARED_INVARIANTS],
@@ -1284,22 +1297,19 @@ It must never appear in reader-facing report output, headings, metadata, attribu
 Its purpose is to force reasoning before prose, not to create visible report structure.`;
 
 export function reportPromptFromPayload(payload: ReportGenerationPayload) {
-  return reportPromptFromPayloadMode(payload, false);
-}
-
-export function reportCandidatePromptFromPayload(payload: ReportGenerationPayload) {
   return reportPromptFromPayloadMode(payload, true);
 }
 
-function reportPromptFromPayloadMode(payload: ReportGenerationPayload, naturalnessCandidate: boolean) {
+export function reportLegacyPromptFromPayload(payload: ReportGenerationPayload) {
+  return reportPromptFromPayloadMode(payload, false);
+}
+
+function reportPromptFromPayloadMode(payload: ReportGenerationPayload, naturalnessActive: boolean) {
   const {
     canonicalOwnerPrompt, livedProseStandard, noClevernessRuling,
     ownerReviewEvidence, coldProseRuling, earnedSentenceRuling,
     naturalnessRuling, priorUnitContext, structuralRequirements, ...taskPayload
   } = payload;
-  if (naturalnessCandidate && !naturalnessRuling) {
-    throw new Error("REPORT_NATURALNESS_RULING_MISSING: candidate prompt requires the governed naturalness ruling.");
-  }
   const targetIsSynthesis = isReportSynthesisUnit(payload.unit.unitId);
   return [
     canonicalOwnerPrompt.text,
@@ -1308,10 +1318,10 @@ function reportPromptFromPayloadMode(payload: ReportGenerationPayload, naturalne
     `OWNER_REVIEW_EVIDENCE\n${ownerReviewEvidence.text}`,
     `COLD_RENDERED_PROSE_OWNER_RULING\n${coldProseRuling.text}`,
     `EARNED_SENTENCE_OWNER_RULING\n${earnedSentenceRuling.text}`,
-    naturalnessCandidate ? `NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING\n${naturalnessRuling?.text}` : "",
-    naturalnessCandidate ? `NATURALNESS_BEFORE_AFTER_EXEMPLAR_PACKET\nThe REJECTED, OWNER, SHARPER OWNER ALTERNATIVE, KEEP EXACTLY, ACCEPTABLE IN CONTEXT, and OWNER STANDALONE VERSION passages in the ruling above are labeled writer evidence. Use the owner replacements as positive examples and the rejected versions as negative examples. Never copy a sample when the unit facts do not support it.` : "",
-    naturalnessCandidate ? `PRIOR_UNIT_REPETITION_PREVENTION\nThe units below are already persisted earlier in this report. Do not repeat their sentences or re-run their manifestation menus. Refer back instead of restating. This is a prevention instruction, not permission to become vague.\n\nSYNTHESIS EXEMPTION\nThe only synthesis units are overview and review-current-year (the Year-in-Review unit). A canonical sentence may appear once in one of those synthesis units and once in the non-synthesis unit that introduces it. Repetition between two non-synthesis units remains forbidden. ${targetIsSynthesis ? "This target is a synthesis unit: it may reference the report's themes, but it must not inventory or re-run every manifestation menu." : "This target is not a synthesis unit: prior synthesis prose does not prevent one canonical sentence from appearing in the unit that actually introduces it; all prior non-synthesis prose does."}\n\nEARLIER_PERSISTED_UNITS\n${JSON.stringify(priorUnitContext, null, 2)}` : "",
-    naturalnessCandidate && structuralRequirements ? `STRUCTURAL_DISPLAY_CONTRACT\nThe headline must begin with '${structuralRequirements.headingPrefix}'. The timing field must contain an explicit reader-facing month/day date range. Preserve both fields exactly through revision and assembly.` : "",
+    naturalnessActive ? `NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING\n${naturalnessRuling.text}` : "",
+    naturalnessActive ? `NATURALNESS_BEFORE_AFTER_EXEMPLAR_PACKET\nThe REJECTED, OWNER, SHARPER OWNER ALTERNATIVE, KEEP EXACTLY, ACCEPTABLE IN CONTEXT, and OWNER STANDALONE VERSION passages in the ruling above are labeled writer evidence. Use the owner replacements as positive examples and the rejected versions as negative examples. Never copy a sample when the unit facts do not support it.` : "",
+    naturalnessActive ? `PRIOR_UNIT_REPETITION_PREVENTION\nThe units below are already persisted earlier in this report. Do not repeat their sentences or re-run their manifestation menus. Refer back instead of restating. This is a prevention instruction, not permission to become vague.\n\nSYNTHESIS EXEMPTION\nThe only synthesis units are overview and review-current-year (the Year-in-Review unit). A canonical sentence may appear once in one of those synthesis units and once in the non-synthesis unit that introduces it. Repetition between two non-synthesis units remains forbidden. ${targetIsSynthesis ? "This target is a synthesis unit: it may reference the report's themes, but it must not inventory or re-run every manifestation menu." : "This target is not a synthesis unit: prior synthesis prose does not prevent one canonical sentence from appearing in the unit that actually introduces it; all prior non-synthesis prose does."}\n\nEARLIER_PERSISTED_UNITS\n${JSON.stringify(priorUnitContext, null, 2)}` : "",
+    naturalnessActive && structuralRequirements ? `STRUCTURAL_DISPLAY_CONTRACT\nThe headline must begin with '${structuralRequirements.headingPrefix}'. The timing field must be exactly '${structuralRequirements.dateRange}'. Preserve both fields exactly through revision and assembly.` : "",
     reportKeyDateSourceUnitIds(payload.reportHorizon).includes(payload.unit.unitId)
       ? `STRUCTURED_KEY_DATE_CONTRACT\nThe supplied events are fact-valid candidates, not a mandatory checklist. For each supplied event that this unit substantively interprets in its reader prose, return exactly one keyDates entry with the exact supplied eventId, a unique date-specific title, and one date-specific reader sentence. Omit events the unit does not interpret. Never create fact-only placeholder copy to make the calendar complete. Never reuse the unit headline or a section heading as the title. Never lift a body sentence as the key-date sentence. Do not repeat a title or sentence. The runtime owns the date label and technical attribution. Eligible candidate events for this unit:\n${JSON.stringify(payload.keyDateRequirements, null, 2)}`
       : "STRUCTURED_KEY_DATE_CONTRACT\nReturn keyDates as an empty array for this unit.",
@@ -1698,10 +1708,10 @@ function validateSeasonStructure(
       severity: "error"
     });
   }
-  if (requirement.dateRangeRequired && !DISPLAY_DATE_RANGE.test(draft.timing?.trim() ?? "")) {
+  if (!DISPLAY_DATE_RANGE.test(draft.timing?.trim() ?? "") || draft.timing?.trim() !== requirement.dateRange) {
     issues.push({
       code: "missing_season_date_range",
-      message: "Seasonal report unit timing must contain an explicit month/day date range.",
+      message: `Seasonal report unit timing must be exactly '${requirement.dateRange}'.`,
       severity: "error"
     });
   }

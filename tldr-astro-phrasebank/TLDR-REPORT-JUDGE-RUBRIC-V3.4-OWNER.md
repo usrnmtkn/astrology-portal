@@ -1,14 +1,18 @@
-# Report fulfillment judge rubric v3.4 draft
+# Report fulfillment judge rubric v3.4
 
-**Status:** `needs_review`
-**Version:** `report-judge-rubric-v3.4-draft`
-**Owner approved:** `false`
-**Active in production:** `false`
-**Promotion authorized:** `false`
+**Status:** `owner_approved`
+**Version:** `report-judge-rubric-v3.4`
+**Approved:** 2026-08-14
+**Owner approved:** `true`
+**Active in production:** `true`
+**Promotion authorized:** `true`
+**Approved source SHA-256:** `bfaca50bb8c4d156d9181b6134debb7ef21002685b690b6286f1ff43a0e78508`
 **Baseline:** `report-judge-rubric-v3.3`
-**Proposed threshold:** `0.85` (unchanged)
-**Amendment source:** `TLDR-REPORT-NATURALNESS-RULING-OWNER.md`, awaiting owner approval.
-**Governance:** Candidate v3.4 amendment layered over the active v3.3 judge rubric. V3.3 and threshold 0.85 remain active. This draft cannot be activated or promoted without fresh SHA-pinned owner approval.
+**Approved threshold:** `0.85` (unchanged)
+**Amendment source:** `TLDR-REPORT-NATURALNESS-RULING-OWNER.md`, owner-approved 2026-08-14.
+**Governance:** Owner-approved v3.4 successor layered over the active v3.3 judge rubric and its earlier governed layers. V3.4 and threshold 0.85 are active in production. Any later revision requires a new version and fresh owner approval.
+
+> I explicitly approve the Report Naturalness and Judging-Restraint ruling at SHA-256 d14433fb6bdee571a36460792f6527b98d3ad94072a178dfdb3d876aed8476db, Report critique checklist v7 at SHA-256 e339c3a6a1bfce28032113994767b893e783cf219653fbd7ecabde20d1e0cb86, and Report judge rubric v3.4 at SHA-256 bfaca50bb8c4d156d9181b6134debb7ef21002685b690b6286f1ff43a0e78508. I authorize their activation; the judge threshold remains 0.85. This approval does not authorize generation calls.
 
 The complete v3.3 rubric, comparison-based owner-voice rule, two-lens order, category scale, applicable-category formula, hard gates, attribution rule, and runtime verdict ownership remain unchanged. Add the naturalness-and-restraint rules below.
 
