@@ -72,7 +72,7 @@ assert.throws(() => normalizeReportColdReadCritique(markdownHeavyKeyDates, {
     id: "duplicate-sentence-id",
     category: "unnatural_phrasing",
     sentence_ids: ["S1", "S1"],
-    quote: "FIXTURE_ONLY_INFORMATIONAL_QUOTE",
+    quote: "FIXTURE_ONLY_TLDR.",
     evidence: "FIXTURE_ONLY",
     evidence_ids: [],
     instruction: "FIXTURE_ONLY"
