@@ -4,6 +4,14 @@ import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { SpreadsheetFile, Workbook } from "@oai/artifact-tool";
+import {
+  aspectComponents,
+  elementComponents,
+  modalityComponents,
+  planets,
+  signs,
+  wordingForSignUnit,
+} from "./sky-calendar-meaning-component-wording.mjs";
 
 const repoRoot = process.cwd();
 const reviewDir = path.join(
@@ -20,15 +28,6 @@ const fallbackPath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fa
 const v9Path = "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-governance-labeled/knowledge-matrix-v9-owner-approved-rows.json";
 const v13Path = "apps/web/public/content/knowledge-matrix-v13/v13-direct-language-owner-approved/knowledge-matrix-v13-owner-approved-locked.json";
 
-const planets = [
-  "sun", "moon", "mercury", "venus", "mars", "jupiter",
-  "saturn", "uranus", "neptune", "pluto", "chiron", "lilith",
-];
-const signs = [
-  "aries", "taurus", "gemini", "cancer", "leo", "virgo",
-  "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces",
-];
-
 const planetFunctions = {
   sun: "identity, visibility, leadership, and recognition",
   moon: "needs, mood, protection, and belonging",
@@ -42,21 +41,6 @@ const planetFunctions = {
   pluto: "power, control, exposure, and irreversible change",
   chiron: "pain, sensitivity, coping, and what cannot be ignored",
   lilith: "refusal, autonomy, exclusion, and what will not be made acceptable",
-};
-
-const planetManifestations = {
-  sun: ["who is visible", "who receives credit", "which contribution represents the group"],
-  moon: ["what people need", "who is protected or cared for", "what makes a situation feel secure"],
-  mercury: ["which information counts", "how a decision is explained", "what the terms actually say"],
-  venus: ["what feels fair or worthwhile", "what people agree to", "what remains worth preserving"],
-  mars: ["who acts first", "where pressure becomes conflict", "what gets pushed through"],
-  jupiter: ["what is allowed to grow", "which promise seems possible", "where confidence becomes excess"],
-  saturn: ["which limit holds", "who carries responsibility", "what standard must be met"],
-  uranus: ["which rule can change", "where independence is restricted", "what old arrangement stops working"],
-  neptune: ["what people hope is true", "where the facts remain unclear", "which boundary is difficult to hold"],
-  pluto: ["who has leverage", "what can no longer stay hidden", "which change cannot be reversed"],
-  chiron: ["where an old pain becomes visible", "which defense is being used", "what remains sensitive under pressure"],
-  lilith: ["what is being refused", "where exclusion becomes visible", "which demand will not be made acceptable"],
 };
 
 const signExpressions = {
@@ -73,108 +57,6 @@ const signExpressions = {
   aquarius: "group standards, systems, precedent, and independence",
   pisces: "feeling, imagination, uncertainty, and porous boundaries",
 };
-
-const signManifestations = {
-  aries: ["pressure for an immediate start", "a direct claim before consensus", "delay treated as somebody else taking control"],
-  taurus: ["a decision measured against cost or durability", "resistance to losing material security", "preference for what can be maintained"],
-  gemini: ["more information creating more possible answers", "terms changing as new facts arrive", "several explanations competing at once"],
-  cancer: ["care or belonging becoming part of the decision", "private consequences affecting a public choice", "protection taking priority over speed"],
-  leo: ["wanting effort acknowledged", "wanting credit attached to the person who did the work", "wanting individual contribution distinguished from the group"],
-  virgo: ["a larger promise tested against the details", "a routine or method needing correction", "precision becoming the standard for progress"],
-  libra: ["fairness depending on who keeps adjusting", "an agreement needing clearer shared terms", "balance measured across everyone affected"],
-  scorpio: ["leverage becoming visible", "trust depending on what remains private", "a decision carrying consequences that are hard to reverse"],
-  sagittarius: ["a larger promise outrunning the supporting facts", "a decision framed through belief or principle", "distance changing what seems possible"],
-  capricorn: ["authority deciding what is workable", "a duty continuing after the announcement", "long-term consequence outweighing immediate relief"],
-  aquarius: ["policy applied across the group", "precedent", "a standard meant to apply equally"],
-  pisces: ["a feeling remaining real without becoming a final answer", "uncertainty affecting what can be promised", "boundaries becoming difficult to define"],
-};
-
-const detailsLanguage = {
-  sun: "identity, visibility, leadership, and recognition",
-  moon: "needs, protection, belonging, and emotional response",
-  mercury: "information, language, decisions, and terms",
-  venus: "value, fairness, agreement, and connection",
-  mars: "action, pressure, conflict, and pursuit",
-  jupiter: "growth, belief, opportunity, and excess",
-  saturn: "limits, responsibility, standards, and consequence",
-  uranus: "disruption, independence, revision, and sudden change",
-  neptune: "imagination, uncertainty, ideals, and boundaries",
-  pluto: "power, control, exposure, and irreversible change",
-  chiron: "pain, sensitivity, coping, and old defenses",
-  lilith: "refusal, autonomy, exclusion, and unacceptable demands",
-};
-
-const aspectComponents = [
-  {
-    key: "sky-aspect-mechanism/conjunction",
-    reader_effect: "both positions become active at the same time and are difficult to separate",
-    conflict_behavior: "one response immediately activates the other position",
-    movement_bias: "movement in either position changes the shared situation at once",
-  },
-  {
-    key: "sky-aspect-mechanism/opposition",
-    reader_effect: "both positions become difficult to ignore",
-    conflict_behavior: "the disagreement is more likely to become explicit",
-    movement_bias: "movement usually requires dealing with both positions rather than eliminating one",
-  },
-  {
-    key: "sky-aspect-mechanism/square",
-    reader_effect: "pressure in one position makes the other harder to handle",
-    conflict_behavior: "each response adds friction until an adjustment becomes necessary",
-    movement_bias: "movement usually requires changing the arrangement rather than choosing one position unchanged",
-  },
-  {
-    key: "sky-aspect-mechanism/trine",
-    reader_effect: "the two positions can support the same movement with less resistance",
-    conflict_behavior: "ease can keep a weak assumption or loose term from being challenged",
-    movement_bias: "movement is available when the shared opening is made specific enough to use",
-  },
-  {
-    key: "sky-aspect-mechanism/sextile",
-    reader_effect: "the two positions create an available opening",
-    conflict_behavior: "the opening can remain unused unless somebody takes a concrete step",
-    movement_bias: "movement depends on acting on the available connection",
-  },
-];
-
-const modalityPairs = [
-  ["cardinal", "cardinal", "both positions push to set direction, so the disagreement becomes active quickly", "change is more likely through a shared first step or a clear decision about who leads"],
-  ["cardinal", "fixed", "one position pushes for action while the other holds its ground", "change is more likely through an action that preserves the fixed position's core limit"],
-  ["cardinal", "mutable", "one position starts the change while the other keeps revising the terms", "change is more likely when the first move leaves room for adjustment"],
-  ["fixed", "cardinal", "one position holds its ground while the other pushes for action", "change is more likely when the proposed action works within the fixed position's core limit"],
-  ["fixed", "fixed", "neither side gives ground easily under pressure", "change is more likely in the terms or structure than through either side backing down"],
-  ["fixed", "mutable", "one position holds a line while the other keeps changing its response", "change is more likely when revision happens around a clearly named nonnegotiable point"],
-  ["mutable", "cardinal", "one position keeps revising while the other pushes for a decision", "change is more likely when the decision includes a defined review point"],
-  ["mutable", "fixed", "one position keeps adapting while the other refuses to move", "change is more likely when the flexible side stops revising around an unnamed fixed demand"],
-  ["mutable", "mutable", "both positions keep rewriting the terms under pressure", "change is more likely when one workable version is chosen long enough to test"],
-].map(([first, second, conflict_behavior, movement_bias]) => ({
-  key: `sky-how/modality/${first}/${second}`,
-  conflict_behavior,
-  movement_bias,
-}));
-
-const elementPairs = [
-  ["fire", "fire", "urgency and visibility rise on both sides", "movement favors a clear action after the direction is agreed"],
-  ["fire", "earth", "pressure for action meets a test of cost, capacity, or durability", "movement comes when urgency is tied to a workable plan"],
-  ["fire", "air", "action and explanation accelerate each other", "movement comes when the idea has a clear direction and somebody acts on it"],
-  ["fire", "water", "visible urgency meets an emotional or protective consequence", "movement comes when the action accounts for what people are protecting"],
-  ["earth", "fire", "a test of cost or durability meets pressure for immediate action", "movement comes when the proposed action can be maintained"],
-  ["earth", "earth", "both positions test the situation against resources, capacity, and what will last", "movement comes through a practical term that both sides can maintain"],
-  ["earth", "air", "practical limits meet competing explanations or changing information", "movement comes when the language names a workable term"],
-  ["earth", "water", "material limits meet care, trust, or belonging", "movement comes through an arrangement that protects both capacity and the human stake"],
-  ["air", "fire", "competing explanations meet pressure for immediate action", "movement comes when clearer language produces a defined next step"],
-  ["air", "earth", "changing information meets a test of cost, capacity, or practical use", "movement comes when the explanation can survive contact with the facts"],
-  ["air", "air", "both positions keep the pressure in language, comparison, and competing explanations", "movement comes through clearer terms and a shared definition"],
-  ["air", "water", "explanation and comparison meet an emotional or protective consequence", "movement comes when the language names the feeling or stake it affects"],
-  ["water", "fire", "an emotional or protective consequence meets visible urgency", "movement comes when the action acknowledges what people are protecting"],
-  ["water", "earth", "care, trust, or belonging meets a material limit", "movement comes through a practical arrangement that does not erase the emotional stake"],
-  ["water", "air", "an emotional or protective stake meets competing explanations", "movement comes when the language becomes specific enough to hold the feeling involved"],
-  ["water", "water", "both positions intensify care, trust, belonging, and emotional consequence", "movement comes when the shared feeling is named without treating it as the only fact"],
-].map(([first, second, conflict_behavior, movement_bias]) => ({
-  key: `sky-how/element/${first}/${second}`,
-  conflict_behavior,
-  movement_bias,
-}));
 
 function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");
@@ -253,14 +135,13 @@ const signUnits = planets.flatMap((planet) => signs.map((sign) => {
     ...(ll ? [evidenceEntry(`${ll.workbookProvenance.path}#${ll.workbookProvenance.sheet}!${ll.workbookRow}`, ll)] : []),
   ];
   if (evidence.length === 0) throw new Error(`No approved evidence for ${unit}`);
+  const wording = wordingForSignUnit(planet, sign);
 
   const record = {
     key: `sky-sign/${planet}/${sign}`,
     planet_function: planetFunctions[planet],
     sign_expression: signExpressions[sign],
-    combined_position: `${planetFunctions[planet]}; expressed through ${signExpressions[sign]}`,
-    reader_manifestations: [...planetManifestations[planet], ...signManifestations[sign]],
-    details_language: `${detailsLanguage[planet]}; expressed through ${signExpressions[sign]}`,
+    ...wording,
     source_ids: evidence.map((item) => item.source_id),
     source_hashes: evidence.map((item) => item.source_hash),
     owner_review_status: "PENDING OWNER",
@@ -269,24 +150,10 @@ const signUnits = planets.flatMap((planet) => signs.map((sign) => {
   if (record.key === "sky-sign/sun/leo") {
     record.planet_function = "individual contribution and recognition become more important";
     record.sign_expression = "visibility, pride, and distinguishing individual contribution";
-    record.combined_position = "individual contribution and recognition carry more weight when visibility and credit are at stake";
-    record.reader_manifestations = [
-      "wanting effort acknowledged",
-      "wanting credit attached to the person who did the work",
-      "wanting individual contribution distinguished from the group",
-    ];
-    record.details_language = "individual contribution and recognition";
   }
   if (record.key === "sky-sign/saturn/aquarius") {
     record.planet_function = "limits, responsibility, and standards carry more weight";
     record.sign_expression = "shared rules, group standards, precedent, and equal application";
-    record.combined_position = "shared rules and group standards carry more weight";
-    record.reader_manifestations = [
-      "policy applied across the group",
-      "precedent",
-      "a standard meant to apply equally",
-    ];
-    record.details_language = "rules, standards, and systems meant to apply across the group";
   }
   return record;
 }));
@@ -308,7 +175,7 @@ const aspects = aspectComponents.map((record) => {
   };
 });
 
-const modalities = modalityPairs.map((record) => {
+const modalities = modalityComponents.map((record) => {
   const [, , first, second] = record.key.split("/");
   const evidence = [
     evidenceForFallbackKey(`fallback-vocab/pattern-mode/${first}`),
@@ -322,7 +189,7 @@ const modalities = modalityPairs.map((record) => {
   };
 });
 
-const elements = elementPairs.map((record) => {
+const elements = elementComponents.map((record) => {
   const [, , first, second] = record.key.split("/");
   const evidence = evidenceForFallbackKey(`fallback-hook/element-pattern/${first}/${second}`);
   return {
@@ -332,6 +199,98 @@ const elements = elementPairs.map((record) => {
     owner_review_status: "PENDING OWNER",
   };
 });
+
+const OPENING_CAP = 4;
+const JOIN_PHRASE_CAP = 4;
+const MANIFESTATION_REPEAT_CAP = 2;
+const DETAILS_LANGUAGE_REPEAT_CAP = 2;
+const EVIDENCE_LAYER_SHA256 = "0ceb85f5897fb42238dfdd69e7b02271f87befe202f009da8659add9b9337c23";
+
+function countValues(values) {
+  const counts = new Map();
+  for (const value of values) counts.set(value, (counts.get(value) ?? 0) + 1);
+  return [...counts.entries()].sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]));
+}
+
+function openingConstruction(value) {
+  return String(value).toLowerCase().replace(/[^a-z0-9 ]/gu, " ").trim().split(/\s+/u).slice(0, 2).join(" ");
+}
+
+function connectiveNgrams(value) {
+  const connectorWords = new Set([
+    "after", "against", "around", "as", "before", "by", "inside", "into",
+    "through", "until", "when", "where", "while", "with",
+  ]);
+  const words = String(value).toLowerCase().replace(/[^a-z0-9 ]/gu, " ").trim().split(/\s+/u).filter(Boolean);
+  const phrases = [];
+  for (let width = 2; width <= 4; width += 1) {
+    for (let index = 0; index <= words.length - width; index += 1) {
+      const tokens = words.slice(index, index + width);
+      if (tokens.some((token) => connectorWords.has(token))) phrases.push(tokens.join(" "));
+    }
+  }
+  return phrases;
+}
+
+function countDistribution(entries) {
+  const distribution = new Map();
+  for (const [, count] of entries) distribution.set(count, (distribution.get(count) ?? 0) + 1);
+  return [...distribution.entries()]
+    .sort((left, right) => left[0] - right[0])
+    .map(([occurrences, distinctValues]) => ({ occurrences, distinctValues }));
+}
+
+const openingCounts = countValues(signUnits.map((row) => openingConstruction(row.combined_position)));
+const manifestationCounts = countValues(signUnits.flatMap((row) => row.reader_manifestations));
+const detailsLanguageCounts = countValues(signUnits.map((row) => row.details_language));
+const connectiveCounts = countValues(signUnits.flatMap((row) => connectiveNgrams(row.combined_position)));
+const detailsCopied = signUnits.filter((row) => row.details_language === row.combined_position).map((row) => row.key);
+const oldJoinRows = signUnits
+  .filter((row) => /;\s*expressed through|\bexpressed through\b/iu.test(row.combined_position))
+  .map((row) => row.key);
+
+const wordingQuality = {
+  caps: {
+    openingConstruction: OPENING_CAP,
+    connectiveNgram: JOIN_PHRASE_CAP,
+    repeatedManifestation: MANIFESTATION_REPEAT_CAP,
+    repeatedDetailsLanguage: DETAILS_LANGUAGE_REPEAT_CAP,
+  },
+  openingConstructionDistribution: countDistribution(openingCounts),
+  openingConstructions: openingCounts,
+  manifestationRepeatDistribution: countDistribution(manifestationCounts),
+  repeatedManifestations: manifestationCounts.filter(([, count]) => count > 1),
+  connectiveNgramDistribution: countDistribution(connectiveCounts),
+  repeatedConnectiveNgrams: connectiveCounts.filter(([, count]) => count > 1),
+  maximumOpeningConstructionUse: openingCounts[0]?.[1] ?? 0,
+  maximumManifestationUse: manifestationCounts[0]?.[1] ?? 0,
+  maximumDetailsLanguageUse: detailsLanguageCounts[0]?.[1] ?? 0,
+  maximumConnectiveNgramUse: connectiveCounts[0]?.[1] ?? 0,
+  detailsCopiedFromCombinedPosition: detailsCopied,
+  mechanicalJoinRows: oldJoinRows,
+};
+
+if (wordingQuality.maximumOpeningConstructionUse > OPENING_CAP) {
+  throw new Error(`Opening construction cap exceeded: ${JSON.stringify(openingCounts.slice(0, 8))}`);
+}
+if (wordingQuality.maximumManifestationUse > MANIFESTATION_REPEAT_CAP) {
+  throw new Error(`Reader manifestation cap exceeded: ${JSON.stringify(manifestationCounts.slice(0, 8))}`);
+}
+if (wordingQuality.maximumDetailsLanguageUse > DETAILS_LANGUAGE_REPEAT_CAP) {
+  throw new Error(`Details language cap exceeded: ${JSON.stringify(detailsLanguageCounts.slice(0, 8))}`);
+}
+if (wordingQuality.maximumConnectiveNgramUse > JOIN_PHRASE_CAP) {
+  throw new Error(`Connective n-gram cap exceeded: ${JSON.stringify(connectiveCounts.slice(0, 8))}`);
+}
+if (detailsCopied.length > 0) throw new Error(`details_language duplicates combined_position: ${detailsCopied.join(", ")}`);
+if (oldJoinRows.length > 0) throw new Error(`Mechanical join phrase remains: ${oldJoinRows.join(", ")}`);
+
+const evidenceLayer = [...signUnits, ...aspects, ...modalities, ...elements]
+  .map((row) => [row.key, row.source_ids, row.source_hashes]);
+const evidenceLayerSha256 = sha256(JSON.stringify(evidenceLayer));
+if (evidenceLayerSha256 !== EVIDENCE_LAYER_SHA256) {
+  throw new Error(`Evidence layer changed: expected ${EVIDENCE_LAYER_SHA256}, got ${evidenceLayerSha256}`);
+}
 
 const registry = {
   schema: "tldrastro.sky-calendar-meaning-components.v1",
@@ -351,6 +310,8 @@ const registry = {
     elementUnits: elements.length,
     total: signUnits.length + aspects.length + modalities.length + elements.length,
   },
+  evidenceLayerSha256,
+  wordingQuality,
   signUnits,
   aspectMechanisms: aspects,
   modalityUnits: modalities,
@@ -376,6 +337,7 @@ const aspectSheet = workbook.worksheets.add("Aspect Mechanisms");
 const modalitySheet = workbook.worksheets.add("Modality Units");
 const elementSheet = workbook.worksheets.add("Element Units");
 const gateSheet = workbook.worksheets.add("Frame Gate");
+const wordingQaSheet = workbook.worksheets.add("Wording QA");
 
 const navy = "#23324A";
 const teal = "#4F7C78";
@@ -436,7 +398,7 @@ function styleTable(sheet, headerRange, dataRange, widths) {
   });
 }
 
-for (const sheet of [overview, signSheet, aspectSheet, modalitySheet, elementSheet, gateSheet]) styleSheet(sheet);
+for (const sheet of [overview, signSheet, aspectSheet, modalitySheet, elementSheet, gateSheet, wordingQaSheet]) styleSheet(sheet);
 
 titleBand(
   overview,
@@ -550,10 +512,11 @@ function writeHowSheet(sheet, title, subtitle, records, tableName) {
     sheet,
     title,
     subtitle,
-    ["Key", "Conflict behavior", "Movement bias", "Source IDs", "Source hashes", "Owner review status", "Owner notes"],
+    ["Key", "Reader effect", "Conflict behavior", "Movement bias", "Source IDs", "Source hashes", "Owner review status", "Owner notes"],
     records,
     (row) => [
       row.key,
+      row.reader_effect,
       row.conflict_behavior,
       row.movement_bias,
       row.source_ids.join("\n"),
@@ -561,13 +524,13 @@ function writeHowSheet(sheet, title, subtitle, records, tableName) {
       row.owner_review_status,
       "",
     ],
-    [["A", 38], ["B", 46], ["C", 46], ["D", 58], ["E", 42], ["F", 20], ["G", 28]],
+    [["A", 38], ["B", 42], ["C", 46], ["D", 46], ["E", 58], ["F", 42], ["G", 20], ["H", 28]],
     tableName,
   );
 }
 
-writeHowSheet(modalitySheet, "Modality units (9)", "Ordered modality pairs. Conflict behavior and movement bias only.", modalities, "ModalityUnitsTable");
-writeHowSheet(elementSheet, "Element units (16)", "Ordered element pairs. Relationship-source wording is evidence only and has been reduced to collective meaning components.", elements, "ElementUnitsTable");
+writeHowSheet(modalitySheet, "Modality units (9)", "Ordered modality pairs. Each row composes reader effect, conflict behavior, and movement bias.", modalities, "ModalityUnitsTable");
+writeHowSheet(elementSheet, "Element units (16)", "Ordered element pairs. Each row is a collective meaning component, not an assembled label definition.", elements, "ElementUnitsTable");
 
 titleBand(
   gateSheet,
@@ -591,6 +554,46 @@ gateSheet.getRange("A5:F11").format = { wrapText: true, verticalAlignment: "top"
   gateSheet.getRange(`${column}:${column}`).format.columnWidth = width;
 });
 
+titleBand(
+  wordingQaSheet,
+  "A1:E1",
+  "Wording-layer QA",
+  "The evidence layer is hash-locked. These checks show whether fixed joins, repeated bullets, or opener monoculture have returned.",
+);
+wordingQaSheet.getRange("A4:C11").values = [
+  ["Measure", "Result", "Cap"],
+  ["Evidence-layer SHA-256", evidenceLayerSha256, "locked"],
+  ["Mechanical join rows", oldJoinRows.length, 0],
+  ["Details copied from combined position", detailsCopied.length, 0],
+  ["Maximum opening construction use", wordingQuality.maximumOpeningConstructionUse, OPENING_CAP],
+  ["Maximum exact manifestation use", wordingQuality.maximumManifestationUse, MANIFESTATION_REPEAT_CAP],
+  ["Maximum details-language use", wordingQuality.maximumDetailsLanguageUse, DETAILS_LANGUAGE_REPEAT_CAP],
+  ["Maximum connective n-gram use", wordingQuality.maximumConnectiveNgramUse, JOIN_PHRASE_CAP],
+];
+wordingQaSheet.getRange("A4:C4").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange("A5:C11").format = { fill: light, wrapText: true, borders: { insideHorizontal: { style: "thin", color: line } } };
+
+const topOpeningRows = wordingQuality.openingConstructions.slice(0, 20).map(([construction, count]) => [construction, count]);
+wordingQaSheet.getRange("A13:B13").values = [["Opening construction", "Uses"]];
+wordingQaSheet.getRange(`A14:B${13 + topOpeningRows.length}`).values = topOpeningRows;
+wordingQaSheet.getRange("A13:B13").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`A14:B${13 + topOpeningRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
+
+wordingQaSheet.getRange("D4:E4").values = [["Manifestation occurrence count", "Distinct bullets"]];
+wordingQaSheet.getRange(`D5:E${4 + wordingQuality.manifestationRepeatDistribution.length}`).values = wordingQuality.manifestationRepeatDistribution.map((row) => [row.occurrences, row.distinctValues]);
+wordingQaSheet.getRange("D4:E4").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`D5:E${4 + wordingQuality.manifestationRepeatDistribution.length}`).format = { fill: light };
+
+wordingQaSheet.getRange("D13:E13").values = [["Repeated connective n-gram", "Uses"]];
+const topConnectiveRows = wordingQuality.repeatedConnectiveNgrams.slice(0, 20).map(([construction, count]) => [construction, count]);
+wordingQaSheet.getRange(`D14:E${13 + topConnectiveRows.length}`).values = topConnectiveRows;
+wordingQaSheet.getRange("D13:E13").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`D14:E${13 + topConnectiveRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
+[["A", 38], ["B", 48], ["C", 12], ["D", 44], ["E", 16]].forEach(([column, width]) => {
+  wordingQaSheet.getRange(`${column}:${column}`).format.columnWidth = width;
+});
+wordingQaSheet.freezePanes.freezeRows(3);
+
 await workbook.inspect({
   kind: "table",
   range: "Overview!A1:F21",
@@ -610,9 +613,10 @@ for (const [sheetName, range] of [
   ["Overview", "A1:F21"],
   ["Sign Units", "A1:J12"],
   ["Aspect Mechanisms", "A1:H8"],
-  ["Modality Units", "A1:G12"],
-  ["Element Units", "A1:G12"],
+  ["Modality Units", "A1:H12"],
+  ["Element Units", "A1:H12"],
   ["Frame Gate", "A1:F11"],
+  ["Wording QA", "A1:E33"],
 ]) {
   const preview = await workbook.render({ sheetName, range, scale: 1, format: "png" });
   await fs.writeFile(
