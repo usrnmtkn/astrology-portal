@@ -1,4 +1,0 @@
-interface:
-  display_name: "Project Author Writer"
-  short_description: "Write TLDR Astro copy from governed owner evidence"
-  default_prompt: "Use $owner-author-writer to revise this TLDR Astro draft using ranked owner evidence and the authorship gate."
