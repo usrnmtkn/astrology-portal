@@ -1,4 +1,4 @@
-export const EXACT_OWNER_APPROVAL_LEVEL = "exact_owner_approved";
+import { isFriendsAcceptedApprovalLevel } from "../../content/fallbackApproval";
 
 export type TransitDetailSection = {
   sourceKeys?: string[];
@@ -6,34 +6,36 @@ export type TransitDetailSection = {
 
 export type ApprovalLevelLookup = (contentKey: string) => string | null;
 
-export function isExactOwnerApprovedTransitContent(
+export function isAcceptedOwnerApprovedTransitContent(
   contentKey: string | null | undefined,
   approvalLevelForContentKey: ApprovalLevelLookup
 ) {
   return Boolean(
     contentKey
-    && approvalLevelForContentKey(contentKey) === EXACT_OWNER_APPROVAL_LEVEL
+    && isFriendsAcceptedApprovalLevel(approvalLevelForContentKey(contentKey))
   );
 }
 
-export function exactOwnerApprovedTransitSections<Section extends TransitDetailSection>(
+export function acceptedOwnerApprovedTransitSections<Section extends TransitDetailSection>(
   sections: Section[],
   approvalLevelForContentKey: ApprovalLevelLookup
 ) {
-  return sections.filter((section) => (
-    Boolean(section.sourceKeys?.length)
-    && section.sourceKeys?.every((contentKey) => (
-      isExactOwnerApprovedTransitContent(contentKey, approvalLevelForContentKey)
-    ))
-  ));
+  return sections.filter((section) => {
+    const approvalLevels = (section.sourceKeys ?? [])
+      .map(approvalLevelForContentKey)
+      .filter((level): level is string => level !== null);
+
+    return approvalLevels.length > 0
+      && approvalLevels.every(isFriendsAcceptedApprovalLevel);
+  });
 }
 
-export function exactOwnerApprovedTransitBody(
+export function acceptedOwnerApprovedTransitBody(
   body: string | null | undefined,
   contentKey: string | null | undefined,
   approvalLevelForContentKey: ApprovalLevelLookup
 ) {
-  return body && isExactOwnerApprovedTransitContent(contentKey, approvalLevelForContentKey)
+  return body && isAcceptedOwnerApprovedTransitContent(contentKey, approvalLevelForContentKey)
     ? [body]
     : [];
 }

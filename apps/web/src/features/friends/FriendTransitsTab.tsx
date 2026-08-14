@@ -24,6 +24,7 @@ export type FriendHouseTransitView = {
   keywords: string[];
   house: number;
   houseLabel: string;
+  detailAvailable: boolean;
 };
 
 export type FriendPersonalTransitGroup = {
@@ -37,6 +38,7 @@ export type FriendPersonalTransitGroup = {
     timingLabel: string;
     summary: string;
     orb: string;
+    detailAvailable: boolean;
   }>;
 };
 
@@ -56,8 +58,11 @@ function FriendPersonalTransitCard({
 }) {
   return (
     <button
-      aria-label={`Open full entry for ${transit.title}`}
+      aria-label={transit.detailAvailable
+        ? `Open full entry for ${transit.title}`
+        : `Full entry unavailable for ${transit.title}`}
       className="updates-aspect-row friend-transit-row"
+      disabled={!transit.detailAvailable}
       onClick={() => onOpen(transit.id)}
       type="button"
     >
@@ -70,6 +75,11 @@ function FriendPersonalTransitCard({
           <span>{transit.rangeLabel}</span>
         </span>
         <p className="updates-aspect-row__description transit-card-preview">{transit.summary}</p>
+        {!transit.detailAvailable ? (
+          <span className="updates-aspect-row__description" role="status">
+            Full interpretation unavailable pending source verification.
+          </span>
+        ) : null}
       </span>
       <span className="updates-aspect-row__meta" aria-label={`${transit.timingLabel}, ${transit.orb} orb`}>
         <span className="updates-aspect-row__dot" aria-hidden="true" />
@@ -194,7 +204,11 @@ export function FriendTransitsTab({
             <div className="updates-aspect-list friend-transit-list">
               {houseTransits.map((card) => (
                 <button
+                  aria-label={card.detailAvailable
+                    ? `Open full entry for ${card.title}`
+                    : `Full entry unavailable for ${card.title}`}
                   className="updates-aspect-row updates-aspect-row--house"
+                  disabled={!card.detailAvailable}
                   key={card.id}
                   onClick={() => onOpenHouseTransit(card.id)}
                   type="button"
@@ -214,6 +228,11 @@ export function FriendTransitsTab({
                     </span>
                     {card.rowSummary ? (
                       <span className="updates-aspect-row__description transit-card-preview">{card.rowSummary}</span>
+                    ) : null}
+                    {!card.detailAvailable ? (
+                      <span className="updates-aspect-row__description" role="status">
+                        Full interpretation unavailable pending source verification.
+                      </span>
                     ) : null}
                     <span className="house-transit-keywords" aria-label="House keywords">
                       <span className="ui-pill house-transit-term-tag">{card.termLabel}</span>
