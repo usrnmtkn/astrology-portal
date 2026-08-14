@@ -1,0 +1,4554 @@
+{
+  "placements": [
+    {
+      "placementKey": "Chiron|Aquarius",
+      "planet": "chiron",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Chiron|Aries",
+      "planet": "chiron",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 18,
+        "scene": 1,
+        "argument": 0,
+        "register": 10,
+        "scene_examples": [
+          "Chiron in Aries moves through your 3rd house of communication and daily reality, so a message, correction, int"
+        ]
+      },
+      "extended": {
+        "meaning": 15,
+        "register": 14,
+        "scene": 1,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 10,
+        "owner-corpus-passage": 4
+      }
+    },
+    {
+      "placementKey": "Chiron|Cancer",
+      "planet": "chiron",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Chiron|Capricorn",
+      "planet": "chiron",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Chiron|Gemini",
+      "planet": "chiron",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 2,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": [
+          "As Chiron moves into Gemini, an old hesitation about being understood might show up in your conversations and ",
+          "This Chiron retrograde in Gemini, an old insecurity about not being clear enough might get tender again. You c"
+        ]
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 3,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Chiron|Leo",
+      "planet": "chiron",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 2,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 2,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Chiron|Libra",
+      "planet": "chiron",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Chiron|Pisces",
+      "planet": "chiron",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Chiron|Sagittarius",
+      "planet": "chiron",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Chiron|Scorpio",
+      "planet": "chiron",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Chiron|Taurus",
+      "planet": "chiron",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 17,
+        "scene": 0,
+        "argument": 3,
+        "register": 10,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 14,
+        "register": 10,
+        "scene": 0,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 10
+      }
+    },
+    {
+      "placementKey": "Chiron|Virgo",
+      "planet": "chiron",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 1,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "Jupiter|Aquarius",
+      "planet": "jupiter",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 7,
+        "scene": 0,
+        "argument": 0,
+        "register": 3,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 6,
+        "register": 2,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Jupiter|Aries",
+      "planet": "jupiter",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 16,
+        "scene": 1,
+        "argument": 3,
+        "register": 11,
+        "scene_examples": [
+          "Jupiter in Aries moves through your 3rd house of communication and daily reality, so more messages, options, i"
+        ]
+      },
+      "extended": {
+        "meaning": 16,
+        "register": 11,
+        "scene": 1,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11
+      }
+    },
+    {
+      "placementKey": "Jupiter|Cancer",
+      "planet": "jupiter",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 22,
+        "scene": 1,
+        "argument": 6,
+        "register": 11,
+        "scene_examples": [
+          "Jupiter in Cancer moves through your 6th house of daily routines and health, so work can expand faster than th"
+        ]
+      },
+      "extended": {
+        "meaning": 16,
+        "register": 110,
+        "scene": 3,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1,
+        "owner_corpus_fixture_scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11,
+        "owner-corpus-passage": 99
+      }
+    },
+    {
+      "placementKey": "Jupiter|Capricorn",
+      "planet": "jupiter",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 6,
+        "scene": 1,
+        "argument": 2,
+        "register": 3,
+        "scene_examples": [
+          "Jupiter moves into Capricorn, and bigger goals start meeting real limits, titles, deadlines, and responsibilit"
+        ]
+      },
+      "extended": {
+        "meaning": 5,
+        "register": 2,
+        "scene": 2,
+        "argument": 2,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Jupiter|Gemini",
+      "planet": "jupiter",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 20,
+        "scene": 1,
+        "argument": 4,
+        "register": 10,
+        "scene_examples": [
+          "Jupiter in Gemini moves through your 6th house of daily routines and health, so work can expand faster than th"
+        ]
+      },
+      "extended": {
+        "meaning": 17,
+        "register": 10,
+        "scene": 2,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 10
+      }
+    },
+    {
+      "placementKey": "Jupiter|Leo",
+      "planet": "jupiter",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 18,
+        "scene": 1,
+        "argument": 5,
+        "register": 13,
+        "scene_examples": [
+          "Jupiter in Leo moves through your 3rd house of communication and daily reality, so more messages, options, int"
+        ]
+      },
+      "extended": {
+        "meaning": 15,
+        "register": 13,
+        "scene": 1,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "Jupiter|Libra",
+      "planet": "jupiter",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 9,
+        "scene": 0,
+        "argument": 5,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 8,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Jupiter|Pisces",
+      "planet": "jupiter",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 30,
+        "scene": 2,
+        "argument": 10,
+        "register": 22,
+        "scene_examples": [
+          "Jupiter in Pisces moves through your 6th house of daily routines and health, so work can expand faster than th",
+          "Jupiter in Pisces moves through your 6th house of daily routines and health, so work can expand faster than th"
+        ]
+      },
+      "extended": {
+        "meaning": 17,
+        "register": 12,
+        "scene": 1,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "Jupiter|Sagittarius",
+      "planet": "jupiter",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 26,
+        "scene": 0,
+        "argument": 11,
+        "register": 15,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 23,
+        "register": 13,
+        "scene": 0,
+        "argument": 10,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "Jupiter|Scorpio",
+      "planet": "jupiter",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 6,
+        "scene": 1,
+        "argument": 3,
+        "register": 2,
+        "scene_examples": [
+          "Jupiter moving into Scorpio starts opening doors through the stuff you don't usually put on a resume, trust, w"
+        ]
+      },
+      "extended": {
+        "meaning": 6,
+        "register": 2,
+        "scene": 1,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Jupiter|Taurus",
+      "planet": "jupiter",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 22,
+        "scene": 0,
+        "argument": 11,
+        "register": 12,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 18,
+        "register": 12,
+        "scene": 0,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "Jupiter|Virgo",
+      "planet": "jupiter",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 6,
+        "scene": 0,
+        "argument": 3,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 5,
+        "register": 0,
+        "scene": 0,
+        "argument": 2,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Mars|Aquarius",
+      "planet": "mars",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 37,
+        "scene": 2,
+        "argument": 6,
+        "register": 22,
+        "scene_examples": [
+          "Mars in Aquarius moves through your 6th house of daily routines and health, so one quick favor can turn into y",
+          "Mars in Aquarius moves through your 6th house of daily routines and health, so one quick favor can turn into y"
+        ]
+      },
+      "extended": {
+        "meaning": 19,
+        "register": 11,
+        "scene": 1,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11
+      }
+    },
+    {
+      "placementKey": "Mars|Aries",
+      "planet": "mars",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 36,
+        "scene": 2,
+        "argument": 5,
+        "register": 26,
+        "scene_examples": [
+          "Mars in Aries moves through your 6th house of daily routines and health, so one quick favor can turn into your",
+          "Mars in Aries moves through your 6th house of daily routines and health, so one quick favor can turn into your"
+        ]
+      },
+      "extended": {
+        "meaning": 20,
+        "register": 14,
+        "scene": 2,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "Mars|Cancer",
+      "planet": "mars",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 45,
+        "scene": 3,
+        "argument": 10,
+        "register": 31,
+        "scene_examples": [
+          "Mars in Cancer moves through your 3rd house of communication and everyday exchanges. You might feel pulled to ",
+          "Mars in Cancer moves through your 6th house of daily routines and health, so one quick favor can turn into you"
+        ]
+      },
+      "extended": {
+        "meaning": 30,
+        "register": 69,
+        "scene": 3,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 22,
+        "owner-corpus-passage": 47
+      }
+    },
+    {
+      "placementKey": "Mars|Capricorn",
+      "planet": "mars",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 47,
+        "scene": 6,
+        "argument": 4,
+        "register": 31,
+        "scene_examples": [
+          "Mars in Capricorn moves through your 8th house of shared resources and privacy, so a shared bill, debt, privat",
+          "Mars in Capricorn moves through your 8th house of shared resources and privacy, so a shared bill, debt, privat"
+        ]
+      },
+      "extended": {
+        "meaning": 30,
+        "register": 20,
+        "scene": 4,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 3
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 20
+      }
+    },
+    {
+      "placementKey": "Mars|Gemini",
+      "planet": "mars",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 39,
+        "scene": 4,
+        "argument": 11,
+        "register": 24,
+        "scene_examples": [
+          "Mars in Gemini moves through your 10th house of career and public life, so you may get less willing to sit qui",
+          "Mars in Gemini moves through your 10th house of career and public life, so you may get less willing to sit qui"
+        ]
+      },
+      "extended": {
+        "meaning": 20,
+        "register": 13,
+        "scene": 7,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 5,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "Mars|Leo",
+      "planet": "mars",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 34,
+        "scene": 4,
+        "argument": 9,
+        "register": 25,
+        "scene_examples": [
+          "Mars in Leo moves through your 3rd house of communication and daily reality, so the reply can come too fast, t",
+          "Mars in Leo moves through your 3rd house of communication and daily reality, so the reply can come too fast, t"
+        ]
+      },
+      "extended": {
+        "meaning": 18,
+        "register": 13,
+        "scene": 2,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "Mars|Libra",
+      "planet": "mars",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 19,
+        "scene": 2,
+        "argument": 7,
+        "register": 12,
+        "scene_examples": [
+          "Mars in Libra moves through your 6th house of daily routines and health, so one quick favor can turn into your",
+          "Mars in Libra moves through your 8th house of shared resources and privacy, so a shared bill, debt, private bo"
+        ]
+      },
+      "extended": {
+        "meaning": 19,
+        "register": 12,
+        "scene": 5,
+        "argument": 8,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 3,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "Mars|Pisces",
+      "planet": "mars",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 34,
+        "scene": 2,
+        "argument": 8,
+        "register": 27,
+        "scene_examples": [
+          "Mars in Pisces moves through your 6th house of daily routines and health, so one quick favor can turn into you",
+          "Mars in Pisces moves through your 6th house of daily routines and health, so one quick favor can turn into you"
+        ]
+      },
+      "extended": {
+        "meaning": 18,
+        "register": 14,
+        "scene": 1,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "Mars|Sagittarius",
+      "planet": "mars",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 37,
+        "scene": 1,
+        "argument": 14,
+        "register": 26,
+        "scene_examples": [
+          "Mars in Sagittarius moves through your 6th house of daily routines and health, so one quick favor can turn int"
+        ]
+      },
+      "extended": {
+        "meaning": 30,
+        "register": 21,
+        "scene": 1,
+        "argument": 11,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 21
+      }
+    },
+    {
+      "placementKey": "Mars|Scorpio",
+      "planet": "mars",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 21,
+        "scene": 1,
+        "argument": 5,
+        "register": 10,
+        "scene_examples": [
+          "Mars in Scorpio moves through your 6th house of daily routines and health, so one quick favor can turn into yo"
+        ]
+      },
+      "extended": {
+        "meaning": 19,
+        "register": 10,
+        "scene": 1,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 10
+      }
+    },
+    {
+      "placementKey": "Mars|Taurus",
+      "planet": "mars",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 34,
+        "scene": 2,
+        "argument": 11,
+        "register": 23,
+        "scene_examples": [
+          "Mars in Taurus moves through your 6th house of daily routines and health, so one quick favor can turn into you",
+          "Mars in Taurus moves through your 6th house of daily routines and health, so one quick favor can turn into you"
+        ]
+      },
+      "extended": {
+        "meaning": 20,
+        "register": 14,
+        "scene": 3,
+        "argument": 8,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 2,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "Mars|Virgo",
+      "planet": "mars",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 25,
+        "scene": 2,
+        "argument": 9,
+        "register": 12,
+        "scene_examples": [
+          "Mars in Virgo moves through your 6th house of daily routines and health, so one quick favor can turn into your",
+          "Mars in Virgo moves through your 8th house of shared resources and privacy, so a shared bill, debt, private bo"
+        ]
+      },
+      "extended": {
+        "meaning": 21,
+        "register": 11,
+        "scene": 3,
+        "argument": 8,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11
+      }
+    },
+    {
+      "placementKey": "Mercury (Stellium)|Virgo",
+      "planet": "mercury-(stellium)",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "Mercury|Aquarius",
+      "planet": "mercury",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 52,
+        "scene": 11,
+        "argument": 6,
+        "register": 29,
+        "scene_examples": [
+          "Mercury stations in Aquarius, so a message, decision, schedule, or missing detail can feel unusually urgent wh",
+          "Mercury in Aquarius moves through your 11th house of friendships and community, so plans move through texts, g"
+        ]
+      },
+      "extended": {
+        "meaning": 30,
+        "register": 17,
+        "scene": 7,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 6
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 17
+      }
+    },
+    {
+      "placementKey": "Mercury|Aries",
+      "planet": "mercury",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 88,
+        "scene": 21,
+        "argument": 9,
+        "register": 53,
+        "scene_examples": [
+          "Mercury stations in Aries, so a message, decision, schedule, or missing detail can feel unusually urgent while",
+          "Mercury in Aries moves through your 11th house of friendships and community, so plans move through texts, grou"
+        ]
+      },
+      "extended": {
+        "meaning": 35,
+        "register": 23,
+        "scene": 6,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 6
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 23
+      }
+    },
+    {
+      "placementKey": "Mercury|Cancer",
+      "planet": "mercury",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 45,
+        "scene": 12,
+        "argument": 17,
+        "register": 18,
+        "scene_examples": [
+          "The review may feel less orderly than usual. Mercury turns retrograde in Cancer, and plans, messages, and deci",
+          "Mercury stations in Cancer, so a message, decision, schedule, or missing detail can feel unusually urgent whil"
+        ]
+      },
+      "extended": {
+        "meaning": 23,
+        "register": 10,
+        "scene": 8,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 7
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 10
+      }
+    },
+    {
+      "placementKey": "Mercury|Capricorn",
+      "planet": "mercury",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 58,
+        "scene": 26,
+        "argument": 9,
+        "register": 23,
+        "scene_examples": [
+          "Mercury turns direct in Capricorn, and messages, decisions, and schedules can start moving again after the rev",
+          "Mercury turns retrograde in Capricorn, bringing messages, decisions, schedules, and missing information back i"
+        ]
+      },
+      "extended": {
+        "meaning": 29,
+        "register": 11,
+        "scene": 12,
+        "argument": 8,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 11
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11
+      }
+    },
+    {
+      "placementKey": "Mercury|Gemini",
+      "planet": "mercury",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 81,
+        "scene": 28,
+        "argument": 15,
+        "register": 39,
+        "scene_examples": [
+          "Mercury turns retrograde in Gemini, bringing messages, decisions, schedules, and missing information back into",
+          "Mercury turns retrograde in Gemini, bringing messages, decisions, schedules, and missing information back into"
+        ]
+      },
+      "extended": {
+        "meaning": 26,
+        "register": 14,
+        "scene": 6,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 6
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "Mercury|Leo",
+      "planet": "mercury",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 58,
+        "scene": 9,
+        "argument": 16,
+        "register": 29,
+        "scene_examples": [
+          "Mercury stations in Leo, so a message, decision, schedule, or missing detail can feel unusually urgent while i",
+          "Mercury in Leo moves through your 3rd house of communication and daily reality, so the text gets rewritten, th"
+        ]
+      },
+      "extended": {
+        "meaning": 47,
+        "register": 37,
+        "scene": 9,
+        "argument": 16,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 9
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 28,
+        "owner-corpus-passage": 9
+      }
+    },
+    {
+      "placementKey": "Mercury|Libra",
+      "planet": "mercury",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 38,
+        "scene": 15,
+        "argument": 10,
+        "register": 25,
+        "scene_examples": [
+          "Mercury moves into Libra, and people may think more carefully about how their words land. This favors negotiat",
+          "Mercury retrograde in Libra can bring an old negotiation back around, a lease or a split bill you thought was "
+        ]
+      },
+      "extended": {
+        "meaning": 22,
+        "register": 14,
+        "scene": 10,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 9
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "Mercury|None",
+      "planet": "mercury",
+      "sign": "none",
+      "matrixRaw": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 0,
+        "register": 3,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Mercury|Pisces",
+      "planet": "mercury",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 89,
+        "scene": 23,
+        "argument": 13,
+        "register": 58,
+        "scene_examples": [
+          "Mercury moves into Pisces, and thought gets more associative, imaginative, and less linear. This can be excell",
+          "Mercury retrograde in Pisces can blur communication further than usual, a message that gets lost or a daydream"
+        ]
+      },
+      "extended": {
+        "meaning": 46,
+        "register": 33,
+        "scene": 10,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 10
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 33
+      }
+    },
+    {
+      "placementKey": "Mercury|Sagittarius",
+      "planet": "mercury",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 67,
+        "scene": 21,
+        "argument": 30,
+        "register": 29,
+        "scene_examples": [
+          "Mercury stations in Sagittarius, so a message, decision, schedule, or missing detail can feel unusually urgent",
+          "Mercury in Sagittarius moves through your 6th house of daily routines and health, so the calendar, instruction"
+        ]
+      },
+      "extended": {
+        "meaning": 22,
+        "register": 8,
+        "scene": 7,
+        "argument": 11,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 6
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 8
+      }
+    },
+    {
+      "placementKey": "Mercury|Scorpio",
+      "planet": "mercury",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 54,
+        "scene": 16,
+        "argument": 4,
+        "register": 23,
+        "scene_examples": [
+          "Mercury stations in Scorpio, so a message, decision, schedule, or missing detail can feel unusually urgent whi",
+          "Mercury in Scorpio moves through your 6th house of daily routines and health, so the calendar, instructions, a"
+        ]
+      },
+      "extended": {
+        "meaning": 21,
+        "register": 8,
+        "scene": 6,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 6
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 8
+      }
+    },
+    {
+      "placementKey": "Mercury|Taurus",
+      "planet": "mercury",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 50,
+        "scene": 15,
+        "argument": 15,
+        "register": 26,
+        "scene_examples": [
+          "Mercury in Taurus moves through your 2nd house of disposable income and foundation, so a price, bill, rate, co",
+          "Mercury in Taurus moves through your 2nd house of disposable income and foundation, so a price, bill, rate, co"
+        ]
+      },
+      "extended": {
+        "meaning": 19,
+        "register": 23,
+        "scene": 7,
+        "argument": 8,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 2,
+        "owner-approved-knowledge-matrix-scene": 5
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 9,
+        "owner-corpus-passage": 14
+      }
+    },
+    {
+      "placementKey": "Mercury|Virgo",
+      "planet": "mercury",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 34,
+        "scene": 15,
+        "argument": 6,
+        "register": 12,
+        "scene_examples": [
+          "Mercury moves into Virgo, one of its natural homes, and your mind gets precise, drawn to fixing the small erro",
+          "Mercury moves into Virgo, one of its natural homes, and your mind gets precise, drawn to fixing the small erro"
+        ]
+      },
+      "extended": {
+        "meaning": 22,
+        "register": 14,
+        "scene": 10,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 2,
+        "owner-approved-knowledge-matrix-scene": 8
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 9,
+        "owner-corpus-passage": 5
+      }
+    },
+    {
+      "placementKey": "Moon|Aries",
+      "planet": "moon",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "Moon|Capricorn",
+      "planet": "moon",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "Moon|Gemini",
+      "planet": "moon",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "Moon|Leo",
+      "planet": "moon",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 13,
+        "scene": 0,
+        "argument": 0,
+        "register": 13,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 13,
+        "register": 13,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "Moon|Pisces",
+      "planet": "moon",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Moon|Sagittarius",
+      "planet": "moon",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "Moon|Scorpio",
+      "planet": "moon",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 35,
+        "scene": 0,
+        "argument": 6,
+        "register": 35,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 13,
+        "register": 13,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "Moon|Taurus",
+      "planet": "moon",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "Moon|Virgo",
+      "planet": "moon",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 14,
+        "scene": 0,
+        "argument": 0,
+        "register": 14,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 13,
+        "register": 13,
+        "scene": 1,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "Neptune|Aquarius",
+      "planet": "neptune",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 4,
+        "scene": 0,
+        "argument": 2,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 4,
+        "register": 2,
+        "scene": 0,
+        "argument": 2,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Neptune|Aries",
+      "planet": "neptune",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 33,
+        "scene": 2,
+        "argument": 8,
+        "register": 17,
+        "scene_examples": [
+          "Neptune in Aries moves through your 3rd house of communication and daily reality, so a message can sound beaut",
+          "Neptune in Aries moves through your 3rd house of communication and daily reality, so a message can sound beaut"
+        ]
+      },
+      "extended": {
+        "meaning": 14,
+        "register": 9,
+        "scene": 1,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 9
+      }
+    },
+    {
+      "placementKey": "Neptune|Cancer",
+      "planet": "neptune",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Neptune|Capricorn",
+      "planet": "neptune",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 1,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Neptune|Gemini",
+      "planet": "neptune",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Neptune|Leo",
+      "planet": "neptune",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Neptune|Libra",
+      "planet": "neptune",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Neptune|Pisces",
+      "planet": "neptune",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 41,
+        "scene": 0,
+        "argument": 15,
+        "register": 18,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 24,
+        "register": 9,
+        "scene": 0,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 9
+      }
+    },
+    {
+      "placementKey": "Neptune|Sagittarius",
+      "planet": "neptune",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Neptune|Scorpio",
+      "planet": "neptune",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Neptune|Taurus",
+      "planet": "neptune",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "Neptune|Virgo",
+      "planet": "neptune",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Nodes|Pisces",
+      "planet": "nodes",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 24,
+        "scene": 0,
+        "argument": 6,
+        "register": 20,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 12,
+        "register": 10,
+        "scene": 0,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 10
+      }
+    },
+    {
+      "placementKey": "North Node|Aquarius",
+      "planet": "north-node",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 1,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "North Node|Aries",
+      "planet": "north-node",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 15,
+        "scene": 1,
+        "argument": 0,
+        "register": 12,
+        "scene_examples": [
+          "North Node in Aries moves through your 3rd house of communication and daily reality, so a conversation, messag"
+        ]
+      },
+      "extended": {
+        "meaning": 13,
+        "register": 12,
+        "scene": 1,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "North Node|Cancer",
+      "planet": "north-node",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 1,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "North Node|Capricorn",
+      "planet": "north-node",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 1,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "North Node|Gemini",
+      "planet": "north-node",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 15,
+        "scene": 1,
+        "argument": 4,
+        "register": 12,
+        "scene_examples": [
+          "North Node in Gemini moves through your 6th house of daily routines and health, so a new routine may feel awkw"
+        ]
+      },
+      "extended": {
+        "meaning": 13,
+        "register": 12,
+        "scene": 1,
+        "argument": 2,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "North Node|Leo",
+      "planet": "north-node",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "North Node|Libra",
+      "planet": "north-node",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 2,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 2,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "North Node|Pisces",
+      "planet": "north-node",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 1,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "North Node|Sagittarius",
+      "planet": "north-node",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "North Node|Scorpio",
+      "planet": "north-node",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "North Node|Taurus",
+      "planet": "north-node",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 15,
+        "scene": 0,
+        "argument": 3,
+        "register": 11,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 13,
+        "register": 11,
+        "scene": 0,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11
+      }
+    },
+    {
+      "placementKey": "North Node|Virgo",
+      "planet": "north-node",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 0,
+        "scene": 1,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Pluto|Aquarius",
+      "planet": "pluto",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 36,
+        "scene": 0,
+        "argument": 2,
+        "register": 15,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 14,
+        "register": 8,
+        "scene": 1,
+        "argument": 2,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 8
+      }
+    },
+    {
+      "placementKey": "Pluto|Aries",
+      "planet": "pluto",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Pluto|Cancer",
+      "planet": "pluto",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Pluto|Capricorn",
+      "planet": "pluto",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 67,
+        "scene": 1,
+        "argument": 5,
+        "register": 37,
+        "scene_examples": [
+          "Pluto in Capricorn moves through your 4th house of home and family. You might feel pulled to face what's reall"
+        ]
+      },
+      "extended": {
+        "meaning": 36,
+        "register": 21,
+        "scene": 1,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 21
+      }
+    },
+    {
+      "placementKey": "Pluto|Gemini",
+      "planet": "pluto",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 1,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Pluto|Leo",
+      "planet": "pluto",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "Pluto|Libra",
+      "planet": "pluto",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "Pluto|Pisces",
+      "planet": "pluto",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Pluto|Sagittarius",
+      "planet": "pluto",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Pluto|Scorpio",
+      "planet": "pluto",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "Pluto|Taurus",
+      "planet": "pluto",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Pluto|Virgo",
+      "planet": "pluto",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 0,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "Saturn|Aquarius",
+      "planet": "saturn",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 26,
+        "scene": 1,
+        "argument": 1,
+        "register": 13,
+        "scene_examples": [
+          "Saturn in Aquarius moves through your 2nd house of disposable income and foundation, so money may need firmer "
+        ]
+      },
+      "extended": {
+        "meaning": 17,
+        "register": 9,
+        "scene": 1,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 9
+      }
+    },
+    {
+      "placementKey": "Saturn|Aries",
+      "planet": "saturn",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 23,
+        "scene": 1,
+        "argument": 0,
+        "register": 10,
+        "scene_examples": [
+          "Saturn in Aries moves through your 2nd house of disposable income and foundation, so money may need firmer lim"
+        ]
+      },
+      "extended": {
+        "meaning": 14,
+        "register": 132,
+        "scene": 2,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 10,
+        "owner-corpus-passage": 122
+      }
+    },
+    {
+      "placementKey": "Saturn|Cancer",
+      "planet": "saturn",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Saturn|Capricorn",
+      "planet": "saturn",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 28,
+        "scene": 0,
+        "argument": 4,
+        "register": 13,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 23,
+        "register": 12,
+        "scene": 1,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "Saturn|Gemini",
+      "planet": "saturn",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 1,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Saturn|Leo",
+      "planet": "saturn",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 2,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 2,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Saturn|Libra",
+      "planet": "saturn",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 12,
+        "scene": 0,
+        "argument": 7,
+        "register": 6,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 10,
+        "register": 4,
+        "scene": 1,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 4
+      }
+    },
+    {
+      "placementKey": "Saturn|Pisces",
+      "planet": "saturn",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 32,
+        "scene": 2,
+        "argument": 4,
+        "register": 14,
+        "scene_examples": [
+          "Saturn in Pisces moves through your 2nd house of disposable income and foundation, so money may need firmer li",
+          "Saturn in Pisces moves through your 2nd house of disposable income and foundation, so money may need firmer li"
+        ]
+      },
+      "extended": {
+        "meaning": 14,
+        "register": 7,
+        "scene": 2,
+        "argument": 2,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 7
+      }
+    },
+    {
+      "placementKey": "Saturn|Sagittarius",
+      "planet": "saturn",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 15,
+        "scene": 0,
+        "argument": 12,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 8,
+        "register": 0,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Saturn|Scorpio",
+      "planet": "saturn",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 6,
+        "scene": 0,
+        "argument": 2,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 6,
+        "register": 2,
+        "scene": 0,
+        "argument": 2,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Saturn|Taurus",
+      "planet": "saturn",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Saturn|Unspecified",
+      "planet": "saturn",
+      "sign": "unspecified",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Saturn|Virgo",
+      "planet": "saturn",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 0,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 2,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "South Node|Aquarius",
+      "planet": "south-node",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 1,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "South Node|Aries",
+      "planet": "south-node",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "South Node|Cancer",
+      "planet": "south-node",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "South Node|Capricorn",
+      "planet": "south-node",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "South Node|Gemini",
+      "planet": "south-node",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 1,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 1,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "South Node|Leo",
+      "planet": "south-node",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "South Node|Libra",
+      "planet": "south-node",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 15,
+        "scene": 0,
+        "argument": 4,
+        "register": 12,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 13,
+        "register": 12,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "South Node|Pisces",
+      "planet": "south-node",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 2,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 2,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "South Node|Sagittarius",
+      "planet": "south-node",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 15,
+        "scene": 0,
+        "argument": 8,
+        "register": 8,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 13,
+        "register": 8,
+        "scene": 0,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 8
+      }
+    },
+    {
+      "placementKey": "South Node|Scorpio",
+      "planet": "south-node",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 15,
+        "scene": 0,
+        "argument": 2,
+        "register": 8,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 12,
+        "register": 8,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 8
+      }
+    },
+    {
+      "placementKey": "South Node|Taurus",
+      "planet": "south-node",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 1,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "South Node|Virgo",
+      "planet": "south-node",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 1,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Stellium (Mars, Jupiter, Saturn, Pluto)|Capricorn",
+      "planet": "stellium-(mars,-jupiter,-saturn,-pluto)",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 0,
+        "register": 3,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 3,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 3
+      }
+    },
+    {
+      "placementKey": "Sun|Aquarius",
+      "planet": "sun",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 45,
+        "scene": 3,
+        "argument": 11,
+        "register": 37,
+        "scene_examples": [
+          "Sun in Aquarius moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, a",
+          "Sun in Aquarius moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, a"
+        ]
+      },
+      "extended": {
+        "meaning": 15,
+        "register": 12,
+        "scene": 1,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "Sun|Aquarius I",
+      "planet": "sun",
+      "sign": "aquarius-i",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Aquarius Ii",
+      "planet": "sun",
+      "sign": "aquarius-ii",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 1,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Aries",
+      "planet": "sun",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 70,
+        "scene": 6,
+        "argument": 11,
+        "register": 62,
+        "scene_examples": [
+          "Sun in Aries moves through your 3rd house of communication and daily reality, so a message, post, pitch, or de",
+          "Sun in Aries moves through your 3rd house of communication and daily reality, so a message, post, pitch, or de"
+        ]
+      },
+      "extended": {
+        "meaning": 29,
+        "register": 25,
+        "scene": 2,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 25
+      }
+    },
+    {
+      "placementKey": "Sun|Aries Ii",
+      "planet": "sun",
+      "sign": "aries-ii",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 1,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Cancer",
+      "planet": "sun",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 70,
+        "scene": 10,
+        "argument": 15,
+        "register": 51,
+        "scene_examples": [
+          "Sun in Cancer moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and",
+          "Sun in Cancer moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and"
+        ]
+      },
+      "extended": {
+        "meaning": 16,
+        "register": 11,
+        "scene": 2,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11
+      }
+    },
+    {
+      "placementKey": "Sun|Cancer (2Nd Decan)",
+      "planet": "sun",
+      "sign": "cancer-(2nd-decan)",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 1,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Cancer I",
+      "planet": "sun",
+      "sign": "cancer-i",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Cancer Ii",
+      "planet": "sun",
+      "sign": "cancer-ii",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Cancer Iii",
+      "planet": "sun",
+      "sign": "cancer-iii",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 1,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Capricorn",
+      "planet": "sun",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 47,
+        "scene": 5,
+        "argument": 4,
+        "register": 34,
+        "scene_examples": [
+          "The sun in Capricorn moves into your 6th house of health and daily routines. That probably makes your sense of",
+          "Sun in Capricorn moves through your 3rd house of communication and daily reality, so a message, post, pitch, o"
+        ]
+      },
+      "extended": {
+        "meaning": 27,
+        "register": 23,
+        "scene": 4,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 3
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 23
+      }
+    },
+    {
+      "placementKey": "Sun|Capricorn Iii",
+      "planet": "sun",
+      "sign": "capricorn-iii",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Gemini",
+      "planet": "sun",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 83,
+        "scene": 10,
+        "argument": 23,
+        "register": 70,
+        "scene_examples": [
+          "Sun in Gemini moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and",
+          "Sun in Gemini moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and"
+        ]
+      },
+      "extended": {
+        "meaning": 27,
+        "register": 24,
+        "scene": 3,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 24
+      }
+    },
+    {
+      "placementKey": "Sun|Gemini I",
+      "planet": "sun",
+      "sign": "gemini-i",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Gemini Ii",
+      "planet": "sun",
+      "sign": "gemini-ii",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Gemini Iii",
+      "planet": "sun",
+      "sign": "gemini-iii",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Leo",
+      "planet": "sun",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 33,
+        "scene": 2,
+        "argument": 7,
+        "register": 26,
+        "scene_examples": [
+          "Sun in Leo moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and wh",
+          "Sun in Leo moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and wh"
+        ]
+      },
+      "extended": {
+        "meaning": 16,
+        "register": 13,
+        "scene": 13,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_house_horoscope_core": 12,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "Sun|Leo I",
+      "planet": "sun",
+      "sign": "leo-i",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 1,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Libra",
+      "planet": "sun",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 32,
+        "scene": 2,
+        "argument": 14,
+        "register": 26,
+        "scene_examples": [
+          "Sun in Libra moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and ",
+          "Sun in Libra moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and "
+        ]
+      },
+      "extended": {
+        "meaning": 15,
+        "register": 13,
+        "scene": 1,
+        "argument": 8,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "Sun|Libra (Decan 2)",
+      "planet": "sun",
+      "sign": "libra-(decan-2)",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 1,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Libra I",
+      "planet": "sun",
+      "sign": "libra-i",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 1,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Libra Iii",
+      "planet": "sun",
+      "sign": "libra-iii",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Pisces",
+      "planet": "sun",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 61,
+        "scene": 3,
+        "argument": 20,
+        "register": 43,
+        "scene_examples": [
+          "Sun in Pisces moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and",
+          "Sun in Pisces moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and"
+        ]
+      },
+      "extended": {
+        "meaning": 31,
+        "register": 22,
+        "scene": 2,
+        "argument": 11,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 22
+      }
+    },
+    {
+      "placementKey": "Sun|Pisces Iii",
+      "planet": "sun",
+      "sign": "pisces-iii",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Sagittarius",
+      "planet": "sun",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 55,
+        "scene": 3,
+        "argument": 25,
+        "register": 44,
+        "scene_examples": [
+          "Sun in Sagittarius moves through your 2nd house of disposable income and foundation, so pay, ownership, credit",
+          "Sun in Sagittarius moves through your 2nd house of disposable income and foundation, so pay, ownership, credit"
+        ]
+      },
+      "extended": {
+        "meaning": 28,
+        "register": 23,
+        "scene": 2,
+        "argument": 11,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 23
+      }
+    },
+    {
+      "placementKey": "Sun|Sagittarius I",
+      "planet": "sun",
+      "sign": "sagittarius-i",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Scorpio",
+      "planet": "sun",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 55,
+        "scene": 4,
+        "argument": 12,
+        "register": 42,
+        "scene_examples": [
+          "Sun in Scorpio moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, an",
+          "Sun in Scorpio moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, an"
+        ]
+      },
+      "extended": {
+        "meaning": 16,
+        "register": 12,
+        "scene": 2,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "Sun|Scorpio (Decan 1)",
+      "planet": "sun",
+      "sign": "scorpio-(decan-1)",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 0,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Scorpio (Decan 2)",
+      "planet": "sun",
+      "sign": "scorpio-(decan-2)",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 1,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Scorpio (Third Decan)",
+      "planet": "sun",
+      "sign": "scorpio-(third-decan)",
+      "matrixRaw": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 1,
+        "register": 0,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "Sun|Taurus",
+      "planet": "sun",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 68,
+        "scene": 5,
+        "argument": 17,
+        "register": 56,
+        "scene_examples": [
+          "Sun in Taurus moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and",
+          "Sun in Taurus moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and"
+        ]
+      },
+      "extended": {
+        "meaning": 27,
+        "register": 23,
+        "scene": 3,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 23
+      }
+    },
+    {
+      "placementKey": "Sun|Virgo",
+      "planet": "sun",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 44,
+        "scene": 3,
+        "argument": 11,
+        "register": 33,
+        "scene_examples": [
+          "Sun in Virgo moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and ",
+          "Sun in Virgo moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and "
+        ]
+      },
+      "extended": {
+        "meaning": 15,
+        "register": 11,
+        "scene": 1,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11
+      }
+    },
+    {
+      "placementKey": "Uranus|Aquarius",
+      "planet": "uranus",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Uranus|Aries",
+      "planet": "uranus",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 18,
+        "scene": 0,
+        "argument": 7,
+        "register": 5,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 13,
+        "register": 4,
+        "scene": 0,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 4
+      }
+    },
+    {
+      "placementKey": "Uranus|Cancer",
+      "planet": "uranus",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 1,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": [
+          "Uranus moving into Cancer starts shaking up home, in the literal sense and in the sense of who you let call yo"
+        ]
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 1,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Uranus|Capricorn",
+      "planet": "uranus",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Uranus|Gemini",
+      "planet": "uranus",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 33,
+        "scene": 8,
+        "argument": 12,
+        "register": 14,
+        "scene_examples": [
+          "Uranus in Gemini moves through your 3rd house of communication and daily reality, so a message, device, route,",
+          "Uranus in Gemini moves through your 3rd house of communication and daily reality, so a message, device, route,"
+        ]
+      },
+      "extended": {
+        "meaning": 14,
+        "register": 66,
+        "scene": 5,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 4
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 7,
+        "owner-corpus-passage": 59
+      }
+    },
+    {
+      "placementKey": "Uranus|Leo",
+      "planet": "uranus",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Uranus|Libra",
+      "planet": "uranus",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Uranus|Pisces",
+      "planet": "uranus",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 4,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 4,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Uranus|Sagittarius",
+      "planet": "uranus",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Uranus|Scorpio",
+      "planet": "uranus",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Uranus|Taurus",
+      "planet": "uranus",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 49,
+        "scene": 5,
+        "argument": 18,
+        "register": 28,
+        "scene_examples": [
+          "Uranus in Taurus moves through your 2nd house of disposable income and foundation, so income, expenses, posses",
+          "Uranus in Taurus moves through your 2nd house of disposable income and foundation, so income, expenses, posses"
+        ]
+      },
+      "extended": {
+        "meaning": 28,
+        "register": 97,
+        "scene": 2,
+        "argument": 8,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 16,
+        "owner-corpus-passage": 81
+      }
+    },
+    {
+      "placementKey": "Uranus|Virgo",
+      "planet": "uranus",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 1,
+        "register": 2,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "Venus/Sun|Virgo",
+      "planet": "venus/sun",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 12,
+        "scene": 1,
+        "argument": 3,
+        "register": 3,
+        "scene_examples": [
+          "Venus and the Sun move through Virgo in your 2nd house of disposable income and foundation, putting more atten"
+        ]
+      },
+      "extended": {
+        "meaning": 12,
+        "register": 3,
+        "scene": 1,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 3
+      }
+    },
+    {
+      "placementKey": "Venus|Aquarius",
+      "planet": "venus",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 48,
+        "scene": 3,
+        "argument": 4,
+        "register": 41,
+        "scene_examples": [
+          "Venus in Aquarius moves through your 6th house of daily routines and health, so you may make the workspace nic",
+          "Venus in Aquarius moves through your 6th house of daily routines and health, so you may make the workspace nic"
+        ]
+      },
+      "extended": {
+        "meaning": 19,
+        "register": 16,
+        "scene": 1,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 16
+      }
+    },
+    {
+      "placementKey": "Venus|Aries",
+      "planet": "venus",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 101,
+        "scene": 4,
+        "argument": 8,
+        "register": 87,
+        "scene_examples": [
+          "Venus in Aries moves through your 3rd house of communication and daily reality, so you may care more about how",
+          "Venus in Aries moves through your 3rd house of communication and daily reality, so you may care more about how"
+        ]
+      },
+      "extended": {
+        "meaning": 32,
+        "register": 30,
+        "scene": 2,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1,
+        "owner_corpus_fixture_scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 26,
+        "owner-corpus-passage": 4
+      }
+    },
+    {
+      "placementKey": "Venus|Cancer",
+      "planet": "venus",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 57,
+        "scene": 4,
+        "argument": 8,
+        "register": 50,
+        "scene_examples": [
+          "Venus in Cancer moves through your 6th house of daily routines and health, so you may make the workspace nicer",
+          "Venus in Cancer moves through your 6th house of daily routines and health, so you may make the workspace nicer"
+        ]
+      },
+      "extended": {
+        "meaning": 16,
+        "register": 20,
+        "scene": 1,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14,
+        "owner-corpus-passage": 6
+      }
+    },
+    {
+      "placementKey": "Venus|Capricorn",
+      "planet": "venus",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 62,
+        "scene": 9,
+        "argument": 7,
+        "register": 51,
+        "scene_examples": [
+          "Venus retrograde in Capricorn can send you back to reconsider a long-term commitment or a budget, checking if ",
+          "Venus in Capricorn moves through your 6th house of daily routines and health, so you may make the workspace ni"
+        ]
+      },
+      "extended": {
+        "meaning": 21,
+        "register": 14,
+        "scene": 5,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 2,
+        "owner-approved-knowledge-matrix-scene": 3
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "Venus|Gemini",
+      "planet": "venus",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 58,
+        "scene": 4,
+        "argument": 12,
+        "register": 46,
+        "scene_examples": [
+          "Venus direct in Gemini can bring flirtation and easy conversation back after a stretch where connecting with p",
+          "Venus in Gemini moves through your 6th house of daily routines and health, so you may make the workspace nicer"
+        ]
+      },
+      "extended": {
+        "meaning": 22,
+        "register": 17,
+        "scene": 5,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 3,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 17
+      }
+    },
+    {
+      "placementKey": "Venus|Leo",
+      "planet": "venus",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 65,
+        "scene": 4,
+        "argument": 8,
+        "register": 50,
+        "scene_examples": [
+          "Venus in Leo moves through your 3rd house of communication and daily reality, so you may care more about how t",
+          "Venus in Leo moves through your 3rd house of communication and daily reality, so you may care more about how t"
+        ]
+      },
+      "extended": {
+        "meaning": 20,
+        "register": 14,
+        "scene": 2,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "Venus|Libra",
+      "planet": "venus",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 26,
+        "scene": 2,
+        "argument": 15,
+        "register": 15,
+        "scene_examples": [
+          "The workday may start bothering you in ways that are hard to unsee. Venus in Libra is moving through your 6th ",
+          "A conversation about shared money or responsibility may get harder to avoid. Venus in Libra is moving through "
+        ]
+      },
+      "extended": {
+        "meaning": 21,
+        "register": 14,
+        "scene": 14,
+        "argument": 15,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_house_horoscope_core": 12,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "Venus|Pisces",
+      "planet": "venus",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 63,
+        "scene": 3,
+        "argument": 8,
+        "register": 49,
+        "scene_examples": [
+          "Venus in Pisces moves through your 6th house of daily routines and health, so you may make the workspace nicer",
+          "Venus in Pisces moves through your 6th house of daily routines and health, so you may make the workspace nicer"
+        ]
+      },
+      "extended": {
+        "meaning": 28,
+        "register": 22,
+        "scene": 1,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 22
+      }
+    },
+    {
+      "placementKey": "Venus|Sagittarius",
+      "planet": "venus",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 44,
+        "scene": 0,
+        "argument": 21,
+        "register": 37,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 16,
+        "register": 13,
+        "scene": 1,
+        "argument": 8,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "Venus|Scorpio",
+      "planet": "venus",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 23,
+        "scene": 0,
+        "argument": 5,
+        "register": 13,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 22,
+        "register": 13,
+        "scene": 0,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "Venus|Taurus",
+      "planet": "venus",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 59,
+        "scene": 0,
+        "argument": 10,
+        "register": 54,
+        "scene_examples": []
+      },
+      "extended": {
+        "meaning": 29,
+        "register": 26,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 26
+      }
+    },
+    {
+      "placementKey": "Venus|Virgo",
+      "planet": "venus",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 31,
+        "scene": 2,
+        "argument": 2,
+        "register": 25,
+        "scene_examples": [
+          "Venus in Virgo moves through your 11th house of friendships and community, so an invitation may get you out of",
+          "Venus in Virgo moves through your 11th house of friendships and community, so an invitation may get you out of"
+        ]
+      },
+      "extended": {
+        "meaning": 16,
+        "register": 39,
+        "scene": 1,
+        "argument": 2,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13,
+        "owner-corpus-passage": 26
+      }
+    }
+  ],
+  "counts": {
+    "placements": 179,
+    "matrixZeroScene": 114,
+    "extendedZeroScene": 98,
+    "extendedZeroMeaning": 2,
+    "extendedZeroArgument": 53
+  },
+  "zeroScenePlacements": [
+    "Chiron|Aquarius",
+    "Chiron|Cancer",
+    "Chiron|Capricorn",
+    "Chiron|Leo",
+    "Chiron|Libra",
+    "Chiron|Pisces",
+    "Chiron|Sagittarius",
+    "Chiron|Scorpio",
+    "Chiron|Taurus",
+    "Jupiter|Aquarius",
+    "Jupiter|Libra",
+    "Jupiter|Sagittarius",
+    "Jupiter|Taurus",
+    "Jupiter|Virgo",
+    "Mercury (Stellium)|Virgo",
+    "Mercury|None",
+    "Moon|Aries",
+    "Moon|Capricorn",
+    "Moon|Gemini",
+    "Moon|Leo",
+    "Moon|Pisces",
+    "Moon|Sagittarius",
+    "Moon|Scorpio",
+    "Moon|Taurus",
+    "Neptune|Aquarius",
+    "Neptune|Cancer",
+    "Neptune|Gemini",
+    "Neptune|Leo",
+    "Neptune|Libra",
+    "Neptune|Pisces",
+    "Neptune|Sagittarius",
+    "Neptune|Scorpio",
+    "Neptune|Taurus",
+    "Neptune|Virgo",
+    "Nodes|Pisces",
+    "North Node|Capricorn",
+    "North Node|Leo",
+    "North Node|Libra",
+    "North Node|Sagittarius",
+    "North Node|Scorpio",
+    "North Node|Taurus",
+    "Pluto|Aries",
+    "Pluto|Cancer",
+    "Pluto|Leo",
+    "Pluto|Libra",
+    "Pluto|Pisces",
+    "Pluto|Sagittarius",
+    "Pluto|Scorpio",
+    "Pluto|Taurus",
+    "Pluto|Virgo",
+    "Saturn|Cancer",
+    "Saturn|Leo",
+    "Saturn|Sagittarius",
+    "Saturn|Scorpio",
+    "Saturn|Taurus",
+    "Saturn|Unspecified",
+    "Saturn|Virgo",
+    "South Node|Aries",
+    "South Node|Cancer",
+    "South Node|Capricorn",
+    "South Node|Leo",
+    "South Node|Libra",
+    "South Node|Pisces",
+    "South Node|Sagittarius",
+    "South Node|Scorpio",
+    "South Node|Taurus",
+    "Stellium (Mars, Jupiter, Saturn, Pluto)|Capricorn",
+    "Sun|Aquarius I",
+    "Sun|Aquarius Ii",
+    "Sun|Aries Ii",
+    "Sun|Cancer (2Nd Decan)",
+    "Sun|Cancer I",
+    "Sun|Cancer Ii",
+    "Sun|Cancer Iii",
+    "Sun|Capricorn Iii",
+    "Sun|Gemini I",
+    "Sun|Gemini Ii",
+    "Sun|Gemini Iii",
+    "Sun|Leo I",
+    "Sun|Libra (Decan 2)",
+    "Sun|Libra I",
+    "Sun|Libra Iii",
+    "Sun|Pisces Iii",
+    "Sun|Sagittarius I",
+    "Sun|Scorpio (Decan 1)",
+    "Sun|Scorpio (Decan 2)",
+    "Sun|Scorpio (Third Decan)",
+    "Uranus|Aquarius",
+    "Uranus|Aries",
+    "Uranus|Capricorn",
+    "Uranus|Leo",
+    "Uranus|Libra",
+    "Uranus|Pisces",
+    "Uranus|Sagittarius",
+    "Uranus|Scorpio",
+    "Uranus|Virgo",
+    "Venus|Scorpio",
+    "Venus|Taurus"
+  ]
+}

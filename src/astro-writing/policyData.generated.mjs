@@ -30,7 +30,6 @@ export const WRITING_POLICY_DATA = Object.freeze({
     "This challenge is actually preparing you for",
     "Welcome to another powerful week",
     "What feels like limitation is really liberation",
-    "X is not Y. It is Z.",
     "You just need to take the next inspired step",
     "attachment wound",
     "consider that perhaps",
