@@ -477,8 +477,8 @@
 .article-related-aspect-row .aspect-row-copy p {
   max-width: none;
   font-family: var(--font-body);
-  font-size: var(--type-meta-size);
-  line-height: var(--leading-body);
+  font-size: var(--aspect-card-body-size);
+  line-height: var(--aspect-card-body-line);
 }
 
 .article-related-aspect-row .aspect-row-glyphs {
