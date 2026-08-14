@@ -345,6 +345,59 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/dailyGlanceVoice.browser.ts
+var SECOND_PERSON = /\b(?:you|your|yours|yourself|yourselves)\b/giu;
+var DIRECT_IMPERATIVE = /(?:^|[.!?]\s+)(?:don't|do not|stop|keep|let|give|take|check|say|ask|make|go|trust|put|use|change|tell|be|try|finish|clear|get|notice|remember|decide|write|walk|sit|come|pick|start|see|rest|reschedule|lead|treat|reduce|stay|run|choose|review|pay|complete|separate|begin|send|follow|hold|bring|count|read|skip|look|call|move|leave|delay|spend|accept|speak|expect|know|direct)\b/giu;
+var PERSON_SLOT = /\{\{([\w.]+)\}\}/gu;
+var DAILY_GLANCE_PERSON_SLOT_KEYS = /* @__PURE__ */ new Set([
+  "personName",
+  "personNamePossessive",
+  "personPreferredName",
+  "personPreferredNamePossessive",
+  "personSubject",
+  "personSubjectCapitalized",
+  "personObject",
+  "personObjectCapitalized",
+  "personPossessiveAdjective",
+  "personPossessiveAdjectiveCapitalized",
+  "personPossessivePronoun",
+  "personPossessivePronounCapitalized",
+  "personReflexive",
+  "personReflexiveCapitalized",
+  "personBePresent",
+  "personBePast",
+  "personHavePresent",
+  "personVerbSuffix"
+]);
+function lintDailyGlanceFriendVoice(bodyThey) {
+  const findings = [];
+  for (const match of bodyThey.matchAll(SECOND_PERSON)) {
+    findings.push({ id: "DG-THEY-NO-SECOND-PERSON", match: match[0] });
+  }
+  for (const match of bodyThey.matchAll(DIRECT_IMPERATIVE)) {
+    findings.push({ id: "DG-THEY-NO-DIRECT-IMPERATIVE", match: match[0].trim() });
+  }
+  for (const match of bodyThey.matchAll(PERSON_SLOT)) {
+    if (!DAILY_GLANCE_PERSON_SLOT_KEYS.has(match[1])) {
+      findings.push({ id: "DG-THEY-ALLOWED-PERSON-SLOTS-ONLY", match: match[0] });
+    }
+  }
+  return findings;
+}
+function fillDailyGlancePersonSlots(bodyThey, slots) {
+  const findings = lintDailyGlanceFriendVoice(bodyThey);
+  if (findings.length > 0) {
+    throw new Error(findings.map((finding) => `${finding.id}: ${finding.match}`).join(" | "));
+  }
+  return bodyThey.replace(PERSON_SLOT, (slot, key) => {
+    const value = slots[key];
+    if (typeof value !== "string") {
+      throw new Error(`DG-THEY-MISSING-PERSON-SLOT: ${slot}`);
+    }
+    return value;
+  });
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
 var TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
 function skyPlacementKeyDates({
@@ -2157,25 +2210,79 @@ ${passHook}`;
     );
   }
   const DAILY_GROUP = { conjunction: "conjunction", square: "square", opposition: "opposition", trine: "soft", sextile: "soft" };
-  function renderDailyGlance({ natal, aspect, house, dateKey, userId, previousVariantId }) {
+  function renderDailyGlance({
+    natal,
+    aspect,
+    house,
+    dateKey,
+    userId,
+    previousVariantId,
+    voice = "you",
+    personSlots = {}
+  }) {
+    const renderFriendRow = (row, contentKey) => {
+      const raw = row?.body_they;
+      if (!raw) return null;
+      const findings = lintDailyGlanceFriendVoice(raw);
+      if (findings.length > 0) {
+        throw new SourceGapError(
+          `SOURCE_GAP: ${contentKey} friend voice failed ${findings.map((finding) => finding.id).join(",")}`
+        );
+      }
+      try {
+        return fillDailyGlancePersonSlots(raw, personSlots);
+      } catch (error) {
+        throw new SourceGapError(
+          `SOURCE_GAP: ${contentKey} friend voice slots ${error instanceof Error ? error.message : String(error)}`
+        );
+      }
+    };
+    const renderForVoice = ({
+      headlineKey,
+      bodyKey,
+      contentKey
+    }) => {
+      if (voice === "they") {
+        const headline2 = renderFriendRow(hooks.get(headlineKey), headlineKey);
+        const body2 = renderFriendRow(hooks.get(bodyKey), bodyKey);
+        return headline2 && body2 ? { headline: headline2, body: body2, parts: [body2], templateKey: "fallback-template/daily.glance", variantId: "primary-they" } : null;
+      }
+      const headline = hooks.get(headlineKey)?.body_you;
+      const body = hooks.get(bodyKey)?.body_you;
+      if (!headline || !body) return null;
+      const selected = selectDailyGlanceVariantSet({
+        variantSet: rowsFile.dailyGlanceVariants?.keys[contentKey],
+        primary: { headline, body },
+        dateKey,
+        contentKey,
+        userId,
+        previousVariantId,
+        allowUnreviewed
+      });
+      return {
+        headline: selected.headline,
+        body: selected.body,
+        parts: [selected.body],
+        templateKey: "fallback-template/daily.glance",
+        variantId: selected.id
+      };
+    };
     if (natal && aspect) {
       const g = DAILY_GROUP[aspect] ?? aspect;
-      const h = hooks.get(`fallback-hook/daily-headline/${g}/${natal}`)?.body_you;
-      const b = hooks.get(`fallback-hook/daily-body/${g}/${natal}`)?.body_you;
-      if (h && b) {
-        const contentKey = `${g}/${natal}`;
-        const selected = selectDailyGlanceVariantSet({ variantSet: rowsFile.dailyGlanceVariants?.keys[contentKey], primary: { headline: h, body: b }, dateKey, contentKey, userId, previousVariantId, allowUnreviewed });
-        return { headline: selected.headline, body: selected.body, parts: [selected.body], templateKey: "fallback-template/daily.glance", variantId: selected.id };
-      }
+      const rendered = renderForVoice({
+        headlineKey: `fallback-hook/daily-headline/${g}/${natal}`,
+        bodyKey: `fallback-hook/daily-body/${g}/${natal}`,
+        contentKey: `${g}/${natal}`
+      });
+      if (rendered) return rendered;
     }
     if (house) {
-      const h = hooks.get(`fallback-hook/daily-headline/house/${house}`)?.body_you;
-      const b = hooks.get(`fallback-hook/daily-body/house/${house}`)?.body_you;
-      if (h && b) {
-        const contentKey = `house/${house}`;
-        const selected = selectDailyGlanceVariantSet({ variantSet: rowsFile.dailyGlanceVariants?.keys[contentKey], primary: { headline: h, body: b }, dateKey, contentKey, userId, previousVariantId, allowUnreviewed });
-        return { headline: selected.headline, body: selected.body, parts: [selected.body], templateKey: "fallback-template/daily.glance", variantId: selected.id };
-      }
+      const rendered = renderForVoice({
+        headlineKey: `fallback-hook/daily-headline/house/${house}`,
+        bodyKey: `fallback-hook/daily-body/house/${house}`,
+        contentKey: `house/${house}`
+      });
+      if (rendered) return rendered;
     }
     throw new SourceGapError(`SOURCE_GAP: daily glance ${aspect ?? "no-aspect"}/${natal ?? house}`);
   }
@@ -2410,7 +2517,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-12b";
+var PACKAGE_VERSION = "v3-2026-08-13a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
