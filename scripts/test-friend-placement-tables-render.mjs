@@ -295,6 +295,7 @@ try {
 
   const emptyTransitsHtml = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     bondTransits: [],
+    dateLabel: "Today",
     friendName: "Alex",
     houseTransits: [],
     onOpenBondTransit() {},
@@ -319,6 +320,7 @@ try {
     },
     dailyDoItems: ["Name the plan", "Keep it practical", "Leave room"],
     dailyDontItems: ["Force an answer", "Assume the worst", "Overpromise"],
+    dateLabel: "Today",
     friendName: "Alex",
     houseTransits: [{
       id: "house-1",
