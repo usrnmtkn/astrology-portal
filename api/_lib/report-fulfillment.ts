@@ -16,7 +16,6 @@ import {
 import { reportSystemPromptVersions } from "./report-prompt-versions.js";
 import {
   deduplicateAssembledReport,
-  runReportRedundancyPass,
   validateReportKeyDateFormat,
   validateAssembledReport,
   type AssembledReportUnit,
@@ -882,44 +881,11 @@ export async function processReportFulfillmentJob(input: {
     throw new ReportAssemblyRegenerationRequired(structuralErrors);
   }
 
-  await input.store.updateReport(report.id, nowPatch("validating"));
-  await input.store.updateJob(input.job.id, { step: "validating" });
-  redundancyAttempts += 1;
-  const reportPayload = assembleReportGenerationPayload({
-    reportId: report.id,
-    reportDomain: report.report_domain,
-    reportHorizon: report.report_horizon,
-    unitId: orderedUnitIds[0],
-    frozenFacts: report.facts
-  });
-  const redundancy = await runReportRedundancyPass({
-    // Key dates are a deterministic assembly of sentences that already passed
-    // in their source season units. Re-sending that copied material to the
-    // prose evaluator would manufacture duplication findings by design.
-    units: assembledUnits.filter((unit) => unit.unitId !== "key-dates"),
-    payload: reportPayload,
-    callModel: authorizedCall
-  });
-  tokenCount += redundancy.usage.totalTokens;
-  promptVersions.redundancy = redundancy.promptVersion;
-  const redundancyWarnings: ReportAssemblyIssue[] = redundancy.findings.map((finding) => ({
-      code: `report_${finding.category}`,
-      message: finding.evidence,
-      severity: "warning",
-      unitId: finding.unit_id,
-      relatedUnitIds: finding.related_unit_ids,
-      location: finding.location,
-      sentenceIndex: finding.sentence_index,
-      scopeStart: finding.scope_start,
-      scopeEnd: finding.scope_end,
-      quote: finding.quote
-    }));
-  const allAssemblyWarnings = [...assemblyWarnings, ...redundancyWarnings];
   validatorSummary.push({
     unitId: "assembled-report",
     passed: true,
-    issues: allAssemblyWarnings,
-    warnings: allAssemblyWarnings,
+    issues: assemblyWarnings,
+    warnings: assemblyWarnings,
     mechanicalRemovals: deduplication.removals
   });
 
