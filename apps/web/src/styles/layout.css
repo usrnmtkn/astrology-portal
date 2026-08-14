@@ -14,9 +14,16 @@
 }
 
 .feature-loading-fallback {
+  display: grid;
+  align-content: start;
   min-height: min(42vh, 420px);
+  padding: var(--space-5);
   border-radius: var(--radius);
   background: color-mix(in srgb, var(--surface) 62%, transparent);
+}
+
+.feature-loading-fallback__lines {
+  margin-top: 0;
 }
 
 .deferred-render-placeholder {
