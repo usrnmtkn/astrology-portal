@@ -1218,20 +1218,21 @@ test.describe("client-facing user flow case studies", () => {
       await friendHouseTransitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()
     ).trim();
     const friendHouseTransitDescription = (
-      await friendHouseTransitCard.locator(".updates-aspect-row__description").innerText()
+      await friendHouseTransitCard.locator(".updates-aspect-row__description.transit-card-preview").innerText()
     ).trim();
     expect(
       friendHouseTransitDescription.startsWith(`${friendHouseTransitRange},`),
       "Friend house transit body does not repeat its visible date range"
     ).toBe(false);
-    await friendHouseTransitCard.click();
-    await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
-    await expectNoDuplicateArticleHeadings(page, "Friend house-transit detail");
     await expect(
-      page.locator(".sky-detail-section"),
-      "Untraced house-transit explanation stays hidden on the detail surface"
-    ).toHaveCount(0);
-    await page.getByRole("button", { name: "Close detail" }).click();
+      friendHouseTransitCard.locator('.updates-aspect-row__description[role="status"]'),
+      "Friend house transit with no eligible detail sections is marked unavailable"
+    ).toHaveText("Full interpretation unavailable pending source verification.");
+    await expect(
+      friendHouseTransitCard,
+      "Friend house transit with no eligible detail sections cannot open a heading-only article"
+    ).toBeDisabled();
+    await expect(page.locator(".app-shell.mode-detail")).toHaveCount(0);
     await expect(page.getByRole("tab", { name: "Transits" })).toHaveAttribute("aria-selected", "true");
 
     const transitCardText = ((await transitCard.innerText()) ?? "").replace(/\s+/g, " ").trim();
@@ -1244,8 +1245,8 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByLabel("What this looks like in space")).toBeVisible();
     await expect(
       page.locator(".sky-detail-section:not(.sky-aspect-mechanics)"),
-      "Untraced personal-transit explanation stays hidden while the mechanics remain"
-    ).toHaveCount(0);
+      "Owner-signoff-untraced personal-transit explanation remains eligible under the owner ruling"
+    ).toHaveCount(1);
     await page.getByRole("button", { name: "Close detail" }).click();
     await expect(page.getByRole("tab", { name: "Transits" })).toHaveAttribute("aria-selected", "true");
 
