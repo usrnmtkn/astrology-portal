@@ -891,6 +891,31 @@ assert.match(
   /onSavePendingForm\(submittedForm\);[\s\S]*verifyPhoneSignInCode[\s\S]*onAuthenticated\(\{[\s\S]*provider: "phone"[\s\S]*createUserProfile\(form, provider, account\)/,
   "Phone signup must defer profile details until code verification and preserve the phone provider."
 );
+assert.match(
+  authService,
+  /type EmailSignupResult[\s\S]*sessionEstablished: boolean[\s\S]*signUpWithEmail[\s\S]*sessionEstablished: Boolean\(data\.session\)/,
+  "Email signup must distinguish a pending auth user from an established authenticated session."
+);
+assert.match(
+  signupView,
+  /signupResult\.account && signupResult\.sessionEstablished[\s\S]*onAuthenticated\([\s\S]*onEmailConfirmationRequired\(\)[\s\S]*setEmailConfirmationPending[\s\S]*aria-label="Confirm your email"/,
+  "Unconfirmed email signup must stay on a confirmation screen instead of exposing the profile as authenticated."
+);
+assert.match(
+  signupView,
+  /hasPendingInvitation \? " and friend invitation" : ""[\s\S]*You will not have a public handle or appear in Friends until your email is confirmed/,
+  "Email confirmation guidance must describe invite continuation only when an invitation is actually pending."
+);
+assert.match(
+  service,
+  /pendingSocialInvitationConfirmationTtlMs[\s\S]*preservePendingSocialInvitationForEmailConfirmation[\s\S]*window\.localStorage\.setItem[\s\S]*pendingSocialInvitationConfirmationExpiryKey/,
+  "Pending invitations must survive an email confirmation opening in a new tab for a bounded period."
+);
+assert.match(
+  `${app}\n${service}`,
+  /setPendingInvitationForSignup\(hasPendingInvitation\)[\s\S]*hasPendingInvitation=\{pendingInvitationForSignup\}[\s\S]*onEmailConfirmationRequired=\{preservePendingSocialInvitationForEmailConfirmation\}/,
+  "The signup surface must preserve and disclose the pending invitation during email confirmation."
+);
 assert.doesNotMatch(
   authService,
   /user\.email\?\.split\("@"\)\[0\]\s*\?\?\s*user\.phone/,
