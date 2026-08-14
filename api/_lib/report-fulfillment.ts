@@ -115,6 +115,8 @@ type PassingUnitCacheEntry = {
     judge: ReportJudgeResult;
     writerReviews: Array<{ critique: unknown; coldCritique: unknown }>;
     keyDateEntries?: Array<{ eventId: string; title: string; sentence: string }>;
+    keyDateEligibleEventIds?: string[];
+    keyDateInterpretedEventIds?: string[];
     promptVersions: Record<string, unknown>;
     factsHash: string | null;
     attemptCounts: { validator: number; judge: number };
@@ -720,6 +722,8 @@ export async function processReportFulfillmentJob(input: {
       fulfillmentPassed: true, validatorResults, judge: judged.result, promptVersions,
       writerReviews,
       keyDateEntries: draft.keyDates ?? [],
+      keyDateEligibleEventIds: payload.keyDateRequirements.map((event) => event.eventId),
+      keyDateInterpretedEventIds: (draft.keyDates ?? []).map((event) => event.eventId),
       factsHash: report.facts_hash, attemptCounts: { validator: validatorAttempts, judge: judgeAttempts },
       tokenAccounting: {
         acceptedTokens: unitAcceptedTokens,
@@ -749,7 +753,7 @@ export async function processReportFulfillmentJob(input: {
   if (orderedUnitIds.includes("key-dates")) {
     const existingKeyDates = await input.store.unit(report.id, "key-dates");
     if (existingKeyDates?.source_snapshot?.fulfillmentPassed === true
-      && (existingKeyDates.source_snapshot.deterministicAssembly as { schema?: unknown } | undefined)?.schema === "report-key-dates-assembly.v3") {
+      && (existingKeyDates.source_snapshot.deterministicAssembly as { schema?: unknown } | undefined)?.schema === "report-key-dates-assembly.v4") {
       const snapshot = existingKeyDates.source_snapshot;
       validatorSummary.push({
         unitId: "key-dates",
@@ -778,10 +782,16 @@ export async function processReportFulfillmentJob(input: {
           }
         }];
       });
+      const eligibleEventIds = sourceRows.flatMap((row) => Array.isArray(row.source_snapshot?.keyDateEligibleEventIds)
+        ? row.source_snapshot.keyDateEligibleEventIds as string[] : []);
+      const interpretedEventIds = sourceRows.flatMap((row) => Array.isArray(row.source_snapshot?.keyDateInterpretedEventIds)
+        ? row.source_snapshot.keyDateInterpretedEventIds as string[] : []);
       const keyDatesDraft = assembleDeterministicReportKeyDates({
         reportHorizon: report.report_horizon,
         frozenFacts: report.facts,
-        sourceUnits
+        sourceUnits,
+        eligibleEventIds,
+        interpretedEventIds
       });
       const formatIssues = validateReportKeyDateFormat(keyDatesDraft, sourceUnits);
       const factLock = verifyReportFactLock(keyDatesDraft, report.facts);
@@ -794,7 +804,7 @@ export async function processReportFulfillmentJob(input: {
         await input.store.saveUnit(report, "key-dates", keyDatesDraft, {
           fulfillmentPassed: true,
           deterministicAssembly: {
-            schema: "report-key-dates-assembly.v3",
+            schema: "report-key-dates-assembly.v4",
             sourceUnitIds: sourceUnits.map((unit) => unit.unitId),
             writerChainSkipped: true,
             coldReadSkipped: true,

@@ -13,6 +13,7 @@ import {
 import {
   assembleReportGenerationPayload,
   isAstrologyMechanismStatement,
+  reportFactors,
   reportPromptFromPayload,
   validateReportDraft
 } from "../api/_lib/report-generation.ts";
@@ -116,7 +117,14 @@ assert.deepEqual(validateAssembledReport(ownerFinalKeyDates).filter((entry) => e
 
 const repairManifest = JSON.parse(fs.readFileSync(new URL("./fixtures/report-8b3e266e-assembly-repair-v1.json", import.meta.url), "utf8"));
 const repairedEntries = Object.values(repairManifest.sourceUnits).flat();
-assert.equal(repairedEntries.length, 27);
+assert.equal(repairedEntries.length, 21);
+for (const removedEventId of [
+  "jupiter-sextile-north-node:0", "chiron-sextile-sun:0", "jupiter-square-chiron:0",
+  "jupiter-sextile-pluto:0", "chiron-sextile-sun:1", "pluto-square-chiron:0"
+]) {
+  assert.ok(!repairedEntries.some((entry) => entry.eventId === removedEventId),
+    `Fact-only event ${removedEventId} must not appear in Key Dates.`);
+}
 assert.equal(new Set(repairedEntries.map((entry) => entry.title.toLowerCase())).size, repairedEntries.length,
   "The repaired Production Key Dates titles must all be unique.");
 assert.equal(new Set(repairedEntries.map((entry) => entry.sentence.toLowerCase())).size, repairedEntries.length,
@@ -226,23 +234,37 @@ assert.equal(mechanicallyRepaired.units.find((unit) => unit.unitId === "summer")
 assert.match(mechanicallyRepaired.units.find((unit) => unit.unitId === "spring")?.draft.body ?? "", /preference\. Different hours/u);
 assert.match(mechanicallyRepaired.units.find((unit) => unit.unitId === "winter-next")?.draft.body ?? "", /Ascendant\. A schedule/u);
 
-const completeManifest = reportKeyDateEventManifest(frozen, "12_months");
-const completeSourceUnits = [...new Set(completeManifest.map((entry) => entry.sourceUnitId).filter(Boolean))].map((unitId) => ({
+const factorEligibleManifest = reportKeyDateEventManifest(frozen, "12_months", reportFactors(frozen).map((factor) => factor.id));
+for (const ineligibleTargetEvent of [
+  "jupiter-sextile-north-node:0", "chiron-sextile-sun:0", "jupiter-square-chiron:0",
+  "chiron-sextile-sun:1", "pluto-square-chiron:0"
+]) {
+  assert.ok(!factorEligibleManifest.some((entry) => entry.eventId === ineligibleTargetEvent),
+    `Transit-target eligibility must remove ${ineligibleTargetEvent} before the writing packet.`);
+}
+const interpretedEventIds = factorEligibleManifest
+  .filter((entry) => entry.eventId !== "jupiter-sextile-pluto:0")
+  .map((entry) => entry.eventId);
+const completeSourceUnits = [...new Set(factorEligibleManifest.map((entry) => entry.sourceUnitId).filter(Boolean))].map((unitId) => ({
   unitId,
   draft: {
-    keyDates: completeManifest.filter((entry) => entry.sourceUnitId === unitId).map((entry, index) => ({
+    keyDates: factorEligibleManifest.filter((entry) => entry.sourceUnitId === unitId && interpretedEventIds.includes(entry.eventId)).map((entry, index) => ({
       eventId: entry.eventId,
       title: `Event ${index + 1} ${unitId}`,
       sentence: `Event ${index + 1} for ${unitId} has a complete factual sentence.`
     }))
   }
 }));
-assert.doesNotThrow(() => assembleDeterministicReportKeyDates({ reportHorizon: "12_months", frozenFacts: frozen, sourceUnits: completeSourceUnits }));
+const keyDateAssemblyContract = {
+  reportHorizon: "12_months", frozenFacts: frozen, sourceUnits: completeSourceUnits,
+  eligibleEventIds: factorEligibleManifest.map((entry) => entry.eventId), interpretedEventIds
+};
+assert.doesNotThrow(() => assembleDeterministicReportKeyDates(keyDateAssemblyContract));
 completeSourceUnits[0].draft.keyDates.pop();
 assert.throws(
-  () => assembleDeterministicReportKeyDates({ reportHorizon: "12_months", frozenFacts: frozen, sourceUnits: completeSourceUnits }),
+  () => assembleDeterministicReportKeyDates(keyDateAssemblyContract),
   /REPORT_KEY_DATES_MISSING_EVENTS/u,
-  "Omitting any eligible frozen fact date must hard-fail deterministic assembly."
+  "Omitting an eligible interpreted frozen date must hard-fail deterministic assembly."
 );
 
 let staleRedundancyCalls = 0;
