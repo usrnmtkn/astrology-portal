@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "sourceArticleParagraphs": 15,
+  "sourceArticleSha256": "79a59780827bef0febdcd885a0941579798b0ddf5d321b420e277822924648ab",
+  "candidateState": "needs_review_non_serving",
+  "mechanicalPlaceholderConversions": 2,
+  "recurrenceEntries": 2,
+  "canonicalMirrorsVerified": 3,
+  "registerGoldFixtures": 7,
+  "aspectReplacementState": "needs_review_non_serving",
+  "genericAspectSubstitutions": 0,
+  "billedCalls": 0
+}
