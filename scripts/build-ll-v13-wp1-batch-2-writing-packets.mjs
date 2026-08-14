@@ -18,7 +18,7 @@ function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");
 }
 const rows = batch.rows.map((row) => {
-  const packet = buildNatalWritingPacket({ surface: "natal-aspect", key: row.rowKey, indexEntries: entries });
+  const packet = buildNatalWritingPacket({ surface: "natal-aspect", key: row.rowKey, voice: "self", indexEntries: entries });
   const modelInput = packet.generationAllowed
     ? renderNatalModelInput(packet, { task: `Write one owner-review-gated natal delineation for ${row.rowKey}. Return only the finished passage.` })
     : null;
@@ -58,7 +58,7 @@ const output = {
     ready: rows.filter((row) => row.generationAllowed).length,
     insufficientEvidence: rows.filter((row) => !row.generationAllowed).length
   },
-  standards: buildNatalWritingPacket({ surface: "natal-aspect", key: "moon|sextile|venus", indexEntries: entries }).standards,
+  standards: buildNatalWritingPacket({ surface: "natal-aspect", key: "moon|sextile|venus", voice: "self", indexEntries: entries }).standards,
   rows
 };
 const outputPath = path.join(repoRoot, "packages/astro-knowledge/review/natal-writer-evidence-2026-08-13/ll-v13-wp1-batch-02-writing-packets-v1.json");

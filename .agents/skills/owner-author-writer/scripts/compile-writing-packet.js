@@ -992,7 +992,8 @@ function main() {
       throw new Error("PRIOR_COPY_FORBIDDEN: --input is not accepted for natal authoring packets.");
     }
     const surface = args.surface === "natal" ? "natal-aspect" : args.surface;
-    const packet = buildNatalWritingPacket({ surface, key: args.id });
+    const voice = args.voice || "self";
+    const packet = buildNatalWritingPacket({ surface, key: args.id, voice });
     fs.mkdirSync(args.out, { recursive: true });
     fs.writeFileSync(path.join(args.out, "packet.json"), `${JSON.stringify(packet, null, 2)}\n`);
     if (!packet.generationAllowed) {
@@ -1000,7 +1001,7 @@ function main() {
       process.exitCode = 2;
       return;
     }
-    fs.writeFileSync(path.join(args.out, "model-input.md"), renderNatalModelInput(packet, { task: args.task }));
+    fs.writeFileSync(path.join(args.out, "model-input.md"), renderNatalModelInput(packet, { task: args.task, voice }));
     console.log(`Compiled ${packet.ownerPassages.length}-passage natal packet at ${args.out}. No model call was made.`);
     return;
   }

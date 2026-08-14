@@ -7,7 +7,7 @@ const path = require("path");
 const { buildIndex, repoRoot } = require("./build-voice-index.js");
 
 const packageRoot = path.join(repoRoot, "packages", "astro-knowledge");
-const PACKET_VERSION = "natal-writer-packet-v4:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v2:exact-owner-evidence-v1:two-entry-points-v1:five-beat-v1:whole-passage-v1:fail-closed-v1";
+const PACKET_VERSION = "natal-writer-packet-v5:astrology-support-source-v1:prior-copy-excluded-v1:registry-boundary-v2:voice-specific-exact-owner-evidence-v1:two-entry-points-v1:five-beat-v1:whole-passage-v1:fail-closed-v1";
 const MIN_PASSAGES = 4;
 const MAX_PASSAGES = 6;
 const MIN_SOURCE_ROWS = 3;
@@ -227,7 +227,7 @@ function loadAstrologySupport(target, supportRegistry = loadAstrologySupportRegi
 function metadataFromEntry(entry) {
   const governedKey = String(entry.governedKey || "");
   const parts = governedKey.split("|");
-  if (entry.surface === "natal-aspect" && parts.length === 3) {
+  if ((entry.surface === "natal-aspect" || entry.surface === "natal-friend") && parts.length === 3) {
     return {
       planetA: normalize(entry.planetA || parts[0]),
       aspect: normalizeAspect(entry.aspect || parts[1]),
@@ -273,9 +273,11 @@ function placementAffinity(target, entry) {
   return { rank: 4, label: "adjacent-owner-approved-natal-placement" };
 }
 
-function selectOwnerPassages(target, indexEntries) {
+function selectOwnerPassages(target, indexEntries, voice = "self") {
+  if (!new Set(["self", "friend"]).has(voice)) throw new Error(`Unsupported natal packet voice: ${voice}`);
+  const evidenceSurface = voice === "friend" ? "natal-friend" : target.surface;
   const ranked = indexEntries
-    .filter((entry) => entry.surface === target.surface)
+    .filter((entry) => entry.surface === evidenceSurface)
     .filter((entry) => entry.authorityClass === "exact_owner_approved")
     .filter((entry) => entry.ownerApproved === true && entry.useAsPositiveVoiceEvidence === true)
     .filter((entry) => typeof entry.text === "string" && entry.text.trim())
@@ -332,12 +334,13 @@ function promptBlockFor(packet) {
   return `NATAL WRITING EVIDENCE CONTRACT\nGeneration is allowed only because this packet contains AstrologySupport for the exact row plus four to six exact owner-approved passages from at least three source rows. AstrologySupport is the sole target-mechanism source. Use owner passages as writing-operation evidence, never as target facts. Registry prose and all existing candidate prose are excluded from this packet by construction. Do not add facts absent from AstrologySupport.\n\nTWO INDEPENDENT AUTHORING TASKS\nAuthor self from the mechanism at the reader's own entry point. Author friend separately from the same mechanism at the observer's entry point. Never derive either passage from the other. Do not expose unobservable interior states in friend voice and do not coach the reader about the friend.\n\nAUTHORING ORDER\nExtract an internal mechanism sentence that is never shipped; find the human situation; enter through a scene; show the consequence; add perspective last; delete astrology-summary prose.\n\nFIVE-BEAT CONSTRAINTS\n${beats}${documents}`;
 }
 
-function buildNatalWritingPacket({ surface, key, indexEntries, factBoundaryLoader = loadNatalFactBoundary, supportRegistry }) {
+function buildNatalWritingPacket({ surface, key, voice = "self", indexEntries, factBoundaryLoader = loadNatalFactBoundary, supportRegistry }) {
+  if (!new Set(["self", "friend"]).has(voice)) throw new Error(`Unsupported natal packet voice: ${voice}`);
   const target = parseNatalTarget(surface, key);
   const factBoundary = factBoundaryLoader(target);
   const authoringSource = loadAstrologySupport(target, supportRegistry);
   const standards = loadStandards();
-  const ownerPassages = target.supported ? selectOwnerPassages(target, indexEntries || buildIndex().entries) : [];
+  const ownerPassages = target.supported ? selectOwnerPassages(target, indexEntries || buildIndex().entries, voice) : [];
   const distinctSourceRows = new Set(ownerPassages.map((entry) => entry.sourceRowId)).size;
   const evidenceCompliant = ownerPassages.length >= MIN_PASSAGES && ownerPassages.length <= MAX_PASSAGES && distinctSourceRows >= MIN_SOURCE_ROWS;
   const generationAllowed = target.supported && factBoundary.ok === true && authoringSource.ok === true && evidenceCompliant;
@@ -351,6 +354,7 @@ function buildNatalWritingPacket({ surface, key, indexEntries, factBoundaryLoade
     schemaVersion: 1,
     packetVersion: PACKET_VERSION,
     packetType: "natal-writing-packet",
+    targetVoice: voice,
     status: generationAllowed ? "ready" : "insufficient-evidence",
     generationAllowed,
     target,
@@ -358,6 +362,7 @@ function buildNatalWritingPacket({ surface, key, indexEntries, factBoundaryLoade
     authoringSource,
     evidencePolicy: {
       authorityClass: "exact_owner_approved",
+      evidenceSurface: voice === "friend" ? "natal-friend" : target.surface,
       minimumPassages: MIN_PASSAGES,
       maximumPassages: MAX_PASSAGES,
       minimumDistinctSourceRows: MIN_SOURCE_ROWS,
@@ -380,7 +385,7 @@ function buildNatalWritingPacket({ surface, key, indexEntries, factBoundaryLoade
       writerPromotion: false,
       personContract: {
         self: "reader-own-experience",
-        friend: "observer-in-the-room",
+        friend: voice === "friend" ? "owner-ruled-observer-contract" : "not-present-in-self-packet",
         friendDerivedFromSelf: false
       }
     }
@@ -396,12 +401,15 @@ function assertNatalGenerationAllowed(packet) {
   }
 }
 
-function renderNatalModelInput(packet, { task = "Write the requested natal delineation.", inputText, voice = "self" } = {}) {
+function renderNatalModelInput(packet, { task = "Write the requested natal delineation.", inputText, voice = packet?.targetVoice || "self" } = {}) {
   assertNatalGenerationAllowed(packet);
   if (inputText != null && String(inputText).trim()) {
     throw new Error("PRIOR_COPY_FORBIDDEN: natal authoring packets cannot accept existing candidate prose.");
   }
   if (!new Set(["self", "friend"]).has(voice)) throw new Error(`UNSUPPORTED_NATAL_VOICE: ${voice}`);
+  if (voice !== packet.targetVoice) {
+    throw new Error(`NATAL_VOICE_PACKET_MISMATCH: packet is ${packet.targetVoice}; requested ${voice}`);
+  }
   const evidence = packet.ownerPassages.map((entry, index) => [
     `OWNER PASSAGE ${index + 1}`,
     `Source row: ${entry.sourceRowId}`,

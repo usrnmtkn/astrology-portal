@@ -632,6 +632,63 @@ function llMatrixV13Wp1Entries() {
   });
 }
 
+function natalFriendCalibrationEntries() {
+  const file = path.join(writerRoot, "natal-friend-calibration", "natal-friend-calibration-owner-approved-v1.json");
+  if (!fs.existsSync(file)) return [];
+  const dataset = readJson(file);
+  if (
+    dataset.schemaVersion !== 1
+    || dataset.id !== "natal-friend-calibration-owner-approved-v1"
+    || dataset.surface !== "natal-friend"
+    || dataset.authorityClass !== "exact_owner_approved"
+    || !Array.isArray(dataset.rows)
+    || dataset.rows.length < 4
+  ) {
+    throw new Error("Natal Friend calibration evidence is incomplete.");
+  }
+  const seen = new Set();
+  return dataset.rows.map((row) => {
+    if (
+      seen.has(row.key)
+      || row.approvalLevel !== "exact_owner_approved"
+      || row.ownerApproved !== true
+      || !row.copy
+      || !row.recordPath
+      || !/^[0-9a-f]{64}$/u.test(row.recordSha256 || "")
+      || crypto.createHash("sha256").update(row.copy).digest("hex") !== row.payloadSha256
+    ) {
+      throw new Error(`Invalid natal Friend calibration row: ${row.key || "missing-key"}`);
+    }
+    seen.add(row.key);
+    return baseEntry({
+      sourceId: `natal-friend-calibration:${tokens(row.key).join("-")}`,
+      text: row.copy,
+      sourcePath: relative(file),
+      sourceSha256: row.payloadSha256,
+      author: "Owner-approved exact Friend wording",
+      origin: "owner-approved-natal-friend-calibration",
+      surface: "natal-friend",
+      planet: row.planetA,
+      articleBeat: "friend-natal-delineation",
+      structuralFunction: `Friend natal aspect delineation (${row.aspect} ${row.planetB})`,
+      authorityClass: "exact_owner_approved",
+      ownerApproved: true,
+      reviewStatus: "approved",
+      editorialStatus: "exact_owner_approved",
+      canonical: true,
+      useAsPositiveVoiceEvidence: true,
+      useAsContextualEvidence: true,
+      provenance: `Exact owner-approved Friend calibration wording, approved ${row.approvedAt}; record ${row.recordPath} at ${row.recordSha256}.`,
+      governedKey: row.key,
+      workbookSourceRow: null,
+      planetA: row.planetA,
+      aspect: row.aspect,
+      planetB: row.planetB,
+      personContract: row.personContract
+    });
+  });
+}
+
 function buildIndex() {
   const entries = [
     ...activeOwnerEntries(),
@@ -641,6 +698,7 @@ function buildIndex() {
     ...knowledgeMatrixV9Entries(),
     ...llMatrixV13Entries(),
     ...llMatrixV13Wp1Entries(),
+    ...natalFriendCalibrationEntries(),
     ...historicalEntries(),
     ...contrastiveEntries(),
     ...negativeEntries(),
