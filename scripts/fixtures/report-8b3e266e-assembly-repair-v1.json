@@ -1,0 +1,46 @@
+{
+  "schema": "tldrastro.report-assembly-repair.v1",
+  "reportId": "8b3e266e-286d-4ea7-a008-f60776e6b791",
+  "reviewStatus": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "provenance": {
+    "ownerReference": "artifacts/marie-satori-year-ahead-2026-FINAL.md",
+    "productionSnapshot": "artifacts/marie-satori-general-12m-report-8b3e266e-review-snapshot.md",
+    "ownerInstructionDate": "2026-08-13",
+    "note": "Nineteen title/sentence pairs are owner-authored reference lines. MAY 12 and AUG 19 are needs-review date-specific repair lines for Production-only selected events. Dates and attributions remain calculation-owned."
+  },
+  "sourceUnits": {
+    "winter-current": [
+      { "eventId": "saturn-trine-jupiter:0", "title": "Give the idea structure", "sentence": "Put a schedule, limit, cost, or deadline around the part you are ready to build." },
+      { "eventId": "neptune-trine-jupiter:0", "title": "Follow the better idea", "sentence": "Pay attention to the possibility that gives the work more meaning or a more interesting direction, then give it somewhere practical to go." },
+      { "eventId": "lunar_eclipse-2026-03-03", "title": "A responsibility reaches its limit", "sentence": "A move, repair, living arrangement, family duty, or household obligation may need a decision." }
+    ],
+    "spring": [
+      { "eventId": "uranus-square-sun:0", "title": "The old setup changes", "sentence": "A role, schedule, relationship, or agreement may need different terms because you or your circumstances have changed." },
+      { "eventId": "jupiter-square-pluto:0", "title": "Read the terms carefully", "sentence": "A request or opportunity may give someone else more control over the terms." },
+      { "eventId": "uranus-sextile-jupiter:0", "title": "Make the method easier to keep", "sentence": "Try a different tool, schedule, or process where it can make the writing easier to continue." },
+      { "eventId": "jupiter-trine-uranus:0", "title": "Try the other method", "sentence": "Give the different tool, schedule, or format a real test before deciding which route works better." },
+      { "eventId": "saturn-sextile-ascendant:0", "title": "Build around your actual week", "sentence": "Choose the practice or limit you can keep before the next Saturn pass." }
+    ],
+    "summer": [
+      { "eventId": "jupiter-conjunction-jupiter:0", "title": "A longer conversation begins", "sentence": "Give one idea enough room to become something you can keep developing." },
+      { "eventId": "solar_eclipse-2026-08-12", "title": "Put the important part into words", "sentence": "An announcement, application, or piece of writing may need a clear answer from someone else." },
+      { "eventId": "jupiter-sextile-ascendant:0", "title": "Say what you are doing clearly", "sentence": "Send the message, explain the work, or accept the introduction while it is easier to be understood clearly." },
+      { "eventId": "jupiter-square-moon:0", "title": "The calendar tells the truth", "sentence": "Notice which basic routines and relationships lose time every time another commitment gets added." },
+      { "eventId": "lunar_eclipse-2026-08-28", "title": "Private words reach a wider audience", "sentence": "Review what you wrote for yourself before it becomes something other people need to understand." },
+      { "eventId": "jupiter-opposition-midheaven:0", "title": "Home and work compete for time", "sentence": "Decide how much of the week each one can realistically receive." }
+    ],
+    "autumn": [
+      { "eventId": "jupiter-trine-neptune:0", "title": "Put the idea into working order", "sentence": "Turn what has been developing into a draft, schedule, process, or plan you can keep working with." },
+      { "eventId": "saturn-sextile-ascendant:1", "title": "Test it against a real week", "sentence": "Keep the part of the May structure that still works and change the part that does not." },
+      { "eventId": "jupiter-square-uranus:0", "title": "Test the new format", "sentence": "Ask what the change improves before you discard a format that still works." },
+      { "eventId": "jupiter-opposition-mars:0", "title": "State the terms, round 1", "sentence": "What you want may conflict with somebody else's plan." }
+    ],
+    "winter-next": [
+      { "eventId": "jupiter-opposition-mars:1", "title": "Terms, round 2", "sentence": "Say what would actually resolve the disagreement from October, including what each person can realistically commit to." },
+      { "eventId": "solar_eclipse-2027-02-06", "title": "The career question gets concrete", "sentence": "An application, title, project, client, publication, or professional decision may reach a point where somebody needs to answer." },
+      { "eventId": "saturn-sextile-ascendant:2", "title": "Keep what survived the year", "sentence": "The practice that still works after May and October is the one worth carrying forward." }
+    ]
+  }
+}
