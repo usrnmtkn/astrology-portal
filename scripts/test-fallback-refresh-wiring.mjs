@@ -591,7 +591,7 @@ assert.ok(
 );
 assert.match(
   pairDailySelectionSource,
-  /const pairVariant = stablePairDailyVariant\([\s\S]*?const readerDriver = pairDailyDriver\(currentSky, profileNatalSky, pairVariant\);[\s\S]*?const friendDriver = pairDailyDriver\(currentSky, selectedChart\.natalChart, pairVariant\);/u,
+  /const pairVariant = stablePairDailyVariant\([\s\S]*?const readerDriver = pairDailyDriver\([\s\S]*?profile\.charts\[0\]\?\.birthTime === "Time unknown"[\s\S]*?\);[\s\S]*?const friendDriver = pairDailyDriver\([\s\S]*?selectedChart\.birthTimeUnknown[\s\S]*?\);/u,
   "Pair Daily must use one stable pair seed for both chart-driver rotations."
 );
 assert.match(

@@ -99,7 +99,6 @@ export function FriendTransitsTab({
   dailyForecast,
   dailyDoItems = [],
   dailyDontItems = [],
-  dateLabel,
   friendName,
   houseTransits,
   isLoading = false,
@@ -144,31 +143,25 @@ export function FriendTransitsTab({
         ) : null}
         {dailyForecast ? (
           <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Daily forecast for ${friendName}`}>
-            <span className="eyebrow section-label friend-section-label">{dateLabel} for {friendName}</span>
+            <h3>{dailyForecast.headline}</h3>
+            <p>{dailyForecast.body}</p>
             <div
               aria-label={[
                 `Moon in ${dailyForecast.moonContext.sign}`,
                 dailyForecast.moonContext.houseLabel,
                 dailyForecast.moonContext.topic
               ].filter(Boolean).join(", ")}
-              className="updates-aspect-row__meta-line friend-daily-forecast__moon-context"
+              className="updates-aspect-row__meta-line daily-horoscope-summary__moon-tags"
             >
-              <span>Moon in {dailyForecast.moonContext.sign}</span>
-              {dailyForecast.moonContext.houseLabel ? (
-                <>
-                  <span aria-hidden="true">·</span>
-                  <span>{dailyForecast.moonContext.houseLabel}</span>
-                </>
-              ) : null}
-              {dailyForecast.moonContext.topic ? (
-                <>
-                  <span aria-hidden="true">·</span>
-                  <span>{dailyForecast.moonContext.topic}</span>
-                </>
-              ) : null}
+              <span className="ui-pill ui-pill--neutral ui-pill--mixed">Moon in</span>
+              <span className="ui-pill ui-pill--neutral ui-pill--mixed">
+                {[
+                  dailyForecast.moonContext.sign,
+                  dailyForecast.moonContext.houseLabel,
+                  dailyForecast.moonContext.topic
+                ].filter(Boolean).join(" · ")}
+              </span>
             </div>
-            <h3>{dailyForecast.headline}</h3>
-            <p>{dailyForecast.body}</p>
           </section>
         ) : null}
         {hasDailyGuidance ? (

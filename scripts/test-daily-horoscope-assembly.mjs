@@ -197,6 +197,11 @@ assert.match(
   /aria-label="Daily horoscope summary"/u,
   "You > Transits must render the personalized daily summary."
 );
+assert.match(
+  youPageSource,
+  /dailyUpdateSummary\.moonContext[\s\S]*?>Moon in<\/span>[\s\S]*?dailyUpdateSummary\.moonContext\.topic/u,
+  "You > Transits must show the chart-specific Moon sign, house, and approved topic as bottom tags."
+);
 assert.doesNotMatch(youPageSource, /aria-label="Personal timing summary"/u);
 assert.doesNotMatch(youPageSource, /Daily calendar/u, "Sky-wide phase and void copy must stay off You > Transits.");
 assert.match(appSource, /dailyOuterTransitPlanets[\s\S]*?gate = dailyOuterTransitPlanets\.has\(planet\) \? 3 : 5/u);

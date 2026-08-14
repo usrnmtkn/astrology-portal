@@ -75,6 +75,16 @@ assert.match(
   /selectDailyGlanceDriver\(moon\.longitude, natalSky\.positions, house\)/u,
   "Daily At-a-Glance must compare only supported natal positions."
 );
+assert.match(
+  driverSource,
+  /const house = !birthTimeUnknown && natalSky\.ascendant[\s\S]*?wholeSignHouseForSign\(moon\.sign, natalSky\.ascendant\)/u,
+  "Daily At-a-Glance house fallback must be calculated from the subject chart's reliable Ascendant."
+);
+assert.doesNotMatch(
+  driverSource,
+  /typeof moon\.house/u,
+  "Daily At-a-Glance must not reuse a Moon house calculated for another chart."
+);
 assert.doesNotMatch(
   driverSource,
   /natalTransitTargets/u,
@@ -82,7 +92,7 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /function friendDailyGlance\([\s\S]*?dailyGlanceDriver\(currentSky, natalSky\)[\s\S]*?renderDailyGlance/u,
+  /function friendDailyGlance\([\s\S]*?dailyGlanceDriver\(currentSky, natalSky, birthTimeUnknown\)[\s\S]*?renderDailyGlance/u,
   "Friends must use the same chart-specific daily driver and authored renderer as You."
 );
 assert.match(
