@@ -35,6 +35,17 @@ try {
   await fallbackRuntime.loadDeferredFallbackArchitectureV3Bundle();
   const weekly = await vite.ssrLoadModule("/src/services/weeklyHoroscope.ts");
 
+  assert.deepEqual(
+    weekly.weeklyHoroscopeTagItems("True balance, honest beauty, reciprocal relationship"),
+    ["True balance", "honest beauty", "reciprocal relationship"],
+    "Weekly focus phrases must render as separate tags without splitting multi-word phrases."
+  );
+  assert.deepEqual(
+    weekly.weeklyHoroscopeTagItems("  clear signal, , steady follow-through  "),
+    ["clear signal", "steady follow-through"],
+    "Weekly focus tag normalization must trim labels and discard empty tags."
+  );
+
   assert.deepEqual(weekly.weeklyContentImportCounts, {
     total: rows.length,
     station: rows.filter((row) => row.surface === "weekly-station").length,
