@@ -15,8 +15,3 @@ this settles", "especially as", "might have you" - unless there is a clear owner
 exception. No generic "You don't have to X" repetition. No repeated "Stop + verb"
 structure. No repeated scene-opening rut ("You open...", "You ask..."). Do not optimize
 repetition mechanically if it makes normal language worse.
-
-NO "IN ASTROLOGY" FRAMING (owner ruling, 2026-08-12): never write "In astrology," as a
-framing phrase anywhere on the site; the entire site is about astrology. State the meaning
-directly. Planet education blocks name the planet with its epithet (owner model: Saturn,
-the Taskmaster). Epithets per planet are owner-approved wording, one per planet.
