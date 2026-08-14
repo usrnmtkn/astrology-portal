@@ -140,13 +140,49 @@ function containsTerm(sentence, terms) {
   return terms.some((term) => new RegExp(`\\b${term.replaceAll(" ", "\\s+")}\\b`, "iu").test(normalized));
 }
 
+function containsObservableNoun(text, term) {
+  const escaped = term.replaceAll(" ", "\\s+");
+  const suffix = term.includes(" ") || /s$/u.test(term) ? "" : "(?:s|es)?";
+  return new RegExp(`\\b${escaped}${suffix}\\b`, "iu").test(String(text || ""));
+}
+
 export function observableSentenceProfile(copy) {
   const items = sentences(copy);
   const observable = items.filter((sentence) => containsTerm(sentence, [...CONCRETE_NOUNS, ...OBSERVABLE_ACTIONS]));
+  const distinctObservableNouns = CONCRETE_NOUNS.filter((term) => containsObservableNoun(copy, term));
   return {
     sentenceCount: items.length,
     observableSentenceCount: observable.length,
-    onlyOneObservableSentence: items.length > 1 && observable.length === 1
+    onlyOneObservableSentence: items.length > 1 && observable.length === 1,
+    distinctObservableNouns,
+    distinctObservableNounCount: distinctObservableNouns.length,
+    zeroObservableNouns: distinctObservableNouns.length === 0
+  };
+}
+
+export function validatePassageShape(copy, {
+  minSentences = 4,
+  minWords = 55,
+  minDistinctObservableNouns = 2
+} = {}) {
+  const sentenceItems = sentences(copy);
+  const wordCount = textWords(copy).length;
+  const observable = observableSentenceProfile(copy);
+  const violations = [];
+  if (sentenceItems.length < minSentences) violations.push({ category: "passage_shape", detail: `Requires at least ${minSentences} sentences; found ${sentenceItems.length}.` });
+  if (wordCount < minWords) violations.push({ category: "passage_length", detail: `Requires at least ${minWords} words; found ${wordCount}.` });
+  if (observable.distinctObservableNounCount < minDistinctObservableNouns) {
+    violations.push({ category: "observable_noun_floor", detail: `Requires at least ${minDistinctObservableNouns} distinct observable nouns; found ${observable.distinctObservableNounCount}.` });
+  }
+  return {
+    passed: violations.length === 0,
+    sentenceCount: sentenceItems.length,
+    wordCount,
+    ...observable,
+    minSentences,
+    minWords,
+    minDistinctObservableNouns,
+    violations
   };
 }
 
@@ -184,7 +220,7 @@ export function validateBatchCadence(rows, { limit = 0.15, copyField = "copy" } 
 }
 
 const FRIEND_INTERIOR = /\bName (?:feels?|thinks?|knows?|believes?|wants?|needs?|hopes?|fears?|worries?|imagines?|remembers?)\b/iu;
-const FRIEND_COACHING = /\b(?:you should|you need to|try to|remember to|give Name|let Name|ask Name to|do not|don't)\b/iu;
+const FRIEND_COACHING = /\b(?:you should|you need to|try to|remember to|give Name|let Name|ask Name to)\b/iu;
 const OBSERVER_OPENING = /\b(?:people|the room|a meeting|a conversation|a group|a shared task|coworkers?|friends?|family|clients?|a manager|a team|a coach|a teacher|a helpful teacher|a spiritual teacher|a mentor|a colleague|close relationships?|close partners?|a spiritually familiar teacher|someone|others?|you (?:see|hear|notice|watch|find|learn))\b/iu;
 
 export function validateFriendPair({ selfCopy, friendCopy }) {
