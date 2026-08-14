@@ -39,10 +39,13 @@ everyone; the reader is not in it.
 Calendar cards have two parts (owner decision, 2026-08-14). Forecast
 first, astrology underneath.
 
-**Main copy: the forecast.** What may happen, why it matters, what can
-move. No astrology explanation required, and no placement or aspect names
-in it. The reader gets something usable before being asked to process
-planet, sign, aspect, modality.
+**Main copy: the forecast.** Forecast concludes; Details explains. The
+forecast carries four semantic beats: what may happen, what it turns into,
+how it behaves, and what can move. Those beats are hidden logic, not a
+four-sentence template. Beats may share a sentence, have no required
+position, and may take two to five sentences. The reader must understand
+the event before receiving explanation or strategy. No astrology
+explanation, placement names, or aspect names belong in it.
 
 **Details: the astrology, in reader order.** Names the transit ("Sun in Leo
 opposite Saturn in Aquarius"), then follows the same message-first logic as
@@ -50,7 +53,7 @@ the forecast. Details may sound like astrology education; the main copy may
 not. Details is NOT "Sun does X. Saturn does Y. Opposition means Z. Fixed
 means Q." That order makes the reader assemble the meaning themselves.
 
-Details beats, in this order (owner decision, 2026-08-14):
+Details beats, in this reader order (owner decision, 2026-08-14):
 
 1. **What may happen.** Compose both placements into one recognizable
    situation.
@@ -58,8 +61,12 @@ Details beats, in this order (owner decision, 2026-08-14):
    sentence.
 3. **Why it sticks or moves this way.** Add aspect, then modality or
    element, only where useful.
-4. **What can move.** Translate the astrology back into the part of the
-   situation that can actually change.
+
+Details stops after the explanation. It does not repeat the forecast's
+conclusion, closing list, action, or moral. Placement A and B mechanisms
+and the aspect mechanism are required. Modality or element appears only
+when it materially explains the behavior; unused components remain in the
+evidence packet.
 
 The astrology library governs the explanation. The reader logic governs
 the order of the prose.
@@ -93,12 +100,56 @@ Approved shape (owner-authored, 2026-08-14):
 > individual contribution and recognition, while Saturn in Aquarius holds
 > to the standard meant to apply across the group. The opposition makes
 > both positions difficult to ignore, and because both signs are fixed,
-> neither side is likely to give way quickly. What can move is the
-> agreement itself: what counts, who gets recognized, and which rule
-> applies here.
+> pressure alone is unlikely to change either side.
 
-Beats in the forecast: the tension in ordinary words, then what it turns
-into, then how it behaves, then what can actually change.
+Before prose, the composer derives a causal situation from the governed
+components: the concrete tension or opening, the likely observable event,
+the practical consequence, the persistence or movement behavior, and the
+movable or actionable part. It may not go directly from component clauses
+to sentences.
+
+The aspect selects the argument shape:
+
+- Opposition: competing positions, disagreement becomes explicit, neither
+  can be ignored, and the terms between them must move.
+- Square: two demands collide, a practical problem appears, working around
+  it stops working, and the point of friction must change.
+- Conjunction: two concerns merge, one starts carrying the meaning of both,
+  distinction becomes difficult, and the concerns must be separated or
+  consciously integrated.
+- Trine: two conditions support the same move, progress becomes easier,
+  ease may hide a weak assumption, and the opening is useful only when the
+  check is not skipped.
+- Sextile: an opening becomes available, a new option appears, somebody has
+  to act, and the workable next step matters.
+
+Forecast entry modes are concrete situation, person and action, new fact,
+consequence, contradiction, or decision point. Do not pack both placements
+into sentence one. Openers vary because the event varies, not because syntax
+is randomly swapped.
+
+The final beat may render as a consequence, practical distinction, direct
+action, condition, unresolved tension, or, sparingly, a question. This is a
+closing-function library, not a closing sentence template. Replacing
+`move` with `change` or `shift` does not create a new construction.
+
+Batch gates inspect grammatical shape, not only exact wording. Across a
+batch of eight or more, no opener family, closing family, or entry mode may
+exceed 25 percent. Across a six-card pilot, each is capped at two. Repeated
+`X may Y`, repeated `What can move/change is`, and repeated
+colon-plus-three-item closing lists fail. Forecast and Details may not share
+an identical consequence sentence or closing list. Details must add
+explanation rather than paraphrase.
+
+Collective does not mean abstract. Prefer a concrete actor and action:
+`Someone asks for an exception`, `A team realizes the cheaper option is
+creating more work`, or `The email thread contains three versions of the
+same promise`. Flag generic `people`, abstract institutional nouns where an
+actor is available, personification such as `the option does not move on its
+own`, invented motives, `capacity` when time, workload, money, or staff can
+be named, vague `material`, repeated modal hedging, and component stitching.
+Do not flag concise contrast, natural collective language, or specific
+institutional vocabulary when the event genuinely requires it.
 
 Synonym sets naming one referent ("the policy, process, or rule") and
 facets of one question ("what counts, who gets recognized, which rule
@@ -136,8 +187,9 @@ A pattern in the birth chart. Person first, "you tend to".
   the piece, promise resolution, or deliver a moral.
 - Invent nothing. Concrete detail must come from governed source material.
 - Plain over clever; the meaning survives one read. No em dashes, ASCII
-  only, no "steady", no coaching or permission language. Contractions are
-  fine.
+  only, no "steady", and no generic coaching or permission language. A
+  concrete direct action may close a forecast when the governed situation
+  supports it. Contractions are fine.
 - Voice exemplars must themselves pass every rule above. An exemplar that
   violates a rule is a counter-example and must be removed from the packet.
 

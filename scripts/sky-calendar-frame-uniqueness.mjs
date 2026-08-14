@@ -25,7 +25,6 @@ const detailsBeatKeys = [
   "whatMayHappen",
   "whyItMatters",
   "whyItSticksOrMoves",
-  "whatCanMove",
 ];
 
 function normalizeWhitespace(value) {
@@ -72,7 +71,9 @@ function verifyBeats(card, key, field, requiredBeatKeys, defects) {
     return;
   }
   for (const beat of requiredBeatKeys) {
-    if (!normalizeWhitespace(beats[beat])) {
+    const value = beats[beat];
+    const present = Array.isArray(value) ? value.length > 0 : Boolean(normalizeWhitespace(value));
+    if (!present) {
       defects.push({ code: "missing_required_beat", key, field, beat });
     }
   }
