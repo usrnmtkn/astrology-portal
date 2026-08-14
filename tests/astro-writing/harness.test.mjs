@@ -15,6 +15,7 @@ import {
   buildCardWriterInstructions,
   applyOwnerApproval,
   applyRenderedSampleApproval,
+  assertSurfaceRegisterContract,
   assertBatchGenerationAuthorized,
   assertServingAuthorized,
   CARD_WRITER_SEVEN_PASS_LOOP,
@@ -76,6 +77,48 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../
 const read = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
 const jsonl = (relativePath) => read(relativePath).trim().split("\n").filter(Boolean).map(JSON.parse);
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
+const SKY_PLACEMENT_TARGET = Object.freeze({
+  surface: "sky-placement-page",
+  route: "sky",
+  renderer: "renderSkyPlacement",
+  contentKeyFamily: "fallback-hook/sky-sign-copy/{planet}/{sign}",
+  temporality: "current_sky",
+  voiceMode: "current_sky_direct_address"
+});
+const runSkyPlacementWritingPipeline = (options) => runWritingPipeline({ target: SKY_PLACEMENT_TARGET, ...options });
+
+assert.deepEqual(
+  assertSurfaceRegisterContract(SKY_PLACEMENT_TARGET, { surface: "sky-placement-page", register: "second_person" }),
+  SKY_PLACEMENT_TARGET
+);
+assert.throws(
+  () => assertSurfaceRegisterContract(null, { surface: "sky-placement-page", register: "second_person" }),
+  /SURFACE_REGISTER_GAP:unresolved_target/u
+);
+assert.throws(
+  () => assertSurfaceRegisterContract({ ...SKY_PLACEMENT_TARGET, temporality: "natal" }, { surface: "sky-placement-page", register: "second_person" }),
+  /SURFACE_REGISTER_GAP:temporality_mismatch:natal/u
+);
+assert.throws(
+  () => assertSurfaceRegisterContract({ ...SKY_PLACEMENT_TARGET, renderer: "renderNatalPlacement" }, { surface: "sky-placement-page", register: "second_person" }),
+  /SURFACE_REGISTER_GAP:renderer_mismatch:renderNatalPlacement/u
+);
+assert.doesNotThrow(() => assertSurfaceRegisterContract({
+  surface: "calendar",
+  route: "calendar",
+  renderer: "renderSkyAspectCard",
+  contentKeyFamily: "fallback-hook/sky-aspect-sign/{a}/{aSign}/{aspect}/{b}/{bSign}",
+  temporality: "current_sky",
+  voiceMode: "collective"
+}, { surface: "calendar", register: "collective" }));
+assert.throws(() => assertSurfaceRegisterContract({
+  surface: "calendar",
+  route: "calendar",
+  renderer: "renderSkyAspectCard",
+  contentKeyFamily: "fallback-hook/sky-aspect-sign/{a}/{aSign}/{aspect}/{b}/{bSign}",
+  temporality: "natal",
+  voiceMode: "second_person"
+}, { surface: "calendar", register: "second_person" }), /SURFACE_REGISTER_GAP:temporality_mismatch:natal/u);
 
 const astrologyContract = read("docs/writing/ASTROLOGY_CONTRACT.md");
 const voiceContract = read("docs/writing/VOICE_CONTRACT.md");
@@ -656,7 +699,7 @@ const venusPipelineArgumentInput = Object.fromEntries(argumentOutlineFieldsForFa
   field,
   venusPipelineRequest.approvedArgumentOutline[field] ?? argumentInput[field]
 ]));
-const pendingPipeline = await runWritingPipeline({
+const pendingPipeline = await runSkyPlacementWritingPipeline({
   meaningInput: venusPipelineRequest.meaningInput,
   examples: ownerPositiveEvidence,
   matrixExamples: venusLibraRoleEvidence.meaning,
@@ -685,7 +728,7 @@ assert.equal(writerCallCount, 0, "Writer must not run before owner argument appr
 const approvedArgumentOutline = approveArgumentOutline(pendingPipeline.argumentOutline, {
   exactOwnerRuling: "I approve this exact argument outline."
 });
-const pipeline = await runWritingPipeline({
+const pipeline = await runSkyPlacementWritingPipeline({
   meaningInput: venusPipelineRequest.meaningInput,
   examples: ownerPositiveEvidence,
   matrixExamples: venusLibraRoleEvidence.meaning,
@@ -809,7 +852,7 @@ assert.ok(validateCopyBatch([
   "This is a period for repair.",
   "This is a period for clearer agreements."
 ]).advisories.some((entry) => entry.category === "spine_scaffold_repetition"));
-const fastMoverPending = await runWritingPipeline({
+const fastMoverPending = await runSkyPlacementWritingPipeline({
   meaningInput: venusPipelineRequest.meaningInput,
   examples: ownerPositiveEvidence,
   matrixExamples: venusLibraRoleEvidence.meaning,
@@ -827,7 +870,7 @@ const fastMoverPending = await runWritingPipeline({
   writerClient
 });
 const fastMoverApprovedArgument = approveArgumentOutline(fastMoverPending.argumentOutline, { exactOwnerRuling: "I approve this outline." });
-const fastMoverPipeline = await runWritingPipeline({
+const fastMoverPipeline = await runSkyPlacementWritingPipeline({
   meaningInput: venusPipelineRequest.meaningInput,
   examples: ownerPositiveEvidence,
   matrixExamples: venusLibraRoleEvidence.meaning,
@@ -915,7 +958,7 @@ const protectedPartialFields = {
   tension: "The cost appears when keeping the agreement easy matters more than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left.",
   close: "Before {{exitDate}}, an arrangement may strain when the person who kept agreeing can no longer accept what they do not want."
 };
-const partialFastMoverPipeline = await runWritingPipeline({
+const partialFastMoverPipeline = await runSkyPlacementWritingPipeline({
   meaningInput: venusPipelineRequest.meaningInput,
   examples: ownerPositiveEvidence,
   matrixExamples: venusLibraRoleEvidence.meaning,
@@ -1066,7 +1109,7 @@ for (const fixture of [
     expectedCode: "OWNER_EVIDENCE_FAMILY_MAPPING_REQUIRED"
   }
 ]) {
-  const pending = await runWritingPipeline({
+  const pending = await runSkyPlacementWritingPipeline({
     meaningInput,
     examples: fixture.examples,
     matrixExamples: fixture.matrixExamples ?? [],
@@ -1084,7 +1127,7 @@ for (const fixture of [
     writerClient
   });
   const approved = approveArgumentOutline(pending.argumentOutline, { exactOwnerRuling: "Fixture-only argument approval." });
-  const failed = await runWritingPipeline({
+  const failed = await runSkyPlacementWritingPipeline({
     meaningInput,
     examples: fixture.examples,
     matrixExamples: fixture.matrixExamples ?? [],

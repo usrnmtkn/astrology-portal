@@ -7,6 +7,7 @@ import {
 import { generatedApprovalState } from "./approvalGovernance.mjs";
 import { attachGenerationMetadata, writeGenerationMetadata } from "./generationMetadata.mjs";
 import { assertArgumentOutlineApproved } from "./argumentGate.mjs";
+import { assertSurfaceRegisterContract } from "./surfaceRegisterContract.mjs";
 
 export const PLACEMENT_DRAFT_SCHEMA = Object.freeze({
   type: "object",
@@ -108,6 +109,7 @@ export function buildDraftInput({
   plan,
   context,
   task,
+  target,
   family = "sky-placement",
   register = "collective",
   surface = "card",
@@ -119,6 +121,7 @@ export function buildDraftInput({
 }) {
   const sections = [
     `TASK\n${String(task ?? "Write one TLDR Astro passage.").trim()}`,
+    `RESOLVED RENDER TARGET\n${JSON.stringify(target, null, 2)}`,
     `SURFACE\n${surface}`,
     `CONTENT FAMILY\n${family}`,
     `REGISTER\n${register}`,
@@ -177,6 +180,7 @@ export async function generateDraft({
   plan,
   context,
   task,
+  target,
   family = "sky-placement",
   register = "collective",
   surface = "card",
@@ -189,6 +193,7 @@ export async function generateDraft({
   schema = null
 }) {
   if (typeof modelClient !== "function") throw new Error("generateDraft requires an injected modelClient; no implicit billed call is allowed.");
+  const resolvedTarget = assertSurfaceRegisterContract(target, { surface, register });
   assertArgumentOutlineApproved(argumentOutline, { plan, family, surface });
   if (!spine || spine.status !== "recorded") throw new Error(`RECORDED_CONTENT_SPINE_REQUIRED:${family}`);
   const role = isCardWritingSurface({ surface, family }) ? "CARD_WRITER_V3" : "WRITER";
@@ -203,7 +208,7 @@ export async function generateDraft({
     instructions: isCardWritingSurface({ surface, family })
       ? candidateCardAstrologyWritingInstructions
       : canonicalAstrologyWritingInstructions,
-    input: buildDraftInput({ plan, context, task, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine }),
+    input: buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine }),
     schema: resolvedSchema
   });
   if (!value || typeof value !== "object") throw new Error("Writer returned no structured draft.");
