@@ -18,6 +18,17 @@ The workbook `tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE
 
 The locked JSON at `packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json` contains the exact approved copy, runtime destination, payload hash, and workbook sheet/row/cell provenance for every serving row. No unapproved row enters the locked file or serving lane.
 
+### Two-lineage runtime boundary
+
+Owner ruling, 2026-08-11: LL V13 and CC V9 are separate canonical lineages and coexist.
+
+- LL V13 is canonical specifically for the LL natal matrix: exact natal placements, natal aspects, and its explicitly mapped natal workbook keys.
+- CC V9 remains canonical for transit meanings, house activations, and their voiced collective or personal timing copy.
+- LL V13 does not supersede, replace, or authorize edits to CC V9. CC V9 does not supply natal copy governed by LL V13.
+- A missing exact key fails closed inside its owning lineage. The runtime must not borrow from the other lineage merely because both are loaded.
+
+The active implementations preserve this boundary: `knowledgeMatrixV13Runtime.ts` exposes natal placement, natal aspect, and V13 workbook-key lookups, while `knowledgeMatrixV9Runtime.ts` exposes transit and house lookups.
+
 ## Voice-index companion
 
 - The current committed `build-voice-index.js` includes the governed `llMatrixV13Entries()` loader alongside `knowledgeMatrixV9Entries()`. The V8 package retained with this record is a provenance archive and is not the active loader.
@@ -27,11 +38,11 @@ The locked JSON at `packages/astro-knowledge/voice/tldr-astro/marie-satori-write
 
 ## Change control
 
-The runtime selects the V13 exact-key row ahead of earlier LL copy while preserving all earlier approved source rows byte-for-byte. A missing V13 key does not borrow another row. Any future wording change requires a new owner-approved workbook lineage and regenerated hashes; the discarded Gemini blind-edit path is not an authorized build step.
+The runtime stores one canonical row per content key. A V13 exact-key row replaces an earlier LL natal row with the same content key while every non-superseded approved row remains byte-identical. This precedence is limited to the LL natal lineage and does not replace CC V9 transit or house content. A missing V13 key does not borrow another row. The 108 same-key replacements and the owner's ruling on the two copy conflicts are recorded in `packages/astro-knowledge/review/v13-duplicate-contentkey-repair-2026-08-11.md`. Any future wording change requires a new owner-approved workbook lineage and regenerated hashes; the discarded Gemini blind-edit path is not an authorized build step.
 
 ## Fingerprints
 
 - Canonical workbook SHA-256: `937549e74eb8e68f8c7e884db6789aeaa79368e53dba5b6ef1c4be697dddb41c`
 - Raw full export SHA-256: `a85593bdfb90b136054768bfa9c3c4dbaabe5aee103f2ba371f2d42161c1cd03`
 - Locked owner-approved JSON SHA-256: `9ca15c189f5ba7622e1376e4b6a1c67e0f131db5b0d6badcfee452341850aeb9`
-- Existing approved rows before V13 SHA-256: `2a3582a520163bfebad1b2f74f0fff2beade8ef987e184f6d8af52ff8ab721e0`
+- Preserved non-superseded approved rows SHA-256: `e9398583a4a95f3147726c006016af4d3241d07fb2b8fc581077e9748cfe65c8`

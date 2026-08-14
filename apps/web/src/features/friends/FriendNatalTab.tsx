@@ -20,6 +20,7 @@ export type FriendNatalEmptyHouseRow = {
   title: string;
   description: string;
   ariaLabel: string;
+  detailAvailable?: boolean;
 };
 
 export type FriendNatalAspectGroup = {
@@ -33,6 +34,7 @@ export type FriendNatalAspectGroup = {
     orb: number;
     title: string;
     summary: string;
+    detailAvailable?: boolean;
   }>;
 };
 
@@ -91,7 +93,9 @@ export function FriendNatalTab({
             const body = birthTimeUnknown && row.label === "Ascendant"
               ? ""
               : friendPlacementDescription(row.label, row.sign);
-            const canOpenDetail = hasNatalChart && !row.sign.toLowerCase().includes("pending");
+            const canOpenDetail = hasNatalChart
+              && row.detailAvailable !== false
+              && !row.sign.toLowerCase().includes("pending");
 
             return (
               <PlacementTableRow
@@ -128,13 +132,13 @@ export function FriendNatalTab({
                 <div className="list you-list-card planet-placement-list" aria-label={`${friendName} empty houses`}>
                   {emptyHouseRows.map((row) => (
                     <PlacementTableRow
-                      ariaLabel={row.ariaLabel}
-                      asButton
+                      ariaLabel={row.detailAvailable !== false ? row.ariaLabel : `${row.title} interpretation unavailable`}
+                      asButton={row.detailAvailable !== false}
                       description={row.description}
                       glyph={row.glyph}
                       house={row.house}
                       key={`friend-empty-house-${row.house}`}
-                      onClick={() => onOpenEmptyHouse(row.house)}
+                      onClick={row.detailAvailable !== false ? () => onOpenEmptyHouse(row.house) : undefined}
                       title={row.title}
                       variant="friend"
                     />
@@ -154,10 +158,13 @@ export function FriendNatalTab({
           >
             {group.aspects.map((aspect) => (
               <button
-                aria-label={`Open full entry for ${aspect.title}`}
+                aria-label={aspect.detailAvailable !== false
+                  ? `Open full entry for ${aspect.title}`
+                  : `${aspect.title} interpretation unavailable`}
                 className="aspect-row aspect-row-button friend-aspect-row"
                 key={aspect.id}
-                onClick={() => onOpenAspect(aspect.id)}
+                disabled={aspect.detailAvailable === false}
+                onClick={aspect.detailAvailable !== false ? () => onOpenAspect(aspect.id) : undefined}
                 type="button"
               >
                 <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />

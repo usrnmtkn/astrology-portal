@@ -35,6 +35,10 @@ and surface wiring.
 | `resolver/knowledgeMatrixV13.browser.ts` | Canonical LL V13 resolver for the 301 workbook rows carrying exact owner approval. It preserves workbook copy and per-row provenance, normalizes node/Part of Fortune and inconjunct keys, supports reverse natal-aspect lookup, and fails closed outside approved coverage. The same rows append to `fallback-source-rows-v3.json` so exact V13 lived copy takes precedence without mutating earlier approved rows. |
 | `tests/verify-transit-synastry.mjs` | Card hygiene + full grid renders: 60 house transits, Moon daily-driver set, 288 deep compat, 390 pair compat, 275 synastry aspect combos. Currently PASS. |
 
+### Knowledge-matrix lineage boundary
+
+CC V9 and LL V13 coexist as separate canonical sources. CC V9 owns transit meanings, house activations, and their voiced timing copy. LL V13 owns exact LL natal placements, natal aspects, and its explicitly mapped natal workbook keys. Neither lineage supersedes the other, and an uncovered key fails closed within its owning resolver rather than borrowing across lineages.
+
 ## What changed vs the old fallback
 
 - `{{core_behavior}} {{house_synthesis}}` concatenation (1,439 records) is retired; those clauses are now `fallback_source` — authoring material only.

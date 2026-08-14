@@ -28,6 +28,10 @@
   "window": {
     "start": "2026-02-18T01:59:11Z",
     "end": "2027-02-18T07:40:22Z",
-    "reportHorizon": "12_months"
+    "reportHorizon": "12_months",
+    "natalPointLongitudes": {
+      "Ascendant": 71.15,
+      "Midheaven": 316.6
+    }
   }
 }

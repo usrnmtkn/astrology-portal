@@ -9,7 +9,7 @@
   "purpose": "Measure writer quality by blinded owner preference and editing burden; never reuse Terra judge calibration as proof of authorship quality.",
   "treatments": {
     "A": "existing candidate",
-    "B": "Marie Satori writer workflow candidate",
+    "B": "Satori writer workflow candidate",
     "C": "optional alternate writer model"
   },
   "blinding": {

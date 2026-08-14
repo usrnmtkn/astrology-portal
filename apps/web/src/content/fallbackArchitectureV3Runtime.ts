@@ -32,6 +32,11 @@ export const fallbackArchitectureV3PackageVersion = PACKAGE_VERSION;
 
 export type ReviewStatus = "approved" | "approved_reuse" | "reviewed" | string;
 
+export type StructuredApproval = {
+  approvalLevel?: string | null;
+  [key: string]: unknown;
+};
+
 export type AuthoredCard = {
   contentKey: string;
   content_role?: string | null;
@@ -116,6 +121,17 @@ export type HouseTransitFacts = {
 export type RowsFile = {
   hookRows?: HookRow[];
   vocabularyRows?: VocabRow[];
+  dailyGlanceVariants?: {
+    schema: string;
+    version: string;
+    note?: string;
+    keys: Record<string, {
+      pairing_policy: "explicit_pairs_only";
+      headlines: Array<{ id: string; text: string; review_status: ReviewStatus; provenance?: Record<string, string> }>;
+      bodies: Array<{ id: string; text: string; review_status: ReviewStatus; provenance?: Record<string, string> }>;
+      pairings: Array<{ id: string; headline_id: string; body_id: string; review_status: ReviewStatus; provenance?: Record<string, string> }>;
+    }>;
+  };
 };
 
 export type TemplatesFile = {
@@ -260,8 +276,11 @@ function assertSkyAspectPhrasebookV1Import(phrasebook: typeof skyAspectPhraseboo
     ["fallback-hook/sky-aspect-sign/", 78]
   ]);
 
-  if (rows.length !== 148 || rows.some((row) => row.review_status !== "reviewed")) {
-    throw new Error("Sky aspect phrasebook must contain exactly 148 reviewed rows.");
+  if (
+    rows.length !== 148
+    || rows.some((row) => !["reviewed", "approved"].includes(row.review_status))
+  ) {
+    throw new Error("Sky aspect phrasebook must contain exactly 148 editorially eligible rows.");
   }
 
   for (const [prefix, expected] of expectedFamilies) {
@@ -367,7 +386,8 @@ function readerEligibleBundle(bundle: FallbackArchitectureV3Bundle): FallbackArc
     },
     rowsFile: {
       hookRows: packageRowsWithLatestReaderEligibleOverride(bundle.rowsFile.hookRows ?? []),
-      vocabularyRows: packageRowsWithLatestReaderEligibleOverride(bundle.rowsFile.vocabularyRows ?? [])
+      vocabularyRows: packageRowsWithLatestReaderEligibleOverride(bundle.rowsFile.vocabularyRows ?? []),
+      dailyGlanceVariants: bundle.rowsFile.dailyGlanceVariants
     }
   };
 }
@@ -436,11 +456,13 @@ export function loadFallbackArchitectureV3BundledSkyPlacementManifest() {
 
 const initialReaderBundle = readerEligibleBundle(snapshotBundle);
 let localDeferredReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let localEmptyHouseReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localRelationshipReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let deferredFallbackBundlePromise: Promise<boolean> | null = null;
+let emptyHouseFallbackBundlePromise: Promise<boolean> | null = null;
 let relationshipFallbackBundlePromise: Promise<boolean> | null = null;
 let skyPlacementFallbackBundlePromise: Promise<boolean> | null = null;
 export let fallbackRendererV3 = createAppFallbackRenderer(initialReaderBundle);
@@ -491,7 +513,8 @@ function mergeReaderBundles(
 
 function recomposeReaderBundle() {
   const localCoreWithDeferred = mergeReaderBundles(initialReaderBundle, localDeferredReaderBundle);
-  const localCoreWithRelationships = mergeReaderBundles(localCoreWithDeferred, localRelationshipReaderBundle);
+  const localCoreWithEmptyHouses = mergeReaderBundles(localCoreWithDeferred, localEmptyHouseReaderBundle);
+  const localCoreWithRelationships = mergeReaderBundles(localCoreWithEmptyHouses, localRelationshipReaderBundle);
   const core = dashboardCoreReaderBundle ?? localCoreWithRelationships;
   const placement = dashboardSkyPlacementReaderBundle ?? localSkyPlacementReaderBundle;
   activateReaderBundle(mergeReaderBundles(core, placement));
@@ -635,6 +658,22 @@ export function transitV3AuthoredCardForContentKey(contentKey: string | null | u
   return contentKey ? transitAuthoredCardsByKey.get(contentKey) ?? null : null;
 }
 
+export function fallbackV3ApprovalLevelForContentKey(contentKey: string | null | undefined) {
+  if (!contentKey) return null;
+
+  const row = transitAuthoredCardsByKey.get(contentKey)
+    ?? hookRowsByKey.get(contentKey)
+    ?? vocabularyRowsByKey.get(contentKey);
+  if (!row) return null;
+
+  const approval = row.approval as StructuredApproval | null | undefined;
+  const approvalLevel = approval?.approvalLevel;
+
+  return typeof approvalLevel === "string" && approvalLevel.trim()
+    ? approvalLevel.trim()
+    : "ungated";
+}
+
 export function transitV3SameBeatKeyForContentKey(contentKey: string | null | undefined) {
   const notes = transitV3AuthoredCardForContentKey(contentKey)?.editorial_notes;
   const text = typeof notes === "string" ? notes.toLowerCase() : "";
@@ -695,6 +734,33 @@ export async function loadDeferredFallbackArchitectureV3Bundle() {
     });
 
   return deferredFallbackBundlePromise;
+}
+
+export function isEmptyHouseFallbackArchitectureV3BundleLoaded() {
+  return Boolean(localEmptyHouseReaderBundle || dashboardCoreReaderBundle);
+}
+
+export async function loadEmptyHouseFallbackArchitectureV3Bundle() {
+  if (localEmptyHouseReaderBundle || dashboardCoreReaderBundle) {
+    return false;
+  }
+
+  emptyHouseFallbackBundlePromise ??= import("./fallbackArchitectureV3EmptyHouseBundle")
+    .then(({ emptyHouseFallbackArchitectureV3Bundle }) => {
+      if (localEmptyHouseReaderBundle || dashboardCoreReaderBundle) {
+        return false;
+      }
+
+      localEmptyHouseReaderBundle = readerEligibleBundle(emptyHouseFallbackArchitectureV3Bundle);
+      recomposeReaderBundle();
+      return true;
+    })
+    .catch((error) => {
+      emptyHouseFallbackBundlePromise = null;
+      throw error;
+    });
+
+  return emptyHouseFallbackBundlePromise;
 }
 
 export function isRelationshipFallbackArchitectureV3BundleLoaded() {

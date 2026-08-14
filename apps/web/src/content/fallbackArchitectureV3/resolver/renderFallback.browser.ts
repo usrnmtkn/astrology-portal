@@ -24,14 +24,16 @@ export interface VocabRow {
   contentKey: string;
   content_role: string;
   grammar_frame: string;
-  body: string;
+  body?: string;
+  body_you?: string;
+  body_they?: string;
   review_status: string;
 }
 export interface ApprovalReference {
   approvalLevel: "exact_owner_approved" | "owner_signoff_untraced";
   recordPath?: string;
   payloadSha256?: string;
-  approvedAt: string;
+  approvedAt?: string;
 }
 export interface HookRow {
   contentKey: string;
@@ -49,9 +51,20 @@ export interface HookRow {
   astroHint?: string;
   fact_line?: string;
   aspect_insert?: string;
+  primary_hook?: string;
+  opening_heading?: string;
   opening?: string;
+  tension_heading?: string;
   tension?: string;
+  development_heading?: string;
   development?: string;
+  era_layer?: {
+    frame: string;
+    handoff: string;
+    recurrence: string;
+    collective_lesson: string;
+  };
+  close_heading?: string;
   close?: string;
   try_this?: string[];
   aspect_units?: Array<{
@@ -69,7 +82,36 @@ export interface HookRow {
   }>;
 }
 export interface TemplatesFile { templates: TemplateRow[] }
-export interface RowsFile { vocabularyRows: VocabRow[]; hookRows?: HookRow[] }
+export interface DailyGlanceVariantText {
+  id: string;
+  text: string;
+  review_status: string;
+  provenance?: Record<string, string>;
+}
+export interface DailyGlanceVariantPairing {
+  id: string;
+  headline_id: string;
+  body_id: string;
+  review_status: string;
+  provenance?: Record<string, string>;
+}
+export interface DailyGlanceVariantSet {
+  pairing_policy: "explicit_pairs_only";
+  headlines: DailyGlanceVariantText[];
+  bodies: DailyGlanceVariantText[];
+  pairings: DailyGlanceVariantPairing[];
+}
+export interface DailyGlanceVariantsFile {
+  schema: "tldrastro-daily-glance-variants-v1";
+  version: string;
+  note?: string;
+  keys: Record<string, DailyGlanceVariantSet>;
+}
+export interface RowsFile {
+  vocabularyRows: VocabRow[];
+  hookRows?: HookRow[];
+  dailyGlanceVariants?: DailyGlanceVariantsFile;
+}
 
 export interface PlacementFacts {
   planet: string; sign: string; house?: number | null; voice: Voice;
@@ -84,30 +126,41 @@ export interface EmptyHouseFacts {
   rulerSign?: string;
   rulerHouse?: number;
   primaryRuler?: string;
-  /** One-based occurrence of this traditional ruler across the profile's ordered empty houses. */
+  /** Surface-local ruler system. Phase 1 defaults to the V14 modern map. */
+  rulerSystem?: "modern" | "traditional";
+  /** @deprecated V14 renders one exact ruler layer per empty house. */
   rulerOccurrence?: number;
-  /** @deprecated Empty-house rulership is computed from primaryRuler or the traditional canon. */
+  /** @deprecated Empty-house V14 resolves its modern ruler from the cusp sign. */
   ruler?: string;
-  /** Explicitly ignored by empty-house assembly. Modern co-rulers are not primary rulers. */
+  /** @deprecated Empty-house V14 resolves its modern ruler from the cusp sign. */
   modernRuler?: string;
   voice?: Voice;
 }
 export interface AspectFacts { planetA: string; planetB: string; aspect: "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx" | "semisextile" | "nonagen"; voice: Voice }
-export interface RenderResult { headline: string; parts: string[]; body: string; templateKey: string; astroHint?: string }
-export interface RenderOpts { allowUnreviewed?: boolean }
+export interface RenderResult { headline: string; parts: string[]; partKeys?: string[]; body: string; templateKey: string; astroHint?: string; sourceKeys?: string[] }
+export interface RenderOpts {
+  allowUnreviewed?: boolean;
+  /** Adds the owner-approved mechanism bridge on empty-house detail pages only. */
+  includeEmptyHouseBridge?: boolean;
+}
 
 export class SourceGapError extends Error {}
 export class RoleViolationError extends Error {}
+
+export function vocabularyBodyForVoice(row: VocabRow | undefined, voice: "you" | "they"): string | null {
+  const body = voice === "you"
+    ? (row?.body_you ?? row?.body)
+    : (row?.body_they ?? row?.body);
+
+  if (typeof body !== "string" || !body.trim()) return null;
+  return body;
+}
 
 const READER_ELIGIBLE = new Set(["approved_reuse", "approved", "reviewed"]);
 const OPPOSITE_SIGN: Record<string, string> = { aries: "libra", taurus: "scorpio", gemini: "sagittarius", cancer: "capricorn", leo: "aquarius", virgo: "pisces", libra: "aries", scorpio: "taurus", sagittarius: "gemini", capricorn: "cancer", aquarius: "leo", pisces: "virgo" };
 const ASPECT_GROUP: Record<string, string> = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
 const ANGLE_TITLE: Record<string, string> = { ascendant: "Ascendant", midheaven: "Midheaven", descendant: "Descendant", "imum-coeli": "IC" };
 const ORD: Record<number, string> = { 1: "1st", 2: "2nd", 3: "3rd" };
-// V3 M2 mapping: house 2 must use A. The remaining modulo buckets continue
-// alphabetically from there so selection stays stable without randomness.
-const EMPTY_HOUSE_RULER_VARIANT: Record<number, string> = { 2: "a", 3: "b", 4: "c", 5: "d", 0: "e", 1: "f" };
-
 const title = (s: string) => s.split("-").map((p) => p[0].toUpperCase() + p.slice(1)).join(" ");
 const ordinal = (n: number) => ORD[n] ?? `${n}th`;
 // "a" -> "an" before vowel SOUNDS only: skip one/once (won-), uni/use/usu (yoo-), eu (yoo-)
@@ -140,19 +193,19 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
   }
   const hooks = new Map((rowsFile.hookRows ?? []).map((r) => [r.contentKey, r]));
 
-  const getVocab = (key: string, opts: RenderOpts = {}): string | null => {
+  const getVocab = (key: string, voice: "you" | "they" = "you", opts: RenderOpts = {}): string | null => {
     const row = [...(vocab.get(key) ?? [])]
       .reverse()
       .find((candidate) => opts.allowUnreviewed || READER_ELIGIBLE.has(candidate.review_status));
     if (!row) return null;
     if (row.content_role === "fallback_source") throw new RoleViolationError(`Row ${key} is fallback_source and can never fill a reader slot.`);
     if (!opts.allowUnreviewed && !READER_ELIGIBLE.has(row.review_status)) return null;
-    return row.body;
+    return vocabularyBodyForVoice(row, voice);
   };
-  const getVocabList = (prefix: string, opts: RenderOpts = {}): string[] => {
+  const getVocabList = (prefix: string, voice: "you" | "they" = "you", opts: RenderOpts = {}): string[] => {
     const out: string[] = [];
     for (let i = 0; i < 8; i++) {
-      const v = getVocab(`${prefix}/${i}`, opts);
+      const v = getVocab(`${prefix}/${i}`, voice, opts);
       if (v == null) break;
       out.push(v);
     }
@@ -207,14 +260,6 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       ? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, opts)
         ?? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, opts)
       : null;
-    if (exactHouseLived) {
-      return {
-        headline: `${title(planet)} in the ${ordinal(house)} house`,
-        parts: [exactHouseLived.body ?? ""],
-        body: exactHouseLived.body ?? "",
-        templateKey: exactHouseLived.contentKey,
-      };
-    }
     const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts)
       ?? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, opts);
     const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
@@ -225,19 +270,19 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       planetRef: needsArticle ? `the ${title(planet)}` : title(planet),
       planetRefCap: needsArticle ? `The ${title(planet)}` : title(planet),
       signTitle: title(sign),
-      planetTopic: getVocab(`fallback-vocab/planet-topic/${planet}`, opts),
-      planetExcess: getVocab(`fallback-vocab/planet-excess/${planet}`, opts),
-      planetProductive: getVocab(`fallback-vocab/planet-productive/${planet}`, opts),
-      planetCore: getVocab(`fallback-vocab/planet-core/${planet}`, opts),
-      signStyle: getVocab(`fallback-vocab/sign-style/${sign}`, opts),
-      signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, opts),
-      planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, opts),
-      signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, opts),
+      planetTopic: getVocab(`fallback-vocab/planet-topic/${planet}`, voice, opts),
+      planetExcess: getVocab(`fallback-vocab/planet-excess/${planet}`, voice, opts),
+      planetProductive: getVocab(`fallback-vocab/planet-productive/${planet}`, voice, opts),
+      planetCore: getVocab(`fallback-vocab/planet-core/${planet}`, voice, opts),
+      signStyle: getVocab(`fallback-vocab/sign-style/${sign}`, voice, opts),
+      signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, voice, opts),
+      planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, voice, opts),
+      signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, voice, opts),
       planetIntro: getReaderLivedRow(`fallback-hook/planet-lived/${planet}`, voice, opts)?.body
         ?? getHook(`fallback-hook/planet-intro/${planet}`, voice, opts),
       planetBest: getHook(`fallback-hook/planet-best/${planet}`, voice, opts),
       placementSentences: getHook(`fallback-hook/placement-sentence/${planet}/${sign}`, voice, opts),
-      placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, opts).join(", or ") || null,
+      placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, voice, opts).join(", or ") || null,
     };
 
     const mods: string[] = [];
@@ -259,34 +304,50 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
 
     const gapLabel = `${planet}/${sign}${house ? `/house-${house}` : ""}`;
     const parts: string[] = [];
+    const partKeys: string[] = [];
 
     const isNode = planet === "north-node" || planet === "south-node";
     if (isNode) {
       const j = getHook(`fallback-hook/node-journey/${planet}`, voice, opts);
       const oppSign = OPPOSITE_SIGN[sign];
-      const oppDir = getVocab(`fallback-vocab/node-direction/${oppSign}`, opts);
+      const oppDir = getVocab(`fallback-vocab/node-direction/${oppSign}`, voice, opts);
       ctx.nodeJourney = j ? j.replace(/\{\{oppositeSignTitle\}\}/g, title(oppSign)).replace(/\{\{oppositeDirection\}\}/g, oppDir ?? "") : null;
     }
     const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, opts)
       ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
     parts.push(exactSignLived?.body ?? renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
+    partKeys.push(exactSignLived?.contentKey ?? signTemplate.contentKey);
 
     let headlineTemplate = signTemplate;
     if (house) {
-      const houseTemplate = getTemplate("fallback-template/natal.house-context");
-      const houseCtx: Ctx = {
-        ...ctx,
-        houseOrdinal: ordinal(house),
-        houseMeaning: getHook(`fallback-hook/house-meaning/${house}`, voice, opts),
-        placementHouseSentences: getHook(`fallback-hook/placement-house-sentence/${planet}/${house}`, voice, opts),
-        modifierSentences: mods,
-      };
-      parts.push(renderTemplate(houseTemplate, houseCtx, gapLabel, voice));
-      headlineTemplate = houseTemplate;
-      ctx.houseOrdinal = houseCtx.houseOrdinal;
+      if (exactHouseLived) {
+        parts.push(exactHouseLived.body ?? "");
+        partKeys.push(exactHouseLived.contentKey);
+      } else {
+        const houseTemplate = getTemplate("fallback-template/natal.house-context");
+        const houseCtx: Ctx = {
+          ...ctx,
+          houseOrdinal: ordinal(house),
+          houseMeaning: getHook(`fallback-hook/house-meaning/${house}`, voice, opts),
+          placementHouseSentences: getHook(`fallback-hook/placement-house-sentence/${planet}/${house}`, voice, opts),
+          modifierSentences: mods,
+        };
+        parts.push(renderTemplate(houseTemplate, houseCtx, gapLabel, voice));
+        partKeys.push(houseTemplate.contentKey);
+        headlineTemplate = houseTemplate;
+        ctx.houseOrdinal = houseCtx.houseOrdinal;
+      }
     }
 
-    return { headline: fixArticles(mustache(headlineTemplate.headline ?? "", ctx)), parts, body: parts.join("\n\n"), templateKey: headlineTemplate.contentKey };
+    return {
+      headline: exactHouseLived
+        ? `${title(planet)} in the ${ordinal(house)} house`
+        : fixArticles(mustache(headlineTemplate.headline ?? "", ctx)),
+      parts,
+      partKeys,
+      body: parts.join("\n\n"),
+      templateKey: exactHouseLived?.contentKey ?? headlineTemplate.contentKey,
+    };
   }
 
   function renderNatalAngle(facts: AngleFacts, opts: RenderOpts = {}): RenderResult {
@@ -330,11 +391,11 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       planetATitle: title(facts.planetA),
       planetBTitle: title(facts.planetB),
       aspectName: aspect,
-      aspectAdj: getVocab(`fallback-vocab/aspect-adj/${aspect}`, opts),
-      planetACore: getVocab(`fallback-vocab/planet-core/${facts.planetA}`, opts),
-      planetBCore: getVocab(`fallback-vocab/planet-core/${facts.planetB}`, opts),
+      aspectAdj: getVocab(`fallback-vocab/aspect-adj/${aspect}`, voice, opts),
+      planetACore: getVocab(`fallback-vocab/planet-core/${facts.planetA}`, voice, opts),
+      planetBCore: getVocab(`fallback-vocab/planet-core/${facts.planetB}`, voice, opts),
       aspectTypeLine: getHook(`fallback-hook/aspect-type/${aspect}`, voice, opts),
-      aspectMotion: getVocab(`fallback-vocab/aspect-motion/${aspect}`, opts),
+      aspectMotion: getVocab(`fallback-vocab/aspect-motion/${aspect}`, voice, opts),
       possessiveLow: facts.voice === "you" ? "your" : `${facts.voice}'s`,
       pairSentences: pair,
     };
@@ -346,12 +407,15 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
   // ---- Empty-house pages (natal): sign-on-cusp -> ruler -> ruler placement -> activation
   // close, all dual-voice by construction (voice param; never pronoun substitution). ----
   const SIGN_RULER: Record<string, string> = { aries: "mars", taurus: "venus", gemini: "mercury", cancer: "moon", leo: "sun", virgo: "mercury", libra: "venus", scorpio: "mars", sagittarius: "jupiter", capricorn: "saturn", aquarius: "saturn", pisces: "jupiter" };
+  const EMPTY_HOUSE_V14_MODERN_RULER: Record<string, string> = { aries: "mars", taurus: "venus", gemini: "mercury", cancer: "moon", leo: "sun", virgo: "mercury", libra: "venus", scorpio: "pluto", sagittarius: "jupiter", capricorn: "saturn", aquarius: "uranus", pisces: "neptune" };
+  const EMPTY_HOUSE_RULERS: Record<"modern" | "traditional", Record<string, string>> = { modern: EMPTY_HOUSE_V14_MODERN_RULER, traditional: SIGN_RULER };
 
   // ---- Aspect patterns (T-square, Grand Cross, Grand Trine, Kite, Yod, Mystic Rectangle):
   // natal pattern card + activation card. Replaces the astro-knowledge copy entries; the
   // detection engine stays in the app, the words come from here. ----
   const PATTERN_NAMES: Record<string, string> = { t_square: "T-Square", grand_square: "Grand Cross", grand_trine: "Grand Trine", kite: "Kite", yod: "Yod", mystic_rectangle: "Mystic Rectangle" };
   function renderAspectPattern({ type, apexTitle, mode, element, activation = false, voice = "you" }: { type: string; apexTitle?: string; mode?: string; element?: string; activation?: boolean; voice?: Voice }): RenderResult {
+    const vocabularyVoice = voice === "you" ? "you" : "they";
     const pick = (key: string) => { const r = hooks.get(key); return r ? (voice === "you" ? r.body_you : r.body_they) : null; };
     const body = pick(`fallback-hook/aspect-pattern${activation ? "-activation" : ""}/${type}`);
     if (!body) throw new SourceGapError(`SOURCE_GAP: aspect pattern ${type}${activation ? " activation" : ""}`);
@@ -362,9 +426,9 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     }
     if (!activation) {
       const qual = mode
-        ? getVocab(`fallback-vocab/pattern-mode/${mode}`, opts)
+        ? getVocab(`fallback-vocab/pattern-mode/${mode}`, vocabularyVoice, opts)
         : element
-          ? getVocab(`fallback-vocab/pattern-element/${element}`, opts)
+          ? getVocab(`fallback-vocab/pattern-element/${element}`, vocabularyVoice, opts)
           : null;
       if (qual) paras.push(`It runs as ${qual}.`);
     }
@@ -381,71 +445,66 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
   }
 
   function renderNatalEmptyHouse(facts: EmptyHouseFacts, opts: RenderOpts = {}): RenderResult & { note: string | null } {
-    const { house, sign, rulerSign, rulerHouse, voice = "you" } = facts;
+    const { house, sign, rulerHouse, voice = "you" } = facts;
     const v = voice === "you" ? "you" : "they";
-    const ruler = facts.primaryRuler ?? SIGN_RULER[sign];
-    const houseTopic = getVocab(`fallback-vocab/house-topic/${house}`, opts);
-    const rulerHouseJurisdiction = rulerHouse
-      ? getVocab(`fallback-vocab/empty-house-ruler-jurisdiction/${rulerHouse}`, opts)
-        ?? (v === "they" ? getVocab(`fallback-vocab/house-jurisdiction-they/${rulerHouse}`, opts) : null)
-        ?? getVocab(`fallback-vocab/house-jurisdiction/${rulerHouse}`, opts)
-      : null;
-    const emptyHouseRulerTopic = rulerHouse
-      ? getVocab(`fallback-vocab/empty-house-ruler-topic/${rulerHouse}`, opts)
-      : null;
-    const rulerHouseTopic = emptyHouseRulerTopic
-      ?? (rulerHouse ? getVocab(`fallback-vocab/house-topic/${rulerHouse}`, opts) : null);
-    const cusp = getHook(`fallback-hook/house-cusp/${sign}`, v, opts);
-    const rulerVariant = EMPTY_HOUSE_RULER_VARIANT[house % 6];
-    const rulerFrame = getHook(`fallback-hook/empty-house-ruler-v3/${rulerVariant}`, v, opts)
-      ?? getHook("fallback-hook/empty-house-ruler", v, opts);
-    const placementFrame = getHook("fallback-hook/empty-house-placement", v, opts);
-    const bridgeLead = getHook(`fallback-hook/empty-house-bridge/${house}`, v, opts);
-    const closeFrame = getHook("fallback-hook/empty-house-close", v, opts);
-    const note = getHook("fallback-hook/empty-house-explainer", v, opts);
-    const placementLine = rulerSign
-      ? getHook(`fallback-hook/ruler-method/${ruler}/${rulerSign}`, v, opts)
-      : null;
-    if (!houseTopic || !rulerHouseJurisdiction || !rulerHouseTopic || !cusp || !rulerFrame || !placementFrame || !bridgeLead || !closeFrame || !placementLine || !rulerSign || !rulerHouse) {
+    const rulerSystem = facts.rulerSystem ?? "modern";
+    const rulerMap = EMPTY_HOUSE_RULERS[rulerSystem];
+    if (!rulerMap) throw new RoleViolationError(`Unknown empty-house ruler system: ${rulerSystem}.`);
+    const ruler = rulerMap[sign];
+    if (!Number.isInteger(house) || house < 1 || house > 12 || !ruler || !Number.isInteger(rulerHouse) || !rulerHouse || rulerHouse < 1 || rulerHouse > 12 || rulerHouse === house) {
       throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
     }
-    const REF: Record<string, string> = { sun: "the Sun", moon: "the Moon" };
-    const rulerRef = REF[ruler] ?? title(ruler);
-    const rulerPossessive = rulerRef.endsWith("s") ? `${rulerRef}'` : `${rulerRef}'s`;
-    const ctx: Record<string, string | null> = {
-      houseOrdinal: ordinal(house), houseTopic, signTitle: title(sign),
-      rulerRef, rulerRefCap: rulerRef.replace(/^./, (char) => char.toUpperCase()), rulerTitle: title(ruler),
-      rulerPossessive,
-      rulerSignTitle: rulerSign ? title(rulerSign) : null,
-      rulerHouseOrdinal: rulerHouse ? ordinal(rulerHouse) : null,
-      rulerHouseJurisdiction,
-      rulerHouseTopic,
-      placementLine,
+    if (facts.primaryRuler && facts.primaryRuler !== ruler) {
+      throw new RoleViolationError(`Empty-house V14 ${rulerSystem} system requires ruler ${ruler} for ${sign}; received ${facts.primaryRuler}.`);
+    }
+
+    const baseKey = `fallback-hook/empty-house/base/${house}`;
+    const signKey = `fallback-hook/empty-house/sign/${house}/${sign}`;
+    const specificRulerKey = house === 1
+      ? `fallback-hook/empty-house/rising-ruler/${sign}/${ruler}/${rulerHouse}`
+      : `fallback-hook/empty-house/ruler-planet/${house}/${ruler}/${rulerHouse}`;
+    const genericRulerKey = `fallback-hook/empty-house/ruler-house/${house}/${rulerHouse}`;
+    const note = getHook(baseKey, v, opts);
+    const signBody = getHook(signKey, v, opts);
+    const specificRulerBody = getHook(specificRulerKey, v, opts);
+    const rulerKey = specificRulerBody ? specificRulerKey : genericRulerKey;
+    const rulerBody = specificRulerBody ?? (house === 1 ? null : getHook(genericRulerKey, v, opts));
+
+    if (!note || !signBody || !rulerBody) {
+      throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign}/${ruler}-in-${rulerHouse} (${v})`);
+    }
+
+    const bridgeTemplateKey = house === 1
+      ? "fallback-hook/empty-house/bridge-template/house-1"
+      : "fallback-hook/empty-house/bridge-template/standard";
+    const topicMKey = `fallback-vocab/empty-house-ruler-jurisdiction/${rulerHouse}`;
+    const topicNKey = `fallback-vocab/empty-house-bridge-topic-short/${house}`;
+    const bridgeTemplate = opts.includeEmptyHouseBridge ? findTemplate(bridgeTemplateKey, opts) : null;
+    const topicM = bridgeTemplate ? getVocab(topicMKey, v, opts) : null;
+    const topicN = house === 1 ? null : (bridgeTemplate ? getVocab(topicNKey, v, opts) : null);
+    const planet = ruler === "sun" || ruler === "moon" ? `the ${title(ruler)}` : title(ruler);
+    const bridge = bridgeTemplate && topicM && (house === 1 || topicN)
+      ? renderTemplate(bridgeTemplate, {
+        houseN: ordinal(house),
+        sign: title(sign),
+        planet,
+        houseM: ordinal(rulerHouse),
+        topicN,
+        topicM,
+      }, `empty house bridge ${house}/${sign}/${ruler}-in-${rulerHouse}`, v)
+      : null;
+    const parts = [signBody, ...(bridge ? [bridge] : []), rulerBody];
+    const bridgeSourceKeys = bridge
+      ? [bridgeTemplateKey, ...(house === 1 ? [] : [topicNKey]), topicMKey]
+      : [];
+    return {
+      headline: `${ordinal(house)} House`,
+      note,
+      body: parts.join("\n\n"),
+      parts,
+      templateKey: "fallback-template/natal.empty-house-v14",
+      sourceKeys: [baseKey, signKey, ...bridgeSourceKeys, rulerKey],
     };
-    const repeatedRuler = (facts.rulerOccurrence ?? 1) > 1;
-    const emptyHousePossessive = v === "you" ? "your" : "their";
-    const rulerHouseTopicRef = emptyHouseRulerTopic
-      ? `${emptyHousePossessive} ${rulerHouseTopic}`
-      : rulerHouseTopic;
-    const m1 = mustache(cusp, ctx).replace(
-      `on the ${ordinal(house)} house`,
-      `on ${emptyHousePossessive} ${ordinal(house)} house`
-    );
-    const m4 = repeatedRuler
-      ? `Because ${title(sign)} is also ruled by ${rulerRef}, the same pattern applies: ${bridgeLead.replace(/^./, (char) => char.toLowerCase())} through the way ${v === "you" ? "you" : "they"} handle ${rulerHouseTopicRef}.`
-      : `Because of this, ${bridgeLead.replace(/^./, (char) => char.toLowerCase())} through the way ${v === "you" ? "you" : "they"} handle ${rulerHouseTopicRef}.`;
-    const paras = [
-      m1,
-      mustache(rulerFrame, ctx),
-      ...(repeatedRuler ? [] : [mustache(placementFrame, ctx)]),
-      m4,
-      mustache(closeFrame, ctx)
-    ];
-    const cleaned = paras.map((p) => fixArticles(p).replace(/\s{2,}/g, " ").trim());
-    for (const p of cleaned) if (/\{\{/.test(p)) throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} unresolved slot`);
-    const body = cleaned.join(" ");
-    if (/[—]|--/u.test(body)) throw new RoleViolationError(`Empty-house punctuation gate failed for ${house}/${sign}.`);
-    return { headline: `${ordinal(house)} House`, note, body, parts: cleaned, templateKey: "fallback-template/natal.empty-house" };
   }
 
 

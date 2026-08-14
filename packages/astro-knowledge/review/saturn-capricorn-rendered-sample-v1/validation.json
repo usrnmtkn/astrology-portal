@@ -1,0 +1,69 @@
+{
+  "candidateId": "sky-placement-saturn-capricorn-rendered-sample-v1",
+  "validator": "src/astro-writing/validateCopy.mjs",
+  "reviewer": "src/astro-writing/reviewDraft.mjs#deterministicEditorialReview",
+  "family": "sky-placement",
+  "register": "collective",
+  "requiredFields": [
+    "fact_line",
+    "aspect_insert",
+    "opening",
+    "tension",
+    "development",
+    "close"
+  ],
+  "expectedPlaceholders": [
+    "aspectInsert",
+    "entryDate",
+    "exitDate"
+  ],
+  "lint": {
+    "passed": true,
+    "violations": []
+  },
+  "deterministicEditorialReview": {
+    "decision": "PASS",
+    "violations": [],
+    "requiredRevisions": []
+  },
+  "ownerEvidenceChecks": {
+    "voiceIndex": {
+      "status": "current",
+      "entryCount": 7695
+    },
+    "vocabularyBank": {
+      "sourceBankId": "owner-vocabulary-bank-v1",
+      "matchedCoreWords": [
+        "time",
+        "feel",
+        "work",
+        "home",
+        "show"
+      ],
+      "matchedSignaturePhrases": [],
+      "result": "register_grounded_without_forced_phrase"
+    },
+    "warmthHarvest": {
+      "emotionalCore": "rest must be earned through overwork",
+      "harvestMode": "matched_not_used",
+      "sourceId": "new-moon-solar-eclipse-in-virgo",
+      "reason": "The close already lands the cost; another warmth sentence would stack the ending."
+    },
+    "minimalPacketCompiler": {
+      "status": "fail_closed_as_designed",
+      "reason": "Placement facts are not verified: DRAFT."
+    }
+  },
+  "focusedTests": {
+    "test:astro-writing": "PASS",
+    "test:marie-writer": "PASS"
+  },
+  "semanticReview": {
+    "status": "not_run",
+    "reason": "No billed reviewer call was authorized."
+  },
+  "coldRenderedProse": {
+    "status": "owner_gate_pending",
+    "reason": "Cold prose judgment is advisory in automation and remains an owner decision."
+  }
+}

@@ -1,0 +1,374 @@
+# Mercury through the signs
+## Article-level ingress drafts, Aquarius-tone rewrite V7
+
+> SERVING STATUS (2026-08-11): `owner_rejected_for_serving`. The owner stated,
+> “I didn't approve this,” and directed Codex to restore the previously approved
+> Mercury placement fallbacks. The article bodies below are preserved unchanged
+> as unapproved review and derivation material only. They are not serving copy,
+> owner-approved generation evidence, or authority for a reader-facing payload.
+
+> REWRITE BASIS (2026-08-11): Full-file rewrite using the owner-revised Mercury in Aquarius section as the sentence-level and paragraph-level benchmark.
+>
+> EDITORIAL STANDARD: Strong thesis. Clear consequence. Lived language. Each section deepens one idea instead of stacking interchangeable examples. The astrology should show up through what people notice, say, miss, repeat, reconsider, or decide. No house-specific scene is invented.
+>
+> REGISTER: Current-sky / collective Mercury ingress.
+>
+> HISTORICAL GOVERNANCE CLAIM (superseded 2026-08-11): Signature anchor "X changes
+> Mercury's Y" APPROVED, once per article at the mechanics opening, never repeated within an
+> article. Capricorn anchor is "terms" by owner wording. Vocabulary: misread/misreading,
+> mismatch, blanks, understandable KEPT by ruling; hijack, insufficiently, increments,
+> intentional-concealment constructions SWAPPED by owner surgery. Scope: these twelve are
+> once described the twelve drafts as reader-facing Mercury ingress article masters and the
+> upstream source for four-slot cards. That serving interpretation is withdrawn. The Aquarius
+> primary hook's "you realize" is not an active Current Sky exception. No wording below is
+> approved for serving unless the owner later approves exact wording explicitly.
+
+---
+
+## Mercury in Aries
+
+**Primary hook:**
+
+The answer comes quickly. Make sure the rest of the question gets a chance to arrive.
+
+**Alternative hooks:**
+
+- Fast thinking helps until one missing detail changes the decision.
+- Directness is useful. Rushing is a different problem.
+
+### Get to the point
+
+Aries changes Mercury’s pace. Long explanations become harder to tolerate when the useful part can be said in one sentence. Questions get sharper. Replies come faster. The hesitation that kept a conversation stuck can disappear as soon as somebody finally says what they actually think.
+
+### Move what has been stalled
+
+This works well when delay has become more complicated than the decision itself. The email gets answered instead of rewritten six times. The call gets made. A vague discussion turns into a clear yes, no, or not yet. Mercury in Aries can cut through the part of the conversation that only exists because nobody wanted to go first.
+
+### Speed can miss what matters
+
+The problem begins when confidence gets mistaken for complete information. You skim the instructions because the task looks familiar, interrupt because the ending seems obvious, or answer the first question so quickly that the second one barely registers. Then the decision has to be reopened because the detail that looked small was the part everything depended on.
+
+### Keep the directness, lose the rush
+
+While Mercury is in Aries, say what you mean and make the first move when the facts are clear. Then keep listening. A fast answer is only useful if it does not create another round of cleanup.
+
+---
+
+## Mercury in Taurus
+
+**Primary hook:**
+
+A reliable answer still has to survive new information.
+
+**Alternative hooks:**
+
+- Familiar is useful until the facts change.
+- Taking your time works best when time does not become an excuse to stay put.
+
+### Let the answer prove itself
+
+Taurus changes Mercury’s standard. New information does not earn trust just because it is new. The question becomes more practical: Does this hold up? What will it cost? Can people rely on it a month from now? The answer has to make sense after the excitement wears off.
+
+### Choose what can last
+
+This works well when a decision needs more than enthusiasm behind it. You compare the proposal with what has already worked, look at the real expense instead of the optimistic estimate, or wait until the terms are clear before agreeing. Mercury in Taurus is good at noticing the difference between an idea that sounds reassuring and one that can actually support the life built around it.
+
+### Stability can turn into resistance
+
+The complication is keeping the old answer because it once worked well. New facts get added without changing the conclusion. The familiar method stays in place because replacing it feels more disruptive than admitting it no longer fits. At that point, caution is not protecting the decision. It is protecting the comfort of not having to make a new one.
+
+### Update what no longer fits
+
+While Mercury is in Taurus, take enough time to know what can be relied on. Then notice when the evidence has actually changed. A thoughtful answer can still become outdated.
+
+---
+
+## Mercury in Gemini
+
+**Primary hook:**
+
+One answer opens three more questions.
+
+**Alternative hooks:**
+
+- Follow the useful connection. Do not lose the point you were trying to make.
+- More information helps until nobody remembers what the original question was.
+
+### Let the information move
+
+Gemini changes Mercury’s range. One fact rarely stays alone for long. A question leads to another source. A side comment reveals the missing connection. Two separate conversations suddenly turn out to be about the same problem.
+
+### Change your mind when the facts improve
+
+This works well when the answer depends on comparison. You can hold two explanations at once, notice where they overlap, and revise the conclusion without treating the first answer like a personal commitment. Mercury in Gemini makes room for the possibility that better information should change what gets said next.
+
+### Too many open loops create their own confusion
+
+The complication is moving on before the useful thought is finished. The new question becomes more interesting than the answer already in progress. The connection gets found, but nobody else understands it because the explanation skipped the middle. By the end, there may be more facts on the table and less agreement about what any of them mean.
+
+### Finish enough to be understood
+
+While Mercury is in Gemini, follow the question that changes the answer. Share the source. Revise the conclusion when the evidence improves. Then finish the explanation before the next interesting idea pulls the conversation somewhere else.
+
+---
+
+## Mercury in Cancer
+
+**Primary hook:**
+
+The message is new. Your memory may already have an opinion.
+
+**Alternative hooks:**
+
+- A familiar tone can bring the old conversation back before this one has had a chance to be different.
+- You may hear the history inside the sentence before you hear the sentence itself.
+
+### Read the history in the words
+
+Cancer changes Mercury’s context. A sentence does not arrive alone. Tone matters. Timing matters. Who said it matters. The same five words can land very differently because of the promise that came before them, the argument nobody resolved, or the way this person usually sounds when something is wrong.
+
+### Memory can catch what the literal wording misses
+
+This works well when the important part of a conversation is not stated directly. You notice that the reply is shorter than usual, remember the commitment that makes the current answer significant, or hear the emotional shift before anybody names it. Mercury in Cancer can hold the history that explains why a small exchange feels much larger than it looks.
+
+### The past can answer before the present does
+
+The complication is letting recognition become proof. A pause sounds like the last pause. A neutral message feels like the beginning of the old disagreement. You start preparing for the ending you remember before checking if the same problem is actually happening again.
+
+### Give the present its own chance
+
+While Mercury is in Cancer, take the reaction seriously, then look at what is happening now. Memory is useful context. It should not get to decide the ending before the current conversation has spoken for itself.
+
+---
+
+## Mercury in Leo
+
+**Primary hook:**
+
+If the point matters to you, it will probably sound like it.
+
+**Alternative hooks:**
+
+- Say it like you mean it. Leave enough room to be corrected.
+- A memorable message still has to survive the facts.
+
+### Put your voice behind the point
+
+Leo changes Mercury’s delivery. Detached language loses some of its appeal. Ideas want personality behind them. A strong opinion, vivid story, or clear point of view can make the message easier to remember because the person saying it is visibly invested.
+
+### Make the information matter
+
+This works well when the facts need a reason to matter. A dry explanation becomes easier to follow once somebody says why the result matters. A thank-you feels more generous when it sounds personal. A difficult truth can land more cleanly when the speaker stops hiding behind language so neutral that nobody knows what they actually believe.
+
+### Pride can take over the conversation
+
+The complication is confusing disagreement with disrespect. A correction to the idea starts to feel like a correction to the person. The discussion moves away from the evidence and toward who was embarrassed, interrupted, or not given enough credit. Once that happens, being seen as right can matter more than finding out what is right.
+
+### Keep the point bigger than the applause
+
+While Mercury is in Leo, let your voice show and say what you actually believe. Make the message memorable. Then let useful feedback improve the idea without turning every correction into a judgment of you.
+
+---
+
+## Mercury in Virgo
+
+**Primary hook:**
+
+Find the part that keeps making everyone do the work twice.
+
+**Alternative hooks:**
+
+- The small error matters when it keeps creating a bigger problem.
+- Fix the detail that changes the outcome. Leave the harmless flaw alone.
+
+### Find the part that keeps breaking
+
+Virgo changes Mercury’s focus. Attention moves toward the sentence everyone misreads, the number that does not match, the instruction that leaves out a step, or the routine that keeps creating the same mistake. The question is not simply what is wrong. It is where the process stopped working.
+
+### Small corrections can save a lot of time
+
+This works well when the problem is specific enough to fix. You catch the error before it gets copied into the next version, rewrite the directions so nobody has to guess, or notice that the decision rests on a detail nobody confirmed. The correction may take two minutes. The mistake it prevents may have been costing hours.
+
+### Precision can become its own delay
+
+The complication is treating every flaw like it carries the same consequence. The draft stays open because one sentence could be cleaner. The answer waits because one more fact might matter. The work keeps getting a little better while the people waiting for it continue using the wrong version.
+
+### Fix what changes the result
+
+While Mercury is in Virgo, correct the error that actually matters. Clarify the instruction people keep misreading. Check the number the decision depends on. Then send the useful version. The tiny flaw you can still see does not deserve the same attention as the mistake that sends everyone back to the beginning.
+
+---
+
+## Mercury in Libra
+
+**Primary hook:**
+
+A conversation is not balanced if the same person keeps doing all the adjusting.
+
+**Alternative hooks:**
+
+- Hearing both sides matters. So does having a side of your own.
+- Pleasant wording cannot rescue an unfair agreement.
+
+### Listen for who keeps giving ground
+
+Libra changes Mercury’s measure. The wording matters because the relationship between the people speaking matters. Attention moves toward fairness, tone, competing versions of events, and the point where keeping the peace begins to change the actual agreement.
+
+### A better conversation can reveal a worse deal
+
+This works well when two people remember the same agreement differently. Comparing both versions can expose the assumption nobody noticed the first time. A clearer phrase can make a difficult point easier to hear. A slower reply can keep the conflict from becoming cruel without pretending the disagreement is smaller than it is.
+
+### Compromise can erase the person doing most of it
+
+The complication is over-adjustment. The message gets softened until the point disappears. The decision waits for one more opinion while the first proposal quietly becomes the default. A plan that sounded fair looks different once the same person keeps changing their time, preference, or expectations to make it work.
+
+### Keep your position in the room
+
+While Mercury is in Libra, listen carefully and make room for nuance. Then state your position clearly enough that it remains part of the decision. Fairness is not everybody leaving pleased. It is nobody being edited out of the agreement.
+
+---
+
+## Mercury in Scorpio
+
+**Primary hook:**
+
+The first explanation is not always the whole explanation.
+
+**Alternative hooks:**
+
+- One contradiction can undo hours of reassurance.
+- Keep looking while the story is incomplete. Stop when the facts are enough.
+
+### Look beneath the first answer
+
+Scorpio changes Mercury’s method. Mercury becomes less interested in taking the first explanation at face value. Attention goes toward what is missing, what changed, what was left unanswered, and what shows up when separate pieces of information are compared.
+
+### Follow what does not add up
+
+This works well for research, hard conversations, and any situation where the surface story is incomplete. One contradiction can undo hours of reassurance. The right follow-up question often uncovers the detail everyone else missed. Staying with a problem long enough brings the pattern beneath the obvious explanation into view.
+
+### When depth turns into suspicion
+
+The complication is suspicion. An incomplete answer can look deliberate before there is proof that anyone is hiding something. Privacy gets mistaken for deception. A single mismatch can spark an elaborate theory that the facts never supported. Depth is useful when it sharpens perception, not when fear starts filling in the blanks.
+
+### Let the facts be enough
+
+While Mercury is in Scorpio, ask the harder question and compare the responses. Keep looking while the evidence is incomplete. Once the facts are sufficient, let them be enough.
+
+---
+
+## Mercury in Sagittarius
+
+**Primary hook:**
+
+The big idea can arrive before the evidence is ready to support it.
+
+**Alternative hooks:**
+
+- Name what the information means. Then check how much it actually proves.
+- A strong conclusion still needs strong support.
+
+### Name the larger point
+
+Sagittarius changes Mercury’s scale. Individual facts become more interesting once they belong to a larger story. Attention moves toward meaning, direction, consequences, and the conclusion that explains why several separate updates matter together.
+
+### Give the information a direction
+
+This works well when everybody is buried in detail and nobody knows what to do with it. The conversation can move once somebody names what all the information adds up to. A long explanation becomes easier to remember when the central point is clear. The facts gain direction because people understand why they matter.
+
+### The conclusion can get ahead of the evidence
+
+The complication is giving one example the weight of an entire argument. A confident summary starts sounding settled before the supporting detail has been checked. The larger point may be correct, but certainty can make it look more proven than it is.
+
+### Check how much the facts really support
+
+While Mercury is in Sagittarius, make the connection and say the bigger point out loud. Then return to the evidence. The detail that complicates the story still counts, especially when it changes the conclusion.
+
+---
+
+## Mercury in Capricorn
+
+**Primary hook:**
+
+A serious plan needs a date, a responsibility, and an actual answer.
+
+**Alternative hooks:**
+
+- The explanation can be excellent and still arrive too late.
+- Put the terms on the table before silence makes the decision for you.
+
+### Put the terms on the table
+
+Capricorn changes Mercury’s terms. Possibility becomes less interesting than requirement. Attention moves toward deadlines, standards, responsibilities, approvals, sequence, limits, and the exact point where an idea becomes a commitment.
+
+### Make the plan accountable to reality
+
+This works well when a vague proposal needs structure. The conversation changes once somebody names who is responsible, what happens first, and when the answer is due. A plan becomes easier to evaluate because the practical consequences are visible before anybody agrees.
+
+### Caution can become silence
+
+The complication is taking so long to prepare the responsible answer that the window closes. The reply stays in drafts while every possible consequence is considered. The person waiting cannot see the careful reasoning behind the delay. They only see that no answer came, and eventually they make a decision without it.
+
+### Say it while it can still matter
+
+While Mercury is in Capricorn, be clear about the terms. Put the important part in writing. Name the limit before it becomes a problem. Careful thinking helps most when the answer arrives in time to be used.
+
+---
+
+## Mercury in Aquarius
+
+**Primary hook:**
+
+The rule looks very different once you realize it is creating the problem.
+
+**Alternative hooks:**
+
+- A smarter system should make life better for more than the person who designed it.
+- A brilliant idea means very little if the system is no better for the people inside it.
+
+### Question the system
+
+Aquarius changes Mercury’s vantage point. Instead of treating each breakdown as a separate mistake, attention moves toward the rule, policy, or process producing the same outcome again and again. Repeated delays start to look connected. Arbitrary requirements become harder to defend. The question shifts from who got this wrong to why so many people keep running into the same problem.
+
+### Find the pattern behind the problem
+
+This works when individual fixes keep failing. If the same bottleneck appears across several teams, conversations, or parts of a process, correcting each case separately will only get you so far. Once the larger pattern becomes visible, changing the rule itself can solve more than another temporary workaround ever could.
+
+### A smarter system should actually improve people’s lives
+
+The complication is getting attached to an idea because it is clever, new, or elegant. A redesign that saves one group time while giving everyone else more work has not solved the problem. A cleaner policy that makes access harder, ignores the people most affected by it, or simply moves the burden somewhere less visible is not much of an improvement.
+
+Aquarius is not interested in innovation for its own sake. The point is to build something better than what came before.
+
+### Look at who the change serves
+
+While Mercury is in Aquarius, question the rule that no longer makes sense and imagine a better one. Then look beyond the idea itself. Who benefits from the change? Who gets left carrying the cost? Does the new system actually improve life for the people inside it? A brilliant idea means very little if the answer is no.
+
+---
+
+## Mercury in Pisces
+
+**Primary hook:**
+
+You may understand the message before you can explain how you understood it.
+
+**Alternative hooks:**
+
+- Trust the impression enough to notice it. Then give it words.
+- A feeling can be accurate without being the final answer.
+
+### Notice what the words did not say
+
+Pisces changes Mercury’s way of gathering information. The literal sentence is only one part of the message. Attention moves toward tone, imagery, memory, hesitation, emotional undercurrents, and the connection that becomes obvious before the reasoning has fully formed.
+
+### Intuition can catch the missing context
+
+This works well when the important part of a message is difficult to state directly. You hear uncertainty inside an agreeable answer, find the image that finally makes a complicated idea understandable, or recognize the connection between two experiences before you can explain every step that led there. Mercury in Pisces can notice what is present before language has organized it neatly.
+
+### A strong impression can still be incomplete
+
+The complication is treating a feeling as proof because it arrived with conviction. Hope or fear slips into the gap where the missing fact should be. You understand the connection so quickly that you assume everybody else sees it too. The impression may contain real information while the explanation still needs to change.
+
+### Give the feeling enough language to test
+
+While Mercury is in Pisces, notice the impression before forcing a conclusion. Write it down. Ask the question that would confirm it. Find the words that make the connection understandable to somebody else. A feeling can be real without being the final answer.

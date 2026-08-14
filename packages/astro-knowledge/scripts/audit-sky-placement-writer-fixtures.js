@@ -5,7 +5,7 @@ const fs = require("fs");
 const path = require("path");
 
 const packageRoot = path.resolve(__dirname, "..");
-const bankPath = path.join(packageRoot, "voice", "tldr-astro", "marie-satori-writer", "contrastive-edits.json");
+const bankPath = path.join(packageRoot, "voice", "tldr-astro", "satori-writer", "contrastive-edits.json");
 const validOwnerReplacementIds = new Set([
   "sky-placement-uranus-cancer-specific-room-change",
   "sky-placement-uranus-cancer-name-relational-cost",

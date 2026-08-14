@@ -17,6 +17,10 @@ const reviewRoot = "packages/astro-knowledge/review/lilith-78-lived-v2";
 const workbookPath = `${reviewRoot}/TLDR-LILITH-78-LIVED-EXPERIENCE-V2-OWNER-EDITED.xlsx`;
 const packet = JSON.parse(fs.readFileSync(path.join(repoRoot, reviewRoot, "lilith-78-lived-payloads.json"), "utf8"));
 const manifest = JSON.parse(fs.readFileSync(path.join(repoRoot, reviewRoot, "shipping-manifest.json"), "utf8"));
+const v13Repair = JSON.parse(fs.readFileSync(
+  path.join(repoRoot, "packages/astro-knowledge/review/v13-duplicate-contentkey-repair-2026-08-11.json"),
+  "utf8",
+));
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
 const source = JSON.parse(fs.readFileSync(path.join(packageDir, "source-rows/fallback-source-rows-v3.json"), "utf8"));
 const ownerExamples = fs.readFileSync(path.join(repoRoot, "data/writing/OWNER_APPROVED_EXAMPLES.jsonl"), "utf8")
@@ -73,6 +77,13 @@ assert.equal(
   "All pre-existing approved rows must remain byte-identical.",
 );
 assert.equal(manifest.invariants.existingApprovedRowsChanged, 0);
+assert.match(
+  manifest.invariants.snapshotRepin,
+  /v3-2026-08-10c empty-house V14 promotion/u,
+  "The container snapshot re-pin must retain its package-version cause."
+);
+assert.equal(v13Repair.counts.supersededRowsRemoved, 108);
+assert.equal(v13Repair.invariants.otherApprovedRowsChanged, 0);
 
 for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
   assert.equal(sha256(JSON.stringify(entry.payload)), entry.sha256, `${workbookKey}: payload hash mismatch`);

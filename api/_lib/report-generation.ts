@@ -1,7 +1,16 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { reportOwnerComparisonSet, type ReportOwnerComparisonPassage } from "./report-owner-comparison.js";
+import type { ReportOwnerComparisonPassage } from "./report-owner-comparison.js";
+import { reportOwnerVoiceComparisonSetV2 } from "./report-owner-voice-corpus-v2.js";
+import { reportKeyDateEventManifest, reportKeyDateSourceUnitIds, type ReportKeyDateEventManifestEntry } from "./report-key-dates.js";
+import {
+  REPORT_COLD_PROSE_RULE_PATH,
+  REPORT_EARNED_SENTENCE_RULING_PATH,
+  REPORT_NATURALNESS_RULING_PATH,
+  REPORT_NO_CLEVERNESS_RULING_PATH,
+  REPORT_OWNER_REVIEW_EVIDENCE_PATH
+} from "./report-prompt-versions.js";
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
 export type { ReportDomain, ReportHorizon } from "./report-types.ts";
@@ -85,6 +94,28 @@ export type ReportGenerationPayload = {
     sourcePath: string;
     text: string;
   };
+  noClevernessRuling: {
+    sourcePath: string;
+    text: string;
+  };
+  ownerReviewEvidence: {
+    sourcePath: string;
+    text: string;
+  };
+  coldProseRuling: {
+    sourcePath: string;
+    text: string;
+  };
+  earnedSentenceRuling: {
+    sourcePath: string;
+    text: string;
+  };
+  naturalnessRuling: {
+    sourcePath: string;
+    text: string;
+  };
+  priorUnitContext: ReportPriorUnitContext[];
+  structuralRequirements: ReportStructuralRequirements | null;
   sharedInvariants: string[];
   domainRelevanceModel: DomainRelevanceTier[];
   frozenFacts: Record<string, unknown>;
@@ -93,6 +124,7 @@ export type ReportGenerationPayload = {
   manifestationSets: ResolvedManifestationSet[];
   sourceGaps: ReportSourceGap[];
   writingQueue: ReportSourceGap[];
+  keyDateRequirements: ReportKeyDateEventManifestEntry[];
   voiceEvidence: Array<{
     sourcePath: string;
     sourceType: "owner_authored_final";
@@ -110,12 +142,27 @@ export type ReportGenerationPayload = {
   };
 };
 
+export type ReportPriorUnitContext = {
+  unitId: string;
+  synthesis: boolean;
+  headline: string;
+  summary: string;
+  body: string;
+  sections: Array<{ heading?: string; body?: string }>;
+};
+
+export type ReportStructuralRequirements = {
+  headingPrefix: string;
+  dateRange: string;
+};
+
 export type AssembleReportPayloadInput = {
   reportId: string;
   reportDomain: ReportDomain;
   reportHorizon: ReportHorizon;
   unitId: string;
   frozenFacts: Record<string, unknown>;
+  priorUnitContext?: ReportPriorUnitContext[];
 };
 
 export type ReportDraft = {
@@ -126,21 +173,36 @@ export type ReportDraft = {
   action?: string;
   timing?: string;
   sections?: Array<{ heading?: string; body?: string }>;
+  keyDates?: Array<{ eventId: string; title: string; sentence: string }>;
 };
 
 export type ReportValidationIssue = {
   code: string;
   message: string;
   severity?: "error" | "warning";
+  /** Exact reader-facing value and coordinate when a deterministic lint can
+   * identify its sentence. The revision bridge must use these coordinates
+   * instead of guessing from the prose of `message`. */
+  value?: string;
+  location?: string;
+  sentenceIndex?: number;
+  quote?: string;
 };
 
 export type ReportValidatorOptions = {
   signatureNouns?: string[];
   signatureNounCap?: number;
+  enforceSeasonStructure?: boolean;
 };
 
 const GENERATION_STANDARD_PATH = "tldr-astro-phrasebank/TLDR-YEAR-AHEAD-GENERATION-LOGIC-OWNER.md";
 const LIVED_PROSE_STANDARD_PATH = "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md";
+
+const REPORT_SYNTHESIS_UNIT_IDS = new Set(["overview", "review-current-year"]);
+
+export function isReportSynthesisUnit(unitId: string) {
+  return REPORT_SYNTHESIS_UNIT_IDS.has(unitId);
+}
 export const PERSONAL_HEALTH_PROMPT_PATH = "tldr-astro-phrasebank/TLDR-PERSONAL-HEALTH-DEEPDIVE-GENERATION-PROMPT-OWNER.md";
 const MANIFESTATION_SETS_PATHS = [
   "packages/astro-knowledge/data/manifestation-sets/year-ahead-v1.json",
@@ -226,7 +288,7 @@ type ReportDomainConfiguration = {
 
 const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
   general: {
-    canonicalPromptPath: "tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-OWNER.md",
+    canonicalPromptPath: "tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-V2-OWNER.md",
     canonicalPromptOwnerApproved: true,
     voiceEvidencePath: "artifacts/marie-satori-year-ahead-2026-FINAL.md",
     generationStandardPath: GENERATION_STANDARD_PATH,
@@ -826,7 +888,8 @@ function transitFactors(facts: Record<string, unknown>): ReportFactor[] {
     const natalPoint = stringValue(arc.natalPoint);
     const aspect = stringValue(arc.aspect);
     const house = numberValue(arc.natalHouse);
-    if (slowTransitExcludedTargetTokens.has(pointToken(natalPoint))) return [];
+    if (slowTransitExcludedTargetTokens.has(pointToken(transitPlanet))
+      || slowTransitExcludedTargetTokens.has(pointToken(natalPoint))) return [];
     const selfConjunction = transitPlanet === natalPoint && aspect === "conjunction";
     if (selfConjunction && !RETURN_ELIGIBLE.has(transitPlanet)) return [];
     const returnEligible = selfConjunction && RETURN_ELIGIBLE.has(transitPlanet);
@@ -1105,6 +1168,40 @@ export function resolveManifestationSets(
   return { resolved, gaps };
 }
 
+function reportStructuralRequirements(
+  unitId: string,
+  frozenFacts: Record<string, unknown>
+): ReportStructuralRequirements | null {
+  const season = ({
+    "winter-current": "WINTER",
+    spring: "SPRING",
+    summer: "SUMMER",
+    autumn: "AUTUMN",
+    "winter-next": "WINTER"
+  } as Record<string, string | undefined>)[unitId];
+  if (!season) return null;
+  const window = reportWindowFacts(frozenFacts);
+  const startYear = Number(stringValue(window.startsAt).slice(0, 4));
+  const endYear = Number(stringValue(window.endsAt).slice(0, 4));
+  const year = unitId === "winter-next" ? endYear : startYear;
+  if (!Number.isFinite(year) || year < 1900) return null;
+  const monthDay = (value: unknown, dayOffset = 0) => {
+    const parsed = new Date(stringValue(value));
+    if (!Number.isFinite(parsed.getTime())) return "";
+    parsed.setUTCDate(parsed.getUTCDate() + dayOffset);
+    return `${parsed.toLocaleString("en-US", { month: "short", timeZone: "UTC" })} ${parsed.getUTCDate()}`;
+  };
+  const dateRange = ({
+    "winter-current": `${monthDay(window.startsAt)} - Mar 20`,
+    spring: "Mar 20 - Jun 21",
+    summer: "Jun 21 - Sep 22",
+    autumn: "Sep 22 - Dec 21",
+    "winter-next": `Dec 21 - ${monthDay(window.endsAt, -1)}`
+  } as Record<string, string>)[unitId];
+  if (!dateRange || dateRange.startsWith(" -") || dateRange.endsWith("- ")) return null;
+  return { headingPrefix: `${season} ${year}`, dateRange };
+}
+
 export function assembleReportGenerationPayload(
   input: AssembleReportPayloadInput
 ): ReportGenerationPayload {
@@ -1132,6 +1229,28 @@ export function assembleReportGenerationPayload(
       sourcePath: LIVED_PROSE_STANDARD_PATH,
       text: readRepoText(LIVED_PROSE_STANDARD_PATH)
     },
+    noClevernessRuling: {
+      sourcePath: REPORT_NO_CLEVERNESS_RULING_PATH,
+      text: readRepoText(REPORT_NO_CLEVERNESS_RULING_PATH)
+    },
+    ownerReviewEvidence: {
+      sourcePath: REPORT_OWNER_REVIEW_EVIDENCE_PATH,
+      text: readRepoText(REPORT_OWNER_REVIEW_EVIDENCE_PATH)
+    },
+    coldProseRuling: {
+      sourcePath: REPORT_COLD_PROSE_RULE_PATH,
+      text: readRepoText(REPORT_COLD_PROSE_RULE_PATH)
+    },
+    earnedSentenceRuling: {
+      sourcePath: REPORT_EARNED_SENTENCE_RULING_PATH,
+      text: readRepoText(REPORT_EARNED_SENTENCE_RULING_PATH)
+    },
+    naturalnessRuling: {
+      sourcePath: REPORT_NATURALNESS_RULING_PATH,
+      text: readRepoText(REPORT_NATURALNESS_RULING_PATH)
+    },
+    priorUnitContext: structuredClone(input.priorUnitContext ?? []),
+    structuralRequirements: reportStructuralRequirements(input.unitId, input.frozenFacts),
     sharedInvariants: [...SHARED_INVARIANTS],
     domainRelevanceModel: reportDomainRelevanceModel(input.reportDomain),
     frozenFacts: JSON.parse(JSON.stringify(input.frozenFacts)) as Record<string, unknown>,
@@ -1140,6 +1259,12 @@ export function assembleReportGenerationPayload(
     manifestationSets: resolved,
     sourceGaps: gaps,
     writingQueue: [...gaps],
+    keyDateRequirements: reportKeyDateEventManifest(
+      input.frozenFacts,
+      input.reportHorizon,
+      factors.map((factor) => factor.id)
+    )
+      .filter((event) => event.sourceUnitId === input.unitId),
     voiceEvidence: [{
       sourcePath: configuration.voiceEvidencePath,
       sourceType: "owner_authored_final",
@@ -1147,7 +1272,7 @@ export function assembleReportGenerationPayload(
       eligible: true,
       text: readRepoText(configuration.voiceEvidencePath)
     }],
-    ownerComparisonSet: reportOwnerComparisonSet(input.reportDomain),
+    ownerComparisonSet: reportOwnerVoiceComparisonSetV2(input.reportDomain, input.unitId),
     outputGovernance: {
       status: "DRAFT",
       review_status: "needs_review",
@@ -1172,13 +1297,37 @@ It must never appear in reader-facing report output, headings, metadata, attribu
 Its purpose is to force reasoning before prose, not to create visible report structure.`;
 
 export function reportPromptFromPayload(payload: ReportGenerationPayload) {
-  const { canonicalOwnerPrompt, livedProseStandard, ...taskPayload } = payload;
+  return reportPromptFromPayloadMode(payload, true);
+}
+
+export function reportLegacyPromptFromPayload(payload: ReportGenerationPayload) {
+  return reportPromptFromPayloadMode(payload, false);
+}
+
+function reportPromptFromPayloadMode(payload: ReportGenerationPayload, naturalnessActive: boolean) {
+  const {
+    canonicalOwnerPrompt, livedProseStandard, noClevernessRuling,
+    ownerReviewEvidence, coldProseRuling, earnedSentenceRuling,
+    naturalnessRuling, priorUnitContext, structuralRequirements, ...taskPayload
+  } = payload;
+  const targetIsSynthesis = isReportSynthesisUnit(payload.unit.unitId);
   return [
     canonicalOwnerPrompt.text,
     `LIVED_PROSE_STANDARD\n${livedProseStandard.text}`,
+    `NO_CLEVERNESS_TAX_OWNER_RULING\n${noClevernessRuling.text}`,
+    `OWNER_REVIEW_EVIDENCE\n${ownerReviewEvidence.text}`,
+    `COLD_RENDERED_PROSE_OWNER_RULING\n${coldProseRuling.text}`,
+    `EARNED_SENTENCE_OWNER_RULING\n${earnedSentenceRuling.text}`,
+    naturalnessActive ? `NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING\n${naturalnessRuling.text}` : "",
+    naturalnessActive ? `NATURALNESS_BEFORE_AFTER_EXEMPLAR_PACKET\nThe REJECTED, OWNER, SHARPER OWNER ALTERNATIVE, KEEP EXACTLY, ACCEPTABLE IN CONTEXT, and OWNER STANDALONE VERSION passages in the ruling above are labeled writer evidence. Use the owner replacements as positive examples and the rejected versions as negative examples. Never copy a sample when the unit facts do not support it.` : "",
+    naturalnessActive ? `PRIOR_UNIT_REPETITION_PREVENTION\nThe units below are already persisted earlier in this report. Do not repeat their sentences or re-run their manifestation menus. Refer back instead of restating. This is a prevention instruction, not permission to become vague.\n\nSYNTHESIS EXEMPTION\nThe only synthesis units are overview and review-current-year (the Year-in-Review unit). A canonical sentence may appear once in one of those synthesis units and once in the non-synthesis unit that introduces it. Repetition between two non-synthesis units remains forbidden. ${targetIsSynthesis ? "This target is a synthesis unit: it may reference the report's themes, but it must not inventory or re-run every manifestation menu." : "This target is not a synthesis unit: prior synthesis prose does not prevent one canonical sentence from appearing in the unit that actually introduces it; all prior non-synthesis prose does."}\n\nEARLIER_PERSISTED_UNITS\n${JSON.stringify(priorUnitContext, null, 2)}` : "",
+    naturalnessActive && structuralRequirements ? `STRUCTURAL_DISPLAY_CONTRACT\nThe headline must begin with '${structuralRequirements.headingPrefix}'. The timing field must be exactly '${structuralRequirements.dateRange}'. Preserve both fields exactly through revision and assembly.` : "",
+    reportKeyDateSourceUnitIds(payload.reportHorizon).includes(payload.unit.unitId)
+      ? `STRUCTURED_KEY_DATE_CONTRACT\nThe supplied events are fact-valid candidates, not a mandatory checklist. For each supplied event that this unit substantively interprets in its reader prose, return exactly one keyDates entry with the exact supplied eventId, a unique date-specific title, and one date-specific reader sentence. Omit events the unit does not interpret. Never create fact-only placeholder copy to make the calendar complete. Never reuse the unit headline or a section heading as the title. Never lift a body sentence as the key-date sentence. Do not repeat a title or sentence. The runtime owns the date label and technical attribution. Eligible candidate events for this unit:\n${JSON.stringify(payload.keyDateRequirements, null, 2)}`
+      : "STRUCTURED_KEY_DATE_CONTRACT\nReturn keyDates as an empty array for this unit.",
     INTERNAL_LIVED_PROSE_SCAFFOLD,
     `REPORT_GENERATION_PAYLOAD\n${JSON.stringify(taskPayload, null, 2)}`
-  ].join("\n\n");
+  ].filter(Boolean).join("\n\n");
 }
 
 function draftText(draft: ReportDraft) {
@@ -1238,8 +1387,74 @@ function phrasePresent(sentence: string, phrase: string) {
   return new RegExp(`(^|[^a-z0-9])${escaped(phrase)}([^a-z0-9]|$)`, "iu").test(sentence);
 }
 
+type DraftSentenceCoordinate = {
+  location: string;
+  sentenceIndex: number;
+  quote: string;
+};
+
+function draftSentenceCoordinates(draft: ReportDraft, readerFacingOnly = false): DraftSentenceCoordinate[] {
+  const fields: Array<[string, string]> = [
+    ["headline", draft.headline ?? ""], ["tldr", draft.tldr ?? ""], ["summary", draft.summary ?? ""],
+    ["body", draft.body ?? ""], ["action", draft.action ?? ""], ["timing", draft.timing ?? ""],
+    ...(draft.sections ?? []).flatMap((section, index) => [
+      [`sections.${index}.heading`, section.heading ?? ""] as [string, string],
+      [`sections.${index}.body`, section.body ?? ""] as [string, string]
+    ])
+  ];
+  return fields.flatMap(([location, value]) => sentences(value).map((quote, sentenceIndex) => ({
+    location, sentenceIndex, quote
+  }))).filter(({ quote }) => !readerFacingOnly || !/^\s*(?:·\s*)?(?:\*|(?:provenance|governance):)/iu.test(quote));
+}
+
+function pushExactSentenceLint(
+  draft: ReportDraft,
+  issues: ReportValidationIssue[],
+  input: {
+    code: string;
+    message: string;
+    matches: (sentence: string) => boolean;
+    severity?: "error" | "warning";
+    readerFacingOnly?: boolean;
+  }
+) {
+  for (const coordinate of draftSentenceCoordinates(draft, input.readerFacingOnly).filter(({ quote }) => input.matches(quote))) {
+    issues.push({
+      code: input.code,
+      message: input.message,
+      severity: input.severity ?? "error",
+      value: coordinate.quote,
+      location: coordinate.location,
+      sentenceIndex: coordinate.sentenceIndex,
+      quote: coordinate.quote
+    });
+  }
+}
+
+export function manifestationEnumerationSize(sentence: string) {
+  const clauseBoundary = /[;:]|,\s+(?=(?:but|so|yet|while|whereas|because|although|though|when|if|unless|since|after|before)\b|(?:i|you|we|they|he|she|it|this|that|these|those|the)\s+(?:am|is|are|was|were|may|might|can|could|will|would|should|must|has|have|had|do|does|did)\b)/iu;
+  let largest = 0;
+
+  for (const clause of sentence.split(clauseBoundary)) {
+    const commaItems = clause.split(/\s*,\s*/u).map((item) => item.trim()).filter(Boolean);
+    if (!commaItems.length) continue;
+    const finalItemParts = commaItems.at(-1)?.split(/\s+(?:and|or)\s+/iu).filter(Boolean).length ?? 1;
+    largest = Math.max(largest, commaItems.length + Math.max(0, finalItemParts - 1));
+  }
+
+  return largest;
+}
+
 function hedged(sentence: string) {
   return /\b(?:may|can|could|might)\b/iu.test(sentence);
+}
+
+export function isAstrologyMechanismStatement(sentence: string) {
+  const astrology = "(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|node|eclipse|profection|solar return|transit)";
+  const attribution = new RegExp(`\\b${astrology}\\b[^.!?]*\\b(?:conjoins?|squares?|opposes?|trines?|sextiles?|returns?|stations?)\\b`, "iu");
+  const interpretedMechanism = new RegExp(`\\b${astrology}\\b[^.!?]*\\b(?:chang(?:e|es|ing|ed)|expand(?:s|ing|ed)?|limit(?:s|ing|ed)?|structur(?:e|es|ing|ed)|disrupt(?:s|ing|ed)?|activate(?:s|d|ing)?|puts? pressure on|brings? pressure to)\\b[^.!?]*\\b(?:terms?|roles?|conditions?|patterns?|rhythms?|expectations?|timing|pace|pressure|structure|capacity|visibility)\\b`, "iu");
+  const explanatoryMechanism = new RegExp(`\\b${astrology}\\b[^.!?]*\\bmakes?\\b[^.!?]*\\b(?:look|feel|seem)\\b`, "iu");
+  return attribution.test(sentence) || interpretedMechanism.test(sentence) || explanatoryMechanism.test(sentence);
 }
 
 function hasActualSaturnReturn(facts: Record<string, unknown>) {
@@ -1309,27 +1524,60 @@ function validateLivedProseMechanics(draft: ReportDraft, issues: ReportValidatio
     "prioritize self-care",
     "trust the evidence"
   ];
-  for (const phrase of writerNotes.filter((candidate) => phrasePresent(text, candidate))) {
-    issues.push({
+  for (const phrase of writerNotes) {
+    pushExactSentenceLint(draft, issues, {
       code: "writer_note_leakage",
       message: `Reader-facing output contains writer-facing report language: ${phrase}.`,
-      severity: "error"
+      matches: (sentence) => phrasePresent(sentence, phrase),
+      readerFacingOnly: true
     });
   }
-  for (const phrase of genericAdvice.filter((candidate) => phrasePresent(text, candidate))) {
-    issues.push({
+  for (const phrase of genericAdvice) {
+    pushExactSentenceLint(draft, issues, {
       code: "generic_advice",
       message: `Reader-facing output contains generic advice instead of a situated practical change: ${phrase}.`,
-      severity: "error"
+      matches: (sentence) => phrasePresent(sentence, phrase),
+      readerFacingOnly: true
     });
   }
-  if (/^\s*(?:#{1,6}\s*)?(?:ASTROLOGY|LIVED FACT|CAUSE|CONSEQUENCE|CONTRADICTION|DO NOT ASSUME)\s*(?::|$)/mu.test(text)) {
-    issues.push({
-      code: "internal_scaffold_leakage",
-      message: "Reader-facing output exposes the internal lived-prose extraction scaffold.",
-      severity: "error"
-    });
+  const bannedReaderTerms: Array<[RegExp, string, string]> = [
+    [/\bthings\b/iu, "vague_noun", "Reader-facing output uses 'things' as a vague noun."],
+    [/\b(?:the\s+)?(?:outcome|result|answer|decision|future)\s+(?:is|was|remains)\s+not settled\b/iu, "banned_settled", "Reader-facing output uses 'settled' as an abstract outcome disclaimer."],
+    [/\b(?:the\s+)?(?:year|eclipse|transit|profection|solar return)\s+(?:asks|wants|invites|encourages)\b/iu, "astrology_as_agent", "Reader-facing output makes astrology an agent that asks, wants, invites, or encourages."],
+    [/\blabor\b/iu, "labor_for_work", "Reader-facing output uses 'labor' where concrete work should be named."],
+    [/\bsummer opens the year outward\b/iu, "no_cleverness_tax", "Owner-rejected compressed construction requires reader decoding: Summer opens the year outward."],
+    [/\bthe work starts moving between people\b/iu, "no_cleverness_tax", "Owner-rejected compressed construction requires reader decoding: The work starts moving between people."],
+    [/\bcircumstances may choose part of it for you\b/iu, "no_cleverness_tax", "Owner-rejected compressed construction requires reader decoding: Circumstances may choose part of it for you."],
+    [/\baugust brings greater access and response\b/iu, "no_cleverness_tax", "Owner-rejected compressed construction requires reader decoding: August brings greater access and response."],
+    [/\bwednesday still has one afternoon\b/iu, "no_cleverness_tax", "Owner-rejected compressed construction requires reader decoding: Wednesday still has one afternoon."],
+    [/\bthe public and private parts of life compete\b/iu, "no_cleverness_tax", "Owner-rejected compressed construction requires reader decoding: The public and private parts of life compete."],
+    [/\bthe opportunity reaches the calendar\b/iu, "no_cleverness_tax", "Owner-rejected compressed construction requires reader decoding: The opportunity reaches the calendar."]
+  ];
+  for (const [pattern, code, message] of bannedReaderTerms) {
+    pushExactSentenceLint(draft, issues, { code, message, matches: (sentence) => pattern.test(sentence), readerFacingOnly: true });
   }
+  const mechanismTerms = /\b(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|node|eclipse|profection|solar return|transit|house)\b/iu;
+  const concreteCosts = /\b(?:hours?|sleep|meals?|lunch|appointments?|travel|commut(?:e|ing)|preparation|follow-up|workload|recovery|caregiving|schedule|costs?|expenses?|money|time)\b/iu;
+  const proseSections = [draft.body ?? "", ...(draft.sections ?? []).map((section) => section.body ?? "")];
+  for (const section of proseSections) {
+    const sectionNamesMechanism = mechanismTerms.test(section);
+    for (const paragraph of section.split(/\n\s*\n/u).map((value) => value.trim()).filter(Boolean)) {
+      if (!/\b(?:overcommit(?:ment|ting|ted)?|capacity|crowd(?:ed|s|ing)? the week|full week)\b/iu.test(paragraph)) continue;
+      if (!sectionNamesMechanism || !concreteCosts.test(paragraph)) {
+        issues.push({
+          code: "mechanism_grounding",
+          message: `Capacity or overcommitment passage must name its astrological mechanism within the same section and a concrete cost within the passage: ${paragraph}`,
+          severity: "error"
+        });
+      }
+    }
+  }
+  pushExactSentenceLint(draft, issues, {
+    code: "internal_scaffold_leakage",
+    message: "Reader-facing output exposes the internal lived-prose extraction scaffold.",
+    matches: (sentence) => /^\s*(?:#{1,6}\s*)?(?:ASTROLOGY|LIVED FACT|CAUSE|CONSEQUENCE|CONTRADICTION|DO NOT ASSUME)\s*(?::|$)/mu.test(sentence),
+    readerFacingOnly: true
+  });
 }
 
 function validateDeepDiveKeyDates(draft: ReportDraft, issues: ReportValidationIssue[]) {
@@ -1353,14 +1601,12 @@ function validateDeepDiveKeyDates(draft: ReportDraft, issues: ReportValidationIs
 }
 
 function validateLoveBannedVocabulary(draft: ReportDraft, issues: ReportValidationIssue[]) {
-  const text = draftText(draft);
-  const banned = ["soulmate", "twin flame", "divine union", "your person"]
-    .filter((phrase) => phrasePresent(text, phrase));
-  for (const phrase of banned) {
-    issues.push({
+  for (const phrase of ["soulmate", "twin flame", "divine union", "your person"]) {
+    pushExactSentenceLint(draft, issues, {
       code: "love_banned_vocabulary",
       message: `Love & Connection output contains banned vocabulary: ${phrase}.`,
-      severity: "error"
+      matches: (sentence) => phrasePresent(sentence, phrase),
+      readerFacingOnly: true
     });
   }
 }
@@ -1406,11 +1652,12 @@ function validatePersonalHealthCeiling(draft: ReportDraft, issues: ReportValidat
     "healing journey",
     "holding space"
   ];
-  for (const phrase of bannedAdvice.filter((candidate) => phrasePresent(text, candidate))) {
-    issues.push({
+  for (const phrase of bannedAdvice) {
+    pushExactSentenceLint(draft, issues, {
       code: "personal_health_banned_advice",
       message: `Personal & Health output contains banned wellness language: ${phrase}.`,
-      severity: "error"
+      matches: (sentence) => phrasePresent(sentence, phrase),
+      readerFacingOnly: true
     });
   }
 
@@ -1445,6 +1692,31 @@ function validatePersonalHealthCeiling(draft: ReportDraft, issues: ReportValidat
   }
 }
 
+const DISPLAY_DATE_RANGE = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:,?\s+\d{4})?\s*(?:-|–|to)\s*(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:,?\s+\d{4})?\b/iu;
+
+function validateSeasonStructure(
+  draft: ReportDraft,
+  payload: ReportGenerationPayload,
+  issues: ReportValidationIssue[]
+) {
+  const requirement = payload.structuralRequirements;
+  if (!requirement) return;
+  if (!new RegExp(`^${escaped(requirement.headingPrefix)}\\b`, "iu").test(draft.headline?.trim() ?? "")) {
+    issues.push({
+      code: "missing_season_heading",
+      message: `Seasonal report unit headline must begin with '${requirement.headingPrefix}'.`,
+      severity: "error"
+    });
+  }
+  if (!DISPLAY_DATE_RANGE.test(draft.timing?.trim() ?? "") || draft.timing?.trim() !== requirement.dateRange) {
+    issues.push({
+      code: "missing_season_date_range",
+      message: `Seasonal report unit timing must be exactly '${requirement.dateRange}'.`,
+      severity: "error"
+    });
+  }
+}
+
 export function validateReportDraft(
   draft: ReportDraft,
   payload: ReportGenerationPayload,
@@ -1456,11 +1728,16 @@ export function validateReportDraft(
   const signatureNouns = options.signatureNouns ?? ["application"];
   const signatureNounCap = options.signatureNounCap ?? 3;
 
-  if (text.includes("—")) issues.push({ code: "em_dash", message: "Report output contains an em dash." });
-  if (/\bwhether\b/iu.test(text)) issues.push({ code: "whether", message: "Report output contains whether." });
-  if (/\b(?:i think|i'm watching|i am watching|this makes me think)\b/iu.test(text)) {
-    issues.push({ code: "astrologer_persona", message: "Report output uses astrologer persona." });
-  }
+  pushExactSentenceLint(draft, issues, {
+    code: "em_dash", message: "Report output contains an em dash.", matches: (sentence) => sentence.includes("—")
+  });
+  pushExactSentenceLint(draft, issues, {
+    code: "whether", message: "Report output contains whether.", matches: (sentence) => /\bwhether\b/iu.test(sentence)
+  });
+  pushExactSentenceLint(draft, issues, {
+    code: "astrologer_persona", message: "Report output uses astrologer persona.",
+    matches: (sentence) => /\b(?:i think|i'm watching|i am watching|this makes me think)\b/iu.test(sentence)
+  });
 
   for (const noun of signatureNouns) {
     const count = normalized.match(new RegExp(`\\b${escaped(noun.toLowerCase())}s?\\b`, "gu"))?.length ?? 0;
@@ -1474,18 +1751,19 @@ export function validateReportDraft(
     const blockSentences = sentences(block);
     let shortManifestationRun = 0;
     for (const [index, sentence] of blockSentences.entries()) {
-      const manifestations = manifestationRecords.flatMap((record) => record.possibleLivedManifestations)
+      const manifestationPhrases = manifestationRecords.flatMap((record) => record.possibleLivedManifestations);
+      const manifestations = manifestationPhrases
         .filter((manifestation) => phrasePresent(sentence, manifestation));
       const exclusions = manifestationRecords.flatMap((record) => record.doNotAssume)
         .filter((exclusion) => phrasePresent(sentence, exclusion));
       const framed = hedged(sentence) || (index > 0 && hedged(blockSentences[index - 1]));
-      if (manifestations.length > 0 && !framed) {
+      if (manifestations.length > 0 && !framed && !isAstrologyMechanismStatement(sentence)) {
         issues.push({ code: "possibility_language", message: `Manifestation is asserted without may/can/could/might framing: ${sentence}` });
       }
       if (exclusions.length > 0 && !framed && !/\b(?:not|never|without|avoid|do not)\b/iu.test(sentence)) {
         issues.push({ code: "do_not_assume", message: `DO NOT ASSUME item is asserted as fact: ${sentence}` });
       }
-      if (manifestations.length > 5) {
+      if (manifestations.length > 0 && manifestationEnumerationSize(sentence) > 5) {
         issues.push({ code: "menu_size", message: `Manifestation menu exceeds five items: ${sentence}` });
       }
       shortManifestationRun = manifestations.length > 0 && sentence.split(/\s+/u).length <= 12
@@ -1520,6 +1798,8 @@ export function validateReportDraft(
       }
     }
   }
+
+  if (options.enforceSeasonStructure) validateSeasonStructure(draft, payload, issues);
 
   validateLivedProseMechanics(draft, issues);
   const domainValidators = REPORT_DOMAIN_CONFIG[payload.reportDomain].validators;

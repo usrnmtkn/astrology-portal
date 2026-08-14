@@ -9,8 +9,8 @@ function strings(value: unknown): string[] {
   return [];
 }
 
-function draftText(draft: ReportDraft) {
-  return [draft.headline, draft.tldr, draft.summary, draft.body, draft.action, draft.timing, ...(draft.sections ?? []).flatMap((section) => [section.heading, section.body])].filter(Boolean).join("\n");
+function draftText(draft: ReportDraft, omitTiming = false) {
+  return [draft.headline, draft.tldr, draft.summary, draft.body, draft.action, omitTiming ? "" : draft.timing, ...(draft.sections ?? []).flatMap((section) => [section.heading, section.body])].filter(Boolean).join("\n");
 }
 
 function recordValue(value: unknown): Record<string, unknown> | null {
@@ -53,8 +53,14 @@ function dateTokens(facts: Record<string, unknown>) {
   return tokens;
 }
 
-export function verifyReportFactLock(draft: ReportDraft, facts: Record<string, unknown>) {
-  const text = draftText(draft);
+export function verifyReportFactLock(
+  draft: ReportDraft,
+  facts: Record<string, unknown>,
+  options: { trustedTiming?: string } = {}
+) {
+  const timingIsGoverned = typeof options.trustedTiming === "string"
+    && draft.timing?.trim() === options.trustedTiming;
+  const text = draftText(draft, timingIsGoverned);
   const allowedDates = dateTokens(facts);
   const factsText = JSON.stringify(facts);
   const normalizedFacts = factsText.toLowerCase().replace(/[^a-z0-9]+/gu, " ");

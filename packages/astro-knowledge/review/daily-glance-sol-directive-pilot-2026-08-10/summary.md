@@ -5,6 +5,10 @@ Source revision: `f705bffea04f64e238b928a73a441eb31509ca17`
 
 > Writer-only pilot. Terra was disabled. Every output remains UNAPPROVED; no serving row or review status changed.
 
+> Owner disposition recorded 2026-08-11: `RETAIN_AS_REGISTER_EVIDENCE / DO_NOT_SERVE`. All twelve outputs are excluded from serving and promotion pools. See `owner-disposition-2026-08-11.json`.
+
+> The owner's disposition records 10/12 as lint-clean under the recalibrated v2 blocking tier. The historical v1 lint fields below are preserved as originally written.
+
 ## Results
 
 | Key | Lint-clean | Rate | NO_LINT_CLEAN_CANDIDATE | Estimated cost |

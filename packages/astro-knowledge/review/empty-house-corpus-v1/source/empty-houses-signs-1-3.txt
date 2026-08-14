@@ -1,0 +1,71 @@
+empty-1st|aries	Your first response is quick, direct, and hard to miss. You are more likely to move before the room has finished deciding, compete without needing much encouragement, and trust action to tell you what comes next. The same speed that gives you courage makes follow-through harder once the excitement wears off.
+
+empty-1st|taurus	Your presence carries more patience than hurry. You may take your time deciding, prefer what feels solid and well made, and resist being pushed into a choice before you are ready. Comfort, beauty, food, clothing, and possessions can matter because the physical world helps you know what you like, though attachment can turn into stubbornness when change is actually needed.
+
+empty-1st|gemini	Your presence leads with curiosity and quick wit. You may talk your way into understanding something, keep several interests going at once, or change direction the minute boredom sets in. That mental speed makes you engaging company, but shifting with every conversation can leave people unsure which version of you to count on.
+
+empty-1st|cancer	You read a room emotionally before you decide what to do in it. Home, family, memory, and the people you care for may shape how you present yourself, even when you keep the deepest feelings private. You are warm and protective, but criticism may land harder than you let on.
+
+empty-1st|leo	Your presence brings warmth, pride, and a little theater. You may naturally take the lead, make the story funnier when you tell it, or light up when somebody notices what you brought to the room. Being seen can feel good. It gets exhausting when every room starts to feel like an audition and you leave wondering who noticed.
+
+empty-1st|virgo	You notice what is out of place before most people do. You catch the missing detail, remember what still needs fixing, and may think through a decision until every practical consequence has been checked. That eye is useful. It gets tiring when you turn it on yourself and nothing is allowed to be good enough yet.
+
+empty-1st|libra	Social balance is central to how you move through the world. You may instinctively soften a rough moment, match the tone of the room, or see the other person's point before they have finished making it. Charm and aesthetic sense are easy assets, but too much weighing can leave you waiting for a choice that pleases everyone.
+
+empty-1st|scorpio	You don't give much away for free. You may read motives quickly, keep private material private, and find reserves of will that appear only when the situation gets serious. Desire and loyalty can run deep, but suspicion or the need to control the outcome can keep an old betrayal in the room long after everyone else has moved on.
+
+empty-1st|sagittarius	Your presence moves toward the larger picture. You may be drawn to travel, big ideas, humor, and plain speech, and you tend to feel best when the direction in front of you feels open. Confidence and optimism are attractive qualities. They get reckless when enthusiasm makes a promise before practicality has checked the schedule.
+
+empty-1st|capricorn	Your presence shows composure long before you feel ready. You may take responsibility early, expect mistakes to be noticed, and build self-reliance because life gave you practice. That discipline earns trust. It gets heavy when every new beginning feels like another test you have to pass alone.
+
+empty-1st|aquarius	Your presence has an independent, slightly unexpected edge. You may think differently than the people around you, prefer an unusual path, and feel uncomfortable when expected to fit a standard mold. Originality and humanitarian interest come naturally. The tension comes when needing to be individual makes simple connection harder than it needs to be.
+
+empty-1st|pisces	Your presence is receptive, gentle, and highly responsive to the atmosphere around you. You may absorb the mood of the room before you know why, express yourself through art, music, or empathy, and find strict boundaries hard to maintain. That sensitivity is a gift. It becomes confusing when you cannot tell where your feelings stop and someone else's begin.
+
+empty-2nd|aries	Money feels like something to move, not something to stare at. You may spend quickly, chase a promising shortcut, or put a lot of energy into earning more. That initiative can open doors. It can also empty the account just as fast when impatience gets to make the financial decision.
+
+empty-2nd|taurus	You want money to turn into something you can actually rely on. You may save for months for one well-made thing and then keep it for years, or pay more for comfort because replacing it twice feels worse than buying it once. That patience can make you good at building resources slowly. It can also make you hold on to a possession, expense, or financial arrangement after it has stopped being useful.
+
+empty-2nd|gemini	Income depends on how well you move information. One conversation can turn into a client, a writing job, a class you get paid to teach, or a second stream of work you did not expect to keep. Because your attention moves quickly, money can scatter quickly too. The useful question is which idea is worth staying with long enough to become reliable income.
+
+empty-2nd|cancer	Money and security feel deeply personal. Financial choices may be driven by the need to protect your home, family, or personal safety, and a drop in savings can bring immediate emotional stress. Generosity toward loved ones comes easily, but fear of scarcity can make holding onto money feel like the only way to stay safe.
+
+empty-2nd|leo	You take pride in what you earn and how you spend it. Money is tied to self-expression, generosity, and enjoyment, whether that means buying something beautiful, supporting a creative goal, or treating people you care about. Financial confidence can open doors, but spending to maintain an impression costs more than the account can carry.
+
+empty-2nd|virgo	Practical accounting and attention to detail shape how you handle money. You notice every small charge, track expenses, and feel best when your budget is organized down to the dollar. That precision builds stability, but financial anxiety can build when every small expense is treated as a potential crisis.
+
+empty-2nd|libra	Financial decisions are often tied to partnership, aesthetics, and balance. You may spend money on beauty, art, design, or social connection, and joint finances with a business partner or spouse play a major role in your income. Balance is key, but avoiding tough money conversations to keep the peace can lead to bigger financial imbalances later.
+
+empty-2nd|scorpio	You are relentless when it comes to making your money work. You have a knack for spotting tangible value in ideas everyone else passed over, quietly building income streams behind closed doors. Keeping your financial moves private gives you real leverage, but secrecy becomes a problem the moment the people sharing your life have no idea what is actually happening with the money.
+
+empty-2nd|sagittarius	Financial growth comes through expansion, big ideas, or international connections. You may earn through teaching, publishing, travel, law, or foreign trade, taking financial risks because you trust things will work out. Optimism can bring abundance, but overestimating income before the contract is signed leads to sudden cash-flow pinches.
+
+empty-2nd|capricorn	Building wealth takes patience, discipline, and long-term planning. You take financial responsibility seriously, prefer secure investments, and build your assets step by step over time. Financial caution protects you from bad investments, but excessive fear of loss can stop you from enjoying what you earned.
+
+empty-2nd|aquarius	Income can come through technology, unconventional careers, group projects, or inventive ideas. You may hold unusual views on personal property or money, preferring financial independence over traditional corporate paths. Originality creates new income sources, but unpredictable financial habits make budgeting harder.
+
+empty-2nd|pisces	Financial priorities are fluid and deeply influenced by your values, intuition, or creative pursuits. You may earn through art, healing, spiritual work, or charitable causes, caring less about accumulation and more about how money serves a purpose. Generosity is a strength, but vague accounting or lack of boundaries can make money disappear mysteriously.
+
+empty-3rd|aries	Speed enters the mind and the mouth. You may answer before everyone else, enjoy a debate, or say the sharp part out loud because waiting feels unnecessary. That directness can make you a lively communicator. It can also turn a small disagreement with a sibling, neighbor, or relative into a much longer argument.
+
+empty-3rd|taurus	You don't rush to an opinion. You may need time to think, choose your words carefully, and stay with a subject long enough to understand it properly. Concentration can be a strength. Once your mind is made up, though, new information may have to work unusually hard to get through the door.
+
+empty-3rd|gemini	Your mind gets plenty of traffic. A quick question can become six open tabs, three messages, and a new idea before the original conversation is finished. That speed makes it easier to learn, write, explain, and keep up with several people at once. It also means your mind can move on before another person realizes the subject changed.
+
+empty-3rd|cancer	Communication is guided by feeling and memory. You pick up on tone and mood in daily interactions, communicating with empathy, warmth, and caution. Conversations with siblings, relatives, or neighbors carry emotional weight, and personal criticism can linger in your mind long after the discussion ends.
+
+empty-3rd|leo	You speak with conviction, warmth, and expressiveness. Conversations, writing, and daily interactions give you a chance to share your ideas creatively and confidently. Communicating clearly comes naturally, but disagreement can feel like a personal slight if pride gets tied to being right.
+
+empty-3rd|virgo	Your mind is built for analysis, research, and catching practical details. You communicate with precision, excel at editing, organizing, or troubleshooting, and take learning seriously. That analytical mind solves problems fast, but overthinking every text, email, or conversation creates unnecessary mental strain.
+
+empty-3rd|libra	Communication is diplomatic, fair-minded, and focused on harmony. You excel at mediating disagreements, seeing multiple sides of an issue, and keeping daily interactions pleasant. Charm makes you an engaging communicator, but hesitating to share a firm opinion can make decision-making drag on.
+
+empty-3rd|scorpio	You communicate with depth, focus, and quiet intensity. You prefer meaningful conversations over small talk, asking probing questions, and keeping your personal thoughts private until trust is established. Insight makes you a strong researcher, but suspicion can make simple interactions feel guarded.
+
+empty-3rd|sagittarius	Your mind naturally runs ahead of the conversation. You may leap to conclusions others need three steps to reach, follow internet rabbit holes into unexpected territory, and explain complex ideas in ways nobody saw coming. That vision makes you a stimulating communicator, but skipping the context behind your leaps leaves siblings, neighbors, and coworkers struggling to follow.
+
+empty-3rd|capricorn	Communication is structured, serious, and focused on practical outcomes. You choose your words with care, excel at structured learning or formal writing, and respect clear boundaries in daily interactions. Reliability earns respect, but being overly formal can make casual conversations feel stiff.
+
+empty-3rd|aquarius	Your mental process is inventive, objective, and forward-thinking. You enjoy unconventional topics, brainstorming new systems, and communicating with broad groups of people. Originality brings fresh perspectives, but detachment can make emotional conversations harder to navigate.
+
+empty-3rd|pisces	Communication is intuitive, imaginative, and highly perceptive. You absorb information through feelings and subtle cues, expressing yourself through storytelling, art, or gentle dialogue. Deep intuition helps you understand what isn't being said, but vague phrasing can leave room for miscommunication.

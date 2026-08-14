@@ -107,8 +107,51 @@ export function angularDistance(first: number, second: number) {
 export type DailyGlanceAspectType = (typeof transitAspectDefinitions)[number]["type"];
 
 export type DailyGlanceSelection =
-  | { kind: "aspect"; natal: string; aspect: DailyGlanceAspectType; orb: number }
+  | {
+      kind: "aspect";
+      natal: string;
+      aspect: DailyGlanceAspectType;
+      orb: number;
+      selectionScope?: "civil-day-exact";
+      exactOffsetDays?: number;
+    }
   | { kind: "house"; house: number };
+
+export type DailyGlanceAspectGroup = "conjunction" | "square" | "opposition" | "soft";
+
+export type DailyGlanceChartContext =
+  | {
+      kind: "aspect";
+      transitPlanet: "moon";
+      transitSign: string;
+      transitHouse: number | null;
+      natalPoint: string;
+      natalSign: string | null;
+      natalHouse: number | null;
+      aspect: DailyGlanceAspectType;
+      aspectGroup: DailyGlanceAspectGroup;
+      orb: number;
+      housesReliable: boolean;
+    }
+  | {
+      kind: "house";
+      transitPlanet: "moon";
+      transitSign: string;
+      transitHouse: number;
+      housesReliable: true;
+    };
+
+const dailyGlanceAspectGroups: Record<DailyGlanceAspectType, DailyGlanceAspectGroup> = {
+  conjunction: "conjunction",
+  opposition: "opposition",
+  square: "square",
+  sextile: "soft",
+  trine: "soft"
+};
+
+function validDailyGlanceHouse(value: unknown): value is number {
+  return typeof value === "number" && Number.isInteger(value) && value >= 1 && value <= 12;
+}
 
 function forwardAngularDistance(from: number, to: number) {
   return normalizedAngle(to - from);
@@ -193,6 +236,153 @@ export function selectDailyGlanceDriver(
     maxOrb,
     1
   )[0] ?? null;
+}
+
+/**
+ * Selects the Daily At-a-Glance driver for the whole local civil day.
+ *
+ * A qualifying applying contact at local noon keeps the established priority.
+ * Only when noon would use the house fallback do we inspect the direct Moon's
+ * ephemeris-derived daily arc. A supported contact that becomes exact inside
+ * that date has necessarily crossed the existing applying gate during the
+ * date; contacts exact outside the date never qualify. Upcoming exact contacts
+ * win over morning contacts, then proximity to noon and source order break ties.
+ */
+export function selectDailyGlanceCivilDayDriver(
+  moonLongitude: number,
+  moonDailySpeed: number | null | undefined,
+  natalTargets: Array<{ planet: string; longitude?: number }>,
+  fallbackHouse: number | null,
+  maxOrb = 5
+): DailyGlanceSelection | null {
+  const noonDriver = selectDailyGlanceDriver(
+    moonLongitude,
+    natalTargets,
+    fallbackHouse,
+    maxOrb
+  );
+
+  if (noonDriver?.kind === "aspect") {
+    return noonDriver;
+  }
+
+  if (
+    typeof moonDailySpeed !== "number"
+    || !Number.isFinite(moonDailySpeed)
+    || moonDailySpeed <= 0
+  ) {
+    return noonDriver;
+  }
+
+  const civilDayStartLongitude = normalizedAngle(moonLongitude - (moonDailySpeed / 2));
+  const candidates: Array<Extract<DailyGlanceSelection, { kind: "aspect" }> & { order: number }> = [];
+  let order = 0;
+
+  for (const target of natalTargets) {
+    const normalizedTarget = target.planet.trim().toLowerCase();
+    if (normalizedTarget === "ascendant" || normalizedTarget === "descendant") {
+      continue;
+    }
+
+    if (typeof target.longitude !== "number" || !Number.isFinite(target.longitude)) {
+      continue;
+    }
+
+    for (const definition of transitAspectDefinitions) {
+      const exactLongitudes = definition.exact === 0 || definition.exact === 180
+        ? [normalizedAngle(target.longitude + definition.exact)]
+        : [
+            normalizedAngle(target.longitude + definition.exact),
+            normalizedAngle(target.longitude - definition.exact)
+          ];
+
+      for (const exactLongitude of exactLongitudes) {
+        const distanceFromDayStart = forwardAngularDistance(civilDayStartLongitude, exactLongitude);
+        if (distanceFromDayStart > moonDailySpeed) {
+          continue;
+        }
+
+        candidates.push({
+          kind: "aspect",
+          natal: target.planet,
+          aspect: definition.type,
+          orb: 0,
+          selectionScope: "civil-day-exact",
+          exactOffsetDays: (distanceFromDayStart / moonDailySpeed) - 0.5,
+          order
+        });
+        order += 1;
+      }
+    }
+  }
+
+  const selected = candidates.sort((first, second) => {
+    const firstUpcoming = (first.exactOffsetDays ?? 0) >= 0;
+    const secondUpcoming = (second.exactOffsetDays ?? 0) >= 0;
+    if (firstUpcoming !== secondUpcoming) return firstUpcoming ? -1 : 1;
+
+    const firstDistance = Math.abs(first.exactOffsetDays ?? 0);
+    const secondDistance = Math.abs(second.exactOffsetDays ?? 0);
+    return firstDistance - secondDistance || first.order - second.order;
+  })[0];
+
+  if (!selected) {
+    return noonDriver;
+  }
+
+  const { order: _order, ...driver } = selected;
+  return driver;
+}
+
+/**
+ * Resolves the calculation-owned facts used by the non-serving Daily Glance
+ * scene compiler. The existing serving selector remains unchanged.
+ *
+ * House facts are deliberately removed when the caller cannot attest that
+ * birth-time-dependent houses are reliable. In that state an aspect may still
+ * resolve, but a house-only result fails closed instead of licensing a guessed
+ * life domain.
+ */
+export function selectDailyGlanceChartContext(
+  moon: { longitude?: number; sign: string; house?: number | null },
+  natalTargets: Array<{ planet: string; longitude?: number; sign?: string | null; house?: number | null }>,
+  fallbackHouse: number | null,
+  housesReliable: boolean,
+  maxOrb = 5
+): DailyGlanceChartContext | null {
+  if (typeof moon.longitude !== "number" || !Number.isFinite(moon.longitude)) {
+    return null;
+  }
+
+  const driver = selectDailyGlanceDriver(moon.longitude, natalTargets, fallbackHouse, maxOrb);
+  if (!driver) return null;
+
+  if (driver.kind === "house") {
+    return housesReliable && validDailyGlanceHouse(driver.house)
+      ? {
+          kind: "house",
+          transitPlanet: "moon",
+          transitSign: moon.sign,
+          transitHouse: driver.house,
+          housesReliable: true
+        }
+      : null;
+  }
+
+  const target = natalTargets.find((entry) => entry.planet.trim().toLowerCase() === driver.natal.trim().toLowerCase());
+  return {
+    kind: "aspect",
+    transitPlanet: "moon",
+    transitSign: moon.sign,
+    transitHouse: housesReliable && validDailyGlanceHouse(fallbackHouse) ? fallbackHouse : null,
+    natalPoint: driver.natal,
+    natalSign: target?.sign?.trim() || null,
+    natalHouse: housesReliable && validDailyGlanceHouse(target?.house) ? target.house : null,
+    aspect: driver.aspect,
+    aspectGroup: dailyGlanceAspectGroups[driver.aspect],
+    orb: driver.orb,
+    housesReliable
+  };
 }
 
 export function zodiacSignForLongitude(longitude: number) {

@@ -5,7 +5,7 @@ const assert = require("assert");
 const path = require("path");
 
 const repoRoot = path.resolve(__dirname, "..", "..", "..");
-const { buildFactGatedStructure, buildPacket, factStatusAllowsWriting, renderModelInput } = require(path.join(repoRoot, ".agents", "skills", "marie-satori-writer", "scripts", "compile-writing-packet.js"));
+const { buildFactGatedStructure, buildPacket, factStatusAllowsWriting, renderModelInput } = require(path.join(repoRoot, ".agents", "skills", "satori-writer", "scripts", "compile-writing-packet.js"));
 const { lintArticle } = require("./lint-placement-voice.js");
 const { buildJudgePrompt } = require("./judge-placement-voice.js");
 const placementSpec = require(path.join("..", "voice", "tldr-astro", "sky-placement.json"));

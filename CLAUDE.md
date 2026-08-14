@@ -34,3 +34,10 @@ of a stop.
 
 5. **PR hygiene.** A scope PR idle for 3+ days must be rebased or closed by
    its owning session before that session opens another scope PR.
+
+6. **Isolated gate execution.** Every gate-relevant check runs in an isolated
+   worktree with dependencies installed locally by `npm ci`. Never symlink or
+   reuse `node_modules` across worktrees. Before reporting a content gate,
+   build `@tldr/astro-knowledge` locally in that worktree, regenerate every
+   affected artifact there, and confirm workspace package links resolve inside
+   that isolated worktree.

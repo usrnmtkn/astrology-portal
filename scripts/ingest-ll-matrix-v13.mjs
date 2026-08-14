@@ -8,12 +8,13 @@ import { readInlineXlsxSheet } from "./lib/read-inline-xlsx.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const workbookRelativePath = "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx";
-const exportRelativePath = "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json";
-const lockedRelativePath = "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json";
+const exportRelativePath = "packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json";
+const lockedRelativePath = "packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json";
 const publicLockedRelativePath = "apps/web/public/content/knowledge-matrix-v13/v13-direct-language-owner-approved/knowledge-matrix-v13-owner-approved-locked.json";
 const sourceRowsRelativePath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
 const manifestRelativePath = "packages/astro-knowledge/review/ll-matrix-v13-runtime-manifest.json";
 const ingestionRecordRelativePath = "packages/astro-knowledge/review/ll-matrix-v13-ingestion-2026-08-10.md";
+const duplicateRepairRecordRelativePath = "packages/astro-knowledge/review/v13-duplicate-contentkey-repair-2026-08-11.json";
 const releaseId = "ll-matrix-v13-owner-approved-runtime";
 const version = "v13-direct-language-owner-approved";
 const approvedAt = "2026-08-10";
@@ -273,7 +274,13 @@ fs.writeFileSync(absolute(publicLockedRelativePath), lockedBytes);
 
 const sourceRows = readJson(sourceRowsRelativePath);
 const priorRows = sourceRows.hookRows.filter((row) => row.source_release !== releaseId);
-const priorApprovedRows = priorRows.filter((row) => servingApprovedReviews.has(row.review_status));
+const v13ContentKeys = new Set(lockedRows.map((row) => row.contentKey));
+const supersededPriorRows = priorRows.filter((row) => v13ContentKeys.has(row.contentKey));
+const preservedPriorRows = priorRows.filter((row) => !v13ContentKeys.has(row.contentKey));
+if (supersededPriorRows.some((row) => !servingApprovedReviews.has(row.review_status))) {
+  throw new Error("A same-key row selected for V13 supersession is not an approved serving row.");
+}
+const priorApprovedRows = preservedPriorRows.filter((row) => servingApprovedReviews.has(row.review_status));
 const existingApprovedRowsSha256 = sha256(JSON.stringify(priorApprovedRows));
 const servingRows = lockedRows.map((row) => ({
   contentKey: row.contentKey,
@@ -301,7 +308,11 @@ const servingRows = lockedRows.map((row) => ({
   precedence: "owner-approved V13 exact key supersedes earlier LL copy on the same runtime key",
   distribution_lane: "serving",
 }));
-sourceRows.hookRows = [...priorRows, ...servingRows];
+sourceRows.hookRows = [...preservedPriorRows, ...servingRows];
+const canonicalContentKeys = [...sourceRows.vocabularyRows, ...sourceRows.hookRows].map((row) => row.contentKey);
+if (new Set(canonicalContentKeys).size !== canonicalContentKeys.length) {
+  throw new Error("V13 ingestion must leave one canonical row per contentKey.");
+}
 fs.writeFileSync(absolute(sourceRowsRelativePath), `${JSON.stringify(sourceRows, null, 1)}\n`);
 
 const manifest = {
@@ -323,10 +334,11 @@ const manifest = {
   runtimeFamilyCounts: familyCounts,
   uniqueServingContentKeys: lockedRows.length,
   fallbackSource: sourceRowsRelativePath,
-  precedence: "V13 rows append after earlier LL rows; the existing latest-eligible resolver rule makes the exact V13 key canonical.",
+  precedence: "V13 rows replace earlier same-contentKey LL rows; one canonical row remains for every contentKey.",
   invariants: {
     existingApprovedRowsChanged: 0,
     existingApprovedRowsSha256,
+    sameKeyRepairRecord: duplicateRepairRecordRelativePath,
     sourceExportSha256,
     approvedPayloadSha256: sha256(JSON.stringify(lockedRows.map(({ sheet, key, copy, governance }) => ({ sheet, key, copy, governance })))),
   },
@@ -361,16 +373,34 @@ The workbook \`${workbookRelativePath}\` is the canonical LL matrix. Its 195-row
 
 The locked JSON at \`${lockedRelativePath}\` contains the exact approved copy, runtime destination, payload hash, and workbook sheet/row/cell provenance for every serving row. No unapproved row enters the locked file or serving lane.
 
+### Two-lineage runtime boundary
+
+Owner ruling, 2026-08-11: LL V13 and CC V9 are separate canonical lineages and coexist.
+
+- LL V13 is canonical specifically for the LL natal matrix: exact natal placements, natal aspects, and its explicitly mapped natal workbook keys.
+- CC V9 remains canonical for transit meanings, house activations, and their voiced collective or personal timing copy.
+- LL V13 does not supersede, replace, or authorize edits to CC V9. CC V9 does not supply natal copy governed by LL V13.
+- A missing exact key fails closed inside its owning lineage. The runtime must not borrow from the other lineage merely because both are loaded.
+
+The active implementations preserve this boundary: \`knowledgeMatrixV13Runtime.ts\` exposes natal placement, natal aspect, and V13 workbook-key lookups, while \`knowledgeMatrixV9Runtime.ts\` exposes transit and house lookups.
+
+## Voice-index companion
+
+- The current committed \`build-voice-index.js\` includes the governed \`llMatrixV13Entries()\` loader alongside \`knowledgeMatrixV9Entries()\`. The V8 package retained with this record is a provenance archive and is not the active loader.
+- The V13 loader indexes only the same 301 owner-approved rows: 136 natal-placement entries and 165 natal-aspect entries, with origin \`owner-approved-ll-matrix-v13\` and exact-owner-approval metadata.
+- The checked-in current-main voice index contains 7,695 total entries and 7,198 positive-evidence entries. Reconciliation preserved that committed V9+V13 index; it did not replace it with the dirty main worktree's stale 5,521-entry V8 build.
+- Voice-index inclusion is evidence for the existing writer/judge environment only. It does not authorize automatic publication, serving outside the explicit runtime mapping, or any further writer promotion.
+
 ## Change control
 
-The runtime selects the V13 exact-key row ahead of earlier LL copy while preserving all earlier approved source rows byte-for-byte. A missing V13 key does not borrow another row. Any future wording change requires a new owner-approved workbook lineage and regenerated hashes; the discarded Gemini blind-edit path is not an authorized build step.
+The runtime stores one canonical row per content key. A V13 exact-key row replaces an earlier LL natal row with the same content key while every non-superseded approved row remains byte-identical. This precedence is limited to the LL natal lineage and does not replace CC V9 transit or house content. A missing V13 key does not borrow another row. The 108 same-key replacements and the owner's ruling on the two copy conflicts are recorded in \`packages/astro-knowledge/review/v13-duplicate-contentkey-repair-2026-08-11.md\`. Any future wording change requires a new owner-approved workbook lineage and regenerated hashes; the discarded Gemini blind-edit path is not an authorized build step.
 
 ## Fingerprints
 
 - Canonical workbook SHA-256: \`${workbookSha256}\`
 - Raw full export SHA-256: \`${sourceExportSha256}\`
 - Locked owner-approved JSON SHA-256: \`${manifest.lockedRowsSha256}\`
-- Existing approved rows before V13 SHA-256: \`${existingApprovedRowsSha256}\`
+- Preserved non-superseded approved rows SHA-256: \`${existingApprovedRowsSha256}\`
 `;
 fs.writeFileSync(absolute(ingestionRecordRelativePath), ingestionRecord);
 

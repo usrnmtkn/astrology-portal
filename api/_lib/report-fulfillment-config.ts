@@ -74,9 +74,17 @@ export function reportFulfillmentConfig() {
     judgeAttemptCap: integerEnv("REPORT_JUDGE_ATTEMPT_CAP", 2, 1),
     auditSampleRate: decimalEnv("REPORT_AUDIT_SAMPLE_RATE", 0.05),
     firstCombinationAuditCount: integerEnv("REPORT_FIRST_COMBINATION_AUDIT_COUNT", 3),
-    tokenBudget: integerEnv("REPORT_TOKEN_BUDGET", 1_450_000, 1),
+    authorizationTokenBudget: integerEnv("REPORT_AUTHORIZATION_TOKEN_BUDGET", integerEnv("REPORT_TOKEN_BUDGET", 1_450_000, 1), 1),
+    reportLifetimeTokenBudget: integerEnv("REPORT_LIFETIME_TOKEN_BUDGET", 1_450_000, 1),
     jobAttemptCap: integerEnv("REPORT_JOB_ATTEMPT_CAP", 5, 1),
-    workerBatchSize: integerEnv("REPORT_WORKER_BATCH_SIZE", 5, 1),
+    // Vercel terminates this function at 300 seconds. The soft cycle deadline
+    // stops new units at four minutes; per-call admission separately compares
+    // observed call duration plus its safety margin with the hard deadline.
+    workerBatchSize: integerEnv("REPORT_WORKER_BATCH_SIZE", 1, 1),
+    workerMaxNewUnitsPerCycle: integerEnv("REPORT_WORKER_MAX_NEW_UNITS_PER_CYCLE", 1, 1),
+    workerCycleDeadlineMs: integerEnv("REPORT_WORKER_CYCLE_DEADLINE_MS", 240_000, 30_000),
+    workerCallDurationDefaultMs: integerEnv("REPORT_WORKER_CALL_DURATION_DEFAULT_MS", 60_000, 1_000),
+    workerCallSafetyMarginMs: integerEnv("REPORT_WORKER_CALL_SAFETY_MARGIN_MS", 90_000, 0),
     workerPaused: process.env.REPORT_WORKER_PAUSED === "true",
     rulingVersion,
     autoPublishRequested: requestedAutoPublish,
@@ -90,19 +98,25 @@ export function resolvedStripePriceId(sku: ReportSku) {
 
 export function reportCallEstimate(horizon: ReportHorizon) {
   const unitCount = horizon === "1_month" ? 4 : horizon === "4_months" || horizon === "6_months" ? 6 : 11;
-  const cleanPathCalls = unitCount * 3; // draft + critique + judge
-  const expectedCallBudget = unitCount * 4; // draft + critique + one splice revision + judge
-  const safetyMarginCalls = unitCount; // one additional provider attempt per unit on average
+  const writerUnitCount = unitCount - 1; // key-dates is deterministic formatted assembly
+  const redundancyPassCalls = 0; // warning-only assembly proceeds directly to owner review
+  const coldReadCalls = writerUnitCount;
+  const cleanPathCalls = writerUnitCount * 4; // draft + critique + cold read + judge
+  const expectedCallBudget = writerUnitCount * 5; // clean path + one ordinary splice revision per written unit
+  const safetyMarginCalls = writerUnitCount; // one cold-read splice revision per written unit at the conservative ceiling
   const recommendedCallBudget = expectedCallBudget + safetyMarginCalls;
   const config = reportFulfillmentConfig();
   const planning = horizon === "12_months" ? estimateReportPlanningProfile(horizon) : null;
   return {
     unitCount,
+    writerUnitCount,
     cleanPathCalls,
+    redundancyPassCalls,
+    coldReadCalls,
     expectedCallBudget,
     safetyMarginCalls,
     recommendedCallBudget,
-    tokenBudget: config.tokenBudget,
+    tokenBudget: config.authorizationTokenBudget,
     planning
   };
 }

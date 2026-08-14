@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "recordType": "transit_house_serving_exact_approval",
+  "approvalId": "saturn-house-owner-approved-2026-07-28-transit-house-sign-7-aries",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "approvedAt": "2026-07-28",
+  "recordedAt": "2026-08-13",
+  "surface": "you|friends",
+  "contentKey": "authored/transit-house-sign/saturn/7/aries",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "f034fd508c566c309ef5efd83a8c285ba99aa5bdc197ea4ed87bbadf75bb335a",
+  "payload": {
+    "body_you": "Saturn in Aries puts pressure on the exit reflex. Walking out can feel cleaner than explaining yourself one more time. Sometimes leaving is the right decision. But leave because the relationship cannot meet the terms you need, not because ending it gives you one fast hour of control. The real answer is in what changes after the conversation.",
+    "body_they": "Saturn in Aries puts pressure on their exit reflex. Walking out can feel cleaner than explaining themselves one more time, and sometimes leaving is the right decision. Leaving is more likely to hold up when the relationship cannot meet the terms they need, not when ending it buys one fast hour of control. What matters is what changes after the conversation, not how relieved they feel immediately after it."
+  },
+  "historicalEvidence": {
+    "readerRewriteCommit": "133e2332c48c147876f352290891ab55a83fde8e",
+    "friendVoiceReviewCommit": "102631f0a3b5851898935c43d6bb9d39f89decf4",
+    "sourceRowApprovalNote": "owner-rewritten full 12-house set, chat 2026-07-28 (Aries layer)"
+  },
+  "ownerConfirmationStatement": "the writing that was being shown in the natal chart was approved",
+  "ownerConfirmationSource": "owner_chat_2026-08-13_source_metadata_correction",
+  "approvalEffect": "exact_wording_approval",
+  "copyMutation": "none"
+}

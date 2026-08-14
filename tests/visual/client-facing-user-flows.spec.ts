@@ -34,6 +34,12 @@ const fallbackSourceRowsV3 = JSON.parse(readFileSync(
 )) as {
   hookRows: Array<{ contentKey: string; body_you?: string }>;
 };
+const skyAspectPhrasebook = JSON.parse(readFileSync(
+  path.resolve("apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json"),
+  "utf8"
+)) as {
+  hookRows: Array<{ contentKey: string; body_you?: string }>;
+};
 const mercuryAscendantHardSource = fallbackSourceRowsV3.hookRows.find(
   (row) => row.contentKey === "fallback-hook/synastry-pair/mercury/ascendant/hard"
 );
@@ -1039,6 +1045,34 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("You and Friends share a date picker for past and future transits", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { profile: true, friends: true });
+    await expectClientRouteLoads(page, "/#you");
+
+    const dateTrigger = page.locator(".sky-header-date-button");
+    await expect(dateTrigger).toBeVisible();
+    await expect(dateTrigger).toContainText("Today");
+    await dateTrigger.click();
+    await expect(page.getByRole("region", { name: "Pick Date" })).toBeVisible();
+    await page.getByRole("gridcell", { name: "Monday, July 20, 2026" }).click();
+
+    await expect(page).toHaveURL(/[?&]date=2026-07-20(?:&|#|$)/u);
+    await expect(dateTrigger).toContainText("Jul 20");
+
+    await page.getByRole("button", { name: "Friends", exact: true }).click();
+    await expect(page.getByLabel("Friends")).toBeVisible();
+    await expect(dateTrigger).toContainText("Jul 20");
+    await dateTrigger.click();
+    await expect(page.getByRole("region", { name: "Pick Date" })).toBeVisible();
+    await page.getByRole("gridcell", { name: "Sunday, July 12, 2026" }).click();
+
+    await expect(page).toHaveURL(/[?&]date=2026-07-12(?:&|#|$)/u);
+    await expect(dateTrigger).toContainText("Jul 12");
+    await assertNoClientErrors();
+  });
+
   test("chart calculation failure terminates in a visible error state", async ({ page }) => {
     await page.route("**/wasm/swisseph.data", async (route) => {
       await route.fulfill({ status: 503, body: "Ephemeris unavailable for visual-smoke coverage." });
@@ -1184,16 +1218,21 @@ test.describe("client-facing user flow case studies", () => {
       await friendHouseTransitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()
     ).trim();
     const friendHouseTransitDescription = (
-      await friendHouseTransitCard.locator(".updates-aspect-row__description").innerText()
+      await friendHouseTransitCard.locator(".updates-aspect-row__description.transit-card-preview").innerText()
     ).trim();
     expect(
       friendHouseTransitDescription.startsWith(`${friendHouseTransitRange},`),
       "Friend house transit body does not repeat its visible date range"
     ).toBe(false);
-    await friendHouseTransitCard.click();
-    await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
-    await expectNoDuplicateArticleHeadings(page, "Friend house-transit detail");
-    await page.getByRole("button", { name: "Close detail" }).click();
+    await expect(
+      friendHouseTransitCard.locator('.updates-aspect-row__description[role="status"]'),
+      "Friend house transit with no eligible detail sections is marked unavailable"
+    ).toHaveText("Full interpretation unavailable pending source verification.");
+    await expect(
+      friendHouseTransitCard,
+      "Friend house transit with no eligible detail sections cannot open a heading-only article"
+    ).toBeDisabled();
+    await expect(page.locator(".app-shell.mode-detail")).toHaveCount(0);
     await expect(page.getByRole("tab", { name: "Transits" })).toHaveAttribute("aria-selected", "true");
 
     const transitCardText = ((await transitCard.innerText()) ?? "").replace(/\s+/g, " ").trim();
@@ -1201,6 +1240,15 @@ test.describe("client-facing user flow case studies", () => {
     const orbLabel = ((await transitCard.locator(".updates-aspect-row__orb").innerText()) ?? "").trim();
     expect(transitCardText.split(rangeLabel).length - 1, "Transit date range appears once").toBe(1);
     expect(transitCardText.split(orbLabel).length - 1, "Transit orb appears once").toBe(1);
+    await transitCard.click();
+    await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
+    await expect(page.getByLabel("What this looks like in space")).toBeVisible();
+    await expect(
+      page.locator(".sky-detail-section:not(.sky-aspect-mechanics)"),
+      "Owner-signoff-untraced personal-transit explanation remains eligible under the owner ruling"
+    ).toHaveCount(1);
+    await page.getByRole("button", { name: "Close detail" }).click();
+    await expect(page.getByRole("tab", { name: "Transits" })).toHaveAttribute("aria-selected", "true");
 
     await selectFriendDetailTab(page, "Synastry");
     await expectRelationshipWheelGeometry(page, "Nikki synastry chart wheel");
@@ -1364,9 +1412,9 @@ test.describe("client-facing user flow case studies", () => {
   test("calendar ingress, station, and aspect details always open with approved prose", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
     const cases = [
-      { date: "2026-07-09", eventType: "ingress", title: "Venus enters Virgo" },
-      { date: "2026-07-23", eventType: "station", title: "Mercury stations direct" },
-      { date: "2026-07-13", eventType: "aspect", title: "Venus square Uranus" }
+      { date: "2026-07-09", eventType: "ingress", title: "Venus enters Virgo", usesV9: true },
+      { date: "2026-07-23", eventType: "station", title: "Mercury stations direct", usesV9: true },
+      { date: "2026-07-13", eventType: "aspect", title: "Venus square Uranus", usesV9: false }
     ];
 
     await seedClientState(page, { now: "2026-07-31T12:00:00.000Z" });
@@ -1379,6 +1427,11 @@ test.describe("client-facing user flow case studies", () => {
         .filter({ hasText: eventCase.title });
 
       await expect(eventButton, `${eventCase.title} has one Calendar detail trigger`).toHaveCount(1);
+      if (eventCase.usesV9) {
+        await expect(eventButton).toHaveAttribute("data-content-key", /^knowledge-matrix-v9\/transit\//u);
+      } else {
+        await expect(eventButton).not.toHaveAttribute("data-content-key", /^knowledge-matrix-v9\//u);
+      }
       await eventButton.click();
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
       const detailParagraphs = page.locator(".app-shell.mode-detail article p");
@@ -1443,7 +1496,11 @@ test.describe("client-facing user flow case studies", () => {
     const weeklyAspectEvents = weeklyView.locator(".lunar-weekly-event.event-aspect");
     const weeklyAspectEventCount = await weeklyAspectEvents.count();
     expect(weeklyAspectEventCount, "Weekly aspects are present in the fixture week").toBeGreaterThan(0);
-    await expect(weeklyAspectEvents.locator(".lunar-weekly-event__body")).toHaveCount(weeklyAspectEventCount);
+    const weeklyAspectSourceGaps = weeklyView.locator('.lunar-weekly-event.event-aspect[data-content-key^="source-gap/"]');
+    await expect(weeklyAspectSourceGaps).toHaveCount(1);
+    await expect(weeklyAspectSourceGaps.locator(".lunar-weekly-event__heading")).toBeVisible();
+    await expect(weeklyAspectSourceGaps.locator(".lunar-weekly-event__body")).toHaveCount(0);
+    await expect(weeklyAspectEvents.locator(".lunar-weekly-event__body")).toHaveCount(weeklyAspectEventCount - 1);
     expect(
       await weeklyAspectEvents.first().evaluate((aspect) => {
         const content = aspect.closest(".lunar-weekly-day__content");
@@ -1662,16 +1719,21 @@ test.describe("client-facing user flow case studies", () => {
     expect(rejected, "The shared selector rejects a row that fails the Sky judge boundary").toBeNull();
   });
 
-  test("Calendar Day and Month reuse the approved Sky aspect write-up", async ({ page }) => {
+  test("Calendar Day and Month preserve the approved sign-specific Sky aspect override", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
-    const sharedAspectContentKey = "sky.aspect.venus.square.mars.virgo.gemini";
-    const sharedAspectBody = "One approved Sky write-up appears unchanged in Calendar Day and Month.";
+    const generatedAspectContentKey = "sky.aspect.venus.square.mars.virgo.gemini";
+    const signSpecificContentKey = "fallback-hook/sky-aspect-sign/venus/virgo/square/mars/gemini";
+    const signSpecificBody = skyAspectPhrasebook.hookRows.find(
+      ({ contentKey }) => contentKey === signSpecificContentKey
+    )?.body_you;
+
+    expect(signSpecificBody).toBeTruthy();
 
     await seedClientState(page, {
       now: "2026-07-30T12:00:00.000Z",
       generatedInterpretations: [{
         id: "calendar-sky-aspect-row",
-        content_key: sharedAspectContentKey,
+        content_key: generatedAspectContentKey,
         surface: "sky",
         mode: "article",
         status: "LIVE",
@@ -1694,7 +1756,7 @@ test.describe("client-facing user flow case studies", () => {
         },
         headline: "Venus square Mars",
         summary: null,
-        body: sharedAspectBody,
+        body: "This generated row must remain behind the approved sign-specific Sky override.",
         sections: {},
         block_type: "sky_aspect",
         flags: [],
@@ -1712,15 +1774,13 @@ test.describe("client-facing user flow case studies", () => {
       name: /Full Moon\. Moon in Aquarius\. Venus square Mars/
     });
     await aspectDay.click();
-    await expect(
-      selectedDay.locator(`.lunar-selected-card__daily-event[data-content-key="${sharedAspectContentKey}"]`)
-    ).toBeVisible({ timeout: 15_000 });
-    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(sharedAspectBody);
+    await expect(selectedDay.getByRole("button", { name: "Venus square Mars" })).toBeVisible({ timeout: 15_000 });
+    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(signSpecificBody ?? "");
 
     const monthTab = page.getByRole("tab", { name: "Month", exact: true });
     await monthTab.click();
     await expect(monthTab).toHaveAttribute("aria-selected", "true");
-    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(sharedAspectBody);
+    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(signSpecificBody ?? "");
     await expect(selectedDay).not.toContainText("and for the collective");
     await assertNoClientErrors();
   });
@@ -2364,7 +2424,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(skyControls).toBeVisible();
     await skyControls.getByRole("button", { name: "Date" }).click();
 
-    const datePicker = page.getByLabel("Select sky date");
+    const datePicker = page.getByLabel("Pick Date");
     await expect(datePicker).toBeVisible();
     await datePicker.getByRole("button", { name: "Next month" }).click();
     await datePicker.getByRole("button", { name: "Previous month" }).click();

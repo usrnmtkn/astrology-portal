@@ -282,9 +282,10 @@ assert.ok(fallbackHookKeys.has("fallback-hook/transit-aspect-type/square"), "V3 
 const conjunctionSunDailyBody = (fallbackSourceRowsV3.hookRows ?? []).find(
   (row) => row.contentKey === "fallback-hook/daily-body/conjunction/sun"
 );
-const approvedConjunctionSunDailyBody = "You might catch yourself hesitating over the plan you actually want to skip, or waiting for someone else to say the answer you are hoping for. Playing easygoing does not make you look flexible right now; it just looks like distance, because the desire shows through anyway. Hiding it does not convince anyone, least of all you. Say what you want, and move forward.";
-assert.equal(conjunctionSunDailyBody?.body_you, approvedConjunctionSunDailyBody, "You Transit must preserve the approved conjunction-Sun daily body.");
-assert.equal(conjunctionSunDailyBody?.body_they, approvedConjunctionSunDailyBody, "The mirrored conjunction-Sun daily body must preserve the approved copy.");
+const approvedConjunctionSunDailyBodyYou = "You might catch yourself hesitating over the plan you actually want to skip, or waiting for someone else to say the answer you are hoping for. Acting like you are fine with whatever happens does not make you look flexible right now; it just looks like distance, because the desire shows through anyway. Hiding it does not convince anyone, least of all you. Say what you want, and move forward.";
+const approvedConjunctionSunDailyBodyThey = "You might catch yourself hesitating over the plan you actually want to skip, or waiting for someone else to say the answer you are hoping for. Playing easygoing does not make you look flexible right now; it just looks like distance, because the desire shows through anyway. Hiding it does not convince anyone, least of all you. Say what you want, and move forward.";
+assert.equal(conjunctionSunDailyBody?.body_you, approvedConjunctionSunDailyBodyYou, "You Transit must preserve the approved conjunction-Sun daily body.");
+assert.equal(conjunctionSunDailyBody?.body_they, approvedConjunctionSunDailyBodyThey, "Friends Transit must preserve its separately governed conjunction-Sun daily body.");
 assert.doesNotMatch(app, /resolveSourceGroundedV2\("sky\.planet_sign"/, "Sky placement rendering must not resolve through legacy authored V2 rows.");
 assert.match(app, /skyPlacementWritingSection/, "Sky placement rendering must fall back to Sky writing atoms when authored rows are absent.");
 assert.match(adminDashboard, /Content System/, "Admin article editor must label authored vs fallback as a content system, not a display override.");

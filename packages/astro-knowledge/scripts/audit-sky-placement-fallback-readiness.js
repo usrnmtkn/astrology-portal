@@ -3,7 +3,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { buildPacket } = require("../../../.agents/skills/marie-satori-writer/scripts/compile-writing-packet.js");
+const { buildPacket } = require("../../../.agents/skills/satori-writer/scripts/compile-writing-packet.js");
 
 const packageRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(packageRoot, "..", "..");

@@ -1,10 +1,12 @@
 import bundledRelationshipAuthoredCardsV3 from "./fallbackArchitectureV3/bundled-relationship-authored-cards-v3.json";
+import bundledDeferredCoreRowsV3 from "./fallbackArchitectureV3/bundled-deferred-core-rows-v3.json";
 import bondLanguagePass2 from "./fallbackArchitectureV3/source-rows/bond-language-pass-2.json";
 import type {
   AuthoredCard,
   FallbackArchitectureV3Bundle,
   HookRow
 } from "./fallbackArchitectureV3Runtime";
+import { isFriendsAcceptedApprovalLevel } from "./fallbackApproval";
 
 function assertBondLanguagePass2Import() {
   const rows = bondLanguagePass2.rows;
@@ -29,6 +31,20 @@ function assertBondLanguagePass2Import() {
 
 assertBondLanguagePass2Import();
 
+const approvedBondEffectRows = bundledDeferredCoreRowsV3.hookRows.filter((row) => (
+  row.contentKey.startsWith("fallback-hook/bond-effect-")
+));
+
+if (
+  approvedBondEffectRows.length !== 139
+  || approvedBondEffectRows.some((row) => (
+    row.review_status !== "approved"
+    || !isFriendsAcceptedApprovalLevel(row.approval?.approvalLevel)
+  ))
+) {
+  throw new Error("Relationship bundle must serve all 139 owner-approved directional bond rows.");
+}
+
 export const relationshipFallbackArchitectureV3Bundle: FallbackArchitectureV3Bundle = {
   transitLib: {
     authoredCards: bundledRelationshipAuthoredCardsV3.authoredCards as AuthoredCard[]
@@ -37,7 +53,7 @@ export const relationshipFallbackArchitectureV3Bundle: FallbackArchitectureV3Bun
     templates: []
   },
   rowsFile: {
-    hookRows: bondLanguagePass2.rows as HookRow[],
+    hookRows: approvedBondEffectRows as HookRow[],
     vocabularyRows: []
   }
 };

@@ -330,6 +330,11 @@
   line-height: var(--leading-body);
 }
 
+.daily-horoscope-summary__moon-tags {
+  gap: var(--space-2);
+  justify-self: start;
+}
+
 .daily-horoscope-summary__secondary {
   color: var(--card-meta-color);
   font-size: var(--text-meta-size);

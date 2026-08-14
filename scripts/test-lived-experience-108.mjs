@@ -20,6 +20,10 @@ const reviewRoot = "packages/astro-knowledge/review/lived-experience-108-v1";
 const workbookPath = `${reviewRoot}/TLDR-LL-FULL-108-LIVED-EXPERIENCE-OWNER-APPROVED.xlsx`;
 const packet = JSON.parse(fs.readFileSync(path.join(repoRoot, reviewRoot, "lived-experience-108-payloads.json"), "utf8"));
 const manifest = JSON.parse(fs.readFileSync(path.join(repoRoot, reviewRoot, "shipping-manifest.json"), "utf8"));
+const repair = JSON.parse(fs.readFileSync(
+  path.join(repoRoot, "packages/astro-knowledge/review/v13-duplicate-contentkey-repair-2026-08-11.json"),
+  "utf8",
+));
 const source = JSON.parse(fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"),
   "utf8",
@@ -70,19 +74,14 @@ function mappedKey(workbookKey) {
   throw new Error(`Ambiguous test mapping: ${workbookKey}`);
 }
 
-const rowsByKey = new Map(source.hookRows
-  .filter((row) => row.source_release !== llMatrixV13Release)
-  .map((row) => [row.contentKey, row]));
 const llMatrixV13ByContentKey = new Map(source.hookRows
   .filter((row) => row.source_release === llMatrixV13Release)
   .map((row) => [row.contentKey, row]));
+const repairByContentKey = new Map(repair.entries.map((entry) => [entry.contentKey, entry]));
 const manifestByWorkbookKey = new Map(manifest.rows.map((row) => [row.workbookKey, row]));
-const livedRows = source.hookRows.filter((row) => (
-  livedPrefixes.some((prefix) => row.contentKey.startsWith(prefix))
-  && !row.contentKey.startsWith("fallback-hook/natal-aspect-lived/lilith/")
-  && row.source_release !== llMatrixV13Release
-));
+const livedRows = manifest.rows.map((row) => llMatrixV13ByContentKey.get(row.contentKey)).filter(Boolean);
 assert.equal(livedRows.length, 108);
+assert.ok(livedRows.every((row) => row.source_release === llMatrixV13Release));
 assert.equal(packet.approvedAt, "2026-08-10");
 assert.equal(packet.approvalRecord, workbookPath);
 assert.equal(manifest.rowCount, 108);
@@ -104,26 +103,35 @@ assert.equal(
   "Existing approved rows must remain byte-identical to the pre-shipping snapshot.",
 );
 assert.equal(manifest.invariants.existingApprovedRowsChanged, 0);
+assert.match(
+  manifest.invariants.snapshotRepin,
+  /v3-2026-08-10c empty-house V14 promotion/u,
+  "The container snapshot re-pin must retain its package-version cause."
+);
 
 for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
   assert.equal(sha256(JSON.stringify(entry.payload)), entry.sha256, `${workbookKey}: payload hash mismatch`);
   const contentKey = mappedKey(workbookKey);
-  const row = rowsByKey.get(contentKey);
-  assert.ok(row, `${contentKey}: serving row missing`);
-  assert.equal(row.body, entry.payload.body, `${contentKey}: body differs from owner-approved workbook payload`);
-  assert.equal(row.sourceMechanism, entry.payload.sourceMechanism, `${contentKey}: sourceMechanism differs`);
+  const row = llMatrixV13ByContentKey.get(contentKey);
+  const disposition = repairByContentKey.get(contentKey);
+  assert.ok(row, `${contentKey}: V13 canonical serving row missing`);
+  assert.ok(disposition, `${contentKey}: V13 supersession disposition missing`);
+  assert.equal(
+    row.body,
+    disposition.copyChanged ? disposition.kept.copy.body : entry.payload.body,
+    `${contentKey}: canonical body differs from the governed V13 disposition`,
+  );
   assert.equal(row.body_you, undefined, `${contentKey}: reader-only row must not synthesize body_you`);
   assert.equal(row.body_they, undefined, `${contentKey}: reader-only row must not synthesize body_they`);
   assert.equal(row.reader_only, true);
   assert.equal(row.render_policy, "reader-only-exact-lived-v1");
   assert.equal(row.review_status, "approved");
-  assert.equal(row.approval?.payloadSha256, entry.sha256);
   assert.equal(row.approval?.approvedAt, "2026-08-10");
 
   const manifestRow = manifestByWorkbookKey.get(workbookKey);
   assert.equal(manifestRow?.contentKey, contentKey);
   assert.equal(manifestRow?.payloadSha256, entry.sha256);
-  const record = JSON.parse(fs.readFileSync(path.join(repoRoot, row.approval.recordPath), "utf8"));
+  const record = JSON.parse(fs.readFileSync(path.join(repoRoot, manifestRow.recordPath), "utf8"));
   assert.equal(record.contentKey, contentKey);
   assert.equal(record.workbookKey, workbookKey);
   assert.equal(record.payloadSha256, entry.sha256);
@@ -171,7 +179,16 @@ for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
       ["browser", browser.renderNatalPlacement],
     ]) {
       const result = render({ planet: object, sign: "aries", house, voice: "you" });
-      assert.equal(result.body, expectedBody, `${label}:${workbookKey}: house body mismatch`);
+      assert.equal(
+        result.parts.at(-1),
+        expectedBody,
+        `${label}:${workbookKey}: approved house body must remain byte-identical as the final placement section`
+      );
+      assert.equal(
+        result.parts.filter((part) => part === expectedBody).length,
+        1,
+        `${label}:${workbookKey}: approved house body must appear exactly once`
+      );
       assert.equal(result.templateKey, mappedKey(workbookKey));
     }
     continue;

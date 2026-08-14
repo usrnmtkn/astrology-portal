@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { waitUntil } from "@vercel/functions";
 import { reportBillingMode, reportCallEstimate, reportSku } from "../_lib/report-fulfillment-config.js";
 import { jsonRequestBody, reportUrl, requireReportAdmin, sendJson } from "../_lib/report-http.js";
-import { authorizeReportGeneration, grantCompEntitlement, revokeEntitlement } from "../_lib/report-entitlements.js";
+import { authorizeReportGeneration, createFreshReportGeneration, grantCompEntitlement, revokeEntitlement } from "../_lib/report-entitlements.js";
 import { releaseReviewedReport } from "../_lib/report-release.js";
 import { createSupabaseReportAdmin } from "../_lib/supabase-report-admin.js";
 import type { ReportHorizon } from "../_lib/report-types.js";
@@ -81,7 +81,7 @@ async function dashboard() {
 
 async function action(body: {
   action?: string; reportId?: string; entitlementId?: string; userId?: string;
-  reportDomain?: string; reportHorizon?: string; windowStart?: string; callBudget?: number;
+  reportDomain?: string; reportHorizon?: string; windowStart?: string; callBudget?: number; tokenBudget?: number; lifetimeTokenBudget?: number;
 }, req: IncomingMessage) {
   const admin = createSupabaseReportAdmin();
   if (body.action === "pause_worker" || body.action === "resume_worker") {
@@ -115,12 +115,24 @@ async function action(body: {
     prompt_versions: Record<string, unknown>;
   }>("user_reports", new URLSearchParams({ id: `eq.${body.reportId}`, select: "id,user_id,entitlement_id,fulfillment_status,report_domain,report_horizon,prompt_versions" }));
   if (!report) throw new Error("Report not found.");
+  if (body.action === "set_lifetime_token_budget") {
+    if (!Number.isInteger(body.lifetimeTokenBudget) || Number(body.lifetimeTokenBudget) < 1) {
+      throw new Error("A positive whole-number lifetime token budget is required.");
+    }
+    await admin.update("user_reports", `id=eq.${report.id}`, { token_budget_lifetime: Number(body.lifetimeTokenBudget) });
+    return { ok: true, lifetimeTokenBudget: Number(body.lifetimeTokenBudget) };
+  }
+  if (body.action === "fresh_generation") {
+    return { ok: true, ...(await createFreshReportGeneration(admin, report.id)) };
+  }
   if (body.action === "rerun") {
     await admin.update("user_generated_interpretations", `subject_id=eq.${report.id}&subject_type=eq.report_unit`, { source_snapshot: { fulfillmentPassed: false } });
     await admin.update("user_reports", `id=eq.${report.id}`, { status: "draft", fulfillment_status: "awaiting_authorization", failure_history: [] });
     await admin.update("report_fulfillment_jobs", `report_id=eq.${report.id}`, {
       state: "paused", step: "writing", last_error: null, authorization_token: null,
-      authorized_call_budget: null, model_call_count: 0, authorization_consumed_at: null
+      authorized_call_budget: null, authorization_call_count: 0,
+      authorized_token_budget: null, authorization_token_count: 0, authorization_consumed_at: null,
+      passing_unit_cache: {}, locked_at: null, locked_by: null, lease_expires_at: null
     });
     return { ok: true };
   }
@@ -128,6 +140,7 @@ async function action(body: {
     const authorized = await authorizeReportGeneration(admin, {
       reportId: report.id,
       callBudget: Number(body.callBudget),
+      tokenBudget: body.tokenBudget === undefined ? undefined : Number(body.tokenBudget),
       now: new Date().toISOString()
     });
     const runnerSecret = process.env.REPORT_FULFILLMENT_SECRET ?? process.env.CRON_SECRET;

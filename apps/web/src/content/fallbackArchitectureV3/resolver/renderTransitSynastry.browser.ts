@@ -10,7 +10,18 @@
 //
 // Selection is authored-or-v3-or-SOURCE_GAP. Never resurrect a legacy helper below this.
 
-import { SourceGapError, type HookRow, type TemplatesFile, type RowsFile } from "./renderFallback.browser";
+import {
+  SourceGapError,
+  type DailyGlanceVariantSet,
+  type HookRow,
+  type TemplatesFile,
+  type RowsFile
+} from "./renderFallback.browser";
+import {
+  fillDailyGlancePersonSlots,
+  lintDailyGlanceFriendVoice,
+  type DailyGlancePersonSlots
+} from "./dailyGlanceVoice.browser";
 
 export interface AuthoredCard {
   contentKey: string;
@@ -49,6 +60,16 @@ export interface TransitHouseFacts { planet: string; house: number; sign?: strin
 export interface TransitAspectFacts { transiting: string; natal: string; aspect: string; variant?: string | number | null; pass?: 1 | 2 | 3 | number | null; sign?: string | null; isRetrograde?: boolean; window?: string | null; voice?: string }
 export interface TransitRetroFacts { planet: string; sign?: string | null; window?: string | null; format?: "card" | "article" }
 export interface TransitLabelFacts { transiting: string; natal: string; aspect: string; window?: string | null }
+export interface DailyGlanceFacts {
+  natal?: string;
+  aspect?: string;
+  house?: number | null;
+  dateKey?: string | null;
+  userId?: string | null;
+  previousVariantId?: string | null;
+  voice?: "you" | "they";
+  personSlots?: Partial<DailyGlancePersonSlots>;
+}
 export interface BondTransitFacts {
   transiting: string;
   aspect: string;
@@ -176,7 +197,9 @@ export function skyPlacementKeyDatesIntro(
 export type SkyArticleSectionKind =
   | "seasonal-context"
   | "ingress"
+  | "planet-education"
   | "collective-read"
+  | "collective-era"
   | "dated-aspect"
   | "event-interaction"
   | "exit-tone-shift"
@@ -226,6 +249,7 @@ export interface TransitRenderResult {
   headline: string;
   body: string;
   parts: string[];
+  partSourceKeys?: string[][];
   templateKey: string;
   contentKey?: string;
   sourceKeys?: string[];
@@ -239,9 +263,64 @@ export interface TransitRenderResult {
   articleMode?: "current" | "archive" | null;
   risingHoroscopes?: { risingSign: string; body: string }[];
   articleSections?: SkyArticleRenderedSection[];
+  variantId?: string;
 }
 export interface SynastryRenderResult extends TransitRenderResult { tag: string | null }
 export interface TransitLabelResult { label: string; window: string }
+
+const DAILY_GLANCE_READER_ELIGIBLE = new Set(["approved", "approved_reuse", "reviewed"]);
+
+function dailyGlanceHash(value: string) {
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash >>> 0;
+}
+
+function dailyGlanceDayNumber(dateKey?: string | null) {
+  if (!dateKey) return null;
+  const parsed = Date.parse(`${dateKey.slice(0, 10)}T00:00:00.000Z`);
+  return Number.isFinite(parsed) ? Math.floor(parsed / 86_400_000) : null;
+}
+
+export function selectDailyGlanceVariantSet({
+  variantSet,
+  primary,
+  dateKey,
+  contentKey,
+  userId,
+  previousVariantId,
+  allowUnreviewed = false
+}: {
+  variantSet?: DailyGlanceVariantSet;
+  primary: { headline: string; body: string };
+  dateKey?: string | null;
+  contentKey: string;
+  userId?: string | null;
+  previousVariantId?: string | null;
+  allowUnreviewed?: boolean;
+}) {
+  const fallback = { id: "primary", ...primary };
+  if (!variantSet || variantSet.pairing_policy !== "explicit_pairs_only") return fallback;
+  const eligible = (status: string) => allowUnreviewed || DAILY_GLANCE_READER_ELIGIBLE.has(status);
+  const headlines = new Map(variantSet.headlines.filter((item) => eligible(item.review_status)).map((item) => [item.id, item.text]));
+  const bodies = new Map(variantSet.bodies.filter((item) => eligible(item.review_status)).map((item) => [item.id, item.text]));
+  const pairs = variantSet.pairings
+    .filter((pairing) => eligible(pairing.review_status))
+    .map((pairing) => ({ id: pairing.id, headline: headlines.get(pairing.headline_id), body: bodies.get(pairing.body_id) }))
+    .filter((pair): pair is { id: string; headline: string; body: string } => Boolean(pair.headline && pair.body));
+  if (!pairs.some((pair) => pair.id === "primary")) pairs.unshift(fallback);
+  const dayNumber = dailyGlanceDayNumber(dateKey);
+  if (pairs.length === 1 || dayNumber === null) return pairs[0] ?? fallback;
+  const offset = dailyGlanceHash(`${contentKey}|${userId ?? "shared"}`) % pairs.length;
+  let index = ((dayNumber + offset) % pairs.length + pairs.length) % pairs.length;
+  if (previousVariantId && pairs[index]?.id === previousVariantId && pairs.length > 1) {
+    index = (index + 1) % pairs.length;
+  }
+  return pairs[index] ?? fallback;
+}
 
 type Ctx = Record<string, string | null | undefined>;
 
@@ -530,7 +609,9 @@ export function createTransitSynastryRenderer(
   const ARTICLE_SECTION_ORDER: Record<SkyArticleSectionKind, number> = {
     "seasonal-context": 1,
     ingress: 2,
+    "planet-education": 3,
     "collective-read": 3,
+    "collective-era": 4,
     "dated-aspect": 4,
     "event-interaction": 5,
     "exit-tone-shift": 6,
@@ -751,7 +832,15 @@ export function createTransitSynastryRenderer(
     return r ? ((voice === "you" ? r.body_you : r.body_they) ?? null) : null;
   };
   const result = (c: AuthoredCard, templateKey: string): TransitRenderResult =>
-    ({ headline: c.headline || "", body: c.body as string, parts: [c.body as string], templateKey, contentKey: c.contentKey });
+    ({
+      headline: c.headline || "",
+      body: c.body as string,
+      parts: [c.body as string],
+      partSourceKeys: [[c.contentKey]],
+      sourceKeys: [c.contentKey],
+      templateKey,
+      contentKey: c.contentKey
+    });
 
   const fillKeep = (body: string, ctx: Ctx): string => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => (ctx[k] != null ? String(ctx[k]) : `{{${k}}}`)).trim();
 
@@ -771,33 +860,60 @@ export function createTransitSynastryRenderer(
         const pick = (c: AuthoredCard) => (v === "you" ? (c.body_you ?? c.body) : (c.body_they ?? c.body)) as string;
         const nameCtx: Ctx = { Name: v === "they" ? voice : "" };
         const parts = [fillKeep(pick(intro), nameCtx), fillKeep(pick(synth), nameCtx)];
+        const partSourceKeys = [[intro.contentKey], [synth.contentKey]];
         const headline = v === "you"
           ? `${title(planet)} moving through your ${ordinal(house)} house`
           : `${title(planet)} moving through ${voice}'s ${ordinal(house)} house`;
         if (isRetrograde) {
-          const ro = hookVoice(`fallback-hook/transit-house-retro-overlay/${planet}`, v);
-          if (ro) parts.push(fillKeep(ro, { Name: v === "they" ? voice : "" } as Ctx));
+          const retroKey = `fallback-hook/transit-house-retro-overlay/${planet}`;
+          const ro = hookVoice(retroKey, v);
+          if (ro) {
+            parts.push(fillKeep(ro, { Name: v === "they" ? voice : "" } as Ctx));
+            partSourceKeys.push([retroKey]);
+          }
         }
         for (const e of events ?? []) {
           try {
             const quality = EVENT_QUALITY[e.aspect];
             const cls = quality === "conjunction" ? (CONJ_SOFT.has(planet) ? "soft" : "hard") : quality;
-            const frameRaw = quality ? hookVoice(`fallback-hook/transit-house-event-frame/${planet}`, v) : null;
+            const frameKey = `fallback-hook/transit-house-event-frame/${planet}`;
+            const frameRaw = quality ? hookVoice(frameKey, v) : null;
             const windowClause = e.window ? (/^(until|through|till|before|by)\b/i.test(e.window) ? ` ${e.window.charAt(0).toLowerCase()}${e.window.slice(1)}` : ` until ${e.window}`) : "";
             const frame = frameRaw ? fillKeep(frameRaw, { houseOrdinal: ordinal(house), natalTitle: title(e.natal), Name: v === "they" ? voice : "", windowClause, aspectVerb: EVENT_VERB[e.aspect] } as Ctx) : null;
-            const wants = sign ? hookVoice(`fallback-hook/transit-house-event-wants/${planet}/${sign}`, v) : null;
-            const holds = hookVoice(`fallback-hook/transit-house-event-natal/${e.natal}`, v);
-            const scenes = hookVoice(`fallback-hook/transit-house-event-scenes/${planet}/${e.natal}/${cls}`, v)
-              ?? hookVoice(`fallback-hook/transit-effect-${cls}/${planet}/${e.natal}`, v);
-            if (frame && wants && holds && scenes) {
+            const wantsKey = `fallback-hook/transit-house-event-wants/${planet}/${sign}`;
+            const holdsKey = `fallback-hook/transit-house-event-natal/${e.natal}`;
+            const sceneKeys = [
+              `fallback-hook/transit-house-event-scenes/${planet}/${e.natal}/${cls}`,
+              `fallback-hook/transit-effect-${cls}/${planet}/${e.natal}`
+            ];
+            const wants = sign ? hookVoice(wantsKey, v) : null;
+            const holds = hookVoice(holdsKey, v);
+            const sceneKey = sceneKeys.find((key) => Boolean(hookVoice(key, v))) ?? null;
+            const scenes = sceneKey ? hookVoice(sceneKey, v) : null;
+            if (frame && wants && holds && scenes && sceneKey) {
               parts.push(`${frame} ${wants}; ${holds}. ${scenes}`.trim());
+              partSourceKeys.push([frameKey, wantsKey, holdsKey, sceneKey]);
             } else {
               const asp = renderTransitAspect({ transiting: planet, natal: e.natal, aspect: e.aspect, voice, window: e.window ?? null });
               parts.push(frame ? `${frame} ${asp.body}` : asp.body);
+              partSourceKeys.push([
+                ...(frame ? [frameKey] : []),
+                ...(asp.contentKey ? [asp.contentKey] : []),
+                asp.templateKey
+              ]);
             }
           } catch { /* SOURCE_GAP on an event never blocks the house card */ }
         }
-        return { headline, body: parts.join("\n\n"), parts, templateKey: "authored/transit-house-layered", contentKey: synth.contentKey, window: win ?? WINDOW_HOUSE[planet] ?? null };
+        return {
+          headline,
+          body: parts.join("\n\n"),
+          parts,
+          partSourceKeys,
+          sourceKeys: [...new Set(partSourceKeys.flat())],
+          templateKey: "authored/transit-house-layered",
+          contentKey: synth.contentKey,
+          window: win ?? WINDOW_HOUSE[planet] ?? null
+        };
       }
     }
     if (v === "you") { const c = card(`authored/transit-house/${planet}/${house}`); if (c) return result(c, "authored/transit-house"); }
@@ -1334,6 +1450,16 @@ export function createTransitSynastryRenderer(
     "north-node",
     "south-node"
   ]);
+  const SKY_PLACEMENT_ERA_PLANETS = new Set([
+    "saturn",
+    "uranus",
+    "neptune",
+    "pluto",
+    "chiron",
+    "north-node",
+    "south-node",
+    "nodes"
+  ]);
   const RETIRED_SUN_IDENTITY_HOOKS = [
     "Somewhere along the way, you switched to autopilot.",
     "You keep rescheduling a decision.",
@@ -1375,7 +1501,8 @@ export function createTransitSynastryRenderer(
     }
     return {
       body: `${month} ${Number(match[2])}`,
-      year: match[3] ?? null
+      year: match[3] ?? null,
+      full: match[3] ? `${month} ${Number(match[2])}, ${match[3]}` : `${month} ${Number(match[2])}`
     };
   }
 
@@ -1422,12 +1549,55 @@ export function createTransitSynastryRenderer(
       priorSignEntryDate: priorSignEntryDate ? continuousSkyPlacementDate(priorSignEntryDate, "prior-sign entry").body : null,
       priorSignExitDate: priorSignExitDate ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").body : null,
       previousResidencyEntryDate: previousResidencyEntryDate ? continuousSkyPlacementDate(previousResidencyEntryDate, "previous-residency entry").body : null,
-      previousResidencyExitDate: previousResidencyExitDate ? continuousSkyPlacementDate(previousResidencyExitDate, "previous-residency exit").body : null
+      previousResidencyExitDate: previousResidencyExitDate ? continuousSkyPlacementDate(previousResidencyExitDate, "previous-residency exit").body : null,
+      priorSignEntryDateWithYear: priorSignEntryDate ? continuousSkyPlacementDate(priorSignEntryDate, "prior-sign entry").full : null,
+      priorSignExitDateWithYear: priorSignExitDate ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").full : null,
+      previousResidencyEntryDateWithYear: previousResidencyEntryDate ? continuousSkyPlacementDate(previousResidencyEntryDate, "previous-residency entry").full : null,
+      previousResidencyExitDateWithYear: previousResidencyExitDate ? continuousSkyPlacementDate(previousResidencyExitDate, "previous-residency exit").full : null
     };
     const factLine = dates.factLine;
+    const educationRow = hooks.get(`fallback-hook/sky-planet-education/${planet}`);
+    const educationBody = educationRow?.render_policy === "sky-placement-planet-education-v1"
+      ? educationRow.body
+      : null;
+    const planetEducation = typeof educationBody === "string" && educationBody.trim()
+      ? educationBody
+      : null;
     const collective = [signCopy.opening, signCopy.tension, signCopy.development]
       .map((part) => fillKeep(part as string, ctx));
+    const eraSource = signCopy.era_layer;
+    let eraLayer: string[] = [];
+    if (eraSource) {
+      if (!SKY_PLACEMENT_ERA_PLANETS.has(planet)) {
+        throw new SourceGapError(`SOURCE_GAP: slow-mover era layer ${planet}/${sign}`);
+      }
+      const eraFields = ["frame", "handoff", "recurrence", "collective_lesson"] as const;
+      const hasCompleteEraCopy = eraFields.every((field) => (
+        typeof eraSource[field] === "string" && Boolean(eraSource[field].trim())
+      ));
+      const hasCompleteEraFacts = Boolean(
+        priorSign
+        && priorSignEntryDate
+        && priorSignExitDate
+        && previousResidencyEntryDate
+        && previousResidencyExitDate
+      );
+      if (!hasCompleteEraCopy || !hasCompleteEraFacts) {
+        throw new SourceGapError(`SOURCE_GAP: slow-mover era layer ${planet}/${sign}`);
+      }
+      eraLayer = eraFields.map((field) => fillKeep(eraSource[field], ctx));
+    }
     const close = fillKeep(signCopy.close as string, ctx);
+    const masterHeadings = [
+      signCopy.opening_heading,
+      signCopy.tension_heading,
+      signCopy.development_heading,
+      signCopy.close_heading
+    ];
+    const rendersArticleMaster = typeof signCopy.primary_hook === "string"
+      && Boolean(signCopy.primary_hook.trim())
+      && masterHeadings.every((heading) => typeof heading === "string" && Boolean(heading.trim()));
+    const primaryHook = rendersArticleMaster ? fillKeep(signCopy.primary_hook as string, ctx) : null;
     const activeAspectMatch = (events ?? [])
       .filter((event) => (
         event.type === "aspect"
@@ -1463,12 +1633,23 @@ export function createTransitSynastryRenderer(
       };
     }
 
-    const parts = [factLine, ...collective, ...aspectParts, close];
-    const articleSections: SkyArticleRenderedSection[] = [
-      { kind: "collective-read", heading: "", body: [factLine, ...collective].join("\n\n") },
-      ...(aspectSection ? [aspectSection] : []),
-      { kind: "exit-tone-shift", heading: "", body: close }
-    ];
+    const parts = [factLine, ...(planetEducation ? [planetEducation] : []), ...collective, ...eraLayer, ...aspectParts, close];
+    const articleSections: SkyArticleRenderedSection[] = rendersArticleMaster
+      ? [
+          ...(planetEducation ? [{ kind: "planet-education", heading: "", body: planetEducation }] : []),
+          { kind: "collective-read", heading: fillKeep(signCopy.opening_heading as string, ctx), body: [factLine, collective[0]].join("\n\n") },
+          { kind: "collective-read", heading: fillKeep(signCopy.tension_heading as string, ctx), body: collective[1] },
+          { kind: "collective-read", heading: fillKeep(signCopy.development_heading as string, ctx), body: collective[2] },
+          ...(eraLayer.length ? [{ kind: "collective-era", heading: "", body: eraLayer.join("\n\n") }] : []),
+          ...(aspectSection ? [aspectSection] : []),
+          { kind: "exit-tone-shift", heading: fillKeep(signCopy.close_heading as string, ctx), body: close }
+        ]
+      : [
+          { kind: "collective-read", heading: "", body: [factLine, ...(planetEducation ? [planetEducation] : []), ...collective].join("\n\n") },
+          ...(eraLayer.length ? [{ kind: "collective-era", heading: "", body: eraLayer.join("\n\n") }] : []),
+          ...(aspectSection ? [aspectSection] : []),
+          { kind: "exit-tone-shift", heading: "", body: close }
+        ];
     const renderedText = [
       `${title(planet)} in ${title(sign)}`,
       ...parts,
@@ -1501,7 +1682,7 @@ export function createTransitSynastryRenderer(
 
     return {
       headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
-      tagline: null,
+      tagline: primaryHook,
       closingCharge: null,
       keyDates: [],
       body: parts.join("\n\n"),
@@ -2169,12 +2350,7 @@ export function createTransitSynastryRenderer(
       };
     }
 
-    const g = GROUP[aspect] ?? aspect;
-    const frame = hooks.get(`fallback-hook/sky-event/aspect-${g}`)?.body_you;
-    if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame aspect-${g}`);
-    const body = fill(frame, eventCtx({ type: "aspect", a, b, aspect, aSign, bSign, dateLine: dateLine ?? "Right now" }));
-    if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky aspect ${a}-${aspect}-${b} missing facts (${body})`);
-    return { headline: `${title(a)} ${title(aspect)} ${title(b)}`, body, parts: [body], templateKey: "fallback-template/sky.aspect-card" };
+    throw new SourceGapError(`SOURCE_GAP: no approved collective Sky aspect copy for ${a}-${aspect}-${b}`);
   }
 
   // ---- Transits to your bond: a transiting planet activating the synastry contact between
@@ -2362,17 +2538,90 @@ export function createTransitSynastryRenderer(
   // transiting Moon. Pass natal+aspect for the Moon's tightest applying aspect; pass house
   // (whole-sign house of the Moon) when no aspect is within orb. No astrology words render. ----
   const DAILY_GROUP: Record<string, string> = { conjunction: "conjunction", square: "square", opposition: "opposition", trine: "soft", sextile: "soft" };
-  function renderDailyGlance({ natal, aspect, house }: { natal?: string; aspect?: string; house?: number | null }): TransitRenderResult {
+  function renderDailyGlance({
+    natal,
+    aspect,
+    house,
+    dateKey,
+    userId,
+    previousVariantId,
+    voice = "you",
+    personSlots = {}
+  }: DailyGlanceFacts): TransitRenderResult {
+    const renderFriendRow = (row: HookRow | undefined, contentKey: string) => {
+      const raw = row?.body_they;
+      if (!raw) return null;
+
+      const findings = lintDailyGlanceFriendVoice(raw);
+      if (findings.length > 0) {
+        throw new SourceGapError(
+          `SOURCE_GAP: ${contentKey} friend voice failed ${findings.map((finding) => finding.id).join(",")}`
+        );
+      }
+
+      try {
+        return fillDailyGlancePersonSlots(raw, personSlots);
+      } catch (error) {
+        throw new SourceGapError(
+          `SOURCE_GAP: ${contentKey} friend voice slots ${error instanceof Error ? error.message : String(error)}`
+        );
+      }
+    };
+
+    const renderForVoice = ({
+      headlineKey,
+      bodyKey,
+      contentKey
+    }: {
+      headlineKey: string;
+      bodyKey: string;
+      contentKey: string;
+    }) => {
+      if (voice === "they") {
+        const headline = renderFriendRow(hooks.get(headlineKey), headlineKey);
+        const body = renderFriendRow(hooks.get(bodyKey), bodyKey);
+        return headline && body
+          ? { headline, body, parts: [body], templateKey: "fallback-template/daily.glance", variantId: "primary-they" }
+          : null;
+      }
+
+      const headline = hooks.get(headlineKey)?.body_you;
+      const body = hooks.get(bodyKey)?.body_you;
+      if (!headline || !body) return null;
+      const selected = selectDailyGlanceVariantSet({
+        variantSet: rowsFile.dailyGlanceVariants?.keys[contentKey],
+        primary: { headline, body },
+        dateKey,
+        contentKey,
+        userId,
+        previousVariantId,
+        allowUnreviewed
+      });
+      return {
+        headline: selected.headline,
+        body: selected.body,
+        parts: [selected.body],
+        templateKey: "fallback-template/daily.glance",
+        variantId: selected.id
+      };
+    };
+
     if (natal && aspect) {
       const g = DAILY_GROUP[aspect] ?? aspect;
-      const h = hooks.get(`fallback-hook/daily-headline/${g}/${natal}`)?.body_you;
-      const b = hooks.get(`fallback-hook/daily-body/${g}/${natal}`)?.body_you;
-      if (h && b) return { headline: h, body: b, parts: [b], templateKey: "fallback-template/daily.glance" };
+      const rendered = renderForVoice({
+        headlineKey: `fallback-hook/daily-headline/${g}/${natal}`,
+        bodyKey: `fallback-hook/daily-body/${g}/${natal}`,
+        contentKey: `${g}/${natal}`
+      });
+      if (rendered) return rendered;
     }
     if (house) {
-      const h = hooks.get(`fallback-hook/daily-headline/house/${house}`)?.body_you;
-      const b = hooks.get(`fallback-hook/daily-body/house/${house}`)?.body_you;
-      if (h && b) return { headline: h, body: b, parts: [b], templateKey: "fallback-template/daily.glance" };
+      const rendered = renderForVoice({
+        headlineKey: `fallback-hook/daily-headline/house/${house}`,
+        bodyKey: `fallback-hook/daily-body/house/${house}`,
+        contentKey: `house/${house}`
+      });
+      if (rendered) return rendered;
     }
     throw new SourceGapError(`SOURCE_GAP: daily glance ${aspect ?? "no-aspect"}/${natal ?? house}`);
   }

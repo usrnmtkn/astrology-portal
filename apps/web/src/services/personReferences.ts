@@ -217,7 +217,7 @@ export function findPronounGrammarIssues(text: string): PronounGrammarIssue[] {
     },
     {
       label: "object verb uses subject they",
-      pattern: /\b(?:reward|rewards|rewarded|help|helps|helped|give|gives|gave|giving|pull|pulls|pulled|support|supports|supported|shape|shapes|shaped|affect|affects|affected|remind|reminds|reminded|satisfy|satisfies|satisfied|satisfying)\s+they\b/gi
+      pattern: /\b(?:reward|rewards|rewarded|help|helps|helped|give|gives|gave|giving|lock|locks|locked|locking|pull|pulls|pulled|support|supports|supported|shape|shapes|shaped|affect|affects|affected|remind|reminds|reminded|satisfy|satisfies|satisfied|satisfying)\s+they\b/gi
     },
     {
       label: "they with singular verb",

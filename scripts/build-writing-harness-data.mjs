@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageRoot = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(path.join(packageRoot, relativePath), "utf8"));
+const readRepoJson = (relativePath) => JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), "utf8"));
 const writeJsonl = (relativePath, rows) => fs.writeFileSync(
   path.join(repoRoot, relativePath),
   `${rows.map((row) => JSON.stringify(row)).join("\n")}\n`
@@ -50,6 +51,11 @@ const placementInterim = readJson("source-rows/placement-interim-fixes-v1.json")
 const templates = readJson("templates/fallback-templates-v3.json");
 const manifest = readJson("bundled-manifest-v3.json");
 const servingKeys = new Set(manifest.keys.map((key) => key.slice(key.indexOf(":") + 1)));
+const emptyHousePrefix = "fallback-hook/empty-house/";
+const emptyHouseImportManifestPath = "packages/astro-knowledge/review/empty-house-v14/import-manifest.json";
+const emptyHouseProjectionPath = "packages/astro-knowledge/review/empty-house-v14/serving-projection-v14-projection-5.json";
+const emptyHouseImportManifest = readRepoJson(emptyHouseImportManifestPath);
+const emptyHouseProjection = readRepoJson(emptyHouseProjectionPath);
 
 const allCandidates = latestOwnerApproved([
   ...transit.authoredCards,
@@ -95,7 +101,9 @@ function registerFor(row) {
 }
 
 const servingApproved = allCandidates
-  .filter((row) => servingKeys.has(row.contentKey))
+  .filter((row) => servingKeys.has(row.contentKey) && (
+    !row.contentKey.startsWith(emptyHousePrefix) || row.content_role === "template"
+  ))
   .map((row) => ({
     id: `serving:${row.contentKey}`,
     contentKey: row.contentKey,
@@ -107,7 +115,48 @@ const servingApproved = allCandidates
     source: "fallbackArchitectureV3"
   }));
 
-const matrixRoot = path.join(repoRoot, "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/knowledge-matrix-v9");
+if (emptyHouseProjection.version !== "v14-projection-5") throw new Error("Empty-house harness evidence must use projection 5.");
+if (emptyHouseImportManifest.serving_projection_contract !== path.basename(emptyHouseProjectionPath)) {
+  throw new Error("Empty-house import manifest does not point to the projection-5 contract.");
+}
+const emptyHouseRows = latestOwnerApproved(
+  source.hookRows.filter((row) => row.contentKey.startsWith(emptyHousePrefix))
+).sort((a, b) => a.contentKey.localeCompare(b.contentKey));
+if (emptyHouseRows.length !== emptyHouseProjection.counts.serving_rows || emptyHouseRows.length !== 541) {
+  throw new Error(`Expected 541 approved empty-house V14 serving rows, found ${emptyHouseRows.length}.`);
+}
+const emptyHouseV14Approved = emptyHouseRows.flatMap((row) => ([
+  {
+    id: `serving:${row.contentKey}:you`,
+    contentKey: row.contentKey,
+    family: "empty-house-v14",
+    register: "second_person",
+    voice: "you",
+    text: row.body_you,
+    ownerApproved: true,
+    authority: "serving-review-status-approved",
+    source: "empty-house-v14/projection-5",
+    sourceManifest: emptyHouseImportManifestPath,
+    projectionContract: emptyHouseProjectionPath,
+    projectionVersion: emptyHouseProjection.version,
+  },
+  {
+    id: `serving:${row.contentKey}:friend`,
+    contentKey: row.contentKey,
+    family: "empty-house-v14",
+    register: "friend",
+    voice: "friend",
+    text: row.body_they,
+    ownerApproved: true,
+    authority: "serving-review-status-approved",
+    source: "empty-house-v14/projection-5",
+    sourceManifest: emptyHouseImportManifestPath,
+    projectionContract: emptyHouseProjectionPath,
+    projectionVersion: emptyHouseProjection.version,
+  },
+]));
+
+const matrixRoot = path.join(repoRoot, "packages/astro-knowledge/voice/tldr-astro/satori-writer/knowledge-matrix-v9");
 const matrix = JSON.parse(fs.readFileSync(path.join(matrixRoot, "knowledge-matrix-v9-owner-approved-rows.json"), "utf8"));
 const matrixApproved = [];
 for (const entry of matrix.transit_meanings) {
@@ -141,7 +190,7 @@ for (const entry of matrix.house_activations) {
   });
 }
 
-const output = [...servingApproved, ...matrixApproved].sort((a, b) => a.id.localeCompare(b.id));
+const output = [...servingApproved, ...emptyHouseV14Approved, ...matrixApproved].sort((a, b) => a.id.localeCompare(b.id));
 writeJsonl("data/writing/OWNER_APPROVED_EXAMPLES.jsonl", output);
 
 const bannedWordsSource = JSON.parse(fs.readFileSync(path.join(repoRoot, "packages/astro-knowledge/voice/banned-words.json"), "utf8"));
@@ -161,4 +210,10 @@ fs.writeFileSync(
   path.join(repoRoot, "src/astro-writing/policyData.generated.mjs"),
   `// Generated from canonical voice policy JSON. Do not edit by hand.\nexport const WRITING_POLICY_DATA = Object.freeze(${JSON.stringify(generatedPolicy, null, 2)});\n`
 );
-console.log(JSON.stringify({ servingApproved: servingApproved.length, matrixApproved: matrixApproved.length, total: output.length }, null, 2));
+console.log(JSON.stringify({
+  servingApproved: servingApproved.length,
+  emptyHouseV14Keys: emptyHouseRows.length,
+  emptyHouseV14DualVoiceExamples: emptyHouseV14Approved.length,
+  matrixApproved: matrixApproved.length,
+  total: output.length
+}, null, 2));

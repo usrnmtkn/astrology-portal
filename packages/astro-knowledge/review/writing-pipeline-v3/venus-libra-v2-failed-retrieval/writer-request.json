@@ -1,0 +1,98 @@
+{
+  "meaningInput": {
+    "contentType": "placement_article",
+    "object": "venus",
+    "sign": "libra",
+    "objectFunction": "Venus governs relationships, creativity, attraction, and what is valued.",
+    "signMechanics": "Libra notices balance, exchange, connection, and how a shared choice is made.",
+    "coreTension": "Agreement can look fair while one side keeps adjusting.",
+    "likelyObservableBehaviors": [
+      "A preference is withheld until everyone else has answered.",
+      "A shared cost or responsibility stays uneven because naming the exact difference feels impolite.",
+      "A connection changes once both sides can state what they want without punishment."
+    ],
+    "likelyConsequences": [
+      "The clearest voice makes the decision while the more accommodating side absorbs the cost.",
+      "Resentment grows inside an arrangement that still looks calm.",
+      "Honesty shows which connections can hold an actual preference."
+    ],
+    "risks": [
+      "Fairness is reduced to avoiding disagreement."
+    ],
+    "allowedLivedDomains": [
+      "relationships",
+      "work",
+      "money",
+      "creative decisions",
+      "access"
+    ]
+  },
+  "task": "Write one complete Venus in Libra fast-mover sky placement article for a rendered cold read.\n\nFill only the owner-approved v2 argument outline and the recorded fast-mover spine.\n\nReturn exactly four fields: opening, tension, development, close.\n\nUse the existing approved article below as the baseline. Preserve its established fairness argument and consequence while making only the additions and consolidation authorized by the outline.\n\nKeep this handoff fragment byte-identical in the opening: After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra on {{entryDate}}\n\nUse {{exitDate}} once in the close. Do not introduce any other placeholders.\n\nDo not add a retrograde look-back, an era or recurrence layer, romance as the default, a dinner scene, a scheduling scene, a house interpretation, a tip list, headings, or aspect copy.\n\nThe prose is unapproved and will be shown to the owner exactly once for a cold read.\n\nEXISTING OWNER-APPROVED ARTICLE\n{\n  \"opening\": \"After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra on {{entryDate}}, and we pay closer attention to whether interest, effort, and consideration are being returned. Venus governs relationships, creativity, and what we value. Libra is the sign of balance, connection, and how we get along with each other. A shared decision includes both preferences. A purchase feels worth making because it is useful and beautiful. Affection becomes easier to trust when care does not have to be requested every time.\",\n  \"tension\": \"The cost appears when agreement matters more than an honest answer. We ask what works for everyone else before admitting what works for us. We revise a preference until nobody can object, accept an arrangement because it looks even, and keep the peace after the effort stops being mutual. The decision then belongs to whoever was clearest, while the more accommodating side carries the extra cost. Resentment enters a relationship that still looks perfectly calm.\",\n  \"development\": \"The issue may be a relationship where the same person always chooses the harmless answer, a shared expense left unequal because asking for the exact amount feels rude, or an attraction sustained by being admired rather than being known. Each compromise seems small. Together they teach others that our preferences can be moved and our limits can wait. By the time a real disagreement arrives, nobody knows which agreement was sincere.\",\n  \"close\": \"Before {{exitDate}}, an arrangement may strain when the person who kept agreeing can no longer accept what they do not want.\"\n}",
+  "family": "fast-mover-article",
+  "register": "collective",
+  "surface": "sky-placement-page",
+  "argumentInput": {
+    "thesis": "Add why the existing imbalance can be hard to notice: Venus works easily in Libra, so smooth agreement can look complete before both preferences are known.",
+    "cultural_rule": "Do not replace the approved fairness argument; add only the assumption that an easy agreement must be a fair one.",
+    "transit_job": "Add a condition-based test of Venus in Libra's home-ground skill: can the connection stay easy after both sides state what they actually want?",
+    "failure_mechanism": "Clarify the existing mechanism by showing skill at compromise becoming automatic adjustment before anyone asks for it.",
+    "lived_scene_1": "Consolidate the approved shared-decision material into one collaboration where one side waits for the other preference before naming its own.",
+    "lived_scene_2": "Continue the same collaboration when the accommodating side absorbs the follow-up work or cost required to keep the agreement easy.",
+    "lived_scene_3": "Finish the same sequence when the withheld preference is stated and the other side's response shows whether the connection can hold honesty.",
+    "strategy": "Add one strategic bias inside the article: state the preference before smoothing the arrangement; do not add a tip list.",
+    "intended_close": "Keep the approved close's consequence rather than adding a second moral: the arrangement strains when the person who kept agreeing stops accepting what they do not want.",
+    "scope_guard": "Retain the existing one-sentence handoff; add no slow-mover contrast paragraph, romance default, dinner or scheduling scene, seventh-house substitution, or retrograde look-back."
+  },
+  "approvedArgumentOutline": {
+    "version": "argument-outline-v1-2026-08-12",
+    "status": "owner-approved",
+    "ownerApproved": true,
+    "family": "fast-mover-article",
+    "surface": "sky-placement-page",
+    "meaningPlanObject": "venus",
+    "meaningPlanSign": "libra",
+    "meaningPlanHash": "c1bb6370a6a72d43b28b11e0c91fae2bcc0116dba5663d59c6e515ac63e3acc0",
+    "thesis": "Add why the existing imbalance can be hard to notice: Venus works easily in Libra, so smooth agreement can look complete before both preferences are known.",
+    "cultural_rule": "Do not replace the approved fairness argument; add only the assumption that an easy agreement must be a fair one.",
+    "transit_job": "Add a condition-based test of Venus in Libra's home-ground skill: can the connection stay easy after both sides state what they actually want?",
+    "failure_mechanism": "Clarify the existing mechanism by showing skill at compromise becoming automatic adjustment before anyone asks for it.",
+    "lived_scene_1": "Consolidate the approved shared-decision material into one collaboration where one side waits for the other preference before naming its own.",
+    "lived_scene_2": "Continue the same collaboration when the accommodating side absorbs the follow-up work or cost required to keep the agreement easy.",
+    "lived_scene_3": "Finish the same sequence when the withheld preference is stated and the other side's response shows whether the connection can hold honesty.",
+    "strategy": "Add one strategic bias inside the article: state the preference before smoothing the arrangement; do not add a tip list.",
+    "intended_close": "Keep the approved close's consequence rather than adding a second moral: the arrangement strains when the person who kept agreeing stops accepting what they do not want.",
+    "scope_guard": "Retain the existing one-sentence handoff; add no slow-mover contrast paragraph, romance default, dinner or scheduling scene, seventh-house substitution, or retrograde look-back.",
+    "outlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49",
+    "exactOwnerRuling": "Venus in Libra v2 outline approved.",
+    "approvedOutlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49"
+  },
+  "expectedPlaceholders": [
+    "entryDate",
+    "exitDate",
+    "priorSign",
+    "priorSignEntryDate",
+    "priorSignExitDate"
+  ],
+  "protectedOwnerLines": [
+    "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra on {{entryDate}}"
+  ],
+  "models": {
+    "writer": {
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "maxOutputTokens": 12000
+    }
+  },
+  "governance": {
+    "authorization": "I authorize exactly one billed Sol-xhigh Venus-in-Libra writer call, with a 12,000-token cap, no Terra, no retries, and no staging or serving.",
+    "authorizedCalls": 1,
+    "reviewerCalls": 0,
+    "retries": 0,
+    "stagingAuthorized": false,
+    "servingAuthorized": false,
+    "retrogradeLookbackAuthorized": false
+  },
+  "diagnosticOnly": true,
+  "invalidatedBy": "OWNER_POSITIVE_EVIDENCE_EMPTY"
+}

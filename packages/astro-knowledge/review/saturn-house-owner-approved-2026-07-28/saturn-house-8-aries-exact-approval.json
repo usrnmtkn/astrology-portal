@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "recordType": "transit_house_serving_exact_approval",
+  "approvalId": "saturn-house-owner-approved-2026-07-28-transit-house-sign-8-aries",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "approvedAt": "2026-07-28",
+  "recordedAt": "2026-08-13",
+  "surface": "you|friends",
+  "contentKey": "authored/transit-house-sign/saturn/8/aries",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "5abc8b2563851eda4e4a569e98a626141747c5fc40e90c1cfb2724733b5e326e",
+  "payload": {
+    "body_you": "Saturn in Aries puts pressure on the need for an answer now. The settlement now. The signature now. The money moved now. Pushing harder may only make the other person more resistant. Some agreements need several conversations and enough time for both people to understand what they are accepting. A yes given just to end the pressure is not a yes you can rely on.",
+    "body_they": "Saturn in Aries puts pressure on their need for an answer now: the settlement now, the signature now, the money moved now. Pushing harder mostly makes the other person more resistant. An agreement reached under pressure may reopen as soon as the pressure lifts. One both people understand and accept has a better chance of holding."
+  },
+  "historicalEvidence": {
+    "readerRewriteCommit": "133e2332c48c147876f352290891ab55a83fde8e",
+    "friendVoiceReviewCommit": "102631f0a3b5851898935c43d6bb9d39f89decf4",
+    "sourceRowApprovalNote": "owner-rewritten full 12-house set, chat 2026-07-28 (Aries layer)"
+  },
+  "ownerConfirmationStatement": "the writing that was being shown in the natal chart was approved",
+  "ownerConfirmationSource": "owner_chat_2026-08-13_source_metadata_correction",
+  "approvalEffect": "exact_wording_approval",
+  "copyMutation": "none"
+}

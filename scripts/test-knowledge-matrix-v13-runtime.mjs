@@ -23,7 +23,8 @@ import { readInlineXlsxSheet } from "./lib/read-inline-xlsx.mjs";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const workbookRelativePath = "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx";
 const workbookPath = path.join(repoRoot, workbookRelativePath);
-const lockedRelativePath = "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json";
+const lockedRelativePath = "packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json";
+const approvalRecordRelativePath = "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json";
 const publicRelativePath = "apps/web/public/content/knowledge-matrix-v13/v13-direct-language-owner-approved/knowledge-matrix-v13-owner-approved-locked.json";
 const lockedPath = path.join(repoRoot, lockedRelativePath);
 const publicPath = path.join(repoRoot, publicRelativePath);
@@ -109,7 +110,7 @@ for (const row of locked.rows) {
   assert.equal(servingRow.reader_only, true);
   assert.equal(servingRow.render_policy, "reader-only-exact-lived-v1");
   assert.equal(servingRow.approval?.approvalLevel, "exact_owner_approved");
-  assert.equal(servingRow.approval?.recordPath, lockedRelativePath);
+  assert.equal(servingRow.approval?.recordPath, approvalRecordRelativePath);
   assert.equal(servingRow.approval?.payloadSha256, row.payloadSha256);
   assert.equal(servingRow.source_workbook_row, row.workbookRow);
   assert.equal(servingRow.source_workbook_sha256, locked.sourceWorkbookSha256);
@@ -118,6 +119,7 @@ for (const row of locked.rows) {
 const servingApprovedReviews = new Set(["approved", "approved_reuse", "reviewed"]);
 const priorApprovedRows = sourceRows.hookRows.filter((row) => (
   row.source_release !== "ll-matrix-v13-owner-approved-runtime"
+  && !row.contentKey.startsWith("fallback-hook/empty-house/")
   && servingApprovedReviews.has(row.review_status)
 ));
 assert.equal(
@@ -159,9 +161,9 @@ assert.equal(browser.renderNatalPlacement({ planet: "mars", sign: "aries", voice
 assert.equal(browser.renderNatalAspect({ planetA: "moon", aspect: "square", planetB: "sun", voice: "you" }).body, sunMoon?.copy);
 assert.equal(browser.renderNatalAspect({ planetA: "mars", aspect: "sextile", planetB: "pluto", voice: "you" }).templateKey, "fallback-hook/aspect-lived/sextile");
 const jupiterRows = sourceRows.hookRows.filter((row) => row.contentKey === "fallback-hook/planet-lived/jupiter");
-assert.ok(jupiterRows.length >= 2, "The prior Jupiter row must remain preserved.");
-assert.equal(jupiterRows.at(-1)?.source_release, "ll-matrix-v13-owner-approved-runtime");
-assert.equal(jupiterRows.at(-1)?.body, sourceByReleaseKey.get("fallback-hook/planet-lived/jupiter")?.body);
+assert.equal(jupiterRows.length, 1, "V13 same-key precedence must leave one canonical Jupiter row.");
+assert.equal(jupiterRows[0]?.source_release, "ll-matrix-v13-owner-approved-runtime");
+assert.equal(jupiterRows[0]?.body, sourceByReleaseKey.get("fallback-hook/planet-lived/jupiter")?.body);
 
 const materializerTempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tldr-ll-v13-materializer-"));
 try {

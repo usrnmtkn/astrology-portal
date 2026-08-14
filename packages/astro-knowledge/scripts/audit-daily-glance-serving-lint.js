@@ -46,7 +46,7 @@ function buildServingLintReport() {
   const policy = readJson(servingLintPolicyPath);
   const observedCounts = Object.fromEntries(ruleStats.map((rule) => [rule.id, rule.failures]));
   if (JSON.stringify(observedCounts) !== JSON.stringify(policy.baseline.ruleFailureCounts)) {
-    throw new Error("Serving lint baseline is stale: observed rule counts differ from daily-glance-writer-lint-policy-v2.json.");
+    throw new Error(`Serving lint baseline is stale: observed rule counts differ from ${path.basename(servingLintPolicyPath)}.`);
   }
 
   const blockingFailures = rows

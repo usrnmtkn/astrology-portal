@@ -4,6 +4,7 @@ import { CitySearchField } from "../../components/CitySearchField";
 import {
   isAuthConfigured,
   isPhoneAuthEnabled,
+  resendEmailSignupConfirmation,
   sendPhoneSignInCode,
   signInWithEmail,
   signInWithProvider,
@@ -34,6 +35,7 @@ import {
 export type { AuthMode, SignupForm, SignupProvider } from "./signupModel";
 
 type SignupViewProps = {
+  hasPendingInvitation: boolean;
   initialForm: SignupForm;
   initialMode?: AuthMode;
   onAuthenticated: (result: {
@@ -44,6 +46,7 @@ type SignupViewProps = {
   }) => void;
   onClearPendingForm: () => void;
   onClose: () => void;
+  onEmailConfirmationRequired: () => void;
   onSavePendingForm: (form: SignupForm) => void;
 };
 
@@ -59,11 +62,13 @@ function GoogleIcon() {
 }
 
 export function SignupView({
+  hasPendingInvitation,
   initialForm,
   initialMode = "create",
   onAuthenticated,
   onClearPendingForm,
   onClose,
+  onEmailConfirmationRequired,
   onSavePendingForm
 }: SignupViewProps) {
   const [authMode, setAuthMode] = useState<AuthMode>(initialMode);
@@ -71,6 +76,9 @@ export function SignupView({
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [authStatus, setAuthStatus] = useState<"idle" | "loading">("idle");
   const [authMessage, setAuthMessage] = useState("");
+  const [emailConfirmationPending, setEmailConfirmationPending] = useState("");
+  const [emailConfirmationResendStatus, setEmailConfirmationResendStatus] = useState<"idle" | "loading" | "sent">("idle");
+  const [emailConfirmationResendMessage, setEmailConfirmationResendMessage] = useState("");
   const [phoneAuthOpen, setPhoneAuthOpen] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneCode, setPhoneCode] = useState("");
@@ -163,33 +171,137 @@ export function SignupView({
     }
 
     try {
-      const account = isLogin
-        ? await signInWithEmail({
-            email: form.email.trim(),
-            password: form.password
-          })
-        : await signUpWithEmail({
-            email: form.email.trim(),
-            password: form.password,
-            fullName: form.fullName.trim()
-          });
+      if (isLogin) {
+        const account = await signInWithEmail({
+          email: form.email.trim(),
+          password: form.password
+        });
 
-      if (account) {
+        if (account) {
+          onAuthenticated({
+            account,
+            form: submittedForm,
+            isNewAccount: false,
+            provider: "email"
+          });
+          onClearPendingForm();
+        }
+        return;
+      }
+
+      const signupResult = await signUpWithEmail({
+        email: form.email.trim(),
+        password: form.password,
+        fullName: form.fullName.trim()
+      });
+
+      if (signupResult.account && signupResult.sessionEstablished) {
         onAuthenticated({
-          account,
+          account: signupResult.account,
           form: submittedForm,
-          isNewAccount: !isLogin,
+          isNewAccount: true,
           provider: "email"
         });
         onClearPendingForm();
-      } else {
-        setAuthMessage("Check your email to confirm your account.");
+        return;
       }
+
+      onEmailConfirmationRequired();
+      setEmailConfirmationPending(form.email.trim());
     } catch (error) {
+      const errorCode = error && typeof error === "object" && "code" in error
+        ? String(error.code)
+        : "";
+      const errorMessage = error instanceof Error ? error.message : "";
+
+      if (
+        isLogin
+        && (errorCode === "email_not_confirmed" || /email not confirmed/i.test(errorMessage))
+      ) {
+        onEmailConfirmationRequired();
+        setEmailConfirmationPending(form.email.trim());
+        return;
+      }
+
       setAuthMessage(error instanceof Error ? error.message : "Email signup failed.");
     } finally {
       setAuthStatus("idle");
     }
+  }
+
+  async function resendEmailConfirmation() {
+    if (!emailConfirmationPending || emailConfirmationResendStatus === "loading") {
+      return;
+    }
+
+    setEmailConfirmationResendStatus("loading");
+    setEmailConfirmationResendMessage("");
+
+    try {
+      await resendEmailSignupConfirmation(emailConfirmationPending);
+      setEmailConfirmationResendStatus("sent");
+      setEmailConfirmationResendMessage("A new confirmation email was sent.");
+    } catch (error) {
+      setEmailConfirmationResendStatus("idle");
+      setEmailConfirmationResendMessage(
+        error instanceof Error ? error.message : "The confirmation email could not be resent."
+      );
+    }
+  }
+
+  if (emailConfirmationPending) {
+    return (
+      <section className="auth-page signup-split" aria-label="Confirm your email">
+        <button className="auth-close-button" type="button" aria-label="Close" onClick={onClose}>
+          <X size={20} aria-hidden="true" />
+        </button>
+        <div className="auth-shell">
+          <div className="signup-form auth-card auth-card--confirmation" role="status">
+            <div className="signup-heading">
+              <p className="auth-card__title">Confirm your email</p>
+              <h3>One more step before your profile is live.</h3>
+            </div>
+            <p className="auth-confirmation-copy">
+              We sent a confirmation link to <strong>{emailConfirmationPending}</strong>.
+              Open it to finish signing in. Your chart details
+              {hasPendingInvitation ? " and friend invitation" : ""} will be waiting.
+            </p>
+            <p className="auth-confirmation-note">
+              You will not have a public handle or appear in Friends until your email is confirmed.
+            </p>
+            <button
+              className="auth-primary-button auth-confirmation-resend-button"
+              type="button"
+              disabled={emailConfirmationResendStatus !== "idle"}
+              onClick={() => void resendEmailConfirmation()}
+            >
+              {emailConfirmationResendStatus === "loading"
+                ? "Sending..."
+                : emailConfirmationResendStatus === "sent"
+                  ? "Confirmation email sent"
+                  : "Resend confirmation email"}
+            </button>
+            {emailConfirmationResendMessage && (
+              <p className="auth-message" aria-live="polite">
+                {emailConfirmationResendMessage}
+              </p>
+            )}
+            <button
+              className="phone-auth-text-button"
+              type="button"
+              onClick={() => {
+                setEmailConfirmationPending("");
+                setEmailConfirmationResendStatus("idle");
+                setEmailConfirmationResendMessage("");
+                setAuthMessage("");
+              }}
+            >
+              Use a different email
+            </button>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   async function socialSignup(provider: "google") {

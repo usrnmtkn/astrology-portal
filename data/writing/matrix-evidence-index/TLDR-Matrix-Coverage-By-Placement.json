@@ -1,0 +1,1434 @@
+{
+ "Chiron|Aquarius": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Chiron|Aries": {
+  "meaning": 18,
+  "scene": 1,
+  "argument": 0,
+  "register": 10,
+  "scene_examples": [
+   "Chiron in Aries moves through your 3rd house of communication and daily reality, so a message, correction, int"
+  ]
+ },
+ "Chiron|Cancer": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Chiron|Capricorn": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Chiron|Gemini": {
+  "meaning": 2,
+  "scene": 2,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": [
+   "As Chiron moves into Gemini, an old hesitation about being understood might show up in your conversations and ",
+   "This Chiron retrograde in Gemini, an old insecurity about not being clear enough might get tender again. You c"
+  ]
+ },
+ "Chiron|Leo": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 2,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Chiron|Libra": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Chiron|Pisces": {
+  "meaning": 3,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Chiron|Sagittarius": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Chiron|Scorpio": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Chiron|Taurus": {
+  "meaning": 17,
+  "scene": 0,
+  "argument": 3,
+  "register": 10,
+  "scene_examples": []
+ },
+ "Chiron|Virgo": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 1,
+  "scene_examples": []
+ },
+ "Jupiter|Aquarius": {
+  "meaning": 7,
+  "scene": 0,
+  "argument": 0,
+  "register": 3,
+  "scene_examples": []
+ },
+ "Jupiter|Aries": {
+  "meaning": 16,
+  "scene": 1,
+  "argument": 3,
+  "register": 11,
+  "scene_examples": [
+   "Jupiter in Aries moves through your 3rd house of communication and daily reality, so more messages, options, i"
+  ]
+ },
+ "Jupiter|Cancer": {
+  "meaning": 22,
+  "scene": 1,
+  "argument": 6,
+  "register": 11,
+  "scene_examples": [
+   "Jupiter in Cancer moves through your 6th house of daily routines and health, so work can expand faster than th"
+  ]
+ },
+ "Jupiter|Capricorn": {
+  "meaning": 6,
+  "scene": 1,
+  "argument": 2,
+  "register": 3,
+  "scene_examples": [
+   "Jupiter moves into Capricorn, and bigger goals start meeting real limits, titles, deadlines, and responsibilit"
+  ]
+ },
+ "Jupiter|Gemini": {
+  "meaning": 20,
+  "scene": 1,
+  "argument": 4,
+  "register": 10,
+  "scene_examples": [
+   "Jupiter in Gemini moves through your 6th house of daily routines and health, so work can expand faster than th"
+  ]
+ },
+ "Jupiter|Leo": {
+  "meaning": 18,
+  "scene": 1,
+  "argument": 5,
+  "register": 13,
+  "scene_examples": [
+   "Jupiter in Leo moves through your 3rd house of communication and daily reality, so more messages, options, int"
+  ]
+ },
+ "Jupiter|Libra": {
+  "meaning": 9,
+  "scene": 0,
+  "argument": 5,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Jupiter|Pisces": {
+  "meaning": 30,
+  "scene": 2,
+  "argument": 10,
+  "register": 22,
+  "scene_examples": [
+   "Jupiter in Pisces moves through your 6th house of daily routines and health, so work can expand faster than th",
+   "Jupiter in Pisces moves through your 6th house of daily routines and health, so work can expand faster than th"
+  ]
+ },
+ "Jupiter|Sagittarius": {
+  "meaning": 26,
+  "scene": 0,
+  "argument": 11,
+  "register": 15,
+  "scene_examples": []
+ },
+ "Jupiter|Scorpio": {
+  "meaning": 6,
+  "scene": 1,
+  "argument": 3,
+  "register": 2,
+  "scene_examples": [
+   "Jupiter moving into Scorpio starts opening doors through the stuff you don't usually put on a resume, trust, w"
+  ]
+ },
+ "Jupiter|Taurus": {
+  "meaning": 22,
+  "scene": 0,
+  "argument": 11,
+  "register": 12,
+  "scene_examples": []
+ },
+ "Jupiter|Virgo": {
+  "meaning": 6,
+  "scene": 0,
+  "argument": 3,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Mars|Aquarius": {
+  "meaning": 37,
+  "scene": 2,
+  "argument": 6,
+  "register": 22,
+  "scene_examples": [
+   "Mars in Aquarius moves through your 6th house of daily routines and health, so one quick favor can turn into y",
+   "Mars in Aquarius moves through your 6th house of daily routines and health, so one quick favor can turn into y"
+  ]
+ },
+ "Mars|Aries": {
+  "meaning": 36,
+  "scene": 2,
+  "argument": 5,
+  "register": 26,
+  "scene_examples": [
+   "Mars in Aries moves through your 6th house of daily routines and health, so one quick favor can turn into your",
+   "Mars in Aries moves through your 6th house of daily routines and health, so one quick favor can turn into your"
+  ]
+ },
+ "Mars|Cancer": {
+  "meaning": 45,
+  "scene": 3,
+  "argument": 10,
+  "register": 31,
+  "scene_examples": [
+   "Mars in Cancer moves through your 3rd house of communication and everyday exchanges. You might feel pulled to ",
+   "Mars in Cancer moves through your 6th house of daily routines and health, so one quick favor can turn into you"
+  ]
+ },
+ "Mars|Capricorn": {
+  "meaning": 47,
+  "scene": 6,
+  "argument": 4,
+  "register": 31,
+  "scene_examples": [
+   "Mars in Capricorn moves through your 8th house of shared resources and privacy, so a shared bill, debt, privat",
+   "Mars in Capricorn moves through your 8th house of shared resources and privacy, so a shared bill, debt, privat"
+  ]
+ },
+ "Mars|Gemini": {
+  "meaning": 39,
+  "scene": 4,
+  "argument": 11,
+  "register": 24,
+  "scene_examples": [
+   "Mars in Gemini moves through your 10th house of career and public life, so you may get less willing to sit qui",
+   "Mars in Gemini moves through your 10th house of career and public life, so you may get less willing to sit qui"
+  ]
+ },
+ "Mars|Leo": {
+  "meaning": 34,
+  "scene": 4,
+  "argument": 9,
+  "register": 25,
+  "scene_examples": [
+   "Mars in Leo moves through your 3rd house of communication and daily reality, so the reply can come too fast, t",
+   "Mars in Leo moves through your 3rd house of communication and daily reality, so the reply can come too fast, t"
+  ]
+ },
+ "Mars|Libra": {
+  "meaning": 19,
+  "scene": 2,
+  "argument": 7,
+  "register": 12,
+  "scene_examples": [
+   "Mars in Libra moves through your 6th house of daily routines and health, so one quick favor can turn into your",
+   "Mars in Libra moves through your 8th house of shared resources and privacy, so a shared bill, debt, private bo"
+  ]
+ },
+ "Mars|Pisces": {
+  "meaning": 34,
+  "scene": 2,
+  "argument": 8,
+  "register": 27,
+  "scene_examples": [
+   "Mars in Pisces moves through your 6th house of daily routines and health, so one quick favor can turn into you",
+   "Mars in Pisces moves through your 6th house of daily routines and health, so one quick favor can turn into you"
+  ]
+ },
+ "Mars|Sagittarius": {
+  "meaning": 37,
+  "scene": 1,
+  "argument": 14,
+  "register": 26,
+  "scene_examples": [
+   "Mars in Sagittarius moves through your 6th house of daily routines and health, so one quick favor can turn int"
+  ]
+ },
+ "Mars|Scorpio": {
+  "meaning": 21,
+  "scene": 1,
+  "argument": 5,
+  "register": 10,
+  "scene_examples": [
+   "Mars in Scorpio moves through your 6th house of daily routines and health, so one quick favor can turn into yo"
+  ]
+ },
+ "Mars|Taurus": {
+  "meaning": 34,
+  "scene": 2,
+  "argument": 11,
+  "register": 23,
+  "scene_examples": [
+   "Mars in Taurus moves through your 6th house of daily routines and health, so one quick favor can turn into you",
+   "Mars in Taurus moves through your 6th house of daily routines and health, so one quick favor can turn into you"
+  ]
+ },
+ "Mars|Virgo": {
+  "meaning": 25,
+  "scene": 2,
+  "argument": 9,
+  "register": 12,
+  "scene_examples": [
+   "Mars in Virgo moves through your 6th house of daily routines and health, so one quick favor can turn into your",
+   "Mars in Virgo moves through your 8th house of shared resources and privacy, so a shared bill, debt, private bo"
+  ]
+ },
+ "Mercury (Stellium)|Virgo": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 1,
+  "scene_examples": []
+ },
+ "Mercury|Aquarius": {
+  "meaning": 52,
+  "scene": 11,
+  "argument": 6,
+  "register": 29,
+  "scene_examples": [
+   "Mercury stations in Aquarius, so a message, decision, schedule, or missing detail can feel unusually urgent wh",
+   "Mercury in Aquarius moves through your 11th house of friendships and community, so plans move through texts, g"
+  ]
+ },
+ "Mercury|Aries": {
+  "meaning": 88,
+  "scene": 21,
+  "argument": 9,
+  "register": 53,
+  "scene_examples": [
+   "Mercury stations in Aries, so a message, decision, schedule, or missing detail can feel unusually urgent while",
+   "Mercury in Aries moves through your 11th house of friendships and community, so plans move through texts, grou"
+  ]
+ },
+ "Mercury|Cancer": {
+  "meaning": 45,
+  "scene": 12,
+  "argument": 17,
+  "register": 18,
+  "scene_examples": [
+   "The review may feel less orderly than usual. Mercury turns retrograde in Cancer, and plans, messages, and deci",
+   "Mercury stations in Cancer, so a message, decision, schedule, or missing detail can feel unusually urgent whil"
+  ]
+ },
+ "Mercury|Capricorn": {
+  "meaning": 58,
+  "scene": 26,
+  "argument": 9,
+  "register": 23,
+  "scene_examples": [
+   "Mercury turns direct in Capricorn, and messages, decisions, and schedules can start moving again after the rev",
+   "Mercury turns retrograde in Capricorn, bringing messages, decisions, schedules, and missing information back i"
+  ]
+ },
+ "Mercury|Gemini": {
+  "meaning": 81,
+  "scene": 28,
+  "argument": 15,
+  "register": 39,
+  "scene_examples": [
+   "Mercury turns retrograde in Gemini, bringing messages, decisions, schedules, and missing information back into",
+   "Mercury turns retrograde in Gemini, bringing messages, decisions, schedules, and missing information back into"
+  ]
+ },
+ "Mercury|Leo": {
+  "meaning": 58,
+  "scene": 9,
+  "argument": 16,
+  "register": 29,
+  "scene_examples": [
+   "Mercury stations in Leo, so a message, decision, schedule, or missing detail can feel unusually urgent while i",
+   "Mercury in Leo moves through your 3rd house of communication and daily reality, so the text gets rewritten, th"
+  ]
+ },
+ "Mercury|Libra": {
+  "meaning": 38,
+  "scene": 15,
+  "argument": 10,
+  "register": 25,
+  "scene_examples": [
+   "Mercury moves into Libra, and people may think more carefully about how their words land. This favors negotiat",
+   "Mercury retrograde in Libra can bring an old negotiation back around, a lease or a split bill you thought was "
+  ]
+ },
+ "Mercury|None": {
+  "meaning": 3,
+  "scene": 0,
+  "argument": 0,
+  "register": 3,
+  "scene_examples": []
+ },
+ "Mercury|Pisces": {
+  "meaning": 89,
+  "scene": 23,
+  "argument": 13,
+  "register": 58,
+  "scene_examples": [
+   "Mercury moves into Pisces, and thought gets more associative, imaginative, and less linear. This can be excell",
+   "Mercury retrograde in Pisces can blur communication further than usual, a message that gets lost or a daydream"
+  ]
+ },
+ "Mercury|Sagittarius": {
+  "meaning": 67,
+  "scene": 21,
+  "argument": 30,
+  "register": 29,
+  "scene_examples": [
+   "Mercury stations in Sagittarius, so a message, decision, schedule, or missing detail can feel unusually urgent",
+   "Mercury in Sagittarius moves through your 6th house of daily routines and health, so the calendar, instruction"
+  ]
+ },
+ "Mercury|Scorpio": {
+  "meaning": 54,
+  "scene": 16,
+  "argument": 4,
+  "register": 23,
+  "scene_examples": [
+   "Mercury stations in Scorpio, so a message, decision, schedule, or missing detail can feel unusually urgent whi",
+   "Mercury in Scorpio moves through your 6th house of daily routines and health, so the calendar, instructions, a"
+  ]
+ },
+ "Mercury|Taurus": {
+  "meaning": 50,
+  "scene": 15,
+  "argument": 15,
+  "register": 26,
+  "scene_examples": [
+   "Mercury in Taurus moves through your 2nd house of disposable income and foundation, so a price, bill, rate, co",
+   "Mercury in Taurus moves through your 2nd house of disposable income and foundation, so a price, bill, rate, co"
+  ]
+ },
+ "Mercury|Virgo": {
+  "meaning": 34,
+  "scene": 15,
+  "argument": 6,
+  "register": 12,
+  "scene_examples": [
+   "Mercury moves into Virgo, one of its natural homes, and your mind gets precise, drawn to fixing the small erro",
+   "Mercury moves into Virgo, one of its natural homes, and your mind gets precise, drawn to fixing the small erro"
+  ]
+ },
+ "Moon|Aries": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 1,
+  "scene_examples": []
+ },
+ "Moon|Capricorn": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 1,
+  "scene_examples": []
+ },
+ "Moon|Gemini": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 1,
+  "scene_examples": []
+ },
+ "Moon|Leo": {
+  "meaning": 13,
+  "scene": 0,
+  "argument": 0,
+  "register": 13,
+  "scene_examples": []
+ },
+ "Moon|Pisces": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Moon|Sagittarius": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 1,
+  "scene_examples": []
+ },
+ "Moon|Scorpio": {
+  "meaning": 35,
+  "scene": 0,
+  "argument": 6,
+  "register": 35,
+  "scene_examples": []
+ },
+ "Moon|Taurus": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Moon|Virgo": {
+  "meaning": 14,
+  "scene": 0,
+  "argument": 0,
+  "register": 14,
+  "scene_examples": []
+ },
+ "Neptune|Aquarius": {
+  "meaning": 4,
+  "scene": 0,
+  "argument": 2,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Neptune|Aries": {
+  "meaning": 33,
+  "scene": 2,
+  "argument": 8,
+  "register": 17,
+  "scene_examples": [
+   "Neptune in Aries moves through your 3rd house of communication and daily reality, so a message can sound beaut",
+   "Neptune in Aries moves through your 3rd house of communication and daily reality, so a message can sound beaut"
+  ]
+ },
+ "Neptune|Cancer": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Neptune|Capricorn": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Neptune|Gemini": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Neptune|Leo": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Neptune|Libra": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Neptune|Pisces": {
+  "meaning": 41,
+  "scene": 0,
+  "argument": 15,
+  "register": 18,
+  "scene_examples": []
+ },
+ "Neptune|Sagittarius": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Neptune|Scorpio": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Neptune|Taurus": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 1,
+  "scene_examples": []
+ },
+ "Neptune|Virgo": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Nodes|Pisces": {
+  "meaning": 24,
+  "scene": 0,
+  "argument": 6,
+  "register": 20,
+  "scene_examples": []
+ },
+ "North Node|Aquarius": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "North Node|Aries": {
+  "meaning": 15,
+  "scene": 1,
+  "argument": 0,
+  "register": 12,
+  "scene_examples": [
+   "North Node in Aries moves through your 3rd house of communication and daily reality, so a conversation, messag"
+  ]
+ },
+ "North Node|Cancer": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 1,
+  "scene_examples": []
+ },
+ "North Node|Capricorn": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 1,
+  "register": 0,
+  "scene_examples": []
+ },
+ "North Node|Gemini": {
+  "meaning": 15,
+  "scene": 1,
+  "argument": 4,
+  "register": 12,
+  "scene_examples": [
+   "North Node in Gemini moves through your 6th house of daily routines and health, so a new routine may feel awkw"
+  ]
+ },
+ "North Node|Leo": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 1,
+  "scene_examples": []
+ },
+ "North Node|Libra": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 2,
+  "register": 1,
+  "scene_examples": []
+ },
+ "North Node|Pisces": {
+  "meaning": 3,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "North Node|Sagittarius": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 1,
+  "scene_examples": []
+ },
+ "North Node|Scorpio": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 1,
+  "scene_examples": []
+ },
+ "North Node|Taurus": {
+  "meaning": 15,
+  "scene": 0,
+  "argument": 3,
+  "register": 11,
+  "scene_examples": []
+ },
+ "North Node|Virgo": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Pluto|Aquarius": {
+  "meaning": 36,
+  "scene": 0,
+  "argument": 2,
+  "register": 15,
+  "scene_examples": []
+ },
+ "Pluto|Aries": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Pluto|Cancer": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Pluto|Capricorn": {
+  "meaning": 67,
+  "scene": 1,
+  "argument": 5,
+  "register": 37,
+  "scene_examples": [
+   "Pluto in Capricorn moves through your 4th house of home and family. You might feel pulled to face what's reall"
+  ]
+ },
+ "Pluto|Gemini": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Pluto|Leo": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 1,
+  "scene_examples": []
+ },
+ "Pluto|Libra": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 1,
+  "scene_examples": []
+ },
+ "Pluto|Pisces": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Pluto|Sagittarius": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Pluto|Scorpio": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 1,
+  "scene_examples": []
+ },
+ "Pluto|Taurus": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Pluto|Virgo": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 0,
+  "register": 1,
+  "scene_examples": []
+ },
+ "Saturn|Aquarius": {
+  "meaning": 26,
+  "scene": 1,
+  "argument": 1,
+  "register": 13,
+  "scene_examples": [
+   "Saturn in Aquarius moves through your 2nd house of disposable income and foundation, so money may need firmer "
+  ]
+ },
+ "Saturn|Aries": {
+  "meaning": 23,
+  "scene": 1,
+  "argument": 0,
+  "register": 10,
+  "scene_examples": [
+   "Saturn in Aries moves through your 2nd house of disposable income and foundation, so money may need firmer lim"
+  ]
+ },
+ "Saturn|Cancer": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Saturn|Capricorn": {
+  "meaning": 28,
+  "scene": 0,
+  "argument": 4,
+  "register": 13,
+  "scene_examples": []
+ },
+ "Saturn|Gemini": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Saturn|Leo": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 2,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Saturn|Libra": {
+  "meaning": 12,
+  "scene": 0,
+  "argument": 7,
+  "register": 6,
+  "scene_examples": []
+ },
+ "Saturn|Pisces": {
+  "meaning": 32,
+  "scene": 2,
+  "argument": 4,
+  "register": 14,
+  "scene_examples": [
+   "Saturn in Pisces moves through your 2nd house of disposable income and foundation, so money may need firmer li",
+   "Saturn in Pisces moves through your 2nd house of disposable income and foundation, so money may need firmer li"
+  ]
+ },
+ "Saturn|Sagittarius": {
+  "meaning": 15,
+  "scene": 0,
+  "argument": 12,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Saturn|Scorpio": {
+  "meaning": 6,
+  "scene": 0,
+  "argument": 2,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Saturn|Taurus": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Saturn|Unspecified": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Saturn|Virgo": {
+  "meaning": 3,
+  "scene": 0,
+  "argument": 0,
+  "register": 2,
+  "scene_examples": []
+ },
+ "South Node|Aquarius": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 1,
+  "scene_examples": []
+ },
+ "South Node|Aries": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 1,
+  "scene_examples": []
+ },
+ "South Node|Cancer": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 1,
+  "scene_examples": []
+ },
+ "South Node|Capricorn": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 1,
+  "scene_examples": []
+ },
+ "South Node|Gemini": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 1,
+  "register": 1,
+  "scene_examples": []
+ },
+ "South Node|Leo": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "South Node|Libra": {
+  "meaning": 15,
+  "scene": 0,
+  "argument": 4,
+  "register": 12,
+  "scene_examples": []
+ },
+ "South Node|Pisces": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 2,
+  "register": 1,
+  "scene_examples": []
+ },
+ "South Node|Sagittarius": {
+  "meaning": 15,
+  "scene": 0,
+  "argument": 8,
+  "register": 8,
+  "scene_examples": []
+ },
+ "South Node|Scorpio": {
+  "meaning": 15,
+  "scene": 0,
+  "argument": 2,
+  "register": 8,
+  "scene_examples": []
+ },
+ "South Node|Taurus": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 1,
+  "scene_examples": []
+ },
+ "South Node|Virgo": {
+  "meaning": 3,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Stellium (Mars, Jupiter, Saturn, Pluto)|Capricorn": {
+  "meaning": 3,
+  "scene": 0,
+  "argument": 0,
+  "register": 3,
+  "scene_examples": []
+ },
+ "Sun|Aquarius": {
+  "meaning": 45,
+  "scene": 3,
+  "argument": 11,
+  "register": 37,
+  "scene_examples": [
+   "Sun in Aquarius moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, a",
+   "Sun in Aquarius moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, a"
+  ]
+ },
+ "Sun|Aquarius I": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Aquarius Ii": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 1,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Aries": {
+  "meaning": 70,
+  "scene": 6,
+  "argument": 11,
+  "register": 62,
+  "scene_examples": [
+   "Sun in Aries moves through your 3rd house of communication and daily reality, so a message, post, pitch, or de",
+   "Sun in Aries moves through your 3rd house of communication and daily reality, so a message, post, pitch, or de"
+  ]
+ },
+ "Sun|Aries Ii": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 1,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Cancer": {
+  "meaning": 70,
+  "scene": 10,
+  "argument": 15,
+  "register": 51,
+  "scene_examples": [
+   "Sun in Cancer moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and",
+   "Sun in Cancer moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and"
+  ]
+ },
+ "Sun|Cancer (2Nd Decan)": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 1,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Cancer I": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Cancer Ii": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Cancer Iii": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 1,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Capricorn": {
+  "meaning": 47,
+  "scene": 5,
+  "argument": 4,
+  "register": 34,
+  "scene_examples": [
+   "The sun in Capricorn moves into your 6th house of health and daily routines. That probably makes your sense of",
+   "Sun in Capricorn moves through your 3rd house of communication and daily reality, so a message, post, pitch, o"
+  ]
+ },
+ "Sun|Capricorn Iii": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Gemini": {
+  "meaning": 83,
+  "scene": 10,
+  "argument": 23,
+  "register": 70,
+  "scene_examples": [
+   "Sun in Gemini moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and",
+   "Sun in Gemini moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and"
+  ]
+ },
+ "Sun|Gemini I": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Gemini Ii": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Gemini Iii": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Leo": {
+  "meaning": 33,
+  "scene": 2,
+  "argument": 7,
+  "register": 26,
+  "scene_examples": [
+   "Sun in Leo moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and wh",
+   "Sun in Leo moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and wh"
+  ]
+ },
+ "Sun|Leo I": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 1,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Libra": {
+  "meaning": 32,
+  "scene": 2,
+  "argument": 14,
+  "register": 26,
+  "scene_examples": [
+   "Sun in Libra moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and ",
+   "Sun in Libra moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and "
+  ]
+ },
+ "Sun|Libra (Decan 2)": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 1,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Libra I": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 1,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Libra Iii": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Pisces": {
+  "meaning": 61,
+  "scene": 3,
+  "argument": 20,
+  "register": 43,
+  "scene_examples": [
+   "Sun in Pisces moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and",
+   "Sun in Pisces moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and"
+  ]
+ },
+ "Sun|Pisces Iii": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Sagittarius": {
+  "meaning": 55,
+  "scene": 3,
+  "argument": 25,
+  "register": 44,
+  "scene_examples": [
+   "Sun in Sagittarius moves through your 2nd house of disposable income and foundation, so pay, ownership, credit",
+   "Sun in Sagittarius moves through your 2nd house of disposable income and foundation, so pay, ownership, credit"
+  ]
+ },
+ "Sun|Sagittarius I": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Scorpio": {
+  "meaning": 55,
+  "scene": 4,
+  "argument": 12,
+  "register": 42,
+  "scene_examples": [
+   "Sun in Scorpio moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, an",
+   "Sun in Scorpio moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, an"
+  ]
+ },
+ "Sun|Scorpio (Decan 1)": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 0,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Scorpio (Decan 2)": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 1,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Scorpio (Third Decan)": {
+  "meaning": 1,
+  "scene": 0,
+  "argument": 1,
+  "register": 0,
+  "scene_examples": []
+ },
+ "Sun|Taurus": {
+  "meaning": 68,
+  "scene": 5,
+  "argument": 17,
+  "register": 56,
+  "scene_examples": [
+   "Sun in Taurus moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and",
+   "Sun in Taurus moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and"
+  ]
+ },
+ "Sun|Virgo": {
+  "meaning": 44,
+  "scene": 3,
+  "argument": 11,
+  "register": 33,
+  "scene_examples": [
+   "Sun in Virgo moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and ",
+   "Sun in Virgo moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and "
+  ]
+ },
+ "Uranus|Aquarius": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Uranus|Aries": {
+  "meaning": 18,
+  "scene": 0,
+  "argument": 7,
+  "register": 5,
+  "scene_examples": []
+ },
+ "Uranus|Cancer": {
+  "meaning": 2,
+  "scene": 1,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": [
+   "Uranus moving into Cancer starts shaking up home, in the literal sense and in the sense of who you let call yo"
+  ]
+ },
+ "Uranus|Capricorn": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Uranus|Gemini": {
+  "meaning": 33,
+  "scene": 8,
+  "argument": 12,
+  "register": 14,
+  "scene_examples": [
+   "Uranus in Gemini moves through your 3rd house of communication and daily reality, so a message, device, route,",
+   "Uranus in Gemini moves through your 3rd house of communication and daily reality, so a message, device, route,"
+  ]
+ },
+ "Uranus|Leo": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Uranus|Libra": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Uranus|Pisces": {
+  "meaning": 4,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Uranus|Sagittarius": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Uranus|Scorpio": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Uranus|Taurus": {
+  "meaning": 49,
+  "scene": 5,
+  "argument": 18,
+  "register": 28,
+  "scene_examples": [
+   "Uranus in Taurus moves through your 2nd house of disposable income and foundation, so income, expenses, posses",
+   "Uranus in Taurus moves through your 2nd house of disposable income and foundation, so income, expenses, posses"
+  ]
+ },
+ "Uranus|Virgo": {
+  "meaning": 2,
+  "scene": 0,
+  "argument": 1,
+  "register": 2,
+  "scene_examples": []
+ },
+ "Venus/Sun|Virgo": {
+  "meaning": 12,
+  "scene": 1,
+  "argument": 3,
+  "register": 3,
+  "scene_examples": [
+   "Venus and the Sun move through Virgo in your 2nd house of disposable income and foundation, putting more atten"
+  ]
+ },
+ "Venus|Aquarius": {
+  "meaning": 48,
+  "scene": 3,
+  "argument": 4,
+  "register": 41,
+  "scene_examples": [
+   "Venus in Aquarius moves through your 6th house of daily routines and health, so you may make the workspace nic",
+   "Venus in Aquarius moves through your 6th house of daily routines and health, so you may make the workspace nic"
+  ]
+ },
+ "Venus|Aries": {
+  "meaning": 101,
+  "scene": 4,
+  "argument": 8,
+  "register": 87,
+  "scene_examples": [
+   "Venus in Aries moves through your 3rd house of communication and daily reality, so you may care more about how",
+   "Venus in Aries moves through your 3rd house of communication and daily reality, so you may care more about how"
+  ]
+ },
+ "Venus|Cancer": {
+  "meaning": 57,
+  "scene": 4,
+  "argument": 8,
+  "register": 50,
+  "scene_examples": [
+   "Venus in Cancer moves through your 6th house of daily routines and health, so you may make the workspace nicer",
+   "Venus in Cancer moves through your 6th house of daily routines and health, so you may make the workspace nicer"
+  ]
+ },
+ "Venus|Capricorn": {
+  "meaning": 62,
+  "scene": 9,
+  "argument": 7,
+  "register": 51,
+  "scene_examples": [
+   "Venus retrograde in Capricorn can send you back to reconsider a long-term commitment or a budget, checking if ",
+   "Venus in Capricorn moves through your 6th house of daily routines and health, so you may make the workspace ni"
+  ]
+ },
+ "Venus|Gemini": {
+  "meaning": 58,
+  "scene": 4,
+  "argument": 12,
+  "register": 46,
+  "scene_examples": [
+   "Venus direct in Gemini can bring flirtation and easy conversation back after a stretch where connecting with p",
+   "Venus in Gemini moves through your 6th house of daily routines and health, so you may make the workspace nicer"
+  ]
+ },
+ "Venus|Leo": {
+  "meaning": 65,
+  "scene": 4,
+  "argument": 8,
+  "register": 50,
+  "scene_examples": [
+   "Venus in Leo moves through your 3rd house of communication and daily reality, so you may care more about how t",
+   "Venus in Leo moves through your 3rd house of communication and daily reality, so you may care more about how t"
+  ]
+ },
+ "Venus|Libra": {
+  "meaning": 26,
+  "scene": 2,
+  "argument": 15,
+  "register": 15,
+  "scene_examples": [
+   "The workday may start bothering you in ways that are hard to unsee. Venus in Libra is moving through your 6th ",
+   "A conversation about shared money or responsibility may get harder to avoid. Venus in Libra is moving through "
+  ]
+ },
+ "Venus|Pisces": {
+  "meaning": 63,
+  "scene": 3,
+  "argument": 8,
+  "register": 49,
+  "scene_examples": [
+   "Venus in Pisces moves through your 6th house of daily routines and health, so you may make the workspace nicer",
+   "Venus in Pisces moves through your 6th house of daily routines and health, so you may make the workspace nicer"
+  ]
+ },
+ "Venus|Sagittarius": {
+  "meaning": 44,
+  "scene": 0,
+  "argument": 21,
+  "register": 37,
+  "scene_examples": []
+ },
+ "Venus|Scorpio": {
+  "meaning": 23,
+  "scene": 0,
+  "argument": 5,
+  "register": 13,
+  "scene_examples": []
+ },
+ "Venus|Taurus": {
+  "meaning": 59,
+  "scene": 0,
+  "argument": 10,
+  "register": 54,
+  "scene_examples": []
+ },
+ "Venus|Virgo": {
+  "meaning": 31,
+  "scene": 2,
+  "argument": 2,
+  "register": 25,
+  "scene_examples": [
+   "Venus in Virgo moves through your 11th house of friendships and community, so an invitation may get you out of",
+   "Venus in Virgo moves through your 11th house of friendships and community, so an invitation may get you out of"
+  ]
+ }
+}

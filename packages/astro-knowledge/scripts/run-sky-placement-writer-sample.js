@@ -3,7 +3,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { buildPacket, renderModelInput } = require("../../../.agents/skills/marie-satori-writer/scripts/compile-writing-packet.js");
+const { buildPacket, renderModelInput } = require("../../../.agents/skills/satori-writer/scripts/compile-writing-packet.js");
 const { assertRoutingMatch, resolveWriterCandidate } = require("./sky-placement-writer-runtime.js");
 const { lintArticle } = require("./lint-placement-voice.js");
 const { judgeArticle } = require("./judge-placement-voice.js");
