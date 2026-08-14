@@ -661,12 +661,14 @@ export function fallbackV3ApprovalLevelForContentKey(contentKey: string | null |
   const row = transitAuthoredCardsByKey.get(contentKey)
     ?? hookRowsByKey.get(contentKey)
     ?? vocabularyRowsByKey.get(contentKey);
-  const approval = row?.approval as StructuredApproval | null | undefined;
+  if (!row) return null;
+
+  const approval = row.approval as StructuredApproval | null | undefined;
   const approvalLevel = approval?.approvalLevel;
 
   return typeof approvalLevel === "string" && approvalLevel.trim()
     ? approvalLevel.trim()
-    : null;
+    : "ungated";
 }
 
 export function transitV3SameBeatKeyForContentKey(contentKey: string | null | undefined) {
