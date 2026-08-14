@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/schemas/daily-glance-contextual-overrides-v1.schema.json",
+  "title": "Daily Glance contextual override registry v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "policy", "overrides"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["referenceOnly", "servingEnabled", "precedence", "eligibleStatuses"],
+      "properties": {
+        "referenceOnly": { "const": true },
+        "servingEnabled": { "type": "boolean" },
+        "precedence": {
+          "const": [
+            "two-house-intersection",
+            "natal-house",
+            "transit-house",
+            "sign-specificity",
+            "approved-base-card"
+          ]
+        },
+        "eligibleStatuses": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["approved", "approved_reuse", "reviewed"] }
+        }
+      }
+    },
+    "overrides": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/override" }
+    }
+  },
+  "$defs": {
+    "override": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "overrideId",
+        "baseKey",
+        "when",
+        "headlineRef",
+        "bodyRef",
+        "approval"
+      ],
+      "properties": {
+        "overrideId": {
+          "type": "string",
+          "pattern": "^daily-glance-context/"
+        },
+        "baseKey": {
+          "type": "string",
+          "pattern": "^(conjunction|square|opposition|soft)/[a-z0-9-]+$"
+        },
+        "when": {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "transitSign": { "type": "string", "minLength": 1 },
+            "transitHouse": { "type": "integer", "minimum": 1, "maximum": 12 },
+            "natalSign": { "type": "string", "minLength": 1 },
+            "natalHouse": { "type": "integer", "minimum": 1, "maximum": 12 }
+          }
+        },
+        "headlineRef": {
+          "type": "string",
+          "pattern": "^fallback-hook/daily-headline/contextual/"
+        },
+        "bodyRef": {
+          "type": "string",
+          "pattern": "^fallback-hook/daily-body/contextual/"
+        },
+        "approval": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "ownerApproved",
+            "approvalSource",
+            "exactWordingQuoted",
+            "renderEligible"
+          ],
+          "properties": {
+            "status": {
+              "enum": ["review_needed", "approved", "approved_reuse", "reviewed", "rejected"]
+            },
+            "ownerApproved": { "type": "boolean" },
+            "approvalSource": { "type": ["string", "null"] },
+            "exactWordingQuoted": { "type": "boolean" },
+            "renderEligible": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  }
+}
