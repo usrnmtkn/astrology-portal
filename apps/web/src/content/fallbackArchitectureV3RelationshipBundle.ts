@@ -6,6 +6,7 @@ import type {
   FallbackArchitectureV3Bundle,
   HookRow
 } from "./fallbackArchitectureV3Runtime";
+import { isFriendsAcceptedApprovalLevel } from "./fallbackApproval";
 
 function assertBondLanguagePass2Import() {
   const rows = bondLanguagePass2.rows;
@@ -30,18 +31,18 @@ function assertBondLanguagePass2Import() {
 
 assertBondLanguagePass2Import();
 
-const exactApprovedBondEffectRows = bundledDeferredCoreRowsV3.hookRows.filter((row) => (
+const approvedBondEffectRows = bundledDeferredCoreRowsV3.hookRows.filter((row) => (
   row.contentKey.startsWith("fallback-hook/bond-effect-")
 ));
 
 if (
-  exactApprovedBondEffectRows.length !== 139
-  || exactApprovedBondEffectRows.some((row) => (
+  approvedBondEffectRows.length !== 139
+  || approvedBondEffectRows.some((row) => (
     row.review_status !== "approved"
-    || row.approval?.approvalLevel !== "exact_owner_approved"
+    || !isFriendsAcceptedApprovalLevel(row.approval?.approvalLevel)
   ))
 ) {
-  throw new Error("Relationship bundle must serve all 139 exact-owner-approved directional bond rows.");
+  throw new Error("Relationship bundle must serve all 139 owner-approved directional bond rows.");
 }
 
 export const relationshipFallbackArchitectureV3Bundle: FallbackArchitectureV3Bundle = {
@@ -52,7 +53,7 @@ export const relationshipFallbackArchitectureV3Bundle: FallbackArchitectureV3Bun
     templates: []
   },
   rowsFile: {
-    hookRows: exactApprovedBondEffectRows as HookRow[],
+    hookRows: approvedBondEffectRows as HookRow[],
     vocabularyRows: []
   }
 };

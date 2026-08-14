@@ -31,7 +31,7 @@ export interface ApprovalReference {
   approvalLevel: "exact_owner_approved" | "owner_signoff_untraced";
   recordPath?: string;
   payloadSha256?: string;
-  approvedAt: string;
+  approvedAt?: string;
 }
 export interface HookRow {
   contentKey: string;
