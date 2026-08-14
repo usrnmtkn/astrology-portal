@@ -62,6 +62,10 @@ function normalized(value) {
   return String(value || "").trim().toLowerCase();
 }
 
+function normalizedContentId(value) {
+  return normalized(value).replace(/\s+/gu, "-");
+}
+
 function exactLlKey(context) {
   return context.kind === "aspect"
     ? `${normalized(context.transitPlanet)}|${normalized(context.aspect)}|${normalized(context.natalPoint)}`
@@ -114,15 +118,27 @@ function verifyEvidence(evidence) {
   if (!fs.existsSync(absolute)) return { passed: false, reason: `Missing source ${evidence.sourcePath}` };
   const source = readJson(absolute);
   const llMatch = evidence.selector.match(/^rows\[key=(.+)\]$/u);
-  if (!llMatch) return { passed: false, reason: `Unsupported evidence selector ${evidence.selector}` };
-  const row = (source.rows || []).find((entry) => entry.key === llMatch[1]);
-  if (!row) return { passed: false, reason: `Missing evidence row ${llMatch[1]}` };
+  const authoredMatch = evidence.selector.match(/^authoredCards\[contentKey=(.+)\]$/u);
+  const row = llMatch
+    ? (source.rows || []).find((entry) => entry.key === llMatch[1])
+    : authoredMatch
+      ? (source.authoredCards || []).find((entry) => entry.contentKey === authoredMatch[1])
+      : null;
+  if (!llMatch && !authoredMatch) {
+    return { passed: false, reason: `Unsupported evidence selector ${evidence.selector}` };
+  }
+  if (!row) return { passed: false, reason: `Missing evidence row ${llMatch?.[1] || authoredMatch?.[1]}` };
+  const evidenceField = evidence.field || "copy";
+  const sourceText = row[evidenceField];
   const evidenceMatches = evidence.match === "includes"
-    ? row.copy.includes(evidence.text)
-    : row.copy === evidence.text;
+    ? sourceText?.includes(evidence.text)
+    : sourceText === evidence.text;
   if (!evidenceMatches) return { passed: false, reason: `Evidence text drifted for ${evidence.sourceId}` };
-  if (evidence.sourceApproval === "approved" && row.ownerApproved !== true) {
+  if (evidence.sourceApproval === "approved" && llMatch && row.ownerApproved !== true) {
     return { passed: false, reason: `Evidence ${evidence.sourceId} is no longer owner-approved` };
+  }
+  if (evidence.sourceApproval === "approved" && authoredMatch && !SERVING_STATUSES.has(normalized(row.review_status))) {
+    return { passed: false, reason: `Evidence ${evidence.sourceId} is no longer reader-approved` };
   }
   return { passed: true };
 }
@@ -167,6 +183,12 @@ function validateScopeBoundary(license, errors) {
       errors.push(`${license.licenseId} provenance for ${grant.semanticClass}:${grant.value} must use scopeRole ${expectedRole}`);
     }
   }
+  if (license.scope?.contextGuard && type !== "house") {
+    errors.push(`${license.licenseId} may use contextGuard only to narrow a house arena`);
+  }
+  if (license.scope?.contextGuard && !license.constraints?.causalGuard) {
+    errors.push(`${license.licenseId} must carry a causal guard with its contextGuard`);
+  }
 }
 
 function validateLicenseRegistry(registry) {
@@ -194,11 +216,19 @@ function validateLicenseRegistry(registry) {
     }
     const evidenceById = new Map((license.evidence || []).map((entry) => [entry.sourceId, entry]));
     const evidenceIds = new Set(evidenceById.keys());
+    const supportingReferenceIds = new Set(
+      (license.evidence || [])
+        .filter((entry) => entry.evidenceRole === "supporting-reference")
+        .map((entry) => entry.sourceId)
+    );
     const availableSourceIds = new Set([...evidenceIds, ...authoritySources.keys()]);
     for (const sourceId of license.sourceIds || []) {
       if (!availableSourceIds.has(sourceId)) errors.push(`${license.licenseId} lacks evidence or owner doctrine for ${sourceId}`);
     }
     for (const evidence of license.evidence || []) {
+      if (!["executable", "supporting-reference"].includes(evidence.evidenceRole || "executable")) {
+        errors.push(`${license.licenseId} has unsupported evidence role ${evidence.evidenceRole}`);
+      }
       const verified = verifyEvidence(evidence);
       if (!verified.passed) errors.push(`${license.licenseId}: ${verified.reason}`);
     }
@@ -214,6 +244,9 @@ function validateLicenseRegistry(registry) {
         if (!availableSourceIds.has(sourceId)) {
           errors.push(`${license.licenseId} provenance for ${grant.semanticClass}:${grant.value} cites unknown source ${sourceId}`);
         }
+        if (supportingReferenceIds.has(sourceId)) {
+          errors.push(`${license.licenseId} provenance for ${grant.semanticClass}:${grant.value} cites supporting-only reference ${sourceId}`);
+        }
       }
       if (grant.grantType.startsWith("normalized")) {
         const doctrineIds = (grant.sourceIds || []).filter((sourceId) => authoritySources.get(sourceId)?.authorityClass === "owner-doctrine");
@@ -222,7 +255,9 @@ function validateLicenseRegistry(registry) {
         }
       }
       if (grant.grantType === "verbatim") {
-        const supportingEvidence = (grant.sourceIds || []).map((sourceId) => evidenceById.get(sourceId)).filter(Boolean);
+        const supportingEvidence = (grant.sourceIds || [])
+          .map((sourceId) => evidenceById.get(sourceId))
+          .filter((evidence) => evidence && evidence.evidenceRole !== "supporting-reference");
         if (!supportingEvidence.some((evidence) => normalized(evidence.text).includes(normalized(grant.value)))) {
           errors.push(`${license.licenseId} verbatim grant ${grant.semanticClass}:${grant.value} is not literal in its cited matrix evidence`);
         }
@@ -245,21 +280,27 @@ function validateLicenseRegistry(registry) {
 function scopeMatches(scope, context) {
   if (scope.type === "aspect") {
     return context.kind === "aspect"
-      && normalized(scope.transitPlanet) === normalized(context.transitPlanet)
+      && normalizedContentId(scope.transitPlanet) === normalizedContentId(context.transitPlanet)
       && normalized(scope.aspect) === normalized(context.aspect)
-      && normalized(scope.natalPoint) === normalized(context.natalPoint);
+      && normalizedContentId(scope.natalPoint) === normalizedContentId(context.natalPoint);
   }
   if (scope.type === "house") {
-    return context.housesReliable === true
+    const houseMatches = context.housesReliable === true
       && (Number(scope.house) === Number(context.transitHouse) || Number(scope.house) === Number(context.natalHouse));
+    if (!houseMatches) return false;
+    if (!scope.contextGuard) return true;
+    return context.kind === "aspect"
+      && normalizedContentId(scope.contextGuard.transitPlanet) === normalizedContentId(context.transitPlanet)
+      && normalized(scope.contextGuard.aspect) === normalized(context.aspect)
+      && normalizedContentId(scope.contextGuard.natalPoint) === normalizedContentId(context.natalPoint);
   }
   if (scope.type === "transit-sign") {
-    return normalized(scope.transitPlanet) === normalized(context.transitPlanet)
+    return normalizedContentId(scope.transitPlanet) === normalizedContentId(context.transitPlanet)
       && normalized(scope.sign) === normalized(context.transitSign);
   }
   if (scope.type === "natal-sign") {
     return context.kind === "aspect"
-      && normalized(scope.natalPoint || context.natalPoint) === normalized(context.natalPoint)
+      && normalizedContentId(scope.natalPoint || context.natalPoint) === normalizedContentId(context.natalPoint)
       && normalized(scope.sign) === normalized(context.natalSign);
   }
   return false;
@@ -287,7 +328,7 @@ function addPermission(map, semanticClass, value, license, grant) {
   map[semanticClass][value].licenseIds = [...new Set(map[semanticClass][value].licenseIds)];
 }
 
-function writerBoundary(permissions, registry, enabled) {
+function writerBoundary(permissions, registry, enabled, constraints = []) {
   const allowed = Object.fromEntries(SEMANTIC_CLASSES.map((semanticClass) => [semanticClass, Object.entries(permissions[semanticClass]).map(([value, provenance]) => ({ value, ...provenance }))]));
   const doNotInvent = Object.fromEntries(SEMANTIC_CLASSES.map((semanticClass) => [
     semanticClass,
@@ -300,6 +341,8 @@ function writerBoundary(permissions, registry, enabled) {
       : "No contextual writing is authorized. Use the approved fallback selected by the resolver.",
     allowed,
     doNotInvent,
+    causalGuards: [...new Set(constraints.map((entry) => entry.causalGuard).filter(Boolean))],
+    disallowedInferences: [...new Set(constraints.flatMap((entry) => entry.disallowedInferences || []))],
     outputContract: {
       approvalStatus: "UNAPPROVED",
       requireSpecificityClaims: true,
@@ -318,9 +361,20 @@ function compileSceneContext(context, { mode = "production", registry = readJson
   const exact = getApprovedLlMechanism(context);
   const pair = exact ? null : getPairMechanism(context);
   const pairApproved = pair?.sourceApproval === "approved" ? pair : null;
-  const mechanism = exact || pairApproved || null;
   const matchedLicenses = (registry.licenses || []).filter((license) => scopeMatches(license.scope, context));
   const executableLicenses = matchedLicenses.filter((license) => licenseAvailable(license, mode));
+  const ownerApprovedAspectMechanism = executableLicenses.find((license) => license.scope.type === "aspect");
+  const licensedMechanism = ownerApprovedAspectMechanism
+    ? {
+        sourceId: ownerApprovedAspectMechanism.licenseId,
+        text: null,
+        normalizedMeaning: ownerApprovedAspectMechanism.normalizedMeaning,
+        sourceApproval: "approved",
+        provenanceTier: "exact-owner-doctrine"
+      }
+    : null;
+  const mechanism = licensedMechanism || exact || pairApproved || null;
+  const constraints = executableLicenses.map((license) => license.constraints).filter(Boolean);
   const permissions = Object.fromEntries(SEMANTIC_CLASSES.map((semanticClass) => [semanticClass, {}]));
   for (const license of executableLicenses) {
     for (const semanticClass of SEMANTIC_CLASSES) {
@@ -360,7 +414,8 @@ function compileSceneContext(context, { mode = "production", registry = readJson
       sourceIds: license.sourceIds,
       approval: license.approval,
       normalizedMeaning: license.normalizedMeaning,
-      provenance: license.provenance
+      provenance: license.provenance,
+      constraints: license.constraints || null
     })),
     reviewLicenses: mode === "review" ? matchedLicenses.map((license) => ({
       licenseId: license.licenseId,
@@ -368,14 +423,15 @@ function compileSceneContext(context, { mode = "production", registry = readJson
       sourceIds: license.sourceIds,
       approval: license.approval,
       normalizedMeaning: license.normalizedMeaning,
-      provenance: license.provenance
+      provenance: license.provenance,
+      constraints: license.constraints || null
     })) : [],
     permissions,
     hasContextualPermissions,
     reviewNeededLicenses,
     requiresOwnerLicenseApproval: reviewNeededLicenses.length > 0,
     canGenerateContextualCandidate,
-    writerBoundary: writerBoundary(permissions, registry, canGenerateContextualCandidate),
+    writerBoundary: writerBoundary(permissions, registry, canGenerateContextualCandidate, constraints),
     fallback,
     governance: {
       writerOutputStatus: "UNAPPROVED",
@@ -389,7 +445,7 @@ function compileSceneContext(context, { mode = "production", registry = readJson
 
 function dailyGlanceKeyForContext(context) {
   if (context?.kind === "house") return `house/${context.transitHouse}`;
-  if (context?.kind === "aspect") return `${context.aspectGroup}/${normalized(context.natalPoint)}`;
+  if (context?.kind === "aspect") return `${context.aspectGroup}/${normalizedContentId(context.natalPoint)}`;
   return null;
 }
 

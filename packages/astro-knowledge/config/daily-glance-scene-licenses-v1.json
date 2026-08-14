@@ -20,6 +20,13 @@
       "authorityClass": "owner-doctrine",
       "approval": "approved",
       "verificationText": "these exact field-level changes constitute approval of the revised meanings"
+    },
+    {
+      "sourceId": "owner-doctrine:daily-glance-scene-license-ruling-2026-08-14",
+      "sourcePath": "packages/astro-knowledge/review/daily-glance-scene-license-ruling-2026-08-14.md",
+      "authorityClass": "owner-doctrine",
+      "approval": "approved",
+      "verificationText": "scene-license/aspect/moon-conjunction-north-node/v1 — approved for writer use."
     }
   ],
   "closedVocabulary": {
@@ -33,7 +40,8 @@
       "professional achievement": ["professional achievement"],
       "communication": ["communication", "conversation", "information"],
       "home": ["home", "household", "living situation"],
-      "family": ["family", "parent", "parents"],
+      "family": ["family"],
+      "private life": ["private life", "private situation"],
       "shared money": ["shared money", "debt", "taxes", "inheritance"],
       "travel": ["travel", "trip", "flight"],
       "health": ["health", "symptom", "symptoms", "medical"]
@@ -46,6 +54,7 @@
       "family member": ["family member", "parent", "sibling", "child"]
     },
     "settings": {
+      "home": ["at home", "inside the home", "in the household"],
       "work that can be evaluated publicly or professionally": [
         "work that can be evaluated publicly or professionally",
         "publicly evaluated work",
@@ -69,6 +78,11 @@
       "notice another person's mood": ["notice somebody else's mood", "notice someone else's mood", "someone else seems uneasy"],
       "form an explanation before the other person has explained what happened": [
         "form an explanation before the other person has explained what happened"
+      ],
+      "notice an unfamiliar possibility": ["notice an unfamiliar possibility", "an unfamiliar possibility"],
+      "return attention to a plan they have barely admitted they want": [
+        "return attention to a plan they have barely admitted they want",
+        "a plan they have barely admitted they want"
       ]
     },
     "behaviors": {
@@ -78,6 +92,9 @@
       ],
       "responds by trying to make the feeling useful or correctable": [
         "responds by trying to make the feeling useful or correctable"
+      ],
+      "treat a temporary emotional opening as information rather than a decision": [
+        "treat a temporary emotional opening as information rather than a decision"
       ]
     },
     "consequences": {
@@ -300,6 +317,147 @@
           "grantType": "normalized, owner-reviewed",
           "scopeRole": "arena",
           "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-11"]
+        }
+      ],
+      "approval": {
+        "status": "approved",
+        "inheritsSourceApproval": false,
+        "ownerApproved": true,
+        "writerEligible": true,
+        "renderEligible": false
+      }
+    },
+    {
+      "licenseId": "scene-license/aspect/moon-conjunction-north-node/v1",
+      "scope": {
+        "type": "aspect",
+        "transitPlanet": "moon",
+        "aspect": "conjunction",
+        "natalPoint": "north-node"
+      },
+      "sourceIds": [
+        "authored:transit-aspect/moon/north-node/conjunction",
+        "owner-doctrine:daily-glance-scene-license-ruling-2026-08-14"
+      ],
+      "evidence": [
+        {
+          "sourceId": "authored:transit-aspect/moon/north-node/conjunction",
+          "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json",
+          "selector": "authoredCards[contentKey=authored/transit-aspect/moon/north-node/conjunction]",
+          "field": "body_you",
+          "evidenceRole": "supporting-reference",
+          "match": "includes",
+          "text": "You may also feel unexpectedly protective of a plan you have barely admitted you want.",
+          "sourceApproval": "approved"
+        }
+      ],
+      "normalizedMeaning": {
+        "domains": [],
+        "roles": [],
+        "settings": [],
+        "objects": [],
+        "actions": [
+          "notice an unfamiliar possibility",
+          "return attention to a plan they have barely admitted they want"
+        ],
+        "behaviors": ["treat a temporary emotional opening as information rather than a decision"],
+        "consequences": []
+      },
+      "provenance": [
+        {
+          "semanticClass": "actions",
+          "value": "notice an unfamiliar possibility",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "mechanism",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "actions",
+          "value": "return attention to a plan they have barely admitted they want",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "mechanism",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "behaviors",
+          "value": "treat a temporary emotional opening as information rather than a decision",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "mechanism",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-14"]
+        }
+      ],
+      "approval": {
+        "status": "approved",
+        "inheritsSourceApproval": false,
+        "ownerApproved": true,
+        "writerEligible": true,
+        "renderEligible": false
+      }
+    },
+    {
+      "licenseId": "scene-license/house/4/v1",
+      "scope": {
+        "type": "house",
+        "house": 4
+      },
+      "sourceIds": [
+        "ll:4th house",
+        "owner-doctrine:daily-glance-scene-license-ruling-2026-08-14"
+      ],
+      "evidence": [
+        {
+          "sourceId": "ll:4th house",
+          "sourcePath": "packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json",
+          "selector": "rows[key=4th house]",
+          "match": "includes",
+          "text": "The 4th house is your private life, the part other people do not see. It holds the home you return to, the family atmosphere that trained your nervous system, the memories that still color reactions, and the private self that does not need an audience. Roots can be comforting, complicated, or both at once.",
+          "sourceApproval": "approved"
+        }
+      ],
+      "normalizedMeaning": {
+        "domains": ["private life", "home", "family"],
+        "roles": ["family member"],
+        "settings": ["home"],
+        "objects": [],
+        "actions": [],
+        "behaviors": [],
+        "consequences": []
+      },
+      "provenance": [
+        {
+          "semanticClass": "domains",
+          "value": "private life",
+          "grantType": "verbatim",
+          "scopeRole": "arena",
+          "sourceIds": ["ll:4th house"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "home",
+          "grantType": "verbatim",
+          "scopeRole": "arena",
+          "sourceIds": ["ll:4th house"]
+        },
+        {
+          "semanticClass": "domains",
+          "value": "family",
+          "grantType": "verbatim",
+          "scopeRole": "arena",
+          "sourceIds": ["ll:4th house"]
+        },
+        {
+          "semanticClass": "roles",
+          "value": "family member",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-14"]
+        },
+        {
+          "semanticClass": "settings",
+          "value": "home",
+          "grantType": "normalized, owner-reviewed",
+          "scopeRole": "arena",
+          "sourceIds": ["owner-doctrine:daily-glance-scene-license-ruling-2026-08-14"]
         }
       ],
       "approval": {
