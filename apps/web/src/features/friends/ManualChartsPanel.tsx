@@ -271,6 +271,7 @@ export function ManualChartsPanel({
     emptyHouseDetailArticle,
     emptyHouseTitle,
     friendTransitSummary,
+    genericPersonReferenceSlots,
     houseLifeAreaKeywords,
     houseLifeAreas,
     lifeAreaFocusScore,
@@ -371,6 +372,7 @@ export function ManualChartsPanel({
     currentSky: SkySnapshot,
     natalSky: SkySnapshot,
     ownerName: string,
+    ownerPreferredName?: string | null,
     ownerPronouns?: PronounChoice | null,
     userId?: string | null
   ): FriendDailyForecastView | null {
@@ -378,36 +380,88 @@ export function ManualChartsPanel({
 
     if (!driver) return null;
 
+    // Follow-up after Friends daily parity ships: author 2–3 approved variants per
+    // driver and select one deterministically from chart id + date + driver.
+
     try {
       const dateKey = currentSky.generatedAt.slice(0, 10);
+      const reference = ownerDisplayPronouns(ownerName, ownerPronouns);
+      const preferredName = ownerPreferredName?.trim()
+        || ownerName.trim().split(/\s+/u)[0]
+        || ownerName;
+      const personSlots = {
+        ...genericPersonReferenceSlots(reference),
+        personPreferredName: preferredName,
+        personPreferredNamePossessive: possessiveLabel(preferredName)
+      };
       const rendered = driver.kind === "aspect"
-        ? transitSynastryFallbackRendererV3.renderDailyGlance({ natal: driver.natal, aspect: driver.aspect, dateKey, userId })
-        : transitSynastryFallbackRendererV3.renderDailyGlance({ house: driver.house, dateKey, userId });
-      const ownerAwareCopy = createNatalGeneratedCopyForOwnerConverter(ownerName, "person", ownerPronouns);
-      const headline = ownerAwareCopy(rendered.headline ?? "");
-      const body = repairSingularOwnerVerbAgreement(
-        ownerAwareCopy(rendered.body ?? ""),
-        ownerName,
-        ownerPronouns
-      );
+        ? transitSynastryFallbackRendererV3.renderDailyGlance({
+            natal: driver.natal,
+            aspect: driver.aspect,
+            dateKey,
+            userId,
+            voice: "they",
+            personSlots
+          })
+        : transitSynastryFallbackRendererV3.renderDailyGlance({
+            house: driver.house,
+            dateKey,
+            userId,
+            voice: "they",
+            personSlots
+          });
 
-      // Follow-up after Friends daily parity ships: author 2–3 approved variants per
-      // driver and select one deterministically from chart id + date + driver.
       return {
-        headline,
-        body
+        headline: rendered.headline ?? "",
+        body: rendered.body ?? ""
       };
     } catch (error) {
-      if (error instanceof FallbackV3SourceGapError) {
-        console.warn("Friend Daily At-a-Glance source gap; hiding surface.", {
+      if (!(error instanceof FallbackV3SourceGapError)) {
+        throw error;
+      }
+
+      // Migration bridge: keep the friend's card visible without changing the
+      // grammar of author-final copy. The card header already identifies whose
+      // forecast this is, so unmigrated rows remain in their original second-person
+      // voice until an approved body_they replaces them. Never run sentence-wide
+      // pronoun substitution here.
+      try {
+        const dateKey = currentSky.generatedAt.slice(0, 10);
+        const rendered = driver.kind === "aspect"
+          ? transitSynastryFallbackRendererV3.renderDailyGlance({
+              natal: driver.natal,
+              aspect: driver.aspect,
+              dateKey,
+              userId
+            })
+          : transitSynastryFallbackRendererV3.renderDailyGlance({
+              house: driver.house,
+              dateKey,
+              userId
+            });
+
+        console.warn("Friend Daily At-a-Glance used the self-addressed migration bridge.", {
           ownerName,
           driver,
           error
         });
-        return null;
-      }
 
-      throw error;
+        return {
+          headline: rendered.headline ?? "",
+          body: rendered.body ?? ""
+        };
+      } catch (legacyError) {
+        if (legacyError instanceof FallbackV3SourceGapError) {
+          console.warn("Friend Daily At-a-Glance source gap; hiding surface.", {
+            ownerName,
+            driver,
+            error: legacyError
+          });
+          return null;
+        }
+
+        throw legacyError;
+      }
     }
   }
 
@@ -1200,6 +1254,7 @@ export function ManualChartsPanel({
           currentSky,
           selectedChart.natalChart,
           selectedChart.displayName,
+          selectedChart.firstName,
           selectedChart.pronouns,
           selectedChart.id
         )

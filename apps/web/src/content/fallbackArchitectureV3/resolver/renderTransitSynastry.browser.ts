@@ -17,6 +17,11 @@ import {
   type TemplatesFile,
   type RowsFile
 } from "./renderFallback.browser";
+import {
+  fillDailyGlancePersonSlots,
+  lintDailyGlanceFriendVoice,
+  type DailyGlancePersonSlots
+} from "./dailyGlanceVoice.browser";
 
 export interface AuthoredCard {
   contentKey: string;
@@ -55,6 +60,16 @@ export interface TransitHouseFacts { planet: string; house: number; sign?: strin
 export interface TransitAspectFacts { transiting: string; natal: string; aspect: string; variant?: string | number | null; pass?: 1 | 2 | 3 | number | null; sign?: string | null; isRetrograde?: boolean; window?: string | null; voice?: string }
 export interface TransitRetroFacts { planet: string; sign?: string | null; window?: string | null; format?: "card" | "article" }
 export interface TransitLabelFacts { transiting: string; natal: string; aspect: string; window?: string | null }
+export interface DailyGlanceFacts {
+  natal?: string;
+  aspect?: string;
+  house?: number | null;
+  dateKey?: string | null;
+  userId?: string | null;
+  previousVariantId?: string | null;
+  voice?: "you" | "they";
+  personSlots?: Partial<DailyGlancePersonSlots>;
+}
 export interface BondTransitFacts {
   transiting: string;
   aspect: string;
@@ -2436,25 +2451,90 @@ export function createTransitSynastryRenderer(
   // transiting Moon. Pass natal+aspect for the Moon's tightest applying aspect; pass house
   // (whole-sign house of the Moon) when no aspect is within orb. No astrology words render. ----
   const DAILY_GROUP: Record<string, string> = { conjunction: "conjunction", square: "square", opposition: "opposition", trine: "soft", sextile: "soft" };
-  function renderDailyGlance({ natal, aspect, house, dateKey, userId, previousVariantId }: { natal?: string; aspect?: string; house?: number | null; dateKey?: string | null; userId?: string | null; previousVariantId?: string | null }): TransitRenderResult {
+  function renderDailyGlance({
+    natal,
+    aspect,
+    house,
+    dateKey,
+    userId,
+    previousVariantId,
+    voice = "you",
+    personSlots = {}
+  }: DailyGlanceFacts): TransitRenderResult {
+    const renderFriendRow = (row: HookRow | undefined, contentKey: string) => {
+      const raw = row?.body_they;
+      if (!raw) return null;
+
+      const findings = lintDailyGlanceFriendVoice(raw);
+      if (findings.length > 0) {
+        throw new SourceGapError(
+          `SOURCE_GAP: ${contentKey} friend voice failed ${findings.map((finding) => finding.id).join(",")}`
+        );
+      }
+
+      try {
+        return fillDailyGlancePersonSlots(raw, personSlots);
+      } catch (error) {
+        throw new SourceGapError(
+          `SOURCE_GAP: ${contentKey} friend voice slots ${error instanceof Error ? error.message : String(error)}`
+        );
+      }
+    };
+
+    const renderForVoice = ({
+      headlineKey,
+      bodyKey,
+      contentKey
+    }: {
+      headlineKey: string;
+      bodyKey: string;
+      contentKey: string;
+    }) => {
+      if (voice === "they") {
+        const headline = renderFriendRow(hooks.get(headlineKey), headlineKey);
+        const body = renderFriendRow(hooks.get(bodyKey), bodyKey);
+        return headline && body
+          ? { headline, body, parts: [body], templateKey: "fallback-template/daily.glance", variantId: "primary-they" }
+          : null;
+      }
+
+      const headline = hooks.get(headlineKey)?.body_you;
+      const body = hooks.get(bodyKey)?.body_you;
+      if (!headline || !body) return null;
+      const selected = selectDailyGlanceVariantSet({
+        variantSet: rowsFile.dailyGlanceVariants?.keys[contentKey],
+        primary: { headline, body },
+        dateKey,
+        contentKey,
+        userId,
+        previousVariantId,
+        allowUnreviewed
+      });
+      return {
+        headline: selected.headline,
+        body: selected.body,
+        parts: [selected.body],
+        templateKey: "fallback-template/daily.glance",
+        variantId: selected.id
+      };
+    };
+
     if (natal && aspect) {
       const g = DAILY_GROUP[aspect] ?? aspect;
-      const h = hooks.get(`fallback-hook/daily-headline/${g}/${natal}`)?.body_you;
-      const b = hooks.get(`fallback-hook/daily-body/${g}/${natal}`)?.body_you;
-      if (h && b) {
-        const contentKey = `${g}/${natal}`;
-        const selected = selectDailyGlanceVariantSet({ variantSet: rowsFile.dailyGlanceVariants?.keys[contentKey], primary: { headline: h, body: b }, dateKey, contentKey, userId, previousVariantId, allowUnreviewed });
-        return { headline: selected.headline, body: selected.body, parts: [selected.body], templateKey: "fallback-template/daily.glance", variantId: selected.id };
-      }
+      const rendered = renderForVoice({
+        headlineKey: `fallback-hook/daily-headline/${g}/${natal}`,
+        bodyKey: `fallback-hook/daily-body/${g}/${natal}`,
+        contentKey: `${g}/${natal}`
+      });
+      if (rendered) return rendered;
     }
     if (house) {
-      const h = hooks.get(`fallback-hook/daily-headline/house/${house}`)?.body_you;
-      const b = hooks.get(`fallback-hook/daily-body/house/${house}`)?.body_you;
-      if (h && b) {
-        const contentKey = `house/${house}`;
-        const selected = selectDailyGlanceVariantSet({ variantSet: rowsFile.dailyGlanceVariants?.keys[contentKey], primary: { headline: h, body: b }, dateKey, contentKey, userId, previousVariantId, allowUnreviewed });
-        return { headline: selected.headline, body: selected.body, parts: [selected.body], templateKey: "fallback-template/daily.glance", variantId: selected.id };
-      }
+      const rendered = renderForVoice({
+        headlineKey: `fallback-hook/daily-headline/house/${house}`,
+        bodyKey: `fallback-hook/daily-body/house/${house}`,
+        contentKey: `house/${house}`
+      });
+      if (rendered) return rendered;
     }
     throw new SourceGapError(`SOURCE_GAP: daily glance ${aspect ?? "no-aspect"}/${natal ?? house}`);
   }
