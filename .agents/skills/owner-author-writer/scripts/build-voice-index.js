@@ -648,6 +648,12 @@ function natalFriendCalibrationEntries() {
   }
   const seen = new Set();
   return dataset.rows.map((row) => {
+    const recordFile = row.recordPath ? path.join(repoRoot, row.recordPath) : null;
+    const recordHashMatches = Boolean(
+      recordFile
+      && fs.existsSync(recordFile)
+      && crypto.createHash("sha256").update(fs.readFileSync(recordFile)).digest("hex") === row.recordSha256
+    );
     if (
       seen.has(row.key)
       || row.approvalLevel !== "exact_owner_approved"
@@ -655,6 +661,7 @@ function natalFriendCalibrationEntries() {
       || !row.copy
       || !row.recordPath
       || !/^[0-9a-f]{64}$/u.test(row.recordSha256 || "")
+      || !recordHashMatches
       || crypto.createHash("sha256").update(row.copy).digest("hex") !== row.payloadSha256
     ) {
       throw new Error(`Invalid natal Friend calibration row: ${row.key || "missing-key"}`);
