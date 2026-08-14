@@ -11,15 +11,20 @@ import { reportOwnerComparisonSet } from "../api/_lib/report-owner-comparison.ts
 import {
   loadActiveReportCritiquePrompt,
   loadActiveReportJudgePrompt,
+  loadLegacyReportCritiquePrompt,
+  loadLegacyReportJudgePrompt,
   REPORT_CRITIQUE_BASELINE_PROMPT_PATH,
+  REPORT_CRITIQUE_FOUNDATION_PROMPT_PATH,
   REPORT_CRITIQUE_PREVIOUS_PROMPT_PATH,
   REPORT_CRITIQUE_PROMPT_PATH,
   REPORT_CRITIQUE_PROMPT_VERSION,
   REPORT_EARNED_SENTENCE_RULING_PATH,
   REPORT_JUDGE_BASELINE_PROMPT_PATH,
+  REPORT_JUDGE_FOUNDATION_PROMPT_PATH,
   REPORT_JUDGE_PREVIOUS_PROMPT_PATH,
   REPORT_JUDGE_PROMPT_PATH,
-  REPORT_JUDGE_PROMPT_VERSION
+  REPORT_JUDGE_PROMPT_VERSION,
+  REPORT_NATURALNESS_RULING_PATH
 } from "../api/_lib/report-prompt-versions.ts";
 import { scopeReportPayloadToUnit } from "../api/_lib/report-unit-scope.ts";
 import { enforceReportRevisionStopRule, ReportStopRuleError } from "../api/_lib/report-writer-chain.ts";
@@ -36,10 +41,13 @@ const manifest = JSON.parse(fs.readFileSync(new URL("./fixtures/report-judge-com
 const facts = JSON.parse(fs.readFileSync(manifest.factsSourcePath, "utf8"));
 const judgeV3 = fs.readFileSync(REPORT_JUDGE_BASELINE_PROMPT_PATH, "utf8");
 const critiqueV3 = fs.readFileSync(REPORT_CRITIQUE_BASELINE_PROMPT_PATH, "utf8");
-const judgeV32 = fs.readFileSync(REPORT_JUDGE_PREVIOUS_PROMPT_PATH, "utf8");
-const critiqueV5 = fs.readFileSync(REPORT_CRITIQUE_PREVIOUS_PROMPT_PATH, "utf8");
-const judgeV33 = fs.readFileSync(REPORT_JUDGE_PROMPT_PATH, "utf8");
-const critiqueV6 = fs.readFileSync(REPORT_CRITIQUE_PROMPT_PATH, "utf8");
+const judgeV32 = fs.readFileSync(REPORT_JUDGE_FOUNDATION_PROMPT_PATH, "utf8");
+const critiqueV5 = fs.readFileSync(REPORT_CRITIQUE_FOUNDATION_PROMPT_PATH, "utf8");
+const judgeV33 = fs.readFileSync(REPORT_JUDGE_PREVIOUS_PROMPT_PATH, "utf8");
+const critiqueV6 = fs.readFileSync(REPORT_CRITIQUE_PREVIOUS_PROMPT_PATH, "utf8");
+const judgeV34 = fs.readFileSync(REPORT_JUDGE_PROMPT_PATH, "utf8");
+const critiqueV7 = fs.readFileSync(REPORT_CRITIQUE_PROMPT_PATH, "utf8");
+const naturalnessRuling = fs.readFileSync(REPORT_NATURALNESS_RULING_PATH, "utf8");
 const earnedSentenceRuling = fs.readFileSync(REPORT_EARNED_SENTENCE_RULING_PATH, "utf8");
 const livedProseStandard = fs.readFileSync("tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md", "utf8");
 const archivedJudgeV2 = fs.readFileSync("tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V2-OWNER.md", "utf8");
@@ -155,14 +163,40 @@ assert.deepEqual(manifest.proposedCalibrationCallBudget, {
 });
 assert.equal(new Set(manifest.pairs.map((pair) => pair.reportDomain)).size, 4);
 assert.ok(manifest.pairs.some((pair) => pair.reportDomain === "personal_health"));
-assert.equal(REPORT_JUDGE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3.3-OWNER.md");
-assert.equal(REPORT_CRITIQUE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V6-OWNER.md");
-assert.equal(REPORT_JUDGE_PROMPT_VERSION, "report-judge-rubric-v3.3");
-assert.equal(REPORT_CRITIQUE_PROMPT_VERSION, "report-critique-checklist-v6");
+assert.equal(REPORT_JUDGE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3.4-OWNER.md");
+assert.equal(REPORT_CRITIQUE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V7-OWNER.md");
+assert.equal(REPORT_JUDGE_PROMPT_VERSION, "report-judge-rubric-v3.4");
+assert.equal(REPORT_CRITIQUE_PROMPT_VERSION, "report-critique-checklist-v7");
 assert.match(archivedJudgeV2, /^\*\*Active in production:\*\* `false`$/mu);
 assert.match(archivedCritiqueV2, /^\*\*Active in production:\*\* `false`$/mu);
 assert.equal(REPORT_JUDGE_THRESHOLD, 0.85);
 assert.equal(reportFulfillmentConfig().judgeThreshold, 0.85);
+assert.ok(naturalnessRuling.includes("**Approved source SHA-256:** `d14433fb6bdee571a36460792f6527b98d3ad94072a178dfdb3d876aed8476db`"));
+for (const [name, document, version] of [
+  ["judge", judgeV34, "report-judge-rubric-v3.4"],
+  ["critique", critiqueV7, "report-critique-checklist-v7"]
+]) {
+  assert.match(document, /^\*\*Status:\*\* `owner_approved`$/mu, `${name} activation must record owner approval.`);
+  assert.ok(document.includes(`**Version:** \`${version}\``));
+  assert.match(document, /^\*\*Active in production:\*\* `true`$/mu);
+  assert.match(document, /^\*\*Owner approved:\*\* `true`$/mu);
+  assert.match(document, /^\*\*Promotion authorized:\*\* `true`$/mu);
+}
+const governingNaturalnessLine = "Do not flag a sentence because it is stylish. Flag it when the style makes the reader work harder than the meaning requires.";
+assert.ok(judgeV34.includes(governingNaturalnessLine));
+for (const diagnostic of ["constructed_phrasing", "double_hedging", "abstract_proof_language", "vagueness_that_matters"]) {
+  assert.ok(critiqueV7.includes(diagnostic), `Critique v7 must contain ${diagnostic}.`);
+}
+for (const restraint of ["landed_compact_rhetoric", "clear_pronoun_antecedent", "maximum_useful_specificity", "stop_after_landing"]) {
+  assert.ok(critiqueV7.includes(restraint), `Critique v7 must contain do-not-flag diagnostic ${restraint}.`);
+}
+for (const item of ["Unnatural verb for an ordinary action", "Double hedging weakens a supported consequence", "Abstract proof language instead of the observable test", "KEEP EXACTLY", "Pronoun: conditional, not mechanical", "Ordinary verb, concrete object"]) {
+  assert.ok(naturalnessRuling.includes(item), `Naturalness ruling must preserve evidence item '${item}'.`);
+}
+for (const document of [judgeV34, critiqueV7]) {
+  assert.match(document, /The reply you wanted can still create more work than the silence did\./u);
+  assert.match(document, /Pronoun (?:judgment|findings) (?:is|are) contextual/u);
+}
 
 for (const [name, document] of [["judge", judgeV3], ["critique", critiqueV3]]) {
   assert.match(document, /^\*\*Status:\*\* `owner_approved`$/mu, `${name} v3 approval must be recorded.`);
@@ -204,8 +238,11 @@ for (const [name, document, version, approvedSourceSha] of [
 }
 const activeJudgePrompt = loadActiveReportJudgePrompt();
 const activeCritiquePrompt = loadActiveReportCritiquePrompt();
+const legacyJudgePrompt = loadLegacyReportJudgePrompt();
+const legacyCritiquePrompt = loadLegacyReportCritiquePrompt();
 assert.deepEqual(activeJudgePrompt.sourcePaths, [
   REPORT_JUDGE_BASELINE_PROMPT_PATH,
+  REPORT_JUDGE_FOUNDATION_PROMPT_PATH,
   REPORT_JUDGE_PREVIOUS_PROMPT_PATH,
   REPORT_JUDGE_PROMPT_PATH
 ]);
@@ -214,6 +251,7 @@ assert.match(activeJudgePrompt.text, /report-judge-rubric-v3\.2/u);
 assert.match(activeJudgePrompt.text, /report-judge-rubric-v3\.3/u);
 assert.deepEqual(activeCritiquePrompt.sourcePaths, [
   REPORT_CRITIQUE_BASELINE_PROMPT_PATH,
+  REPORT_CRITIQUE_FOUNDATION_PROMPT_PATH,
   REPORT_CRITIQUE_PREVIOUS_PROMPT_PATH,
   REPORT_CRITIQUE_PROMPT_PATH
 ]);
@@ -221,6 +259,10 @@ assert.match(activeCritiquePrompt.text, /report-critique-checklist-v3/u);
 assert.match(activeCritiquePrompt.text, /report-critique-checklist-v5/u);
 assert.match(activeCritiquePrompt.text, /report-critique-checklist-v6/u);
 assert.match(activeCritiquePrompt.text, /no_earned_sentence/u);
+assert.match(activeJudgePrompt.text, /report-judge-rubric-v3\.4/u);
+assert.match(activeCritiquePrompt.text, /report-critique-checklist-v7/u);
+assert.doesNotMatch(legacyJudgePrompt.text, /report-judge-rubric-v3\.4/u);
+assert.doesNotMatch(legacyCritiquePrompt.text, /report-critique-checklist-v7/u);
 assert.match(activeJudgePrompt.text, /same unit-level function: overview with overview, season with season/iu);
 assert.equal(calibrationRunTwo.status, "passed");
 assert.equal(calibrationRunTwo.completedCalls, 9);
@@ -278,6 +320,39 @@ assert.match(runtimePrompt, /COMPLETE_UNIT[\s\S]*UNIT_FACTS[\s\S]*OWNER_COMPARIS
 assert.equal(runtimeJudge.result.applicability.interpretive_movement, "applicable");
 assert.equal(runtimeJudge.result.overall, 35 / 36);
 assert.equal(runtimeJudge.result.verdict, "pass", "Runtime recomputation must override model-reported overall and verdict.");
+const candidateRuntimePayload = assembleReportGenerationPayload({
+  reportId: "00000000-0000-0000-0000-000000000086",
+  reportDomain: "general",
+  reportHorizon: "12_months",
+  unitId: "spring",
+  frozenFacts: facts
+});
+let candidateRuntimePrompt = "";
+await judgeReportUnit({
+  payload: candidateRuntimePayload,
+  draft: { headline: "SPRING 2026: FIXTURE_ONLY", timing: "Mar 20 - Jun 21", body: "FIRST SUBSTANTIVE PARAGRAPH.\n\nSECOND SUBSTANTIVE PARAGRAPH.", sections: [] },
+  validatorResults: [],
+  threshold: 0.85,
+  promptMode: "active",
+  callModel: async (input) => {
+    candidateRuntimePrompt = input.prompt;
+    return {
+      value: {
+        scores: Object.fromEntries(REPORT_JUDGE_CATEGORIES.map((category) => [category, 4])),
+        applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
+        overall: 1,
+        verdict: "pass",
+        findings: []
+      },
+      model: "FIXTURE_ONLY_MODEL",
+      provider: "FIXTURE_ONLY_PROVIDER",
+      usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0 }
+    };
+  }
+});
+assert.match(candidateRuntimePrompt, /report-judge-rubric-v3\.4/u);
+assert.ok(candidateRuntimePrompt.includes(governingNaturalnessLine));
+assert.match(candidateRuntimePrompt, /NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING/u);
 const shortJudge = await judgeReportUnit({
   payload: runtimePayload,
   draft: { body: "ONE SUBSTANTIVE PARAGRAPH.", sections: [] },

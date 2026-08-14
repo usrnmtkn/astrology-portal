@@ -1,5 +1,5 @@
 import type { ReportDraft, ReportGenerationPayload, ReportValidationIssue } from "./report-generation.ts";
-import { reportPromptFromPayload, validateReportDraft } from "./report-generation.js";
+import { reportLegacyPromptFromPayload, reportPromptFromPayload, validateReportDraft } from "./report-generation.js";
 import {
   assertReportEvaluationPacketReady, completeReportUnit, reportEvaluationPacket,
   reportDraftMovementApplicable, reportSentenceSpans, reportUnitSentenceAddresses,
@@ -7,7 +7,7 @@ import {
 } from "./report-evaluation-packet.js";
 import { verifyReportFactLock } from "./report-fact-lock.js";
 import { callReportModel, type ReportModelCall, type ReportModelUsage, writerModelTarget } from "./report-model-client.js";
-import { loadActiveReportCritiquePrompt } from "./report-prompt-versions.js";
+import { loadActiveReportCritiquePrompt, loadLegacyReportCritiquePrompt, type ReportPromptMode } from "./report-prompt-versions.js";
 import { scopeReportPayloadToUnit } from "./report-unit-scope.js";
 
 export const REPORT_DEFECT_CATEGORIES = [
@@ -640,6 +640,7 @@ export async function reviseReportDraftForNamedDefects(input: {
   defects: ReportDefect[];
   callModel?: ReportModelCall;
   stage?: "revise" | "cold_revise";
+  promptMode?: ReportPromptMode;
 }) {
   const callModel = input.callModel ?? callReportModel;
   const target = writerModelTarget();
@@ -656,8 +657,11 @@ export async function reviseReportDraftForNamedDefects(input: {
       `COMPLETE_UNIT_READ_ONLY\n${completeReportUnit(input.draft)}`,
       `NAMED_DEFECTS_AND_INSTRUCTIONS\n${JSON.stringify(defects)}`,
       `CANONICAL_OWNER_RULING\n${payload.canonicalOwnerPrompt.text}`,
-      `LIVED_PROSE_OWNER_RULING\n${payload.livedProseStandard.text}`
-    ].join("\n\n"),
+      `LIVED_PROSE_OWNER_RULING\n${payload.livedProseStandard.text}`,
+      (input.promptMode ?? "active") === "active"
+        ? `NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING\n${payload.naturalnessRuling.text}`
+        : ""
+    ].filter(Boolean).join("\n\n"),
     schemaName: "report_unit_revision_spans",
     schema: REPORT_REVISION_PATCH_SCHEMA
   });
@@ -674,6 +678,7 @@ export async function runReportWriterChain(input: {
   chainKey?: string;
   checkpoint?: ReportWriterChainCheckpoint;
   persistCheckpoint?: (checkpoint: ReportWriterChainCheckpoint) => Promise<void>;
+  promptMode?: ReportPromptMode;
 }): Promise<ReportWriterChainResult> {
   const callModel = input.callModel ?? callReportModel;
   const target = writerModelTarget();
@@ -681,7 +686,10 @@ export async function runReportWriterChain(input: {
   // Fail closed before draft generation: a packet missing owner comparisons
   // must never consume a billed provider call.
   assertReportEvaluationPacketReady(payload);
-  const critiquePrompt = loadActiveReportCritiquePrompt();
+  const promptMode = input.promptMode ?? "active";
+  const critiquePrompt = promptMode === "active"
+    ? loadActiveReportCritiquePrompt()
+    : loadLegacyReportCritiquePrompt();
   const chainKey = input.chainKey ?? "standalone";
   const resumable = input.checkpoint?.schema === "report-writer-chain-checkpoint.v1"
     && input.checkpoint.chainKey === chainKey
@@ -704,7 +712,11 @@ export async function runReportWriterChain(input: {
   if (!draft) {
     const draftResult = await callModel<ReportDraft>({
       ...target,
-      prompt: [reportPromptFromPayload(payload), input.failureContext?.length ? `FAILURE_CONTEXT\n${input.failureContext.join("\n")}` : "", "Return one report unit using the structured output contract."].filter(Boolean).join("\n\n"),
+      prompt: [
+        promptMode === "active" ? reportPromptFromPayload(payload) : reportLegacyPromptFromPayload(payload),
+        input.failureContext?.length ? `FAILURE_CONTEXT\n${input.failureContext.join("\n")}` : "",
+        "Return one report unit using the structured output contract."
+      ].filter(Boolean).join("\n\n"),
       schemaName: "report_unit_draft",
       schema: REPORT_DRAFT_SCHEMA
     });
@@ -717,8 +729,10 @@ export async function runReportWriterChain(input: {
   let critique = resumable?.critique;
   if (!critique) {
     const deterministicIssues = [
-      ...validateReportDraft(draft, payload),
-      ...verifyReportFactLock(draft, payload.frozenFacts).issues
+      ...validateReportDraft(draft, payload, { enforceSeasonStructure: promptMode === "active" }),
+      ...verifyReportFactLock(draft, payload.frozenFacts, {
+        trustedTiming: payload.structuralRequirements?.dateRange
+      }).issues
     ];
     const movementApplicable = reportDraftMovementApplicable(draft);
     const critiqueResult = await callModel<ReportSentenceAddressedCritique>({
@@ -730,6 +744,9 @@ export async function runReportWriterChain(input: {
         `NO_CLEVERNESS_TAX_OWNER_RULING\n${payload.noClevernessRuling.text}`,
         `OWNER_REVIEW_EVIDENCE\n${payload.ownerReviewEvidence.text}`,
         `EARNED_SENTENCE_OWNER_RULING\n${payload.earnedSentenceRuling.text}`,
+        promptMode === "active"
+          ? `NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING\n${payload.naturalnessRuling.text}`
+          : "",
         FLATNESS_DIAGNOSTIC_ROUTING,
         "SENTENCE_ADDRESS_CONTRACT\nEvery finding must reference one or more supplied sentence_ids. The runtime owns source segmentation and resolves those IDs to exact replacement spans. quote is informational only and is never used as an address or compared for byte equality.",
         `SENTENCE_ADDRESSED_UNIT\n${sentenceAddressedReportUnit(draft)}`,
@@ -738,7 +755,7 @@ export async function runReportWriterChain(input: {
         `TARGET_FUNCTIONS\n${JSON.stringify(packet.targetFunctions)}`,
         `LABELED_NEGATIVE_EXAMPLES\n${JSON.stringify(packet.labeledNegativeExamples)}`,
         `VALIDATOR_RESULTS\n${JSON.stringify(deterministicIssues)}`
-      ].join("\n\n"),
+      ].filter(Boolean).join("\n\n"),
       schemaName: "report_unit_critique",
       schema: reportSentenceAddressedCritiqueSchema(draft, movementApplicable),
       validateResponse: (value) => {
@@ -765,7 +782,7 @@ export async function runReportWriterChain(input: {
   if (!revised) {
     revised = draft;
     if (critique.result !== "no_defects" && critique.defects.length > 0) {
-      const revision = await reviseReportDraftForNamedDefects({ payload, draft, defects: critique.defects, callModel });
+      const revision = await reviseReportDraftForNamedDefects({ payload, draft, defects: critique.defects, callModel, promptMode });
       calls.push(...revision.calls);
       revised = revision.revised;
     }
@@ -806,7 +823,7 @@ export async function runReportWriterChain(input: {
   if (coldCritique.result !== "no_defects" && coldCritique.defects.length > 0) {
     if (resumable?.completedStage !== "cold_revision") {
       const coldRevision = await reviseReportDraftForNamedDefects({
-        payload, draft: revised, defects: coldCritique.defects, callModel, stage: "cold_revise"
+        payload, draft: revised, defects: coldCritique.defects, callModel, stage: "cold_revise", promptMode
       });
       calls.push(...coldRevision.calls);
       revised = coldRevision.revised;

@@ -731,6 +731,12 @@ assert.equal(exhaustedResponseAttempts, 4,
   "Response-contract exhaustion must escalate only after the initial call plus three retries.");
 assert.equal(verifyReportFactLock({ ...draft, body: "March 3 is traceable." }, frozen).passed, true);
 assert.equal(verifyReportFactLock({ ...draft, body: "March 31 is not traceable." }, frozen).passed, false);
+assert.equal(verifyReportFactLock({ ...draft, timing: "Mar 20 - Jun 21" }, frozen, {
+  trustedTiming: "Mar 20 - Jun 21"
+}).passed, true, "An exact governed structural date range must not be reclassified as an invented event date.");
+assert.equal(verifyReportFactLock({ ...draft, timing: "Mar 20 - Jun 22" }, frozen, {
+  trustedTiming: "Mar 20 - Jun 21"
+}).passed, false, "Only the exact governed structural range may bypass event-date traceability.");
 assert.equal(verifyReportFactLock({ ...draft, body: "MAR 3 · FIXTURE_ONLY · FIXTURE_ONLY. · *A lunar eclipse falls on your natal Saturn.*" }, frozen).passed, true);
 assert.equal(verifyReportFactLock({ ...draft, body: "MAR 3 · FIXTURE_ONLY · FIXTURE_ONLY. · *Pluto squares your natal Venus.*" }, frozen).passed, false);
 
@@ -893,6 +899,8 @@ assert.equal(
   "user_id,subject_type,subject_id,content_key,target_date,mode",
   "The report-unit upsert must name the governed Production unique constraint exactly."
 );
+assert.equal(productionShapedUnitWrites[0].row.source_snapshot.renderMetadata.timing, "FIXTURE_ONLY_TIMING.",
+  "The report-unit persistence layer must preserve the reader-facing season date range through assembly and delivery.");
 assert.deepEqual({
   user_id: productionShapedUnitWrites[0].row.user_id,
   subject_type: productionShapedUnitWrites[0].row.subject_type,
@@ -956,7 +964,13 @@ function createMemoryStore() {
       summary: value.summary ?? "",
       body: value.body ?? "",
       sections: value.sections ?? [],
-      source_snapshot: sourceSnapshot
+      source_snapshot: {
+        ...sourceSnapshot,
+        renderMetadata: {
+          ...(sourceSnapshot.renderMetadata ?? {}),
+          timing: value.timing ?? ""
+        }
+      }
     }); },
     async unitRows(reportId) { return [...units.entries()].filter(([key]) => key.startsWith(`${reportId}:`)).map(([, value]) => value); },
     async countCombination() { return 0; }, async queueAudit() {}, async recordDelivery() {}
@@ -977,15 +991,31 @@ assert.equal(reportJudgeVerdict(shortUnitScores, 0.85, false), "pass", "Movement
 function fixtureUnitDraft(unitId) {
   const unitFingerprint = crypto.createHash("sha256").update(unitId).digest("hex").slice(0, 10).toUpperCase();
   const deterministicKeyDateSources = new Set(["what-matters-most", "development:1", "phase-1", "winter-current"]);
+  const seasonHeadings = {
+    "winter-current": "WINTER 2026",
+    spring: "SPRING 2026",
+    summer: "SUMMER 2026",
+    autumn: "AUTUMN 2026",
+    "winter-next": "WINTER 2027"
+  };
+  const seasonTiming = {
+    "winter-current": "Feb 18 - Mar 20",
+    spring: "Mar 20 - Jun 21",
+    summer: "Jun 21 - Sep 22",
+    autumn: "Sep 22 - Dec 21",
+    "winter-next": "Dec 21 - Feb 17"
+  };
   return {
-    headline: `FIXTURE_ONLY ${unitFingerprint} HEADLINE.`,
+    headline: seasonHeadings[unitId]
+      ? `${seasonHeadings[unitId]}: FIXTURE_ONLY ${unitFingerprint} HEADLINE.`
+      : `FIXTURE_ONLY ${unitFingerprint} HEADLINE.`,
     tldr: `FIXTURE_ONLY ${unitFingerprint} TLDR.`,
     summary: `FIXTURE_ONLY ${unitFingerprint} SUMMARY.`,
     body: deterministicKeyDateSources.has(unitId)
       ? `FIXTURE_ONLY ${unitFingerprint}: Saturn trines your natal Jupiter. A supported calendar consequence may belong to ${unitFingerprint}.`
       : `FIXTURE_ONLY ${unitFingerprint} BODY.`,
     action: `FIXTURE_ONLY ${unitFingerprint} ACTION.`,
-    timing: `FIXTURE_ONLY ${unitFingerprint} TIMING.`,
+    timing: seasonTiming[unitId] ?? `FIXTURE_ONLY ${unitFingerprint} TIMING.`,
     sections: unitId === "key-dates" ? [{
       heading: "FIXTURE_ONLY SEASON",
       body: "FEB 18 · FIXTURE_ONLY TITLE · A supported event may require an answer. · FIXTURE_ONLY attribution."
@@ -1016,12 +1046,11 @@ function modelCallWithCrash(crashAt = Infinity) {
       assert.doesNotMatch(input.prompt, /UNIT_FACTS|CANONICAL_PROMPT|OWNER_COMPARISON_SET|VALIDATOR_RESULTS/u,
         "The final cold read must receive rendered prose only, never context that can rescue it.");
     }
-    const unitId = /"unitId":\s*"([^"]+)"/u.exec(input.prompt)?.[1] ?? "fixture-unit";
-    const uniqueDraft = fixtureUnitDraft(unitId);
     const payloadMatch = /REPORT_GENERATION_PAYLOAD\n([\s\S]*?)\n\nReturn one report unit/u.exec(input.prompt);
-    const keyDateRequirements = payloadMatch
-      ? (JSON.parse(payloadMatch[1]).keyDateRequirements ?? [])
-      : [];
+    const reportPayload = payloadMatch ? JSON.parse(payloadMatch[1]) : null;
+    const unitId = reportPayload?.unit?.unitId ?? "fixture-unit";
+    const uniqueDraft = fixtureUnitDraft(unitId);
+    const keyDateRequirements = reportPayload?.keyDateRequirements ?? [];
     uniqueDraft.keyDates = keyDateRequirements.map((event, index) => ({
       eventId: event.eventId,
       title: `Event ${index + 1} ${unitId}`,
@@ -1109,6 +1138,45 @@ assert.equal(calculationCalls, 4, "One facts calculation per user/window must se
 assert.ok([...store.reports.values()].filter((report) => report.report_domain === "personal_health")
   .every((report) => report.status === "needs_review"), "Personal & Health fulfillment must be active and remain review-gated.");
 assert.ok(completedCompReport, "The free-test comp report must complete before release is exercised.");
+
+const candidatePreventionStore = createMemoryStore();
+const candidatePreventionReport = {
+  id: "candidate-prevention-report", user_id: "user-1", subject_id: null,
+  report_domain: "general", report_horizon: "1_month",
+  period_start: frozen.startsAt.slice(0, 10), period_end: factsForHorizon("1_month").endsAt.slice(0, 10),
+  facts: {}, facts_engine: "pending", facts_hash: null, fulfillment_status: "queued", prompt_versions: {}, token_count: 0,
+  attempt_counts: { validator: 0, judge: 0 }, failure_history: [], status: "draft"
+};
+candidatePreventionStore.reports.set(candidatePreventionReport.id, candidatePreventionReport);
+candidatePreventionStore.entitlements.set("candidate-prevention-ent", {
+  id: "candidate-prevention-ent", user_id: "user-1", status: "active", source: "comp",
+  product_key: "general_1m", period_start: candidatePreventionReport.period_start,
+  period_end: candidatePreventionReport.period_end
+});
+const candidateBaseModel = modelCallWithCrash();
+const candidateDraftPrompts = [];
+const candidateModel = async (input) => {
+  if (input.schemaName === "report_unit_draft") candidateDraftPrompts.push(input.prompt);
+  return candidateBaseModel(input);
+};
+await processReportFulfillmentJob({
+  job: authorizedJob({
+    id: "candidate-prevention-job", report_id: candidatePreventionReport.id,
+    entitlement_id: "candidate-prevention-ent", state: "running", step: "calculating", attempt: 1
+  }),
+  store: candidatePreventionStore,
+  calculateFacts,
+  callModel: candidateModel,
+  judgeCall,
+  promptMode: "active"
+});
+assert.ok(candidateDraftPrompts.length >= 2);
+assert.match(candidateDraftPrompts[0], /EARLIER_PERSISTED_UNITS\n\[\]/u,
+  "The first candidate unit must begin with no invented prior-unit context.");
+assert.ok(candidateDraftPrompts[1].includes(fixtureUnitDraft("overview").body),
+  "The second candidate unit must receive the first unit's exact persisted text before its draft call.");
+assert.match(candidateDraftPrompts[1], /PRIOR_UNIT_REPETITION_PREVENTION/u);
+assert.match(candidateDraftPrompts[1], /NATURALNESS_BEFORE_AFTER_EXEMPLAR_PACKET/u);
 const releaseUpdates = [];
 const releaseInserts = [];
 const releaseResult = await releaseReviewedReport({
@@ -1502,9 +1570,9 @@ structuralStore.entitlements.set("structural-ent", { id: "structural-ent", user_
 const repeatedClose = "The same closing sentence must not appear in two report units.";
 const warningOnlyBody = "An application may begin. The application may need revision. An application may receive an answer. Another application may require a deadline.";
 await seedAssemblyUnits(structuralStore, structuralReport, {
-  overview: repeatedClose,
+  overview: warningOnlyBody,
   "what-matters-most": repeatedClose,
-  "domain:main": warningOnlyBody
+  "domain:main": repeatedClose
 });
 for (const unitId of ["overview", "what-matters-most", "domain:main"]) {
   const row = structuralStore.units.get(`structural-report:${unitId}`);
@@ -1525,8 +1593,8 @@ await processReportFulfillmentJob({
 assert.equal(structuralModel.count(), 0, "Zero assembly errors must proceed to needs_review without any report-level model call.");
 assert.equal(structuralStore.units.get("structural-report:overview").source_snapshot.fulfillmentPassed, true);
 assert.equal(structuralStore.units.get("structural-report:what-matters-most").source_snapshot.fulfillmentPassed, true);
-assert.equal(structuralStore.units.get("structural-report:what-matters-most").body, "",
-  "The later exact sentence must be mechanically removed without a writer call.");
+assert.equal(structuralStore.units.get("structural-report:domain:main").body, "",
+  "The later exact sentence between two non-synthesis units must be mechanically removed without a writer call.");
 assert.equal(structuralStore.reports.get(structuralReport.id).fulfillment_status, "needs_review");
 const structuralAssemblyReview = structuralStore.reports.get(structuralReport.id).validator_results.find((entry) => entry.unitId === "assembled-report");
 assert.equal(structuralAssemblyReview.mechanicalRemovals.length, 1);
@@ -1573,7 +1641,7 @@ seamStore.reports.set(seamReport.id, seamReport);
 seamStore.entitlements.set("bounded-seam-ent", { id: "bounded-seam-ent", user_id: seamReport.user_id, status: "active", product_key: "general_1m" });
 const repeatedInteriorSentence = "The repeated sentence is removed from the later unit.";
 await seedAssemblyUnits(seamStore, seamReport, {
-  overview: repeatedInteriorSentence,
+  "what-matters-most": repeatedInteriorSentence,
   "domain:main": `The paragraph begins with a distinct consequence. ${repeatedInteriorSentence} The paragraph ends with another distinct consequence.`
 });
 let seamCalls = 0;

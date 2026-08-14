@@ -8,13 +8,14 @@ import { createReportMailProvider, type ReportMailProvider } from "./report-mail
 import {
   assertReportDomainFulfillmentReady,
   assembleReportGenerationPayload,
+  isReportSynthesisUnit,
   reportFactors,
   validateReportDraft,
   type ReportDomain,
   type ReportDraft,
   type ReportHorizon
 } from "./report-generation.js";
-import { reportSystemPromptVersions } from "./report-prompt-versions.js";
+import { reportSystemPromptVersions, type ReportPromptMode } from "./report-prompt-versions.js";
 import {
   deduplicateAssembledReport,
   detectPostDedupCoherenceScopes,
@@ -332,8 +333,12 @@ export async function processReportFulfillmentJob(input: {
   random?: () => number;
   persistenceRetry?: ReportPersistenceRetryOptions;
   continuationPolicy?: ReportWorkerContinuationPolicy;
+  /** Legacy mode exists only for deterministic historical contracts. Owner-
+   * approved Production fulfillment uses the active naturalness stack. */
+  promptMode?: ReportPromptMode;
 }) {
   const config = reportFulfillmentConfig();
+  const promptMode = input.promptMode ?? "active";
   const report = await input.store.report(input.job.report_id);
   const entitlement = await input.store.entitlement(input.job.entitlement_id);
   if (!report || !entitlement) throw new Error("Fulfillment job lost its report or entitlement.");
@@ -498,6 +503,21 @@ export async function processReportFulfillmentJob(input: {
   let generatedUnitsThisCycle = 0;
   const orderedUnitIds = [...fulfillmentUnitIds(report.report_domain, report.report_horizon)];
   const writerUnitIds = orderedUnitIds.filter((unitId) => unitId !== "key-dates");
+  const initialPersistedRows = promptMode === "active"
+    ? await input.store.unitRows(report.id)
+    : [];
+  const persistedDrafts = new Map(initialPersistedRows.flatMap((row) => {
+    if (row.source_snapshot?.fulfillmentPassed !== true && !isAssemblyInvalidatedPassingSnapshot(row.source_snapshot)) return [];
+    const unitId = row.content_key.replace(`report:${report.id}:`, "");
+    const renderMetadata = row.source_snapshot?.renderMetadata as { timing?: unknown } | undefined;
+    return [[unitId, {
+      headline: row.headline,
+      summary: row.summary,
+      body: row.body,
+      timing: typeof renderMetadata?.timing === "string" ? renderMetadata.timing : "",
+      sections: Array.isArray(row.sections) ? row.sections as Array<{ heading?: string; body?: string }> : []
+    } satisfies ReportDraft] as const];
+  }));
 
   const durableJobCache = () => ({
     ...passingUnitCache,
@@ -552,6 +572,7 @@ export async function processReportFulfillmentJob(input: {
     validatorAttempts = nextValidatorAttempts;
     judgeAttempts = nextJudgeAttempts;
     delete passingUnitCache[entry.unitId];
+    persistedDrafts.set(entry.unitId, structuredClone(entry.draft));
     writerChainCheckpoint = null;
     validatorSummary.push({
       unitId: entry.unitId,
@@ -588,9 +609,30 @@ export async function processReportFulfillmentJob(input: {
       if (unitLimitReached || deadlineReached) return requeueForContinuation();
     }
     await input.store.updateJob(input.job.id, { step: "writing" });
-    const payload = assembleReportGenerationPayload({ reportId: report.id, reportDomain: report.report_domain, reportHorizon: report.report_horizon, unitId, frozenFacts: report.facts });
+    const unitIndex = orderedUnitIds.indexOf(unitId);
+    const priorUnitContext = promptMode === "active"
+      ? orderedUnitIds.slice(0, unitIndex).flatMap((priorUnitId) => {
+        const prior = persistedDrafts.get(priorUnitId);
+        return prior ? [{
+          unitId: priorUnitId,
+          synthesis: isReportSynthesisUnit(priorUnitId),
+          headline: prior.headline ?? "",
+          summary: prior.summary ?? "",
+          body: prior.body ?? "",
+          sections: structuredClone(prior.sections ?? [])
+        }] : [];
+      })
+      : [];
+    const payload = assembleReportGenerationPayload({
+      reportId: report.id,
+      reportDomain: report.report_domain,
+      reportHorizon: report.report_horizon,
+      unitId,
+      frozenFacts: report.facts,
+      priorUnitContext
+    });
     if (payload.sourceGaps.length) throw new Error(`SOURCE_GAP: ${payload.sourceGaps.map((gap) => gap.requestedKey).join(", ")}`);
-    const versions = reportSystemPromptVersions(payload.canonicalOwnerPrompt.sourcePath);
+    const versions = reportSystemPromptVersions(payload.canonicalOwnerPrompt.sourcePath, promptMode);
     promptVersions.canonical = versions.canonical.version;
     promptVersions.critique = versions.critique.version;
     promptVersions.judge = versions.judge.version;
@@ -598,6 +640,7 @@ export async function processReportFulfillmentJob(input: {
     promptVersions.ownerReviewEvidence = versions.ownerReviewEvidence.version;
     promptVersions.coldProse = versions.coldProse.version;
     promptVersions.earnedSentence = versions.earnedSentence.version;
+    if ("naturalness" in versions) promptVersions.naturalness = versions.naturalness.version;
     const validatorAttemptCap = reportValidatorAttemptCap(input.job, unitId, config.validatorAttemptCap);
     let persistedCheckpointConsumed = false;
     const runCheckpointedWriterChain = async (failureContext?: string[], resumePersistedCheckpoint = false) => {
@@ -634,7 +677,8 @@ export async function processReportFulfillmentJob(input: {
               passing_unit_cache: durableJobCache()
             });
           }, input.persistenceRetry);
-        }
+        },
+        promptMode
       });
     };
     const validateWithNamedRevisions = async (initialDraft: ReportDraft, initialChainTokens: number, initialChainCost: number) => {
@@ -646,8 +690,12 @@ export async function processReportFulfillmentJob(input: {
         await input.store.updateReport(report.id, nowPatch("validating"));
         await input.store.updateJob(input.job.id, { step: "validating" });
         validatorAttempts += 1;
-        const validation = validateReportDraft(candidate, payload);
-        const factLock = verifyReportFactLock(candidate, payload.frozenFacts);
+        const validation = validateReportDraft(candidate, payload, {
+          enforceSeasonStructure: promptMode === "active"
+        });
+        const factLock = verifyReportFactLock(candidate, payload.frozenFacts, {
+          trustedTiming: payload.structuralRequirements?.dateRange
+        });
         issues = [...validation, ...factLock.issues];
         if (issues.length === 0) return { draft: candidate, acceptedTokens, acceptedEstimatedUsd, issues };
         if (attempt + 1 >= validatorAttemptCap) break;
@@ -655,7 +703,9 @@ export async function processReportFulfillmentJob(input: {
         if (!defects.length) break;
         await input.store.updateReport(report.id, nowPatch("writing"));
         await input.store.updateJob(input.job.id, { step: "writing" });
-        const revision = await reviseReportDraftForNamedDefects({ payload, draft: candidate, defects, callModel: authorizedCall });
+        const revision = await reviseReportDraftForNamedDefects({
+          payload, draft: candidate, defects, callModel: authorizedCall, promptMode
+        });
         candidate = revision.revised;
         acceptedTokens += totalTokens(revision.calls);
         acceptedEstimatedUsd += totalEstimatedCost(revision.calls);
@@ -692,7 +742,9 @@ export async function processReportFulfillmentJob(input: {
     let acceptedJudgeTokens = 0;
     for (let attempt = 0; attempt < config.judgeAttemptCap; attempt += 1) {
       judgeAttempts += 1;
-      judged = await (input.judgeCall ?? judgeReportUnit)({ payload, draft, validatorResults, threshold: config.judgeThreshold, callModel: authorizedCall });
+      judged = await (input.judgeCall ?? judgeReportUnit)({
+        payload, draft, validatorResults, threshold: config.judgeThreshold, callModel: authorizedCall, promptMode
+      });
       if (judged.result.verdict === "pass") {
         acceptedJudgeTokens = judged.usage.totalTokens;
         break;
@@ -779,6 +831,9 @@ export async function processReportFulfillmentJob(input: {
             headline: row.headline,
             summary: row.summary,
             body: row.body,
+            timing: typeof (row.source_snapshot?.renderMetadata as { timing?: unknown } | undefined)?.timing === "string"
+              ? (row.source_snapshot.renderMetadata as { timing: string }).timing
+              : "",
             sections: Array.isArray(row.sections) ? row.sections as Array<{ heading?: string; body?: string }> : [],
             keyDates: Array.isArray(row.source_snapshot?.keyDateEntries)
               ? row.source_snapshot.keyDateEntries as Array<{ eventId: string; title: string; sentence: string }>
@@ -857,6 +912,9 @@ export async function processReportFulfillmentJob(input: {
         headline: row.headline,
         summary: row.summary,
         body: row.body,
+        timing: typeof (row.source_snapshot?.renderMetadata as { timing?: unknown } | undefined)?.timing === "string"
+          ? (row.source_snapshot.renderMetadata as { timing: string }).timing
+          : "",
         sections: Array.isArray(row.sections) ? row.sections as Array<{ heading?: string; body?: string }> : []
       }
     };
@@ -882,7 +940,9 @@ export async function processReportFulfillmentJob(input: {
       attempt_counts: { validator: validatorAttempts, judge: judgeAttempts, redundancy: redundancyAttempts }
     });
   };
-  const deduplication = deduplicateAssembledReport(assembledUnits);
+  const deduplication = deduplicateAssembledReport(assembledUnits, {
+    allowSynthesisRepetition: promptMode === "active"
+  });
   const mechanicalCoherence = repairMechanicalPostDedupSeams(deduplication.units, deduplication.removals);
   assembledUnits = mechanicalCoherence.units;
   if (mechanicalCoherence.remaining.length) {
@@ -953,7 +1013,10 @@ export async function processReportFulfillmentJob(input: {
     return requeueForContinuation();
   }
   assembledUnits = normalizeAssembledReportWhitespace(assembledUnits);
-  const structuralIssues = validateAssembledReport(assembledUnits);
+  const structuralIssues = validateAssembledReport(assembledUnits, {
+    enforceSeasonStructure: promptMode === "active",
+    allowSynthesisRepetition: promptMode === "active"
+  });
   const structuralErrors = structuralIssues.filter((entry) => entry.severity === "error");
   const assemblyWarnings = structuralIssues.filter((entry) => entry.severity !== "error");
   const warningsByUnit = new Map<string, ReportAssemblyIssue[]>();
