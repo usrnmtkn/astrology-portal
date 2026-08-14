@@ -4,7 +4,7 @@
   "generatedBy": "scripts/compile-satori-editorial-decisions.js",
   "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
   "decisionSourceId": "satori-editorial-decisions-v1",
-  "decisionSourceSha256": "308769ccd546e88d9cd89d8fc4aafa437cd7afad61fe9c2beb2c8e3e46ecc3d5",
+  "decisionSourceSha256": "d2a94f8656e00ca6372d46bbd55cf7592c7f3a0984433fff04e086786218e8a2",
   "architecture": [
     "Verified astrology supplies meaning.",
     "Sol writes one original draft.",
@@ -51,13 +51,13 @@
       "rule": "Name the pressure, what someone does, and what changes because of it in one recognizable sequence."
     },
     {
-      "id": "ED-003",
+      "id": "ED-028",
       "scope": {
         "surfaces": [
-          "current-sky"
+          "sky-aspect-calendar"
         ]
       },
-      "rule": "Current Sky never uses you, your, yours, yourself, or yourselves; natal and transit-to-natal may use second person."
+      "rule": "Calendar Sky aspect copy never uses you, your, yours, yourself, or yourselves; Sky placement copy may address the reader directly."
     },
     {
       "id": "ED-004",
