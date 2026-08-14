@@ -568,7 +568,7 @@ overview.getRange("D4:F9").values = [
   ["Fail closed", "TRUE", "Missing or unapproved components cannot be rendered."],
   ["Verbatim emission", "FALSE", "Stored components may not be emitted as whole sentences."],
   ["First sentence", "COMPOSED", "Both positions must become one lived disagreement or shared condition."],
-  ["Reader order", "4 beats", "What may happen; why it matters; why it sticks or moves; what can move."],
+  ["Reader order", "Forecast 4 / Details 3", "Forecast concludes with four hidden meanings. Details explains what may happen, why it matters, and why it sticks or moves."],
 ];
 overview.getRange("A4:B4").format = { fill: teal, font: { bold: true, color: white } };
 overview.getRange("D4:F4").format = { fill: teal, font: { bold: true, color: white } };
@@ -723,7 +723,7 @@ titleBand(
   gateSheet,
   "A1:F1",
   "Frame uniqueness gate",
-  "Beats are required. Connective wording is not. The future composer must vary openers and connective constructions across the corpus.",
+  "Beats are hidden logic, not sentence positions. Forecast concludes; Details explains and stops. The composer must vary openers, closers, entry modes, and connective constructions.",
 );
 gateSheet.getRange("A4:F14").values = [
   ["Rule", "Scope", "Cap", "Pass example", "Fail example", "Reason"],
@@ -732,7 +732,7 @@ gateSheet.getRange("A4:F14").values = [
   ["Details opener construction", "Details first composed sentence", 4, "Four or fewer uses", "Five cards begin with the same normalized opening", "Details must also compose both positions"],
   ["Connective construction", "Later sentences", 4, "Four or fewer uses of one opening phrase", "Repeated 'That can turn...' across five cards", "Beats do not require fixed connective wording"],
   ["Required forecast beats", "Each forecast", 4, "All four meanings present", "A moral replaces what can move", "Meaning is required even when wording varies"],
-  ["Required Details beats", "Each Details block", 4, "Reader order preserved", "Planet-by-planet concatenation", "Astrology explains the reader beats"],
+  ["Required Details beats", "Each Details block", 3, "Explanation ends after behavior", "Forecast conclusion repeated in Details", "Forecast concludes; Details explains"],
   ["Verbatim component emission", "All components", 0, "Composer paraphrases and integrates", "A stored component appears as a full sentence", "Components govern meaning, not prose"],
   ["Manifestation shape reuse", "Sign-unit manifestations", 3, "Planet-sign events use distinct grammar", "A sign frame survives after planet nouns are stripped", "String uniqueness alone does not catch slot templates"],
   ["Plain-register subject", "Meaning components", 0, "People, deadlines, messages, rules, and other everyday actors lead", "Recognition, autonomy, or pressure narrates itself", "The owner's register uses active verbs and concrete nouns"],

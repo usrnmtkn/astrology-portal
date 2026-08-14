@@ -1,0 +1,197 @@
+{
+  "schema": "tldr.sky-calendar.two-part.worked-card-plans.v2",
+  "status": "PENDING OWNER",
+  "purpose": "Unbilled Aspect Composer v2 proof. Causal situations are derived before prose; these plans are review candidates, not serving copy.",
+  "cards": [
+    {
+      "contentKey": "sky-calendar-worked/sun/leo/opposition/saturn/aquarius",
+      "classification": "friction_pair_owner_shape",
+      "entryMode": "person_and_action",
+      "closingFunction": "practical_distinction",
+      "forecastLeadIn": "On Tuesday, August 18,",
+      "input": {
+        "planetA": "sun", "signA": "leo", "planetB": "saturn", "signB": "aquarius",
+        "aspect": "opposition", "modalityA": "fixed", "modalityB": "fixed",
+        "elementA": "fire", "elementB": "air", "how": { "type": "modality" }
+      },
+      "causalSituation": {
+        "concreteTensionOrOpening": { "value": "individual credit against a rule meant to apply equally", "supportKeys": ["sky-sign/sun/leo", "sky-sign/saturn/aquarius"] },
+        "likelyObservableEvent": { "value": "a contributor asks why equal treatment ignores unequal work", "supportKeys": ["sky-sign/sun/leo", "sky-sign/saturn/aquarius", "sky-aspect-mechanism/opposition"] },
+        "practicalConsequence": { "value": "a credit dispute becomes a disagreement about the rule", "supportKeys": ["sky-aspect-mechanism/opposition"] },
+        "persistenceOrMovementBehavior": { "value": "fixed positions make pressure alone ineffective", "supportKeys": ["sky-aspect-mechanism/opposition", "sky-how/modality/fixed/fixed"] },
+        "movableOrActionablePart": { "value": "the part of the rule that actually applies", "supportKeys": ["sky-aspect-mechanism/opposition", "sky-how/modality/fixed/fixed"] }
+      },
+      "realization": {
+        "forecastSentences": [
+          { "text": "someone asks why their work is being treated the same as everyone else's when they carried more of it", "beats": ["whatMayHappen"], "supportKeys": ["sky-sign/sun/leo", "sky-sign/saturn/aquarius"] },
+          { "text": "The disagreement is no longer only about credit; it is also about whether a shared rule can make room for a real difference in contribution", "beats": ["whatItTurnsInto", "howItBehaves"], "supportKeys": ["sky-aspect-mechanism/opposition", "sky-how/modality/fixed/fixed"] },
+          { "text": "The useful question is not who deserves an exception", "beats": ["whatCanMove"], "supportKeys": ["sky-aspect-mechanism/opposition"] },
+          { "text": "It is which part of the rule actually applies here", "beats": ["whatCanMove"], "supportKeys": ["sky-sign/saturn/aquarius", "sky-aspect-mechanism/opposition"] }
+        ],
+        "detailsSentences": [
+          { "text": "A request for individual credit meets a standard written to apply across the group", "beats": ["whatMayHappen"], "supportKeys": ["sky-sign/sun/leo", "sky-sign/saturn/aquarius"] },
+          { "text": "The Sun in Leo makes contribution and recognition more visible, while Saturn in Aquarius puts more weight on rules meant to apply equally", "beats": ["whyItMatters"], "supportKeys": ["sky-sign/sun/leo", "sky-sign/saturn/aquarius"] },
+          { "text": "The opposition makes the disagreement explicit, and both signs are fixed, so pressure alone is unlikely to change either side", "beats": ["whyItSticksOrMoves"], "supportKeys": ["sky-aspect-mechanism/opposition", "sky-how/modality/fixed/fixed"] }
+        ]
+      }
+    },
+    {
+      "contentKey": "sky-calendar-worked/moon/cancer/conjunction/venus/cancer",
+      "classification": "overlap_pair",
+      "entryMode": "contradiction",
+      "closingFunction": "condition",
+      "forecastLeadIn": "On Monday, September 7,",
+      "input": {
+        "planetA": "moon", "signA": "cancer", "planetB": "venus", "signB": "cancer",
+        "aspect": "conjunction", "modalityA": "cardinal", "modalityB": "cardinal",
+        "elementA": "water", "elementB": "water", "how": { "type": "element" }
+      },
+      "causalSituation": {
+        "concreteTensionOrOpening": { "value": "care and agreement start carrying the same meaning", "supportKeys": ["sky-sign/moon/cancer", "sky-sign/venus/cancer", "sky-aspect-mechanism/conjunction"] },
+        "likelyObservableEvent": { "value": "a practical choice receives an emotional answer", "supportKeys": ["sky-sign/moon/cancer", "sky-sign/venus/cancer"] },
+        "practicalConsequence": { "value": "saying no to a term can sound like withdrawing care", "supportKeys": ["sky-sign/venus/cancer", "sky-aspect-mechanism/conjunction"] },
+        "persistenceOrMovementBehavior": { "value": "water emphasis keeps feeling and relationship terms joined", "supportKeys": ["sky-aspect-mechanism/conjunction", "sky-how/element/water/water"] },
+        "movableOrActionablePart": { "value": "the distinction between caring and agreeing", "supportKeys": ["sky-sign/moon/cancer", "sky-sign/venus/cancer"] }
+      },
+      "realization": {
+        "forecastSentences": [
+          { "text": "a practical decision can start carrying more emotional weight than anyone intended", "beats": ["whatMayHappen", "whatItTurnsInto"], "supportKeys": ["sky-sign/moon/cancer", "sky-sign/venus/cancer", "sky-aspect-mechanism/conjunction"] },
+          { "text": "One person may assume that caring means saying yes before anybody has actually talked about what they need, so saying no later can sound like withdrawing care", "beats": ["howItBehaves"], "supportKeys": ["sky-sign/moon/cancer", "sky-sign/venus/cancer", "sky-how/element/water/water"] },
+          { "text": "The decision gets clearer once care and consent are treated as related but separate questions", "beats": ["whatCanMove"], "supportKeys": ["sky-aspect-mechanism/conjunction", "sky-how/element/water/water"] }
+        ],
+        "detailsSentences": [
+          { "text": "A practical choice starts carrying the meaning of care and loyalty", "beats": ["whatMayHappen"], "supportKeys": ["sky-sign/moon/cancer", "sky-sign/venus/cancer"] },
+          { "text": "The Moon in Cancer ties the moment to protection and belonging, while Venus in Cancer measures the agreement by whether care is returned", "beats": ["whyItMatters"], "supportKeys": ["sky-sign/moon/cancer", "sky-sign/venus/cancer"] },
+          { "text": "Because the placements are conjunct in water signs, the feeling and the agreement can merge before anyone names the difference", "beats": ["whyItSticksOrMoves"], "supportKeys": ["sky-aspect-mechanism/conjunction", "sky-how/element/water/water"] }
+        ]
+      }
+    },
+    {
+      "contentKey": "sky-calendar-worked/mercury/gemini/square/neptune/pisces",
+      "classification": "friction_pair",
+      "entryMode": "concrete_situation",
+      "closingFunction": "direct_action",
+      "forecastLeadIn": "On Thursday, October 15,",
+      "input": {
+        "planetA": "mercury", "signA": "gemini", "planetB": "neptune", "signB": "pisces",
+        "aspect": "square", "modalityA": "mutable", "modalityB": "mutable",
+        "elementA": "air", "elementB": "water", "how": { "type": "modality" }
+      },
+      "causalSituation": {
+        "concreteTensionOrOpening": { "value": "new details keep supporting different accounts", "supportKeys": ["sky-sign/mercury/gemini", "sky-sign/neptune/pisces"] },
+        "likelyObservableEvent": { "value": "one thread contains conflicting versions of the same promise", "supportKeys": ["sky-sign/mercury/gemini", "sky-sign/neptune/pisces", "sky-aspect-mechanism/square"] },
+        "practicalConsequence": { "value": "verification becomes the practical problem", "supportKeys": ["sky-aspect-mechanism/square"] },
+        "persistenceOrMovementBehavior": { "value": "mutable wording changes faster than the underlying contradiction", "supportKeys": ["sky-aspect-mechanism/square", "sky-how/modality/mutable/mutable"] },
+        "movableOrActionablePart": { "value": "the exact statement promise or written record", "supportKeys": ["sky-sign/mercury/gemini", "sky-sign/neptune/pisces"] }
+      },
+      "realization": {
+        "forecastSentences": [
+          { "text": "the email thread now contains three different versions of what was supposedly agreed to", "beats": ["whatMayHappen"], "supportKeys": ["sky-sign/mercury/gemini", "sky-sign/neptune/pisces"] },
+          { "text": "Every new detail seems to support a different account, and the practical problem becomes deciding what can still be verified", "beats": ["whatItTurnsInto"], "supportKeys": ["sky-sign/mercury/gemini", "sky-sign/neptune/pisces", "sky-aspect-mechanism/square"] },
+          { "text": "Working around the contradiction only creates another version of it", "beats": ["howItBehaves"], "supportKeys": ["sky-aspect-mechanism/square", "sky-how/modality/mutable/mutable"] },
+          { "text": "Go back to what was actually said, promised, or put in writing", "beats": ["whatCanMove"], "supportKeys": ["sky-sign/mercury/gemini", "sky-sign/neptune/pisces"] }
+        ],
+        "detailsSentences": [
+          { "text": "Conflicting accounts make a simple promise difficult to verify", "beats": ["whatMayHappen"], "supportKeys": ["sky-sign/mercury/gemini", "sky-sign/neptune/pisces"] },
+          { "text": "Mercury in Gemini keeps adding facts and comparisons, while Neptune in Pisces blurs the line between the preferred story and the documented one", "beats": ["whyItMatters"], "supportKeys": ["sky-sign/mercury/gemini", "sky-sign/neptune/pisces"] },
+          { "text": "The square keeps returning the mismatch to view, and both signs are mutable, so the wording can change faster than the underlying problem", "beats": ["whyItSticksOrMoves"], "supportKeys": ["sky-aspect-mechanism/square", "sky-how/modality/mutable/mutable"] }
+        ]
+      }
+    },
+    {
+      "contentKey": "sky-calendar-worked/mars/taurus/trine/saturn/capricorn",
+      "classification": "supportive_pair",
+      "entryMode": "consequence",
+      "closingFunction": "condition",
+      "forecastLeadIn": "On Saturday, November 21,",
+      "input": {
+        "planetA": "mars", "signA": "taurus", "planetB": "saturn", "signB": "capricorn",
+        "aspect": "trine", "modalityA": "fixed", "modalityB": "cardinal",
+        "elementA": "earth", "elementB": "earth", "how": { "type": "element" }
+      },
+      "causalSituation": {
+        "concreteTensionOrOpening": { "value": "a slower proposal matches the available money time and staff", "supportKeys": ["sky-sign/mars/taurus", "sky-sign/saturn/capricorn"] },
+        "likelyObservableEvent": { "value": "the practical proposal becomes easier to support", "supportKeys": ["sky-sign/mars/taurus", "sky-sign/saturn/capricorn", "sky-aspect-mechanism/trine"] },
+        "practicalConsequence": { "value": "the plan can be funded staffed and finished", "supportKeys": ["sky-sign/mars/taurus", "sky-sign/saturn/capricorn"] },
+        "persistenceOrMovementBehavior": { "value": "earth agreement reduces resistance but can hide a weak estimate", "supportKeys": ["sky-aspect-mechanism/trine", "sky-how/element/earth/earth"] },
+        "movableOrActionablePart": { "value": "the pace matched to money time and workload", "supportKeys": ["sky-sign/mars/taurus", "sky-sign/saturn/capricorn"] }
+      },
+      "realization": {
+        "forecastSentences": [
+          { "text": "the slower proposal starts looking better once the budget and staffing are actually on the table", "beats": ["whatMayHappen"], "supportKeys": ["sky-sign/mars/taurus", "sky-sign/saturn/capricorn"] },
+          { "text": "The numbers show it can be funded, staffed, and finished without asking the same team to absorb another impossible deadline", "beats": ["whatItTurnsInto"], "supportKeys": ["sky-sign/mars/taurus", "sky-sign/saturn/capricorn", "sky-aspect-mechanism/trine"] },
+          { "text": "With the practical pieces lined up, the work moves with less resistance, but an easy agreement can still hide a weak estimate", "beats": ["howItBehaves"], "supportKeys": ["sky-aspect-mechanism/trine", "sky-how/element/earth/earth"] },
+          { "text": "The plan works once the pace matches the money, time, and staff available to carry it", "beats": ["whatCanMove"], "supportKeys": ["sky-sign/mars/taurus", "sky-sign/saturn/capricorn", "sky-how/element/earth/earth"] }
+        ],
+        "detailsSentences": [
+          { "text": "A workable pace makes the slower proposal easier to support", "beats": ["whatMayHappen"], "supportKeys": ["sky-sign/mars/taurus", "sky-sign/saturn/capricorn"] },
+          { "text": "Mars in Taurus keeps effort on what can be sustained, while Saturn in Capricorn tests the plan against deadlines, budgets, and named responsibility", "beats": ["whyItMatters"], "supportKeys": ["sky-sign/mars/taurus", "sky-sign/saturn/capricorn"] },
+          { "text": "Their trine helps effort and structure support the same result, and the earth signs keep the test on what can actually be funded and finished", "beats": ["whyItSticksOrMoves"], "supportKeys": ["sky-aspect-mechanism/trine", "sky-how/element/earth/earth"] }
+        ]
+      }
+    },
+    {
+      "contentKey": "sky-calendar-worked/jupiter/aries/sextile/uranus/gemini",
+      "classification": "opening_pair",
+      "entryMode": "new_fact",
+      "closingFunction": "direct_action",
+      "forecastLeadIn": "On Wednesday, December 9,",
+      "input": {
+        "planetA": "jupiter", "signA": "aries", "planetB": "uranus", "signB": "gemini",
+        "aspect": "sextile", "modalityA": "cardinal", "modalityB": "mutable",
+        "elementA": "fire", "elementB": "air", "how": { "type": "modality" }
+      },
+      "causalSituation": {
+        "concreteTensionOrOpening": { "value": "new information gives a stalled proposal another route", "supportKeys": ["sky-sign/jupiter/aries", "sky-sign/uranus/gemini"] },
+        "likelyObservableEvent": { "value": "one fact gets an idea moving faster than expected", "supportKeys": ["sky-sign/jupiter/aries", "sky-sign/uranus/gemini", "sky-aspect-mechanism/sextile"] },
+        "practicalConsequence": { "value": "a proposal has a workable option but no first step yet", "supportKeys": ["sky-aspect-mechanism/sextile"] },
+        "persistenceOrMovementBehavior": { "value": "cardinal action can begin while mutable terms remain revisable", "supportKeys": ["sky-aspect-mechanism/sextile", "sky-how/modality/cardinal/mutable"] },
+        "movableOrActionablePart": { "value": "the smallest testable first step", "supportKeys": ["sky-aspect-mechanism/sextile", "sky-how/modality/cardinal/mutable"] }
+      },
+      "realization": {
+        "forecastSentences": [
+          { "text": "one new piece of information can get an idea moving much faster than expected", "beats": ["whatMayHappen"], "supportKeys": ["sky-sign/jupiter/aries", "sky-sign/uranus/gemini"] },
+          { "text": "A proposal that had stalled now has a workable route, but somebody still has to turn the idea into a first step", "beats": ["whatItTurnsInto", "howItBehaves"], "supportKeys": ["sky-aspect-mechanism/sextile", "sky-how/modality/cardinal/mutable"] },
+          { "text": "Test the new information, then make the smallest move that proves the route is usable", "beats": ["whatCanMove"], "supportKeys": ["sky-sign/uranus/gemini", "sky-aspect-mechanism/sextile"] }
+        ],
+        "detailsSentences": [
+          { "text": "A new fact creates an opening for a proposal that had stalled", "beats": ["whatMayHappen"], "supportKeys": ["sky-sign/jupiter/aries", "sky-sign/uranus/gemini"] },
+          { "text": "Jupiter in Aries increases the confidence to begin, while Uranus in Gemini changes the route as new information arrives", "beats": ["whyItMatters"], "supportKeys": ["sky-sign/jupiter/aries", "sky-sign/uranus/gemini"] },
+          { "text": "The sextile makes the connection available rather than automatic, and the cardinal-to-mutable pattern supports a first move that can still be revised", "beats": ["whyItSticksOrMoves"], "supportKeys": ["sky-aspect-mechanism/sextile", "sky-how/modality/cardinal/mutable"] }
+        ]
+      }
+    },
+    {
+      "contentKey": "sky-calendar-worked/venus/scorpio/opposition/pluto/taurus",
+      "classification": "fixed_friction_pair",
+      "entryMode": "person_and_action",
+      "closingFunction": "consequence",
+      "forecastLeadIn": "On Sunday, January 17,",
+      "input": {
+        "planetA": "venus", "signA": "scorpio", "planetB": "pluto", "signB": "taurus",
+        "aspect": "opposition", "modalityA": "fixed", "modalityB": "fixed",
+        "elementA": "water", "elementB": "earth", "how": { "type": "modality" }
+      },
+      "causalSituation": {
+        "concreteTensionOrOpening": { "value": "an agreement depends on unequal control of money access or information", "supportKeys": ["sky-sign/venus/scorpio", "sky-sign/pluto/taurus"] },
+        "likelyObservableEvent": { "value": "the person controlling a needed resource defines the terms", "supportKeys": ["sky-sign/venus/scorpio", "sky-sign/pluto/taurus", "sky-aspect-mechanism/opposition"] },
+        "practicalConsequence": { "value": "a fairness dispute becomes a control dispute", "supportKeys": ["sky-aspect-mechanism/opposition"] },
+        "persistenceOrMovementBehavior": { "value": "fixed positions keep the argument stuck on control", "supportKeys": ["sky-aspect-mechanism/opposition", "sky-how/modality/fixed/fixed"] },
+        "movableOrActionablePart": { "value": "the terms governing money access or information", "supportKeys": ["sky-sign/venus/scorpio", "sky-sign/pluto/taurus"] }
+      },
+      "realization": {
+        "forecastSentences": [
+          { "text": "someone controls the money or access, and the agreement starts looking a lot less equal", "beats": ["whatMayHappen"], "supportKeys": ["sky-sign/venus/scorpio", "sky-sign/pluto/taurus"] },
+          { "text": "The dispute becomes explicit when privacy or trust depends on the person who controls what the other side needs", "beats": ["whatItTurnsInto"], "supportKeys": ["sky-sign/venus/scorpio", "sky-sign/pluto/taurus", "sky-aspect-mechanism/opposition"] },
+          { "text": "Neither side is likely to give ground quickly, so the argument can stay stuck on who controls what", "beats": ["howItBehaves"], "supportKeys": ["sky-aspect-mechanism/opposition", "sky-how/modality/fixed/fixed"] },
+          { "text": "If the terms stay unchanged, the disagreement moves from whether the arrangement is fair to who has the power to define fairness", "beats": ["whatCanMove"], "supportKeys": ["sky-aspect-mechanism/opposition", "sky-how/modality/fixed/fixed"] }
+        ],
+        "detailsSentences": [
+          { "text": "Control of a needed resource makes an unequal agreement harder to ignore", "beats": ["whatMayHappen"], "supportKeys": ["sky-sign/venus/scorpio", "sky-sign/pluto/taurus"] },
+          { "text": "Venus in Scorpio puts more weight on private trust and mutual terms, while Pluto in Taurus exposes where money or access has become leverage", "beats": ["whyItMatters"], "supportKeys": ["sky-sign/venus/scorpio", "sky-sign/pluto/taurus"] },
+          { "text": "The opposition brings both positions into the open, and both signs are fixed, so the argument is likely to stay on control until the terms change", "beats": ["whyItSticksOrMoves"], "supportKeys": ["sky-aspect-mechanism/opposition", "sky-how/modality/fixed/fixed"] }
+        ]
+      }
+    }
+  ]
+}
