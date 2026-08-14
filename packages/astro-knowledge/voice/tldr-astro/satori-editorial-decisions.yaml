@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "source_id": "marie-satori-editorial-decisions-v1",
+  "source_id": "satori-editorial-decisions-v1",
   "effective_date": "2026-08-03",
   "audit_source": "packages/astro-knowledge/voice/tldr-astro/marie-satori-owner-feedback-audit.md",
   "format_note": "JSON-compatible YAML 1.2; kept dependency-free for the repository compiler.",

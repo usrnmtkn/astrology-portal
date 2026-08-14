@@ -7,7 +7,7 @@ const path = require("path");
 
 const packageRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(packageRoot, "..", "..");
-const skillRoot = path.join(repoRoot, ".agents", "skills", "marie-satori-writer");
+const skillRoot = path.join(repoRoot, ".agents", "skills", "satori-writer");
 const { buildIndex } = require(path.join(skillRoot, "scripts", "build-voice-index.js"));
 const { assertPacketQuotablesPassOutputBans, buildPacket, factStatusAllowsWriting, passageSupportsTargetDomain, passageUsesIncompatibleCurrentSkyEvidence, passageUsesUnsupportedDomain, renderModelInput } = require(path.join(skillRoot, "scripts", "compile-writing-packet.js"));
 const { assertRoutingMatch } = require("./sky-placement-writer-runtime.js");
@@ -34,7 +34,7 @@ function main() {
     packageRoot,
     "voice",
     "tldr-astro",
-    "marie-satori-writer",
+    "satori-writer",
     "knowledge-matrix-v9",
     "knowledge-matrix-v9-owner-approved-rows.json"
   ));
@@ -271,7 +271,7 @@ function main() {
   assert.strictEqual(combined26Proposal.governance.applied, true);
   assert.strictEqual(combined26Proposal.governance.explicitOwnerServingConfirmationRequired, false);
 
-  const taxonomy = require(path.join("..", "voice", "tldr-astro", "marie-satori-writer", "failure-tags.json"));
+  const taxonomy = require(path.join("..", "voice", "tldr-astro", "satori-writer", "failure-tags.json"));
   const requiredTags = [
     "polished_but_flat", "abstract_hook", "abstract_consequence", "requires_interpretation",
     "unnatural_personification", "behavior_missing", "generic_coverage_sentence",
@@ -289,19 +289,19 @@ function main() {
     emphasisBeat: "turn",
     task: "Write one complete Current Sky article for Jupiter in Libra."
   });
-  const invalidatedPool = require(path.join("..", "voice", "tldr-astro", "marie-satori-writer", "surface-qualified-positive-exemplars.json"));
+  const invalidatedPool = require(path.join("..", "voice", "tldr-astro", "satori-writer", "surface-qualified-positive-exemplars.json"));
   assert.strictEqual(invalidatedPool.poolStatus, "invalidated_by_owner_feedback");
   assert(invalidatedPool.records.every((entry) => entry.generationEvidenceAuthorized === false));
   assert(invalidatedPool.records.every((entry) => entry.ownerVoiceVerified === false));
   assert.strictEqual(invalidatedPool.records.find((entry) => entry.sourceId.includes("venus-virgo"))?.provenanceStatus, "owner_rejected_as_positive_voice_evidence");
   assert.strictEqual(invalidatedPool.records.find((entry) => entry.sourceId.includes("moon-scorpio"))?.provenanceStatus, "owner_rejected_as_positive_voice_evidence");
-  const pool = require(path.join("..", "voice", "tldr-astro", "marie-satori-writer", "surface-qualified-positive-exemplars-v2.json"));
+  const pool = require(path.join("..", "voice", "tldr-astro", "satori-writer", "surface-qualified-positive-exemplars-v2.json"));
   assert.strictEqual(pool.poolStatus, "active");
   assert(pool.records.every((entry) => entry.generationEvidenceAuthorized === true));
   assert(pool.records.every((entry) => entry.ownerVoiceVerified === true));
   assert(pool.records.every((entry) => entry.provenanceStatus === "verified_owner_published_source"));
 
-  const formatDataset = require(path.join("..", "voice", "tldr-astro", "marie-satori-writer", "sky-placement-format-exemplars-v4.json"));
+  const formatDataset = require(path.join("..", "voice", "tldr-astro", "satori-writer", "sky-placement-format-exemplars-v4.json"));
   assert.strictEqual(formatDataset.approvalScope, "voice_format_generation_evidence_only");
   assert.strictEqual(formatDataset.cards.length, 4);
   assert(formatDataset.cards.every((entry) => entry.ownerApproved && entry.generationEvidenceAuthorized));
@@ -561,7 +561,7 @@ function main() {
   assert.strictEqual(nodeAxisPacket.ownerCorpusWarmthEvidence.harvest_mode, "matched");
   assert.strictEqual(nodeAxisPacket.ownerCorpusWarmthEvidence.id, "warmth-foundation-nodes-aquarius-leo-v1");
   assert.strictEqual(nodeAxisPacket.ownerCorpusWarmthEvidence.primary.sourceId, "owner-article:this-weeks-astrology-august-24th-31st:p015");
-  assert.strictEqual(nodeAxisPacket.ownerCorpusWarmthEvidence.primary.sourceId, require(path.join("..", "voice", "tldr-astro", "marie-satori-writer", "owner-corpus-warmth-foundations-v1.json")).records.find((entry) => entry.id === "warmth-foundation-jupiter-leo-v1").primary.sourceId);
+  assert.strictEqual(nodeAxisPacket.ownerCorpusWarmthEvidence.primary.sourceId, require(path.join("..", "voice", "tldr-astro", "satori-writer", "owner-corpus-warmth-foundations-v1.json")).records.find((entry) => entry.id === "warmth-foundation-jupiter-leo-v1").primary.sourceId);
   assert.strictEqual(nodeAxisPacket.surfaceRequirements.axisMode.fallbackContentKey, "fallback-hook/sky-sign-copy/nodes/aquarius-leo");
   assert.match(renderModelInput(nodeAxisPacket), /COMBINED NODE-AXIS MODE/u);
   assert.match(renderModelInput(nodeAxisPacket), /Do not split the result into two articles/u);
@@ -851,7 +851,7 @@ function main() {
   assert.strictEqual(registry.lanes["judge:sky-placement"].active.model, "gpt-5.6-terra");
   assert.strictEqual(registry.lanes["judge:sky-placement"].active.reasoningEffort, "low");
 
-  const writerPolicy = require(path.join("..", "config", "marie-satori-writer-policy-v1.json"));
+  const writerPolicy = require(path.join("..", "config", "satori-writer-policy-v1.json"));
   assert.match(writerPolicy.voiceTarget.permanentRule, /Chani-adjacent cadence is acceptable/);
   assert.strictEqual(writerPolicy.voiceTarget.advocacySubjectsRequireAstrologyAndOwnerSupport, true);
   assert(writerPolicy.voiceTarget.ownerRecurringConcerns.includes("gatekeeping"));
@@ -871,17 +871,17 @@ function main() {
   assert.doesNotMatch(judgePrompt, /OWNER VOCABULARY PALETTE|DIRECTIONAL BEAT EVIDENCE|failure tags/i);
 
   const agents = fs.readFileSync(path.join(repoRoot, "AGENTS.md"), "utf8");
-  assert.match(agents, /\.agents\/skills\/marie-satori-writer\/SKILL\.md/);
+  assert.match(agents, /\.agents\/skills\/satori-writer\/SKILL\.md/);
   const skill = fs.readFileSync(path.join(skillRoot, "SKILL.md"), "utf8");
   assert.doesNotMatch(skill, /\[TODO/);
-  assert.match(skill, /name: marie-satori-writer/);
+  assert.match(skill, /name: satori-writer/);
   assert.match(skill, /Terra only at the end/);
   assert.match(skill, /Chani can influence the softness of the delivery; Marie determines what the article notices/);
   const fixtureAudit = auditRecords();
   assert.strictEqual(fixtureAudit.sourceRecordCount, 33);
   assert.strictEqual(fixtureAudit.validFixtureCount, 6);
   assert.strictEqual(fixtureAudit.exactShortfall, 14);
-  console.log(`Marie Satori writer environment passed: ${index.entries.length} indexed excerpts, governed retrieval, authorship gate, feedback safety, and separated writer/judge roles.`);
+  console.log(`Satori writer suite passed: ${index.entries.length} indexed excerpts, governed retrieval, authorship gate, feedback safety, and separated writer/judge roles.`);
 }
 
 try { main(); } catch (error) {

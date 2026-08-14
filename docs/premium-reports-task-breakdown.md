@@ -113,7 +113,7 @@ Tasks are ordered for execution. Each lists files touched and a done-check. IDs 
 - Sections: `origins` (natal Moon/IC/Saturn, third person), `in_relationship` (Venus/Mars/7th, third person), `collision` (top synastry contacts, second-person-plural), `together` (composite Sun/Moon/angles), `watch` (hardest aspect, constructive).
 - Prompts grounded only in frozen facts; prose forbidden from naming planets/aspects (attribution lines carry that). Seed approved-example context from `packages/astro-knowledge/dist/synastry.json`, `composite.json`, and `fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json`.
 - Extend `editorialBannedPhrases` with a diagnosing-others section (per parent plan §5.4).
-- All output lands `DRAFT`/`needs_review`; marie-satori-writer skill governs the copy pass per `AGENTS.md`.
+- All output lands `DRAFT`/`needs_review`; satori-writer skill governs the copy pass per `AGENTS.md`.
 
 **Done when:** all 5 sections generate for fixture pair, pass `evaluateEditorialCoherence`, and persist as report units under one envelope.
 

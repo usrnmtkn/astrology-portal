@@ -7,7 +7,7 @@ const { repoRoot } = require("./build-voice-index.js");
 
 const packageRoot = path.join(repoRoot, "packages", "astro-knowledge");
 const { lintArticle } = require(path.join(packageRoot, "scripts", "lint-placement-voice.js"));
-const negativeExamples = require(path.join(packageRoot, "voice", "tldr-astro", "marie-satori-writer", "negative-examples.json"));
+const negativeExamples = require(path.join(packageRoot, "voice", "tldr-astro", "satori-writer", "negative-examples.json"));
 
 function parseArgs(argv = process.argv.slice(2)) {
   const options = {};
@@ -155,7 +155,7 @@ const articleQuestions = [
   "The turn names behavior and consequence.",
   "The ending does not stack another metaphor, slogan, or conclusion.",
   "Moves carry pressure, choice, or consequence instead of administration.",
-  "Current Sky contains no second person.",
+  "Sky Page direct address and third-person observation mix without narrator commentary or fourth-wall breaks.",
   "Current Sky contains no generic 'People ...' sentence opener.",
   "The article did not become more polished at the expense of natural English."
 ];

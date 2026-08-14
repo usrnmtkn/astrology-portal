@@ -1,7 +1,7 @@
 "use strict";
 
 const { readRegistry, resolveCandidateRelease } = require("./editorial-model-registry.js");
-const { PACKET_VERSION, RELEASE_ID } = require("../../../.agents/skills/marie-satori-writer/scripts/compile-writing-packet.js");
+const { PACKET_VERSION, RELEASE_ID } = require("../../../.agents/skills/satori-writer/scripts/compile-writing-packet.js");
 
 function resolveWriterCandidate(registry = readRegistry()) {
   return resolveCandidateRelease({ role: "writer", surface: "sky-placement", releaseId: RELEASE_ID, registry });

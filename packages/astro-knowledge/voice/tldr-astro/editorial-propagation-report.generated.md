@@ -1,7 +1,7 @@
-# Marie Satori editorial propagation report
+# Satori editorial propagation report
 
-Decision source: `voice/tldr-astro/marie-satori-editorial-decisions.yaml`
-Source SHA-256: `8dfe6d6459f705689ee4267f2ae01b1262bff54bf5ffa0d822683bea0a2a7717`
+Decision source: `voice/tldr-astro/satori-editorial-decisions.yaml`
+Source SHA-256: `308769ccd546e88d9cd89d8fc4aafa437cd7afad61fe9c2beb2c8e3e46ecc3d5`
 Approved active decisions: 44
 Unresolved decisions: 0
 Retired or superseded decisions: 2
@@ -26,9 +26,9 @@ Active regression cases: 63
 
 ## Runtime traceability
 
-Runtime rules inspected: 106
+Runtime rules inspected: 118
 Traced to an approved authoritative decision: 8
-Not yet traced to an approved authoritative decision: 98
+Not yet traced to an approved authoritative decision: 110
 
 - TRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `—` ← `ED-004`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `for everyone at once`
@@ -77,6 +77,8 @@ Not yet traced to an approved authoritative decision: 98
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `\bthe practical choice is\b`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `\bthe correction is not\b`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `\bthe next choice is whether\b`
+- UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `\bnot a passing mood\b`
+- UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `\ba(?: [a-z-]+){0,2} chapter,\s*not a\b`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `group chat`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\bsettl(e|es|ing)\b(?! for)`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\bnot [a-z]+ but\b`
@@ -87,6 +89,16 @@ Not yet traced to an approved authoritative decision: 98
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `invit(es|ation|ing) (you|us)`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\bletters?\b`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\bcorrespondence\b`
+- UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\bexacting\b`
+- UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\bcandor\b`
+- UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\bungracious\b`
+- UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\bvitality\b`
+- UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\battachment\b`
+- UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\breciprocity\b`
+- UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\bpreset role\b`
+- UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\bfull accounting\b`
+- UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\brescue reflex\b`
+- UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\bsecure love\b`
 - UNTRACED `voice/banned-words.json#bannedWords` `reckoning`
 - UNTRACED `voice/banned-words.json#bannedWords` `profound`
 - UNTRACED `voice/banned-words.json#bannedWords` `whisper`

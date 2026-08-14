@@ -156,7 +156,7 @@ const emptyHouseV14Approved = emptyHouseRows.flatMap((row) => ([
   },
 ]));
 
-const matrixRoot = path.join(repoRoot, "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/knowledge-matrix-v9");
+const matrixRoot = path.join(repoRoot, "packages/astro-knowledge/voice/tldr-astro/satori-writer/knowledge-matrix-v9");
 const matrix = JSON.parse(fs.readFileSync(path.join(matrixRoot, "knowledge-matrix-v9-owner-approved-rows.json"), "utf8"));
 const matrixApproved = [];
 for (const entry of matrix.transit_meanings) {

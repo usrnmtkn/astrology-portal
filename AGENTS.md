@@ -23,7 +23,7 @@ reader copy, load the canonical repository skill at
 repository context alone. The skill routes every task through the versioned
 meaning-plan, owner-context, draft, separate-review, surgical-revision, and
 deterministic-validation pipeline. The existing Marie Satori evidence compiler
-at `.agents/skills/marie-satori-writer/SKILL.md` remains the governed retrieval
+at `.agents/skills/satori-writer/SKILL.md` remains the governed retrieval
 implementation used by that pipeline.
 
 A writer result remains `needs_review` unless the owner explicitly approves

@@ -13,7 +13,7 @@
 | `historical_only` | Provenance only; never active-surface positive evidence |
 | `third_party_source` | Knowledge/word reference only; never Marie voice evidence |
 
-The machine policy is `packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/authority-policy.json`.
+The machine policy is `packages/astro-knowledge/voice/tldr-astro/satori-writer/authority-policy.json`.
 
 ## Approval distinctions
 

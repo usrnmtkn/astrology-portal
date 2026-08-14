@@ -7,7 +7,7 @@ const path = require("path");
 const { repoRoot } = require("./build-voice-index.js");
 
 const packageRoot = path.join(repoRoot, "packages", "astro-knowledge");
-const datasetPath = path.join(packageRoot, "voice", "tldr-astro", "marie-satori-writer", "contrastive-edits.json");
+const datasetPath = path.join(packageRoot, "voice", "tldr-astro", "satori-writer", "contrastive-edits.json");
 const FEEDBACK_KINDS = new Set([
   "rejection",
   "directional_approval",
@@ -95,8 +95,8 @@ function main() {
     approvalInferred: false,
     proposedRecord: proposal,
     nextCommands: [
-      "node .agents/skills/marie-satori-writer/scripts/build-voice-index.js",
-      "git diff -- packages/astro-knowledge/voice/tldr-astro/marie-satori-writer"
+      "node .agents/skills/satori-writer/scripts/build-voice-index.js",
+      "git diff -- packages/astro-knowledge/voice/tldr-astro/satori-writer"
     ]
   };
   if (options.apply) {

@@ -6,7 +6,7 @@ const path = require("path");
 const { buildIndex, repoRoot } = require("./build-voice-index.js");
 
 const packageRoot = path.join(repoRoot, "packages", "astro-knowledge");
-const writerRoot = path.join(packageRoot, "voice", "tldr-astro", "marie-satori-writer");
+const writerRoot = path.join(packageRoot, "voice", "tldr-astro", "satori-writer");
 const contrastive = require(path.join(writerRoot, "contrastive-edits.json"));
 const negatives = require(path.join(writerRoot, "negative-examples.json"));
 const surfaceSpec = require(path.join(packageRoot, "voice", "tldr-astro", "sky-placement.json"));
@@ -209,7 +209,7 @@ function buildPacket(options) {
   }
   return {
     schemaVersion: 1,
-    packetId: `marie-satori-writer:${options.surface}:${options.planet}-${options.sign}:${options.beat || "article"}`,
+    packetId: `satori-writer:${options.surface}:${options.planet}-${options.sign}:${options.beat || "article"}`,
     createdAt: "2026-08-02T00:00:00.000Z",
     surface: options.surface,
     target: { planet: options.planet, sign: options.sign, beat: options.beat || "article", goal: options.goal, failureTags: options.failureTags, keywords: options.keywords, positiveSourceIds: options.positiveSourceIds, ranking: options.ranking },
@@ -255,7 +255,7 @@ function buildPacket(options) {
 
 function renderMarkdown(packet) {
   const lines = [
-    `# Marie Satori writing packet`,
+    `# Satori writing packet`,
     ``,
     `Target: ${packet.target.planet} in ${packet.target.sign}; beat=${packet.target.beat}`,
     `Goal: ${packet.target.goal || "complete article authorship pass"}`,
@@ -320,7 +320,7 @@ function main() {
   const packet = buildPacket(options);
   const outDir = options.outDir
     ? path.resolve(repoRoot, options.outDir)
-    : path.join(packageRoot, "out", "marie-satori-writer", `${options.planet}-${options.sign}-${options.beat || "article"}`);
+    : path.join(packageRoot, "out", "satori-writer", `${options.planet}-${options.sign}-${options.beat || "article"}`);
   fs.mkdirSync(outDir, { recursive: true });
   const jsonPath = path.join(outDir, "packet.json");
   const markdownPath = path.join(outDir, "packet.md");

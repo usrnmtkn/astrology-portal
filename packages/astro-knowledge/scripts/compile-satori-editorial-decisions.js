@@ -8,7 +8,7 @@ const path = require("path");
 const packageRoot = path.resolve(__dirname, "..");
 const voiceRoot = path.join(packageRoot, "voice");
 const editorialRoot = path.join(voiceRoot, "tldr-astro");
-const sourcePath = path.join(editorialRoot, "marie-satori-editorial-decisions.yaml");
+const sourcePath = path.join(editorialRoot, "satori-editorial-decisions.yaml");
 const relativeSourcePath = path.relative(packageRoot, sourcePath).replaceAll(path.sep, "/");
 const generatedPaths = {
   writer: path.join(editorialRoot, "writer-policy.generated.json"),
@@ -112,7 +112,7 @@ function baseArtifact(kind, source, sourceSha256) {
   return {
     schemaVersion: 1,
     artifact: kind,
-    generatedBy: "scripts/compile-marie-satori-editorial-decisions.js",
+    generatedBy: "scripts/compile-satori-editorial-decisions.js",
     decisionSource: relativeSourcePath,
     decisionSourceId: source.source_id,
     decisionSourceSha256: sourceSha256
@@ -266,7 +266,7 @@ function renderReport(source, sourceSha256, compiled) {
   const runtime = traceRuntimeRules(source);
   const untraced = runtime.filter((entry) => entry.tracedBy.length === 0);
   const lines = [
-    "# Marie Satori editorial propagation report",
+    "# Satori editorial propagation report",
     "",
     `Decision source: \`${relativeSourcePath}\``,
     `Source SHA-256: \`${sourceSha256}\``,
@@ -331,7 +331,7 @@ function writeOrCheck({ check = false } = {}) {
       fs.writeFileSync(filePath, content);
     }
   }
-  if (stale.length) throw new Error(`Generated editorial policy is stale:\n- ${stale.join("\n- ")}\nRun npm run build:marie-editorial-policy.`);
+  if (stale.length) throw new Error(`Generated editorial policy is stale:\n- ${stale.join("\n- ")}\nRun npm run build:satori-editorial-policy.`);
   return result;
 }
 
@@ -339,7 +339,7 @@ function main() {
   const check = process.argv.includes("--check");
   const result = writeOrCheck({ check });
   const verb = check ? "Verified" : "Generated";
-  console.log(`${verb} Marie Satori editorial policy (${result.compiled.active.length} active, ${result.compiled.unresolved.length} unresolved, ${result.compiled.artifacts.regression.activeCaseCount} active regressions).`);
+  console.log(`${verb} Satori editorial policy (${result.compiled.active.length} active, ${result.compiled.unresolved.length} unresolved, ${result.compiled.artifacts.regression.activeCaseCount} active regressions).`);
 }
 
 module.exports = { compilePolicies, compiledFiles, generatedPaths, loadDecisionSource, sourcePath, validateDecisionSource, verifyPropagation, writeOrCheck };
