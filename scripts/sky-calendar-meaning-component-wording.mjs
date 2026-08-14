@@ -179,82 +179,754 @@ const fusedPositionRows = {
   ],
 };
 
-const planetStakes = {
-  sun: ["individual credit", "visible contribution", "who represents the group"],
-  moon: ["immediate needs", "care and protection", "a sense of belonging"],
-  mercury: ["the stated facts", "the decision language", "the terms being exchanged"],
-  venus: ["shared value", "fair agreement", "what remains worth preserving"],
-  mars: ["the first action", "open pressure", "the result being pursued"],
-  jupiter: ["the promised growth", "a wider opportunity", "confidence in what is possible"],
-  saturn: ["the active limit", "assigned responsibility", "the standard being enforced"],
-  uranus: ["the proposed change", "room for independence", "the arrangement being revised"],
-  neptune: ["the hoped-for outcome", "uncertain information", "the boundary in question"],
-  pluto: ["the source of leverage", "control of the decision", "the change that cannot be reversed"],
-  chiron: ["the sensitive point", "an old defense", "the pain still shaping the response"],
-  lilith: ["the refusal", "the excluded position", "the demand deemed unacceptable"],
-};
-
-const manifestationBuilders = {
-  aries: [
-    (value) => `${value} being claimed before others agree`,
-    (value) => `pressure to move first on ${value}`,
-    (value) => `delay around ${value} being treated as lost control`,
-  ],
-  taurus: [
-    (value) => `${value} measured against cost and durability`,
-    (value) => `${value} slowed by what must be preserved`,
-    (value) => `${value} judged by whether it can be maintained`,
-  ],
-  gemini: [
-    (value) => `new information changing ${value}`,
-    (value) => `several explanations competing around ${value}`,
-    (value) => `${value} being revised as the terms move`,
-  ],
-  cancer: [
-    (value) => `care and belonging changing the handling of ${value}`,
-    (value) => `private consequences shaping ${value}`,
-    (value) => `protection taking priority in decisions about ${value}`,
-  ],
-  leo: [
-    (value) => `${value} needing visible acknowledgment`,
-    (value) => `personal ownership becoming part of ${value}`,
-    (value) => `${value} being distinguished from the group response`,
-  ],
-  virgo: [
-    (value) => `${value} tested against the details`,
-    (value) => `a correction changing ${value}`,
-    (value) => `usefulness becoming the measure of ${value}`,
-  ],
-  libra: [
-    (value) => `fairness depending on who adjusts ${value}`,
-    (value) => `${value} needing clearer shared terms`,
-    (value) => `reciprocity becoming part of ${value}`,
-  ],
-  scorpio: [
-    (value) => `hidden leverage affecting ${value}`,
-    (value) => `privacy determining access to ${value}`,
-    (value) => `${value} carrying consequences that are hard to reverse`,
-  ],
-  sagittarius: [
-    (value) => `a larger promise stretching ${value}`,
-    (value) => `conviction setting the direction for ${value}`,
-    (value) => `distance changing what seems possible for ${value}`,
-  ],
-  capricorn: [
-    (value) => `authority setting the workable limit for ${value}`,
-    (value) => `duty continuing after decisions about ${value}`,
-    (value) => `long-term consequence outweighing immediate relief in ${value}`,
-  ],
-  aquarius: [
-    (value) => `${value} being measured against group policy`,
-    (value) => `precedent shaping ${value}`,
-    (value) => `${value} being expected to apply equally`,
-  ],
-  pisces: [
-    (value) => `feeling affecting what can be promised about ${value}`,
-    (value) => `uncertainty making ${value} difficult to define`,
-    (value) => `porous boundaries complicating ${value}`,
-  ],
+// These manifestations are authored per planet-sign unit. They must not be
+// rebuilt by inserting planet nouns into reusable sign frames: the event is
+// the meaning component, not a sign template with a different subject.
+const manifestationRows = {
+  sun: {
+    aries: [
+      "credit claimed before anyone agrees the work is finished",
+      "the person who starts the project becoming its public face",
+      "recognition following the first visible move rather than the longest contribution",
+    ],
+    taurus: [
+      "a contribution valued because it keeps producing something useful",
+      "recognition arriving only after the result proves it can last",
+      "public credit tied to who protected the budget or the material",
+    ],
+    gemini: [
+      "the clearest explanation deciding who is seen as responsible",
+      "credit moving when a new version of the story circulates",
+      "several people making a plausible claim to the same idea",
+    ],
+    cancer: [
+      "care work becoming the contribution everyone depends on",
+      "private loyalty shaping who receives public acknowledgment",
+      "someone representing the group because they remember its history",
+    ],
+    leo: [
+      "wanting effort acknowledged",
+      "wanting credit attached to the person who did the work",
+      "wanting individual contribution distinguished from the group",
+    ],
+    virgo: [
+      "the person who catches the error receiving the authority to fix it",
+      "useful work being noticed after a small failure exposes its value",
+      "recognition depending on precision rather than display",
+    ],
+    libra: [
+      "credit divided according to the terms people agreed to",
+      "a public role changing hands to keep the arrangement fair",
+      "individual visibility negotiated alongside shared ownership",
+    ],
+    scorpio: [
+      "recognition withheld until trust and access are settled",
+      "the public representative carrying private obligations others cannot see",
+      "credit becoming leverage in a decision with lasting consequences",
+    ],
+    sagittarius: [
+      "a strong belief making one contribution stand for a larger cause",
+      "recognition extending beyond the original audience",
+      "the person who names the wider purpose becoming identified with it",
+    ],
+    capricorn: [
+      "authority granted after someone accepts responsibility for the outcome",
+      "a title reflecting work that has already survived scrutiny",
+      "recognition attached to the person expected to answer for the result",
+    ],
+    aquarius: [
+      "individual credit weighed against what the group built together",
+      "a public face expected to represent rules that apply to everyone",
+      "recognition going to the contribution that changes the system",
+    ],
+    pisces: [
+      "authorship becoming unclear when many people shaped the same vision",
+      "recognition attaching to an idealized image rather than the actual work",
+      "personal contribution fading into a shared emotional response",
+    ],
+  },
+  moon: {
+    aries: [
+      "an immediate need becoming impossible to postpone",
+      "care arriving as quick protection rather than discussion",
+      "belonging tested by who responds when something happens",
+    ],
+    taurus: [
+      "security measured by whether food, money, or shelter remains dependable",
+      "comfort preserved even when a faster change is available",
+      "a familiar routine carrying more emotional weight than the new option",
+    ],
+    gemini: [
+      "a mood changing when one more fact enters the conversation",
+      "care taking the form of keeping people informed",
+      "belonging negotiated through several competing accounts of what happened",
+    ],
+    cancer: [
+      "private needs setting the terms before public plans can continue",
+      "care becoming more protective when belonging feels uncertain",
+      "family memory making a present response stronger than expected",
+    ],
+    leo: [
+      "emotional security rising when care is acknowledged openly",
+      "hurt becoming visible when appreciation is withheld",
+      "belonging tied to having a recognizable place in the group",
+    ],
+    virgo: [
+      "care appearing as the task that keeps a routine from failing",
+      "unease narrowing attention to the detail that can be corrected",
+      "emotional relief depending on whether practical help actually works",
+    ],
+    libra: [
+      "someone feeling included only after their needs enter the agreement",
+      "care distributed so one person is not carrying all of it",
+      "belonging strained by a compromise that looks fair but feels uneven",
+    ],
+    scorpio: [
+      "emotional safety depending on who is trusted with private information",
+      "care becoming guarded after something cannot be taken back",
+      "belonging deepening where people share the risk of being known",
+    ],
+    sagittarius: [
+      "a change of place restoring emotional room",
+      "belonging widening around a shared belief rather than a shared history",
+      "care expressed by making space for a larger possibility",
+    ],
+    capricorn: [
+      "needs being postponed until the required work is done",
+      "care shown by taking responsibility when feelings stay private",
+      "belonging secured through reliability rather than reassurance",
+    ],
+    aquarius: [
+      "emotional distance protecting room to remain part of the group",
+      "belonging depending on whether difference is allowed without explanation",
+      "care organized through a shared system instead of personal closeness",
+    ],
+    pisces: [
+      "one person's mood spreading before anyone names it",
+      "care extending past the point where responsibility is clear",
+      "belonging felt through empathy even when facts remain uncertain",
+    ],
+  },
+  mercury: {
+    aries: [
+      "a decision announced before every objection has been heard",
+      "the first explanation setting the terms of the debate",
+      "new facts treated as reasons to act now rather than wait",
+    ],
+    taurus: [
+      "an agreement slowing until the price and practical terms are clear",
+      "a repeated fact carrying more weight than a clever argument",
+      "decisions holding once they are written in concrete language",
+    ],
+    gemini: [
+      "several versions of the same information remaining active at once",
+      "the wording changing as quickly as the facts",
+      "a decision staying open because another comparison is still possible",
+    ],
+    cancer: [
+      "a practical question carrying the memory of an earlier conversation",
+      "private consequences changing what can be said in public",
+      "information being trusted because it arrives through care",
+    ],
+    leo: [
+      "an opinion becoming inseparable from who said it",
+      "the clearest speaker taking visible ownership of the decision",
+      "language used to defend personal credit as well as the point itself",
+    ],
+    virgo: [
+      "one inconsistency changing the whole decision",
+      "the useful correction mattering more than the impressive explanation",
+      "terms narrowed until every part can be checked",
+    ],
+    libra: [
+      "a decision moving only after both replies enter the record",
+      "wording revised to distribute responsibility more fairly",
+      "the agreement depending on whether each side can answer the same terms",
+    ],
+    scorpio: [
+      "access to private information deciding who can act",
+      "a withheld fact gaining power as the stakes rise",
+      "language becoming exact because the consequence cannot be reversed",
+    ],
+    sagittarius: [
+      "one principle organizing facts that point in several directions",
+      "a distant possibility changing the immediate decision",
+      "the larger claim traveling farther than its supporting detail",
+    ],
+    capricorn: [
+      "formal wording assigning responsibility that continues after the meeting",
+      "a decision becoming real when an authority records it",
+      "communication judged by whether it can support a lasting structure",
+    ],
+    aquarius: [
+      "an idea evaluated by the system it would alter",
+      "information shared widely enough to change who holds access",
+      "the group adopting language that makes a new rule possible",
+    ],
+    pisces: [
+      "meaning carried by tone when the stated facts remain incomplete",
+      "an implication spreading faster than anyone can verify it",
+      "a decision blurred by sympathy for several incompatible accounts",
+    ],
+  },
+  venus: {
+    aries: [
+      "a preference stated clearly enough to force a quick answer",
+      "attraction growing through direct pursuit instead of careful agreement",
+      "value assigned to the choice that shows immediate commitment",
+    ],
+    taurus: [
+      "an agreement holding because the exchange feels materially worthwhile",
+      "comfort becoming part of how value is measured",
+      "affection shown by preserving what people already share",
+    ],
+    gemini: [
+      "connection growing through the conversation that keeps changing shape",
+      "interest sustained by more than one possible arrangement",
+      "shared value revised when people compare what each option offers",
+    ],
+    cancer: [
+      "affection expressed through inclusion in private life",
+      "an agreement valued because it protects belonging",
+      "care determining what people are willing to preserve together",
+    ],
+    leo: [
+      "appreciation becoming real when it is shown where others can see it",
+      "affection tied to being chosen distinctly rather than generally included",
+      "a shared value represented through visible generosity",
+    ],
+    virgo: [
+      "care demonstrated by noticing the strain and reducing it",
+      "an agreement improved through one practical adjustment",
+      "value measured by whether attention makes daily life work better",
+    ],
+    libra: [
+      "mutual response becoming the evidence that an agreement is fair",
+      "affection sustained by terms neither person has to disappear inside",
+      "shared value defined through balance rather than identical contribution",
+    ],
+    scorpio: [
+      "desire deepening after trust survives a private disclosure",
+      "an agreement carrying the risk of giving someone real leverage",
+      "value concentrating around what cannot be casually replaced",
+    ],
+    sagittarius: [
+      "connection widening through a shared horizon rather than a fixed plan",
+      "value following the choice that leaves more room to grow",
+      "affection expressed by supporting a belief with visible reach",
+    ],
+    capricorn: [
+      "an agreement earning value because it can carry responsibility over time",
+      "affection shown through commitments that survive inconvenience",
+      "shared worth measured against consequence, status, and durability",
+    ],
+    aquarius: [
+      "connection remaining possible because independence is built into the terms",
+      "shared value forming around a group commitment rather than private closeness",
+      "affection making room for a difference the old agreement could not hold",
+    ],
+    pisces: [
+      "longing adding value to an arrangement before its limits are visible",
+      "affection extending beyond what either person has clearly promised",
+      "shared ideals making unequal terms difficult to notice",
+    ],
+  },
+  mars: {
+    aries: [
+      "the first move establishing who controls the pace",
+      "pressure turning directly into action before a process is agreed",
+      "a visible result pursued without waiting for broader support",
+    ],
+    taurus: [
+      "effort continuing at the same point until a material limit gives way",
+      "conflict gathering around a resource no one wants to surrender",
+      "action delayed until the result can be kept",
+    ],
+    gemini: [
+      "effort divided among several messages, errands, or targets",
+      "conflict moving with the wording instead of staying on one issue",
+      "a new comparison redirecting action already underway",
+    ],
+    cancer: [
+      "defense beginning when home or belonging feels exposed",
+      "action taken to protect someone before the reason is explained",
+      "conflict carrying a private vulnerability into a public decision",
+    ],
+    leo: [
+      "a bold action tying the outcome to one visible person",
+      "effort intensifying when pride and recognition are on the line",
+      "the result pursued in a way that makes ownership unmistakable",
+    ],
+    virgo: [
+      "energy concentrating on the fault that can actually be repaired",
+      "conflict narrowing into a dispute about method",
+      "action continuing through small corrections rather than one large move",
+    ],
+    libra: [
+      "the urge to act slowing long enough to measure the other response",
+      "conflict entering negotiation before either side gets its preferred result",
+      "effort redirected toward terms that do not leave one party carrying the cost",
+    ],
+    scorpio: [
+      "action withheld until the source of control becomes clear",
+      "pressure applied where trust and private access are already at stake",
+      "a result pursued carefully because it cannot be undone",
+    ],
+    sagittarius: [
+      "effort extending toward the larger target before the near one is settled",
+      "action gaining force from conviction rather than immediate proof",
+      "conflict widening when freedom of movement is restricted",
+    ],
+    capricorn: [
+      "effort organized around the result an authority will accept",
+      "pressure sustained through duty after urgency has passed",
+      "action measured by whether it creates a durable outcome",
+    ],
+    aquarius: [
+      "conflict gathering around a rule that limits independence",
+      "action aimed at changing the system rather than winning one exception",
+      "group pressure building behind a different arrangement",
+    ],
+    pisces: [
+      "effort following an emotional current before the target is defined",
+      "conflict spreading because the boundary of responsibility stays unclear",
+      "action losing force when several needs merge into one another",
+    ],
+  },
+  jupiter: {
+    aries: [
+      "a new opening becoming larger because someone risks moving first",
+      "confidence building through action before certainty arrives",
+      "growth attached to the option that expands independence",
+    ],
+    taurus: [
+      "opportunity increasing the resources people can actually maintain",
+      "a larger promise tested against cost before it is trusted",
+      "growth appearing in what becomes more secure or materially useful",
+    ],
+    gemini: [
+      "several small openings becoming available through new information",
+      "confidence rising as people compare more than one route",
+      "possibility expanding faster than the decision can narrow",
+    ],
+    cancer: [
+      "growth taking the form of wider protection or belonging",
+      "an opportunity becoming meaningful because it includes people previously left out",
+      "confidence increasing where care has made risk feel survivable",
+    ],
+    leo: [
+      "generosity making an individual contribution more visible",
+      "a larger role becoming possible after someone is publicly trusted",
+      "confidence spreading through recognition that feels personally earned",
+    ],
+    virgo: [
+      "an opportunity proving itself through a useful improvement",
+      "growth limited to what the details can support",
+      "confidence increasing after the method produces a measurable result",
+    ],
+    libra: [
+      "benefit widening when the terms distribute it more fairly",
+      "an agreement creating an opportunity neither side could reach alone",
+      "confidence resting on cooperation that remains reciprocal",
+    ],
+    scorpio: [
+      "growth requiring enough trust to share real leverage",
+      "a larger opportunity carrying consequences that cannot be easily reversed",
+      "confidence changing when hidden stakes become visible",
+    ],
+    sagittarius: [
+      "belief enlarging the horizon beyond the current limit",
+      "an opportunity reaching farther because its meaning is widely shared",
+      "confidence rising faster than practical constraints can answer",
+    ],
+    capricorn: [
+      "ambition expanding through duties that increase authority",
+      "an opportunity becoming credible when it fits a long structure",
+      "growth measured by what can still stand after accountability arrives",
+    ],
+    aquarius: [
+      "possibility widening through a reform meant to reach the whole group",
+      "confidence gathering around a system people believe can change",
+      "an opportunity emerging from shared access rather than private advantage",
+    ],
+    pisces: [
+      "hope expanding where empathy loosens an old boundary",
+      "possibility becoming larger than anyone can yet define",
+      "confidence attaching to a shared ideal before its limits are clear",
+    ],
+  },
+  saturn: {
+    aries: [
+      "a limit stopping the first move until responsibility is assigned",
+      "independence tested by a consequence that cannot be rushed",
+      "authority requiring proof before action receives backing",
+    ],
+    taurus: [
+      "responsibility settling on the resource that must not run out",
+      "a material limit forcing people to maintain what they already have",
+      "progress measured by endurance rather than speed",
+    ],
+    gemini: [
+      "changing language held to a standard that must remain consistent",
+      "a decision delayed while conflicting facts are documented",
+      "responsibility attached to the version that enters the record",
+    ],
+    cancer: [
+      "duty falling on the person who protects private continuity",
+      "care narrowed by a limit on time, money, or capacity",
+      "belonging tested by obligations that are not distributed equally",
+    ],
+    leo: [
+      "recognition withheld until the visible contribution meets the standard",
+      "authority limiting how much pride can direct the decision",
+      "a public role carrying consequences that personal confidence cannot erase",
+    ],
+    virgo: [
+      "responsibility concentrating in the detail no one else can ignore",
+      "a routine becoming stricter after an avoidable error",
+      "progress depending on correction that can be repeated reliably",
+    ],
+    libra: [
+      "obligation divided according to terms both sides must answer to",
+      "fairness tested by who carries the consequence of compromise",
+      "an agreement becoming binding when accountability is shared",
+    ],
+    scorpio: [
+      "a limit protecting access to information that cannot be taken back",
+      "responsibility increasing where control and trust are intertwined",
+      "authority settling a consequence people had hoped to postpone",
+    ],
+    sagittarius: [
+      "a large promise reduced to what can be proved and delivered",
+      "belief tested by the boundary of an institution or law",
+      "responsibility following the claim farther than confidence expected",
+    ],
+    capricorn: [
+      "authority consolidating around the person who can carry the duty",
+      "long consequences deciding which ambition remains workable",
+      "progress becoming inseparable from structure and accountability",
+    ],
+    aquarius: [
+      "policy applied across the group",
+      "precedent",
+      "a standard meant to apply equally",
+    ],
+    pisces: [
+      "a formal boundary trying to contain a need that has no clean edge",
+      "responsibility becoming hard to assign when compassion is widely shared",
+      "structure holding only where uncertainty is named rather than denied",
+    ],
+  },
+  uranus: {
+    aries: [
+      "an unexpected first move changing who has room to act",
+      "independence claimed before the existing process can respond",
+      "a sudden break creating an opening that did not exist a moment earlier",
+    ],
+    taurus: [
+      "a secure resource becoming the site of an unexpected revision",
+      "material routines changing after stability proves less fixed than assumed",
+      "independence requiring a new way to preserve what still matters",
+    ],
+    gemini: [
+      "new information altering the available routes almost immediately",
+      "a revised term changing who can participate",
+      "independence spreading through access to a different explanation",
+    ],
+    cancer: [
+      "a household pattern changing because someone needs more room",
+      "belonging reorganized around a form of care no longer kept private",
+      "independence unsettling the role that once guaranteed emotional safety",
+    ],
+    leo: [
+      "visible difference interrupting the expected public role",
+      "recognition shifting toward the contribution that breaks precedent",
+      "independence becoming impossible to separate from personal visibility",
+    ],
+    virgo: [
+      "a routine revised when the old method stops solving the problem",
+      "one technical change altering how the work is distributed",
+      "independence gained through a more useful process",
+    ],
+    libra: [
+      "an agreement reopening because equal treatment no longer produces a fair result",
+      "independence changing the terms of mutual obligation",
+      "a different arrangement becoming possible once reciprocity is redefined",
+    ],
+    scorpio: [
+      "hidden leverage exposed by a change no one can reverse",
+      "private access disrupted before trust can be renegotiated",
+      "independence altering who controls the most consequential information",
+    ],
+    sagittarius: [
+      "a sudden opening widening the distance people can imagine crossing",
+      "independence challenging a belief that once set the horizon",
+      "change moving farther than the original plan was built to contain",
+    ],
+    capricorn: [
+      "a long-standing authority losing control of the structure it maintained",
+      "independence forced into a system designed to resist quick revision",
+      "change becoming durable only after responsibility is reassigned",
+    ],
+    aquarius: [
+      "a group redesigning the rule that once limited its own independence",
+      "system change spreading because the exception reveals a wider problem",
+      "difference becoming part of the shared arrangement rather than outside it",
+    ],
+    pisces: [
+      "a sudden intuition disrupting a boundary that was already unclear",
+      "independence appearing where people had mistaken sympathy for agreement",
+      "change moving through a shared feeling before anyone can define the plan",
+    ],
+  },
+  neptune: {
+    aries: [
+      "a collective hope rushing into action before its direction is understood",
+      "an ideal making the first move feel clearer than the evidence does",
+      "uncertainty hidden by the urgency of beginning",
+    ],
+    taurus: [
+      "comfort carrying an idealized value that obscures the real cost",
+      "material security trusted because it feels familiar rather than verified",
+      "a shared hope attaching to something people want to preserve",
+    ],
+    gemini: [
+      "several plausible explanations blurring which fact deserves trust",
+      "an implied meaning circulating without a stable source",
+      "information becoming more persuasive as its boundaries become less exact",
+    ],
+    cancer: [
+      "memory softening the difference between care and projection",
+      "a private longing shaping what the group believes it needs",
+      "belonging idealized until unequal emotional labor becomes hard to see",
+    ],
+    leo: [
+      "a public image carrying more hope than the contribution can support",
+      "recognition attaching to the story people want to believe",
+      "individual visibility becoming a screen for a collective ideal",
+    ],
+    virgo: [
+      "an ideal meeting the practical detail it cannot explain away",
+      "uncertainty exposed when the method has to produce a usable result",
+      "compassion losing clarity around what actually needs correction",
+    ],
+    libra: [
+      "an image of fairness hiding which side keeps absorbing the cost",
+      "agreement sustained by avoiding the unequal term underneath it",
+      "shared ideals blurring the point where reciprocity stopped",
+    ],
+    scorpio: [
+      "trust deepening around a motive no one can fully name",
+      "private power becoming harder to locate as boundaries soften",
+      "an irreversible choice shaped by information that remains uncertain",
+    ],
+    sagittarius: [
+      "a belief growing beyond what its supporting facts can carry",
+      "hope widening the horizon while obscuring the practical distance",
+      "a collective ideal becoming difficult to separate from certainty",
+    ],
+    capricorn: [
+      "an institution asked to formalize a need it cannot clearly define",
+      "authority lending certainty to an ideal that still lacks limits",
+      "responsibility blurred by a structure built around appearances",
+    ],
+    aquarius: [
+      "collective hope gathering around a system that does not yet exist",
+      "an imagined reform obscuring who would carry its actual cost",
+      "group ideals making uncertain access feel universally available",
+    ],
+    pisces: [
+      "empathy dissolving the line between shared feeling and shared duty",
+      "imagination expanding where facts cannot set a firm boundary",
+      "a collective longing becoming the atmosphere around the decision",
+    ],
+  },
+  pluto: {
+    aries: [
+      "leverage taken before anyone agrees it is in play",
+      "the first decisive move concentrating control around one actor",
+      "power revealed by who can act without waiting for consent",
+    ],
+    taurus: [
+      "control settling around the resource people cannot afford to lose",
+      "a material dependency giving one side durable leverage",
+      "power becoming visible when security can no longer be assumed",
+    ],
+    gemini: [
+      "access to the explanation deciding who can shape the outcome",
+      "one version of the facts becoming leverage over the others",
+      "control shifting when information reaches a wider audience",
+    ],
+    cancer: [
+      "family loyalty giving private influence public consequence",
+      "care turning into leverage where belonging feels conditional",
+      "control hidden inside the role that protects the household",
+    ],
+    leo: [
+      "ownership of the public role becoming a source of control",
+      "recognition deciding whose authority appears legitimate",
+      "power concentrating around the person identified with the outcome",
+    ],
+    virgo: [
+      "control exercised through the method everyone must use",
+      "one required correction exposing who defines acceptable work",
+      "leverage appearing in the power to call something defective",
+    ],
+    libra: [
+      "compromise revealing which side has been yielding to preserve the agreement",
+      "fairness language used to conceal unequal control",
+      "power shifting when reciprocal terms become enforceable",
+    ],
+    scorpio: [
+      "private leverage intensifying because the consequence cannot be reversed",
+      "control depending on access to what others cannot safely disclose",
+      "power becoming undeniable when trust and survival meet",
+    ],
+    sagittarius: [
+      "authority growing around who can define the larger truth",
+      "a belief extending power beyond its original boundary",
+      "control moving through the institution that grants wider reach",
+    ],
+    capricorn: [
+      "institutional power becoming visible in who assigns lasting duty",
+      "control secured through a structure that outlives the immediate dispute",
+      "authority concentrating where consequences are formally enforced",
+    ],
+    aquarius: [
+      "group rules redistributing power across an entire system",
+      "collective pressure exposing who benefits from the current arrangement",
+      "control changing hands when independence becomes structurally possible",
+    ],
+    pisces: [
+      "power becoming difficult to locate inside a shared emotional field",
+      "control operating through an ideal no single person appears to own",
+      "leverage increasing where boundaries and responsibility remain diffuse",
+    ],
+  },
+  chiron: {
+    aries: [
+      "hesitation around acting first after initiative was once punished",
+      "a strong reaction when independence is treated as selfishness",
+      "pain resurfacing at the moment someone has to claim the right to begin",
+    ],
+    taurus: [
+      "worth becoming sensitive where material safety has been unreliable",
+      "difficulty trusting comfort that could still be taken away",
+      "an old defense returning when resources determine who gets to stay secure",
+    ],
+    gemini: [
+      "careful wording shaped by the fear of being misunderstood again",
+      "a question carrying the memory of not being believed",
+      "sensitivity appearing when several explanations exclude the lived one",
+    ],
+    cancer: [
+      "care becoming protective where belonging once felt conditional",
+      "family memory sharpening a present need for safety",
+      "old pain returning when private loyalty is asked to prove itself",
+    ],
+    leo: [
+      "recognition touching the earlier fear that contribution would be dismissed",
+      "visible pride covering uncertainty about whether appreciation will last",
+      "hurt surfacing when the person doing the work is not named",
+    ],
+    virgo: [
+      "a small correction reopening the fear of never being useful enough",
+      "competence becoming a defense against being judged as a burden",
+      "sensitivity gathering around the detail that others call insignificant",
+    ],
+    libra: [
+      "an unfair term touching an older habit of preserving peace at personal cost",
+      "pain appearing where agreement requires repeated self-adjustment",
+      "balance becoming fragile when one side's need is treated as disruption",
+    ],
+    scorpio: [
+      "trust activating the memory of a disclosure that carried consequences",
+      "privacy guarded because some experiences cannot be made harmless afterward",
+      "old pain shaping how much leverage anyone is allowed to hold",
+    ],
+    sagittarius: [
+      "a larger promise touching the fear that hope will be punished again",
+      "belief becoming sensitive when one story is declared universally true",
+      "pain entering the question of who is free to imagine a different future",
+    ],
+    capricorn: [
+      "competence used to hide the cost of carrying too much responsibility",
+      "an old hurt returning when need is treated as failure",
+      "duty becoming the place where vulnerability is least allowed",
+    ],
+    aquarius: [
+      "group belonging tested by whether difference is tolerated in practice",
+      "exclusion remembered when a shared rule erases a particular need",
+      "sensitivity gathering around being useful to the group but not known by it",
+    ],
+    pisces: [
+      "empathy reopening pain that has not been clearly separated from others",
+      "longing making an old loss feel collectively meaningful",
+      "sensitivity spreading where care has no agreed boundary",
+    ],
+  },
+  lilith: {
+    aries: [
+      "a refusal stated before anyone grants the right to object",
+      "autonomy claimed through the act others call premature",
+      "the excluded position forcing its way into the decision",
+    ],
+    taurus: [
+      "a boundary forming around the body or resource others expect to use",
+      "refusal becoming firm when security requires surrender",
+      "autonomy measured by what can be kept without apology",
+    ],
+    gemini: [
+      "a contradiction spoken after the approved explanation stops holding",
+      "refusal moving between versions that authority wanted reduced to one",
+      "autonomy preserved through naming what the official language leaves out",
+    ],
+    cancer: [
+      "care withheld from a role that expects feeling to be performed",
+      "private belonging protected from demands for emotional access",
+      "refusal appearing when loyalty is used to override autonomy",
+    ],
+    leo: [
+      "visibility claimed without making the contribution more acceptable first",
+      "recognition rejected when it depends on shrinking the difficult part",
+      "autonomy becoming public where approval had set the terms",
+    ],
+    virgo: [
+      "a standard refused because usefulness has become a condition of worth",
+      "autonomy defended against correction aimed at making difference manageable",
+      "the excluded need exposing what the approved method cannot serve",
+    ],
+    libra: [
+      "an agreement challenged after fairness becomes repeated self-erasure",
+      "refusal entering the negotiation where politeness had hidden the cost",
+      "autonomy requiring terms that do not depend on one side yielding",
+    ],
+    scorpio: [
+      "desire protected from someone else's claim to private access",
+      "refusal becoming final where trust has been used as leverage",
+      "autonomy holding back what cannot be safely recovered once given",
+    ],
+    sagittarius: [
+      "a rule rejected when belief is used to make freedom conditional",
+      "autonomy widening beyond the story that defined acceptable desire",
+      "refusal exposing who was allowed to name the larger truth",
+    ],
+    capricorn: [
+      "authority confronted where respectability has been used as control",
+      "a duty refused because compliance would erase the person carrying it",
+      "autonomy becoming visible in the consequence someone chooses to accept",
+    ],
+    aquarius: [
+      "a group norm challenged for welcoming difference only in approved forms",
+      "refusal revealing who remains excluded by a supposedly universal rule",
+      "autonomy protected from collective pressure to become easier to manage",
+    ],
+    pisces: [
+      "an emotional demand refused before empathy becomes absorption",
+      "autonomy held where other people's ideals blur personal boundaries",
+      "the excluded feeling named without turning it into a request for rescue",
+    ],
+  },
 };
 
 const detailsRows = {
@@ -432,31 +1104,12 @@ export function wordingForSignUnit(planet, sign) {
   const planetIndex = planets.indexOf(planet);
   const signIndex = signs.indexOf(sign);
   if (planetIndex < 0 || signIndex < 0) throw new Error(`Unknown sign unit ${planet}/${sign}`);
-  const stakes = planetStakes[planet];
-  const builders = manifestationBuilders[sign];
   const combinedPosition = fusedPositionRows[planet][signIndex];
   const record = {
     combined_position: combinedPosition,
-    reader_manifestations: builders.map((builder, index) => builder(stakes[index])),
+    reader_manifestations: manifestationRows[planet][sign],
     details_language: detailsRows[planet][signIndex],
   };
-
-  if (planet === "sun" && sign === "leo") {
-    record.reader_manifestations = [
-      "wanting effort acknowledged",
-      "wanting credit attached to the person who did the work",
-      "wanting individual contribution distinguished from the group",
-    ];
-    record.details_language = "individual contribution and recognition";
-  }
-  if (planet === "saturn" && sign === "aquarius") {
-    record.reader_manifestations = [
-      "policy applied across the group",
-      "precedent",
-      "a standard meant to apply equally",
-    ];
-    record.details_language = "rules, standards, and systems meant to apply across the group";
-  }
   return record;
 }
 
