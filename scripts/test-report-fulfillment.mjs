@@ -201,7 +201,20 @@ const productionKeyDatesDraft = assembleDeterministicReportKeyDates({
     draft: {
       headline: "SUMMER: Your work reaches other people, but new opportunities strain your daily schedule",
       body: "Summer is when work you have been developing privately starts reaching other people. Jupiter returns to its natal position in your 3rd house, beginning a new 12-year cycle around writing, learning, speaking, teaching, and everyday communication. You may begin writing regularly, take a course, send a proposal, or develop an idea that will occupy you for years.\n\nThe 3rd-house solar eclipse may bring privately developed work to submission, publication, or announcement. An application, announcement, piece of writing, or decision may reach the point where someone else can respond.\n\nNear the end of summer, all the new communication starts competing with your daily capacity. Jupiter squares your 6th-house Moon. Each new opportunity can look manageable by itself.",
-      sections: []
+      sections: [],
+      keyDates: [{
+        eventId: "jupiter-conjunction-jupiter:0",
+        title: "A longer conversation begins",
+        sentence: "Give one idea enough room to become something you can keep developing."
+      }, {
+        eventId: "solar_eclipse-2026-08-12",
+        title: "Put the important part into words",
+        sentence: "An announcement, application, or piece of writing may need a clear answer from someone else."
+      }, {
+        eventId: "jupiter-square-moon:0",
+        title: "The calendar tells the truth",
+        sentence: "Notice which basic routines lose time every time another commitment gets added."
+      }]
     }
   }]
 });
@@ -212,9 +225,9 @@ assert.equal(verifyReportFactLock(productionKeyDatesDraft, {
     { id: "jupiter-square-moon", transitPlanet: "Jupiter", natalPoint: "Moon", aspect: "square", passes: [{ exactAt: "2026-08-27T16:35:38Z" }] }],
   lunarEvents: [{ id: "solar_eclipse-2026-08-12", kind: "solar_eclipse", occursAt: "2026-08-12T17:36:45Z", natalHouse: 3, natalContacts: [] }]
 }).passed, true, "Deterministic date labels and technical attributions must remain traceable to the frozen facts.");
-assert.match(productionKeyDatesDraft.body, /JUL 4 · Your work reaches other people[\s\S]*You may begin writing regularly/u);
-assert.match(productionKeyDatesDraft.body, /AUG 12 · Your work reaches other people[\s\S]*someone else can respond/u);
-assert.match(productionKeyDatesDraft.body, /AUG 27 · Your work reaches other people[\s\S]*Each new opportunity can look manageable by itself/u);
+assert.match(productionKeyDatesDraft.body, /JUL 4 · A longer conversation begins[\s\S]*Give one idea enough room/u);
+assert.match(productionKeyDatesDraft.body, /AUG 12 · Put the important part into words[\s\S]*clear answer from someone else/u);
+assert.match(productionKeyDatesDraft.body, /AUG 27 · The calendar tells the truth[\s\S]*basic routines lose time/u);
 assert.equal(productionKeyDatesDraft.sections.length, 0, "Key dates must be one deterministic formatted assembly, not a writer-created section tree.");
 
 assert.equal(enforceReportRevisionStopRule(draft, namedRevision, [{
@@ -953,7 +966,8 @@ function fixtureUnitDraft(unitId) {
     sections: unitId === "key-dates" ? [{
       heading: "FIXTURE_ONLY SEASON",
       body: "FEB 18 · FIXTURE_ONLY TITLE · A supported event may require an answer. · FIXTURE_ONLY attribution."
-    }] : []
+    }] : [],
+    keyDates: []
   };
 }
 function modelCallWithCrash(crashAt = Infinity) {
@@ -981,6 +995,15 @@ function modelCallWithCrash(crashAt = Infinity) {
     }
     const unitId = /"unitId":\s*"([^"]+)"/u.exec(input.prompt)?.[1] ?? "fixture-unit";
     const uniqueDraft = fixtureUnitDraft(unitId);
+    const payloadMatch = /REPORT_GENERATION_PAYLOAD\n([\s\S]*?)\n\nReturn one report unit/u.exec(input.prompt);
+    const keyDateRequirements = payloadMatch
+      ? (JSON.parse(payloadMatch[1]).keyDateRequirements ?? [])
+      : [];
+    uniqueDraft.keyDates = keyDateRequirements.slice(0, 1).map((event) => ({
+      eventId: event.eventId,
+      title: `FIXTURE_ONLY ${event.eventId} title`,
+      sentence: `A unique supported consequence belongs to ${event.eventId}.`
+    }));
     const result = {
       value: input.schemaName === "report_unit_critique" || input.schemaName === "report_unit_cold_read" ? {
         result: "no_defects",
@@ -1439,6 +1462,7 @@ async function seedAssemblyUnits(targetStore, report, bodyByUnit = {}) {
       }] : []
     }, {
       fulfillmentPassed: true,
+      ...(unitId === "key-dates" ? { deterministicAssembly: { schema: "report-key-dates-assembly.v2" } } : {}),
       validatorResults: [],
       judge: { scores: passingJudgeScores, overall: 1, verdict: "pass", findings: [] },
       promptVersions: { judge: "report-judge-v3.1" },
@@ -1485,6 +1509,40 @@ const structuralAssemblyReview = structuralStore.reports.get(structuralReport.id
 assert.equal(structuralAssemblyReview.mechanicalRemovals.length, 1);
 assert.ok(structuralAssemblyReview.warnings.some((issue) => issue.code === "report_lexical_budget"),
   "Warning-severity assembly findings must remain attached to the needs_review packet without becoming model work items.");
+
+const coherenceStore = createMemoryStore();
+const coherenceReport = assemblyReadyReport("coherence-report");
+coherenceStore.reports.set(coherenceReport.id, coherenceReport);
+coherenceStore.entitlements.set("coherence-ent", { id: "coherence-ent", user_id: coherenceReport.user_id, status: "active", product_key: "general_1m" });
+await seedAssemblyUnits(coherenceStore, coherenceReport, {
+  "domain:main": "The change may be your decision, but it does not have to begin as a preference.  Different hours, fewer responsibilities, or more notice may become necessary."
+});
+let coherenceCalls = 0;
+const coherenceModel = async (input) => {
+  coherenceCalls += 1;
+  assert.equal(input.schemaName, "report_unit_revision_spans");
+  assert.match(input.prompt, /internal_whitespace/u);
+  const defectId = /"id":"([^"]*assembly-coherence[^"]*)"/u.exec(input.prompt)?.[1];
+  const result = {
+    value: { replacements: [{
+      defect_id: defectId, location: "body", scope_start: 0, scope_end: 1,
+      replacement: "The change may be your decision, but it does not have to begin as a preference. Different hours, fewer responsibilities, or more notice may become necessary because the original arrangement no longer fits."
+    }] },
+    model: input.model, provider: input.provider,
+    usage: { inputTokens: 2, outputTokens: 2, totalTokens: 4 }
+  };
+  await input.beforeProviderCall?.({ provider: input.provider, model: input.model, schemaName: input.schemaName });
+  await input.afterProviderCall?.({ provider: input.provider, model: input.model, schemaName: input.schemaName }, result);
+  return result;
+};
+const coherenceJob = authorizedJob({ id: "coherence-job", report_id: coherenceReport.id, entitlement_id: "coherence-ent", state: "running", step: "validating", attempt: 1 });
+const coherenceResult = await processReportFulfillmentJob({
+  job: coherenceJob, store: coherenceStore, calculateFacts, callModel: coherenceModel, judgeCall
+});
+assert.equal(coherenceResult.status, "queued");
+assert.equal(coherenceCalls, 1, "A post-dedup coherence hole must receive exactly one bounded paragraph-splice call.");
+assert.doesNotMatch(coherenceStore.units.get("coherence-report:domain:main").body, /[ \t]{2,}/u);
+assert.equal(coherenceStore.units.get("coherence-report:domain:main").source_snapshot.assemblyCoherenceRepairs[0].boundedCallCount, 1);
 
 const persistenceStore = createMemoryStore();
 const persistenceReport = {
