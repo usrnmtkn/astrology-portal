@@ -2613,6 +2613,46 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("button", { name: "Close detail" })).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Friend natal placement detail");
 
+    const bodyType = await page.evaluate(() => {
+      const aspectCopy = document.querySelector<HTMLElement>(".aspect-row-copy");
+      if (!aspectCopy) return null;
+
+      const articleSection = document.createElement("section");
+      articleSection.className = "article-section";
+      articleSection.hidden = true;
+
+      const articleBody = document.createElement("p");
+      const aspectBody = document.createElement("p");
+      articleSection.append(articleBody);
+      aspectCopy.append(aspectBody);
+      document.body.append(articleSection);
+
+      const articleStyle = getComputedStyle(articleBody);
+      const aspectStyle = getComputedStyle(aspectBody);
+
+      const result = {
+        article: {
+          fontFamily: articleStyle.fontFamily,
+          fontSize: articleStyle.fontSize,
+          fontWeight: articleStyle.fontWeight,
+          lineHeight: articleStyle.lineHeight
+        },
+        aspect: {
+          fontFamily: aspectStyle.fontFamily,
+          fontSize: aspectStyle.fontSize,
+          fontWeight: aspectStyle.fontWeight,
+          lineHeight: aspectStyle.lineHeight
+        }
+      };
+
+      articleSection.remove();
+      aspectBody.remove();
+      return result;
+    });
+
+    expect(bodyType, "Friend aspect typography must resolve in the placement detail").not.toBeNull();
+    expect(bodyType?.aspect).toEqual(bodyType?.article);
+
     await page.getByRole("button", { name: "Close detail" }).click();
     await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();
     await assertNoClientErrors();
