@@ -551,6 +551,7 @@ type NormalizedTransitHouseArticle = {
   surface: "transit-house";
   status: NormalizedSurfaceStatus;
   sections: NormalizedTransitHouseSection[];
+  detailSections: NormalizedTransitHouseSection[];
 };
 
 type HouseOverlaySlot = "overlay-meaning";
@@ -7492,6 +7493,7 @@ function normalizeTransitHouseSurface(
   events: ReturnType<typeof transitHouseAspectEvents> = []
 ): NormalizedTransitHouseArticle {
   let section: NormalizedTransitHouseSection | null = null;
+  let detailSections: NormalizedTransitHouseSection[] = [];
 
   try {
     const rendered = transitSynastryFallbackRendererV3.renderTransitHouse({
@@ -7505,11 +7507,44 @@ function normalizeTransitHouseSurface(
       window: windowLabel,
       voice
     });
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
     const layer = rendered.templateKey.startsWith("authored/") ? "authored" : "fallback";
     const renderedWindow = typeof rendered.window === "string" && rendered.window.trim()
       ? rendered.window
       : windowLabel || null;
+    const fallbackSourceKeys = [
+      rendered.contentKey ?? "",
+      rendered.templateKey,
+      ...(layer === "fallback"
+        ? [
+            "fallback-template/transit.house",
+            `fallback-hook/transit-effect-house/${normalizeContentIdPart(transit.transitPlanet)}`,
+            `fallback-vocab/house-topic/${house}`
+          ]
+        : [])
+    ].filter(Boolean);
+    detailSections = (rendered.parts as string[]).flatMap((part: string, index: number): NormalizedTransitHouseSection[] => {
+      const partBody = readerFacingParagraphs([part]).join("\n\n");
+
+      return partBody
+        ? [{
+            slot: "house-activation" as const,
+            required: true,
+            layer,
+            tier: layer === "authored"
+              ? "fallback-architecture-v3-authored" as const
+              : "fallback-architecture-v3" as const,
+            sourceKeys: rendered.partSourceKeys?.[index] ?? fallbackSourceKeys,
+            heading: rendered.headline || (
+              voice === "you"
+                ? `${transit.transitPlanet} through your ${ordinalHouse(house)} house`
+                : `${transit.transitPlanet} through ${possessiveLabel(voice)} ${ordinalHouse(house)} house`
+            ),
+            body: partBody,
+            window: renderedWindow
+          }]
+        : [];
+    });
+    const body = detailSections.map((detailSection: NormalizedTransitHouseSection) => detailSection.body).join("\n\n");
 
     section = body && isReaderFacingCopy(body)
       ? {
@@ -7519,18 +7554,7 @@ function normalizeTransitHouseSurface(
           tier: layer === "authored"
             ? "fallback-architecture-v3-authored"
             : "fallback-architecture-v3",
-          sourceKeys: [
-            "tldrastro-fallback-architecture-v3",
-            rendered.contentKey ?? "",
-            rendered.templateKey,
-            ...(layer === "fallback"
-              ? [
-                  "fallback-template/transit.house",
-                  `fallback-hook/transit-effect-house/${normalizeContentIdPart(transit.transitPlanet)}`,
-                  `fallback-vocab/house-topic/${house}`
-                ]
-              : [])
-          ].filter(Boolean),
+          sourceKeys: rendered.sourceKeys ?? fallbackSourceKeys,
           heading: rendered.headline || (
             voice === "you"
               ? `${transit.transitPlanet} through your ${ordinalHouse(house)} house`
@@ -7549,7 +7573,8 @@ function normalizeTransitHouseSurface(
   return {
     surface: "transit-house",
     status: section ? (section.layer === "authored" ? "servable" : "partial") : "not-servable",
-    sections: section ? [section] : []
+    sections: section ? [section] : [],
+    detailSections: section ? detailSections : []
   };
 }
 

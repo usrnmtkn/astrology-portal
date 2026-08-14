@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "recordType": "transit_house_serving_exact_approval",
+  "approvalId": "saturn-house-owner-approved-2026-07-28-transit-house-intro-5",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "approvedAt": "2026-07-28",
+  "recordedAt": "2026-08-13",
+  "surface": "you|friends",
+  "contentKey": "authored/transit-house-intro/saturn/5",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "5d8dec0be56c56bf3836800003403cf30d59b3fa161c5e7dad70b90e65862095",
+  "payload": {
+    "body_you": "The creative project has enough supplies. It needs hours. Dating has enough chemistry. It needs follow-through. The child, hobby, or pleasure you care about needs a place in your actual week, not another promise that you will get back to it when life calms down. Saturn moving through your 5th house makes joy more serious because neglecting it has started to cost you.\n\nGive the creative work a schedule. Make the date. Finish one piece before buying materials for the next one. But do not turn pleasure into another job description. Not every hobby needs a market. Not every date needs a five-year plan. Some joy should remain useful only because it makes you feel more alive.",
+    "body_they": "{{Name}}'s creative project has enough supplies; it needs hours. Dating has enough chemistry; it needs follow-through. The child, hobby, or pleasure they care about needs a place in their actual week, not another promise to get back to it when life calms down. Saturn moving through their 5th house makes joy more serious because neglecting it has started to cost them.\n\nThe creative work does best on a schedule now: regular hours, one piece finished before materials arrive for the next. Not every hobby needs a market, and not every date needs a five-year plan. Some joy can matter simply because they feel more alive while they are doing it."
+  },
+  "historicalEvidence": {
+    "readerRewriteCommit": "133e2332c48c147876f352290891ab55a83fde8e",
+    "friendVoiceReviewCommit": "102631f0a3b5851898935c43d6bb9d39f89decf4",
+    "sourceRowApprovalNote": "owner-rewritten full 12-house set, chat 2026-07-28"
+  },
+  "ownerConfirmationStatement": "the writing that was being shown in the natal chart was approved",
+  "ownerConfirmationSource": "owner_chat_2026-08-13_source_metadata_correction",
+  "approvalEffect": "exact_wording_approval",
+  "copyMutation": "none"
+}
