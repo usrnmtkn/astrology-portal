@@ -129,7 +129,10 @@ assert.throws(
 // The migration bridge uses the original author-final second-person copy. It
 // keeps the card visible without manufacturing third-person grammar.
 const houseElevenBridge = renderDailyGlance({ house: 11 });
-assert.match(houseElevenBridge.body, /it locks you into commitments you never asked for/u);
+assert.equal(
+  houseElevenBridge.body,
+  "Everyone else may have decided what the plan is before you had much say in it. That puts you in the position of responding to terms you did not choose. Get clear on what is actually required, what can still be changed, and what needs to be clarified in writing. Do not make an imposed plan harder on yourself by quietly agreeing to expectations that were never realistic in the first place."
+);
 assert.doesNotMatch(houseElevenBridge.body, /locks they|works for them/u);
 assert.deepEqual(findPronounGrammarIssues(houseElevenBridge.body), []);
 
@@ -141,6 +144,14 @@ const sourceRows = JSON.parse(fs.readFileSync(
   "utf8"
 ));
 const dailyHeadlinePrefix = "fallback-hook/daily-headline/";
+const houseElevenBodyRow = sourceRows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/daily-body/house/11"
+);
+assert.equal(
+  houseElevenBodyRow?.body_they,
+  "Notice how tempting it gets to nod along just because the room is moving in one direction. Slipping into consensus keeps things smooth now, but it locks you into commitments you never asked for. Speak up to one person: name what part of the plan actually works for you, and outline the one change that makes it worth your time.",
+  "house/11 body_they stays unchanged until the governed Friends migration"
+);
 const servingKeys = sourceRows.hookRows
   .filter((row) => row.contentKey?.startsWith(dailyHeadlinePrefix) && row.review_status === "approved")
   .map((row) => row.contentKey.slice(dailyHeadlinePrefix.length))
