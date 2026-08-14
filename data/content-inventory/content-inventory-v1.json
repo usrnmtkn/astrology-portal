@@ -1,12 +1,12 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "66f8df1e",
+  "sourceCommit": "1d3f54f609daa026733b09bf2ff1d78dce1276ff",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "35a1d74dff7b02269f8e5eed38e20ef5745edfbf8945987f6e3ab6e922fd1ce2",
-  "recordCount": 9537,
+  "contentFingerprint": "83db33c0620a80d5700198b8c1eb9d88806d57ebf5cdb7896dfd885bcb8e37a0",
+  "recordCount": 9539,
   "statusCounts": {
-    "owner-approved": 9537
+    "owner-approved": 9539
   },
   "familyCounts": {
     "approved/calendar-weekly-overview": 1,
@@ -83,6 +83,7 @@
     "fallback-hook/sky-fullmoon-sign": 12,
     "fallback-hook/sky-horoscope": 5,
     "fallback-hook/sky-newmoon-sign": 12,
+    "fallback-hook/sky-planet-education": 1,
     "fallback-hook/sky-season-close": 12,
     "fallback-hook/sky-season-lore": 12,
     "fallback-hook/sky-season-opener": 12,
@@ -108,7 +109,7 @@
     "sky": 26,
     "sky-article/saturn": 2,
     "sky-aspect": 112,
-    "sky-placement": 811,
+    "sky-placement": 812,
     "sky.ingress.jupiter.leo": 1,
     "sky.retrograde.venus.scorpio.retrograde_passage": 1,
     "sky.station.chiron.taurus.retrograde": 1,
@@ -150213,15 +150214,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "package-owner-approval",
-      "contentHash": "b6409d7b085db21c5559d49faf82edce0508763f6b0cdf154011d470a6ffa254",
+      "approvalVersionDate": "packages/astro-knowledge/review/saturn-capricorn-article-v3/OWNER-APPROVAL-2026-08-13.md",
+      "contentHash": "3c4f8f7d744d77ebb9aa0bbe69cffaa134736ecf7d411d729cbbad70aedff88b",
       "wording": {
-        "body_you": "Venus in Virgo trine Saturn in Capricorn makes a careful effort easier to respect. The edit gets finished, the appointment is kept, and the small responsibility is handled before it becomes someone else's emergency. Affection and appreciation grow around competence because the work removes a burden people were already tired of carrying.",
-        "body_they": "Venus in Virgo trine Saturn in Capricorn makes a careful effort easier to respect. The edit gets finished, the appointment is kept, and the small responsibility is handled before it becomes someone else's emergency. Affection and appreciation grow around competence because the work removes a burden people were already tired of carrying."
+        "body_you": "Venus in Virgo trine Saturn in Capricorn puts affection into the details people can actually rely on. The edit gets finished, the appointment is kept, and the small responsibility is handled before it becomes someone else's emergency. People notice when your work makes their day easier. A finished task can feel surprisingly affectionate when it takes one burden off someone else's list.",
+        "body_they": "Venus in Virgo trine Saturn in Capricorn puts affection into the details people can actually rely on. The edit gets finished, the appointment is kept, and the small responsibility is handled before it becomes someone else's emergency. People notice when your work makes their day easier. A finished task can feel surprisingly affectionate when it takes one burden off someone else's list."
       },
       "astrology": {
         "objects": [
@@ -173008,6 +173009,31 @@
       }
     },
     {
+      "contentKey": "fallback-hook/sky-planet-education/saturn",
+      "contentFamily": "fallback-hook/sky-planet-education",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "packages/astro-knowledge/review/saturn-capricorn-article-v3/OWNER-APPROVAL-2026-08-13.md",
+      "contentHash": "7427a4e60eaf4316028122da5a5896916d706d5cabd71ae1c023c15ae4a19c02",
+      "wording": {
+        "body": "Saturn stands at the threshold where a choice becomes a consequence. The deadline arrives, the bill comes due, and a weak structure reveals itself in the person who has to absorb the extra hours, missing money, or unfinished work. Saturn governs time, limits, and responsibility. Under pressure, the true cost of keeping something going becomes visible, along with who has been expected to carry it."
+      },
+      "astrology": {
+        "objects": [
+          "saturn"
+        ],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/sky-season-close/aquarius",
       "contentFamily": "fallback-hook/sky-season-close",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -175731,6 +175757,38 @@
       }
     },
     {
+      "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+      "contentFamily": "sky-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "packages/astro-knowledge/review/saturn-capricorn-article-v3/OWNER-APPROVAL-2026-08-13.md",
+      "contentHash": "ad008cbef8ef3d50368e92c78953b9d63fb6cfa57791d8a54d803c47f6a9e7a3",
+      "wording": {
+        "opening": "Saturn rules Capricorn, so the sign sharpens what Saturn already cares about: hierarchy, endurance, and consequence. The sea-goat gives Capricorn a body built for two environments: hooves for the climb and a tail that still belongs to the water. The danger is not ambition. It is reaching the top by spending more time, money, health, and human effort than the climb can justify.\n\nThe job of Saturn in Capricorn is not to prove how much weight one person can carry. It is to build a structure that still works after the most reliable person leaves the room.\n\nYou have been taught to mistake endurance for ability. The person who remembers every deadline, answers after hours, and never drops the ball gets called reliable, and the arrangement is cheaper than hiring anyone else. Saturn in Capricorn asks a harder question: is the system actually working, or has one person become the system?",
+        "tension": "A project can win praise while one person sends corrections at midnight, covers a vacant role, and logs in on vacation. You may recognize the same pattern at home: a household looks organized because one person remembers every appointment, payment, and form. When they stop doing all of it, deadlines slip, messages go unanswered, and everyone discovers how much of the plan depended on work nobody else was prepared to do. If everything falls apart when one person takes a day off, that person was the infrastructure.\n\nBeing needed can feel like proof of ability until every problem belongs to you. You take the task back when someone else does it differently, answer messages during dinner, and postpone rest so the work stays on schedule. The deadline gets met, but the knowledge stays in one mind and the responsibility in one set of hands.\n\nThe reward for fixing the problem is often another problem. The person who handles it well becomes the default person everyone calls when something goes wrong. More responsibility arrives without more authority, more money, or anyone learning how to do the work without them. At some point, being indispensable stops looking like recognition and starts looking like a system that never bothered to build a backup.",
+        "development": "Before you expand the plan, make sure somebody else can run it. Fix the handoff. Train someone else to do the work. Fund the repair. Document what only one person knows. If training, funding, documentation, or another set of hands fixes the problem, reinforce it. If the structure still requires permanent overwork to function, stop calling it stable.",
+        "close": "A structure is not stable if it only works when one person never rests.",
+        "fact_line": "{{entryDate}} to {{exitDate}}",
+        "aspect_insert": "{{aspectInsert}}"
+      },
+      "astrology": {
+        "objects": [
+          "saturn"
+        ],
+        "signs": [
+          "capricorn"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/sky-sign-copy/sun/aquarius",
       "contentFamily": "sky-placement",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
@@ -176448,18 +176506,14 @@
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "packages/astro-knowledge/review/sky-placement-writer-sun-venus-24-owner-approved-fallbacks-2026-08-04.json#sky-placement-sun-venus-24-venus-libra-owner-approved-v1",
-      "contentHash": "ad5969b836aea9956d754b21372219113dceabdf5a23c2056e0c364b0a51e55e",
+      "approvalVersionDate": "packages/astro-knowledge/review/venus-libra-owner-approved-v1/OWNER-APPROVAL-2026-08-14.md",
+      "contentHash": "9cd2da3e18f170e4be34283b19267fad980d6723535b7ad0793bea12707762d6",
       "wording": {
-        "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra on {{entryDate}}, and we pay closer attention to whether interest, effort, and consideration are being returned. Venus governs relationships, creativity, and what we value. Libra is the sign of balance, connection, and how we get along with each other. A shared decision includes both preferences. A purchase feels worth making because it is useful and beautiful. Affection becomes easier to trust when care does not have to be requested every time.\n\nThe cost appears when agreement matters more than an honest answer. We ask what works for everyone else before admitting what works for us. We revise a preference until nobody can object, accept an arrangement because it looks even, and keep the peace after the effort stops being mutual. The decision then belongs to whoever was clearest, while the more accommodating side carries the extra cost. Resentment enters a relationship that still looks perfectly calm.\n\nThe issue may be a relationship where the same person always chooses the harmless answer, a shared expense left unequal because asking for the exact amount feels rude, or an attraction sustained by being admired rather than being known. Each compromise seems small. Together they teach others that our preferences can be moved and our limits can wait. By the time a real disagreement arrives, nobody knows which agreement was sincere.\n\nBefore {{exitDate}}, an arrangement may strain when the person who kept agreeing can no longer accept what they do not want.",
-        "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra on {{entryDate}}, and we pay closer attention to whether interest, effort, and consideration are being returned. Venus governs relationships, creativity, and what we value. Libra is the sign of balance, connection, and how we get along with each other. A shared decision includes both preferences. A purchase feels worth making because it is useful and beautiful. Affection becomes easier to trust when care does not have to be requested every time.",
-        "tension": "The cost appears when agreement matters more than an honest answer. We ask what works for everyone else before admitting what works for us. We revise a preference until nobody can object, accept an arrangement because it looks even, and keep the peace after the effort stops being mutual. The decision then belongs to whoever was clearest, while the more accommodating side carries the extra cost. Resentment enters a relationship that still looks perfectly calm.",
-        "development": "The issue may be a relationship where the same person always chooses the harmless answer, a shared expense left unequal because asking for the exact amount feels rude, or an attraction sustained by being admired rather than being known. Each compromise seems small. Together they teach others that our preferences can be moved and our limits can wait. By the time a real disagreement arrives, nobody knows which agreement was sincere.",
-        "close": "Before {{exitDate}}, an arrangement may strain when the person who kept agreeing can no longer accept what they do not want.",
-        "try_this": [
-          "We can state our preferred option before asking anyone else to choose.",
-          "We can total one shared expense and request the exact amount still owed."
-        ],
+        "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them.\n\nVenus rules Libra, so compromise comes easily here. You can see both sides, find the middle ground, and make an arrangement work without much friction. That is useful until your own preference disappears somewhere inside the compromise.\n\nThe problem starts when you keep saying yes because it feels easier than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left. The loudest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility. Resentment builds because the agreement only works by asking one person to keep giving more. You did not agree. You accommodated, and everyone called it agreement.\n\nBeing easy to work with is rewarded everywhere. It gets called low maintenance, flexible, a good partner. Nobody mentions that it is also free. A collaborator chooses the direction, you say it works, and before anyone assigns the follow-up, you offer to rewrite the draft, send the updates, and deliver the final version. The decision takes five minutes; carrying it out costs you several more hours. When you finally say you preferred another version, their response tells you which one it was: they reopen the decision and split the revisions, or they expect you to keep carrying the plan you never picked.\n\nA shared purchase hides the same imbalance. You agree to split the cost, put the charge on your card, and accept a smaller repayment because asking for the exact difference feels awkward. You save the receipt, calculate what is still owed, and send another reminder. The agreement stays easy because you carry the missing money and the work of collecting it.\n\nSay what you want before you hear what everyone else wants. Name the number. Ask who is doing the follow-up. Let the plan change once you are actually in it. Then watch what happens: who adjusts, who covers the difference, and who takes on the work their choice created.\n\nThe connections worth keeping are the ones that survive you asking for something.",
+        "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them.\n\nVenus rules Libra, so compromise comes easily here. You can see both sides, find the middle ground, and make an arrangement work without much friction. That is useful until your own preference disappears somewhere inside the compromise.",
+        "tension": "The problem starts when you keep saying yes because it feels easier than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left. The loudest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility. Resentment builds because the agreement only works by asking one person to keep giving more. You did not agree. You accommodated, and everyone called it agreement.",
+        "development": "Being easy to work with is rewarded everywhere. It gets called low maintenance, flexible, a good partner. Nobody mentions that it is also free. A collaborator chooses the direction, you say it works, and before anyone assigns the follow-up, you offer to rewrite the draft, send the updates, and deliver the final version. The decision takes five minutes; carrying it out costs you several more hours. When you finally say you preferred another version, their response tells you which one it was: they reopen the decision and split the revisions, or they expect you to keep carrying the plan you never picked.\n\nA shared purchase hides the same imbalance. You agree to split the cost, put the charge on your card, and accept a smaller repayment because asking for the exact difference feels awkward. You save the receipt, calculate what is still owed, and send another reminder. The agreement stays easy because you carry the missing money and the work of collecting it.\n\nSay what you want before you hear what everyone else wants. Name the number. Ask who is doing the follow-up. Let the plan change once you are actually in it. Then watch what happens: who adjusts, who covers the difference, and who takes on the work their choice created.",
+        "close": "The connections worth keeping are the ones that survive you asking for something.",
         "fact_line": "{{entryDate}} to {{exitDate}}",
         "aspect_insert": "{{aspectInsert}}"
       },
