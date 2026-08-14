@@ -4,7 +4,7 @@
   "generatedBy": "scripts/compile-satori-editorial-decisions.js",
   "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
   "decisionSourceId": "satori-editorial-decisions-v1",
-  "decisionSourceSha256": "308769ccd546e88d9cd89d8fc4aafa437cd7afad61fe9c2beb2c8e3e46ecc3d5",
+  "decisionSourceSha256": "d2a94f8656e00ca6372d46bbd55cf7592c7f3a0984433fff04e086786218e8a2",
   "cases": [
     {
       "id": "natural-english-abstract-personification",
@@ -33,6 +33,16 @@
       "text": "You already know what changed.",
       "expected": "fail",
       "decisionId": "ED-003",
+      "decisionStatus": "superseded",
+      "active": false
+    },
+    {
+      "id": "sky-aspect-calendar-second-person",
+      "surface": "sky-aspect-calendar",
+      "kind": "linter",
+      "text": "You already know what changed.",
+      "expected": "fail",
+      "decisionId": "ED-028",
       "decisionStatus": "approved",
       "active": true
     },
