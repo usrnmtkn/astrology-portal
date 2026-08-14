@@ -359,7 +359,7 @@ button.settings-signout-row {
 .account-delete-confirm-button {
   border: 1px solid var(--danger);
   background: var(--danger);
-  color: #fff;
+  color: var(--danger-fg);
 }
 
 .account-delete-confirm-button:disabled {
