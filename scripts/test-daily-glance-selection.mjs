@@ -1,7 +1,13 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { selectDailyGlanceDriver } from "../apps/web/src/services/chartMath.ts";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { createServer } from "vite";
+import {
+  selectDailyGlanceCivilDayDriver,
+  selectDailyGlanceDriver
+} from "../apps/web/src/services/chartMath.ts";
 
 const natalTarget = [{ planet: "Mars", longitude: 0 }];
 const aspectFixtures = [
@@ -62,6 +68,52 @@ assert.deepEqual(
   "A tighter angle contact must be ignored in favor of the supported applying contact."
 );
 
+assert.deepEqual(
+  selectDailyGlanceCivilDayDriver(7, 14, [
+    { planet: "Mercury", longitude: 314 },
+    { planet: "Mars", longitude: 327 }
+  ], 11),
+  {
+    kind: "aspect",
+    natal: "Mercury",
+    aspect: "sextile",
+    orb: 0,
+    selectionScope: "civil-day-exact",
+    exactOffsetDays: 0.5
+  },
+  "A future exact contact inside the civil day must replace a repeated house fallback."
+);
+
+assert.deepEqual(
+  selectDailyGlanceCivilDayDriver(20, 14, [
+    { planet: "Mercury", longitude: 314 },
+    { planet: "Mars", longitude: 327 }
+  ], 11),
+  {
+    kind: "aspect",
+    natal: "Mars",
+    aspect: "sextile",
+    orb: 0,
+    selectionScope: "civil-day-exact",
+    exactOffsetDays: 0.5
+  },
+  "Consecutive dates may resolve to different exact Moon contacts instead of repeating the house card."
+);
+
+assert.deepEqual(
+  selectDailyGlanceCivilDayDriver(20, 14, [
+    { planet: "Mercury", longitude: 312 }
+  ], 11),
+  { kind: "house", house: 11 },
+  "A contact exact before local midnight must not be carried into the selected day."
+);
+
+assert.deepEqual(
+  selectDailyGlanceCivilDayDriver(30, null, natalTarget, 9),
+  { kind: "house", house: 9 },
+  "Missing ephemeris speed must preserve the fail-closed noon selector."
+);
+
 const appSource = [
   fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8"),
   fs.readFileSync(new URL("../apps/web/src/features/friends/ManualChartsPanel.tsx", import.meta.url), "utf8")
@@ -72,8 +124,8 @@ const driverSource = appSource.slice(driverStart, driverEnd);
 assert.ok(driverStart >= 0 && driverEnd > driverStart, "The Daily At-a-Glance driver must exist.");
 assert.match(
   driverSource,
-  /selectDailyGlanceDriver\(moon\.longitude, natalSky\.positions, house\)/u,
-  "Daily At-a-Glance must compare only supported natal positions."
+  /selectDailyGlanceCivilDayDriver\([\s\S]*?moon\.longitude,[\s\S]*?moon\.speed,[\s\S]*?natalSky\.positions,[\s\S]*?house/u,
+  "Daily At-a-Glance must compare supported natal positions across the Moon's ephemeris-derived civil-day arc."
 );
 assert.match(
   driverSource,
@@ -107,6 +159,11 @@ assert.match(
 );
 assert.match(
   appSource,
+  /dailyMoonDriver\.selectionScope === "civil-day-exact"[\s\S]*?\? "Today"/u,
+  "A civil-day exact Moon driver must keep the Behind-this-forecast label scoped to today."
+);
+assert.match(
+  appSource,
   /author 2–3 approved variants per[\s\S]*?chart id \+ date \+ driver/u,
   "The approved deterministic copy-variant follow-up must remain recorded without changing today's driver."
 );
@@ -115,5 +172,54 @@ assert.match(
   /"North Node": "South Node"[\s\S]*?"South Node": "North Node"/u,
   "Transit deduplication must treat the lunar nodes as a single axis."
 );
+
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const vite = await createServer({
+  root: repoRoot,
+  server: { middlewareMode: true, hmr: false },
+  appType: "custom",
+  logLevel: "error"
+});
+
+try {
+  const { defaultLocation, getAstrodienstSky } = await vite.ssrLoadModule("/apps/web/src/services/ephemeris.ts");
+  const ephemerisCases = [
+    {
+      noon: "2026-08-30T16:00:00.000Z",
+      lateEvening: "2026-08-31T03:00:00.000Z"
+    },
+    {
+      noon: "2026-08-31T16:00:00.000Z",
+      lateEvening: "2026-09-01T03:00:00.000Z"
+    }
+  ];
+
+  for (const fixture of ephemerisCases) {
+    const [noonSky, lateEveningSky] = await Promise.all([
+      getAstrodienstSky(defaultLocation, new Date(fixture.noon)),
+      getAstrodienstSky(defaultLocation, new Date(fixture.lateEvening))
+    ]);
+    const noonMoon = noonSky.positions.find((position) => position.planet === "Moon");
+    const lateEveningMoon = lateEveningSky.positions.find((position) => position.planet === "Moon");
+    assert.equal(typeof noonMoon?.longitude, "number");
+    assert.equal(typeof noonMoon?.speed, "number");
+    assert.equal(typeof lateEveningMoon?.longitude, "number");
+
+    const natalLongitude = ((lateEveningMoon.longitude - 60) % 360 + 360) % 360;
+    const selected = selectDailyGlanceCivilDayDriver(
+      noonMoon.longitude,
+      noonMoon.speed,
+      [{ planet: "Mercury", longitude: natalLongitude }],
+      11
+    );
+
+    assert.equal(selected?.kind, "aspect");
+    assert.equal(selected?.selectionScope, "civil-day-exact");
+    assert.equal(selected?.natal, "Mercury");
+    assert.equal(selected?.aspect, "sextile");
+  }
+} finally {
+  await vite.close();
+}
 
 console.log("daily At-a-Glance applying-selection checks passed");
