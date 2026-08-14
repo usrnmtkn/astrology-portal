@@ -30,33 +30,33 @@ const v9Path = "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-go
 const v13Path = "apps/web/public/content/knowledge-matrix-v13/v13-direct-language-owner-approved/knowledge-matrix-v13-owner-approved-locked.json";
 
 const planetFunctions = {
-  sun: "identity, visibility, leadership, and recognition",
-  moon: "needs, mood, protection, and belonging",
-  mercury: "information, language, decisions, and exchange",
-  venus: "value, agreement, attraction, and social balance",
-  mars: "action, pressure, conflict, and pursuit",
-  jupiter: "growth, belief, opportunity, and excess",
-  saturn: "limits, responsibility, standards, and consequence",
-  uranus: "disruption, independence, revision, and sudden change",
-  neptune: "imagination, uncertainty, ideals, and blurred boundaries",
-  pluto: "power, control, exposure, and irreversible change",
-  chiron: "pain, sensitivity, coping, and what cannot be ignored",
-  lilith: "refusal, autonomy, exclusion, and what will not be made acceptable",
+  sun: "people notice who is visible, who leads, and whose name stays attached to the work",
+  moon: "people react from habit, memory, and what helps them feel safe",
+  mercury: "messages, decisions, and explanations change what people know and what they can agree on",
+  venus: "people decide what they want, what feels fair, and what they will agree to",
+  mars: "people act, push, defend, and spend energy on what matters",
+  jupiter: "people take up more room, trust a larger possibility, and sometimes promise too much",
+  saturn: "deadlines, smaller budgets, hard limits, and named responsibilities set the terms",
+  uranus: "a sudden change breaks the old routine and forces people to respond differently",
+  neptune: "people have a harder time separating the facts from the wish when hope and imagination take over",
+  pluto: "a power arrangement stops holding and people have to face who controls the outcome",
+  chiron: "people protect themselves differently when an old hurt enters the situation",
+  lilith: "people refuse rules that ask them to hide, comply, or make themselves acceptable",
 };
 
 const signExpressions = {
-  aries: "quick action, direct claims, independence, and a need to begin",
-  taurus: "material limits, preservation, value, and what can be maintained",
-  gemini: "information, comparison, movement, and changing terms",
-  cancer: "protection, belonging, care, and private consequences",
-  leo: "visibility, recognition, pride, and individual contribution",
-  virgo: "precision, usefulness, routine, and correction",
-  libra: "fairness, agreement, balance, and shared terms",
-  scorpio: "privacy, leverage, trust, and what is difficult to reverse",
-  sagittarius: "larger aims, conviction, distance, and promised possibility",
-  capricorn: "duty, authority, structure, and long-term consequence",
-  aquarius: "group standards, systems, precedent, and independence",
-  pisces: "feeling, imagination, uncertainty, and porous boundaries",
+  aries: "someone moves first and asks everyone else to catch up",
+  taurus: "people work with what can be afforded, maintained, and made to last",
+  gemini: "new facts and quick replies keep changing the choices",
+  cancer: "people respond through care, memory, and private loyalties",
+  leo: "the work becomes visible and someone wants the credit attached to it",
+  virgo: "people check the method, find the error, and fix what is not working",
+  libra: "each side compares the terms and asks whether the deal is fair",
+  scorpio: "people guard what is private and notice who holds leverage",
+  sagittarius: "people follow a larger promise or belief beyond the issue's first limits",
+  capricorn: "deadlines, duties, and long-term results decide what can proceed",
+  aquarius: "the group asks whether the same rule applies to everyone",
+  pisces: "people can lose track of where the facts end and the wish begins",
 };
 
 function sha256(value) {
@@ -91,6 +91,53 @@ const allFallbackRows = [
   ...fallback.fallbackSourceRows,
   ...fallback.hookRows,
 ];
+
+const ownerPlanetRows = fallback.hookRows
+  .filter(isApproved)
+  .filter((row) => /^fallback-hook\/planet-lived\/[^/]+$/u.test(row.contentKey ?? ""));
+const ownerPlacementRows = fallback.hookRows
+  .filter(isApproved)
+  .filter((row) => /^fallback-hook\/placement-sign-lived\/[^/]+\/[^/]+$/u.test(row.contentKey ?? ""));
+const ownerPlanetByPlanet = new Map(
+  ownerPlanetRows.map((row) => [row.contentKey.split("/").at(-1), row]),
+);
+const ownerPlacementByUnit = new Map(
+  ownerPlacementRows.map((row) => {
+    const [, , planet, sign] = row.contentKey.split("/");
+    return [`${planet}|${sign}`, row];
+  }),
+);
+const ownerPlacementsByPlanet = new Map();
+const ownerPlacementsBySign = new Map();
+for (const row of ownerPlacementRows) {
+  const [, , planet, sign] = row.contentKey.split("/");
+  if (!ownerPlacementsByPlanet.has(planet)) ownerPlacementsByPlanet.set(planet, []);
+  if (!ownerPlacementsBySign.has(sign)) ownerPlacementsBySign.set(sign, []);
+  ownerPlacementsByPlanet.get(planet).push(row);
+  ownerPlacementsBySign.get(sign).push(row);
+}
+
+function ownerVoiceEvidenceFor(planet, sign) {
+  const exact = ownerPlacementByUnit.get(`${planet}|${sign}`) ?? null;
+  const planetRow = ownerPlanetByPlanet.get(planet) ?? null;
+  const samePlanet = (ownerPlacementsByPlanet.get(planet) ?? [])
+    .filter((row) => row !== exact)
+    .sort((left, right) => left.contentKey.localeCompare(right.contentKey))[0] ?? null;
+  const sameSign = (ownerPlacementsBySign.get(sign) ?? [])
+    .filter((row) => row !== exact)
+    .sort((left, right) => left.contentKey.localeCompare(right.contentKey))[0] ?? null;
+  const rows = [...new Set([planetRow, exact, samePlanet, sameSign].filter(Boolean))].slice(0, 3);
+  let coverage = "owner_voiced_exact_pair";
+  if (!exact && planetRow) coverage = "owner_voice_inferred_from_planet_and_sign";
+  if (!exact && !planetRow && samePlanet) coverage = "owner_voice_inferred_from_same_planet_and_sign";
+  if (!exact && !planetRow && !samePlanet) coverage = "doctrine_meaning_owner_register_inferred";
+  return {
+    coverage,
+    exactPair: Boolean(exact),
+    pointSpecificOwnerVoice: Boolean(planetRow || exact || samePlanet),
+    rows,
+  };
+}
 
 const servingByUnit = new Map(
   fallback.hookRows
@@ -137,6 +184,10 @@ const signUnits = planets.flatMap((planet) => signs.map((sign) => {
   ];
   if (evidence.length === 0) throw new Error(`No approved evidence for ${unit}`);
   const wording = wordingForSignUnit(planet, sign);
+  const ownerVoice = ownerVoiceEvidenceFor(planet, sign);
+  const ownerVoiceEvidence = ownerVoice.rows.map((row) => (
+    evidenceEntry(`${fallbackPath}#${row.contentKey}`, row)
+  ));
 
   const record = {
     key: `sky-sign/${planet}/${sign}`,
@@ -145,19 +196,28 @@ const signUnits = planets.flatMap((planet) => signs.map((sign) => {
     ...wording,
     source_ids: evidence.map((item) => item.source_id),
     source_hashes: evidence.map((item) => item.source_hash),
+    owner_voice_coverage: ownerVoice.coverage,
+    owner_voice_source_ids: ownerVoiceEvidence.map((item) => item.source_id),
+    owner_voice_source_hashes: ownerVoiceEvidence.map((item) => item.source_hash),
     owner_review_status: "PENDING OWNER",
   };
 
-  if (record.key === "sky-sign/sun/leo") {
-    record.planet_function = "individual contribution and recognition become more important";
-    record.sign_expression = "visibility, pride, and distinguishing individual contribution";
-  }
-  if (record.key === "sky-sign/saturn/aquarius") {
-    record.planet_function = "limits, responsibility, and standards carry more weight";
-    record.sign_expression = "shared rules, group standards, precedent, and equal application";
-  }
   return record;
 }));
+
+const targetOwnerPlanetCoverage = planets.map((planet) => ({
+  planet,
+  planet_lived: ownerPlanetByPlanet.has(planet),
+  exact_placement_pairs: signs.filter((sign) => ownerPlacementByUnit.has(`${planet}|${sign}`)),
+}));
+const targetOwnerSignCoverage = signs.map((sign) => ({
+  sign,
+  placement_sign_lived_planets: (ownerPlacementsBySign.get(sign) ?? [])
+    .map((row) => row.contentKey.split("/")[2])
+    .sort(),
+}));
+const exactTargetPairCount = signUnits.filter((row) => row.owner_voice_coverage === "owner_voiced_exact_pair").length;
+const ownerVoiceCoverageCounts = countValues(signUnits.map((row) => row.owner_voice_coverage));
 
 function evidenceForFallbackKey(contentKey) {
   const row = allFallbackRows.find((candidate) => candidate.contentKey === contentKey && isApproved(candidate));
@@ -252,6 +312,67 @@ const detailsCopied = signUnits.filter((row) => row.details_language === row.com
 const oldJoinRows = signUnits
   .filter((row) => /;\s*expressed through|\bexpressed through\b/iu.test(row.combined_position))
   .map((row) => row.key);
+const abstractSubjectWords = new Set([
+  "action", "affection", "agreement", "ambition", "attraction", "authority", "autonomy",
+  "belonging", "capacity", "care", "change", "confidence", "connection", "control",
+  "disruption", "duty", "ease", "effort", "emotional", "expansion", "explanation",
+  "fairness", "feelings", "freedom", "growth", "hope", "hurt", "ideas", "identity",
+  "ideals", "imagination", "independence", "information", "leverage", "limits", "mood",
+  "movement", "needs", "opportunity", "pain", "possibility", "power", "pressure",
+  "privacy", "progress", "recognition", "refusal", "responsibility", "revision",
+  "security", "sensitivity", "standards", "structure", "thought", "uncertainty", "urgency",
+  "value", "visibility",
+]);
+function firstWord(value) {
+  return String(value).toLowerCase().match(/[a-z]+/u)?.[0] ?? "";
+}
+const plainRegisterFields = [
+  ...signUnits.flatMap((row) => [
+    [row.key, "planet_function", row.planet_function],
+    [row.key, "sign_expression", row.sign_expression],
+    [row.key, "combined_position", row.combined_position],
+  ]),
+  ...[...aspects, ...modalities, ...elements].flatMap((row) => [
+    [row.key, "reader_effect", row.reader_effect],
+    [row.key, "conflict_behavior", row.conflict_behavior],
+    [row.key, "movement_bias", row.movement_bias],
+  ]),
+];
+const abstractSubjectViolations = plainRegisterFields
+  .filter(([, , value]) => abstractSubjectWords.has(firstWord(value)))
+  .map(([key, field, value]) => ({ key, field, value }));
+
+function rowBody(row) {
+  return String(row?.body ?? row?.body_you ?? row?.copy ?? "");
+}
+const ownerVoiceBodies = [...ownerPlanetRows, ...ownerPlacementRows].map((row) => ({
+  source: `${fallbackPath}#${row.contentKey}`,
+  body: rowBody(row).toLowerCase(),
+}));
+const wordingValues = [
+  ...signUnits.flatMap((row) => [
+    [row.key, "planet_function", row.planet_function],
+    [row.key, "sign_expression", row.sign_expression],
+    [row.key, "combined_position", row.combined_position],
+    ...row.reader_manifestations.map((value, index) => [row.key, `reader_manifestations[${index}]`, value]),
+    [row.key, "details_language", row.details_language],
+  ]),
+  ...[...aspects, ...modalities, ...elements].flatMap((row) => [
+    [row.key, "reader_effect", row.reader_effect],
+    [row.key, "conflict_behavior", row.conflict_behavior],
+    [row.key, "movement_bias", row.movement_bias],
+  ]),
+];
+const ownerVoiceVerbatimMatches = [];
+for (const [key, field, value] of wordingValues) {
+  const normalized = String(value).toLowerCase().replace(/\s+/gu, " ").trim();
+  if (normalized.split(/\s+/u).length < 8) continue;
+  for (const source of ownerVoiceBodies) {
+    if (source.body.replace(/\s+/gu, " ").includes(normalized)) {
+      ownerVoiceVerbatimMatches.push({ key, field, source: source.source, value });
+    }
+  }
+}
 
 const wordingQuality = {
   caps: {
@@ -276,6 +397,8 @@ const wordingQuality = {
   maximumConnectiveNgramUse: connectiveCounts[0]?.[1] ?? 0,
   detailsCopiedFromCombinedPosition: detailsCopied,
   mechanicalJoinRows: oldJoinRows,
+  abstractSubjectViolations,
+  ownerVoiceVerbatimMatches,
 };
 
 if (wordingQuality.maximumOpeningConstructionUse > OPENING_CAP) {
@@ -292,6 +415,8 @@ if (wordingQuality.maximumConnectiveNgramUse > JOIN_PHRASE_CAP) {
 }
 if (detailsCopied.length > 0) throw new Error(`details_language duplicates combined_position: ${detailsCopied.join(", ")}`);
 if (oldJoinRows.length > 0) throw new Error(`Mechanical join phrase remains: ${oldJoinRows.join(", ")}`);
+if (abstractSubjectViolations.length > 0) throw new Error(`Abstract subject remains: ${JSON.stringify(abstractSubjectViolations.slice(0, 12))}`);
+if (ownerVoiceVerbatimMatches.length > 0) throw new Error(`Owner personal-register wording was copied instead of converted: ${JSON.stringify(ownerVoiceVerbatimMatches.slice(0, 12))}`);
 
 const evidenceLayer = [...signUnits, ...aspects, ...modalities, ...elements]
   .map((row) => [row.key, row.source_ids, row.source_hashes]);
@@ -319,6 +444,20 @@ const registry = {
     total: signUnits.length + aspects.length + modalities.length + elements.length,
   },
   evidenceLayerSha256,
+  ownerVoiceCoverage: {
+    sourceFamilies: [
+      "fallback-hook/planet-lived/*",
+      "fallback-hook/placement-sign-lived/*",
+    ],
+    approvedPlanetRows: ownerPlanetRows.length,
+    approvedPlacementRows: ownerPlacementRows.length,
+    targetExactPairRows: exactTargetPairCount,
+    targetInferredPairRows: signUnits.length - exactTargetPairCount,
+    targetPlanets: targetOwnerPlanetCoverage,
+    signs: targetOwnerSignCoverage,
+    derivationCounts: Object.fromEntries(ownerVoiceCoverageCounts),
+    rule: "Exact owner-written planet-sign rows govern where present. Missing pairs keep governed doctrine for meaning and use the nearest owner-approved planet or sign rows for register. No personal or second-person wording is copied into collective Sky components.",
+  },
   wordingQuality,
   signUnits,
   aspectMechanisms: aspects,
@@ -340,6 +479,7 @@ await fs.writeFile(
 
 const workbook = Workbook.create();
 const overview = workbook.worksheets.add("Overview");
+const coverageSheet = workbook.worksheets.add("Owner Voice Coverage");
 const signSheet = workbook.worksheets.add("Sign Units");
 const aspectSheet = workbook.worksheets.add("Aspect Mechanisms");
 const modalitySheet = workbook.worksheets.add("Modality Units");
@@ -406,7 +546,7 @@ function styleTable(sheet, headerRange, dataRange, widths) {
   });
 }
 
-for (const sheet of [overview, signSheet, aspectSheet, modalitySheet, elementSheet, gateSheet, wordingQaSheet]) styleSheet(sheet);
+for (const sheet of [overview, coverageSheet, signSheet, aspectSheet, modalitySheet, elementSheet, gateSheet, wordingQaSheet]) styleSheet(sheet);
 
 titleBand(
   overview,
@@ -454,6 +594,42 @@ overview.getRange("A14:F21").format = { wrapText: true, verticalAlignment: "top"
   overview.getRange(`${column}:${column}`).format.columnWidth = width;
 });
 
+titleBand(
+  coverageSheet,
+  "A1:F1",
+  "Owner-voice coverage",
+  "Exact owner-written planet/sign rows govern first. Missing pairs keep governed doctrine and borrow register only from the nearest approved owner writing. Personal wording is converted, never quoted.",
+);
+coverageSheet.getRange("A4:C4").values = [["Planet", "Planet-lived source?", "Exact placement-sign pairs"]];
+coverageSheet.getRange("A5:C16").values = targetOwnerPlanetCoverage.map((row) => [
+  row.planet,
+  row.planet_lived ? "YES" : "NO",
+  row.exact_placement_pairs.length ? row.exact_placement_pairs.join(", ") : "none",
+]);
+coverageSheet.getRange("E4:F4").values = [["Sign", "Owner-written placement planets"]];
+coverageSheet.getRange("E5:F16").values = targetOwnerSignCoverage.map((row) => [
+  row.sign,
+  row.placement_sign_lived_planets.join(", "),
+]);
+coverageSheet.getRange("A19:C24").values = [
+  ["Coverage measure", "Count", "Meaning"],
+  ["Approved planet-lived rows", ownerPlanetRows.length, "Target planets with a direct owner-written planet register source"],
+  ["Approved placement-sign-lived rows", ownerPlacementRows.length, "All approved rows in the source family, including non-target points"],
+  ["Exact target planet-sign pairs", exactTargetPairCount, "Strongest owner-voice evidence"],
+  ["Inferred target planet-sign pairs", signUnits.length - exactTargetPairCount, "Governed meaning plus nearest owner-written register evidence"],
+  ["Doctrine-only point meanings", signUnits.filter((row) => row.owner_voice_coverage === "doctrine_meaning_owner_register_inferred").length, "No point-specific owner-voice row; sign writing supplies register only"],
+];
+for (const range of ["A4:C4", "E4:F4", "A19:C19"]) {
+  coverageSheet.getRange(range).format = { fill: teal, font: { bold: true, color: white }, wrapText: true };
+}
+coverageSheet.getRange("A5:C16").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+coverageSheet.getRange("E5:F16").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+coverageSheet.getRange("A20:C24").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+[["A", 24], ["B", 22], ["C", 58], ["D", 4], ["E", 22], ["F", 66]].forEach(([column, width]) => {
+  coverageSheet.getRange(`${column}:${column}`).format.columnWidth = width;
+});
+coverageSheet.freezePanes.freezeRows(3);
+
 function writeComponentSheet(sheet, title, subtitle, headers, records, mapper, widths, tableName) {
   const lastColumn = String.fromCharCode(64 + headers.length);
   titleBand(sheet, `A1:${lastColumn}1`, title, subtitle);
@@ -473,7 +649,7 @@ writeComponentSheet(
   signSheet,
   "Sign units (144)",
   "Meaning components only. Reader manifestations are a source-backed menu for composition, never a quota or a sentence template.",
-  ["Key", "Planet function", "Sign expression", "Combined position", "Reader manifestations", "Details language", "Source IDs", "Source hashes", "Owner review status", "Owner notes"],
+  ["Key", "Planet function", "Sign expression", "Combined position", "Reader manifestations", "Details language", "Meaning source IDs", "Meaning source hashes", "Owner-voice coverage", "Owner-voice source IDs", "Owner-voice source hashes", "Owner review status", "Owner notes"],
   signUnits,
   (row) => [
     row.key,
@@ -484,10 +660,13 @@ writeComponentSheet(
     row.details_language,
     row.source_ids.join("\n"),
     row.source_hashes.join("\n"),
+    row.owner_voice_coverage,
+    row.owner_voice_source_ids.join("\n"),
+    row.owner_voice_source_hashes.join("\n"),
     row.owner_review_status,
     "",
   ],
-  [["A", 34], ["B", 32], ["C", 34], ["D", 42], ["E", 46], ["F", 38], ["G", 58], ["H", 42], ["I", 20], ["J", 28]],
+  [["A", 34], ["B", 38], ["C", 38], ["D", 46], ["E", 46], ["F", 38], ["G", 58], ["H", 42], ["I", 34], ["J", 58], ["K", 42], ["L", 20], ["M", 28]],
   "SignUnitsTable",
 );
 
@@ -546,7 +725,7 @@ titleBand(
   "Frame uniqueness gate",
   "Beats are required. Connective wording is not. The future composer must vary openers and connective constructions across the corpus.",
 );
-gateSheet.getRange("A4:F12").values = [
+gateSheet.getRange("A4:F14").values = [
   ["Rule", "Scope", "Cap", "Pass example", "Fail example", "Reason"],
   ["Exact sentence uniqueness", "Forecast + Details", 1, "Every sentence appears once", "Same full sentence in two cards", "Prevents copied frames"],
   ["Forecast opener construction", "Forecast first sentence", 4, "Four or fewer uses", "Five cards begin with the same normalized opening", "Prevents opener monoculture"],
@@ -556,9 +735,11 @@ gateSheet.getRange("A4:F12").values = [
   ["Required Details beats", "Each Details block", 4, "Reader order preserved", "Planet-by-planet concatenation", "Astrology explains the reader beats"],
   ["Verbatim component emission", "All components", 0, "Composer paraphrases and integrates", "A stored component appears as a full sentence", "Components govern meaning, not prose"],
   ["Manifestation shape reuse", "Sign-unit manifestations", 3, "Planet-sign events use distinct grammar", "A sign frame survives after planet nouns are stripped", "String uniqueness alone does not catch slot templates"],
+  ["Plain-register subject", "Meaning components", 0, "People, deadlines, messages, rules, and other everyday actors lead", "Recognition, autonomy, or pressure narrates itself", "The owner's register uses active verbs and concrete nouns"],
+  ["Owner-source conversion", "All owner-voice evidence", 0, "Personal source meaning is converted for collective Sky", "Eight or more source words are copied verbatim", "Owner voice governs without leaking second-person source prose"],
 ];
 gateSheet.getRange("A4:F4").format = { fill: teal, font: { bold: true, color: white }, wrapText: true };
-gateSheet.getRange("A5:F12").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+gateSheet.getRange("A5:F14").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
 [["A", 34], ["B", 28], ["C", 10], ["D", 38], ["E", 42], ["F", 38]].forEach(([column, width]) => {
   gateSheet.getRange(`${column}:${column}`).format.columnWidth = width;
 });
@@ -569,7 +750,7 @@ titleBand(
   "Wording-layer QA",
   "The evidence layer is hash-locked. These checks show whether fixed joins, repeated bullets, structural slot templates, or opener monoculture have returned.",
 );
-wordingQaSheet.getRange("A4:C12").values = [
+wordingQaSheet.getRange("A4:C14").values = [
   ["Measure", "Result", "Cap"],
   ["Evidence-layer SHA-256", evidenceLayerSha256, "locked"],
   ["Mechanical join rows", oldJoinRows.length, 0],
@@ -579,15 +760,17 @@ wordingQaSheet.getRange("A4:C12").values = [
   ["Maximum manifestation skeleton use", wordingQuality.maximumManifestationShapeUse, MANIFESTATION_SHAPE_CAP],
   ["Maximum details-language use", wordingQuality.maximumDetailsLanguageUse, DETAILS_LANGUAGE_REPEAT_CAP],
   ["Maximum connective n-gram use", wordingQuality.maximumConnectiveNgramUse, JOIN_PHRASE_CAP],
+  ["Abstract-subject violations", abstractSubjectViolations.length, 0],
+  ["Owner-source verbatim matches (8+ words)", ownerVoiceVerbatimMatches.length, 0],
 ];
 wordingQaSheet.getRange("A4:C4").format = { fill: teal, font: { bold: true, color: white } };
-wordingQaSheet.getRange("A5:C12").format = { fill: light, wrapText: true, borders: { insideHorizontal: { style: "thin", color: line } } };
+wordingQaSheet.getRange("A5:C14").format = { fill: light, wrapText: true, borders: { insideHorizontal: { style: "thin", color: line } } };
 
 const topOpeningRows = wordingQuality.openingConstructions.slice(0, 20).map(([construction, count]) => [construction, count]);
-wordingQaSheet.getRange("A13:B13").values = [["Opening construction", "Uses"]];
-wordingQaSheet.getRange(`A14:B${13 + topOpeningRows.length}`).values = topOpeningRows;
-wordingQaSheet.getRange("A13:B13").format = { fill: teal, font: { bold: true, color: white } };
-wordingQaSheet.getRange(`A14:B${13 + topOpeningRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
+wordingQaSheet.getRange("A16:B16").values = [["Opening construction", "Uses"]];
+wordingQaSheet.getRange(`A17:B${16 + topOpeningRows.length}`).values = topOpeningRows;
+wordingQaSheet.getRange("A16:B16").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`A17:B${16 + topOpeningRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
 
 wordingQaSheet.getRange("D4:E4").values = [["Manifestation occurrence count", "Distinct bullets"]];
 wordingQaSheet.getRange(`D5:E${4 + wordingQuality.manifestationRepeatDistribution.length}`).values = wordingQuality.manifestationRepeatDistribution.map((row) => [row.occurrences, row.distinctValues]);
@@ -599,16 +782,16 @@ wordingQaSheet.getRange(`G5:H${4 + wordingQuality.manifestationShapeDistribution
 wordingQaSheet.getRange("G4:H4").format = { fill: teal, font: { bold: true, color: white } };
 wordingQaSheet.getRange(`G5:H${4 + wordingQuality.manifestationShapeDistribution.length}`).format = { fill: light };
 
-wordingQaSheet.getRange("D13:E13").values = [["Repeated connective n-gram", "Uses"]];
+wordingQaSheet.getRange("D16:E16").values = [["Repeated connective n-gram", "Uses"]];
 const topConnectiveRows = wordingQuality.repeatedConnectiveNgrams.slice(0, 20).map(([construction, count]) => [construction, count]);
-wordingQaSheet.getRange(`D14:E${13 + topConnectiveRows.length}`).values = topConnectiveRows;
-wordingQaSheet.getRange("D13:E13").format = { fill: teal, font: { bold: true, color: white } };
-wordingQaSheet.getRange(`D14:E${13 + topConnectiveRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
-wordingQaSheet.getRange("G13:H13").values = [["Manifestation skeleton", "Uses"]];
+wordingQaSheet.getRange(`D17:E${16 + topConnectiveRows.length}`).values = topConnectiveRows;
+wordingQaSheet.getRange("D16:E16").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`D17:E${16 + topConnectiveRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
+wordingQaSheet.getRange("G16:H16").values = [["Manifestation skeleton", "Uses"]];
 const topShapeRows = wordingQuality.manifestationShapes.slice(0, 20).map(([construction, count]) => [construction, count]);
-wordingQaSheet.getRange(`G14:H${13 + topShapeRows.length}`).values = topShapeRows;
-wordingQaSheet.getRange("G13:H13").format = { fill: teal, font: { bold: true, color: white } };
-wordingQaSheet.getRange(`G14:H${13 + topShapeRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
+wordingQaSheet.getRange(`G17:H${16 + topShapeRows.length}`).values = topShapeRows;
+wordingQaSheet.getRange("G16:H16").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`G17:H${16 + topShapeRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
 [["A", 38], ["B", 48], ["C", 12], ["D", 44], ["E", 16], ["F", 3], ["G", 64], ["H", 12]].forEach(([column, width]) => {
   wordingQaSheet.getRange(`${column}:${column}`).format.columnWidth = width;
 });
@@ -631,12 +814,13 @@ if (/"matchCount":\s*[1-9]/u.test(errors.ndjson)) throw new Error(errors.ndjson)
 
 for (const [sheetName, range] of [
   ["Overview", "A1:F21"],
-  ["Sign Units", "A1:J12"],
+  ["Owner Voice Coverage", "A1:F24"],
+  ["Sign Units", "A1:M12"],
   ["Aspect Mechanisms", "A1:H8"],
   ["Modality Units", "A1:H12"],
   ["Element Units", "A1:H12"],
-  ["Frame Gate", "A1:F12"],
-  ["Wording QA", "A1:H33"],
+  ["Frame Gate", "A1:F14"],
+  ["Wording QA", "A1:H36"],
 ]) {
   const preview = await workbook.render({ sheetName, range, scale: 1, format: "png" });
   await fs.writeFile(

@@ -26,19 +26,39 @@ All 174 rows fail closed until exact owner approval.
 
 The frame-uniqueness gate is implemented in `scripts/sky-calendar-frame-uniqueness.mjs` and permanently tested by `scripts/test-sky-calendar-frame-uniqueness.mjs`.
 
+## Owner-voice coverage
+
+The wording pass uses two exact-approved source families for register and lived meaning:
+
+- `fallback-hook/planet-lived/*`: 7 target planets have direct rows: Jupiter, Mars, Moon, Neptune, Pluto, Saturn, and Uranus.
+- `fallback-hook/placement-sign-lived/*`: 56 approved rows cover all 12 signs. Of those, 46 are exact pairs among the 12 target Sky planets.
+
+Coverage across the 144 target planet-sign units:
+
+- 46 `owner_voiced_exact_pair`
+- 49 `owner_voice_inferred_from_planet_and_sign`
+- 13 `owner_voice_inferred_from_same_planet_and_sign`
+- 36 `doctrine_meaning_owner_register_inferred`
+
+The 36 doctrine-led units are all Sun, Chiron, and Lilith sign units. Those three points have neither a `planet-lived` row nor an exact `placement-sign-lived` row. Their governed doctrine still controls meaning; approved writing for the same sign supplies register only. Mercury and Venus also lack `planet-lived` rows, but their exact and same-planet `placement-sign-lived` rows supply point-specific owner voice.
+
+Every sign has at least two owner-written placement rows. Exact source IDs, SHA-256 hashes, and the derivation class are visible on every Sign Units row and summarized in the Owner Voice Coverage sheet. Personal and second-person prose is converted for collective Sky; no source passage of eight or more words is copied verbatim.
+
 ## Wording-layer regeneration
 
-The owner rejected the first wording layer because 142 sign units used the same mechanical join and their manifestations were unions of reusable planet and sign lists. A second pass fixed the joined position language but still built manifestations from three reusable frames per sign. The third pass replaces that slot system with manifestations authored separately for every planet-sign unit. The evidence layer was preserved at SHA-256 `0ceb85f5897fb42238dfdd69e7b02271f87befe202f009da8659add9b9337c23`.
+The owner rejected the first wording layer because 142 sign units used the same mechanical join and their manifestations were unions of reusable planet and sign lists. A second pass fixed the joined position language but still built manifestations from three reusable frames per sign. The next pass replaced that slot system with manifestations authored separately for every planet-sign unit. This pass keeps that structural fix and moves the full component set into the owner's plain register: people, deadlines, budgets, messages, rules, work, and consequences replace abstract nouns narrating themselves. The evidence layer remains unchanged at SHA-256 `0ceb85f5897fb42238dfdd69e7b02271f87befe202f009da8659add9b9337c23`.
 
 The regenerated wording layer has:
 
 - zero uses of the old `expressed through` join;
 - zero `details_language` values copied from `combined_position`;
-- an opening-construction cap of 4, with an observed maximum of 3;
-- 132 distinct two-word openings across 144 sign units: 123 used once, 6 used twice, and 3 used three times;
+- an opening-construction cap of 4, with an observed maximum of 4;
+- 120 distinct two-word openings across 144 sign units: 103 used once, 11 used twice, 5 used three times, and 1 used four times;
 - a reader-manifestation reuse cap of 2, with all 432 bullets unique and an observed maximum of 1;
 - a reader-manifestation structural-skeleton cap of 3 after planet-specific noun stripping, with 432 distinct skeletons and an observed maximum of 1;
 - a details-language reuse cap of 2, with all 144 phrases unique and an observed maximum of 1;
 - a connective n-gram cap of 4, with an observed maximum of 4.
+- zero abstract-subject violations in the planet, sign, combined-position, aspect, modality, and element meaning fields;
+- zero verbatim matches of eight or more words against the owner-written personal-register sources.
 
 These checks run during workbook generation and are pinned by `scripts/test-sky-calendar-meaning-components.mjs`.

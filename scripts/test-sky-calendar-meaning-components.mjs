@@ -64,16 +64,15 @@ assert.equal(registry.wordingQuality.maximumDetailsLanguageUse <= registry.wordi
 assert.equal(registry.wordingQuality.maximumConnectiveNgramUse <= registry.wordingQuality.caps.connectiveNgram, true);
 assert.deepEqual(registry.wordingQuality.detailsCopiedFromCombinedPosition, []);
 assert.deepEqual(registry.wordingQuality.mechanicalJoinRows, []);
-assert.equal(
-  sha256(JSON.stringify({
-    signUnits: registry.signUnits.map(({ reader_manifestations: _manifestations, ...row }) => row),
-    aspectMechanisms: registry.aspectMechanisms,
-    modalityUnits: registry.modalityUnits,
-    elementUnits: registry.elementUnits,
-  })),
-  "e9e948cd75277ab19b20fe2cfc69d881bdc068270452ff36ac466b0188a5238b",
-  "owner-approved-in-substance component layers must remain byte-identical",
-);
+assert.deepEqual(registry.wordingQuality.abstractSubjectViolations, []);
+assert.deepEqual(registry.wordingQuality.ownerVoiceVerbatimMatches, []);
+assert.equal(registry.ownerVoiceCoverage.approvedPlanetRows, 7);
+assert.equal(registry.ownerVoiceCoverage.approvedPlacementRows, 56);
+assert.equal(registry.ownerVoiceCoverage.targetExactPairRows, 46);
+assert.equal(registry.ownerVoiceCoverage.targetInferredPairRows, 98);
+assert.equal(registry.ownerVoiceCoverage.targetPlanets.length, 12);
+assert.equal(registry.ownerVoiceCoverage.signs.length, 12);
+assert.equal(registry.ownerVoiceCoverage.signs.every((row) => row.placement_sign_lived_planets.length > 0), true);
 assert.throws(
   () => assertManifestationShapeCap([
     { key: "sky-sign/sun/aries", reader_manifestations: ["credit being claimed before others agree"] },
@@ -92,6 +91,16 @@ const all = [
 ];
 assert.equal(all.length, 174);
 assert.equal(new Set(all.map((row) => row.key)).size, 174);
+const renderedRegistryText = JSON.stringify({
+  signUnits: registry.signUnits,
+  aspectMechanisms: registry.aspectMechanisms,
+  modalityUnits: registry.modalityUnits,
+  elementUnits: registry.elementUnits,
+});
+assert.doesNotMatch(renderedRegistryText, /\b(?:you|your|yours|yourself|yourselves)\b/iu, "collective components may not use second person");
+assert.doesNotMatch(renderedRegistryText, /—/u, "components must remain ASCII and em-dash free");
+assert.equal([...renderedRegistryText].some((character) => character.charCodeAt(0) > 127), false, "components must remain ASCII");
+assert.doesNotMatch(renderedRegistryText, /\bsteady\b/iu, "banned word steady");
 
 for (const row of all) {
   assert.equal(row.owner_review_status, "PENDING OWNER", `${row.key} must remain pending`);
@@ -112,6 +121,14 @@ for (const row of registry.signUnits) {
   assert.notEqual(row.details_language, row.combined_position, `${row.key} details language must be independently phrased`);
   assert.doesNotMatch(row.combined_position, /;\s*expressed through|\bexpressed through\b/iu, `${row.key} mechanical join`);
   assert.ok(Array.isArray(row.reader_manifestations) && row.reader_manifestations.length === 3);
+  assert.ok(typeof row.owner_voice_coverage === "string" && row.owner_voice_coverage.length > 0);
+  assert.ok(Array.isArray(row.owner_voice_source_ids) && row.owner_voice_source_ids.length > 0);
+  assert.equal(row.owner_voice_source_ids.length, row.owner_voice_source_hashes.length);
+  row.owner_voice_source_ids.forEach((sourceId, index) => {
+    const value = sourceValue(sourceId);
+    assert.ok(value, `${row.key} missing owner-voice source ${sourceId}`);
+    assert.equal(row.owner_voice_source_hashes[index], sha256(JSON.stringify(value)), `${row.key} owner-voice source hash ${sourceId}`);
+  });
   row.reader_manifestations.forEach((value) => {
     assert.doesNotMatch(value, /[.!?]$/u, `${row.key} reader manifestation must remain a component`);
   });
@@ -125,13 +142,13 @@ for (const row of [...registry.aspectMechanisms, ...registry.modalityUnits, ...r
 }
 
 const opposition = registry.aspectMechanisms.find((row) => row.key === "sky-aspect-mechanism/opposition");
-assert.equal(opposition.reader_effect, "both positions become difficult to ignore");
-assert.equal(opposition.conflict_behavior, "the disagreement is more likely to become explicit");
-assert.equal(opposition.movement_bias, "movement usually requires dealing with both positions rather than eliminating one");
+assert.equal(opposition.reader_effect, "people can see both positions at the same time");
+assert.equal(opposition.conflict_behavior, "the two sides are more likely to state the disagreement openly");
+assert.equal(opposition.movement_bias, "people usually have to deal with both positions instead of removing one");
 
 const fixedFixed = registry.modalityUnits.find((row) => row.key === "sky-how/modality/fixed/fixed");
 assert.equal(fixedFixed.reader_effect, "the disagreement settles around two positions neither side considers expendable");
 assert.equal(fixedFixed.conflict_behavior, "neither side gives ground easily under pressure");
-assert.equal(fixedFixed.movement_bias, "change is more likely in the terms or structure than through either side backing down");
+assert.equal(fixedFixed.movement_bias, "people are more likely to change the terms or structure than to make either side back down");
 
 console.log("Sky Calendar meaning components: PASS (174/174 evidence hashes verified)");
