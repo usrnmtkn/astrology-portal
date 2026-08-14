@@ -141,58 +141,12 @@ export interface RenderOpts {
 export class SourceGapError extends Error {}
 export class RoleViolationError extends Error {}
 
-// Keep this standalone: legacy verifier paths execute this resolver from a data: URL.
-// scripts/test-friends-natal-fallback-runtime.mjs locks it to the governed JSON contract.
-export const FRIEND_NATAL_SECOND_PERSON_VOCABULARY_KEYS = new Set<string>([
-  "fallback-vocab/house-jurisdiction/1",
-  "fallback-vocab/house-jurisdiction/3",
-  "fallback-vocab/house-jurisdiction/7",
-  "fallback-vocab/house-jurisdiction/11",
-  "fallback-vocab/house-jurisdiction/12",
-  "fallback-vocab/planet-excess/sun",
-  "fallback-vocab/planet-productive/sun",
-  "fallback-vocab/planet-function/sun",
-  "fallback-vocab/planet-function/moon",
-  "fallback-vocab/planet-function/mercury",
-  "fallback-vocab/planet-function/venus",
-  "fallback-vocab/planet-excess/jupiter",
-  "fallback-vocab/planet-function/chiron",
-  "fallback-vocab/planet-productive/north-node",
-  "fallback-vocab/planet-productive/south-node",
-  "fallback-vocab/house-pressure/1",
-  "fallback-vocab/placement-gerund/chiron/aries/0",
-  "fallback-vocab/placement-gerund/chiron/gemini/0",
-  "fallback-vocab/placement-gerund/chiron/leo/0",
-  "fallback-vocab/placement-gerund/chiron/virgo/0",
-  "fallback-vocab/placement-gerund/chiron/libra/0",
-  "fallback-vocab/placement-gerund/chiron/scorpio/0",
-  "fallback-vocab/placement-gerund/chiron/sagittarius/0",
-  "fallback-vocab/placement-gerund/chiron/capricorn/0",
-  "fallback-vocab/placement-gerund/chiron/aquarius/0",
-  "fallback-vocab/placement-gerund/chiron/pisces/0",
-  "fallback-vocab/dodont-do/mercury/libra",
-  "fallback-vocab/dodont-do/mercury/aquarius",
-  "fallback-vocab/dodont-reward/moon",
-  "fallback-vocab/dodont-moon-dont/taurus",
-  "fallback-vocab/dodont-moon-do/gemini",
-  "fallback-vocab/dodont-moon-do/cancer",
-  "fallback-vocab/dodont-moon-dont/libra",
-  "fallback-vocab/sky-planet-function/chiron",
-  "fallback-vocab/sky-planet-function/jupiter",
-  "fallback-vocab/sky-planet-function/mercury",
-  "fallback-vocab/sky-planet-function/moon",
-  "fallback-vocab/sky-planet-function/north-node",
-  "fallback-vocab/sky-planet-function/south-node",
-  "fallback-vocab/sky-planet-function/sun"
-]);
-
 export function vocabularyBodyForVoice(row: VocabRow | undefined, voice: "you" | "they"): string | null {
   const body = voice === "you"
     ? (row?.body_you ?? row?.body)
     : (row?.body_they ?? row?.body);
 
   if (typeof body !== "string" || !body.trim()) return null;
-  if (voice === "they" && row && FRIEND_NATAL_SECOND_PERSON_VOCABULARY_KEYS.has(row.contentKey)) return null;
   return body;
 }
 
