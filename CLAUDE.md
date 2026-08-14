@@ -6,6 +6,31 @@ The project has three reader-facing registers. They are not
 interchangeable, and copy written in the wrong one is rejected on sight.
 Check the register before writing a single sentence.
 
+Resolve the rendered surface first. Trace the page or route to its renderer
+and content-key family before using source prose or choosing a voice. Never
+infer register from a content key that merely names a planet and sign: the
+same planet-plus-sign shape can feed Sky Placement, Calendar, You, or Friends,
+where the renderer may make it current sky, a collective event, a natal
+placement, a personal transit, or a relationship condition.
+
+- Content rendered on the Sky page is current-sky content, never natal.
+- Content rendered on the Calendar page is current-sky content, never natal.
+- On You and Friends, the exact renderer decides between natal, personal
+  transit, and relationship registers.
+
+Current-sky temporality does not make every Sky surface sound identical. Sky
+Placement articles may address the reader under their article contract, but
+they describe the current transit rather than a standing personality.
+Calendar aspect cards remain collective and use no second person. Apply the
+sub-surface contract only after the current-sky classification is fixed. If
+the route, renderer, or surface is ambiguous, fail closed and ask the owner
+instead of guessing.
+
+Incident record, 2026-08-15: an owner-directed natal register normalization
+was applied to Sky Placement review rows because the surface was assumed from
+the content key instead of resolved; review caught the error, the change was
+reverted, and it remained non-serving throughout.
+
 ### 1. Sky aspect (Calendar) — collective
 
 Two planets aspecting each other in the current sky. It is the same for
