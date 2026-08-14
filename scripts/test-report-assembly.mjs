@@ -3,6 +3,8 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import {
   deduplicateAssembledReport,
+  detectPostDedupCoherenceScopes,
+  normalizeAssembledReportWhitespace,
   REPORT_LEVEL_LEXICAL_BUDGETS,
   runReportRedundancyPass,
   validateAssembledReport
@@ -36,12 +38,49 @@ const validKeyDates = [{
   draft: {
     headline: "KEY DATES",
     summary: "FIXTURE_ONLY summary.",
-    body: "AUG 12 · FIXTURE_ONLY TITLE · A supported event may need an answer. · Solar eclipse in the third house.\n\nAUG 28 · FIXTURE_ONLY TITLE · Public wording may require revision. · Lunar eclipse on natal Mercury.",
+    body: "AUG 12 · FIXTURE_ONLY FIRST TITLE · A supported event may need an answer. · Solar eclipse in the third house.\n\nAUG 28 · FIXTURE_ONLY SECOND TITLE · Public wording may require revision. · Lunar eclipse on natal Mercury.",
     sections: []
   }
 }];
 assert.ok(!validateAssembledReport(validKeyDates).some((entry) => /key_date|markdown/u.test(entry.code)),
   "Two well-formed key-date records must pass the assembled format contract.");
+
+const exactBrokenKeyDates = [{
+  unitId: "spring",
+  draft: { headline: "The old plan needs different terms", body: "FIXTURE_ONLY." }
+}, {
+  unitId: "key-dates",
+  draft: {
+    headline: "KEY DATES",
+    body: [
+      "FEB 22 · GIVE THE IDEA A USABLE FORM · Put the idea somewhere practical. · Saturn trines natal Jupiter.",
+      "FEB 26 · GIVE THE IDEA A USABLE FORM · Follow the idea into a plan. · Neptune trines natal Jupiter.",
+      "MAY 12 · The old plan needs different terms · Together, these aspects make it easier for your writing and replies to fit the schedule you have now. · Uranus sextiles natal Jupiter.",
+      "MAY 14 · The old plan needs different terms · Together, these aspects make it easier for your writing and replies to fit the schedule you have now. · Jupiter trines natal Uranus."
+    ].join("\n\n")
+  }
+}];
+const exactBrokenKeyDateIssues = validateAssembledReport(exactBrokenKeyDates);
+assert.equal(exactBrokenKeyDateIssues.filter((entry) => entry.code === "duplicate_key_date_title").length, 2,
+  "FEB 22/FEB 26 and MAY 12/MAY 14 must expose both duplicate-title pairs.");
+assert.equal(exactBrokenKeyDateIssues.filter((entry) => entry.code === "key_date_title_reuses_section_heading").length, 2,
+  "Both exact parent-heading titles must fail the key-date contract.");
+assert.equal(exactBrokenKeyDateIssues.filter((entry) => entry.code === "duplicate_key_date_sentence").length, 1,
+  "The exact MAY 12/MAY 14 duplicate sentence must fail the key-date contract.");
+
+const repairManifest = JSON.parse(fs.readFileSync(new URL("./fixtures/report-8b3e266e-assembly-repair-v1.json", import.meta.url), "utf8"));
+const repairedEntries = Object.values(repairManifest.sourceUnits).flat();
+assert.equal(repairedEntries.length, 21);
+assert.equal(new Set(repairedEntries.map((entry) => entry.title.toLowerCase())).size, repairedEntries.length,
+  "The repaired Production Key Dates titles must all be unique.");
+assert.equal(new Set(repairedEntries.map((entry) => entry.sentence.toLowerCase())).size, repairedEntries.length,
+  "The repaired Production Key Dates sentences must all be unique.");
+assert.ok(repairedEntries.every((entry) => (entry.sentence.match(/[.!?](?:\s|$)/gu)?.length ?? 0) === 1),
+  "Every repaired Production Key Dates entry must contain exactly one reader sentence.");
+for (const forbiddenTitle of ["GIVE THE IDEA A USABLE FORM", "The old plan needs different terms", "Your work reaches other people, but new opportunities strain your daily schedule"]) {
+  assert.ok(!repairedEntries.some((entry) => entry.title.toLowerCase() === forbiddenTitle.toLowerCase()),
+    `The repaired Key Dates title set must not reuse '${forbiddenTitle}'.`);
+}
 
 const lexicalUnits = [{
   unitId: "overview",
@@ -114,6 +153,24 @@ assert.equal(productionDeduplication.removals.filter((entry) => entry.code === "
 assert.equal(validateAssembledReport(productionDeduplication.units).filter((entry) => entry.severity === "error").length, 0);
 assert.equal(productionRepetitionUnits[3].draft.body, `${manageable} ${overcommit} ${goodOpportunities} ${publicCommunication}`,
   "Mechanical deduplication must not mutate the persisted input object in place.");
+
+const exactPostDedupHoleUnits = [{
+  unitId: "spring",
+  draft: { body: "The change may be your decision, but it does not have to begin as a preference.  Different hours, fewer responsibilities, or more notice may become necessary." }
+}, {
+  unitId: "summer",
+  draft: { body: "  But you still only have so many hours in a day, so a quick yes may cut into lunch or sleep." }
+}, {
+  unitId: "winter-next",
+  draft: { body: "Saturn then makes its final sextile to your Ascendant.  A schedule or boundary may now become the standard." }
+}];
+const exactPostDedupScopes = detectPostDedupCoherenceScopes(exactPostDedupHoleUnits);
+assert.deepEqual(exactPostDedupScopes.map((entry) => entry.unitId), ["spring", "summer", "winter-next"],
+  "The three exact report 8b3e266e post-dedup holes must be bounded for repair.");
+assert.ok(exactPostDedupScopes.find((entry) => entry.unitId === "summer")?.reasons.includes("dangling_connector"));
+const whitespaceNormalized = normalizeAssembledReportWhitespace(exactPostDedupHoleUnits);
+assert.ok(whitespaceNormalized.every((unit) => !/[ \t]{2,}/u.test(unit.draft.body)),
+  "Whitespace left by sentence removal must normalize mechanically.");
 
 let staleRedundancyCalls = 0;
 const staleRedundancyResult = await runReportRedundancyPass({

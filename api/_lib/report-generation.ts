@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { reportOwnerComparisonSet, type ReportOwnerComparisonPassage } from "./report-owner-comparison.js";
+import { reportKeyDateEventManifest, reportKeyDateSourceUnitIds, type ReportKeyDateEventManifestEntry } from "./report-key-dates.js";
 import { REPORT_COLD_PROSE_RULE_PATH, REPORT_NO_CLEVERNESS_RULING_PATH, REPORT_OWNER_REVIEW_EVIDENCE_PATH } from "./report-prompt-versions.js";
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
@@ -106,6 +107,7 @@ export type ReportGenerationPayload = {
   manifestationSets: ResolvedManifestationSet[];
   sourceGaps: ReportSourceGap[];
   writingQueue: ReportSourceGap[];
+  keyDateRequirements: ReportKeyDateEventManifestEntry[];
   voiceEvidence: Array<{
     sourcePath: string;
     sourceType: "owner_authored_final";
@@ -139,6 +141,7 @@ export type ReportDraft = {
   action?: string;
   timing?: string;
   sections?: Array<{ heading?: string; body?: string }>;
+  keyDates?: Array<{ eventId: string; title: string; sentence: string }>;
 };
 
 export type ReportValidationIssue = {
@@ -1172,6 +1175,8 @@ export function assembleReportGenerationPayload(
     manifestationSets: resolved,
     sourceGaps: gaps,
     writingQueue: [...gaps],
+    keyDateRequirements: reportKeyDateEventManifest(input.frozenFacts, input.reportHorizon)
+      .filter((event) => event.sourceUnitId === input.unitId),
     voiceEvidence: [{
       sourcePath: configuration.voiceEvidencePath,
       sourceType: "owner_authored_final",
@@ -1211,6 +1216,9 @@ export function reportPromptFromPayload(payload: ReportGenerationPayload) {
     `NO_CLEVERNESS_TAX_OWNER_RULING\n${noClevernessRuling.text}`,
     `OWNER_REVIEW_EVIDENCE\n${ownerReviewEvidence.text}`,
     `COLD_RENDERED_PROSE_OWNER_RULING\n${coldProseRuling.text}`,
+    reportKeyDateSourceUnitIds(payload.reportHorizon).includes(payload.unit.unitId)
+      ? `STRUCTURED_KEY_DATE_CONTRACT\nFor every frozen key-date event this unit deliberately selects, return one keyDates entry with the exact supplied eventId, a unique date-specific title, and one date-specific reader sentence. Never reuse the unit headline or a section heading as the title. Never lift a body sentence as the key-date sentence. Do not repeat a title or sentence. The runtime owns the date label and technical attribution. Eligible events for this unit:\n${JSON.stringify(payload.keyDateRequirements, null, 2)}`
+      : "STRUCTURED_KEY_DATE_CONTRACT\nReturn keyDates as an empty array for this unit.",
     INTERNAL_LIVED_PROSE_SCAFFOLD,
     `REPORT_GENERATION_PAYLOAD\n${JSON.stringify(taskPayload, null, 2)}`
   ].join("\n\n");
