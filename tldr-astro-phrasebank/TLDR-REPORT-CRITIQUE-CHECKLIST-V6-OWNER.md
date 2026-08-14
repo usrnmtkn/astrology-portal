@@ -1,15 +1,19 @@
-# Report critique checklist v6 draft
+# Report critique checklist v6
 
-**Status:** `needs_review`
-**Version:** `report-critique-checklist-v6-draft`
-**Owner approved:** `false`
-**Active in production:** `false`
-**Promotion authorized:** `false`
+**Status:** `owner_approved`
+**Version:** `report-critique-checklist-v6`
+**Approved:** 2026-08-14
+**Owner approved:** `true`
+**Active in production:** `true`
+**Promotion authorized:** `true`
+**Approved source SHA-256:** `73a575734822ae895bf67e940bb00f591cb381762d55d4a45cc8c1cdf910ff6e`
 **Baseline:** `report-critique-checklist-v5`
-**Candidate amendment source:** `TLDR-REPORT-EARNED-SENTENCE-RULING-OWNER.md`, owner ruling draft 2026-08-13.
-**Governance:** This candidate does not alter the active v5 checklist. Activation requires fresh SHA-pinned owner approval.
+**Amendment source:** `TLDR-REPORT-EARNED-SENTENCE-RULING-OWNER.md`, owner-approved 2026-08-14.
+**Governance:** Owner-approved v6 successor layered over the active v5 checklist and immutable v3 baseline. V6 is active in production. Any later revision requires a new version and fresh owner approval.
 
-The complete v5 checklist remains in force. Add the following candidate requirements only after approval.
+> I approve the earned-sentence ruling at SHA e9a56a47…, critique checklist v6 at SHA 73a57573…, and judge rubric v3.3 at SHA 9f74b1ad…. Activate all three.
+
+The complete v5 checklist remains in force. Add the following requirements.
 
 ## Earned-sentence pass
 

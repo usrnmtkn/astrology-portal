@@ -1,14 +1,18 @@
-# Report fulfillment judge rubric v3.3 draft
+# Report fulfillment judge rubric v3.3
 
-**Status:** `needs_review`
-**Version:** `report-judge-rubric-v3.3-draft`
-**Owner approved:** `false`
-**Active in production:** `false`
-**Promotion authorized:** `false`
+**Status:** `owner_approved`
+**Version:** `report-judge-rubric-v3.3`
+**Approved:** 2026-08-14
+**Owner approved:** `true`
+**Active in production:** `true`
+**Promotion authorized:** `true`
+**Approved source SHA-256:** `9f74b1ad1c4057286ca7acc6687b7ab8349e93d8b0e5de7f94c354ad83ea7f03`
 **Baseline:** `report-judge-rubric-v3.2`
-**Proposed threshold:** `0.85` (unchanged)
-**Candidate amendment source:** `TLDR-REPORT-EARNED-SENTENCE-RULING-OWNER.md`, owner ruling draft 2026-08-13.
-**Governance:** This candidate does not alter the active v3.2 judge. Activation requires fresh SHA-pinned owner approval.
+**Approved threshold:** `0.85` (unchanged)
+**Amendment source:** `TLDR-REPORT-EARNED-SENTENCE-RULING-OWNER.md`, owner-approved 2026-08-14.
+**Governance:** Owner-approved v3.3 successor layered over the active v3.2 judge and immutable v3.1 baseline. V3.3 and threshold 0.85 are active in production. Any later revision requires a new version and fresh owner approval.
+
+> I approve the earned-sentence ruling at SHA e9a56a47…, critique checklist v6 at SHA 73a57573…, and judge rubric v3.3 at SHA 9f74b1ad…. Activate all three.
 
 The complete v3.2 rubric, two-lens order, category scale, applicable-category formula, hard gates, attribution rule, and runtime verdict ownership remain unchanged. Replace only the owner-voice evaluation with the comparison-based rule below and add the earned-sentence evidence.
 
