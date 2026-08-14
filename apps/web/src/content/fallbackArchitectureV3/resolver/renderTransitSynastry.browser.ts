@@ -1956,7 +1956,9 @@ export function createTransitSynastryRenderer(
       throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
     }
 
-    const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
+    const aspectParas = events
+      .filter((event) => SKY_PLACEMENT_MAJOR_ASPECTS.has(event.aspect))
+      .map((event) => skyPlacementAspectParagraph(planet, event));
     const pairKey = `fallback-hook/sky-placement-hook/${planet}/${sign}`;
     const pairHook = hooks.get(pairKey)?.body_you;
     const pairLived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you;
