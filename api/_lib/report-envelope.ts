@@ -29,6 +29,8 @@ export type UserReportRow = {
   facts: ReportFacts;
   facts_engine: string;
   status: ReportStatus;
+  generation_number?: number;
+  supersedes_report_id?: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -172,6 +174,7 @@ function reportQuery(identity: ReportIdentity) {
     report_type: `eq.${identity.reportType}`,
     period_start: `eq.${identity.periodStart}`,
     select: "*",
+    order: "generation_number.desc",
     limit: "1"
   });
   params.set("report_domain", identity.reportDomain ? `eq.${identity.reportDomain}` : "is.null");

@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { waitUntil } from "@vercel/functions";
 import { reportBillingMode, reportCallEstimate, reportSku } from "../_lib/report-fulfillment-config.js";
 import { jsonRequestBody, reportUrl, requireReportAdmin, sendJson } from "../_lib/report-http.js";
-import { authorizeReportGeneration, grantCompEntitlement, revokeEntitlement } from "../_lib/report-entitlements.js";
+import { authorizeReportGeneration, createFreshReportGeneration, grantCompEntitlement, revokeEntitlement } from "../_lib/report-entitlements.js";
 import { releaseReviewedReport } from "../_lib/report-release.js";
 import { createSupabaseReportAdmin } from "../_lib/supabase-report-admin.js";
 import type { ReportHorizon } from "../_lib/report-types.js";
@@ -81,7 +81,7 @@ async function dashboard() {
 
 async function action(body: {
   action?: string; reportId?: string; entitlementId?: string; userId?: string;
-  reportDomain?: string; reportHorizon?: string; windowStart?: string; callBudget?: number; lifetimeTokenBudget?: number;
+  reportDomain?: string; reportHorizon?: string; windowStart?: string; callBudget?: number; tokenBudget?: number; lifetimeTokenBudget?: number;
 }, req: IncomingMessage) {
   const admin = createSupabaseReportAdmin();
   if (body.action === "pause_worker" || body.action === "resume_worker") {
@@ -122,6 +122,9 @@ async function action(body: {
     await admin.update("user_reports", `id=eq.${report.id}`, { token_budget_lifetime: Number(body.lifetimeTokenBudget) });
     return { ok: true, lifetimeTokenBudget: Number(body.lifetimeTokenBudget) };
   }
+  if (body.action === "fresh_generation") {
+    return { ok: true, ...(await createFreshReportGeneration(admin, report.id)) };
+  }
   if (body.action === "rerun") {
     await admin.update("user_generated_interpretations", `subject_id=eq.${report.id}&subject_type=eq.report_unit`, { source_snapshot: { fulfillmentPassed: false } });
     await admin.update("user_reports", `id=eq.${report.id}`, { status: "draft", fulfillment_status: "awaiting_authorization", failure_history: [] });
@@ -137,6 +140,7 @@ async function action(body: {
     const authorized = await authorizeReportGeneration(admin, {
       reportId: report.id,
       callBudget: Number(body.callBudget),
+      tokenBudget: body.tokenBudget === undefined ? undefined : Number(body.tokenBudget),
       now: new Date().toISOString()
     });
     const runnerSecret = process.env.REPORT_FULFILLMENT_SECRET ?? process.env.CRON_SECRET;
