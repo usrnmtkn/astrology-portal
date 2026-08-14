@@ -604,7 +604,7 @@
       "bodies": [
         {
           "id": "primary",
-          "text": "Notice how tempting it gets to nod along just because the room is moving in one direction. Slipping into consensus keeps things smooth now, but it locks you into commitments you never asked for. Speak up to one person: name what part of the plan actually works for you, and outline the one change that makes it worth your time.",
+          "text": "Everyone else may have decided what the plan is before you had much say in it. That puts you in the position of responding to terms you did not choose. Get clear on what is actually required, what can still be changed, and what needs to be clarified in writing. Do not make an imposed plan harder on yourself by quietly agreeing to expectations that were never realistic in the first place.",
           "review_status": "approved",
           "provenance": {
             "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",

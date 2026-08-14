@@ -1,9 +1,9 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "43aeea97f9208d3f69e4bbb739c3598700acf046",
+  "sourceCommit": "ad5dd53a2b6345df73c0504eb2ca32a90c1ee7ea",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "8204f0355d662e204a2d37bacee9dff035948d4726837a47ed9f4e0321fc6052",
+  "contentFingerprint": "afc572da5de3d5e69d7dd62afdb080494a154002ed008137c074c8458be2c2c4",
   "recordCount": 9537,
   "statusCounts": {
     "owner-approved": 9537
@@ -93591,9 +93591,9 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "ae399c100596072933313a19f475c8860beead6c965ec50c29589b26e1a3cd58",
+      "contentHash": "9af65baf5830b1c4146e5d2130b6e72575bac8355fc2088e9acf2b2402485840",
       "wording": {
-        "body_you": "Notice how tempting it gets to nod along just because the room is moving in one direction. Slipping into consensus keeps things smooth now, but it locks you into commitments you never asked for. Speak up to one person: name what part of the plan actually works for you, and outline the one change that makes it worth your time.",
+        "body_you": "Everyone else may have decided what the plan is before you had much say in it. That puts you in the position of responding to terms you did not choose. Get clear on what is actually required, what can still be changed, and what needs to be clarified in writing. Do not make an imposed plan harder on yourself by quietly agreeing to expectations that were never realistic in the first place.",
         "body_they": "Notice how tempting it gets to nod along just because the room is moving in one direction. Slipping into consensus keeps things smooth now, but it locks you into commitments you never asked for. Speak up to one person: name what part of the plan actually works for you, and outline the one change that makes it worth your time."
       },
       "astrology": {
