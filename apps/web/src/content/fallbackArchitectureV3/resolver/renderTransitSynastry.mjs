@@ -5,6 +5,10 @@ import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 import { SourceGapError } from "./renderFallback.mjs";
+import {
+  fillDailyGlancePersonSlots,
+  lintDailyGlanceFriendVoice
+} from "./dailyGlanceVoice.mjs";
 
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-synastry-rows-v1.json"), "utf8"));
@@ -2136,25 +2140,81 @@ export function renderLunationEventCard({ eventDate, blendFallbackEnabled = fals
 // transiting Moon. Pass natal+aspect for the Moon's tightest applying aspect; pass house
 // (whole-sign house of the Moon) when no aspect is within orb. No astrology words render. ----
 const DAILY_GROUP = { conjunction: "conjunction", square: "square", opposition: "opposition", trine: "soft", sextile: "soft" };
-export function renderDailyGlance({ natal, aspect, house, dateKey, userId, previousVariantId }) {
+export function renderDailyGlance({
+  natal,
+  aspect,
+  house,
+  dateKey,
+  userId,
+  previousVariantId,
+  voice = "you",
+  personSlots = {}
+}) {
+  const renderFriendRow = (row, contentKey) => {
+    const raw = row?.body_they;
+    if (!raw) return null;
+
+    const findings = lintDailyGlanceFriendVoice(raw);
+    if (findings.length > 0) {
+      throw new SourceGapError(
+        `SOURCE_GAP: ${contentKey} friend voice failed ${findings.map((finding) => finding.id).join(",")}`
+      );
+    }
+
+    try {
+      return fillDailyGlancePersonSlots(raw, personSlots);
+    } catch (error) {
+      throw new SourceGapError(
+        `SOURCE_GAP: ${contentKey} friend voice slots ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  };
+
+  const renderForVoice = ({ headlineKey, bodyKey, contentKey }) => {
+    if (voice === "they") {
+      const headline = renderFriendRow(hooks.get(headlineKey), headlineKey);
+      const body = renderFriendRow(hooks.get(bodyKey), bodyKey);
+      return headline && body
+        ? { headline, body, parts: [body], templateKey: "fallback-template/daily.glance", variantId: "primary-they" }
+        : null;
+    }
+
+    const headline = hooks.get(headlineKey)?.body_you;
+    const body = hooks.get(bodyKey)?.body_you;
+    if (!headline || !body) return null;
+    const selected = selectDailyGlanceVariantSet({
+      variantSet: dailyGlanceVariants.keys[contentKey],
+      primary: { headline, body },
+      dateKey,
+      contentKey,
+      userId,
+      previousVariantId
+    });
+    return {
+      headline: selected.headline,
+      body: selected.body,
+      parts: [selected.body],
+      templateKey: "fallback-template/daily.glance",
+      variantId: selected.id
+    };
+  };
+
   if (natal && aspect) {
     const g = DAILY_GROUP[aspect] ?? aspect;
-    const h = hooks.get(`fallback-hook/daily-headline/${g}/${natal}`)?.body_you;
-    const b = hooks.get(`fallback-hook/daily-body/${g}/${natal}`)?.body_you;
-    if (h && b) {
-      const contentKey = `${g}/${natal}`;
-      const selected = selectDailyGlanceVariantSet({ variantSet: dailyGlanceVariants.keys[contentKey], primary: { headline: h, body: b }, dateKey, contentKey, userId, previousVariantId });
-      return { headline: selected.headline, body: selected.body, parts: [selected.body], templateKey: "fallback-template/daily.glance", variantId: selected.id };
-    }
+    const rendered = renderForVoice({
+      headlineKey: `fallback-hook/daily-headline/${g}/${natal}`,
+      bodyKey: `fallback-hook/daily-body/${g}/${natal}`,
+      contentKey: `${g}/${natal}`
+    });
+    if (rendered) return rendered;
   }
   if (house) {
-    const h = hooks.get(`fallback-hook/daily-headline/house/${house}`)?.body_you;
-    const b = hooks.get(`fallback-hook/daily-body/house/${house}`)?.body_you;
-    if (h && b) {
-      const contentKey = `house/${house}`;
-      const selected = selectDailyGlanceVariantSet({ variantSet: dailyGlanceVariants.keys[contentKey], primary: { headline: h, body: b }, dateKey, contentKey, userId, previousVariantId });
-      return { headline: selected.headline, body: selected.body, parts: [selected.body], templateKey: "fallback-template/daily.glance", variantId: selected.id };
-    }
+    const rendered = renderForVoice({
+      headlineKey: `fallback-hook/daily-headline/house/${house}`,
+      bodyKey: `fallback-hook/daily-body/house/${house}`,
+      contentKey: `house/${house}`
+    });
+    if (rendered) return rendered;
   }
   throw new SourceGapError(`SOURCE_GAP: daily glance ${aspect ?? "no-aspect"}/${natal ?? house}`);
 }

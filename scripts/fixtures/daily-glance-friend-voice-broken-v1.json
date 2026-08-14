@@ -1,0 +1,26 @@
+[
+  {
+    "id": "chris-direct-imperative",
+    "friendName": "Chris",
+    "bodyThey": "For the next few hours, it is easier to act on what they want instead of just thinking about it. Give it thirty minutes before their mind starts making the case for waiting again.",
+    "expectedLintRules": ["DG-THEY-NO-DIRECT-IMPERATIVE"]
+  },
+  {
+    "id": "alisa-pronoun-transform",
+    "friendName": "Alisa",
+    "bodyThey": "Their drive comes straight through they.",
+    "expectedPronounIssues": ["object position uses subject they"]
+  },
+  {
+    "id": "evergreen-second-person-leak",
+    "friendName": "Evergreen",
+    "bodyThey": "They can chase the spotlight when they need to feel like you matter.",
+    "expectedLintRules": ["DG-THEY-NO-SECOND-PERSON"]
+  },
+  {
+    "id": "nikki-object-pronoun-transform",
+    "friendName": "Nikki",
+    "bodyThey": "Slipping into consensus locks they into commitments they never asked for.",
+    "expectedPronounIssues": ["object verb uses subject they"]
+  }
+]
