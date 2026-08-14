@@ -33,6 +33,15 @@ An email signup that requires confirmation must not enter the authenticated app 
 5. An expired 24-hour handoff is discarded and cannot be claimed.
 6. `Use a different email` returns to the populated form without clearing the pending chart details.
 
+## Existing pending-account recovery
+
+1. Attempt to log in with a valid account whose email is not yet confirmed.
+2. Verify that the Supabase `email_not_confirmed` response opens the confirmation screen.
+3. Select `Resend confirmation email` and verify that exactly one signup-confirmation request is made.
+4. Verify that the resend uses the configured live-app redirect.
+5. Verify that a successful request shows `A new confirmation email was sent.` and disables duplicate submission.
+6. Confirm the email, reopen the original invitation link, and accept the invitation.
+
 ## Automated gates
 
 1. Run the social Friends/auth contract.
