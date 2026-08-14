@@ -173,6 +173,8 @@ type InvitationPreviewRow = {
 };
 
 const pendingSocialInvitationKey = "tldrastro.pending-social-invitation";
+const pendingSocialInvitationConfirmationExpiryKey = `${pendingSocialInvitationKey}.confirmation-expires-at`;
+const pendingSocialInvitationConfirmationTtlMs = 24 * 60 * 60 * 1000;
 
 function pendingInvitationToken() {
   const sessionToken = window.sessionStorage.getItem(pendingSocialInvitationKey);
@@ -184,8 +186,19 @@ function pendingInvitationToken() {
   const legacyToken = window.localStorage.getItem(pendingSocialInvitationKey);
 
   if (legacyToken) {
+    const confirmationExpiry = Number(
+      window.localStorage.getItem(pendingSocialInvitationConfirmationExpiryKey)
+    );
+
+    if (Number.isFinite(confirmationExpiry) && confirmationExpiry > 0 && confirmationExpiry <= Date.now()) {
+      window.localStorage.removeItem(pendingSocialInvitationKey);
+      window.localStorage.removeItem(pendingSocialInvitationConfirmationExpiryKey);
+      return null;
+    }
+
     window.sessionStorage.setItem(pendingSocialInvitationKey, legacyToken);
     window.localStorage.removeItem(pendingSocialInvitationKey);
+    window.localStorage.removeItem(pendingSocialInvitationConfirmationExpiryKey);
   }
 
   return legacyToken;
@@ -194,6 +207,26 @@ function pendingInvitationToken() {
 export function clearPendingSocialInvitation() {
   window.sessionStorage.removeItem(pendingSocialInvitationKey);
   window.localStorage.removeItem(pendingSocialInvitationKey);
+  window.localStorage.removeItem(pendingSocialInvitationConfirmationExpiryKey);
+}
+
+export function preservePendingSocialInvitationForEmailConfirmation() {
+  const token = pendingInvitationToken();
+
+  if (!token) {
+    return false;
+  }
+
+  window.localStorage.setItem(pendingSocialInvitationKey, token);
+  window.localStorage.setItem(
+    pendingSocialInvitationConfirmationExpiryKey,
+    String(Date.now() + pendingSocialInvitationConfirmationTtlMs)
+  );
+  return true;
+}
+
+export function hasPendingSocialInvitation() {
+  return Boolean(pendingInvitationToken());
 }
 
 export function normalizeSocialHandle(value: string) {
