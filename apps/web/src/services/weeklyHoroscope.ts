@@ -45,6 +45,13 @@ export type WeeklyHoroscopeReading = {
   sourceUnits: string[];
 };
 
+export function weeklyHoroscopeTagItems(tag?: string | null) {
+  return (tag ?? "")
+    .split(/\s*,\s*/u)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 export type CalendarWeeklyOverview = {
   headline: string;
   overview: string;
