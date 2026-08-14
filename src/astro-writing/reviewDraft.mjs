@@ -1,5 +1,6 @@
 import {
   canonicalAstrologyReviewInstructions,
+  coldRenderedProseReviewInstructions,
   HARD_REVISE_FIELDS,
   REVIEW_FIELDS
 } from "./canonicalInstructions.mjs";
@@ -38,6 +39,27 @@ export const REVIEW_SCHEMA = Object.freeze({
     ["decision", { type: "string", enum: ["PASS", "REVISE"] }],
     ["violations", { type: "array", items: VIOLATION_SCHEMA }]
   ])
+});
+
+export const COLD_REVIEW_SCHEMA = Object.freeze({
+  type: "object",
+  additionalProperties: false,
+  required: ["cold_rendered_prose", "decision", "violations"],
+  properties: {
+    cold_rendered_prose: CHECK_RESULT_SCHEMA,
+    decision: { type: "string", enum: ["PASS", "REVISE"] },
+    violations: {
+      type: "array",
+      items: {
+        ...VIOLATION_SCHEMA,
+        properties: {
+          ...VIOLATION_SCHEMA.properties,
+          category: { type: "string", enum: ["cold_rendered_prose"] },
+          severity: { type: "string", enum: ["nonblocking"] }
+        }
+      }
+    }
+  }
 });
 
 function copyText(copy) {
@@ -171,6 +193,30 @@ function validateModelReview(modelReview) {
   }
 }
 
+function validateColdModelReview(modelReview) {
+  if (!modelReview?.cold_rendered_prose
+    || !new Set(["PASS", "FAIL"]).has(modelReview.cold_rendered_prose.status)
+    || typeof modelReview.cold_rendered_prose.reason !== "string") {
+    throw new Error("Cold reviewer omitted strict cold_rendered_prose result.");
+  }
+  if (!new Set(["PASS", "REVISE"]).has(modelReview?.decision)) {
+    throw new Error("Cold reviewer omitted a valid PASS-or-REVISE decision.");
+  }
+  if (!Array.isArray(modelReview?.violations)) throw new Error("Cold reviewer omitted violations.");
+  for (const violation of modelReview.violations) {
+    if (violation.category !== "cold_rendered_prose" || violation.severity !== "nonblocking") {
+      throw new Error("Cold reviewer returned a non-cold or blocking violation after advisory-only calibration.");
+    }
+    for (const field of ["location", "text", "reason", "revision_instruction"]) {
+      if (typeof violation?.[field] !== "string") throw new Error(`Cold reviewer violation omitted ${field}.`);
+    }
+  }
+  const failed = modelReview.cold_rendered_prose.status === "FAIL";
+  if ((failed && modelReview.decision !== "REVISE") || (!failed && modelReview.decision !== "PASS")) {
+    throw new Error("Cold reviewer decision contradicts its advisory check result.");
+  }
+}
+
 export async function reviewDraft({
   draft,
   plan,
@@ -185,7 +231,30 @@ export async function reviewDraft({
   const mechanical = deterministicEditorialReview({
     draft, plan, context, family, register, expectedPlaceholders, requiredFields, protectedOwnerLines
   });
-  if (!modelClient) return mechanical;
+  if (!modelClient) {
+    const missingColdReview = violationRecord(
+      draft,
+      "cold_rendered_prose",
+      "A context-isolated semantic cold read has not run.",
+      "Run the rendered copy through the cold-rendered-prose reviewer before approval."
+    );
+    return {
+      ...mechanical,
+      cold_rendered_prose: { status: "FAIL", reason: missingColdReview.reason },
+      decision: mechanical.decision,
+      violations: [...mechanical.violations, missingColdReview],
+      required_revisions: mechanical.required_revisions
+    };
+  }
+
+  const coldModelReview = await modelClient({
+    stage: "cold-review",
+    role: "COLD_REVIEWER",
+    instructions: coldRenderedProseReviewInstructions,
+    input: JSON.stringify({ rendered_copy: copyText(draft) }, null, 2),
+    schema: COLD_REVIEW_SCHEMA
+  });
+  validateColdModelReview(coldModelReview);
 
   const modelReview = await modelClient({
     stage: "review",
@@ -197,19 +266,29 @@ export async function reviewDraft({
   validateModelReview(modelReview);
   const mergedViolations = [...new Map([
     ...mechanical.violations,
-    ...modelReview.violations
+    ...coldModelReview.violations,
+    ...modelReview.violations.filter((item) => item.category !== "cold_rendered_prose")
   ].map((item) => [`${item.category}|${item.location}|${item.reason}`, item])).values()];
   const failed = new Set(mergedViolations.map((item) => canonicalCategory(item.category)));
   const checks = Object.fromEntries(REVIEW_FIELDS.map((field) => [field, {
-    status: failed.has(field) || modelReview[field].status === "FAIL" || mechanical[field].status === "FAIL" ? "FAIL" : "PASS",
-    reason: [mechanical[field].reason, modelReview[field].reason].filter(Boolean).join(" ")
+    status: failed.has(field)
+      || (field === "cold_rendered_prose" ? coldModelReview[field].status === "FAIL" : modelReview[field].status === "FAIL")
+      || mechanical[field].status === "FAIL" ? "FAIL" : "PASS",
+    reason: [
+      mechanical[field].reason,
+      field === "cold_rendered_prose" ? coldModelReview[field].reason : modelReview[field].reason
+    ].filter(Boolean).join(" ")
   }]));
   const blocking = mergedViolations.some((item) => item.severity === "blocking")
     || HARD_REVISE_FIELDS.some((field) => checks[field].status === "FAIL");
-  const anyFailedCheck = REVIEW_FIELDS.some((field) => checks[field].status === "FAIL");
+  const anyFailedCheck = REVIEW_FIELDS.some((field) => field !== "cold_rendered_prose" && checks[field].status === "FAIL");
+  const actionableViolation = mergedViolations.some((item) => item.category !== "cold_rendered_prose");
   return {
     ...checks,
-    decision: blocking || anyFailedCheck || mergedViolations.length > 0 || modelReview.decision !== "PASS" ? "REVISE" : "PASS",
+    decision: blocking
+      || anyFailedCheck
+      || actionableViolation
+      || modelReview.decision !== "PASS" ? "REVISE" : "PASS",
     violations: mergedViolations,
     required_revisions: mergedViolations.map((item) => ({ field: item.location, instruction: item.revision_instruction }))
   };

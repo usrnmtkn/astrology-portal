@@ -124,6 +124,24 @@ try {
     /The Cancer Moon doesn't make you weak; it makes you aware\./u
   );
 
+  const mondayVirgoTone = weekly.resolveCalendarWeeklyMoonTone({
+    mondayDateKey: "2026-08-17",
+    moonSign: "Virgo"
+  });
+  assert.equal(
+    mondayVirgoTone?.contentKey,
+    "authored/calendar-weekly-moon/virgo/variant-2"
+  );
+  assert.equal(
+    mondayVirgoTone?.body,
+    "The Moon in Virgo makes small, annoying chores and missed details much harder to ignore.\n\nYou may spot a missed calendar invite, catch a typo in an important email, or finally cross off a tedious task you've been putting off. Fixing a specific problem feels good because you know exactly what to do about it.\n\nThe problem starts when every detail begins to feel equally important. You might rewrite the same email four times, keep tweaking a project that is already done, or clean the kitchen because staying busy feels easier than admitting you're anxious, annoyed, or unsure about what happens next.\n\nCheck the details once to make sure they're right. Checking the same thing three more times won't make you feel more certain. Fix what actually needs fixing, then leave it alone."
+  );
+  assert.doesNotMatch(
+    mondayVirgoTone?.body ?? "",
+    /(?:What is happening this week|Where it hits your life|The trap to avoid|What to do about it):/u,
+    "Internal weekly structure labels must not render in the Virgo Moon card."
+  );
+
   const stationEvent = {
     id: "station-mercury-retrograde-test",
     type: "station",
@@ -961,6 +979,58 @@ try {
   );
   const mondayNeptune = mondaySky.positions.find((position) => position.planet === "Neptune");
   assert.ok(mondayNeptune && typeof mondayNeptune.longitude === "number");
+  assert.equal(mondayNeptune.sign, "Aries");
+  assert.equal(mondayNeptune.motion, "retrograde");
+  const forcedNeptuneMercuryNatal = {
+    ...natalSky,
+    positions: natalSky.positions.map((position) => (
+      position.planet === "Mercury"
+        ? { ...position, longitude: (mondayNeptune.longitude + 90) % 360 }
+        : position
+    ))
+  };
+  const neptuneMercuryWeek = await weekly.buildWeeklyHoroscope({
+    userId: "weekly-neptune-mercury-owner-copy-fixture",
+    natalSky: forcedNeptuneMercuryNatal,
+    risingSign: "gemini",
+    location,
+    now: new Date("2026-07-29T12:00:00Z")
+  });
+  const neptuneMercuryReading = [neptuneMercuryWeek.horoscope, ...neptuneMercuryWeek.aspects].find((reading) => (
+    /Neptune square your Mercury/iu.test(reading.driverLabel)
+  ));
+  assert.ok(neptuneMercuryReading, "The exact Neptune-square-Mercury contact must render as a weekly reading.");
+  assert.equal(neptuneMercuryReading.headline, "Neptune square your Mercury");
+  assert.equal(
+    neptuneMercuryReading.body,
+    "Don't trust your first reaction to messages or news. Double-check the facts before you respond.\n\nNeptune in Aries can make you respond quickly because you feel sure you understood what someone meant. You may not have the full story yet. A confusing text might seem clear at first, only for you to realize an hour later that you misread it. You might have a conversation, think you both agreed on something, and compare notes later to find out you heard completely different terms. You might assume someone is mad at you because of their tone even though their actual words are neutral. Because Neptune is retrograde, an old conversation or misunderstanding may come back up while your memory of what actually happened is fuzzy.\n\nSlow down when the details matter. Read texts twice. Double-check dates and times. Ask direct questions, and put important agreements in writing. Spending one extra minute checking the facts now can prevent a messy cleanup later."
+  );
+  assert.doesNotMatch(
+    neptuneMercuryReading.body,
+    /(?:What is happening this week|Where it hits your life|The trap to avoid|What to do about it):/u,
+    "Internal weekly structure labels must not render in the Neptune-Mercury card."
+  );
+  const sharedTransitCopy = fallbackRuntime.transitSynastryFallbackRendererV3.renderTransitAspect({
+    transiting: "neptune",
+    natal: "mercury",
+    aspect: "square",
+    sign: "aries",
+    isRetrograde: true
+  });
+  assert.doesNotMatch(
+    sharedTransitCopy.body,
+    /What is happening this week:/u,
+    "The weekly approval must not replace the shared daily/Friends transit row."
+  );
+  const saturnReturnCopy = fallbackRuntime.transitSynastryFallbackRendererV3.renderTransitReturn({
+    planet: "saturn"
+  });
+  assert.equal(saturnReturnCopy.headline, "Saturn Return");
+  assert.equal(
+    saturnReturnCopy.body,
+    "Saturn has completed its circle and returned to where it was when you were born, bringing your life's goals, rules, and responsibilities back into focus. Your goals may still be the same, but the way you pursue them needs to change. Old rules and heavy responsibilities might no longer fit your current life. This milestone is about keeping the commitments that still matter and renegotiating or letting go of the rest as you mature.",
+    "The Saturn Return renderer must preserve the owner's exact 2026-08-12 serving approval."
+  );
   const forcedNeptuneSelfContactNatal = {
     ...natalSky,
     positions: natalSky.positions.map((position) => (

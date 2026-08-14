@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "recordId": "you-horoscope-owner-exemplars-v4-2026-08-11",
+  "recordedAt": "2026-08-11",
+  "authority": "owner-authored 2026-08-11, chat calibration",
+  "status": "OWNER_APPROVED",
+  "exemplars": [
+    {
+      "exemplarId": "owner-exemplar/weekly/neptune-square-natal-mercury/2026-08-11",
+      "servingUnit": "weekly/neptune-square-natal-mercury",
+      "servingContentKey": "authored/weekly-transit-aspect/neptune/aries/rx/mercury/square",
+      "computedHeadline": "Neptune square your Mercury",
+      "body": "Don't trust your first reaction to messages or news. Double-check the facts before you respond.\n\nNeptune in Aries can make you respond quickly because you feel sure you understood what someone meant. You may not have the full story yet. A confusing text might seem clear at first, only for you to realize an hour later that you misread it. You might have a conversation, think you both agreed on something, and compare notes later to find out you heard completely different terms. You might assume someone is mad at you because of their tone even though their actual words are neutral. Because Neptune is retrograde, an old conversation or misunderstanding may come back up while your memory of what actually happened is fuzzy.\n\nSlow down when the details matter. Read texts twice. Double-check dates and times. Ask direct questions, and put important agreements in writing. Spending one extra minute checking the facts now can prevent a messy cleanup later.",
+      "provenance": "owner-authored 2026-08-11, chat calibration",
+      "ownerApproved": true,
+      "writerEligible": true,
+      "servingApproved": true,
+      "hashBasis": "computedHeadline + newline + body",
+      "sha256": "97042a0e33a57635b14e9952864370c7126cce71a4c5bb0ed896a95204511559"
+    },
+    {
+      "exemplarId": "owner-exemplar/weekly/moon-virgo/2026-08-11",
+      "servingUnit": "weekly/moon-virgo-fallback",
+      "servingContentKey": "authored/calendar-weekly-moon/virgo/variant-2",
+      "computedHeadline": "Weekly Moon: Virgo",
+      "body": "The Moon in Virgo makes small, annoying chores and missed details much harder to ignore.\n\nYou may spot a missed calendar invite, catch a typo in an important email, or finally cross off a tedious task you've been putting off. Fixing a specific problem feels good because you know exactly what to do about it.\n\nThe problem starts when every detail begins to feel equally important. You might rewrite the same email four times, keep tweaking a project that is already done, or clean the kitchen because staying busy feels easier than admitting you're anxious, annoyed, or unsure about what happens next.\n\nCheck the details once to make sure they're right. Checking the same thing three more times won't make you feel more certain. Fix what actually needs fixing, then leave it alone.",
+      "provenance": "owner-authored 2026-08-11, chat calibration",
+      "ownerApproved": true,
+      "writerEligible": true,
+      "servingApproved": true,
+      "hashBasis": "computedHeadline + newline + body",
+      "sha256": "f7d6abad9c7d59b314fdb889eb1556da7b125be7d8f043dec0d12df2cbae4bee"
+    }
+  ],
+  "approval": "Owner approval 2026-08-11: register both supplied texts verbatim as owner-authored canonical exemplars and replace the named weekly serving units through the governed path."
+}

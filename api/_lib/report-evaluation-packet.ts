@@ -2,6 +2,22 @@ import type { ReportDraft, ReportGenerationPayload } from "./report-generation.t
 import { REPORT_LABELED_NEGATIVE_EXAMPLES } from "./report-owner-comparison.js";
 
 type LocatedText = { location: string; text: string; heading: boolean };
+export type ReportUnitCoordinate = {
+  token: string;
+  location: string;
+  paragraphIndex: number;
+  sentenceStartIndex: number;
+  text: string;
+};
+export type ReportSentenceSpan = { start: number; end: number; text: string };
+export type ReportSentenceAddress = {
+  id: string;
+  token: string;
+  location: string;
+  paragraphIndex: number;
+  sentenceIndex: number;
+  text: string;
+};
 
 function locatedText(draft: ReportDraft): LocatedText[] {
   return [
@@ -22,6 +38,24 @@ function paragraphs(value: string) {
   return value.split(/\n\s*\n/u).map((paragraph) => paragraph.trim()).filter(Boolean);
 }
 
+export function reportSentenceSpans(value: string): ReportSentenceSpan[] {
+  const spans: ReportSentenceSpan[] = [];
+  const matcher = /[^.!?]+[.!?]+|[^.!?]+$/gu;
+  for (const match of value.matchAll(matcher)) {
+    const raw = match[0];
+    const leading = raw.length - raw.trimStart().length;
+    const trailing = raw.length - raw.trimEnd().length;
+    const start = (match.index ?? 0) + leading;
+    const end = (match.index ?? 0) + raw.length - trailing;
+    if (start < end) spans.push({ start, end, text: value.slice(start, end) });
+  }
+  return spans;
+}
+
+function sentenceCount(value: string) {
+  return reportSentenceSpans(value).length;
+}
+
 function excludedFromMovementCount(value: string) {
   return /^(?:#{1,6}\s|\*{0,2}astrology\b|[-*]\s+(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\s+\d{1,2}\b|(?:WINTER|SPRING|SUMMER|AUTUMN)\s+\d{4}\b)/iu.test(value);
 }
@@ -32,10 +66,50 @@ export function reportDraftMovementApplicable(draft: ReportDraft) {
   return count >= 2;
 }
 
+export function reportUnitCoordinates(draft: ReportDraft): ReportUnitCoordinate[] {
+  return locatedText(draft).flatMap((field) => {
+    let sentenceStartIndex = 0;
+    return paragraphs(field.text).map((text, paragraphIndex) => {
+      const coordinate = {
+        token: `[LOCATION=${field.location}; PARAGRAPH_INDEX=${paragraphIndex}]`,
+        location: field.location,
+        paragraphIndex,
+        sentenceStartIndex,
+        text
+      };
+      sentenceStartIndex += sentenceCount(text);
+      return coordinate;
+    });
+  });
+}
+
 export function completeReportUnit(draft: ReportDraft) {
-  return locatedText(draft).flatMap((field) => paragraphs(field.text).map((text, paragraphIndex) => (
-    `[LOCATION=${field.location}; PARAGRAPH_INDEX=${paragraphIndex}]\n${text}`
-  ))).join("\n\n");
+  return reportUnitCoordinates(draft).map((coordinate) => (
+    `${coordinate.token}\n${coordinate.text}`
+  )).join("\n\n");
+}
+
+export function reportUnitSentenceAddresses(draft: ReportDraft): ReportSentenceAddress[] {
+  let ordinal = 0;
+  return reportUnitCoordinates(draft).flatMap((coordinate) => (
+    reportSentenceSpans(coordinate.text).map((span, localSentenceIndex) => {
+      ordinal += 1;
+      return {
+        id: `S${ordinal}`,
+        token: `[S${ordinal}]`,
+        location: coordinate.location,
+        paragraphIndex: coordinate.paragraphIndex,
+        sentenceIndex: coordinate.sentenceStartIndex + localSentenceIndex,
+        text: span.text
+      };
+    })
+  ));
+}
+
+export function sentenceAddressedReportUnit(draft: ReportDraft) {
+  return reportUnitSentenceAddresses(draft).map((sentence) => (
+    `${sentence.token} [LOCATION=${sentence.location}; PARAGRAPH_INDEX=${sentence.paragraphIndex}] ${sentence.text}`
+  )).join("\n");
 }
 
 export function assertReportEvaluationPacketReady(payload: ReportGenerationPayload) {

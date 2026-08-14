@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "id": "friends-owner-signoff-untraced-ruling-2026-08-13",
+  "recordedAt": "2026-08-13",
+  "authority": "Owner ruling, 2026-08-13: accept both levels.",
+  "acceptedLevels": [
+    "exact_owner_approved",
+    "owner_signoff_untraced"
+  ],
+  "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json",
+  "counts": {
+    "articleRows": 1501,
+    "supportingRows": 88,
+    "totalRowsGoverned": 1589,
+    "exactRowsPreserved": 24,
+    "untracedRowsApplied": 1565,
+    "byFamily": {
+      "authored/transit-aspect/": 377,
+      "authored/transit-return/": 8,
+      "authored/transit-house/": 108,
+      "authored/transit-house-sign/": 1008,
+      "authored/transit-house-intro/": 84,
+      "authored/point-explainer/": 2,
+      "authored/transit-aspect-insert/": 2
+    }
+  },
+  "restoration": {
+    "articleRowsMadeEligible": 1501,
+    "reachableFriendsArticleRows": 1393,
+    "selfOnlyGenericHouseRowsPreviouslyOvercounted": 108,
+    "primaryArticleRowsStillDisabledByUngatedHooks": 0,
+    "conditionallyWithheldEnrichmentArticleRows": 288,
+    "condition": "Jupiter or Saturn sign-specific house article rendered with a retrograde state or qualifying aspect event keeps its approved base paragraphs while the ungated enrichment paragraph is withheld",
+    "ungatedContributingHookKeys": [
+      "fallback-hook/transit-house-event-frame/jupiter",
+      "fallback-hook/transit-house-event-frame/saturn",
+      "fallback-hook/transit-house-event-wants/jupiter/aries",
+      "fallback-hook/transit-house-event-wants/jupiter/taurus",
+      "fallback-hook/transit-house-event-wants/jupiter/gemini",
+      "fallback-hook/transit-house-event-wants/jupiter/cancer",
+      "fallback-hook/transit-house-event-wants/jupiter/leo",
+      "fallback-hook/transit-house-event-wants/jupiter/virgo",
+      "fallback-hook/transit-house-event-wants/jupiter/libra",
+      "fallback-hook/transit-house-event-wants/jupiter/scorpio",
+      "fallback-hook/transit-house-event-wants/jupiter/sagittarius",
+      "fallback-hook/transit-house-event-wants/jupiter/capricorn",
+      "fallback-hook/transit-house-event-wants/jupiter/aquarius",
+      "fallback-hook/transit-house-event-wants/jupiter/pisces",
+      "fallback-hook/transit-house-event-wants/saturn/aries",
+      "fallback-hook/transit-house-event-wants/saturn/taurus",
+      "fallback-hook/transit-house-event-wants/saturn/gemini",
+      "fallback-hook/transit-house-event-wants/saturn/cancer",
+      "fallback-hook/transit-house-event-wants/saturn/leo",
+      "fallback-hook/transit-house-event-wants/saturn/virgo",
+      "fallback-hook/transit-house-event-wants/saturn/libra",
+      "fallback-hook/transit-house-event-wants/saturn/scorpio",
+      "fallback-hook/transit-house-event-wants/saturn/sagittarius",
+      "fallback-hook/transit-house-event-wants/saturn/capricorn",
+      "fallback-hook/transit-house-event-wants/saturn/aquarius",
+      "fallback-hook/transit-house-event-wants/saturn/pisces",
+      "fallback-hook/transit-house-retro-overlay/jupiter",
+      "fallback-hook/transit-house-retro-overlay/saturn"
+    ]
+  },
+  "invariants": {
+    "readerPayloadSha256Before": "9ae494a7998e4441a03799c477e8e0819028e0822908a7a3ca4aeafb1e1415f5",
+    "readerPayloadSha256After": "9ae494a7998e4441a03799c477e8e0819028e0822908a7a3ca4aeafb1e1415f5",
+    "copyChanged": false
+  },
+  "excluded": {
+    "totalRows": 1175,
+    "approvedWithExplicitOwnerEvidence": 726,
+    "approvedWithoutExplicitOwnerEvidence": 333,
+    "approvedReuse": 115,
+    "needsReview": 1,
+    "bySurfaceFamily": {
+      "compatibility": 1008,
+      "career": 54,
+      "skyCalendar": 113
+    },
+    "friendsTransitDetailArticleRows": 0,
+    "disposition": "untouched_outside_friends_transit_detail_scope",
+    "note": "These rows feed compatibility, Sky, career, station, weekly, or other authored surfaces. They are not primary Friends transit-detail articles and are not disabled by this gate."
+  }
+}

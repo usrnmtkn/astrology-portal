@@ -1,0 +1,30 @@
+{
+  "$extends": "daily-glance-writer-sol-xhigh-batch-3-self-audit-v1.json",
+  "schemaVersion": 1,
+  "configId": "daily-glance-writer-sol-xhigh-batch-3-self-audit-v2",
+  "packetVersion": "daily-glance-writer-packet-v10:resolved-chart-context+scene-license-gate",
+  "promptVersion": "daily-glance-writer-v10:owner-sol-directive-v2+resolved-chart-context",
+  "status": "owner-ruled-scene-license-gated-2026-08-11",
+  "authorities": [
+    "packages/astro-knowledge/review/daily-glance-sol-writer-directive-v2.md",
+    "packages/astro-knowledge/review/daily-glance-sol-directive-pilot-2026-08-10/owner-disposition-2026-08-11.md"
+  ],
+  "selfAuditDirectivePath": "packages/astro-knowledge/review/daily-glance-sol-writer-directive-v2.md",
+  "sceneContextGate": {
+    "required": true,
+    "registryPath": "packages/astro-knowledge/config/daily-glance-scene-licenses-v1.json",
+    "requiresExplicitOwnerLicenseApproval": true,
+    "requiresResolvedChartContext": true,
+    "noRegenerationWithoutBoth": true
+  },
+  "ownerFinalTests": [
+    {
+      "id": "OWNER-TEST-morning-read",
+      "rule": "Every sentence must parse half-awake; mechanical guard caps body sentences at 28 words and flags semicolons or parentheses."
+    },
+    {
+      "id": "OWNER-TEST-screenshot",
+      "rule": "At least one body sentence must be a candidate line worth saving because it names a recognizable experience clearly."
+    }
+  ]
+}

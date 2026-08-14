@@ -1,0 +1,60 @@
+{
+  "package": "empty-house-v14 bridge layer proposal",
+  "purpose": "Reader-facing connective sentence rendered BETWEEN the sign paragraph and the ruler-placement paragraph. Explains the mechanism (empty house -> cusp sign -> ruler planet -> planet's natal house) so the jump from A to B is legible. No approved V14 prose is modified; this is a new template row family with slot vocabulary.",
+  "review_status": "needs_review — owner exact-wording approval required before serving",
+  "templates": [
+    {
+      "contentKey": "fallback-hook/empty-house/bridge-template/standard",
+      "applies_to": "empty houses 2-12",
+      "grammar_frame": "complete_sentence_with_slots",
+      "body_you": "Your {{houseN}} house is empty, and {{sign}} sits on its cusp. {{sign}} is ruled by {{planet}}, and in your chart {{planet}} lands in your {{houseM}} house. That is why your {{topicN}} story keeps running through {{topicM}}.",
+      "body_they": "Their {{houseN}} house is empty, and {{sign}} sits on its cusp. {{sign}} is ruled by {{planet}}, and in their chart {{planet}} lands in their {{houseM}} house. That is why their {{topicN}} story keeps running through {{topicM}}."
+    },
+    {
+      "contentKey": "fallback-hook/empty-house/bridge-template/house-1",
+      "applies_to": "empty 1st house (rising sign / chart ruler)",
+      "grammar_frame": "complete_sentence_with_slots",
+      "body_you": "Your rising sign is {{sign}}, which makes {{planet}} your chart ruler. In your chart {{planet}} lands in your {{houseM}} house, so the story of who you are gets worked out through {{topicM}}.",
+      "body_they": "Their rising sign is {{sign}}, which makes {{planet}} their chart ruler. In their chart {{planet}} lands in their {{houseM}} house, so the story of who they are gets worked out through {{topicM}}."
+    }
+  ],
+  "slots": {
+    "houseN, houseM": "ordinal, e.g. '2nd', '6th' — from chart facts",
+    "sign": "capitalized sign name from the cusp",
+    "planet": "display name with article: 'the Moon', 'the Sun', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto' — from the active ruler map (modern now, traditional when those rows land)",
+    "topicN, topicM": "short house-jurisdiction noun phrases; reuse/extend the existing fallback-vocab/empty-house-ruler-jurisdiction rows (e.g. 6 = 'daily work, routines, and health')"
+  },
+  "topic_vocab_proposed": {
+    "1": "identity and presence",
+    "2": "money and what you value",
+    "3": "communication and daily connections",
+    "4": "home and family",
+    "5": "creativity, romance, and play",
+    "6": "daily work, routines, and health",
+    "7": "partnership and commitment",
+    "8": "shared money and deep trust",
+    "9": "learning, travel, and belief",
+    "10": "career and public reputation",
+    "11": "friendship and the future",
+    "12": "rest, solitude, and the inner world"
+  },
+  "example_renders": [
+    {
+      "case": "empty 2nd, Cancer cusp, Moon in 6th (the user's first example)",
+      "rendered_you": "Your 2nd house is empty, and Cancer sits on its cusp. Cancer is ruled by the Moon, and in your chart the Moon lands in your 6th house. That is why your money story keeps running through daily work, routines, and health.",
+      "note": "topicN grammar: 'your money story' reads better than 'your money and what you value story' — recommend a second, possessive-safe vocab set (2 = 'money', see topic_vocab_short)"
+    },
+    {
+      "case": "empty/unoccupied 1st, Gemini rising, Mercury in 10th (the user's second example)",
+      "rendered_you": "Your rising sign is Gemini, which makes Mercury your chart ruler. In your chart Mercury lands in your 10th house, so the story of who you are gets worked out through career and public reputation."
+    }
+  ],
+  "topic_vocab_short": {
+    "note": "possessive-safe single-noun variants for the '{{topicN}} story' slot",
+    "1": "identity", "2": "money", "3": "communication", "4": "home", "5": "pleasure",
+    "6": "work-and-health", "7": "partnership", "8": "shared-resources", "9": "horizons",
+    "10": "career", "11": "friendship", "12": "inner-life"
+  },
+  "render_position": "detail view order becomes: base note -> sign paragraph -> BRIDGE -> ruler-placement paragraph. Card summary unchanged (sign paragraph only).",
+  "governance": "2 template rows x 2 voices + up to 24 vocab noun phrases. All needs_review until owner approves exact wording; far smaller approval surface than any per-combination alternative (2 templates cover all 541 rows)."
+}

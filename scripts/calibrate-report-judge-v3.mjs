@@ -8,6 +8,7 @@ import { assembleReportGenerationPayload } from "../api/_lib/report-generation.t
 import { callReportModel, judgeModelTarget } from "../api/_lib/report-model-client.ts";
 import { scopeReportPayloadToUnit } from "../api/_lib/report-unit-scope.ts";
 import { REPORT_DEFECT_CATEGORIES } from "../api/_lib/report-writer-chain.ts";
+import { loadActiveReportCritiquePrompt, loadActiveReportJudgePrompt } from "../api/_lib/report-prompt-versions.ts";
 import {
   completeUnitFacts,
   numberedCompleteUnit,
@@ -15,11 +16,9 @@ import {
 } from "./report-judge-v3-fixture-packets.mjs";
 
 const manifestPath = "scripts/fixtures/report-judge-complete-unit-regressions-v3.json";
-const judgePath = "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3-OWNER.md";
-const critiquePath = "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V3-OWNER.md";
 const livedProsePath = "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md";
 const promptPaths = {
-  general: "tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-OWNER.md",
+  general: "tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-V2-OWNER.md",
   work_money: "tldr-astro-phrasebank/TLDR-WORK-MONEY-DEEPDIVE-GENERATION-PROMPT-OWNER.md",
   love_connection: "tldr-astro-phrasebank/TLDR-LOVE-CONNECTION-DEEPDIVE-GENERATION-PROMPT-OWNER.md"
 };
@@ -36,6 +35,9 @@ const hardGates = new Set([
 function read(sourcePath) {
   return fs.readFileSync(sourcePath, "utf8");
 }
+
+const activeJudgePrompt = loadActiveReportJudgePrompt();
+const activeCritiquePrompt = loadActiveReportCritiquePrompt();
 
 function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");
@@ -70,8 +72,8 @@ function negativeUnit(fixture, positive) {
 
 const manifestText = read(manifestPath);
 const manifest = JSON.parse(manifestText);
-const judgeText = read(judgePath);
-const critiqueText = read(critiquePath);
+const judgeText = activeJudgePrompt.text;
+const critiqueText = activeCritiquePrompt.text;
 const livedProseText = read(livedProsePath);
 const facts = JSON.parse(read(manifest.factsSourcePath));
 
@@ -295,7 +297,7 @@ const artifactBase = {
   version: "report-judge-v3-calibration-v2",
   runAt,
   authorization: {
-    approvedDocuments: ["report-judge-rubric-v3", "report-critique-checklist-v3"],
+    approvedDocuments: ["report-judge-rubric-v3.3", "report-critique-checklist-v6"],
     threshold,
     requestedCalls: 9,
     judgeCalls: 8,
@@ -304,8 +306,8 @@ const artifactBase = {
   },
   inputs: {
     manifest: { sourcePath: manifestPath, sha256: sha256(manifestText) },
-    judge: { sourcePath: judgePath, sha256: sha256(judgeText) },
-    critique: { sourcePath: critiquePath, sha256: sha256(critiqueText) },
+    judge: { sourcePaths: activeJudgePrompt.sourcePaths, sha256: sha256(judgeText) },
+    critique: { sourcePaths: activeCritiquePrompt.sourcePaths, sha256: sha256(critiqueText) },
     livedProse: { sourcePath: livedProsePath, sha256: sha256(livedProseText) }
   },
   provider: target.provider,

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/schema/satori-voice-index.schema.json",
+  "type": "object",
+  "required": ["schemaVersion", "indexId", "generatedAt", "authorityPolicy", "summary", "entries"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "indexId": { "type": "string", "minLength": 1 },
+    "generatedAt": { "type": "string", "minLength": 1 },
+    "authorityPolicy": { "type": "string", "minLength": 1 },
+    "summary": { "type": "object" },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "sourceId", "text", "sourcePath", "author", "origin", "surface", "articleBeat",
+          "structuralFunction", "authorityClass", "ownerAuthored", "ownerApproved", "reviewStatus",
+          "editorialStatus", "canonical", "useAsPositiveVoiceEvidence", "useAsNegativeEvidence",
+          "failureTags", "provenance", "sourceSha256"
+        ],
+        "properties": {
+          "sourceId": { "type": "string", "minLength": 1 },
+          "text": { "type": "string", "minLength": 1 },
+          "sourcePath": { "type": "string", "minLength": 1 },
+          "author": { "type": "string", "minLength": 1 },
+          "origin": { "type": "string", "minLength": 1 },
+          "surface": { "type": "string", "minLength": 1 },
+          "planet": { "type": "string" },
+          "sign": { "type": "string" },
+          "house": { "type": "string" },
+          "articleBeat": { "type": "string", "minLength": 1 },
+          "structuralFunction": { "type": "string", "minLength": 1 },
+          "authorityClass": { "type": "string", "minLength": 1 },
+          "ownerAuthored": { "type": "boolean" },
+          "ownerApproved": { "type": "boolean" },
+          "reviewStatus": { "type": "string", "minLength": 1 },
+          "editorialStatus": { "type": "string", "minLength": 1 },
+          "canonical": { "type": "boolean" },
+          "useAsPositiveVoiceEvidence": { "type": "boolean" },
+          "useAsContextualEvidence": { "type": "boolean" },
+          "useAsNegativeEvidence": { "type": "boolean" },
+          "failureTags": { "type": "array", "items": { "type": "string" } },
+          "provenance": { "type": "string", "minLength": 1 },
+          "sourceSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    }
+  }
+}

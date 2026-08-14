@@ -1,0 +1,525 @@
+{
+ "note": "Owner decision aid for Friend payload. 31 rows recommended approve-as-is; 34 rows have minimal corrected wording proposed (referent collisions and reader-directed advice that breaks on the Friend surface). Corrections touch only the defective sentence; all other text is the drafted transposition unchanged.",
+ "rows": [
+  {
+   "corpus_key": "empty-1st",
+   "contentKey": "fallback-hook/empty-house/base/1",
+   "verdict": "corrected_wording_proposed",
+   "flag": "reader-directed imperative retained; 'they' now collides with pre-existing 'they' for onlookers",
+   "body_they_drafted": "The 1st house is how they arrive. Before anyone knows their history, they see their pace, expression, body language, and how quickly they take up space or hold back. Those first impressions change how people respond to them: who approaches, who waits for them to lead, and what they assume they can handle. An empty 1st house does not make them less visible. Follow the ruler of the rising sign to see where their identity gets shaped and where changes elsewhere in life are most likely to show up in the way they carry themselves.",
+   "body_they_proposed": "The 1st house is how they arrive. Before anyone knows their history, people see their pace, expression, body language, and how quickly they take up space or hold back. Those first impressions change how people respond to them: who approaches, who waits for them to lead, and what others assume they can handle. An empty 1st house does not make them less visible. Follow the ruler of the rising sign to see where their identity gets shaped and where changes elsewhere in life are most likely to show up in the way they carry themselves."
+  },
+  {
+   "corpus_key": "empty-2nd",
+   "contentKey": "fallback-hook/empty-house/base/2",
+   "verdict": "approve_as_is",
+   "flag": "reader-directed imperative 'Follow its ruler' retained",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "The 2nd house is where value becomes a decision. They take the job, turn down the purchase, keep the old coat, save for the thing that matters more, or realize the monthly payment is changing what else they can afford. Because money, time, and possessions are finite, their priorities become visible in what they fund and what they refuse to. An empty 2nd house does not mean money is unimportant or unavailable. Follow its ruler to see which part of life keeps changing what comes in, what goes out, and what feels worth the cost."
+  },
+  {
+   "corpus_key": "empty-7th",
+   "contentKey": "fallback-hook/empty-house/base/7",
+   "verdict": "corrected_wording_proposed",
+   "flag": "'require them' collides with 'all of them'; 'they are still' ambiguous with 'the person'",
+   "body_they_drafted": "The 7th house is where another person can change the plan. A partner says no, a client wants different terms, a contract adds a condition, or the person sharing their life has needs that cannot be solved by pretending they are still making the decision alone. This house covers marriage, long-term partners, business partnerships, advisors, lawyers, rivals, and open conflicts because all of them require them to deal with somebody else's position. The 7th house is empty, so the ruler of the Descendant shows what partnership keeps getting tied to and where agreements start carrying concrete consequences.",
+   "body_they_proposed": "The 7th house is where another person can change the plan. A partner says no, a client wants different terms, a contract adds a condition, or the person sharing their life has needs that cannot be solved by pretending they are still making the decision alone. This house covers marriage, long-term partners, business partnerships, advisors, lawyers, rivals, and open conflicts because all of them require dealing with somebody else's position. The 7th house is empty, so the ruler of the Descendant shows what partnership keeps getting tied to and where agreements start carrying concrete consequences."
+  },
+  {
+   "corpus_key": "empty-9th",
+   "contentKey": "fallback-hook/empty-house/base/9",
+   "verdict": "approve_as_is",
+   "flag": "'they can widen the frame they use' \u2014 first 'they' (the subjects listed) now collides with subject 'they'",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "The 9th house is where a larger world can change what they do next. One course can qualify them for work they could not apply for before, a trip can change where they want to live, a legal decision can delay a plan, and a book or teacher can make an old belief impossible to keep using. Higher education, philosophy, religion, spirituality, law, publishing, foreign cultures, languages, and long-distance travel belong here because they can widen the frame they use to make decisions. The 9th house is empty, so its ruler shows where those bigger questions start producing practical consequences."
+  },
+  {
+   "corpus_key": "empty-11th",
+   "contentKey": "fallback-hook/empty-house/base/11",
+   "verdict": "corrected_wording_proposed",
+   "flag": "'a goal they could not finish alone' \u2014 'they' now ambiguous with 'collaborator'",
+   "body_they_drafted": "The 11th house is where the people between them and the future matter. A friend forwards the job, a group introduces them to someone useful, a team finally gives the idea enough people to work, or an unreliable collaborator delays a goal they could not finish alone. This house covers friends, groups, communities, allies, and long-range plans because other people often determine which possibilities become reachable. The 11th house is empty, so its ruler shows what their hopes depend on and where friendship or group life changes what happens next.",
+   "body_they_proposed": "The 11th house is where the people between them and the future matter. A friend forwards the job, a group introduces them to someone useful, a team finally gives the idea enough people to work, or an unreliable collaborator delays a goal that could not be finished alone. This house covers friends, groups, communities, allies, and long-range plans because other people often determine which possibilities become reachable. The 11th house is empty, so its ruler shows what their hopes depend on and where friendship or group life changes what happens next."
+  },
+  {
+   "corpus_key": "empty-1st|virgo",
+   "contentKey": "fallback-hook/empty-house/sign/1/virgo",
+   "verdict": "approve_as_is",
+   "flag": "'while they are still small' \u2014 pre-existing 'they' (problems) now collides with subject 'they'",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "They notice the crooked label, the missing detail, and the sentence that would be clearer with one word changed. That eye can make them exceptionally useful because they catch problems while they are still small. It can also follow them into the mirror, the email they already sent, or the decision they keep reopening after they had enough information the first time. Precision helps. Constant correction is a much more exhausting job."
+  },
+  {
+   "corpus_key": "empty-1st|libra",
+   "contentKey": "fallback-hook/empty-house/sign/1/libra",
+   "verdict": "approve_as_is",
+   "flag": "'before they have finished making it' \u2014 pre-existing 'they' (the other person) now ambiguous with subject 'they'",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "Social balance is part of how they move through the world. They may instinctively soften a rough moment, match the tone of the room, or see the other person's point before they have finished making it. Charm and aesthetic sense are easy assets, but too much weighing can leave them waiting for a choice that pleases everyone."
+  },
+  {
+   "corpus_key": "empty-2nd|capricorn",
+   "contentKey": "fallback-hook/empty-house/sign/2/capricorn",
+   "verdict": "corrected_wording_proposed",
+   "flag": "closing advice imperative addressed to the subject retained as-is",
+   "body_they_drafted": "They usually want the money to last. They may save patiently, inspect an investment before committing, and choose durability over a quick thrill. A plan feels better when it can survive contact with the calendar and the bank account. Building wealth may be slow because they would rather trust effort than luck. Just do not make every expense audition for the right to exist.",
+   "body_they_proposed": "They usually want the money to last. They may save patiently, inspect an investment before committing, and choose durability over a quick thrill. A plan feels better when it can survive contact with the calendar and the bank account. Building wealth may be slow because they would rather trust effort than luck. The trap comes when every expense has to audition for the right to exist."
+  },
+  {
+   "corpus_key": "empty-2nd|pisces",
+   "contentKey": "fallback-hook/empty-house/sign/2/pisces",
+   "verdict": "corrected_wording_proposed",
+   "flag": "advice imperatives ('Keep...', 'Get...') addressed to the subject retained",
+   "body_they_drafted": "Money can be easier to feel than to pin down. They may earn through music, images, caregiving, spiritual work, or another skill that depends on imagination and sensitivity. The trouble starts when a beautiful idea arrives without a clear price, contract, or payment date. Keep the inspiration. Get the numbers in writing before they trust the offer.",
+   "body_they_proposed": "Money can be easier to feel than to pin down. They may earn through music, images, caregiving, spiritual work, or another skill that depends on imagination and sensitivity. The trouble starts when a beautiful idea arrives without a clear price, contract, or payment date. The inspiration can stay. The numbers belong in writing before they trust the offer."
+  },
+  {
+   "corpus_key": "empty-3rd|pisces",
+   "contentKey": "fallback-hook/empty-house/sign/3/pisces",
+   "verdict": "approve_as_is",
+   "flag": "'before they have found the sentence' \u2014 pre-existing 'they' (somebody) now ambiguous with subject 'they'",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "They can hear what somebody means before they have found the sentence for it. A change in tone, the pause before the reply, or the feeling they get after a conversation may stay with them longer than the actual words. That sensitivity can feed writing, music, art, and an unusually intuitive mind. It also means they sometimes need to check the message twice before deciding the feeling they picked up belongs to the other person."
+  },
+  {
+   "corpus_key": "empty-4th|aquarius",
+   "contentKey": "fallback-hook/empty-house/sign/4/aquarius",
+   "verdict": "corrected_wording_proposed",
+   "flag": "'more distance than they expect' \u2014 pre-existing 'they' (relatives) now ambiguous with subject 'they'",
+   "body_they_drafted": "Their household may work by rules that make perfect sense to the people inside it and very little sense to anybody else. Chosen family, unusual living arrangements, a house full of technology, or sudden changes in where and how they live can all make home feel less traditional from the beginning. They can love relatives deeply and still need more distance than they expect. The home works best when difference is allowed without turning emotional closeness into a requirement nobody can actually meet.",
+   "body_they_proposed": "Their household may work by rules that make perfect sense to the people inside it and very little sense to anybody else. Chosen family, unusual living arrangements, a house full of technology, or sudden changes in where and how they live can all make home feel less traditional from the beginning. They can love relatives deeply and still need more distance than the relatives expect. The home works best when difference is allowed without turning emotional closeness into a requirement nobody can actually meet."
+  },
+  {
+   "corpus_key": "empty-5th|libra",
+   "contentKey": "fallback-hook/empty-house/sign/5/libra",
+   "verdict": "corrected_wording_proposed",
+   "flag": "'They can also leave them' \u2014 pre-existing 'They' (high standards) now collides with subject pronouns",
+   "body_they_drafted": "They like pleasure to have some beauty and mutuality in it. They may spend time choosing the restaurant, the outfit, the playlist, or the right words because the atmosphere is part of what makes the experience enjoyable. High standards can make romance and creative work feel refined. They can also leave them comparing a real person or project with the version they imagined and postponing a choice that cannot be made perfectly.",
+   "body_they_proposed": "They like pleasure to have some beauty and mutuality in it. They may spend time choosing the restaurant, the outfit, the playlist, or the right words because the atmosphere is part of what makes the experience enjoyable. High standards can make romance and creative work feel refined. Those standards can also leave them comparing a real person or project with the version they imagined and postponing a choice that cannot be made perfectly."
+  },
+  {
+   "corpus_key": "empty-6th|gemini",
+   "contentKey": "fallback-hook/empty-house/sign/6/gemini",
+   "verdict": "approve_as_is",
+   "flag": "imperative 'Give yourself' rendered as 'Give them' \u2014 reflexive mapping impossible",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "They need enough mental movement in the workday to stay engaged. A role that has them writing in the morning, answering questions after lunch, and switching gears before the day ends can keep their attention alive. Give them eight hours of identical work and focus may disappear before the shift is over. Coworker banter may be part of the fun until gossip becomes another problem the team has to manage. The lungs, arms, shoulders, and hands may also be more sensitive areas."
+  },
+  {
+   "corpus_key": "empty-6th|virgo",
+   "contentKey": "fallback-hook/empty-house/sign/6/virgo",
+   "verdict": "corrected_wording_proposed",
+   "flag": "'people know they will catch what they drop' \u2014 subject 'they' now collides with 'they' (people)",
+   "body_they_drafted": "Systems can become part of how they keep stress from multiplying. They notice the missing step, organize the schedule, remember the detail, and often prevent a problem before anybody else knows it was coming. That competence can make them indispensable. It can also mean more and more work finds them because people know they will catch what they drop. Digestion, diet, and health routines can require more attention here.",
+   "body_they_proposed": "Systems can become part of how they keep stress from multiplying. They notice the missing step, organize the schedule, remember the detail, and often prevent a problem before anybody else knows it was coming. That competence can make them indispensable. It can also mean more and more work finds them because people know whatever they drop will be caught. Digestion, diet, and health routines can require more attention here."
+  },
+  {
+   "corpus_key": "empty-6th|capricorn",
+   "contentKey": "fallback-hook/empty-house/sign/6/capricorn",
+   "verdict": "corrected_wording_proposed",
+   "flag": "'that they will handle' \u2014 subject 'they' now ambiguous with 'coworkers'",
+   "body_they_drafted": "Coworkers learn quickly that they will handle the difficult part of the job. They can tolerate long hours, strict systems, and slow progress because responsibility gives the day structure, which can eventually bring more authority. It can also teach everyone else to leave the unpleasant task with them. The bones, skin, knees, and teeth may be more sensitive areas, and overwork becomes the larger problem when competence keeps being rewarded with more to carry.",
+   "body_they_proposed": "Coworkers learn quickly who will handle the difficult part of the job. They can tolerate long hours, strict systems, and slow progress because responsibility gives the day structure, which can eventually bring more authority. It can also teach everyone else to leave the unpleasant task with them. The bones, skin, knees, and teeth may be more sensitive areas, and overwork becomes the larger problem when competence keeps being rewarded with more to carry."
+  },
+  {
+   "corpus_key": "empty-6th|pisces",
+   "contentKey": "fallback-hook/empty-house/sign/6/pisces",
+   "verdict": "approve_as_is",
+   "flag": "'before they have finished asking' \u2014 pre-existing 'they' (coworker) now ambiguous with subject 'they'",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "They may notice what a coworker needs before they have finished asking for it. That sensitivity can make them excellent at care, listening, creative work, or any role where the human part of the job matters, but a vague job description can quietly turn into responsibilities nobody ever formally assigned them. Flexible work may suit them. The day gets harder when compassion keeps expanding the job faster than anybody is defining its limits."
+  },
+  {
+   "corpus_key": "empty-7th|taurus",
+   "contentKey": "fallback-hook/empty-house/sign/7/taurus",
+   "verdict": "approve_as_is",
+   "flag": "'Do they show up...' \u2014 pre-existing 'they' (somebody) now ambiguous with subject 'they'",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "They notice very quickly if somebody is reliable in ordinary life. Do they show up when they said they would, pay their share, remember what belongs to whom, and make the relationship easier to live inside? Taurus or Scorpio may show up strongly in a partner\u2019s chart, so commitment can bring either a strong need for consistency or a much deeper concern with privacy, loyalty, and control. Trust builds slowly here because the proof is in what keeps happening after the first attraction wears off."
+  },
+  {
+   "corpus_key": "empty-7th|cancer",
+   "contentKey": "fallback-hook/empty-house/sign/7/cancer",
+   "verdict": "corrected_wording_proposed",
+   "flag": "'Somebody remembers what they need... a favor they now owe them' \u2014 subject 'they/them' now ambiguous with 'somebody'",
+   "body_they_drafted": "They pay attention to who makes the relationship feel livable at home. Somebody remembers what they need from the store, notices when they are exhausted, or takes care of the practical detail without turning it into a favor they now owe them. Cancer or Capricorn may show up strongly in a partner\u2019s chart, so care and responsibility can become two sides of the same agreement. The relationship gets harder when one person is always doing the remembering and the other gets to remain the guest.",
+   "body_they_proposed": "They pay attention to who makes the relationship feel livable at home. Somebody remembers what they need from the store, notices when they are exhausted, or takes care of the practical detail without turning it into a favor that is now owed. Cancer or Capricorn may show up strongly in a partner\u2019s chart, so care and responsibility can become two sides of the same agreement. The relationship gets harder when one person is always doing the remembering and the other gets to remain the guest."
+  },
+  {
+   "corpus_key": "empty-7th|leo",
+   "contentKey": "fallback-hook/empty-house/sign/7/leo",
+   "verdict": "corrected_wording_proposed",
+   "flag": "second sentence 'They' (the partner) now collides with subject 'them/their/they' throughout",
+   "body_they_drafted": "They want to feel that the person beside them is genuinely glad to have them in their life. They celebrate the win, introduce them with warmth, or make it obvious that their presence matters instead of treating appreciation like something they should infer. Leo or Aquarius may show up strongly in a partner\u2019s chart, bringing either more visible affection or a stronger need for friendship and independence inside commitment. Admiration helps the bond. It becomes exhausting when the relationship has to look impressive before it can feel good.",
+   "body_they_proposed": "They want to feel that the person beside them is genuinely glad to have them in their life. That person celebrates the win, introduces them with warmth, or makes it obvious that their presence matters instead of treating appreciation like something they should infer. Leo or Aquarius may show up strongly in a partner\u2019s chart, bringing either more visible affection or a stronger need for friendship and independence inside commitment. Admiration helps the bond. It becomes exhausting when the relationship has to look impressive before it can feel good."
+  },
+  {
+   "corpus_key": "empty-7th|sagittarius",
+   "contentKey": "fallback-hook/empty-house/sign/7/sagittarius",
+   "verdict": "approve_as_is",
+   "flag": "'they had before meeting them' mixes native and partner referents",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "They need a relationship with enough room for both people to keep becoming more of themselves. A partner may bring travel, another culture, a new field of study, or simply a future that feels larger than the one they had before meeting them. Sagittarius or Gemini may show up strongly in a partner\u2019s chart, so the bond can run on candor, curiosity, movement, and a lot of conversation. Freedom helps when both people are growing. It hurts when one person is always the one waiting for the other to come back."
+  },
+  {
+   "corpus_key": "empty-8th|capricorn",
+   "contentKey": "fallback-hook/empty-house/sign/8/capricorn",
+   "verdict": "corrected_wording_proposed",
+   "flag": "'expects them to trust them' \u2014 double 'them' with different referents",
+   "body_they_drafted": "Intimacy and shared money can become serious business. The 8th gets literal around the tax form, the loan, the shared account, the will, the secret, or the moment somebody expects them to trust them with something costly. They may be cautious about physical vulnerability and dependable with financial responsibilities. They may also live a long life, but control is the more immediate issue: feelings can take longer to show when consequences matter this much.",
+   "body_they_proposed": "Intimacy and shared money can become serious business. The 8th gets literal around the tax form, the loan, the shared account, the will, the secret, or the moment somebody expects to be trusted with something costly. They may be cautious about physical vulnerability and dependable with financial responsibilities. They may also live a long life, but control is the more immediate issue: feelings can take longer to show when consequences matter this much."
+  },
+  {
+   "corpus_key": "empty-8th|pisces",
+   "contentKey": "fallback-hook/empty-house/sign/8/pisces",
+   "verdict": "approve_as_is",
+   "flag": "final imperative recast with 'They should'",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "Shared money, intimacy, death, and occult subjects can feel emotionally porous. They may sense more than they can verify, keep financial concerns private, or worry when agreements are vague. Intuition can be useful here, but confusion and deception can make it harder to know what to trust. They should get the joint account, loan, medication, or other high-stakes detail clear in writing."
+  },
+  {
+   "corpus_key": "empty-9th|sagittarius",
+   "contentKey": "fallback-hook/empty-house/sign/9/sagittarius",
+   "verdict": "approve_as_is",
+   "flag": "'they change the range of options they can see' mixes subject and native referents",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "They are usually willing to go farther for an answer. They may take the course, learn the language, book the trip, or publish the idea because a larger horizon gives them more confidence about what comes next. Education and travel can redirect work, relationships, or where they imagine living because they change the range of options they can see. That same drive can lead toward teaching, publishing, law, religion, or international work."
+  },
+  {
+   "corpus_key": "empty-10th|aries",
+   "contentKey": "fallback-hook/empty-house/sign/10/aries",
+   "verdict": "corrected_wording_proposed",
+   "flag": "'they are willing' may misread as the team",
+   "body_they_drafted": "They do not need much time to decide when the work clearly needs movement. The stalled project gets a volunteer, the urgent problem finally has an owner, or the team stops debating because they are willing to make the first call. That initiative can move them toward leadership or physically demanding fields where acting matters more than polishing the plan. The friction usually starts when a boss wants permission to matter more than the result.",
+   "body_they_proposed": "They do not need much time to decide when the work clearly needs movement. The stalled project gets a volunteer, the urgent problem finally has an owner, or the team stops debating because somebody is finally willing to make the first call. That initiative can move them toward leadership or physically demanding fields where acting matters more than polishing the plan. The friction usually starts when a boss wants permission to matter more than the result."
+  },
+  {
+   "corpus_key": "empty-10th|cancer",
+   "contentKey": "fallback-hook/empty-house/sign/10/cancer",
+   "verdict": "corrected_wording_proposed",
+   "flag": "'they noticed what mattered to them' mixes native and client referents",
+   "body_they_drafted": "A client remembers that they noticed what mattered to them. A guest feels looked after, a team trusts them with the sensitive situation, or somebody comes back because the work felt human instead of processed. That reputation can open doors in hospitality, property, food, caregiving, and other fields where care changes the experience. Home and family can redirect the career too, especially when private responsibilities change how much public work they can reasonably hold.",
+   "body_they_proposed": "A client remembers the person who noticed what mattered to them. A guest feels looked after, a team trusts them with the sensitive situation, or somebody comes back because the work felt human instead of processed. That reputation can open doors in hospitality, property, food, caregiving, and other fields where care changes the experience. Home and family can redirect the career too, especially when private responsibilities change how much public work they can reasonably hold."
+  },
+  {
+   "corpus_key": "empty-10th|pisces",
+   "contentKey": "fallback-hook/empty-house/sign/10/pisces",
+   "verdict": "corrected_wording_proposed",
+   "flag": "native 'they' collides with client's 'they' in first sentence",
+   "body_they_drafted": "A client cannot quite explain what they want, but they understand the mood before they find the words. They may notice what a team is avoiding, make something artistic that communicates more than a long report, or do work where sensitivity itself becomes part of the skill. That receptivity can create professional value. It becomes expensive when being open to what everybody needs quietly turns into absorbing stress and tasks nobody actually assigned them.",
+   "body_they_proposed": "A client cannot quite explain what they want, but they understand the mood before the client finds the words. They may notice what a team is avoiding, make something artistic that communicates more than a long report, or do work where sensitivity itself becomes part of the skill. That receptivity can create professional value. It becomes expensive when being open to what everybody needs quietly turns into absorbing stress and tasks nobody actually assigned them."
+  },
+  {
+   "corpus_key": "empty-11th|leo",
+   "contentKey": "fallback-hook/empty-house/sign/11/leo",
+   "verdict": "approve_as_is",
+   "flag": "'open doors for them' may misread as friends",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "They are often the person who gets the group moving. They plan the dinner, celebrate somebody\u2019s win properly, volunteer to lead the project, or make the room feel more alive because their enthusiasm gives other people permission to participate. Friends may be creative, visible, or influential in ways that open doors for them too. Loyalty works best when friendship does not become another place where attention has to prove affection."
+  },
+  {
+   "corpus_key": "empty-11th|capricorn",
+   "contentKey": "fallback-hook/empty-house/sign/11/capricorn",
+   "verdict": "corrected_wording_proposed",
+   "flag": "'they have watched them work' mixes friend and native referents",
+   "body_they_drafted": "A small number of friendships can become unusually consequential. One older colleague may introduce them to the person who changes their career, or a long-standing friend may be the one who helps a difficult plan become possible because they have watched them work for years. Status and responsibility can enter friendship more than they expect. The circle may be small, but each tie can carry enough weight that losing one changes more than their weekend plans.",
+   "body_they_proposed": "A small number of friendships can become unusually consequential. One older colleague may introduce them to the person who changes their career, or a long-standing friend may be the one who helps a difficult plan become possible because that friend has watched them work for years. Status and responsibility can enter friendship more than they expect. The circle may be small, but each tie can carry enough weight that losing one changes more than their weekend plans."
+  },
+  {
+   "corpus_key": "empty-11th|aquarius",
+   "contentKey": "fallback-hook/empty-house/sign/11/aquarius",
+   "verdict": "approve_as_is",
+   "flag": "'they need support' may misread as somebody close",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "They may know a surprising number of people without needing all of them close. One community is for work, another is built around an unusual interest, and a third is simply where the smartest conversations happen. That breadth can create opportunities because information and introductions move easily around them. The distance becomes noticeable when somebody close has no idea they need support because they have spent so long being the independent friend."
+  },
+  {
+   "corpus_key": "empty-11th|pisces",
+   "contentKey": "fallback-hook/empty-house/sign/11/pisces",
+   "verdict": "corrected_wording_proposed",
+   "flag": "'happening to them' may misread as the friend",
+   "body_they_drafted": "They can care about a friend\u2019s crisis almost as if it were happening to them. That compassion can create beautiful communities around art, spirituality, service, or people who do not feel at home elsewhere. It can also make rescue feel a lot like friendship, especially when somebody always needs something and they are always the one who understands. Devotion matters. So does noticing what the relationship keeps costing.",
+   "body_they_proposed": "They can care about a friend\u2019s crisis almost as if it were their own. That compassion can create beautiful communities around art, spirituality, service, or people who do not feel at home elsewhere. It can also make rescue feel a lot like friendship, especially when somebody always needs something and they are always the one who understands. Devotion matters. So does noticing what the relationship keeps costing."
+  },
+  {
+   "corpus_key": "empty-12th|leo",
+   "contentKey": "fallback-hook/empty-house/sign/12/leo",
+   "verdict": "approve_as_is",
+   "flag": "'until they handle them differently' may misread as children",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "They may hide more of their creative self than people expect. They may do their best work in private, avoid the spotlight even when they have leadership ability, or need solitude before they are ready to be seen. Performers can show this too. Romance or children can also bring lessons that repeat until they handle them differently. Not every talent needs an audience before it counts."
+  },
+  {
+   "corpus_key": "empty-1st|aries|mars-in-11th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/aries/mars/11",
+   "verdict": "approve_as_is",
+   "flag": "final 'They' (friends) now ambiguous with native 'they'",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "They can put serious energy into friendships, groups, causes, and the future they want to build. They may naturally become the person who starts the project or pushes the group forward. Strong-minded friends can make the circle lively. They can also turn every meeting into a contest if nobody knows when to stop pushing."
+  },
+  {
+   "corpus_key": "empty-1st|taurus|venus-in-7th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/taurus/venus/7",
+   "verdict": "corrected_wording_proposed",
+   "flag": "partner 'They' collides with native 'them' in second sentence",
+   "body_they_drafted": "Being loved can become easier to believe when another person shows it consistently. They make the plan, remember what matters to them, share the expense without making them ask, or simply keep choosing the relationship after the first excitement is gone. Partnership may come early, and Taurus or Scorpio can show up strongly in the other person\u2019s chart through either practical reliability or a more private, intense approach to trust. The relationship can strengthen their sense of value. It should not have to become the only place they know they have it.",
+   "body_they_proposed": "Being loved can become easier to believe when another person shows it consistently. That person makes the plan, remembers what matters to them, shares the expense without making them ask, or simply keep choosing the relationship after the first excitement is gone. Partnership may come early, and Taurus or Scorpio can show up strongly in the other person\u2019s chart through either practical reliability or a more private, intense approach to trust. The relationship can strengthen their sense of value. It should not have to become the only place they know they have it."
+  },
+  {
+   "corpus_key": "empty-1st|gemini|mercury-in-8th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/gemini/mercury/8",
+   "verdict": "approve_as_is",
+   "flag": "transposed 'they' sits beside pre-existing 'them' (the topics) in 'once they can talk about them directly'",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "They may be the person who asks the question everybody else was trying to avoid. Sex, debt, death, secrets, or somebody else\u2019s money can become easier to understand once they can talk about them directly, and that curiosity can make them good at research or investigation. Communication gets more private here because the information can actually change what people owe or trust. Knowing the answer does not always mean it is theirs to share."
+  },
+  {
+   "corpus_key": "empty-1st|cancer|moon-in-12th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/cancer/moon/12",
+   "verdict": "corrected_wording_proposed",
+   "flag": "pre-existing 'them' (feelings) collides with transposed 'them' in 'catch up with them'",
+   "body_they_drafted": "They may keep feelings private until the house is quiet enough for them to catch up with them. A family memory returns in a dream, an old story gets louder after everybody leaves, or they realize how much of the day they spent absorbing somebody else\u2019s mood. Institutions and behind-the-scenes care work may draw out their compassion too. Past-life material may feel tied to a feminine role. Solitude helps when it gives the feeling somewhere to go instead of somewhere to hide.",
+   "body_they_proposed": "They may keep feelings private until the house is quiet enough for the feelings to catch up with them. A family memory returns in a dream, an old story gets louder after everybody leaves, or they realize how much of the day they spent absorbing somebody else\u2019s mood. Institutions and behind-the-scenes care work may draw out their compassion too. Past-life material may feel tied to a feminine role. Solitude helps when it gives the feeling somewhere to go instead of somewhere to hide."
+  },
+  {
+   "corpus_key": "empty-1st|virgo|mercury-in-5th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/virgo/mercury/5",
+   "verdict": "corrected_wording_proposed",
+   "flag": "transposed 'they' ambiguous with pre-existing 'they' (children and lovers) in final sentence",
+   "body_they_drafted": "Attraction often begins with the mind. They may be selective, drawn to younger or intellectually interesting partners, and quick to notice what is not working in romance. Boredom can shorten a relationship, and criticism can do the same. Children and lovers do not need to pass an exam to be loved, even when they can see exactly how they could improve.",
+   "body_they_proposed": "Attraction often begins with the mind. They may be selective, drawn to younger or intellectually interesting partners, and quick to notice what is not working in romance. Boredom can shorten a relationship, and criticism can do the same. Children and lovers do not need to pass an exam to be loved, even when they can see exactly how each could improve."
+  },
+  {
+   "corpus_key": "empty-1st|libra|venus-in-5th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/libra/venus/5",
+   "verdict": "approve_as_is",
+   "flag": "imperative 'Just remember...' addressed to reader, kept verbatim",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "Romance, social life, children, and creativity can come with ease and pleasure. They may notice beauty quickly and be drawn to charming partners, and a creative hobby can even support financial goals. Attraction is enjoyable here. Just remember that looking good together and actually liking how the relationship works are two different tests."
+  },
+  {
+   "corpus_key": "empty-1st|sagittarius|jupiter-in-2nd",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/sagittarius/jupiter/2",
+   "verdict": "approve_as_is",
+   "flag": "idiom 'future you' transposed as 'future them'",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "Money can come with more opportunity and more room for excess. Rewards may come through hard work, patience, and personal effort, especially with Capricorn on the 2nd. They may swing between generosity and holding on too tightly. The useful middle is knowing what they can afford to give without making future them pay for today's optimism."
+  },
+  {
+   "corpus_key": "empty-1st|sagittarius|jupiter-in-6th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/sagittarius/jupiter/6",
+   "verdict": "approve_as_is",
+   "flag": "imperative 'Just remember...' addressed to reader, kept verbatim",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "They can make a workday feel lighter simply by refusing to treat every problem like the end of the world. Coworkers may respond to their humor, willingness to help, or habit of saying yes to the opportunity other people hesitated over. Jobs can open because they are willing to try. Just remember that enthusiasm does not give the week more hours than it actually has."
+  },
+  {
+   "corpus_key": "empty-1st|sagittarius|jupiter-in-11th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/sagittarius/jupiter/11",
+   "verdict": "approve_as_is",
+   "flag": "imperative 'Ask not...' addressed to reader, kept verbatim",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "Friends and groups can make the future feel more possible. Opportunities may come through social ties, and they may attract adventurous, funny, outgoing people who broaden their world. This is the friend who sends the link, the group that makes room, the club they outgrow, or the introduction that quietly changes the next year. Generosity makes them popular. Ask not how many people like the idea, but which friendships actually help the hope become something they can live."
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-5th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/pisces/neptune/5",
+   "verdict": "corrected_wording_proposed",
+   "flag": "imperatives ('Keep the dream. Just let...') retained unchanged",
+   "body_they_drafted": "They can fall in love with the atmosphere before they know the person. Music, theater, art, dance, fantasy, and romance can pull them completely into the experience, which makes creativity feel almost effortless when inspiration is strong. The same imagination can keep a relationship beautiful in their head after the evidence has started saying something else. Keep the dream. Just let the actual person stay visible inside it.",
+   "body_they_proposed": "They can fall in love with the atmosphere before they know the person. Music, theater, art, dance, fantasy, and romance can pull them completely into the experience, which makes creativity feel almost effortless when inspiration is strong. The same imagination can keep a relationship beautiful in their head after the evidence has started saying something else. The dream can stay. The actual person just has to stay visible inside it."
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-7th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/pisces/neptune/7",
+   "verdict": "corrected_wording_proposed",
+   "flag": "subject and partner 'they/their' referents collide in second sentence",
+   "body_they_drafted": "They can see the best version of a partner very early. The kindness feels significant, the connection feels fated, or they understand their pain well enough that they start making room for who they might become instead of only who they are now. Virgo or Pisces may appear strongly in the partner\u2019s chart through either practical attentiveness or unusual sensitivity. Love can be generous here. It gets confusing when hope keeps rewriting behavior they have already seen more than once.",
+   "body_they_proposed": "They can see the best version of a partner very early. The kindness feels significant, the connection feels fated, or they understand the partner's pain well enough that they start making room for who that person might become instead of only who they are now. Virgo or Pisces may appear strongly in the partner\u2019s chart through either practical attentiveness or unusual sensitivity. Love can be generous here. It gets confusing when hope keeps rewriting behavior they have already seen more than once."
+  },
+  {
+   "corpus_key": "empty-1st|pisces|neptune-in-8th",
+   "contentKey": "fallback-hook/empty-house/rising-ruler/pisces/neptune/8",
+   "verdict": "corrected_wording_proposed",
+   "flag": "imperative ('Get the loan...') retained unchanged",
+   "body_they_drafted": "Intuition and imagination can become especially strong around intimacy and shared money. Romantic fantasy may be powerful, but so can confusion, dishonesty, or wishful thinking when another person's finances are involved. A feeling can be meaningful without being evidence. Get the loan, account, inheritance, or agreement clear enough that nobody has to guess what was promised.",
+   "body_they_proposed": "Intuition and imagination can become especially strong around intimacy and shared money. Romantic fantasy may be powerful, but so can confusion, dishonesty, or wishful thinking when another person's finances are involved. A feeling can be meaningful without being evidence. The loan, account, inheritance, or agreement should be clear enough that nobody has to guess what was promised."
+  },
+  {
+   "corpus_key": "empty-3rd|ruler-in-1st",
+   "contentKey": "fallback-hook/empty-house/ruler-house/3/1",
+   "verdict": "corrected_wording_proposed",
+   "flag": "first sentence: transposed 'they' collides with 'People' as referent",
+   "body_they_drafted": "People often know what they are thinking because they have already started saying it. They ask the question, tell the story, answer the message, or volunteer the explanation before the conversation has warmed up. Errands, siblings, short trips, and ordinary exchanges can keep the whole day moving. That quick mind makes connection easy. It also means the first sentence may land before they have decided if it is the sentence they meant to keep.",
+   "body_they_proposed": "What they are thinking is rarely a secret, because they have already started saying it. They ask the question, tell the story, answer the message, or volunteer the explanation before the conversation has warmed up. Errands, siblings, short trips, and ordinary exchanges can keep the whole day moving. That quick mind makes connection easy. It also means the first sentence may land before they have decided if it is the sentence they meant to keep."
+  },
+  {
+   "corpus_key": "empty-4th|ruler-in-10th",
+   "contentKey": "fallback-hook/empty-house/ruler-house/4/10",
+   "verdict": "corrected_wording_proposed",
+   "flag": "imperatives ('Look at...', 'Ask which...') retained; pronouns transposed",
+   "body_they_drafted": "Family and career can pull on the same rope. A parent's advice or approval may matter, and public image may include wanting to come from a solid or respectable family background. Look at the r\u00e9sum\u00e9, the promotion, the deadline, the person signing off, and who gets thanked when the work lands. Career and home can also compete for time. Ask which responsibility is actually theirs today, not which side can make them feel more guilty.",
+   "body_they_proposed": "Family and career can pull on the same rope. A parent's advice or approval may matter, and public image may include wanting to come from a solid or respectable family background. The r\u00e9sum\u00e9, the promotion, the deadline, the person signing off, and who gets thanked when the work lands all tell the story. Career and home can also compete for time. The useful question is which responsibility is actually theirs today, not which side can make them feel more guilty."
+  },
+  {
+   "corpus_key": "empty-4th|ruler-in-1st",
+   "contentKey": "fallback-hook/empty-house/ruler-house/4/1",
+   "verdict": "corrected_wording_proposed",
+   "flag": "'they tell them' pronoun collision in first sentence",
+   "body_they_drafted": "People may be able to see their family history before they tell them much about it. The way they host, protect their space, talk about where they are from, or react when home feels unstable can become part of how others know them. Family can be a strong foundation for identity. It becomes limiting when the household or a parent\u2019s expectations keep deciding which version of them is allowed to grow.",
+   "body_they_proposed": "People may be able to see their family history before being told much about it. The way they host, protect their space, talk about where they are from, or react when home feels unstable can become part of how others know them. Family can be a strong foundation for identity. It becomes limiting when the household or a parent\u2019s expectations keep deciding which version of them is allowed to grow."
+  },
+  {
+   "corpus_key": "empty-5th|ruler-in-6th",
+   "contentKey": "fallback-hook/empty-house/ruler-house/5/6",
+   "verdict": "corrected_wording_proposed",
+   "flag": "imperative ('Just notice...') retained unchanged",
+   "body_they_drafted": "Pleasure and work can cross paths. A hobby can become paid work and a coworker can become a date, but once every enjoyable skill gets scheduled, measured, and monetized, the thing that restored them can start feeling like another task. Creative challenge can make the workday feel more alive. Just notice when the enjoyable skill has quietly become another obligation.",
+   "body_they_proposed": "Pleasure and work can cross paths. A hobby can become paid work and a coworker can become a date, but once every enjoyable skill gets scheduled, measured, and monetized, the thing that restored them can start feeling like another task. Creative challenge can make the workday feel more alive. The thing to notice is when the enjoyable skill has quietly become another obligation."
+  },
+  {
+   "corpus_key": "empty-2nd|mercury-in-8th",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/2/mercury/8",
+   "verdict": "approve_as_is",
+   "flag": "imperative ('Know what...') retained unchanged",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "Money may involve other people's resources as much as their own. A tax bill, refund, loan, inheritance, or partner's financial decision can change what they have even though the money did not begin entirely in their hands. Know what the document actually says before assuming everyone remembers the agreement the same way."
+  },
+  {
+   "corpus_key": "empty-2nd|uranus-in-3rd",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/2/uranus/3",
+   "verdict": "approve_as_is",
+   "flag": "imperative ('Keep enough...') retained unchanged",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "An unusual idea can become income. A useful idea can become an invoice once they explain, teach, sell, or write it clearly enough for somebody else to use; a sibling's request or a transportation problem can turn into an expense just as quickly. The earning path may not look conventional, which is part of the point. Keep enough practical structure around the idea that a sudden change does not turn into a preventable financial emergency."
+  },
+  {
+   "corpus_key": "empty-3rd|mars-in-1st",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/3/mars/1",
+   "verdict": "corrected_wording_proposed",
+   "flag": "first sentence: transposed 'they/their' collides with 'People' as referent",
+   "body_they_drafted": "People may hear their opinion before they have finished wondering what they think. They answer quickly, argue directly, or say the sharp part out loud because holding the point back can feel more uncomfortable than dealing with the reaction. That force can make them persuasive and hard to ignore. The useful pause is only long enough to decide if they want the other person to understand the point or simply feel how angry they are.",
+   "body_they_proposed": "Their opinion often arrives before people have finished wondering what it is. They answer quickly, argue directly, or say the sharp part out loud because holding the point back can feel more uncomfortable than dealing with the reaction. That force can make them persuasive and hard to ignore. The useful pause is only long enough to decide if they want the other person to understand the point or simply feel how angry they are."
+  },
+  {
+   "corpus_key": "empty-3rd|mercury-in-1st",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/3/mercury/1",
+   "verdict": "approve_as_is",
+   "flag": "imperative ('Ask not only...') retained; pronoun transposed",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "Quick thinking is part of the introduction. What they say can become the first impression people remember, so one quick comment may open a connection or create a story about them before the rest of the context arrives. They may speak easily, keep busy, and move through frequent short trips or car travel with a mind that rarely feels idle. Being heard can matter almost automatically. Ask not only what they want to say, but what the other person actually needs in order to follow it."
+  },
+  {
+   "corpus_key": "empty-6th|saturn-in-10th",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/6/saturn/10",
+   "verdict": "corrected_wording_proposed",
+   "flag": "imperative sentence ('Look at the r\u00e9sum\u00e9...') retained as-is; addresses the reader",
+   "body_they_drafted": "Daily work can build directly toward status and authority. They may take responsibility seriously and want a stable professional role. Look at the r\u00e9sum\u00e9, the promotion, the deadline, the person signing off, and who gets thanked when the work lands. Success after age thirty and possible help from the 10th-house parent may show up too. Patience can build a career. It does not need to become a reason to stay indefinitely in work that has stopped supporting the life around it.",
+   "body_they_proposed": "Daily work can build directly toward status and authority. They may take responsibility seriously and want a stable professional role. The r\u00e9sum\u00e9, the promotion, the deadline, the person signing off, and who gets thanked when the work lands all tell the story. Success after age thirty and possible help from the 10th-house parent may show up too. Patience can build a career. It does not need to become a reason to stay indefinitely in work that has stopped supporting the life around it."
+  },
+  {
+   "corpus_key": "empty-7th|moon-in-1st",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/7/moon/1",
+   "verdict": "approve_as_is",
+   "flag": "existing 'they/their' for the partner now collides with transposed pronouns; referents ambiguous",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "They can read a partner\u2019s mood before they have decided what to do with it. Their reaction may change their own confidence quickly, especially when they are already tired or uncertain, and they may need more time alone than the relationship makes obvious. Empathy helps them understand each other. It becomes a problem when their feelings start making decisions they were supposed to make for themselves."
+  },
+  {
+   "corpus_key": "empty-7th|ruler-in-1st",
+   "contentKey": "fallback-hook/empty-house/ruler-house/7/1",
+   "verdict": "corrected_wording_proposed",
+   "flag": "partner's 'their' (attention, criticism) now ambiguous with subject's transposed 'their'",
+   "body_they_drafted": "A partner can become one of the clearest mirrors for how they see themselves. Their attention changes their confidence, their criticism lands personally, or the relationship becomes part of the way they introduce their life to other people. They may strongly prefer being partnered. The mirror is useful when it shows them something. It becomes limiting when the relationship is the only place they are allowed to decide who they are.",
+   "body_they_proposed": "A partner can become one of the clearest mirrors for how they see themselves. The partner's attention changes their confidence, the partner's criticism lands personally, or the relationship becomes part of the way they introduce their life to other people. They may strongly prefer being partnered. The mirror is useful when it shows them something. It becomes limiting when the relationship is the only place they are allowed to decide who they are."
+  },
+  {
+   "corpus_key": "empty-8th|saturn-in-11th",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/8/saturn/11",
+   "verdict": "corrected_wording_proposed",
+   "flag": "existing 'their' (friends' role) now ambiguous beside subject's transposed 'their'",
+   "body_they_drafted": "They may keep a small circle of serious, older, professional, or unusually consequential friends. A group can pool money, support a crisis, or build something together, but shared resources need clear ownership before goodwill turns into confusion about who owes what. Friends can bring responsibility as well as stability, and long-range goals may take patience. They may expect a lot from the people they trust because they take their role in their future seriously.",
+   "body_they_proposed": "They may keep a small circle of serious, older, professional, or unusually consequential friends. A group can pool money, support a crisis, or build something together, but shared resources need clear ownership before goodwill turns into confusion about who owes what. Friends can bring responsibility as well as stability, and long-range goals may take patience. They may expect a lot from the people they trust because they take those friends' role in their future seriously."
+  },
+  {
+   "corpus_key": "empty-8th|ruler-in-1st",
+   "contentKey": "fallback-hook/empty-house/ruler-house/8/1",
+   "verdict": "approve_as_is",
+   "flag": "'they knew' (other people) now collides with transposed 'them'; also 'They are the one' number clash",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "A crisis can change how they carry themselves because suddenly the decision cannot be theoretical. They are the one dealing with the debt, inheritance, private agreement, loss, or intimate truth, and other people may see more nerve in them than they knew was there. Personal effort can improve the financial picture, and life may contain several major reinventions. Change becomes part of their identity here. It does not have to destroy every older version of them to count."
+  },
+  {
+   "corpus_key": "empty-9th|saturn-in-8th",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/9/saturn/8",
+   "verdict": "approve_as_is",
+   "flag": "imperative 'Think joint accounts...' addressed to reader retained",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "Foreign money and long-term financial planning can move slowly but deliberately. Gains may connect with older or established people from other cultures. Think joint accounts, debt, taxes, inheritances, passwords, private agreements, and the agreements people only discuss behind closed doors. Conservative, responsibility-heavy investments may pay later. Patience is useful. The financial plan should still be reviewed when circumstances change, even if it was built to last."
+  },
+  {
+   "corpus_key": "empty-10th|ruler-in-1st",
+   "contentKey": "fallback-hook/empty-house/ruler-house/10/1",
+   "verdict": "approve_as_is",
+   "flag": "pronoun collision: 'they know what their title is' can misbind to 'People'",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "People may start treating them like the responsible one before they know what their title is. They put their name on the work, make the decision, or build something for themselves, and personal initiative becomes part of why professional doors open. Reputation is visible in how they carry themselves because the career is not tucked away in a separate room. The danger is letting every personal choice become another piece of the professional image they feel responsible for maintaining."
+  },
+  {
+   "corpus_key": "empty-11th|pluto-in-1st",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/11/pluto/1",
+   "verdict": "approve_as_is",
+   "flag": "final 'they do' can misbind to 'everyone else'",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "They can change a room simply by deciding to take the group seriously. They may become the person who organizes everybody, pushes a cause forward, or gives a scattered circle enough focus to become something more powerful. That influence can be useful because people feel the intensity of their commitment. It gets heavy when leadership turns into needing everyone else to care in exactly the same way they do."
+  },
+  {
+   "corpus_key": "empty-12th|mercury-in-2nd",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/12/mercury/2",
+   "verdict": "corrected_wording_proposed",
+   "flag": "final imperative 'Make the money visible...' addressed to reader retained",
+   "body_they_drafted": "Private work can quietly become income, while an expense they refuse to look at can keep growing in the background. Writing, research, confidential associations, or another intellectual skill may earn money without much public visibility. Hidden costs and private income get harder to manage when the records cannot include what nobody is willing to name. Make the money visible enough to manage before anxiety invents the balance.",
+   "body_they_proposed": "Private work can quietly become income, while an expense they refuse to look at can keep growing in the background. Writing, research, confidential associations, or another intellectual skill may earn money without much public visibility. Hidden costs and private income get harder to manage when the records cannot include what nobody is willing to name. The money has to be visible enough to manage before anxiety invents the balance."
+  },
+  {
+   "corpus_key": "empty-12th|pluto-in-7th",
+   "contentKey": "fallback-hook/empty-house/ruler-planet/12/pluto/7",
+   "verdict": "corrected_wording_proposed",
+   "flag": "pronoun collision in final sentence: subject and 'somebody' both read as 'they/them'",
+   "body_they_drafted": "A close relationship can bring private fears to the surface very quickly. They notice who has the information, who decides what gets discussed, or how strongly they react when another person has access to something they normally control. Commitment may repeat the same lesson around trust until the pattern changes, and past-life themes can feel unusually vivid here. Being able to read somebody closely is useful. It still does not tell them what they will do with the access they give them.",
+   "body_they_proposed": "A close relationship can bring private fears to the surface very quickly. They notice who has the information, who decides what gets discussed, or how strongly they react when another person has access to something they normally control. Commitment may repeat the same lesson around trust until the pattern changes, and past-life themes can feel unusually vivid here. Being able to read somebody closely is useful. It still does not tell them what the other person will do with the access they hand over."
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-1st",
+   "contentKey": "fallback-hook/empty-house/ruler-house/12/1",
+   "verdict": "approve_as_is",
+   "flag": "opening 'they' can misbind to 'People'",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "People may notice that they need more privacy than they ever explain. They disappear after a crowded week, absorb the mood of the room before speaking, or seem quieter than the amount of inner activity would suggest. Solitude can restore them because the private world is always close to the surface. It becomes a problem when disappearing is the only response available whenever ordinary life gets uncomfortable."
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-3rd",
+   "contentKey": "fallback-hook/empty-house/ruler-house/12/3",
+   "verdict": "corrected_wording_proposed",
+   "flag": "final imperative 'Confirm the facts...' addressed to reader; embedded 'you' transposed to 'they'",
+   "body_they_drafted": "Their communication style is quiet, intuitive, and deeply perceptive. What stays unsaid in a room can shape the conversation more than the actual dialogue. They might share a private, unspoken bond with a relative or spend hours researching psychology, storytelling, and hidden patterns. Their imagination is powerful, but one unconfirmed assumption can send a simple plan off course. Confirm the facts out loud so they can tell the difference between intuition and a runaway story.",
+   "body_they_proposed": "Their communication style is quiet, intuitive, and deeply perceptive. What stays unsaid in a room can shape the conversation more than the actual dialogue. They might share a private, unspoken bond with a relative or spend hours researching psychology, storytelling, and hidden patterns. Their imagination is powerful, but one unconfirmed assumption can send a simple plan off course. Confirming the facts out loud is how they can tell the difference between intuition and a runaway story."
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-6th",
+   "contentKey": "fallback-hook/empty-house/ruler-house/12/6",
+   "verdict": "approve_as_is",
+   "flag": "'they expect' can misbind to 'coworkers'",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "Private or institutional work can become part of the ordinary week. They work in a hospital, charity, research setting, or another place where service happens away from public view, and coworkers may keep more to themselves than they expect. Stress can also go underground, especially when health worry keeps looping without producing a useful next step. Helping can be meaningful here. It becomes unsustainable when the job requires permanent private strain to keep everybody else functioning."
+  },
+  {
+   "corpus_key": "empty-12th|ruler-in-11th",
+   "contentKey": "fallback-hook/empty-house/ruler-house/12/11",
+   "verdict": "approve_as_is",
+   "flag": "'they understand' vs 'they do not want' referent collision with 'somebody'",
+   "reason": "idiomatic/parseable in context, doctrinal imperative, or universal aphorism",
+   "body_they_drafted": "A friendship can carry much more private weight than anybody else sees. They keep the bond quiet, get drawn into a secretive group, or become the person somebody calls because they understand the crisis they do not want anyone else to know about. Compassion can make that loyalty feel meaningful. The line gets harder to see when helping means protecting a story that is doing damage to both of them."
+  }
+ ]
+}

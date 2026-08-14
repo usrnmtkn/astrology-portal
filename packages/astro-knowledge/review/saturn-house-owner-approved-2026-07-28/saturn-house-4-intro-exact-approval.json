@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "recordType": "transit_house_serving_exact_approval",
+  "approvalId": "saturn-house-owner-approved-2026-07-28-transit-house-intro-4",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "approvedAt": "2026-07-28",
+  "recordedAt": "2026-08-13",
+  "surface": "you|friends",
+  "contentKey": "authored/transit-house-intro/saturn/4",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "a55b2b6dad2f83d760f9fba083c4b2cb948db55d981a9dc0b5ac767479b6c2b9",
+  "payload": {
+    "body_you": "Home stops being the place where every unresolved problem gets stored. The repair you keep postponing. The relative everyone accommodates. The household arrangement that works because one person keeps absorbing the inconvenience. Saturn moving through your 4th house makes the private cost harder to hide.\n\nStart with what daily life depends on. The lease. The mortgage. The room that does not work. The family agreement nobody remembers making. You do not have to solve your entire childhood in one season, but you do need a home life that does not leave you depleted before the rest of the day begins.",
+    "body_they": "Home stops being the place where {{Name}}'s unresolved problems get stored. The repair kept postponed. The relative everyone accommodates. The household arrangement that works because one person keeps absorbing the inconvenience. Saturn moving through their 4th house makes the private cost harder to hide.\n\nWhat their daily life depends on comes first now: the lease, the mortgage, the room that does not work, the family agreement nobody remembers making. They do not have to solve their entire childhood in one season, but they do need a home life that does not leave them depleted before the day begins."
+  },
+  "historicalEvidence": {
+    "readerRewriteCommit": "133e2332c48c147876f352290891ab55a83fde8e",
+    "friendVoiceReviewCommit": "102631f0a3b5851898935c43d6bb9d39f89decf4",
+    "sourceRowApprovalNote": "owner-rewritten full 12-house set, chat 2026-07-28"
+  },
+  "ownerConfirmationStatement": "the writing that was being shown in the natal chart was approved",
+  "ownerConfirmationSource": "owner_chat_2026-08-13_source_metadata_correction",
+  "approvalEffect": "exact_wording_approval",
+  "copyMutation": "none"
+}

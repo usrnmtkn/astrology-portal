@@ -1,0 +1,179 @@
+{
+  "version": "1.0",
+  "corpus": {
+    "format": "TSV: key<TAB>entry text, one entry per line, blank line between entries",
+    "files": [
+      "empty-houses-principles.txt",
+      "empty-houses-base.txt",
+      "empty-houses-signs-1-3.txt",
+      "empty-houses-signs-4-12.txt",
+      "empty-houses-rulers-1-3.txt",
+      "empty-houses-rulers-4-6.txt",
+      "empty-houses-rulers-7-9.txt",
+      "empty-houses-rulers-10-12.txt"
+    ],
+    "houses": ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"],
+    "signs": ["aries","taurus","gemini","cancer","leo","virgo","libra","scorpio","sagittarius","capricorn","aquarius","pisces"],
+    "entry_types": {
+      "principle": { "key_pattern": "^principle\\|[a-z][a-z0-9-]*$" },
+      "base":      { "key_pattern": "^empty-(1st|2nd|3rd|4th|5th|6th|7th|8th|9th|10th|11th|12th)$" },
+      "sign":      { "key_pattern": "^empty-(1st|2nd|3rd|4th|5th|6th|7th|8th|9th|10th|11th|12th)\\|(aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)$" },
+      "ruler":     { "key_pattern": "^empty-(1st|2nd|3rd|4th|5th|6th|7th|8th|9th|10th|11th|12th)\\|ruler-in-(1st|2nd|3rd|4th|5th|6th|7th|8th|9th|10th|11th|12th)$" }
+    },
+    "expected_counts": { "principle": 9, "base": 12, "sign": 144, "ruler": 144 }
+  },
+  "checks": [
+    {
+      "id": "key-format",
+      "severity": "error",
+      "method": "regex",
+      "applies_to": ["principle", "base", "sign", "ruler"],
+      "description": "Key must match its entry-type pattern exactly.",
+      "params": { "use": "entry_types.key_pattern" }
+    },
+    {
+      "id": "single-line",
+      "severity": "error",
+      "method": "computed",
+      "applies_to": ["principle", "base", "sign", "ruler"],
+      "description": "Entry text must be a single line with no tabs or newlines inside."
+    },
+    {
+      "id": "no-artifacts",
+      "severity": "error",
+      "method": "regex",
+      "applies_to": ["principle", "base", "sign", "ruler"],
+      "description": "No citation artifacts, markdown, brackets, or em dashes.",
+      "params": { "forbidden_patterns": ["\\[cite", "\\[\\d", "\\[[^\\]]*\\]", "[#*_`]", "—"] }
+    },
+    {
+      "id": "banned-words",
+      "severity": "error",
+      "method": "regex",
+      "applies_to": ["base", "sign", "ruler"],
+      "description": "Style banlist.",
+      "params": { "forbidden_patterns": ["\\bmind-set\\b", "\\bdestined\\b", "\\bdoomed\\b", "\\bwill inevitably\\b", "\\bcursed\\b", "\\bfated to\\b"] }
+    },
+    {
+      "id": "second-person",
+      "severity": "error",
+      "method": "regex",
+      "applies_to": ["base", "sign", "ruler"],
+      "description": "Entry must address the reader directly.",
+      "params": { "required_pattern": "\\b(you|your)\\b" }
+    },
+    {
+      "id": "pivot-present",
+      "severity": "warn",
+      "method": "regex",
+      "applies_to": ["sign", "ruler"],
+      "description": "Advisory: most entries pivot with 'but' or 'though'; varied pivots ('It gets...', 'The same speed that...') are acceptable. The structure-formula LLM check is authoritative for strength+shadow presence.",
+      "params": { "required_pattern": "\\bbut\\b|\\bthough\\b|\\bThe harder part\\b" }
+    },
+    {
+      "id": "ruler-opener-direction",
+      "severity": "error",
+      "method": "computed",
+      "applies_to": ["ruler"],
+      "description": "Opener must be 'When the ruler of an empty {N} house lands in the {M},' with N and M matching the key (use 'sits in the {N} house' when N == M). Catches reversed-direction entries.",
+      "params": {
+        "opener_template_diff": "^When the ruler of an empty {house} house lands in the {target}",
+        "opener_template_same": "^When the ruler of an empty {house} house sits in the {house} house"
+      }
+    },
+    {
+      "id": "sign-opener-style",
+      "severity": "error",
+      "method": "regex",
+      "applies_to": ["sign"],
+      "description": "Sign entries open with a trait statement, never with the sign name or ruler mechanics.",
+      "params": { "forbidden_patterns": ["^(Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capricorn|Aquarius|Pisces)\\b", "^When the ruler\\b", "^When the \\d+(st|nd|rd|th)-house ruler\\b"] }
+    },
+    {
+      "id": "length-band",
+      "severity": "error",
+      "method": "computed",
+      "applies_to": ["principle", "base", "sign", "ruler"],
+      "description": "Word count within band for the entry type.",
+      "params": { "bands": { "principle": [35, 150], "base": [55, 135], "sign": [35, 110], "ruler": [40, 120] } }
+    },
+    {
+      "id": "ngram-duplication",
+      "severity": "warn_error",
+      "method": "computed",
+      "applies_to": ["base", "sign", "ruler"],
+      "description": "No verbatim clause reuse across entries. Ruler-opener template is stripped before comparison. Shared run of warn_n+ words = warning; error_n+ = error.",
+      "params": { "warn_n": 7, "error_n": 10, "strip_prefix_pattern": "^when the ruler of an empty \\w+ house (lands|sits) in the \\w+( house)?", "allow_phrases": ["follow its ruler to see"] }
+    },
+    {
+      "id": "house-topic-accuracy",
+      "severity": "error",
+      "method": "llm",
+      "applies_to": ["base", "sign", "ruler"],
+      "description": "Content must describe the key's house domain (and for ruler entries, show how it plays out in the target house's domain).",
+      "params": {
+        "house_domains": {
+          "1st": "presence, first impressions, identity, body, personal initiative",
+          "2nd": "income, money, possessions, personal values, financial security",
+          "3rd": "communication, learning, siblings, neighbors, errands, short trips",
+          "4th": "home, family, roots, private life, property",
+          "5th": "creativity, romance, play, hobbies, self-expression",
+          "6th": "daily work, routines, health, service, coworkers",
+          "7th": "partnership, marriage, contracts, one-on-one negotiation",
+          "8th": "shared finances, debt, taxes, inheritance, deep intimacy, transformation",
+          "9th": "higher education, travel, philosophy, publishing, law, foreign connections",
+          "10th": "career, reputation, public standing, authority",
+          "11th": "friends, community, networks, causes, long-term hopes",
+          "12th": "solitude, subconscious, rest, hidden work, private healing"
+        }
+      }
+    },
+    {
+      "id": "sign-trait-accuracy",
+      "severity": "error",
+      "method": "llm",
+      "applies_to": ["sign"],
+      "description": "Traits and shadow must match the key's sign.",
+      "params": {
+        "sign_traits": {
+          "aries": "direct, fast, competitive; shadow: impatience, weak follow-through",
+          "taurus": "steady, patient, tangible comfort; shadow: stubbornness, holding on too long",
+          "gemini": "curious, verbal, multi-track; shadow: scattered focus, inconsistency",
+          "cancer": "protective, feeling-led, memory-rich; shadow: scarcity fear, taking things personally",
+          "leo": "warm, proud, expressive; shadow: needing applause, ego bruises",
+          "virgo": "precise, analytical, helpful; shadow: perfectionism, self-criticism, anxiety",
+          "libra": "diplomatic, aesthetic, fair; shadow: conflict avoidance, indecision",
+          "scorpio": "intense, private, strategic; shadow: secrecy, control, suspicion",
+          "sagittarius": "expansive, optimistic, blunt; shadow: overpromising, skipped details",
+          "capricorn": "disciplined, responsible, long-range; shadow: over-seriousness, carrying burdens alone",
+          "aquarius": "original, independent, objective; shadow: detachment, novelty over reliability",
+          "pisces": "intuitive, empathetic, imaginative; shadow: vague boundaries, absorbing others' feelings"
+        }
+      }
+    },
+    {
+      "id": "structure-formula",
+      "severity": "error",
+      "method": "llm",
+      "applies_to": ["sign", "ruler"],
+      "description": "3-4 sentences: (1) domain/behavior opener, (2) concrete everyday manifestations with real nouns, (3) one acknowledged strength, (4) one cost framed as an adjustable habit introduced with 'but'. Exactly one strength and one shadow."
+    },
+    {
+      "id": "anti-fatalism",
+      "severity": "error",
+      "method": "llm",
+      "applies_to": ["base", "sign", "ruler"],
+      "description": "No predicted events, no deficit framing (empty never means missing), shadow is a tendency the reader can adjust, tone stays warm and non-judgmental."
+    }
+  ],
+  "scoring": {
+    "pass": "All error-severity checks pass.",
+    "warn_policy": "Warnings do not fail an entry but must be listed in the judge output.",
+    "judge_output_schema": {
+      "key": "string",
+      "pass": "boolean",
+      "failures": [{ "check_id": "string", "detail": "string" }],
+      "warnings": [{ "check_id": "string", "detail": "string" }]
+    }
+  }
+}

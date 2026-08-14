@@ -1,0 +1,2743 @@
+{
+  "schema": "tldrastro-daily-glance-variants-v1",
+  "version": "1.0.0",
+  "note": "Primary pairs mirror the shipped owner-approved rows. Imported alternatives are review_needed and cannot serve until the owner approves both their text and an explicit headline/body pairing.",
+  "keys": {
+    "conjunction/chiron": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "The care is being offered, but part of you still expects to be disappointed.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/conjunction/chiron"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You type \"I'm fine\" after they offer to call, even though part of you wants to say yes. Wanting the help and expecting to be disappointed can happen at the same time, so refusing feels safer than asking. Tell them you could use the call after all.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/conjunction/chiron"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "conjunction/jupiter": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Help becomes extra work when everyone shows up at the same time.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/conjunction/jupiter"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You ask for a ride and get three offers, a meal plan, and enough enthusiasm to turn one quick errand into a full group project. The support is genuine, but managing the offers, coordinating the details, and keeping everyone happy takes more energy than doing the job yourself. Accept the offer that actually makes your day easier and decline the rest.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/conjunction/jupiter"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "conjunction/lilith": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "You still want the thing you keep talking yourself out of.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/conjunction/lilith"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You finish the task, close the tab, then reopen the option you saved. Your routine may be comfortable, but it has not erased the part of you that wants something else. Wanting more does not make your current life a failure. Write down what you want before you start talking yourself out of it.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/conjunction/lilith"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "conjunction/mars": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "The feeling hits, and you are already doing something about it.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/conjunction/mars"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You may walk out angry, make the worried call immediately, or jump into an argument that did not involve you. A quick response is not always the wrong one, but it gives you less time to decide if you are solving the problem or making it bigger. Before you leave, call, or intervene, decide what you want the next ten minutes to accomplish.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/conjunction/mars"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "conjunction/mercury": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Once you admit what you are worried about, the whole conversation can come out at once.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/conjunction/mercury"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You are trying to decide who can take a family member to an appointment when you finally say that you do not think they should go alone. Then the rest spills out: the work you would miss, who else could help, and why this keeps becoming your responsibility. Decide who is going with them first. Then come back to why the responsibility keeps falling on you.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/conjunction/mercury"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "conjunction/moon": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "A sudden change of plans can quickly wear down your patience.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/conjunction/moon"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "When someone asks to reschedule, you might catch yourself getting irritated or defensive before you even process the ask. Instead of listing every reason their idea is inconvenient, just say what you can and cannot do. You do not have to manage everyone else's feelings today. Give them a straight answer and let the rest go.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/conjunction/moon"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "conjunction/neptune": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Give yourself permission to turn the volume down on the world right now.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/conjunction/neptune"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "A song can undo you. An old memory can color the whole afternoon. Someone else's mood may follow you home before you realize you picked it up. Give yourself less noise, fewer opinions, and more time before making a hard decision. Write, make something, take a long shower, or let yourself stare out the window for a while. Give yourself enough quiet to figure out what you are actually feeling before you make a decision based on it.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/conjunction/neptune"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "conjunction/north-node": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "You keep reopening the next step you said you were not ready for.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/conjunction/north-node"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "The application, class, project, or responsibility you keep reopening deserves a closer look. That does not mean you need to overhaul your life. If you keep coming back to the same opportunity, find out what is keeping your attention there. Write one sentence naming why you want it.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/conjunction/north-node"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "conjunction/pluto": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Trying to win is easier than admitting you're upset.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/conjunction/pluto"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "A small reaction may reveal how much you want control, recognition, or certainty. You may want to push, withhold, test, or win because saying you are upset feels more exposing. Say what actually got to you before the argument turns into a fight over who has the upper hand. Getting control of the moment will not fix the part that upset you.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/conjunction/pluto"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "conjunction/saturn": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Taking care of family is rarely just about the task itself.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/conjunction/saturn"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "A text confirms an appointment, so you reschedule a work call and now have to fit the rest of your work into fewer hours. Then another request comes in before you have adjusted to the first one. The burden is not only showing up. It is rearranging your day every time someone else needs help. Pick the most important request you can actually manage today, adjust the schedule once, and say no to the rest.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/conjunction/saturn"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "conjunction/south-node": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "The past stops being memory and becomes an option.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/conjunction/south-node"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "An old employer reaches out. An ex checks in. A plan you abandoned suddenly looks possible again. Because you recognize the pattern, your body may relax before your mind remembers what it cost you. Pause before you call it a second chance. Do you still want this, or do you simply know how to survive it? The unfamiliar can feel uncomfortable without being wrong. The familiar can feel easy without being good. Let your history help you choose differently, not return automatically.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/conjunction/south-node"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "conjunction/sun": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "What you want is obvious today, especially when you try to pretend you do not care.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/conjunction/sun"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You might catch yourself hesitating over the plan you actually want to skip, or waiting for someone else to say the answer you are hoping for. Acting like you are fine with whatever happens does not make you look flexible right now; it just looks like distance, because the desire shows through anyway. Hiding it does not convince anyone, least of all you. Say what you want, and move forward.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/conjunction/sun"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "conjunction/uranus": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "You keep reconsidering the whole routine after one unwelcome change.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/conjunction/uranus"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You open an app you use all the time and see the price went up. Five minutes later you are comparing replacements and questioning every routine built around it. You're allowed to change your plan once you know the new price. Write down the new total and one workable alternative before you cancel anything.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/conjunction/uranus"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "conjunction/venus": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Love can look low-key.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/conjunction/venus"
+          }
+        },
+        {
+          "id": "headline-affection-shows-up-in-small-practical-ways",
+          "text": "Affection shows up in small, practical ways.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
+            "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Love usually looks pretty ordinary: a saved seat, a remembered coffee order, a text that arrives right when you need someone to check in. You don't need a grand, dramatic gesture to know who's in your corner. Pay attention to who shows up without making it about them, and let them know you saw it. Let the small things count.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/conjunction/venus"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "house/1": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Do not make yourself invisible just to make a good first impression.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/house/1"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You dress down to blend in and leave out the one detail you actually wanted to share. Staying neutral may help you avoid attention, but it can leave you feeling invisible. You may know exactly which version of yourself will go over well here. That does not mean you have to become it. Put back the detail you were about to hide.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/house/1"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "house/10": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "More responsibility should come with something you actually want.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/house/10"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "A bigger project lands on your desk because everyone knows you can handle it. Before you treat that as recognition, look at what comes with it. More money, authority, credit, or access can make the extra work worth considering. Another pile of responsibility with the same title and the same pay is just more work. Ask what changes for you before you agree to carry more for them.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/house/10"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "house/11": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Keeping the peace is not worth inheriting everyone else's priorities.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/house/11"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Everyone else may have decided what the plan is before you had much say in it. That puts you in the position of responding to terms you did not choose. Get clear on what is actually required, what can still be changed, and what needs to be clarified in writing. Do not make an imposed plan harder on yourself by quietly agreeing to expectations that were never realistic in the first place.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/house/11"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "house/12": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Answering messages too early gives away the only private part of your day.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/house/12"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You wake up, reach for your phone, and start answering messages before anyone has asked for an immediate response. By breakfast, the quiet hour is gone, several conversations are open, and you are already thinking about three problems that could have waited. The cost is not only the time you spent replying. It is how quickly your own morning disappears. Send one message if you need to, put the phone down, and keep the morning you meant to have.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/house/12"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "house/2": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Stop auditing your worth like it is a balance sheet.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/house/2"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You check your balance and feel your whole body tighten. A bill is due. The workday ends with half the list unfinished. Suddenly, the number starts telling a story about who you are: not responsible enough, not productive enough, not doing enough. Money can show you what needs attention. It cannot tell you what you are worth. Before you take on more work out of guilt, deny yourself what you need, or spend just to quiet the panic, pause and ask what would actually help. Handle the practical details, but leave your character out of it.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/house/2"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "house/3": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Extra explanation can bury the point.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/house/3"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "The group chat moves dinner from seven to eight, then back again. A quick email turns into six replies. You get halfway through an errand before realizing one key detail changed, and suddenly the afternoon is disappearing into back-and-forth. Confirm the time. Answer the exact question. Put the important detail somewhere everyone can find it. A little precision now can save you from a much bigger problem later.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/house/3"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "house/4": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Make home easier to live in, not harder to maintain.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/house/4"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You walk through the door and feel your body tighten before you have even put your keys down. The cabinet still will not close. The chair is buried again. The conversation no one wants to have is waiting at the kitchen table. Tend to the part of your private life you keep postponing because you are too tired to deal with it. Fix the latch. Clear a place to sit. Say what has been following everyone from room to room. Comfort is not a luxury or a look. It is what allows your home to hold you when the rest of life asks too much.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/house/4"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "house/5": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "You don't have to turn everything you make into work.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/house/5"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You draft a playful text or start making something, then hesitate right before sharing it and edit out the exact line that sounds most like you. You've forgotten how to have fun without turning it into work or optimizing it for an audience. Scaling back your voice might protect you from feeling exposed, but it also strips out the creative spark that makes it yours. You're allowed to make things that don't impress anyone but you, and what you create doesn't need to be profitable to matter. Put your original spin back into it and let it be messy, imperfect, and yours.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/house/5"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "house/6": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Stop structuring your day around everyone else's priorities.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/house/6"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Pay attention to the exhaustion that does not lift after one good night of sleep. You may be building the entire day around other people's deadlines, then trying to fit food, medication, movement, or rest into whatever is left. Your health is not an extra task after the real work. Change one part of the schedule that keeps making basic care impossible.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/house/6"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "house/7": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "The agreement can change after you realize what it is costing you.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/house/7"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You said yes because the plan sounded reasonable at the time. Then the follow-up work lands, the schedule changes, or you realize you are the person expected to keep adjusting. You are not stuck with the first version just because the conversation already happened. Go back to the part that no longer works and tell them what needs to change.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/house/7"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "house/8": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Notice what you share and what you keep private.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/house/8"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You split the check down the middle even though you barely ate, or keep quiet about a shared debt because bringing up money feels uncomfortable. Someone else holds the password, paperwork, or final say, and you are left working around information you should have access to. Ask who owes what, request the login, and get the exact numbers in writing. You can care about the relationship and still require clear terms before you put in more money, time, or trust.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/house/8"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "house/9": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "You do not have to have it all figured out to keep learning.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/house/9"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You read something that changes your mind, hear a teacher explain the subject differently, or realize the rule you have been following no longer fits the life you are living. You do not need to defend an old opinion just because you once believed it. Follow the new information far enough to see what it changes. You can revise the plan without pretending the earlier version of you was stupid for believing something else.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/house/9"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "opposition/chiron": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "You can leave a need unsaid and still expect them to understand.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/opposition/chiron"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "A loved one asks why you changed the evening plan, and you stop halfway through the answer because their response makes you want to shut down. You may wait for them to notice what you did not finish saying, but they cannot respond to a need you never named. Finish the sentence. Tell them what you needed when you changed the plan.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/opposition/chiron"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "opposition/jupiter": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "More isn't the answer this time.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/opposition/jupiter"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Someone else keeps adding to the plan, and you keep agreeing before you check what you still have time or money for. A quick catch-up turns into an afternoon of extra stops. Their enthusiasm can make saying no feel harder than it should. If the extra plan takes time, money, or energy you already need somewhere else, it is too much. Enjoy the part you actually wanted and decline the additions.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/opposition/jupiter"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "opposition/lilith": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Staying silent only hides how much you've already given up.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/opposition/lilith"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You can keep calling the relationship fine because naming the problem would force a harder conversation. Meanwhile, the distance keeps growing and you keep giving up more of what you actually want to avoid the argument. Staying polite is not fixing the relationship. It is postponing the conversation that decides what happens next.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/opposition/lilith"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "opposition/mars": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Someone else's pressure can easily bait you into overreacting.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/opposition/mars"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Expect an urge to fire back when someone pushes a boundary or questions your judgment. Their tone can make defending yourself feel urgent before you have even heard the whole point. Ask one clear question, let them answer without interruption, and then decide how much weight to give it.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/opposition/mars"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "opposition/mercury": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "You can disagree without answering the argument they did not make.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/opposition/mercury"
+          }
+        },
+        {
+          "id": "headline-youre-reading-too-much-into-a-short-message",
+          "text": "You're reading too much into a short message.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
+            "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "A short message lands badly, and five minutes later you are responding to the tone, the timing, and everything you think they meant underneath it. Crossed wires only become a confrontation when you start fighting the story in your head instead of the words being said. Ask the question that clears up the missing part before you build a case around it.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/opposition/mercury"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "opposition/moon": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Stop treating their urgency as proof that your plans can wait.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/opposition/moon"
+          }
+        },
+        {
+          "id": "headline-someone-elses-mood-is-rewriting-your-schedule",
+          "text": "Someone else's mood is rewriting your schedule.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved owner-supplied alternative title hook"
+          }
+        },
+        {
+          "id": "headline-offer-support-not-your-last-reserve",
+          "text": "Offer support, not your last reserve.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved owner-supplied alternative title hook"
+          }
+        },
+        {
+          "id": "headline-their-impatience-is-not-your-emergency",
+          "text": "Their impatience is not your emergency.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved owner-supplied alternative title hook"
+          }
+        },
+        {
+          "id": "headline-you-dont-have-to-abandon-your-day-to-prove-you-care",
+          "text": "You don't have to abandon your day to prove you care.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved owner-supplied alternative title hook"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You started with a clear plan, but someone else's crisis just hijacked your schedule. They need more time, reassurance, or attention than you expected, and your first impulse is to put your life on hold to manage their reaction. Care is not the mistake here. The mistake is making their mood the emergency and your life the afterthought. Give what you can actually spare, not the energy you need to get through the rest of the day.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/opposition/moon"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "opposition/neptune": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Trust the pattern, not the promise.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/opposition/neptune"
+          }
+        },
+        {
+          "id": "headline-you-dont-have-to-figure-everyone-out-today",
+          "text": "You don't have to figure everyone out today.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
+            "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Someone gives you just enough soft reassurance to keep you from walking away or setting a boundary. You want to accept the explanation because accepting the pattern means making an uncomfortable decision. Stop making the decision based on what they say they could do. Pay attention to what they actually do after the conversation ends; that is the only data that matters.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/opposition/neptune"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "opposition/north-node": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "The old excuse is getting harder to believe.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/opposition/north-node"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Someone points out the same habit you thought you had already moved past, and your first instinct may be to avoid them instead of looking at the pattern. Familiar dynamics can feel easier because you already know how to behave inside them. Pay attention to who supports the choices you are trying to make now, not only the version of you that used to be easier for them.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/opposition/north-node"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "opposition/pluto": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Your need does not disappear because someone else has the final say.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/opposition/pluto"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You bring a private need to the person who controls the money, access, or family decision. You explain what you need, and they point to whose money it is, who controls access, or who gets the final say. The power difference becomes obvious fast: who keeps compromising, whose needs are treated like a problem, and who is expected to accept the answer. State the facts of what you need without letting the conversation turn into a test of who has more authority. Being vulnerable does not mean giving up your position.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/opposition/pluto"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "opposition/saturn": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Their approval should not become another job.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/opposition/saturn"
+          }
+        },
+        {
+          "id": "headline-what-youre-building-is-being-tested-not-torn-down",
+          "text": "What you're building is being tested, not torn down.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved owner-supplied alternative title hook"
+          }
+        },
+        {
+          "id": "headline-their-mood-is-not-a-measure-of-your-effort",
+          "text": "Their mood is not a measure of your effort.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved owner-supplied alternative title hook"
+          }
+        },
+        {
+          "id": "headline-stop-working-harder-for-a-response-they-never-promised-t",
+          "text": "Stop working harder for a response they never promised to give.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved owner-supplied alternative title hook"
+          }
+        },
+        {
+          "id": "headline-are-you-meeting-shared-expectations-or-chasing-a-moving-",
+          "text": "Are you meeting shared expectations or chasing a moving standard?",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved owner-supplied alternative title hook"
+          }
+        },
+        {
+          "id": "headline-feeling-forgotten-doesnt-mean-youve-been-left",
+          "text": "Feeling forgotten doesn't mean you've been left.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
+            "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You remember the details, show up when you said you would, and follow through, but still leave wondering what you did wrong. The other person stays distant or points to one more standard you have not met, so you keep trying harder for a response they never promised to give. At some point, the problem is no longer your effort.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/opposition/saturn"
+          }
+        },
+        {
+          "id": "body-someone-elses-emotional-distance-or-rigid-expectations-c",
+          "text": "Someone else's emotional distance or rigid expectations can make you feel as though every effort is being graded. You show up, follow through, and still wonder what you missed, working harder for a response they never promised to give. Look at the dynamic honestly: are you meeting shared expectations, or is one person moving the standard every time you get close?",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved non-canonical body"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "opposition/south-node": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "The automatic yes is getting harder to live with.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/opposition/south-node"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Someone asks for one more favor, and you feel yourself agreeing before you check the time you saved for yourself. The yes may keep them happy and leave you resentful. You do not have to prove care by taking on every errand. Tell them you cannot do this one.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/opposition/south-node"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "opposition/sun": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "You can say yes in public and regret it in private.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/opposition/sun"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Someone asks for more, and the answer that keeps the peace comes out before you check what it will cost you. An hour later, you are resentful about a commitment you never wanted. Correct the answer. Tell them you agreed too quickly and need to revise what you can take on.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/opposition/sun"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "opposition/uranus": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "They changed the plan. They do not get to ruin yours.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/opposition/uranus"
+          }
+        },
+        {
+          "id": "headline-the-surprise-is-doing-you-a-favor",
+          "text": "The surprise is doing you a favor.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
+            "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You reorganized your life to make room for someone who just canceled, shifted the time, or went quiet. The mistake is letting their cancellation take the rest of your day with it. Take back the hours you set aside and put them toward your own life. They get to change their mind; they don't get to manage what you do next.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/opposition/uranus"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "opposition/venus": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Being loved and feeling it do not always match.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/opposition/venus"
+          }
+        },
+        {
+          "id": "headline-you-want-comfort-more-than-company",
+          "text": "You want comfort more than company.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
+            "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Someone can care about you and still miss what you actually need. Your reflex is to hide your disappointment, convinced that saying you are disappointed will make you difficult or push them away. All this does is teach people to treat your limits as optional while keeping them blind to what you actually need. Tell them what you need and pay attention to what they actually do with the information. Caring about you and being able to meet the need are not always the same thing.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/opposition/venus"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "soft/chiron": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "You're not weak for needing care.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/soft/chiron"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You are struggling through a difficult task or a frustrating message when someone notices you're stressed and quietly offers to handle something that would overwhelm you. Your reflex is to turn it down, because being seen stuck may feel worse than staying stuck. You don't have to keep pretending it's all okay or minimize your own experience. Accepting help mid-struggle does not make you weak or take away your independence, it just gives you room to breathe. Let them take a look and let the care reach the sore spot without putting your defenses up.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/soft/chiron"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "soft/jupiter": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "An opening just appeared.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/soft/jupiter"
+          }
+        },
+        {
+          "id": "headline-things-are-leaning-your-way",
+          "text": "Things are leaning your way.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
+            "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
+          }
+        },
+        {
+          "id": "headline-its-a-good-time-to-ask-for-what-you-want",
+          "text": "It's a good time to ask for what you want.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
+            "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
+          }
+        },
+        {
+          "id": "headline-room-to-grow-just-opened-up",
+          "text": "Room to grow just opened up.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
+            "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You send the email expecting another delay, and the answer comes back yes. A meeting moves and gives you the hour you needed. The fee is lower than expected, or the right person offers an introduction without making you chase them for it. Use the opening while it is here. Send the application, make the appointment, or move the project forward.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/soft/jupiter"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "soft/lilith": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Saying nothing is not the same as wanting nothing.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/soft/lilith"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "When your partner opens the grocery order and asks what to add, you may worry that one extra snack will seem demanding. So you say \"nothing,\" which leaves the item on your phone instead of in the shared cart. You're allowed to want more. One snack does not turn the order into a crisis. Send the snack's name and price before they check out.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/soft/lilith"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "soft/mars": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "It takes less energy to do the thing than to keep putting it off.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/soft/mars"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "The task you have been putting off may take less energy than all the time you have spent thinking about it. The conversation, decision, or errand may still be annoying, but it feels more possible once you start. Give it thirty minutes before you decide to put it off again.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/soft/mars"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "soft/mercury": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Say the thing that's been living in your chest.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/soft/mercury"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You finally reach the exact reason a conversation went off the rails, and the words to explain it are right there. In a private meeting, voice note, or direct reply, you can name what upset you, what changed, and what answer you need without starting another argument. Say the part that matters and stop before the explanation turns into another point to fight over.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/soft/mercury"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "soft/moon": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Constantly bracing for trouble doesn't prevent it.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/soft/moon"
+          }
+        },
+        {
+          "id": "headline-drop-the-guard-and-trust-in-the-flow",
+          "text": "Drop the guard and trust in the flow",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved owner-supplied alternative title hook"
+          }
+        },
+        {
+          "id": "headline-old-feelings-are-visiting-not-moving-back-in",
+          "text": "Old feelings are visiting, not moving back in.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
+            "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Things are running smoothly, which might ironically make you nervous. The problem is that a quiet day can make you start looking for what is about to go wrong. Your reflex might be to brace for impact, look for the hidden catch, or deflect a simple thank you by listing everything you could have done better. Constantly bracing for trouble doesn't prevent it; it just ruins any peace of mind you actually have right now. Let the good day be a good day.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/soft/moon"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "soft/neptune": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Trust the impulse before you understand the purpose.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/soft/neptune"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "A sentence arrives while you are washing the dishes. An image keeps returning when your attention drifts, or a vague hunch pulls you toward something you cannot explain yet. Save it before you ask what it is for. Write the line, collect the image, or make the rough version without forcing it to mean something. The structure can come later, once there is enough material to shape.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/soft/neptune"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "soft/north-node": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "You're building muscle memory.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/soft/north-node"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "It's the slow, quiet shift from bracing yourself to trusting your own response. You ask for help before you are overwhelmed. You choose the unfamiliar path without needing to know exactly how every step will work. Each time you say no earlier, ask for help sooner, or choose the unfamiliar option, it gets easier to do it again. Eventually, what once took all your courage becomes part of how you live.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/soft/north-node"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "soft/pluto": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "It takes less effort to acknowledge a feeling than to keep minimizing it.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/soft/pluto"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Talking about something painful from the past does not have to turn into a fight about every detail. You can say what affected you without defending every part of the story or demanding an answer from anyone else. Tell someone you trust what happened and how it made you feel.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/soft/pluto"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "soft/saturn": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Quiet progress is still progress.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/soft/saturn"
+          }
+        },
+        {
+          "id": "headline-a-quiet-day-still-counts-as-progress",
+          "text": "A quiet day still counts as progress.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
+            "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You open the email you have been avoiding and realize the reply takes five minutes. The bill gets paid, the appointment gets booked, or the form finally leaves the pile on your desk. None of it is exciting, but carrying it in your head every day was taking more energy than finishing it. Use the quieter day to clear one loose end.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/soft/saturn"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "soft/south-node": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Use what you learned, but put down what you carried.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/soft/south-node"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Experience taught you how to spot the problem before anyone else does. When the plan falls apart, the deadline moves, or someone else's panic fills the room, you may already be answering messages, assigning the next steps, and calming everyone down before you have even decided to help. Use what you know. Organize the part that is actually yours. Then stop before helping becomes another attempt to prove that you deserve to be there. Keep the skill. Put down the job of holding everyone together.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/soft/south-node"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "soft/sun": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Let it be simple.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/soft/sun"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You know what you want before anyone asks you to justify it. Ask for the opportunity, state the limit, or say yes without adding a paragraph to make the answer easier for everyone else to accept. Put your name on the work. Let the sentence stand.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/soft/sun"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "soft/uranus": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "A small change gives you your day back.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/soft/uranus"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "An unexpected gap opens in your afternoon, giving you a quick chance to clear an errand or shift your schedule. Use the window to handle something small now, and enjoy having an extra hour to yourself later.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/soft/uranus"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "soft/venus": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Let someone make your day easier.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/soft/venus"
+          }
+        },
+        {
+          "id": "headline-let-someone-make-things-easy-for-you",
+          "text": "Let someone make things easy for you.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
+            "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Someone covers the errand, moves the meeting, sends the introduction, or takes care of the part you were already dreading. Your first instinct may be to say you are fine or immediately fill the open time with another obligation. Let the help do what it was supposed to do. You do not get extra credit for turning relief into more work.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/soft/venus"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "square/chiron": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Expecting someone to guess what you need won't tell you how much they care.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/square/chiron"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Notice when you drop a hint, leave out the actual ask, and wait to see if they guess what you need. When you text that the milk is gone, delete the line asking them to stop at the store, and get a reply about dinner instead, it is easy to feel ignored, even though you never actually asked. Feeling overlooked still hurts, but expecting them to read your mind just sets everyone up to fail.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/square/chiron"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "square/jupiter": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "The temptation is to say yes before you see the bill.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/square/jupiter"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "A rush of optimism can make every idea look manageable and every invitation look easier to fit in than it actually is. You may add work, spend money, or promise time before finishing what is already in front of you. Check your calendar, bank balance, and actual energy before you add anything else. More will not help if the current plan is already asking too much.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/square/jupiter"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "square/lilith": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Comfort is a quick substitute for admitting what you actually want.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/square/lilith"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You keep returning to the easier option even though it is not the one you want. You say the plan is fine, close the tab, or tell yourself it would be too disruptive to ask for more, then catch yourself thinking about the other choice again. Name what you actually want before you settle for the easiest option just because it causes the least trouble.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/square/lilith"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "square/mars": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Anger this quick is usually the exhaustion talking.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/square/mars"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "A last-minute demand lands on an already strained day, and someone pushes for an immediate answer while you are carrying private stress or sheer exhaustion. When they act like your time and energy are unlimited, it is easy to register the disrespect and lose your patience, spending twenty minutes in an argument you did not need to have and draining more energy than the task itself. You are already at your limit. You don't owe anyone an immediate reaction just because they brought an immediate demand. State your timeline, step out of the argument, and protect what's left of your day.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/square/mars"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "square/mercury": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Not everything you think needs to be said.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/square/mercury"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Your thoughts are outrunning your judgment today. It is tempting to jump to conclusions, fill in missing details with worst-case guesses, or answer before you actually understand what is being said. Pause before you reply. You don't need to win the moment at the expense of getting it right. Don't make permanent choices with temporary information.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/square/mercury"
+          }
+        },
+        {
+          "id": "body-your-thoughts-are-moving-faster-than-your-judgment-creat",
+          "text": "Your thoughts are moving faster than your judgment, creating an urge to answer before you have the full story. A missing detail, delayed response, or misunderstood message can push you toward a conclusion that has not earned your certainty. Are you trying to win the argument, or be understood? Slow down before you reply. Don't make permanent choices with temporary information.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved non-canonical body"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "square/moon": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "The plan is not more important than the energy you actually have.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/square/moon"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You may get halfway through the errands and realize the rest of the list is too much. Forcing the original schedule can turn a normal day into a fight with yourself. Changing the plan does not make you unreliable. Remove one nonessential task before you start resenting everything that remains.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/square/moon"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "square/neptune": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Question the story you're telling yourself.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/square/neptune"
+          }
+        },
+        {
+          "id": "headline-the-plan-looks-blurry-because-its-still-forming-not-fail",
+          "text": "The plan looks blurry because it's still forming, not failing.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
+            "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "A delayed reply, vague plan, or conversation that suddenly feels off leaves enough room for your imagination to write the worst possible ending. You reread the message, study the wording, and connect the silence to every time someone disappointed you before. Soon, you are responding as if they have already disappointed you again. Give it time. Do not send the second message, cancel the plan, or make the decision for them before they have answered.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/square/neptune"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "square/north-node": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Staying comfortable is costing you time.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/square/north-node"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "A familiar choice can feel safer because you already know how to survive it. That does not mean it still fits the life you are trying to build. Notice where you keep choosing the same role, relationship pattern, or work arrangement because change would require you to be inexperienced for a while. Being new at something is not proof that you made the wrong choice.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/square/north-node"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "square/pluto": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Checking again is not going to make the answer safer.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/square/pluto"
+          }
+        },
+        {
+          "id": "headline-what-you-cant-control-is-not-yours-to-carry",
+          "text": "What you can't control is not yours to carry.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
+            "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You reopen the account, reread the message, or ask one more question because uncertainty makes you want another piece of information. The problem is that every new detail gives you something else to monitor. Check what actually needs checking, ask the direct question, and stop before trying to stay informed turns into trying to control an outcome you do not control.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/square/pluto"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "square/saturn": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "The deadline is not proof that you should be doing three jobs at once.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/square/saturn"
+          }
+        },
+        {
+          "id": "headline-today-feels-heavier-than-it-actually-is",
+          "text": "Today feels heavier than it actually is.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved owner-supplied alternative title hook"
+          }
+        },
+        {
+          "id": "headline-stop-moving-the-finish-line",
+          "text": "Stop moving the finish line.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved owner-supplied alternative title hook"
+          }
+        },
+        {
+          "id": "headline-rest-does-not-need-to-be-earned",
+          "text": "Rest does not need to be earned.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved owner-supplied alternative title hook"
+          }
+        },
+        {
+          "id": "headline-perfection-is-a-moving-target",
+          "text": "Perfection is a moving target.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved owner-supplied alternative title hook"
+          }
+        },
+        {
+          "id": "headline-this-heaviness-is-a-phase-with-an-end-date",
+          "text": "This heaviness is a phase with an end date.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
+            "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Someone adds another request to a week that was already full, and your first response is to figure out how to squeeze it in. That is how an unreasonable workload starts looking like a personal time-management problem. Check what was already agreed to before you absorb the new work. Move the deadline, change the scope, or ask what should come off your list if this now takes priority.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/square/saturn"
+          }
+        },
+        {
+          "id": "body-a-slow-start-or-unfinished-task-can-make-the-whole-day-f",
+          "text": "A slow start or unfinished task can make the whole day feel like proof that you are falling behind. You may respond by working through exhaustion, treating every minor delay as proof that you don't have it together. The standard keeps moving because the goal is no longer to finish the work. It is to silence the part of you that thinks rest must be earned. Choose the one task that matters today and stop moving the finish line.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved non-canonical body"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "square/south-node": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Doing it yourself is how the burden becomes yours again.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/square/south-node"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "Pressure pulls you straight into your oldest habit: retreat, take control, smooth it over, or handle the whole thing yourself. That may end the argument right now, but it leaves you carrying the same burden again. Before you take over, give someone else a chance to answer, finish the task, or deal with the consequence. You can use what past experience taught you without stepping back into the role that cost you so much.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/square/south-node"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "square/sun": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "You're arguing with yourself, and both sides have a point.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/square/sun"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "What would happen if you stopped trying to control how everyone sees you? Part of you knows who you are, while another part is busy presenting the version that will be taken seriously, approved of, or left alone. That version may have helped you avoid criticism, rejection, or conflict. But forcing composure when you are burnt out, defensive, or uninspired is an exhausting way to live.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/square/sun"
+          }
+        },
+        {
+          "id": "body-what-would-happen-if-you-stopped-managing-everyones-perc",
+          "text": "What would happen if you stopped managing everyone's perception of you? A quiet conflict is running under your day between who you know yourself to be and the version you present so people will take you seriously, approve of you, or leave you alone. That version may have helped you avoid criticism, rejection, or conflict. But it is exhausting to keep presenting yourself as agreeable, capable, or unaffected when that is not how you actually feel.",
+          "review_status": "review_needed",
+          "provenance": {
+            "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
+            "locator": "preserved non-canonical body"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "square/uranus": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "Your routine could use a small shake-up.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/square/uranus"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You sit down to handle one tedious administrative form or one annoying obligation on your calendar, and five minutes later the whole day feels suffocating. It is easy to let that one task convince you that you preach balance while practicing burnout and need to scrap the entire schedule. You do not need to change everything because one part of it is making you miserable. Adjust the single commitment that is actually causing the friction and leave the rest intact. You're allowed to change your direction as you learn more about who you are.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/square/uranus"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    },
+    "square/venus": {
+      "pairing_policy": "explicit_pairs_only",
+      "headlines": [
+        {
+          "id": "primary",
+          "text": "A delayed reply can make a quiet phone feel like a final verdict.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-headline/square/venus"
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "id": "primary",
+          "text": "You send a warm text and get silence back, and within ten minutes you are wondering if you were too much, while an impulse purchase in your cart starts looking like a reasonable fix for your feelings. Put the phone down and step away from the checkout screen. A slow reply does not get to decide what you are worth.",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+            "content_key": "fallback-hook/daily-body/square/venus"
+          }
+        }
+      ],
+      "pairings": [
+        {
+          "id": "primary",
+          "headline_id": "primary",
+          "body_id": "primary",
+          "review_status": "approved",
+          "provenance": {
+            "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"
+          }
+        }
+      ]
+    }
+  }
+}

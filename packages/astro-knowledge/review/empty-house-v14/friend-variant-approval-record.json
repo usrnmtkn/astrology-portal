@@ -1,0 +1,19 @@
+{
+  "schema": "tldrastro.empty-house.friend-variant-approval.v1",
+  "status": "approved",
+  "source_version": "v14-owner-approved-full-workbook-2026-08-10",
+  "row_count": 541,
+  "payload_sha256": "6388f0d05e8bba16bce13f25b7faf052047ec0e3f64498595a4f993461c67811",
+  "prior_payload_sha256": "07e238f17f5d3941412cc9dcf273a87a9b05f996d3d1ae82b1c587f79aad7b1b",
+  "body_you_digest_sha256": "ca3d554e9b0992f4ed6c51be6de1774d9bb69612f5ee577429247a8aca199846",
+  "body_they_digest_sha256": "d3947881987c858352a206f963eacc2f2148bd179b2b3ccbd116f5917bfa8a94",
+  "approval_statement": "Owner exact-wording approval: all 541 projection-4 body_they rows, plus the owner-authored empty-2nd|cancer final-sentence revision in exact current wording for projection 5. Scope: Friend surface, empty-house V14, modern rulers.",
+  "approved_at": "2026-08-11",
+  "source": "owner_messages_2026-08-10_and_2026-08-11",
+  "owner_revision": {
+    "record": "owner-revision-2026-08-11.json",
+    "corpus_key": "empty-2nd|cancer",
+    "body_they_digest_sha256": "d3947881987c858352a206f963eacc2f2148bd179b2b3ccbd116f5917bfa8a94"
+  },
+  "note": "Approval applies exactly to payload SHA-256 6388f0d05e8bba16bce13f25b7faf052047ec0e3f64498595a4f993461c67811. Any further body_they byte change requires a new approval record."
+}

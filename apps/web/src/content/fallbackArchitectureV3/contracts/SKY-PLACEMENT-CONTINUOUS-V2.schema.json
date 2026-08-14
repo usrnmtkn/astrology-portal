@@ -39,7 +39,19 @@
       "type": "string",
       "minLength": 1
     },
+    "primary_hook": {
+      "type": "string",
+      "minLength": 1
+    },
+    "opening_heading": {
+      "type": "string",
+      "minLength": 1
+    },
     "tension": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tension_heading": {
       "type": "string",
       "minLength": 1
     },
@@ -47,10 +59,46 @@
       "type": "string",
       "minLength": 1
     },
+    "era_layer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frame",
+        "handoff",
+        "recurrence",
+        "collective_lesson"
+      ],
+      "properties": {
+        "frame": {
+          "type": "string",
+          "minLength": 1
+        },
+        "handoff": {
+          "type": "string",
+          "minLength": 1
+        },
+        "recurrence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "collective_lesson": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "development_heading": {
+      "type": "string",
+      "minLength": 1
+    },
     "aspect_insert": {
       "const": "{{aspectInsert}}"
     },
     "close": {
+      "type": "string",
+      "minLength": 1
+    },
+    "close_heading": {
       "type": "string",
       "minLength": 1
     },

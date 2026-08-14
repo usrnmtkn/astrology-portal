@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "recordType": "transit_house_serving_exact_approval",
+  "approvalId": "saturn-house-owner-approved-2026-07-28-transit-house-intro-10",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "approvedAt": "2026-07-28",
+  "recordedAt": "2026-08-13",
+  "surface": "you|friends",
+  "contentKey": "authored/transit-house-intro/saturn/10",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "e276fc86caba09e3c2807794804af9f47b8bc0893a35aae52252849f598d1a2f",
+  "payload": {
+    "body_you": "Your work becomes more visible, and so does the way you handle responsibility. The deadline. The title. The people depending on your decision. The mistake that now reaches beyond your own desk. Saturn moving through your 10th house changes the question from whether you can do the work to whether people can trust what happens when the work is yours.\n\nDocument your results. Fix the part of the process that only works when you are overextended. Take responsibility for what belongs to you, but stop carrying a larger role indefinitely without discussing title, pay, or authority. Being capable does not mean your labor should remain unofficial.",
+    "body_they": "{{Name}}'s work becomes more visible, and so does the way they handle responsibility. The deadline. The title. The people depending on their decision. The mistake that now reaches beyond their own desk. Saturn moving through their 10th house changes the question from whether they can do the work to whether people can trust what happens when the work is theirs.\n\nDocumented results matter now, and so does fixing the part of the process that only works when they are overextended. They may already be carrying a larger role than the title admits. Being capable does not mean the extra labor should remain unofficial."
+  },
+  "historicalEvidence": {
+    "readerRewriteCommit": "133e2332c48c147876f352290891ab55a83fde8e",
+    "friendVoiceReviewCommit": "102631f0a3b5851898935c43d6bb9d39f89decf4",
+    "sourceRowApprovalNote": "owner-rewritten full 12-house set, chat 2026-07-28"
+  },
+  "ownerConfirmationStatement": "the writing that was being shown in the natal chart was approved",
+  "ownerConfirmationSource": "owner_chat_2026-08-13_source_metadata_correction",
+  "approvalEffect": "exact_wording_approval",
+  "copyMutation": "none"
+}

@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro.report-model-pricing.v1",
-  "version": "2026-08-10",
+  "version": "2026-08-13",
   "currency": "USD",
   "unit": "per_1m_tokens",
   "serviceTier": "standard",
@@ -8,14 +8,16 @@
   "source": "https://developers.openai.com/api/docs/pricing",
   "planningProfiles": {
     "12_months": {
-      "basis": "run_1_observed_draft_critique_judge_plus_splice_revision_projection",
+      "basis": "run_1_observed_draft_critique_judge_plus_splice_revision_and_cold_rendered_prose_projection; warning-only assembly adds no model call per owner ruling 2026-08-13",
       "units": 11,
       "operationsPerUnit": [
         { "model": "gpt-5.6-sol", "stage": "draft", "inputTokens": 35500, "outputTokens": 1200 },
         { "model": "gpt-5.6-sol", "stage": "critique", "inputTokens": 12000, "outputTokens": 1500 },
         { "model": "gpt-5.6-sol", "stage": "splice_revision", "inputTokens": 40000, "outputTokens": 700 },
+        { "model": "gpt-5.6-sol", "stage": "cold_read", "inputTokens": 3000, "outputTokens": 800 },
         { "model": "gpt-5.6-terra", "stage": "judge", "inputTokens": 12500, "outputTokens": 1000 }
-      ]
+      ],
+      "operationsPerReport": []
     }
   },
   "models": {

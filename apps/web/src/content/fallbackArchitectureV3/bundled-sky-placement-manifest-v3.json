@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-08-10f",
-  "contentHash": "8ae76de74badc20b00c8a55121b07817",
-  "keyManifestHash": "bb320f7d9c3632f9d438983b767e8bcd",
-  "keyCount": 785,
+  "packageVersion": "v3-2026-08-14e",
+  "contentHash": "418c5d3c729a2bf0e695eaa2e3d9978c",
+  "keyManifestHash": "f8dfd1eb99116d5fe9fe7055813f551b",
+  "keyCount": 787,
   "keys": [
     "hook:fallback-hook/sky-placement-aspect/sun/jupiter/conjunction",
     "hook:fallback-hook/sky-placement-aspect/sun/moon/opposition/aquarius",
@@ -709,6 +709,7 @@
     "hook:fallback-hook/sky-placement-turn/venus/scorpio",
     "hook:fallback-hook/sky-placement-turn/venus/taurus",
     "hook:fallback-hook/sky-placement-turn/venus/virgo",
+    "hook:fallback-hook/sky-planet-education/saturn",
     "hook:fallback-hook/sky-sign-copy/chiron/aries",
     "hook:fallback-hook/sky-sign-copy/jupiter/leo",
     "hook:fallback-hook/sky-sign-copy/jupiter/libra",
@@ -740,6 +741,7 @@
     "hook:fallback-hook/sky-sign-copy/nodes/aquarius-leo",
     "hook:fallback-hook/sky-sign-copy/pluto/aquarius",
     "hook:fallback-hook/sky-sign-copy/saturn/aries",
+    "hook:fallback-hook/sky-sign-copy/saturn/capricorn",
     "hook:fallback-hook/sky-sign-copy/sun/aquarius",
     "hook:fallback-hook/sky-sign-copy/sun/aries",
     "hook:fallback-hook/sky-sign-copy/sun/cancer",

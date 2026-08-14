@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "recordType": "transit_house_serving_exact_approval",
+  "approvalId": "saturn-house-owner-approved-2026-07-28-transit-house-sign-3-aries",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "approvedAt": "2026-07-28",
+  "recordedAt": "2026-08-13",
+  "surface": "you|friends",
+  "contentKey": "authored/transit-house-sign/saturn/3/aries",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "af05b3a126514d20058b3152374fcb7d7ccba6602077cfeef352506afafb80cb",
+  "payload": {
+    "body_you": "Saturn in Aries puts pressure on the fast reply. You may need to wait before responding, ask one more question, or explain yourself again to someone who did not understand the first time. That can feel insulting when you know what you meant. But meaning it is not the same as saying it clearly. What you still want to say after the anger passes is usually the part worth keeping.",
+    "body_they": "Saturn in Aries puts pressure on the impulse to answer immediately. They may need to wait before responding, ask one more question, or explain something again to someone who did not understand the first time, and that can feel insulting when they know what they meant. What they still want to say after the anger passes is usually the part worth keeping."
+  },
+  "historicalEvidence": {
+    "readerRewriteCommit": "133e2332c48c147876f352290891ab55a83fde8e",
+    "friendVoiceReviewCommit": "102631f0a3b5851898935c43d6bb9d39f89decf4",
+    "sourceRowApprovalNote": "owner-rewritten full 12-house set, chat 2026-07-28 (Aries layer)"
+  },
+  "ownerConfirmationStatement": "the writing that was being shown in the natal chart was approved",
+  "ownerConfirmationSource": "owner_chat_2026-08-13_source_metadata_correction",
+  "approvalEffect": "exact_wording_approval",
+  "copyMutation": "none"
+}

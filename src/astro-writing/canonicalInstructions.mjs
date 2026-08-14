@@ -5,9 +5,55 @@
 import { REVIEWER_GOLD_EXEMPLARS } from "./reviewerGoldExemplars.generated.mjs";
 import { buildCardWriterInstructions } from "./cardWritingStandard.mjs";
 
-export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v2-2026-08-09";
+export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v3-sky-placement-spine-2026-08-14";
 export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v3-owner-standard-candidate-2026-08-09";
-export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v3-owner-gold-2026-08-09";
+export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v4-cold-rendered-prose-2026-08-11";
+
+export const COLD_RENDERED_PROSE_RULE = `Read the copy cold, rendered, and line by line as prose. Judge the final text exactly as a
+reader would encounter it in the product. Do not use the prompt, source notes, astrology
+logic, intended meaning, or drafting context to help the writing make sense.
+
+Every sentence must: make sense on the first read; flow naturally from the sentence before
+it; lead naturally into the sentence after it; use normal, everyday language; sound like
+something a human writer would actually say; state the intended meaning directly enough
+that the reader does not have to decode it.
+
+Prefer the ordinary word when it is more natural. Use work instead of labor unless labor is
+literally the subject. Do not choose a more formal, abstract, clever, or literary word just
+because it sounds elevated.
+
+A sentence fails if the judge has to stop and ask what it means, mentally translate it into
+simpler English, infer a missing connection, or rely on knowledge of the astrology to
+understand the prose.
+
+Also judge the paragraph as a whole. Flag: abrupt jumps between ideas; sentences that
+technically make sense alone but do not connect; vague referents such as it, this, that,
+the change when the reader may not know what they refer to; report-heavy transitions;
+clever compression; abstract summaries where the actual behavior could be named; repeated
+setup or explanation; sentences that sound assembled rather than written; unnecessarily
+formal vocabulary; a strong sentence followed by another sentence that explains the same
+point again.
+
+Cold-read test: after drafting, ignore what the writer intended and read only the rendered
+copy. If any line produces "Wait, what does that mean?", "Why are we suddenly talking about
+this?", or "A normal person would say this more simply," the line is not approved.
+
+Final judge instruction: Do not reward a sentence for being astrologically correct if it is
+awkward prose. Correct astrology expressed in unnatural language still fails the writing
+judge.`;
+
+export const coldRenderedProseReviewInstructions = `# COLD RENDERED PROSE GATE
+
+You are reviewing only the rendered reader-facing prose. You have not been given, and must
+not infer help from, a meaning plan, source notes, astrology logic, intended meaning, or
+drafting context.
+
+${COLD_RENDERED_PROSE_RULE}
+
+Return strict JSON only. Decision may be PASS or REVISE only. The decision and any failed
+cold_rendered_prose finding are advisory evidence for the owner; they cannot block, revise,
+approve, or serve copy. Do not rewrite the copy; identify the exact failed line and provide
+a narrowly scoped revision instruction.`;
 
 export const canonicalAstrologyWritingInstructions = `CODEX INSTRUCTION (owner-designated canonical form): Translate every astrological idea into lived cause and consequence. Begin with the specific human experience, behavior, conflict, decision, or consequence the astrology describes. Use concrete stakes such as work, money, home, body, time, access, recognition, and relationships. For aspects, show one force acting on another. For synastry, show one person doing something and the other reacting. For placements, describe the recurring behavior and need rather than predicting an event. Add perspective, warmth, or advice only after the truth has been clearly named. Never make the reader decode astrology language to understand what is happening.
 
@@ -31,6 +77,14 @@ If any answer is no, revise the line.
 
 House bleed can survive even when the prose is good. Do not judge sign-house separation by how natural the paragraph sounds. Inspect the nouns. Apply the same noun-level test to every sign before PASS.
 
+SPINE SLOTS ARE CHECKS, NOT TEMPLATES: a spine element is satisfied when its content is present in the prose, not when a sentence announces it. Structural vocabulary from the spine or outline ("the job of," "this is a period for," "the collective lesson is") must not appear in reader copy unless it earns its place as a line. A construction approved once does not license its reuse; repeating it across a set turns a strong line into machinery.
+
+SPINE QUALITY GATES: structural presence is not enough. Planet must become visible in ordinary life rather than end as an abstract keyword list. A dignity condition must explain its consequence, and a recorded sign symbol must interpret the mechanism rather than decorate it. Handoff must name the shift. Thesis must name the challenged cultural rule and who benefits. Lived evidence needs two or three distinct, nameable situations plus a short standalone line that carries the argument. Failure must be performed behavior. Strategy needs at least two short imperatives in sequence. Close must land without a hedging modal or date-bound escape. An inherited close receives the same current review as new copy.
+
+SKY PLACEMENT ARTICLE SPINE: every element is required and is satisfied only when it meets its stated quality requirement. Every placement article must satisfy planet, condition when dignity applies, one-sentence dated handoff with the shift, thesis with cultural rule and beneficiary, two or three distinct lived situations with objects, decisions, costs, follow-up work and a pull-quote line, performed failure mechanism, imperative strategy sequence, and one unhedged close. Slow movers add era frame, recurrence, verified-and-sourced older analogs when they advance the thesis, and collective lesson with a test. The page speaks directly to the reader without breaking the fourth wall. Structural vocabulary never becomes reader copy merely because it names a slot. Mythology and symbolism must interpret the mechanism. Judge every sentence cold as rendered prose.
+
+NEGATION-PIVOT CAP: the "X is not Y. It is Z." family, including "the problem is not," "X is not the problem," and "not X but Y," stays available. Use at most one negation pivot per page and no more than three across a twelve-item set. When the cap is reached, state the consequence directly, ask the question, or name what happens next.
+
 Governance: Never label generated or refined wording as owner-authored, owner-approved, exact, settled, or locked until the owner explicitly approves that exact wording.`;
 
 export const candidateCardAstrologyWritingInstructions = buildCardWriterInstructions(canonicalAstrologyWritingInstructions);
@@ -50,6 +104,15 @@ Do not reward fluency by itself.
 Evaluate the copy against the supplied structured astrology meaning plan and canonical TLDR Astro writing contract.
 
 ASSUME THERE IS A DEFECT UNTIL EACH REQUIRED CHECK PASSES.
+
+ADVISORY CHECK
+
+0. COLD RENDERED PROSE
+This check is performed in a separate context-isolated pass using only the rendered copy.
+The final TRAIN/HOLDOUT calibration failed because one owner-approved gold was rejected.
+Its result is permanently advisory-only. Prose approval remains an owner gate by design.
+
+${COLD_RENDERED_PROSE_RULE}
 
 BLOCKING CHECKS
 
@@ -131,6 +194,7 @@ DECISION CONTRACT: Return PASS or REVISE only. Never return FAIL.
 ${REVIEWER_GOLD_EXEMPLARS}`;
 
 export const REVIEW_FIELDS = Object.freeze([
+  "cold_rendered_prose",
   "astrology_integrity",
   "planet_or_point_function",
   "sign_house_separation",

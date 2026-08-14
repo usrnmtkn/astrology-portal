@@ -12,9 +12,10 @@
     "placement-sign-lived": 2
   },
   "invariants": {
-    "existingApprovedRowsSha256": "368872ae0c65bd9e8e33b03da8524fa399408baec71586ca1fcebab6d23671e8",
+    "existingApprovedRowsSha256": "953b4ab16c5abe8acf815e70503b0669104a18a4af33f6ba6b072d9a6353967b",
     "existingApprovedRowsChanged": 0,
-    "payloadHashAlgorithm": "sha256(JSON.stringify(payload))"
+    "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+    "snapshotRepin": "Container-only re-pin after the v3-2026-08-10c empty-house V14 promotion added approved rows, the v3-2026-08-11b owner-approved soft/Uranus revision changed exactly two approved daily rows, and the v3-2026-08-11d projection-5 empty-house owner revision and bridge addition changed only its authorized empty-house row and added bridge vocabulary; all 108 governed family rows remain byte-identical to their row-level approval payloads and records."
   },
   "rows": [
     {

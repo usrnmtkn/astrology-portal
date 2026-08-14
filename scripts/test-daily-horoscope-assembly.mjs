@@ -31,7 +31,7 @@ const approvedDailyGlances = [
     natal: "mars",
     aspect: "conjunction",
     headline: "The feeling hits, and you are already doing something about it.",
-    body: "You may walk out angry, make the worried call immediately, or jump into an argument that did not involve you. A quick response is not always the wrong one, but it gives you less time to decide whether you are solving the problem or making it bigger. Before you leave, call, or intervene, decide what you want the next ten minutes to accomplish."
+    body: "You may walk out angry, make the worried call immediately, or jump into an argument that did not involve you. A quick response is not always the wrong one, but it gives you less time to decide if you are solving the problem or making it bigger. Before you leave, call, or intervene, decide what you want the next ten minutes to accomplish."
   },
   {
     natal: "sun",
@@ -42,20 +42,26 @@ const approvedDailyGlances = [
   {
     natal: "lilith",
     aspect: "conjunction",
-    headline: "The want you keep explaining away is still there.",
-    body: "You finish the task, close the tab, then reopen the option you saved. Your routine may be comfortable, but it has not erased the part of you that wants something else. Wanting more does not make your current life a failure. Finish the sentence \"What I want is…\" and stop before the justification."
+    headline: "You still want the thing you keep talking yourself out of.",
+    body: "You finish the task, close the tab, then reopen the option you saved. Your routine may be comfortable, but it has not erased the part of you that wants something else. Wanting more does not make your current life a failure. Write down what you want before you start talking yourself out of it."
   },
   {
     natal: "pluto",
     aspect: "soft",
     headline: "It takes less effort to acknowledge a feeling than to keep minimizing it.",
-    body: "A conversation about grief, anxiety, or old family history does not have to become a fight. You can say what affected you without explaining every detail or demanding an answer from anyone else. Tell someone you trust what happened and how it made you feel."
+    body: "Talking about something painful from the past does not have to turn into a fight about every detail. You can say what affected you without defending every part of the story or demanding an answer from anyone else. Tell someone you trust what happened and how it made you feel."
+  },
+  {
+    natal: "neptune",
+    aspect: "conjunction",
+    headline: "Give yourself permission to turn the volume down on the world right now.",
+    body: "A song can undo you. An old memory can color the whole afternoon. Someone else's mood may follow you home before you realize you picked it up. Give yourself less noise, fewer opinions, and more time before making a hard decision. Write, make something, take a long shower, or let yourself stare out the window for a while. Give yourself enough quiet to figure out what you are actually feeling before you make a decision based on it."
   },
   {
     natal: "north-node",
     aspect: "conjunction",
     headline: "You keep reopening the next step you said you were not ready for.",
-    body: "The application, class, project, or responsibility you keep reopening deserves a closer look. That does not mean you need to overhaul your life. It does mean the choice deserves more than another closed tab. Write one sentence naming why you want it."
+    body: "The application, class, project, or responsibility you keep reopening deserves a closer look. That does not mean you need to overhaul your life. If you keep coming back to the same opportunity, find out what is keeping your attention there. Write one sentence naming why you want it."
   },
   {
     natal: "south-node",
@@ -66,8 +72,8 @@ const approvedDailyGlances = [
   {
     natal: "chiron",
     aspect: "conjunction",
-    headline: "The care is being offered, but the old hurt makes it hard to accept.",
-    body: "You type \"I'm fine\" after they offer to call, even though part of you wants to say yes. The need for care and the fear of being disappointed arrive at the same time, so refusing can feel safer than asking. Replace \"I'm fine\" with a quick check-in."
+    headline: "The care is being offered, but part of you still expects to be disappointed.",
+    body: "You type \"I'm fine\" after they offer to call, even though part of you wants to say yes. Wanting the help and expecting to be disappointed can happen at the same time, so refusing feels safer than asking. Tell them you could use the call after all."
   },
   {
     natal: "chiron",
@@ -79,7 +85,7 @@ const approvedDailyGlances = [
     natal: "chiron",
     aspect: "opposition",
     headline: "You can leave a need unsaid and still expect them to understand.",
-    body: "A loved one asks why you changed the evening plan, and you stop mid-sentence when their tone feels too familiar. You may want to stay quiet and wait for them to notice what you did not finish. That test backfires. You don't have to do it all alone. Finish your sentence: tell them what you needed when you changed the plan."
+    body: "A loved one asks why you changed the evening plan, and you stop halfway through the answer because their response makes you want to shut down. You may wait for them to notice what you did not finish saying, but they cannot respond to a need you never named. Finish the sentence. Tell them what you needed when you changed the plan."
   },
   {
     natal: "moon",
@@ -97,12 +103,12 @@ const approvedDailyGlances = [
     natal: "uranus",
     aspect: "conjunction",
     headline: "You keep reconsidering the whole routine after one unwelcome change.",
-    body: "You open a familiar service, find a higher price, and lose time comparing replacements. You may feel too restless to accept the new terms. You start questioning every routine built around it. You're allowed to change your plan once you know the new price. Write down the new total and one workable alternative before changing the service."
+    body: "You open an app you use all the time and see the price went up. Five minutes later you are comparing replacements and questioning every routine built around it. You're allowed to change your plan once you know the new price. Write down the new total and one workable alternative before you cancel anything."
   },
   {
     house: 1,
-    headline: "Blending in is not worth a first impression you do not recognize.",
-    body: "You dress down to blend in and leave out the one detail you actually wanted to share. Staying neutral may help you avoid attention, but it can leave you feeling invisible. Nobody can know you from the version that never shows up. Tell one person the detail you almost kept to yourself."
+    headline: "Do not make yourself invisible just to make a good first impression.",
+    body: "You dress down to blend in and leave out the one detail you actually wanted to share. Staying neutral may help you avoid attention, but it can leave you feeling invisible. You may know exactly which version of yourself will go over well here. That does not mean you have to become it. Put back the detail you were about to hide."
   }
 ];
 
@@ -191,6 +197,11 @@ assert.match(
   /aria-label="Daily horoscope summary"/u,
   "You > Transits must render the personalized daily summary."
 );
+assert.match(
+  youPageSource,
+  /dailyUpdateSummary\.moonContext[\s\S]*?<DailyMoonContextTags context=\{dailyUpdateSummary\.moonContext\}/u,
+  "You > Transits must show the chart-specific Moon sign, house, and approved topic as bottom tags."
+);
 assert.doesNotMatch(youPageSource, /aria-label="Personal timing summary"/u);
 assert.doesNotMatch(youPageSource, /Daily calendar/u, "Sky-wide phase and void copy must stay off You > Transits.");
 assert.match(appSource, /dailyOuterTransitPlanets[\s\S]*?gate = dailyOuterTransitPlanets\.has\(planet\) \? 3 : 5/u);
@@ -214,7 +225,17 @@ assert.doesNotMatch(
   "You transit timing must not read the chart setup form's one-time date."
 );
 assert.match(appSource, /renderTransitLabel\(\{/u);
-assert.match(appSource, /renderLunationHoroscope\(\{/u);
+assert.match(appSource, /renderLunationEventCard\(\{/u);
+assert.match(
+  appSource,
+  /renderLunationEventCard\(\{\s*eventDate: currentSky\.moonEvent\.occursAt,/u,
+  "The You-page lunation card must resolve against the calculated event date."
+);
+assert.match(
+  appSource,
+  /blendFallbackEnabled: String\(\s*import\.meta\.env\.VITE_ENABLE_LUNATION_BLEND_YOU_FALLBACK \?\? "false"\s*\)\.toLowerCase\(\) === "true"/u,
+  "The weekly-blend fallback must remain behind its explicit You-page feature gate."
+);
 assert.match(appSource, /qualifyingTransits: qualifyingDailyTransits\.map/u);
 assert.match(youPageSource, />Areas of Your Life</u);
 assert.match(youPageSource, />Behind this Forecast</u);

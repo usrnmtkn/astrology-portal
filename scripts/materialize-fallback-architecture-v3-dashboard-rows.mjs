@@ -255,6 +255,22 @@ function eventTypeForKey(key, role) {
 }
 
 function rowBody(record) {
+  if (
+    record.render_policy === "sky-placement-continuous-v2"
+    && typeof record.body_you !== "string"
+  ) {
+    const era = record.era_layer ?? {};
+    return [
+      record.opening,
+      record.tension,
+      record.development,
+      era.frame,
+      era.handoff,
+      era.recurrence,
+      era.collective_lesson,
+      record.close
+    ].filter((part) => typeof part === "string" && part.trim()).join("\n\n");
+  }
   return String(record.body_you ?? record.body ?? record.text ?? "").trim();
 }
 
@@ -566,9 +582,9 @@ function readerPackageBundle(sources) {
     },
     rowsFile: {
       hookRows: packageRowsWithLatestEligibleOverride([
+        ...sources.bondLanguagePass2.rows,
         ...sources.sourceRows.hookRows,
         ...sources.lunationBlendRows.hookRows,
-        ...sources.bondLanguagePass2.rows,
         ...sources.pairDailyFrames.rows,
         ...sources.pairDailyClauses.rows,
         ...sources.skyArticleRows.hookRows,
@@ -612,9 +628,9 @@ function materializeRows(sources) {
     ...sources.skyArticleRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.weeklyRows.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.timingEventRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
+    ...sources.bondLanguagePass2.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.sourceRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.lunationBlendRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
-    ...sources.bondLanguagePass2.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.pairDailyFrames.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.pairDailyClauses.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyArticleRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),

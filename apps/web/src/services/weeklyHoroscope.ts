@@ -635,10 +635,29 @@ function lunationKind(event: LunarCalendarEvent) {
       : "full-moon";
 }
 
-function renderContact(contact: TransitContact, source: "return" | "heavy", variantSeed: string) {
+function weeklyTransitAspectContentKey(contact: TransitContact) {
+  const direction = contact.isRetrograde ? "rx" : "direct";
+  return `authored/weekly-transit-aspect/${contact.transiting}/${contact.sign}/${direction}/${contact.natal}/${contact.aspect}`;
+}
+
+function renderContact(
+  contact: TransitContact,
+  source: "return" | "heavy",
+  variantSeed: string,
+  rows: WeeklySourceRow[] = sourceRows
+) {
   if (source === "return") {
     const rendered = transitSynastryFallbackRendererV3.renderTransitReturn({ planet: contact.transiting });
     return { headline: rendered.headline, body: rendered.body, source };
+  }
+
+  const weeklyAuthored = approvedSourceRow(weeklyTransitAspectContentKey(contact), rows);
+  if (weeklyAuthored) {
+    return {
+      headline: weeklyAuthored.headline || `${title(contact.transiting)} ${aspectRelations[contact.aspect]} your ${title(contact.natal)}`,
+      body: weeklyAuthored.body,
+      source
+    };
   }
 
   const rendered = transitSynastryFallbackRendererV3.renderTransitAspect({
@@ -1359,7 +1378,7 @@ export async function buildWeeklyHoroscope({
     const source = isReturn ? "return" : "heavy";
 
     try {
-      const rendered = renderContact(contact, source, `${userId}:${contact.transiting}:${contact.unit}`);
+      const rendered = renderContact(contact, source, `${userId}:${contact.transiting}:${contact.unit}`, rows);
       candidates.push({
         dateKey,
         dayLabel: eventDayLabel(dateKey),

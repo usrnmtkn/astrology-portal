@@ -1,24 +1,40 @@
 import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
+import { assertOpenAiStrictResponseSchema, ReportProviderSchemaError } from "./report-provider-schema.js";
+
+export { assertOpenAiStrictResponseSchema, ReportProviderSchemaError } from "./report-provider-schema.js";
 
 export type ReportModelUsage = { inputTokens: number; cachedInputTokens?: number; outputTokens: number; totalTokens: number };
 export type ReportModelResult<T> = { value: T; model: string; provider: string; responseId?: string; usage: ReportModelUsage };
 export type ReportProviderAttempt = { provider: string; model: string; schemaName: string };
+export const REPORT_MODEL_RESPONSE_RETRY_CAP = 3;
+export class ReportModelResponseRejectedError extends Error {
+  constructor(
+    message: string,
+    readonly usage?: ReportModelUsage,
+    readonly responseId?: string
+  ) {
+    super(message);
+    this.name = "ReportModelResponseRejectedError";
+  }
+}
 export class ReportModelLifecycleError extends Error {
   constructor(stage: "before" | "after" | "error", cause: unknown) {
     super(`REPORT_MODEL_LIFECYCLE_${stage.toUpperCase()}: ${cause instanceof Error ? cause.message : "provider lifecycle hook failed"}`, { cause });
     this.name = "ReportModelLifecycleError";
   }
 }
-export type ReportModelCall = <T>(input: {
+export type ReportModelCallInput<T> = {
   provider: string;
   model: string;
   prompt: string;
   schemaName: string;
   schema: Record<string, unknown>;
+  validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
   onProviderCallError?: (attempt: ReportProviderAttempt, error: unknown) => Promise<void>;
-}) => Promise<ReportModelResult<T>>;
+};
+export type ReportModelCall = <T>(input: ReportModelCallInput<T>) => Promise<ReportModelResult<T>>;
 
 function usage(inputTokens = 0, outputTokens = 0, cachedInputTokens = 0): ReportModelUsage {
   return { inputTokens, cachedInputTokens, outputTokens, totalTokens: inputTokens + outputTokens };
@@ -41,10 +57,12 @@ async function callOpenAi<T>(input: {
   prompt: string;
   schemaName: string;
   schema: Record<string, unknown>;
+  validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
   onProviderCallError?: (attempt: ReportProviderAttempt, error: unknown) => Promise<void>;
 }): Promise<ReportModelResult<T>> {
+  assertOpenAiStrictResponseSchema(input.schema, input.schemaName);
   const attempt = { provider: input.provider, model: input.model, schemaName: input.schemaName };
   try { await input.beforeProviderCall?.(attempt); } catch (error) { throw new ReportModelLifecycleError("before", error); }
   let result: ReportModelResult<T>;
@@ -62,17 +80,39 @@ async function callOpenAi<T>(input: {
   });
     const payload = await response.json() as Record<string, unknown> & { error?: { message?: string }; id?: string };
     if (!response.ok) throw new Error(payload.error?.message ?? `Report model call failed with ${response.status}.`);
-    const text = outputText(payload);
-    if (!text) throw new Error("Report model response contained no structured output.");
     const rawUsage = payload.usage && typeof payload.usage === "object" ? payload.usage as Record<string, unknown> : {};
     const inputTokens = typeof rawUsage.input_tokens === "number" ? rawUsage.input_tokens : 0;
     const outputTokens = typeof rawUsage.output_tokens === "number" ? rawUsage.output_tokens : 0;
     const details = rawUsage.input_tokens_details && typeof rawUsage.input_tokens_details === "object"
       ? rawUsage.input_tokens_details as Record<string, unknown> : {};
     const cachedInputTokens = typeof details.cached_tokens === "number" ? details.cached_tokens : 0;
+    const responseUsage = usage(inputTokens, outputTokens, cachedInputTokens);
+    const text = outputText(payload);
+    if (!text) throw new ReportModelResponseRejectedError(
+      "Report model response contained no structured output.", responseUsage, payload.id
+    );
+    let value: T;
+    try {
+      value = JSON.parse(text) as T;
+    } catch (error) {
+      throw new ReportModelResponseRejectedError(
+        `Report model response contained malformed JSON: ${error instanceof Error ? error.message : "parse failed"}.`,
+        responseUsage,
+        payload.id
+      );
+    }
+    try {
+      input.validateResponse?.(value);
+    } catch (error) {
+      throw new ReportModelResponseRejectedError(
+        error instanceof Error ? error.message : "Report model response failed structured validation.",
+        responseUsage,
+        payload.id
+      );
+    }
     result = {
-      value: JSON.parse(text) as T, model: input.model, provider: input.provider,
-      responseId: payload.id, usage: usage(inputTokens, outputTokens, cachedInputTokens)
+      value, model: input.model, provider: input.provider,
+      responseId: payload.id, usage: responseUsage
     };
   } catch (error) {
     try { await input.onProviderCallError?.(attempt, error); } catch (hookError) { throw new ReportModelLifecycleError("error", hookError); }
@@ -84,6 +124,7 @@ async function callOpenAi<T>(input: {
 
 async function callClaude<T>(input: {
   provider: string; model: string; prompt: string; schemaName: string; schema: Record<string, unknown>;
+  validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
   onProviderCallError?: (attempt: ReportProviderAttempt, error: unknown) => Promise<void>;
@@ -110,10 +151,21 @@ async function callClaude<T>(input: {
     usage?: { input_tokens?: number; output_tokens?: number }; error?: { message?: string };
   };
     if (!response.ok) throw new Error(payload.error?.message ?? `Anthropic report call failed with ${response.status}.`);
+    const responseUsage = usage(payload.usage?.input_tokens, payload.usage?.output_tokens);
     const value = payload.content?.find((entry) => entry.type === "tool_use" && entry.name === input.schemaName)?.input;
-    if (!value) throw new Error("Anthropic report response contained no structured output.");
-    result = { value, model: input.model, provider: "claude", responseId: payload.id,
-      usage: usage(payload.usage?.input_tokens, payload.usage?.output_tokens) };
+    if (!value) throw new ReportModelResponseRejectedError(
+      "Anthropic report response contained no structured output.", responseUsage, payload.id
+    );
+    try {
+      input.validateResponse?.(value);
+    } catch (error) {
+      throw new ReportModelResponseRejectedError(
+        error instanceof Error ? error.message : "Anthropic report response failed structured validation.",
+        responseUsage,
+        payload.id
+      );
+    }
+    result = { value, model: input.model, provider: "claude", responseId: payload.id, usage: responseUsage };
   } catch (error) {
     try { await input.onProviderCallError?.(attempt, error); } catch (hookError) { throw new ReportModelLifecycleError("error", hookError); }
     throw error;
@@ -124,6 +176,7 @@ async function callClaude<T>(input: {
 
 async function directReportModelCall<T>(input: {
   provider: string; model: string; prompt: string; schemaName: string; schema: Record<string, unknown>;
+  validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
   onProviderCallError?: (attempt: ReportProviderAttempt, error: unknown) => Promise<void>;
@@ -135,6 +188,7 @@ async function directReportModelCall<T>(input: {
 
 export const callReportModel: ReportModelCall = async <T>(input: {
   provider: string; model: string; prompt: string; schemaName: string; schema: Record<string, unknown>;
+  validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
   onProviderCallError?: (attempt: ReportProviderAttempt, error: unknown) => Promise<void>;
@@ -142,13 +196,45 @@ export const callReportModel: ReportModelCall = async <T>(input: {
   try {
     return await directReportModelCall<T>(input);
   } catch (error) {
-    if (error instanceof ReportModelLifecycleError) throw error;
+    if (error instanceof ReportModelLifecycleError
+      || error instanceof ReportModelResponseRejectedError
+      || error instanceof ReportProviderSchemaError) throw error;
     const config = reportFulfillmentConfig();
     if (!config.fallbackProvider || !config.fallbackModel
       || (config.fallbackProvider === input.provider && config.fallbackModel === input.model)) throw error;
     return directReportModelCall<T>({ ...input, provider: config.fallbackProvider, model: config.fallbackModel });
   }
 };
+
+function responseRetryPrompt(prompt: string, reason: string, retryNumber: number) {
+  return [
+    prompt,
+    "RESPONSE_REJECTION",
+    `The previous structured response was rejected before downstream processing: ${reason}`,
+    `Return the same requested output again, corrected to satisfy the schema and runtime contract. This is response retry ${retryNumber} of ${REPORT_MODEL_RESPONSE_RETRY_CAP}.`
+  ].join("\n\n");
+}
+
+/**
+ * Retries only model-response contract failures. Provider, model, schema, and
+ * call purpose stay fixed; every retry remains an independently metered call.
+ */
+export function withReportModelResponseRetries(
+  providerCall: ReportModelCall,
+  retryCap = REPORT_MODEL_RESPONSE_RETRY_CAP
+): ReportModelCall {
+  return async <T>(input: ReportModelCallInput<T>) => {
+    let prompt = input.prompt;
+    for (let retry = 0; ; retry += 1) {
+      try {
+        return await providerCall<T>({ ...input, prompt });
+      } catch (error) {
+        if (!(error instanceof ReportModelResponseRejectedError) || retry >= retryCap) throw error;
+        prompt = responseRetryPrompt(input.prompt, error.message, retry + 1);
+      }
+    }
+  };
+}
 
 export function writerModelTarget() {
   const config = reportFulfillmentConfig();

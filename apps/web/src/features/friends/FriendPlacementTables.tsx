@@ -60,7 +60,7 @@ export function FriendPlacementTable({
                 dignity={dignity}
                 glyph={row.glyph}
                 house={row.house}
-                onClick={onPlacementClick ? () => onPlacementClick(row) : undefined}
+                onClick={onPlacementClick && row.detailAvailable !== false ? () => onPlacementClick(row) : undefined}
                 pointName={row.label}
                 retrograde={row.retrograde}
                 sign={row.sign}

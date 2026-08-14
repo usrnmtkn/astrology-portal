@@ -1,7 +1,10 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createReportFactsCalculator, runReportFulfillmentBatch } from "../_lib/report-fulfillment.js";
+import { reportFulfillmentConfig } from "../_lib/report-fulfillment-config.js";
 import { createReportFulfillmentStore } from "../_lib/report-fulfillment-store.js";
 import { requireInternalRunner, sendJson } from "../_lib/report-http.js";
+
+export const maxDuration = 300;
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== "POST" && req.method !== "GET") return sendJson(res, 405, { error: "Use GET or POST." });
@@ -9,11 +12,18 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   try {
     const jobId = new URL(req.url ?? "/", "https://tldrastro.invalid").searchParams.get("jobId") ?? undefined;
     const workerId = `report-worker-${process.pid}-${Date.now()}`;
+    const cycleStartedAt = Date.now();
+    const config = reportFulfillmentConfig();
     sendJson(res, 200, await runReportFulfillmentBatch({
       workerId,
       store: createReportFulfillmentStore(),
       calculateFacts: createReportFactsCalculator(),
-      jobId
+      jobId,
+      continuationPolicy: {
+        deadlineAtMs: cycleStartedAt + config.workerCycleDeadlineMs,
+        runtimeDeadlineAtMs: cycleStartedAt + maxDuration * 1_000,
+        maxNewUnits: config.workerMaxNewUnitsPerCycle
+      }
     }));
   } catch (error) {
     sendJson(res, 500, { error: error instanceof Error ? error.message : "Report fulfillment runner failed." });

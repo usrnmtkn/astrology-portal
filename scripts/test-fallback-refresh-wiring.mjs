@@ -54,7 +54,7 @@ const skyPlacementBatchApprovals = [2, 3, 4].map((batch) => JSON.parse(fs.readFi
   "utf8"
 )));
 const skyPlacementCurrentApproval = JSON.parse(fs.readFileSync(
-  path.join(repoRoot, "packages/astro-knowledge/review/sun-leo-fallback-v3/approval-record.json"),
+  path.join(repoRoot, "packages/astro-knowledge/review/sky-placement-approved-serving-snapshot-2026-08-14.json"),
   "utf8"
 ));
 const skyPlanetFrames = readPackageJson("source-rows/sky-planet-frames-v1.json");
@@ -64,8 +64,8 @@ const pairDailyClauses = readPackageJson("source-rows/pair-daily-clauses-v1.json
 const timingEventRows = readPackageJson("source-rows/timing-event-reader-copy-v2.json");
 const weeklyRows = readPackageJson("source-rows/station-cards-week-openers-v1.json");
 
-assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 56);
-assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 56);
+assert.equal(skyPlacementOwnerApprovedFallbacks.rows.length, 58);
+assert.equal(new Set(skyPlacementOwnerApprovedFallbacks.rows.map((row) => row.contentKey)).size, 58);
 assert.ok(skyPlacementOwnerApprovedFallbacks.rows.every((row) => row.review_status === "approved"));
 const runtimeEligibleApprovedArticles = skyPlacementBatchApprovals.flatMap((approval) => approval.articles);
 assert.ok(skyPlacementBatchApprovals.every((approval) => approval.ownerApproved === true));
@@ -92,7 +92,7 @@ assert.equal(
   skyPlacementCurrentApproval.articlesSha256,
   "The exact serving articles must match the owner-approved Sun-in-Leo V3 snapshot."
 );
-for (const servingRow of skyPlacementOwnerApprovedFallbacks.rows) {
+for (const servingRow of skyPlacementOwnerApprovedFallbacks.rows.filter((row) => Object.hasOwn(row, "body_you"))) {
   assert.equal(
     servingRow.body_you,
     [
@@ -122,13 +122,13 @@ assert.ok(skyPlacementOwnerApprovedReaderFallbacks.rows.every((row) => (
   && !Object.hasOwn(row, "approved_via")
   && !Object.hasOwn(row, "body_you")
 )), "Reader serving rows must exclude editorial provenance metadata.");
-assert.ok(skyPlacementOwnerApprovedReaderFallbacks.rows.every((row) => !/\b(?:you|your|yours|yourself|yourselves)\b/iu.test([
-  row.opening,
-  row.tension,
-  row.development,
-  row.close,
-  ...(row.try_this ?? [])
-].join("\n"))), "Legacy body_you storage must not introduce second-person Current Sky copy.");
+assert.ok(
+  skyPlacementOwnerApprovedReaderFallbacks.rows.some((row) => (
+    row.contentKey === "fallback-hook/sky-sign-copy/venus/libra"
+    && /\byou\b/iu.test([row.opening, row.tension, row.development, row.close].join("\n"))
+  )),
+  "Sky placement articles must preserve owner-approved direct address while still stripping the legacy body_you field."
+);
 
 const moonTaurusEntry = sourceRows.hookRows.find((row) => (
   row.contentKey === "fallback-hook/sky-placement-hook/moon/taurus"
@@ -173,7 +173,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-10f");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-14e");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -206,7 +206,7 @@ const personalTransitFriendRows = friendVoiceRows.filter((row) => (
 const prepositionTheyPattern = /\b(?:to|for|with|at|from|of|about|around|through|toward|towards|against|between|among|by|beside|behind|under|over|into|onto|off|near|without|within)\s+they\b|(?<!early )(?<!later )\bon\s+they\b/iu;
 const objectPositionTheyPattern = /(?<!their )\b(?:expect(?:s)?|lift(?:s)?|embarrass(?:es)?|enjoy(?:s)?|trust(?:s)?|grow(?:s)?|enlarge(?:s)?|pair(?:s|ing)?|erase(?:s)?|rebuild(?:s)?|favor(?:s)?|scatter(?:s)?|fuel(?:s)?|shift(?:s)?|run(?:s)?)\s+they\b/iu;
 const themVerbPattern = /\bthem\s+(?:feel|feels|think|thinks|want|wants|need|needs|expect|expects|carry|carries|navigate|navigates|trust|trusts|enjoy|enjoys|lift|lifts|embarrass|embarrasses)\b/giu;
-const legitimateThemVerbGovernor = /(?:let(?:s|ting)?|mak(?:e|es|ing)|made|around|of|in|with|nearest)\s+$/iu;
+const legitimateThemVerbGovernor = /(?:let(?:s|ting)?|mak(?:e|es|ing)|made|help(?:s|ing|ed)?|around|of|in|with|nearest)\s+$/iu;
 const subjectFormPredicatePattern = /\b(?:is|was)\s+they\b/iu;
 const adjectiveTheyPattern = /\b(?:distinct)\s+they\b/iu;
 const reflexiveObjectPattern = /\b(?:let|make|help|allow)\s+themselves\b/iu;
@@ -591,7 +591,7 @@ assert.ok(
 );
 assert.match(
   pairDailySelectionSource,
-  /const pairVariant = stablePairDailyVariant\([\s\S]*?const readerDriver = pairDailyDriver\(currentSky, profileNatalSky, pairVariant\);[\s\S]*?const friendDriver = pairDailyDriver\(currentSky, selectedChart\.natalChart, pairVariant\);/u,
+  /const pairVariant = stablePairDailyVariant\([\s\S]*?const readerDriver = pairDailyDriver\([\s\S]*?profile\.charts\[0\]\?\.birthTime === "Time unknown"[\s\S]*?\);[\s\S]*?const friendDriver = pairDailyDriver\([\s\S]*?selectedChart\.birthTimeUnknown[\s\S]*?\);/u,
   "Pair Daily must use one stable pair seed for both chart-driver rotations."
 );
 assert.match(
@@ -724,7 +724,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const openFriendHouseTransitDetail[\s\S]*?sections: card\.normalized\.sections\.map\(\(section\) => \(\{[\s\S]*?heading: "",/u,
+  /const openFriendHouseTransitDetail[\s\S]*?const eligibleSections = acceptedOwnerApprovedTransitSections\([\s\S]*?card\.normalized\.detailSections,[\s\S]*?sections: eligibleSections\.map\(\(section\) => \(\{[\s\S]*?heading: "",/u,
   "Friend house-transit details must not repeat the resolver headline below the page title."
 );
 assert.match(
@@ -759,7 +759,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const openBondTransitDetail[\s\S]*?body: card\.effectBody \? \[card\.effectBody\] : \[\][\s\S]*?heading: index === 0 \? "What this activates"/u,
+  /const openBondTransitDetail[\s\S]*?body: acceptedOwnerApprovedTransitBody\([\s\S]*?card\.effectBody,[\s\S]*?card\.effectContentKey,[\s\S]*?\)[\s\S]*?heading: index === 0 \? "What this activates"/u,
   "Connection-transit detail views must show the effect once and expand the activated synastry connections."
 );
 assert.ok(
@@ -774,8 +774,8 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const openFriendTransitDetail[\s\S]*?sections: normalized\.sections\.map\(\(section\) => \(\{[\s\S]*?body: section\.body/u,
-  "Friend personal-transit detail views must retain the full normalized write-up."
+  /const openFriendTransitDetail[\s\S]*?const eligibleSections = acceptedOwnerApprovedTransitSections\([\s\S]*?normalized\.sections,[\s\S]*?sections: eligibleSections\.map\(\(section\) => \(\{[\s\S]*?body: section\.body/u,
+  "Friend personal-transit detail views must retain only exact-owner-approved normalized write-ups."
 );
 assert.match(
   aspectStylesSource,
@@ -931,9 +931,9 @@ try {
     },
     rowsFile: {
       hookRows: [
+        ...bondLanguagePass2.rows,
         ...sourceRows.hookRows,
         ...lunationBlendRows.hookRows,
-        ...bondLanguagePass2.rows,
         ...skyArticleRows.hookRows,
         ...skyAspectPhrasebook.hookRows,
         ...skyPlanetFrames.rows,
@@ -980,17 +980,25 @@ try {
 
   for (const row of bondLanguagePass2.rows) {
     const materializedRow = materializedByKey.get(row.contentKey);
+    const canonicalRow = sourceRows.hookRows.find((candidate) => candidate.contentKey === row.contentKey);
     assert.ok(materializedRow, `${row.contentKey} must materialize exactly once.`);
     assert.equal(
       materializedRow.body,
-      row.body_you,
-      `${row.contentKey} must expose the staged pass-2 candidate for review.`
+      canonicalRow?.body_you ?? row.body_you,
+      `${row.contentKey} must expose the latest governed bond row.`
     );
     assert.equal(
       materializedRow.source_snapshot.review_status,
-      "reviewed",
-      `${row.contentKey} must carry its reviewed state into the dashboard mirror.`
+      canonicalRow?.review_status ?? "reviewed",
+      `${row.contentKey} must carry its latest governed state into the dashboard mirror.`
     );
+    if (canonicalRow?.approval?.approvalLevel === "exact_owner_approved") {
+      assert.equal(
+        materializedRow.sections.packageRecord.approval.approvalLevel,
+        "exact_owner_approved",
+        `${row.contentKey} must retain exact-owner provenance in the dashboard mirror.`
+      );
+    }
   }
 
   for (const row of skySignCopySun.rows) {
@@ -1018,9 +1026,19 @@ try {
   for (const row of skyPlacementOwnerApprovedFallbacks.rows) {
     const materializedRow = materializedByKey.get(row.contentKey);
     assert.ok(materializedRow, `${row.contentKey} must materialize for reader distribution.`);
-    assert.equal(materializedRow.body, row.body_you);
+    const expectedMaterializedBody = row.body ?? row.body_you ?? [
+      row.opening,
+      row.tension,
+      row.development,
+      row.era_layer?.frame,
+      row.era_layer?.handoff,
+      row.era_layer?.recurrence,
+      row.era_layer?.collective_lesson,
+      row.close
+    ].filter(Boolean).join("\n\n");
+    assert.equal(materializedRow.body, expectedMaterializedBody);
     assert.equal(materializedRow.source_snapshot.review_status, "approved");
-    assert.equal(materializedRow.sections.packageRecord.render_policy, "sky-placement-continuous-v2");
+    assert.equal(materializedRow.sections.packageRecord.render_policy, row.render_policy);
   }
 
   for (const row of sunLeoHouseCores.rows) {
