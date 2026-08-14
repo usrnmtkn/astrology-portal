@@ -10898,7 +10898,8 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
-    const friendDeferredFallbackRequested = friendRelationshipContentRequests.has("compatibility")
+    const friendDeferredFallbackRequested = friendNatalContentRequested
+      || friendRelationshipContentRequests.has("compatibility")
       || friendRelationshipContentRequests.has("transits")
       || friendRelationshipContentRequests.has("synastry")
       || friendRelationshipContentRequests.has("composite");
@@ -10926,7 +10927,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [friendRelationshipContentRequests, mode]);
+  }, [friendNatalContentRequested, friendRelationshipContentRequests, mode]);
 
   useEffect(() => {
     let cancelled = false;

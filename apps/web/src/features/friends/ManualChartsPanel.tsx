@@ -145,6 +145,7 @@ import { resolvedNatalAspectPatternSectionLabel } from "../you/natalAspectPatter
 import type { SkyDetail } from "../sky/SkyDetailArticle";
 import { wholeDegreeOrb } from "../sky/skyHelpers";
 import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
+import { friendDetailHasReaderFacingContent } from "./friendDetailAvailability";
 
 const FriendsWorkspaceShell = lazy(() =>
   import("./FriendsWorkspaceShell").then((module) => ({
@@ -1521,11 +1522,41 @@ export function ManualChartsPanel({
       }];
     });
   }, [currentSky, relationshipGeneratedContent, selectedChart, selectedFriendTransits]);
-  const selectedFriendPlacementRows = useMemo(() => (
-    friendProfileWork.natal && selectedChart?.natalChart
-      ? socialPlacementRows(selectedChart.natalChart)
-      : []
-  ), [friendProfileWork.natal, selectedChart?.natalChart]);
+  const selectedFriendPlacementRows = useMemo(() => {
+    if (!friendProfileWork.natal || !selectedChart?.natalChart) {
+      return [];
+    }
+
+    const natalChart = selectedChart.natalChart;
+    return socialPlacementRows(natalChart).map((row) => {
+      const position = planetPositionFromSocialRow(row, natalChart);
+      const detail = position
+        ? natalPlacementSkyDetail(
+            position,
+            natalChart,
+            null,
+            friendGeneratedContent,
+            undefined,
+            {
+              ownerName: selectedChart.displayName,
+              ownerKind: selectedChartIsEvent ? "chart" : "person",
+              ownerPronouns: selectedChart.pronouns
+            }
+          )
+        : null;
+
+      return {
+        ...row,
+        detailAvailable: Boolean(detail && friendDetailHasReaderFacingContent(detail))
+      };
+    });
+  }, [
+    fallbackArchitectureV3Version,
+    friendGeneratedContent,
+    friendProfileWork.natal,
+    selectedChart,
+    selectedChartIsEvent
+  ]);
   const selectedFriendBigThreeDisplayRows = useMemo<SocialPlacementRow[]>(() => {
     if (!friendProfileWork.natal) {
       return [];
@@ -1648,11 +1679,28 @@ export function ManualChartsPanel({
       const houseSign = signAtWholeSignHouse(friendNatalChart.ascendant, house);
       const title = emptyHouseTitle(house, friendNatalChart);
 
+      const article = emptyHouseDetailArticle(
+        house,
+        friendNatalChart,
+        "friend",
+        selectedChart.displayName,
+        selectedChart.pronouns,
+        selectedFriendEmptyHouses
+      );
+      const detailAvailable = friendDetailHasReaderFacingContent({
+        body: article.body ?? [],
+        sections: article.sections.map((section) => ({
+          heading: section.heading,
+          body: section.body
+        }))
+      });
+
       return {
         house,
         glyph: houseSign ? zodiacSignGlyphs[houseSign] ?? "○" : "○",
         title,
         ariaLabel: `Read more about ${title}`,
+        detailAvailable,
         description: emptyHouseCardDescription(
           house,
           friendNatalChart,
@@ -1663,7 +1711,7 @@ export function ManualChartsPanel({
         )
       };
     });
-  }, [selectedChart, selectedFriendEmptyHouses]);
+  }, [fallbackArchitectureV3Version, selectedChart, selectedFriendEmptyHouses]);
   const selectedFriendNatalAspectViewGroups = useMemo<FriendNatalViewAspectGroup[]>(() => (
     selectedFriendNatalAspectGroups.map((group) => ({
       key: group.key,
@@ -1683,17 +1731,38 @@ export function ManualChartsPanel({
           to: aspect.to,
           orb: aspect.orb,
           title: renderedSection?.heading ?? `${selectedChart?.displayName ?? "Friend"}'s ${aspect.from} ${aspect.type} ${aspect.to}`,
-          summary: normalizedSurfacePreview(normalized)
+          summary: normalizedSurfacePreview(normalized),
+          detailAvailable: friendDetailHasReaderFacingContent({
+            body: [],
+            sections: normalized.sections.map((section) => ({
+              heading: section.heading,
+              body: section.body
+            }))
+          })
         };
       })
     }))
-  ), [selectedChart?.displayName, selectedChart?.pronouns, selectedChartIsEvent, selectedFriendNatalAspectGroups]);
+  ), [
+    fallbackArchitectureV3Version,
+    selectedChart?.displayName,
+    selectedChart?.pronouns,
+    selectedChartIsEvent,
+    selectedFriendNatalAspectGroups
+  ]);
+  const openFriendDetail = (detail: SkyDetail) => {
+    if (!friendDetailHasReaderFacingContent(detail)) {
+      return false;
+    }
+
+    onOpenDetail(detail);
+    return true;
+  };
   const openFriendCompatibilityCardDetail = (card: CompatibilityPlanetCard, paragraphs: string[]) => {
     if (!selectedChart) {
       return;
     }
 
-    onOpenDetail({
+    openFriendDetail({
       routePath: friendDetailRoutePath(selectedChart.id, "compatibility", card.id),
       glyph: card.glyph,
       kicker: "Compatibility",
@@ -1714,7 +1783,7 @@ export function ManualChartsPanel({
       ownerPronouns: selectedChart?.pronouns
     });
 
-    onOpenDetail({
+    openFriendDetail({
       routePath: selectedChart ? friendDetailRoutePath(
         selectedChart.id,
         friendProfileTab,
@@ -1771,7 +1840,7 @@ export function ManualChartsPanel({
         }));
     });
 
-    onOpenDetail({
+    openFriendDetail({
       routePath: friendDetailRoutePath(
         selectedChart.id,
         "natal",
@@ -1799,7 +1868,7 @@ export function ManualChartsPanel({
       return;
     }
 
-    onOpenDetail({
+    openFriendDetail({
       ...natalPlacementSkyDetail(
       position,
       selectedChart.natalChart,
@@ -1829,7 +1898,7 @@ export function ManualChartsPanel({
       selectedFriendEmptyHouses
     );
 
-    onOpenDetail({
+    openFriendDetail({
       routePath: friendDetailRoutePath(selectedChart.id, friendProfileTab, `empty-house-${house}`),
       glyph: article.glyph || "○",
       kicker: "",
@@ -1864,7 +1933,7 @@ export function ManualChartsPanel({
       return;
     }
 
-    onOpenDetail({
+    openFriendDetail({
       routePath: friendDetailRoutePath(
         selectedChart.id,
         "transits",
@@ -1911,7 +1980,7 @@ export function ManualChartsPanel({
       return rendered ? [rendered] : [];
     });
 
-    onOpenDetail({
+    openFriendDetail({
       routePath: friendDetailRoutePath(
         selectedChart.id,
         "transits",
@@ -1956,7 +2025,7 @@ export function ManualChartsPanel({
     const title = rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart.displayName}'s ${contact.friendPoint.name}`;
     const subtitle = rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect);
 
-    onOpenDetail({
+    openFriendDetail({
       routePath: friendDetailRoutePath(selectedChart.id, "synastry", `synastry-${contact.id}`),
       glyph: `${pointGlyph(contact.friendPoint.name)} ${aspectGlyph(contact.aspect)} ${pointGlyph(contact.yourPoint.name)}`,
       kicker: "Synastry",
@@ -1999,7 +2068,7 @@ export function ManualChartsPanel({
       return;
     }
 
-    onOpenDetail({
+    openFriendDetail({
       routePath: friendDetailRoutePath(
         selectedChart.id,
         "transits",
