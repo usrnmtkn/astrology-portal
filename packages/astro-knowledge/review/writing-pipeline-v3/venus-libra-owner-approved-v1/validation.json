@@ -1,0 +1,68 @@
+{
+  "version": "venus-libra-owner-approved-v1",
+  "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+  "status": "owner-approved",
+  "reviewStatus": "owner-approved",
+  "ownerApproved": true,
+  "ownerLocked": true,
+  "promotionAuthorized": false,
+  "servingAuthorized": false,
+  "canonicalArticleFile": "article.txt",
+  "articleSha256": "2306bbd9d80e99c9dc1c1939c0c82ca962263b3bdf0e778d2c46085352b39d8e",
+  "paragraphCount": 7,
+  "spineValidation": {
+    "version": "sky-placement-article-spine-v1-2026-08-14",
+    "family": "fast-mover-article",
+    "status": "spine-quality-complete",
+    "complete": true,
+    "failedElementCount": 0,
+    "failedElements": [],
+    "failures": [],
+    "elements": {
+      "planet": {
+        "text": "After moving through Virgo from July 9 to August 6, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them."
+      },
+      "condition": {
+        "text": "After moving through Virgo from July 9 to August 6, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them.\n\nVenus rules Libra, so compromise comes easily here. You can see both sides, find the middle ground, and make an arrangement work without much friction. That is useful until your own preference disappears somewhere inside the compromise."
+      },
+      "handoff": {
+        "text": "After moving through Virgo from July 9 to August 6, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them."
+      },
+      "thesis": {
+        "text": "The problem starts when you keep saying yes because it feels easier than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left. The loudest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility. Resentment builds because the agreement only works by asking one person to keep giving more. You did not agree. You accommodated, and everyone called it agreement.\n\nBeing easy to work with is rewarded everywhere. It gets called low maintenance, flexible, a good partner. Nobody mentions that it is also free. A collaborator chooses the direction, you say it works, and before anyone assigns the follow-up, you offer to rewrite the draft, send the updates, and deliver the final version. The decision takes five minutes; carrying it out costs you several more hours. When you finally say you preferred another version, their response tells you which one it was: they reopen the decision and split the revisions, or they expect you to keep carrying the plan you never picked."
+      },
+      "lived_evidence": {
+        "text": "Being easy to work with is rewarded everywhere. It gets called low maintenance, flexible, a good partner. Nobody mentions that it is also free. A collaborator chooses the direction, you say it works, and before anyone assigns the follow-up, you offer to rewrite the draft, send the updates, and deliver the final version. The decision takes five minutes; carrying it out costs you several more hours. When you finally say you preferred another version, their response tells you which one it was: they reopen the decision and split the revisions, or they expect you to keep carrying the plan you never picked.\n\nA shared purchase hides the same imbalance. You agree to split the cost, put the charge on your card, and accept a smaller repayment because asking for the exact difference feels awkward. You save the receipt, calculate what is still owed, and send another reminder. The agreement stays easy because you carry the missing money and the work of collecting it.",
+        "scenarioCount": 2,
+        "scenarioParagraphSpans": [
+          1,
+          1
+        ]
+      },
+      "failure_mechanism": {
+        "text": "Venus rules Libra, so compromise comes easily here. You can see both sides, find the middle ground, and make an arrangement work without much friction. That is useful until your own preference disappears somewhere inside the compromise.\n\nThe problem starts when you keep saying yes because it feels easier than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left. The loudest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility. Resentment builds because the agreement only works by asking one person to keep giving more. You did not agree. You accommodated, and everyone called it agreement.\n\nBeing easy to work with is rewarded everywhere. It gets called low maintenance, flexible, a good partner. Nobody mentions that it is also free. A collaborator chooses the direction, you say it works, and before anyone assigns the follow-up, you offer to rewrite the draft, send the updates, and deliver the final version. The decision takes five minutes; carrying it out costs you several more hours. When you finally say you preferred another version, their response tells you which one it was: they reopen the decision and split the revisions, or they expect you to keep carrying the plan you never picked."
+      },
+      "strategy": {
+        "text": "Say what you want before you hear what everyone else wants. Name the number. Ask who is doing the follow-up. Let the plan change once you are actually in it. Then watch what happens: who adjusts, who covers the difference, and who takes on the work their choice created."
+      },
+      "close": {
+        "text": "The connections worth keeping are the ones that survive you asking for something."
+      }
+    }
+  },
+  "deterministicValidation": {
+    "passed": true,
+    "violations": [],
+    "advisories": [],
+    "counts": {
+      "negationPivots": 1,
+      "negationPivotsDetected": 1,
+      "negationPivotsReserved": 0,
+      "spineScaffolds": 0,
+      "vagueOutcomeClauses": 0,
+      "failedSpineQualityElements": 0
+    }
+  },
+  "billedCalls": 0,
+  "automaticEdits": 0
+}

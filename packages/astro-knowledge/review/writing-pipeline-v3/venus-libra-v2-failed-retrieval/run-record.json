@@ -1,0 +1,376 @@
+{
+  "status": "failed-retrieval",
+  "classification": "diagnostic-only",
+  "ownerRuling": "if the article does not go through both the writing-pipeline and the satori voice, fail the article and rewrite.",
+  "voiceEvidenceEligible": false,
+  "draftEligible": false,
+  "baselineEligible": false,
+  "rewriteRequired": true,
+  "failure": {
+    "code": "OWNER_POSITIVE_EVIDENCE_EMPTY",
+    "sourceIds": [],
+    "positiveOwnerPassageCount": 0
+  },
+  "rawWriterResult": {
+    "draft": {
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra on {{entryDate}}, and we pay closer attention to whether interest, effort, and consideration are being returned. Venus governs relationships, creativity, attraction, and what we value. Libra notices balance, exchange, connection, and how a shared choice is made. Because Venus rules Libra, finding common ground can feel unusually natural. That ease can make an agreement look fair and complete before both preferences are known.",
+      "tension": "The cost appears when agreement matters more than an honest answer. We ask what works for everyone else before admitting what works for us. Skill at compromise becomes automatic adjustment: we change a preference before anyone asks us to and treat the lack of disagreement as proof that the result is fair. The decision then belongs to whoever was clearest, while the more accommodating side carries the extra cost. Resentment enters an arrangement that still looks perfectly calm.",
+      "development": "In one collaboration, one person names a preference first. The other says it works and leaves their own preference unsaid. When that decision creates follow-up work or an added cost, the accommodating person takes it on rather than reopening what already looked settled. Each compromise seems small. Together they create a pattern in which the same person’s preferences keep moving and the same person keeps absorbing the consequences. The strategic shift is to state the preference before smoothing the arrangement. Once the withheld preference is stated, the other person’s response provides the real test: can the collaboration remain cooperative after both people say what they actually want? That response shows whether the connection can hold honesty, not just agreement.",
+      "close": "Before {{exitDate}}, an arrangement may strain when the person who kept agreeing can no longer accept what they do not want.",
+      "approvalStatus": "generated",
+      "approvalHistory": [
+        "generated"
+      ],
+      "ownerApproved": false,
+      "ownerLocked": false,
+      "renderedSampleStatus": "not-rendered",
+      "renderedSampleOwnerApproved": false,
+      "batchGenerationAuthorized": false,
+      "servingAuthorized": false,
+      "editorialStatus": "generated_candidate",
+      "reviewStatus": "needs_review",
+      "ownerStatus": "PENDING OWNER",
+      "promotionAuthorized": false,
+      "canonical": false,
+      "argumentOutline": {
+        "version": "argument-outline-v1-2026-08-12",
+        "status": "owner-approved",
+        "ownerApproved": true,
+        "family": "fast-mover-article",
+        "surface": "sky-placement-page",
+        "meaningPlanObject": "venus",
+        "meaningPlanSign": "libra",
+        "meaningPlanHash": "c1bb6370a6a72d43b28b11e0c91fae2bcc0116dba5663d59c6e515ac63e3acc0",
+        "thesis": "Add why the existing imbalance can be hard to notice: Venus works easily in Libra, so smooth agreement can look complete before both preferences are known.",
+        "cultural_rule": "Do not replace the approved fairness argument; add only the assumption that an easy agreement must be a fair one.",
+        "transit_job": "Add a condition-based test of Venus in Libra's home-ground skill: can the connection stay easy after both sides state what they actually want?",
+        "failure_mechanism": "Clarify the existing mechanism by showing skill at compromise becoming automatic adjustment before anyone asks for it.",
+        "lived_scene_1": "Consolidate the approved shared-decision material into one collaboration where one side waits for the other preference before naming its own.",
+        "lived_scene_2": "Continue the same collaboration when the accommodating side absorbs the follow-up work or cost required to keep the agreement easy.",
+        "lived_scene_3": "Finish the same sequence when the withheld preference is stated and the other side's response shows whether the connection can hold honesty.",
+        "strategy": "Add one strategic bias inside the article: state the preference before smoothing the arrangement; do not add a tip list.",
+        "intended_close": "Keep the approved close's consequence rather than adding a second moral: the arrangement strains when the person who kept agreeing stops accepting what they do not want.",
+        "scope_guard": "Retain the existing one-sentence handoff; add no slow-mover contrast paragraph, romance default, dinner or scheduling scene, seventh-house substitution, or retrograde look-back.",
+        "outlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49",
+        "exactOwnerRuling": "Venus in Libra v2 outline approved.",
+        "approvedOutlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49"
+      },
+      "argumentOutlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49",
+      "contentSpineId": "fast-mover-article-v1",
+      "generation_metadata": {
+        "role": "WRITER",
+        "provider": "openai",
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "thinkingLevel": null,
+        "components": {
+          "pipeline": "writing-pipeline-v3-2026-08-12",
+          "argument_gate": "argument-outline-v1-2026-08-12",
+          "content_spines": "content-spines-v2-2026-08-13",
+          "correction_pair_selector": "owner-correction-pairs-v1-2026-08-12",
+          "deterministic_layer": "writing-deterministic-v3-2026-08-12",
+          "astrology_contract": "owner-contract-2026-08-09",
+          "writing_contract": "tldr-astro-writing-v2-2026-08-09",
+          "review_rubric": "tldr-astro-editorial-gate-v4-cold-rendered-prose-2026-08-11",
+          "owner_corpus": "owner-corpus-through-2026-08-09",
+          "fixture_set": "lilith-vertical-slice-v1-2026-08-09",
+          "writer_prompt": "tldr-astro-writing-v2-2026-08-09",
+          "reviewer_prompt": "tldr-astro-editorial-gate-v4-cold-rendered-prose-2026-08-11"
+        },
+        "sourceIds": []
+      }
+    },
+    "plan": {
+      "content_type": "placement_article",
+      "object": "venus",
+      "sign": "libra",
+      "house": null,
+      "event_type": null,
+      "object_function": [
+        "Venus governs relationships, creativity, attraction, and what is valued."
+      ],
+      "sign_mechanics": [
+        "Libra notices balance, exchange, connection, and how a shared choice is made."
+      ],
+      "actual_house_domain": null,
+      "core_tension": "Agreement can look fair while one side keeps adjusting.",
+      "what_changes": "The clearest voice makes the decision while the more accommodating side absorbs the cost.",
+      "constructive_expression": "A preference is withheld until everyone else has answered.",
+      "overcorrection": "Fairness is reduced to avoiding disagreement.",
+      "observable_behaviors": [
+        "A preference is withheld until everyone else has answered.",
+        "A shared cost or responsibility stays uneven because naming the exact difference feels impolite.",
+        "A connection changes once both sides can state what they want without punishment."
+      ],
+      "possible_consequences": [
+        "The clearest voice makes the decision while the more accommodating side absorbs the cost.",
+        "Resentment grows inside an arrangement that still looks calm.",
+        "Honesty shows which connections can hold an actual preference."
+      ],
+      "allowed_life_domain_examples": [
+        "relationships",
+        "work",
+        "money",
+        "creative decisions",
+        "access"
+      ],
+      "do_not_assume": [
+        "a house or life domain that was not supplied",
+        "a specific event, motive, relationship type, or biography not present in governed facts"
+      ],
+      "house_bleed_risks": [
+        "relationship status"
+      ],
+      "stock_trope_risks": [],
+      "unearned_motives": [],
+      "eventType": null,
+      "objectFunction": "Venus governs relationships, creativity, attraction, and what is valued.",
+      "signMechanics": "Libra notices balance, exchange, connection, and how a shared choice is made.",
+      "actualHouseDomain": null,
+      "allowedLivedDomains": [
+        "relationships",
+        "work",
+        "money",
+        "creative decisions",
+        "access"
+      ],
+      "prohibitedDomainAssumptions": [
+        "relationship status"
+      ],
+      "coreTension": "Agreement can look fair while one side keeps adjusting.",
+      "likelyObservableBehaviors": [
+        "A preference is withheld until everyone else has answered.",
+        "A shared cost or responsibility stays uneven because naming the exact difference feels impolite.",
+        "A connection changes once both sides can state what they want without punishment."
+      ],
+      "likelyConsequences": [
+        "The clearest voice makes the decision while the more accommodating side absorbs the cost.",
+        "Resentment grows inside an arrangement that still looks calm.",
+        "Honesty shows which connections can hold an actual preference."
+      ],
+      "risks": [
+        "Fairness is reduced to avoiding disagreement."
+      ],
+      "DO_NOT_ASSUME": [
+        "a house or life domain that was not supplied",
+        "a specific event, motive, relationship type, or biography not present in governed facts"
+      ]
+    },
+    "context": {
+      "examples": [],
+      "corrections": [
+        {
+          "before": "secrets, leverage, debts, favors, and the facts everyone knows but nobody names",
+          "after": "secrets, leverage, private agreements, and the facts everyone knows but nobody names",
+          "owner_reason": "Debts pushed Scorpio toward an 8th-house delineation; sign is not its associated house.",
+          "category": "sign_house_separation",
+          "family": "lilith-placement-hook",
+          "rule": "SIGN-DOMAIN INTEGRITY",
+          "selection_score": 86,
+          "selection_reasons": [
+            "same_surface_family",
+            "family_failure_history"
+          ]
+        },
+        {
+          "before": "Until {{exitDate}}, the hierarchy gets harder to accept without question. The person doing the boss's job asks for that pay. Someone turns down the promotion that was really just more work in a nicer chair.",
+          "after": "Until {{exitDate}}, the rules get harder to accept without question. The reliable person stops covering for someone else's lack of planning. Someone asks why the same standard changes depending on who broke it. A promotion gets turned down because it comes with more responsibility and no more authority.",
+          "owner_reason": "Capricorn had collapsed into boss/title/career, functioning as the 10th house; broadened to responsibility, standards, legitimacy.",
+          "category": "sign_house_separation",
+          "family": "lilith-placement-lived",
+          "rule": "SIGN-DOMAIN INTEGRITY",
+          "selection_score": 86,
+          "selection_reasons": [
+            "same_surface_family",
+            "family_failure_history"
+          ]
+        },
+        {
+          "before": "A teacher, institution, publication, or public voice gets challenged over the version of the truth it has been presenting as settled.",
+          "after": "A claim that everyone has been repeating as fact gets challenged when somebody checks what it is actually based on.",
+          "owner_reason": "House bleed survived good prose: teacher/education/publication/institution cluster defined Sagittarius through the 9th-house inventory instead of belief-and-conviction behavior. Judge by nouns, not by how natural the paragraph sounds.",
+          "category": "sign_house_separation",
+          "family": "lilith-placement-lived",
+          "rule": "NOUN-LEVEL HOUSE-BLEED TEST",
+          "selection_score": 86,
+          "selection_reasons": [
+            "same_surface_family",
+            "family_failure_history"
+          ]
+        },
+        {
+          "before": "states the point plainly",
+          "after": "gets to the point quickly",
+          "owner_reason": "Ordinary spoken English over technically correct phrasing.",
+          "category": "natural_language",
+          "family": "sky-placement",
+          "rule": null,
+          "selection_score": 86,
+          "selection_reasons": [
+            "same_surface_family",
+            "family_failure_history"
+          ]
+        },
+        {
+          "before": "before the remaining information arrives",
+          "after": "before the rest of the information comes in",
+          "owner_reason": "Ordinary word order; the first sounds written, not said.",
+          "category": "natural_language",
+          "family": "sky-placement",
+          "rule": null,
+          "selection_score": 86,
+          "selection_reasons": [
+            "same_surface_family",
+            "family_failure_history"
+          ]
+        },
+        {
+          "before": "a conclusion may be repeated before the reasoning behind it is complete",
+          "after": "the conclusion may get shared before the explanation is finished",
+          "owner_reason": "'Repeated' is the strange word here; the mechanism is that it gets shared before the reasoning is done.",
+          "category": "natural_language",
+          "family": "sky-placement",
+          "rule": null,
+          "selection_score": 86,
+          "selection_reasons": [
+            "same_surface_family",
+            "family_failure_history"
+          ]
+        },
+        {
+          "before": "silence can make a practical concern sound like a refusal",
+          "after": "silence can make a practical concern read like a refusal",
+          "owner_reason": "Silence does not sound like anything.",
+          "category": "natural_language",
+          "family": "sky-placement",
+          "rule": null,
+          "selection_score": 86,
+          "selection_reasons": [
+            "same_surface_family",
+            "family_failure_history"
+          ]
+        },
+        {
+          "before": "boss / promotion / title / career / public status throughout a Capricorn passage",
+          "after": "responsibility, rules, standards, authority, legitimacy, who carries more",
+          "owner_reason": "The sign became its associated house. Inspect the nouns, not how natural it sounds.",
+          "category": "sign_house_separation",
+          "family": "sky-placement",
+          "rule": null,
+          "selection_score": 86,
+          "selection_reasons": [
+            "same_surface_family",
+            "family_failure_history"
+          ]
+        }
+      ],
+      "correctionSelection": {
+        "requested": 8,
+        "selected": 8,
+        "deduplicatedCorpusCount": 57,
+        "family": "fast-mover-article",
+        "priority": [
+          "same content family",
+          "requested failure mode",
+          "that family's historical failure categories",
+          "adjacent family",
+          "stable source order"
+        ]
+      },
+      "counts": {
+        "examples": 0,
+        "corrections": 8
+      }
+    },
+    "argumentOutline": {
+      "version": "argument-outline-v1-2026-08-12",
+      "status": "owner-approved",
+      "ownerApproved": true,
+      "family": "fast-mover-article",
+      "surface": "sky-placement-page",
+      "meaningPlanObject": "venus",
+      "meaningPlanSign": "libra",
+      "meaningPlanHash": "c1bb6370a6a72d43b28b11e0c91fae2bcc0116dba5663d59c6e515ac63e3acc0",
+      "thesis": "Add why the existing imbalance can be hard to notice: Venus works easily in Libra, so smooth agreement can look complete before both preferences are known.",
+      "cultural_rule": "Do not replace the approved fairness argument; add only the assumption that an easy agreement must be a fair one.",
+      "transit_job": "Add a condition-based test of Venus in Libra's home-ground skill: can the connection stay easy after both sides state what they actually want?",
+      "failure_mechanism": "Clarify the existing mechanism by showing skill at compromise becoming automatic adjustment before anyone asks for it.",
+      "lived_scene_1": "Consolidate the approved shared-decision material into one collaboration where one side waits for the other preference before naming its own.",
+      "lived_scene_2": "Continue the same collaboration when the accommodating side absorbs the follow-up work or cost required to keep the agreement easy.",
+      "lived_scene_3": "Finish the same sequence when the withheld preference is stated and the other side's response shows whether the connection can hold honesty.",
+      "strategy": "Add one strategic bias inside the article: state the preference before smoothing the arrangement; do not add a tip list.",
+      "intended_close": "Keep the approved close's consequence rather than adding a second moral: the arrangement strains when the person who kept agreeing stops accepting what they do not want.",
+      "scope_guard": "Retain the existing one-sentence handoff; add no slow-mover contrast paragraph, romance default, dinner or scheduling scene, seventh-house substitution, or retrograde look-back.",
+      "outlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49",
+      "exactOwnerRuling": "Venus in Libra v2 outline approved.",
+      "approvedOutlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49"
+    },
+    "spine": {
+      "id": "fast-mover-article-v1",
+      "status": "recorded",
+      "ownerApproved": true,
+      "ownerRulingDate": "2026-08-13",
+      "fields": [
+        "planet",
+        "condition_when_relevant",
+        "handoff",
+        "job",
+        "thesis",
+        "lived_evidence",
+        "failure",
+        "strategy",
+        "close"
+      ],
+      "rules": {
+        "condition_when_relevant": "Include dignity only when it materially changes how directly the planet can do its job. Venus rules Libra, so Venus in Libra receives this home-ground layer, parallel to Saturn in Capricorn.",
+        "handoff": "One opening sentence names the prior sign and its dates. Do not expand it into the standalone contrast paragraph used by slow movers.",
+        "collective_test": "May be folded into the close when earned; never required as a standalone layer."
+      }
+    },
+    "lint": {
+      "passed": false,
+      "violations": [
+        {
+          "category": "banned_language",
+          "detail": "whether"
+        }
+      ],
+      "advisories": []
+    },
+    "status": "human-review-required",
+    "report": {
+      "drafted": 1,
+      "writerCalls": 1,
+      "billedCalls": 1,
+      "proseModelGateCalls": 0,
+      "automaticallyRevised": 0,
+      "failureCategories": [
+        "banned_language"
+      ],
+      "finalLintStatus": "REVISE",
+      "finalEvalStatus": "OWNER_GATE_REQUIRED",
+      "modelUsage": {
+        "input_tokens": 3758,
+        "input_tokens_details": {
+          "cache_write_tokens": 3755,
+          "cached_tokens": 0
+        },
+        "output_tokens": 3433,
+        "output_tokens_details": {
+          "reasoning_tokens": 3055
+        },
+        "total_tokens": 7191
+      }
+    },
+    "ownerStatus": "PENDING OWNER",
+    "candidateHistory": {
+      "writer": {
+        "provider": "openai",
+        "model": "gpt-5.6-sol"
+      },
+      "proseModelGate": "none_owner_gate_permanent",
+      "ownerStatus": "PENDING OWNER",
+      "approvalEffect": "none"
+    }
+  }
+}

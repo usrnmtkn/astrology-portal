@@ -1,0 +1,3748 @@
+{
+  "version": "writing-pipeline-v3-deterministic-audit-2026-08-13",
+  "corpus": {
+    "approvedExamples": 11386,
+    "ownerCorpusFiles": 48,
+    "ownerCorpusVocabularyTokens": 7328
+  },
+  "policy": {
+    "blockingNow": [
+      "register_consistency",
+      "placeholder_integrity",
+      "owner_line_integrity",
+      "negation_pivot_cap",
+      "negation_pivot_page_cap",
+      "negation_pivot_set_cap"
+    ],
+    "advisoryOnly": [
+      "synonym_redundancy",
+      "scene_noun_frequency",
+      "opening_syntax_repetition",
+      "anchor_construction_repetition",
+      "spine_scaffold_grammar",
+      "spine_scaffold_repetition",
+      "vocabulary_outside_corpus"
+    ],
+    "note": "Every finding on owner-approved evidence is counted as a potential false positive until the owner rules."
+  },
+  "totals": {
+    "entriesFlagged": 8594,
+    "potentialFalsePositiveEntryRate": 0.754787,
+    "potentialFalsePositiveRatesByEntryCategory": {
+      "register_consistency": {
+        "entries": 0,
+        "rate": 0
+      },
+      "placeholder_integrity": {
+        "entries": 0,
+        "rate": 0
+      },
+      "owner_line_integrity": {
+        "entries": 0,
+        "rate": 0
+      },
+      "negation_pivot_cap": {
+        "entries": 5,
+        "rate": 0.000439
+      },
+      "synonym_redundancy": {
+        "entries": 6,
+        "rate": 0.000527
+      },
+      "vocabulary_outside_corpus": {
+        "entries": 8592,
+        "rate": 0.754611
+      },
+      "spine_scaffold_grammar": {
+        "entries": 9,
+        "rate": 0.00079
+      }
+    },
+    "totalBatchGroups": 966,
+    "batchGroupsFlagged": 518,
+    "potentialFalsePositiveRatesByBatchCategory": {
+      "scene_noun_frequency": {
+        "groups": 225,
+        "rate": 0.232919
+      },
+      "opening_syntax_repetition": {
+        "groups": 350,
+        "rate": 0.362319
+      },
+      "anchor_construction_repetition": {
+        "groups": 14,
+        "rate": 0.014493
+      },
+      "negation_pivot_page_cap": {
+        "groups": 4,
+        "rate": 0.004141
+      },
+      "negation_pivot_set_cap": {
+        "groups": 5,
+        "rate": 0.005176
+      },
+      "spine_scaffold_repetition": {
+        "groups": 4,
+        "rate": 0.004141
+      }
+    },
+    "findingsByCategory": {
+      "vocabulary_outside_corpus": 8592,
+      "negation_pivot_cap": 5,
+      "spine_scaffold_grammar": 9,
+      "synonym_redundancy": 6,
+      "scene_noun_frequency": 286,
+      "opening_syntax_repetition": 391,
+      "anchor_construction_repetition": 14,
+      "negation_pivot_set_cap": 5,
+      "negation_pivot_page_cap": 5,
+      "spine_scaffold_repetition": 4
+    }
+  },
+  "negationPivotCountsPerEntry": [
+    {
+      "id": "matrix-v9:house:row-1000",
+      "contentKey": "virgo|sun|libra|ingress|2",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-1558",
+      "contentKey": "scorpio|mars|virgo|retrograde|11",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-1559",
+      "contentKey": "scorpio|mars|virgo|retrograde|11",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-1885",
+      "contentKey": "capricorn|mercury|gemini|ingress|6",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-1886",
+      "contentKey": "capricorn|mercury|gemini|ingress|6",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-322",
+      "contentKey": "taurus|mercury|capricorn|ingress|9",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-68",
+      "contentKey": "aries|jupiter|cancer|ingress|4",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-69",
+      "contentKey": "aries|mars|cancer|ingress|4",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-70",
+      "contentKey": "aries|mars|cancer|ingress|4",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-72",
+      "contentKey": "aries|mercury|cancer|ingress|4",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-73",
+      "contentKey": "aries|mercury|cancer|ingress|4",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-74",
+      "contentKey": "aries|sun|cancer|ingress|4",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-75",
+      "contentKey": "aries|sun|cancer|ingress|4",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-76",
+      "contentKey": "aries|sun|cancer|ingress|4",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-77",
+      "contentKey": "aries|sun|cancer|ingress|4",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-78",
+      "contentKey": "aries|sun|cancer|ingress|4",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-79",
+      "contentKey": "aries|venus|cancer|ingress|4",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-80",
+      "contentKey": "aries|venus|cancer|ingress|4",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-81",
+      "contentKey": "aries|venus|cancer|ingress|4",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-82",
+      "contentKey": "aries|venus|cancer|ingress|4",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-993",
+      "contentKey": "virgo|mars|libra|ingress|2",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-994",
+      "contentKey": "virgo|mercury|libra|ingress|2",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-995",
+      "contentKey": "virgo|mercury|libra|ingress|2",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-998",
+      "contentKey": "virgo|south node|libra|ingress|2",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:house:row-999",
+      "contentKey": "virgo|sun|libra|ingress|2",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:transit:row-101",
+      "contentKey": "jupiter|sagittarius|retrograde",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:transit:row-102",
+      "contentKey": "jupiter|sagittarius|retrograde",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:transit:row-1050",
+      "contentKey": "venus|libra|retrograde",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:transit:row-164",
+      "contentKey": "mars|cancer|ingress",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:transit:row-210",
+      "contentKey": "mars|sagittarius|ingress",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:transit:row-352",
+      "contentKey": "mercury|leo|retrograde",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:transit:row-39",
+      "contentKey": "jupiter|aries|retrograde",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:transit:row-568",
+      "contentKey": "neptune|pisces|retrograde",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:transit:row-620",
+      "contentKey": "pluto|capricorn|direct",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:transit:row-676",
+      "contentKey": "saturn|libra|direct",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:transit:row-708",
+      "contentKey": "saturn|capricorn|direct",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:transit:row-716",
+      "contentKey": "saturn|capricorn|retrograde",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:transit:row-717",
+      "contentKey": "saturn|capricorn|retrograde",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:transit:row-85",
+      "contentKey": "jupiter|libra|retrograde",
+      "count": 1
+    },
+    {
+      "id": "matrix-v9:transit:row-956",
+      "contentKey": "uranus|pisces|ingress",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/compat-deep/moon/aquarius/leo",
+      "contentKey": "authored/compat-deep/moon/aquarius/leo",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/compat-deep/moon/leo/aquarius",
+      "contentKey": "authored/compat-deep/moon/leo/aquarius",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/compat-pair/mars/virgo/virgo",
+      "contentKey": "authored/compat-pair/mars/virgo/virgo",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/compat-pair/saturn/capricorn/libra",
+      "contentKey": "authored/compat-pair/saturn/capricorn/libra",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/compat-pair/saturn/libra/capricorn",
+      "contentKey": "authored/compat-pair/saturn/libra/capricorn",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/sky-lunation-macro/full-moon/aries",
+      "contentKey": "authored/sky-lunation-macro/full-moon/aries",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/sky-lunation-macro/full-moon/virgo",
+      "contentKey": "authored/sky-lunation-macro/full-moon/virgo",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/station/neptune/direct",
+      "contentKey": "authored/station/neptune/direct",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/station/saturn/direct",
+      "contentKey": "authored/station/saturn/direct",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/station/venus/rx",
+      "contentKey": "authored/station/venus/rx",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-aspect/moon/north-node/conjunction",
+      "contentKey": "authored/transit-aspect/moon/north-node/conjunction",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-aspect/moon/venus/hard",
+      "contentKey": "authored/transit-aspect/moon/venus/hard",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-aspect/north-node/sun/conjunction",
+      "contentKey": "authored/transit-aspect/north-node/sun/conjunction",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house-intro/jupiter/12",
+      "contentKey": "authored/transit-house-intro/jupiter/12",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house-intro/mercury/4",
+      "contentKey": "authored/transit-house-intro/mercury/4",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house-intro/saturn/2",
+      "contentKey": "authored/transit-house-intro/saturn/2",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house-intro/saturn/4",
+      "contentKey": "authored/transit-house-intro/saturn/4",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house-intro/venus/5",
+      "contentKey": "authored/transit-house-intro/venus/5",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/chiron/1",
+      "contentKey": "authored/transit-house/chiron/1",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/chiron/2",
+      "contentKey": "authored/transit-house/chiron/2",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/chiron/6",
+      "contentKey": "authored/transit-house/chiron/6",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/chiron/7",
+      "contentKey": "authored/transit-house/chiron/7",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/chiron/8",
+      "contentKey": "authored/transit-house/chiron/8",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/jupiter/12",
+      "contentKey": "authored/transit-house/jupiter/12",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/lilith/12",
+      "contentKey": "authored/transit-house/lilith/12",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/lilith/2",
+      "contentKey": "authored/transit-house/lilith/2",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/north-node/2",
+      "contentKey": "authored/transit-house/north-node/2",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/north-node/4",
+      "contentKey": "authored/transit-house/north-node/4",
+      "count": 2
+    },
+    {
+      "id": "serving:authored/transit-house/saturn/2",
+      "contentKey": "authored/transit-house/saturn/2",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/saturn/4",
+      "contentKey": "authored/transit-house/saturn/4",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/south-node/1",
+      "contentKey": "authored/transit-house/south-node/1",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/south-node/10",
+      "contentKey": "authored/transit-house/south-node/10",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/south-node/12",
+      "contentKey": "authored/transit-house/south-node/12",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/south-node/2",
+      "contentKey": "authored/transit-house/south-node/2",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-house/south-node/8",
+      "contentKey": "authored/transit-house/south-node/8",
+      "count": 1
+    },
+    {
+      "id": "serving:authored/transit-return/north-node",
+      "contentKey": "authored/transit-return/north-node",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/aspect-pair/lilith/jupiter/hard",
+      "contentKey": "fallback-hook/aspect-pair/lilith/jupiter/hard",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/aspect-pair/lilith/moon/conjunction",
+      "contentKey": "fallback-hook/aspect-pair/lilith/moon/conjunction",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/aspect-pair/saturn/pluto/soft",
+      "contentKey": "fallback-hook/aspect-pair/saturn/pluto/soft",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/aspect-pair/venus/uranus/hard",
+      "contentKey": "fallback-hook/aspect-pair/venus/uranus/hard",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/bond-effect-hard/uranus/variant-3",
+      "contentKey": "fallback-hook/bond-effect-hard/uranus/variant-3",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/bond-effect-square/venus",
+      "contentKey": "fallback-hook/bond-effect-square/venus",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/daily-body/conjunction/mars",
+      "contentKey": "fallback-hook/daily-body/conjunction/mars",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/daily-body/house/12",
+      "contentKey": "fallback-hook/daily-body/house/12",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/daily-body/house/4",
+      "contentKey": "fallback-hook/daily-body/house/4",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/daily-body/house/9",
+      "contentKey": "fallback-hook/daily-body/house/9",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/daily-body/opposition/lilith",
+      "contentKey": "fallback-hook/daily-body/opposition/lilith",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/daily-body/square/mars",
+      "contentKey": "fallback-hook/daily-body/square/mars",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/rising-ruler/libra/venus/2:friend",
+      "contentKey": "fallback-hook/empty-house/rising-ruler/libra/venus/2",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/rising-ruler/libra/venus/2:you",
+      "contentKey": "fallback-hook/empty-house/rising-ruler/libra/venus/2",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/rising-ruler/sagittarius/jupiter/11:friend",
+      "contentKey": "fallback-hook/empty-house/rising-ruler/sagittarius/jupiter/11",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/rising-ruler/sagittarius/jupiter/11:you",
+      "contentKey": "fallback-hook/empty-house/rising-ruler/sagittarius/jupiter/11",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/rising-ruler/sagittarius/jupiter/4:friend",
+      "contentKey": "fallback-hook/empty-house/rising-ruler/sagittarius/jupiter/4",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/rising-ruler/sagittarius/jupiter/4:you",
+      "contentKey": "fallback-hook/empty-house/rising-ruler/sagittarius/jupiter/4",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/ruler-house/3/7:friend",
+      "contentKey": "fallback-hook/empty-house/ruler-house/3/7",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/ruler-house/3/7:you",
+      "contentKey": "fallback-hook/empty-house/ruler-house/3/7",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/ruler-house/7/8:friend",
+      "contentKey": "fallback-hook/empty-house/ruler-house/7/8",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/ruler-house/7/8:you",
+      "contentKey": "fallback-hook/empty-house/ruler-house/7/8",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/ruler-planet/3/mercury/1:friend",
+      "contentKey": "fallback-hook/empty-house/ruler-planet/3/mercury/1",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/ruler-planet/3/mercury/1:you",
+      "contentKey": "fallback-hook/empty-house/ruler-planet/3/mercury/1",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/ruler-planet/5/venus/2:friend",
+      "contentKey": "fallback-hook/empty-house/ruler-planet/5/venus/2",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/ruler-planet/5/venus/2:you",
+      "contentKey": "fallback-hook/empty-house/ruler-planet/5/venus/2",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/sign/2/gemini:friend",
+      "contentKey": "fallback-hook/empty-house/sign/2/gemini",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/sign/2/gemini:you",
+      "contentKey": "fallback-hook/empty-house/sign/2/gemini",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/sign/9/aquarius:friend",
+      "contentKey": "fallback-hook/empty-house/sign/9/aquarius",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/empty-house/sign/9/aquarius:you",
+      "contentKey": "fallback-hook/empty-house/sign/9/aquarius",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/natal-aspect-lived/lilith/trine/venus",
+      "contentKey": "fallback-hook/natal-aspect-lived/lilith/trine/venus",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/natal-aspect-lived/mars/conjunction/saturn",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/conjunction/saturn",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/natal-aspect-lived/mars/quincunx/south-node",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/quincunx/south-node",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/natal-aspect-lived/mercury/square/uranus",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/square/uranus",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/natal-aspect-lived/saturn/sextile/part-of-fortune",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/sextile/part-of-fortune",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/natal-aspect-lived/sun/semisextile/ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/semisextile/ascendant",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/natal-aspect-lived/venus/conjunction/mars",
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/conjunction/mars",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/placement-house-lived/north-node/3",
+      "contentKey": "fallback-hook/placement-house-lived/north-node/3",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/placement-sentence/lilith/leo",
+      "contentKey": "fallback-hook/placement-sentence/lilith/leo",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/placement-sentence/mercury/capricorn",
+      "contentKey": "fallback-hook/placement-sentence/mercury/capricorn",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/placement-sign-lived/mercury/pisces",
+      "contentKey": "fallback-hook/placement-sign-lived/mercury/pisces",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/placement-sign-lived/moon/aries",
+      "contentKey": "fallback-hook/placement-sign-lived/moon/aries",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/placement-sign-lived/part-of-fortune/cancer",
+      "contentKey": "fallback-hook/placement-sign-lived/part-of-fortune/cancer",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/placement-sign-lived/venus/taurus",
+      "contentKey": "fallback-hook/placement-sign-lived/venus/taurus",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/planet-lived/uranus",
+      "contentKey": "fallback-hook/planet-lived/uranus",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sign-lived/libra",
+      "contentKey": "fallback-hook/sign-lived/libra",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sign-lived/scorpio",
+      "contentKey": "fallback-hook/sign-lived/scorpio",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sign-lived/virgo",
+      "contentKey": "fallback-hook/sign-lived/virgo",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-fullmoon-sign/libra",
+      "contentKey": "fallback-hook/sky-fullmoon-sign/libra",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-hook/chiron/cancer",
+      "contentKey": "fallback-hook/sky-placement-hook/chiron/cancer",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-hook/chiron/gemini",
+      "contentKey": "fallback-hook/sky-placement-hook/chiron/gemini",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-hook/mars/aquarius",
+      "contentKey": "fallback-hook/sky-placement-hook/mars/aquarius",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-hook/mercury/libra",
+      "contentKey": "fallback-hook/sky-placement-hook/mercury/libra",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-hook/mercury/pisces",
+      "contentKey": "fallback-hook/sky-placement-hook/mercury/pisces",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-hook/neptune/libra",
+      "contentKey": "fallback-hook/sky-placement-hook/neptune/libra",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-hook/neptune/scorpio",
+      "contentKey": "fallback-hook/sky-placement-hook/neptune/scorpio",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-hook/pluto/cancer",
+      "contentKey": "fallback-hook/sky-placement-hook/pluto/cancer",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-hook/sun/aries",
+      "contentKey": "fallback-hook/sky-placement-hook/sun/aries",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/chiron/capricorn",
+      "contentKey": "fallback-hook/sky-placement-lived/chiron/capricorn",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/jupiter/gemini",
+      "contentKey": "fallback-hook/sky-placement-lived/jupiter/gemini",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/jupiter/scorpio",
+      "contentKey": "fallback-hook/sky-placement-lived/jupiter/scorpio",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/mars/capricorn",
+      "contentKey": "fallback-hook/sky-placement-lived/mars/capricorn",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/mars/leo",
+      "contentKey": "fallback-hook/sky-placement-lived/mars/leo",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/mars/taurus",
+      "contentKey": "fallback-hook/sky-placement-lived/mars/taurus",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/mercury/libra",
+      "contentKey": "fallback-hook/sky-placement-lived/mercury/libra",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/neptune/capricorn",
+      "contentKey": "fallback-hook/sky-placement-lived/neptune/capricorn",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/neptune/leo",
+      "contentKey": "fallback-hook/sky-placement-lived/neptune/leo",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/north-node/aquarius",
+      "contentKey": "fallback-hook/sky-placement-lived/north-node/aquarius",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/north-node/libra",
+      "contentKey": "fallback-hook/sky-placement-lived/north-node/libra",
+      "count": 2
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/north-node/virgo",
+      "contentKey": "fallback-hook/sky-placement-lived/north-node/virgo",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/pluto/capricorn",
+      "contentKey": "fallback-hook/sky-placement-lived/pluto/capricorn",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/saturn/aquarius",
+      "contentKey": "fallback-hook/sky-placement-lived/saturn/aquarius",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/saturn/cancer",
+      "contentKey": "fallback-hook/sky-placement-lived/saturn/cancer",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/saturn/virgo",
+      "contentKey": "fallback-hook/sky-placement-lived/saturn/virgo",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/sun/pisces",
+      "contentKey": "fallback-hook/sky-placement-lived/sun/pisces",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/uranus/aquarius",
+      "contentKey": "fallback-hook/sky-placement-lived/uranus/aquarius",
+      "count": 2
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/uranus/capricorn",
+      "contentKey": "fallback-hook/sky-placement-lived/uranus/capricorn",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/uranus/leo",
+      "contentKey": "fallback-hook/sky-placement-lived/uranus/leo",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/uranus/scorpio",
+      "contentKey": "fallback-hook/sky-placement-lived/uranus/scorpio",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/venus/gemini",
+      "contentKey": "fallback-hook/sky-placement-lived/venus/gemini",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-lived/venus/pisces",
+      "contentKey": "fallback-hook/sky-placement-lived/venus/pisces",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-meaning/sun/leo",
+      "contentKey": "fallback-hook/sky-placement-meaning/sun/leo",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-turn/jupiter/leo",
+      "contentKey": "fallback-hook/sky-placement-turn/jupiter/leo",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-turn/lilith/aquarius",
+      "contentKey": "fallback-hook/sky-placement-turn/lilith/aquarius",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-turn/lilith/aries",
+      "contentKey": "fallback-hook/sky-placement-turn/lilith/aries",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-turn/lilith/sagittarius",
+      "contentKey": "fallback-hook/sky-placement-turn/lilith/sagittarius",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-turn/lilith/scorpio",
+      "contentKey": "fallback-hook/sky-placement-turn/lilith/scorpio",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-placement-turn/saturn/virgo",
+      "contentKey": "fallback-hook/sky-placement-turn/saturn/virgo",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-season-close/pisces",
+      "contentKey": "fallback-hook/sky-season-close/pisces",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-sign-copy/mars/taurus",
+      "contentKey": "fallback-hook/sky-sign-copy/mars/taurus",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/sky-sign-copy/sun/leo",
+      "contentKey": "fallback-hook/sky-sign-copy/sun/leo",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/synastry-pair/moon/neptune/soft",
+      "contentKey": "fallback-hook/synastry-pair/moon/neptune/soft",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/synastry-pair/neptune/ascendant/hard",
+      "contentKey": "fallback-hook/synastry-pair/neptune/ascendant/hard",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/transit-effect-hard/jupiter/variant-3",
+      "contentKey": "fallback-hook/transit-effect-hard/jupiter/variant-3",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/transit-effect-hard/neptune/variant-3",
+      "contentKey": "fallback-hook/transit-effect-hard/neptune/variant-3",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/transit-effect-hard/neptune/venus",
+      "contentKey": "fallback-hook/transit-effect-hard/neptune/venus",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/transit-retro-article/chiron",
+      "contentKey": "fallback-hook/transit-retro-article/chiron",
+      "count": 2
+    },
+    {
+      "id": "serving:fallback-hook/transit-retro-article/mars",
+      "contentKey": "fallback-hook/transit-retro-article/mars",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/transit-retro-article/mercury",
+      "contentKey": "fallback-hook/transit-retro-article/mercury",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/transit-retro-article/neptune",
+      "contentKey": "fallback-hook/transit-retro-article/neptune",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/transit-retro-article/pluto",
+      "contentKey": "fallback-hook/transit-retro-article/pluto",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/transit-retro-article/saturn",
+      "contentKey": "fallback-hook/transit-retro-article/saturn",
+      "count": 1
+    },
+    {
+      "id": "serving:fallback-hook/transit-retro-article/uranus",
+      "contentKey": "fallback-hook/transit-retro-article/uranus",
+      "count": 2
+    },
+    {
+      "id": "serving:fallback-hook/transit-retro/chiron",
+      "contentKey": "fallback-hook/transit-retro/chiron",
+      "count": 1
+    },
+    {
+      "id": "serving:sky.station.chiron.taurus.retrograde",
+      "contentKey": "sky.station.chiron.taurus.retrograde",
+      "count": 1
+    }
+  ],
+  "sampleEntryFindings": [
+    {
+      "id": "matrix-v9:house:row-10",
+      "contentKey": "aries|mercury|aries|ingress|1",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "introduction, wording, somebody",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-100",
+      "contentKey": "aries|sun|virgo|ingress|6",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "everybody",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1000",
+      "contentKey": "virgo|sun|libra|ingress|2",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "disposable, fifty-fifty",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1001",
+      "contentKey": "virgo|venus|libra|ingress|2",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "disposable, nicer, fifty-fifty",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1002",
+      "contentKey": "virgo|mars|scorpio|ingress|3",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "reply, errand, motive",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1003",
+      "contentKey": "virgo|mercury|scorpio|ingress|3",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "motive",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1004",
+      "contentKey": "virgo|mercury|scorpio|ingress|3",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "motive",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1005",
+      "contentKey": "virgo|mercury|scorpio|ingress|3",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "motive",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1006",
+      "contentKey": "virgo|moon|scorpio|ingress|3",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "trip",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1007",
+      "contentKey": "virgo|moon|scorpio|ingress|3",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "trip",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1008",
+      "contentKey": "virgo|south node|scorpio|ingress|3",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "motive",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1009",
+      "contentKey": "virgo|sun|scorpio|ingress|3",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "pitch, motive",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-101",
+      "contentKey": "aries|sun|virgo|ingress|6",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "everybody",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1010",
+      "contentKey": "virgo|sun|scorpio|ingress|3",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "pitch, motive",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1011",
+      "contentKey": "virgo|sun|scorpio|ingress|3",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "pitch, motive",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1012",
+      "contentKey": "virgo|sun|scorpio|ingress|3",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "pitch, motive",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1013",
+      "contentKey": "virgo|venus|scorpio|ingress|3",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "kinder, motive",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1014",
+      "contentKey": "virgo|jupiter|sagittarius|ingress|4",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "setup",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1015",
+      "contentKey": "virgo|mars|sagittarius|ingress|4",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "setup",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1018",
+      "contentKey": "virgo|mercury|sagittarius|ingress|4",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "setup",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1019",
+      "contentKey": "virgo|mercury|sagittarius|ingress|4",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "setup",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-102",
+      "contentKey": "aries|venus|virgo|ingress|6",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "workspace, nicer",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1020",
+      "contentKey": "virgo|mercury|sagittarius|ingress|4",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "setup",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1021",
+      "contentKey": "virgo|mercury|sagittarius|ingress|4",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "setup",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1022",
+      "contentKey": "virgo|south node|sagittarius|ingress|4",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "assigning, setup",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1023",
+      "contentKey": "virgo|sun|sagittarius|ingress|4",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "setup",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1024",
+      "contentKey": "virgo|sun|sagittarius|ingress|4",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "setup",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1025",
+      "contentKey": "virgo|sun|sagittarius|ingress|4",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "setup",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1027",
+      "contentKey": "virgo|venus|sagittarius|ingress|4",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "nicer, setup",
+          "advisory": true
+        }
+      ]
+    },
+    {
+      "id": "matrix-v9:house:row-1028",
+      "contentKey": "virgo|venus|sagittarius|ingress|4",
+      "family": "knowledge-matrix-house",
+      "findings": [
+        {
+          "category": "vocabulary_outside_corpus",
+          "detail": "nicer, setup",
+          "advisory": true
+        }
+      ]
+    }
+  ],
+  "sampleBatchFindings": [
+    {
+      "family": "knowledge-matrix-house",
+      "start": 0,
+      "size": 12,
+      "findings": [],
+      "counts": {
+        "negationPivots": 1,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 1
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 12,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "decision",
+          "count": 5,
+          "indices": [
+            1,
+            2,
+            3,
+            9,
+            10
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 24,
+      "size": 12,
+      "findings": [
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "sun in sagittarius moves",
+          "count": 4,
+          "indices": [
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 36,
+      "size": 12,
+      "findings": [
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "pluto in capricorn moves",
+          "count": 4,
+          "indices": [
+            5,
+            6,
+            7,
+            8
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 48,
+      "size": 12,
+      "findings": [
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "venus in capricorn moves",
+          "count": 4,
+          "indices": [
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 72,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "answer",
+          "count": 4,
+          "indices": [
+            1,
+            2,
+            9,
+            10
+          ]
+        },
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "mercury in pisces moves",
+          "count": 5,
+          "indices": [
+            3,
+            4,
+            5,
+            7,
+            8
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 84,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "plan",
+          "count": 6,
+          "indices": [
+            4,
+            6,
+            7,
+            9,
+            10,
+            11
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 96,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "answer",
+          "count": 8,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            8
+          ]
+        },
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "mercury in aries moves",
+          "count": 5,
+          "indices": [
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 108,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "answer",
+          "count": 9,
+          "indices": [
+            0,
+            1,
+            2,
+            5,
+            6,
+            7,
+            8,
+            10,
+            11
+          ]
+        },
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "sun in aries moves",
+          "count": 4,
+          "indices": [
+            6,
+            7,
+            8,
+            9
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 120,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "answer",
+          "count": 4,
+          "indices": [
+            0,
+            1,
+            10,
+            11
+          ]
+        },
+        {
+          "category": "scene_noun_frequency",
+          "detail": "plan",
+          "count": 7,
+          "indices": [
+            3,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ]
+        },
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "venus in aries moves",
+          "count": 5,
+          "indices": [
+            0,
+            1,
+            2,
+            4,
+            5
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 132,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "plan",
+          "count": 9,
+          "indices": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            8,
+            9,
+            10,
+            11
+          ]
+        },
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "sun in taurus moves",
+          "count": 5,
+          "indices": [
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 144,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "meeting",
+          "count": 8,
+          "indices": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            11
+          ]
+        },
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "mercury in gemini moves",
+          "count": 5,
+          "indices": [
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 156,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "meeting",
+          "count": 9,
+          "indices": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "sun in gemini moves",
+          "count": 6,
+          "indices": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 168,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "plan",
+          "count": 4,
+          "indices": [
+            2,
+            3,
+            5,
+            6
+          ]
+        },
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "sun in cancer moves",
+          "count": 4,
+          "indices": [
+            7,
+            8,
+            9,
+            11
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 180,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "plan",
+          "count": 4,
+          "indices": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "venus in cancer moves",
+          "count": 4,
+          "indices": [
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 192,
+      "size": 12,
+      "findings": [
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "venus in leo moves",
+          "count": 4,
+          "indices": [
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 204,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "decision",
+          "count": 6,
+          "indices": [
+            3,
+            4,
+            5,
+            7,
+            10,
+            11
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 216,
+      "size": 12,
+      "findings": [
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "mercury in sagittarius moves",
+          "count": 4,
+          "indices": [
+            8,
+            9,
+            10,
+            11
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 228,
+      "size": 12,
+      "findings": [
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "sun in sagittarius moves",
+          "count": 4,
+          "indices": [
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 240,
+      "size": 12,
+      "findings": [
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "pluto in capricorn moves",
+          "count": 4,
+          "indices": [
+            5,
+            6,
+            7,
+            8
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 252,
+      "size": 12,
+      "findings": [
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "venus in capricorn moves",
+          "count": 4,
+          "indices": [
+            2,
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 276,
+      "size": 12,
+      "findings": [
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "mercury in pisces moves",
+          "count": 6,
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 288,
+      "size": 12,
+      "findings": [
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "venus in pisces moves",
+          "count": 4,
+          "indices": [
+            7,
+            8,
+            9,
+            10
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 300,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "answer",
+          "count": 4,
+          "indices": [
+            2,
+            3,
+            9,
+            11
+          ]
+        },
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "mercury in aries moves",
+          "count": 5,
+          "indices": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 312,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "plan",
+          "count": 7,
+          "indices": [
+            2,
+            3,
+            4,
+            8,
+            9,
+            10,
+            11
+          ]
+        },
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "sun in aries moves",
+          "count": 4,
+          "indices": [
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 324,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "plan",
+          "count": 9,
+          "indices": [
+            0,
+            3,
+            4,
+            5,
+            6,
+            7,
+            9,
+            10,
+            11
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 336,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "plan",
+          "count": 9,
+          "indices": [
+            0,
+            2,
+            3,
+            4,
+            7,
+            8,
+            9,
+            10,
+            11
+          ]
+        },
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "sun in taurus moves",
+          "count": 5,
+          "indices": [
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 348,
+      "size": 12,
+      "findings": [
+        {
+          "category": "scene_noun_frequency",
+          "detail": "answer",
+          "count": 6,
+          "indices": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ]
+        },
+        {
+          "category": "scene_noun_frequency",
+          "detail": "plan",
+          "count": 6,
+          "indices": [
+            0,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "mercury in gemini moves",
+          "count": 4,
+          "indices": [
+            6,
+            8,
+            9,
+            10
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 360,
+      "size": 12,
+      "findings": [
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "sun in gemini moves",
+          "count": 6,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    },
+    {
+      "family": "knowledge-matrix-house",
+      "start": 372,
+      "size": 12,
+      "findings": [
+        {
+          "category": "opening_syntax_repetition",
+          "detail": "sun in cancer moves",
+          "count": 5,
+          "indices": [
+            7,
+            8,
+            9,
+            10,
+            11
+          ]
+        }
+      ],
+      "counts": {
+        "negationPivots": 0,
+        "negationPivotsByPage": [
+          {
+            "index": 0,
+            "count": 0
+          },
+          {
+            "index": 1,
+            "count": 0
+          },
+          {
+            "index": 2,
+            "count": 0
+          },
+          {
+            "index": 3,
+            "count": 0
+          },
+          {
+            "index": 4,
+            "count": 0
+          },
+          {
+            "index": 5,
+            "count": 0
+          },
+          {
+            "index": 6,
+            "count": 0
+          },
+          {
+            "index": 7,
+            "count": 0
+          },
+          {
+            "index": 8,
+            "count": 0
+          },
+          {
+            "index": 9,
+            "count": 0
+          },
+          {
+            "index": 10,
+            "count": 0
+          },
+          {
+            "index": 11,
+            "count": 0
+          }
+        ],
+        "negationPivotSetCap": 3
+      }
+    }
+  ]
+}

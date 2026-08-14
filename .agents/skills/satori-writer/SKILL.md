@@ -18,6 +18,11 @@ Produce authored candidate wording from governed evidence. Treat writing, judgin
 - Require explicit authorization before any billed generation or judge call.
 - Do not promote content, alter the editorial model registry, or synchronize external content from this skill.
 - Do not write or revise an aspect entry whose human-moment beat is missing. Flag it for editorial work instead of inventing a core. A harvest with `harvest_mode: none_found` is non-blocking; proceed without inventing a reassurance line.
+- Owner ruling, 2026-08-13, verbatim: "if the article does not go through both the writing-pipeline and the satori voice, fail the article and rewrite." For article generation, require at least three exact owner-authored passages from the explicitly mapped same-family pool plus the configured register-gold page. Empty, below-floor, or unmapped retrieval returns `failed-retrieval` before any writer call. The result is diagnostic only, never an editable draft, voice evidence, or baseline.
+- Use `docs/writing/SHARED_EVIDENCE_STANDARD.md` for every article packet. Meaning, register, scene, and argument are separate required roles. Approved same-planet-sign house cores are the primary placement-article scene bank, followed by approved serving rows, then matrix scene rows. If approved same-placement scene evidence exists but none reaches the packet, fail retrieval. The writer may use observable actions, objects, costs, and follow-up work, but may not import a house claim into houseless copy.
+- Load matrix evidence through `data/writing/matrix-evidence-index/`. Filter to the exact planet-sign and relevant event; keep meaning, scene, and argument-candidate lanes separate; deduplicate within the target and role by `copy_sha`; and honor governance precedence. The workbook remains canonical and unchanged.
+- Treat every recorded spine slot as a semantic coverage check, never a sentence template. Do not announce `the job of`, `this is a period for`, or `the collective lesson is` merely because the outline contains those labels. Count negation pivots mechanically: no more than one per page and three across a twelve-item set.
+- Structural presence is not completion. Apply the unified eight-element Sky Placement article spine in `docs/writing/ASTROLOGY_CONTRACT.md`; slow movers add era frame, recurrence, conditional older analogs, and collective lesson. Every element is required, so any failed element must return `spine-quality-incomplete`; never present that draft as complete, never rewrite it automatically, and never exempt inherited copy because it carried approval under an older standard.
 
 Read [governance.md](references/governance.md) when approval scope, evidence authority, or feedback classification is involved. Read [writer-contract.md](references/writer-contract.md) before drafting or rewriting. Read [commands.md](references/commands.md) when running the deterministic tools.
 
@@ -42,7 +47,11 @@ Require the packet to contain:
 - verified astrology;
 - surface requirements;
 - the exact writing task;
-- four to six exact owner-authored passages selected by same-sign, same-planet, then adjacent affinity;
+- at least three exact owner-authored passages from the explicitly mapped same-family pool,
+  plus the configured register-gold page; the completed packet may contain four to six passages
+  selected by same-sign, same-planet, then adjacent affinity;
+- a separate scene-evidence section led by approved same-planet-sign house cores when available,
+  followed by approved serving scenes and then governed matrix scenes under authority precedence;
 - the concise governed writer prompt.
 
 For a beat-only rewrite, the passages must come from at least three articles, contain at least three paragraph structures, and include at least two passages matching the requested beat. Reject a packet if anything other than `owner_authored_final` appears in initial writer retrieval.
