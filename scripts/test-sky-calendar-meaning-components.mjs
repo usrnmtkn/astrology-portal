@@ -49,6 +49,13 @@ assert.equal(registry.policy.componentsAreMeaningNotSentences, true);
 assert.equal(registry.policy.emitStoredComponentVerbatim, false);
 assert.equal(registry.policy.firstSentenceMustBeComposed, true);
 assert.equal(registry.policy.failClosed, true);
+assert.equal(registry.evidenceLayerSha256, "0ceb85f5897fb42238dfdd69e7b02271f87befe202f009da8659add9b9337c23");
+assert.equal(registry.wordingQuality.maximumOpeningConstructionUse <= registry.wordingQuality.caps.openingConstruction, true);
+assert.equal(registry.wordingQuality.maximumManifestationUse <= registry.wordingQuality.caps.repeatedManifestation, true);
+assert.equal(registry.wordingQuality.maximumDetailsLanguageUse <= registry.wordingQuality.caps.repeatedDetailsLanguage, true);
+assert.equal(registry.wordingQuality.maximumConnectiveNgramUse <= registry.wordingQuality.caps.connectiveNgram, true);
+assert.deepEqual(registry.wordingQuality.detailsCopiedFromCombinedPosition, []);
+assert.deepEqual(registry.wordingQuality.mechanicalJoinRows, []);
 
 const all = [
   ...registry.signUnits,
@@ -75,14 +82,16 @@ for (const row of registry.signUnits) {
     assert.ok(typeof row[field] === "string" && row[field].trim(), `${row.key} ${field}`);
     assert.doesNotMatch(row[field], /[.!?]$/u, `${row.key} ${field} must remain a meaning component, not a sentence`);
   }
-  assert.ok(Array.isArray(row.reader_manifestations) && row.reader_manifestations.length > 0);
+  assert.notEqual(row.details_language, row.combined_position, `${row.key} details language must be independently phrased`);
+  assert.doesNotMatch(row.combined_position, /;\s*expressed through|\bexpressed through\b/iu, `${row.key} mechanical join`);
+  assert.ok(Array.isArray(row.reader_manifestations) && row.reader_manifestations.length === 3);
   row.reader_manifestations.forEach((value) => {
     assert.doesNotMatch(value, /[.!?]$/u, `${row.key} reader manifestation must remain a component`);
   });
 }
 
 for (const row of [...registry.aspectMechanisms, ...registry.modalityUnits, ...registry.elementUnits]) {
-  for (const field of ["conflict_behavior", "movement_bias"]) {
+  for (const field of ["reader_effect", "conflict_behavior", "movement_bias"]) {
     assert.ok(typeof row[field] === "string" && row[field].trim(), `${row.key} ${field}`);
     assert.doesNotMatch(row[field], /[.!?]$/u, `${row.key} ${field} must remain a meaning component`);
   }
@@ -94,6 +103,7 @@ assert.equal(opposition.conflict_behavior, "the disagreement is more likely to b
 assert.equal(opposition.movement_bias, "movement usually requires dealing with both positions rather than eliminating one");
 
 const fixedFixed = registry.modalityUnits.find((row) => row.key === "sky-how/modality/fixed/fixed");
+assert.equal(fixedFixed.reader_effect, "the disagreement settles around two positions neither side considers expendable");
 assert.equal(fixedFixed.conflict_behavior, "neither side gives ground easily under pressure");
 assert.equal(fixedFixed.movement_bias, "change is more likely in the terms or structure than through either side backing down");
 
