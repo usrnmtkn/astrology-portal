@@ -62,6 +62,10 @@ function normalized(value) {
   return String(value || "").trim().toLowerCase();
 }
 
+function normalizedContentId(value) {
+  return normalized(value).replace(/\s+/gu, "-");
+}
+
 function exactLlKey(context) {
   return context.kind === "aspect"
     ? `${normalized(context.transitPlanet)}|${normalized(context.aspect)}|${normalized(context.natalPoint)}`
@@ -389,7 +393,7 @@ function compileSceneContext(context, { mode = "production", registry = readJson
 
 function dailyGlanceKeyForContext(context) {
   if (context?.kind === "house") return `house/${context.transitHouse}`;
-  if (context?.kind === "aspect") return `${context.aspectGroup}/${normalized(context.natalPoint)}`;
+  if (context?.kind === "aspect") return `${context.aspectGroup}/${normalizedContentId(context.natalPoint)}`;
   return null;
 }
 

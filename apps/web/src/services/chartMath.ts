@@ -343,18 +343,13 @@ export function selectDailyGlanceCivilDayDriver(
  * resolve, but a house-only result fails closed instead of licensing a guessed
  * life domain.
  */
-export function selectDailyGlanceChartContext(
-  moon: { longitude?: number; sign: string; house?: number | null },
+export function dailyGlanceChartContextFromSelection(
+  driver: DailyGlanceSelection | null,
+  moon: { sign: string; house?: number | null },
   natalTargets: Array<{ planet: string; longitude?: number; sign?: string | null; house?: number | null }>,
   fallbackHouse: number | null,
-  housesReliable: boolean,
-  maxOrb = 5
+  housesReliable: boolean
 ): DailyGlanceChartContext | null {
-  if (typeof moon.longitude !== "number" || !Number.isFinite(moon.longitude)) {
-    return null;
-  }
-
-  const driver = selectDailyGlanceDriver(moon.longitude, natalTargets, fallbackHouse, maxOrb);
   if (!driver) return null;
 
   if (driver.kind === "house") {
@@ -383,6 +378,40 @@ export function selectDailyGlanceChartContext(
     orb: driver.orb,
     housesReliable
   };
+}
+
+/**
+ * Resolves the writer-only chart context from the same civil-day selection
+ * policy used by the serving Daily At-a-Glance card. Callers that already
+ * selected the serving driver can pass it to
+ * `dailyGlanceChartContextFromSelection` to avoid recalculating it.
+ */
+export function selectDailyGlanceChartContext(
+  moon: { longitude?: number; speed?: number | null; sign: string; house?: number | null },
+  natalTargets: Array<{ planet: string; longitude?: number; sign?: string | null; house?: number | null }>,
+  fallbackHouse: number | null,
+  housesReliable: boolean,
+  maxOrb = 5
+): DailyGlanceChartContext | null {
+  if (typeof moon.longitude !== "number" || !Number.isFinite(moon.longitude)) {
+    return null;
+  }
+
+  const driver = selectDailyGlanceCivilDayDriver(
+    moon.longitude,
+    moon.speed,
+    natalTargets,
+    fallbackHouse,
+    maxOrb
+  );
+
+  return dailyGlanceChartContextFromSelection(
+    driver,
+    moon,
+    natalTargets,
+    fallbackHouse,
+    housesReliable
+  );
 }
 
 export function zodiacSignForLongitude(longitude: number) {
