@@ -19,8 +19,8 @@ assert.match(
 );
 assert.match(
   app,
-  /isPersonalTransitDateMode && skyDate === todaySkyDate[\s\S]*\? "Pick Date"/u,
-  "You and Friends must visibly present the header control as Pick Date."
+  /isPersonalTransitDateMode && skyDate === todaySkyDate[\s\S]*\? "Today"/u,
+  "You and Friends must visibly present the current date as Today."
 );
 assert.equal(
   (app.match(/<SkyDatePicker/gu) ?? []).length,
