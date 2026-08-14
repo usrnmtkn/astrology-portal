@@ -14,7 +14,14 @@ const functionWords = new Set([
   "will", "with", "without", "what", "which", "why",
 ]);
 
-const requiredBeatKeys = [
+const forecastBeatKeys = [
+  "whatMayHappen",
+  "whatItTurnsInto",
+  "howItBehaves",
+  "whatCanMove",
+];
+
+const detailsBeatKeys = [
   "whatMayHappen",
   "whyItMatters",
   "whyItSticksOrMoves",
@@ -58,7 +65,7 @@ function cardKey(card, index) {
   return String(card.contentKey ?? card.key ?? `card-${index + 1}`);
 }
 
-function verifyBeats(card, key, field, defects) {
+function verifyBeats(card, key, field, requiredBeatKeys, defects) {
   const beats = card[field];
   if (!beats || typeof beats !== "object") {
     defects.push({ code: "missing_beat_metadata", key, field });
@@ -90,12 +97,16 @@ export function auditSkyCalendarFrameUniqueness(cards, {
     if (!forecast) defects.push({ code: "missing_forecast", key });
     if (!details) defects.push({ code: "missing_details", key });
     if (requireBeatMetadata) {
-      verifyBeats(card, key, "forecastBeats", defects);
-      verifyBeats(card, key, "detailsBeats", defects);
+      verifyBeats(card, key, "forecastBeats", forecastBeatKeys, defects);
+      verifyBeats(card, key, "detailsBeats", detailsBeatKeys, defects);
     }
 
     for (const [surface, text] of [["forecast", forecast], ["details", details]]) {
-      const sentences = splitSentences(text);
+      const allSentences = splitSentences(text);
+      const transitLabel = normalizeWhitespace(card.detailsTransitLabel).toLowerCase();
+      const sentences = surface === "details" && transitLabel && allSentences[0]?.toLowerCase() === transitLabel
+        ? allSentences.slice(1)
+        : allSentences;
       if (sentences.length === 0) continue;
       addOccurrence(
         surface === "forecast" ? forecastOpeners : detailsOpeners,
@@ -118,6 +129,15 @@ export function auditSkyCalendarFrameUniqueness(cards, {
           });
         }
       });
+      if (surface === "details" && sentences !== allSentences && allSentences[0]) {
+        addOccurrence(exactSentences, normalizeWhitespace(allSentences[0]).toLowerCase(), {
+          key,
+          surface,
+          sentenceIndex: -1,
+          sentence: allSentences[0],
+          structuralLabel: true,
+        });
+      }
     }
   });
 
