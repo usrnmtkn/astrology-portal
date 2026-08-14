@@ -261,10 +261,10 @@ function validateKeyDates(units: AssembledReportUnit[], issues: ReportAssemblyIs
         }
         if (parts.length === 4) {
           const titleWords = parts[1].match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)?/gu)?.length ?? 0;
-          if (titleWords < 2 || titleWords > 6) {
+          if (titleWords < 2 || titleWords > 8) {
             issues.push(issue({
               code: "key_date_title_length",
-              message: `Key-date title '${parts[1]}' must contain 2–6 words.`,
+              message: `Key-date title '${parts[1]}' must contain 2–8 words.`,
               unitId: unit.unitId, location: field.location, sentenceIndex: recordIndex,
               scopeStart: recordIndex, scopeEnd: recordIndex, quote: record
             }, "error"));

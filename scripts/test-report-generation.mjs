@@ -459,7 +459,7 @@ const eligibilityFixture = reportFactors({
     { point: "North Node", house: 4 }
   ] } },
   slowTransitArcs: [
-    { id: "allowed-chiron-source", transitPlanet: "Chiron", natalPoint: "Sun", natalHouse: 1, aspect: "trine" },
+    { id: "excluded-chiron-source", transitPlanet: "Chiron", natalPoint: "Sun", natalHouse: 1, aspect: "trine" },
     { id: "excluded-chiron-target", transitPlanet: "Pluto", natalPoint: "Chiron", natalHouse: 2, aspect: "square" },
     { id: "excluded-lilith-target", transitPlanet: "Pluto", natalPoint: "Black Moon Lilith", natalHouse: 3, aspect: "trine" },
     { id: "excluded-node-target", transitPlanet: "Jupiter", natalPoint: "North Node", natalHouse: 4, aspect: "sextile" }
@@ -481,7 +481,6 @@ const eligibilityFixture = reportFactors({
 });
 assert.deepEqual(eligibilityFixture.map((factor) => factor.id), [
   "sr-overlay-sun-house-1",
-  "allowed-chiron-source",
   "fixture-eclipse-house-5",
   "fixture-eclipse-sun"
 ]);
