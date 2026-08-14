@@ -92,6 +92,9 @@ export default defineConfig(({ command, mode }) => {
     },
     optimizeDeps: {
       exclude: ["swisseph-wasm"]
+    },
+    build: {
+      manifest: true
     }
   }
 });

@@ -7905,6 +7905,7 @@ body,
   background: var(--admin-ui-bg);
   color: var(--admin-ui-text);
   grid-template-columns: 276px minmax(0, 1fr);
+  overflow-anchor: none;
   overflow-x: hidden;
 }
 
