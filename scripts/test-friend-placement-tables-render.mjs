@@ -316,7 +316,12 @@ try {
     }],
     dailyForecast: {
       headline: "An opening just appeared.",
-      body: "Alex gets an answer sooner than expected and can use the opening while it is here."
+      body: "Alex gets an answer sooner than expected and can use the opening while it is here.",
+      moonContext: {
+        sign: "Gemini",
+        houseLabel: "Alex's 11th house",
+        topic: "friends, community, and long-term hopes"
+      }
     },
     dailyDoItems: ["Name the plan", "Keep it practical", "Leave room"],
     dailyDontItems: ["Force an answer", "Assume the worst", "Overpromise"],
@@ -355,6 +360,9 @@ try {
   }));
   assert.match(populatedTransitsHtml, /friend-profile-copy-column"><section class="daily-horoscope-summary friend-daily-forecast"/);
   assert.match(populatedTransitsHtml, /Daily forecast for Alex/);
+  assert.match(populatedTransitsHtml, /Moon in Gemini/);
+  assert.match(populatedTransitsHtml, /Alex&#x27;s 11th house/);
+  assert.match(populatedTransitsHtml, /friends, community, and long-term hopes/);
   assert.match(populatedTransitsHtml, /An opening just appeared/);
   assert.match(populatedTransitsHtml, /Alex gets an answer sooner than expected/);
   assert.doesNotMatch(populatedTransitsHtml, /most relevant transit|friend-transit-focus/);
@@ -373,6 +381,30 @@ try {
     populatedTransitsHtml.indexOf("An opening just appeared") < populatedTransitsHtml.indexOf("Name the plan"),
     "The chart-specific daily write-up should lead the friend's daily guidance."
   );
+
+  const unknownBirthTimeTransitsHtml = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
+    bondTransits: [],
+    dailyForecast: {
+      headline: "Keep the pace simple.",
+      body: "Alex can leave one decision open until there is more information.",
+      moonContext: {
+        sign: "Gemini",
+        houseLabel: null,
+        topic: null
+      }
+    },
+    dateLabel: "Today",
+    friendName: "Alex",
+    houseTransits: [],
+    onOpenBondTransit() {},
+    onOpenHouseTransit() {},
+    onOpenPersonalTransit() {},
+    patternItems: [],
+    patternTimingOverrides: {},
+    personalTransitGroups: []
+  }));
+  assert.match(unknownBirthTimeTransitsHtml, /Moon in Gemini/);
+  assert.doesNotMatch(unknownBirthTimeTransitsHtml, /house/);
   assert.ok(
     populatedTransitsHtml.indexOf("Between you two") < populatedTransitsHtml.indexOf("Mars trine Moon"),
     "Relationship context should lead the ranked short-term transit list."
