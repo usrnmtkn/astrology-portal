@@ -2,6 +2,7 @@ import type {
   NatalAspectPatternActivationTimingWindow,
   NatalAspectPatternReaderItem
 } from "../../services/natalAspectPatterns";
+import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
 import { DurationLabelText } from "../../components/charts/PlacementRows";
 import { pointGlyph } from "../../components/charts/chartAssets";
 import { NatalAspectPatternActivationsSection } from "../you/NatalAspectPatternsSection";
@@ -45,11 +46,7 @@ export type FriendPersonalTransitGroup = {
 export type FriendDailyForecastView = {
   headline: string;
   body: string;
-  moonContext: {
-    sign: string;
-    houseLabel: string | null;
-    topic: string | null;
-  };
+  moonContext: DailyMoonContext;
 };
 
 type FriendPersonalTransit = FriendPersonalTransitGroup["transits"][number];
@@ -145,23 +142,7 @@ export function FriendTransitsTab({
           <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Daily forecast for ${friendName}`}>
             <h3>{dailyForecast.headline}</h3>
             <p>{dailyForecast.body}</p>
-            <div
-              aria-label={[
-                `Moon in ${dailyForecast.moonContext.sign}`,
-                dailyForecast.moonContext.houseLabel,
-                dailyForecast.moonContext.topic
-              ].filter(Boolean).join(", ")}
-              className="updates-aspect-row__meta-line daily-horoscope-summary__moon-tags"
-            >
-              <span className="ui-pill ui-pill--neutral ui-pill--mixed">Moon in</span>
-              <span className="ui-pill ui-pill--neutral ui-pill--mixed">
-                {[
-                  dailyForecast.moonContext.sign,
-                  dailyForecast.moonContext.houseLabel,
-                  dailyForecast.moonContext.topic
-                ].filter(Boolean).join(" · ")}
-              </span>
-            </div>
+            <DailyMoonContextTags context={dailyForecast.moonContext} />
           </section>
         ) : null}
         {hasDailyGuidance ? (
