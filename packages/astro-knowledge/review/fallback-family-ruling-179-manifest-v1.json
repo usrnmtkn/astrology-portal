@@ -1,0 +1,1269 @@
+{
+  "schemaVersion": 1,
+  "id": "fallback-family-ruling-179-manifest-v1",
+  "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+  "reconciliationRecord": "packages/astro-knowledge/review/fallback-approval-metadata-reconciliation-2026-08-13.json",
+  "rulingTemplatePath": "packages/astro-knowledge/review/TLDR-APPROVAL-RULING-NEEDED-179-ROWS.md",
+  "rulingTemplateSha256": "933ce9e7a02385d4e68694763f9303f8d555f14e7faedcf84a8ab8612d7da5b1",
+  "counts": {
+    "families": 18,
+    "rows": 179,
+    "currentlyUngated": 145,
+    "alreadyExactOwnerApproved": 34
+  },
+  "rows": [
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/ascendant/aquarius",
+      "rowWithoutApprovalSha256": "65ea5eceff6113eb2803fdc06307a5ef34ebc1b8d2567a71ce54065172ac4e43",
+      "readerPayloadSha256": "932f1737a420aefc8b727816fa20576390837c4e4f426f8e96dd03cfa539318d",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/ascendant/aries",
+      "rowWithoutApprovalSha256": "a31f474e47b418222370706cf56e60c0c39fdd434be2e52fdc4f7e76358a99fe",
+      "readerPayloadSha256": "66d21762e4751a7d9faa0b4ce0180f90f2be9e946247b16744f176cb11b3aaa9",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/ascendant/cancer",
+      "rowWithoutApprovalSha256": "4fe8a6107c3b6fec953518a8ff71523521b963b060e45a2f81facbbe3119300c",
+      "readerPayloadSha256": "03cc5272a6d19ca161f285d4ce59c1bf80ae9a0dd049b780b2c0ae88d8009368",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/ascendant/capricorn",
+      "rowWithoutApprovalSha256": "ac7c903fe622aebb0a6294c4ea4521a982a4f93ef4b1a19ce06fb8017397d437",
+      "readerPayloadSha256": "935156662ee36924e21d37ac6e5ff4e562d68fbca465e0648733515a8373f0be",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/ascendant/gemini",
+      "rowWithoutApprovalSha256": "ebccedc7013002b7a575f5c9523e1c4f9624450d064bb57e81a4c5c378c8f345",
+      "readerPayloadSha256": "e462bf2049415cd72b340044118052b37e66f7a7e17f96053d9ff6ee5be8d9a5",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/ascendant/leo",
+      "rowWithoutApprovalSha256": "6f28b51ed744076ce6316ad6d55f5847a9fc7de268898de7b2d05e578f54739b",
+      "readerPayloadSha256": "ff68dde03d10b4bc47dc7b80e40bc9df4513d00e29a3958eefec83f907f10237",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/ascendant/libra",
+      "rowWithoutApprovalSha256": "fa42aa8ba848732678d27994d78612138672ca21846bf384701178d1e6a26edb",
+      "readerPayloadSha256": "c4939ebd5f812b4e594c02b5b7df990cbfe46ec40925842167f170979cca2c35",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/ascendant/pisces",
+      "rowWithoutApprovalSha256": "95ff8301341871a842e9e8ab487d374c4613bde070ff0710b7bb78befd910daa",
+      "readerPayloadSha256": "c0ecff5418f66acec50be7d49741292bd716e47cf5401ee6b664ff3cc490adf3",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/ascendant/sagittarius",
+      "rowWithoutApprovalSha256": "d7ec4641dce32445c5c3c7553dd3903a2f609a1e4a9438a9bd3fdef230e8bac5",
+      "readerPayloadSha256": "8104d0340d0db08a45441684fdb4556c70286eae2c81021bba3b1a03189a6ed9",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/ascendant/scorpio",
+      "rowWithoutApprovalSha256": "acee75214d9c15a800925e39e8bc5f2d7862181fb8f472db75331242228506e5",
+      "readerPayloadSha256": "8f1241c80a40fdf1a44d6885efe5aa6380983300c761f890a83231e1be187f9c",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/ascendant/taurus",
+      "rowWithoutApprovalSha256": "5a01e96382acadfd5a1dc333a15b449442dd86f6a05b90bc37c0635e34a75250",
+      "readerPayloadSha256": "eeec5dc4d0237a0044ca4016d012a0b21ba3f197a9c0e8a7ae6cedb232c16a21",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/ascendant/virgo",
+      "rowWithoutApprovalSha256": "2af8242d31ff8d2b787d8d51cbf9a89e292aecb3402cdac844a4dd76e2d62b1f",
+      "readerPayloadSha256": "ef87f263f33d4723b3818f6ba044a81a19414665dca21d3b174052b804f603b9",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/midheaven/aquarius",
+      "rowWithoutApprovalSha256": "b37306cccd00cd0e2cd4193c60b94688dc47550afcd4ff7b0b8613feadc98726",
+      "readerPayloadSha256": "8b2ef799839c05788f280a764315020d089e4cc4af9431173981b3c9f41781de",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/midheaven/aries",
+      "rowWithoutApprovalSha256": "ec9900cadef841f0acec5633e7943dd66ba27600c02eacf2d482ce208c068ab4",
+      "readerPayloadSha256": "4faedeb7db9cad5aec960c5046679a70c8870f822424069b450f8a0d431fcea4",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/midheaven/cancer",
+      "rowWithoutApprovalSha256": "95d32fa7bbe252a73f92bad0abb914d89678d57a2ea61e618233e5dcc789c827",
+      "readerPayloadSha256": "9e30ffdcc4c41879b280d4e8deb19069f49e04aa230a66cecae336ac26c2be54",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/midheaven/capricorn",
+      "rowWithoutApprovalSha256": "ff40c2c66009d3ab2710d9d371d0bfb1b4e2055e729a7460f89df11c28190158",
+      "readerPayloadSha256": "49c94108600c843444ae4c81bd01b24b183a90a312323fb68be7aa6dbcf9c316",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/midheaven/gemini",
+      "rowWithoutApprovalSha256": "671ffb7427848882a9257d804c184384e917e744278551c5c066e12eda2722e1",
+      "readerPayloadSha256": "9f80c3bdd2ebf8a5eeac88f47b78de3ef7140aac4e56a7041ffa7919d78cd53c",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/midheaven/leo",
+      "rowWithoutApprovalSha256": "7879f5d10fc7c760280f638a5f73ef217b93e149e3ba5141114247cc67011b04",
+      "readerPayloadSha256": "ab758b7858c4f4bb23786a48e5ecb1c141a2601556674ba7fa046c6487483803",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/midheaven/libra",
+      "rowWithoutApprovalSha256": "a433036535a5118bbfc3bcc1d5e01312d7c3859a0aafd0c4c9b9448d88263319",
+      "readerPayloadSha256": "3aba5197eaf70767144af557635f006637470a5b3bd78befd310684a7c9b0ec0",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/midheaven/pisces",
+      "rowWithoutApprovalSha256": "038826f19eb5c05752ca3477eb5451de4a638a7adb64f79308a0587c3ca4f72a",
+      "readerPayloadSha256": "f6080fd8105351024c47161d46d9ba02fed22f98f82d8d51de77ddd4201d43fc",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/midheaven/sagittarius",
+      "rowWithoutApprovalSha256": "a784a5e4d28a8e3ff04c8a84ab2d47d0eea17ba22cd3140d3c649902b4c0dd6d",
+      "readerPayloadSha256": "a0973735498324658a3d211493e8c19b6ca19bf879bfcbda325016e3c27d325a",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/midheaven/scorpio",
+      "rowWithoutApprovalSha256": "d8cebc8efed461e5273d1c4078dba4cdbb6e8fccdbba8e5e311ce15d78b2fe74",
+      "readerPayloadSha256": "b76f313835845c014ee0307c7b471f23fec86c6ad77834cad2db0bdad00b2723",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/midheaven/taurus",
+      "rowWithoutApprovalSha256": "7e6aded21d450cb3cbcf4d85faf7bc721df50756b33cd37a8937dae0e0ef754d",
+      "readerPayloadSha256": "2ead8d593218668c532310a7d8d69277d19e7f3fde9768c6307eeab8888413bd",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/placement-sentence",
+      "contentKey": "fallback-hook/placement-sentence/midheaven/virgo",
+      "rowWithoutApprovalSha256": "8f2868f9296a8ec78b239860dae3c2a6d540752a0779b1af36af1a97785cd70d",
+      "readerPayloadSha256": "8d781cd77296ec8674de42fd9d0978c130cb411a9a6351f413ffa6dd603f069f",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/jupiter/aquarius",
+      "rowWithoutApprovalSha256": "46ebf2cfa21ca9b9a484e2428d3e9201d02641b11a9303aaeb7bbd6bfe66ef9f",
+      "readerPayloadSha256": "c420a846d741ca0db1e25764b7860e01746f443cd6348731ac1588077f2a1a75",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/jupiter/aries",
+      "rowWithoutApprovalSha256": "30d8f1d3cf0a604a396277017416900daba5a720c376d01a61afce5111455cfb",
+      "readerPayloadSha256": "550e16663eae69a277d6daa607cab8044264bd4d9dbe4aea50009ef346784e6f",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/jupiter/cancer",
+      "rowWithoutApprovalSha256": "6fd46a69817ac0a5b89f953b043a21d17712853c9a2bd36bbfb17f2bbf42225d",
+      "readerPayloadSha256": "774038c65ebc92be143f0022f5fb83572020a7bd1201b55e44821c37b07397b5",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/jupiter/capricorn",
+      "rowWithoutApprovalSha256": "cd13c766fe73cb7db339f2da581c8bd34721237e537dab8a8e137e4e55d53e57",
+      "readerPayloadSha256": "6994449bc762197f4aa23a409820e80db6def7f015af77b3071eb45711b9eb44",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/jupiter/gemini",
+      "rowWithoutApprovalSha256": "7799d0122e33b0ff3cbc36c8eb1ad693132b9cb1e45e69ba8798a955570c32e1",
+      "readerPayloadSha256": "10b80f00f4fbd2d1ab36e7980834596ff30a4120c93a13f567604ebc6ebf956e",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/jupiter/leo",
+      "rowWithoutApprovalSha256": "06265d81e995db71ce8f1d5bb3c73852cf0c90229701a82b23ba4995b845223a",
+      "readerPayloadSha256": "21af58d3e5639feffb186a21628341dbfcb0e83c368db3f953bcb0ccc887bd61",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/jupiter/libra",
+      "rowWithoutApprovalSha256": "b7a72e11527615b89745587728477fd2cc463a94bb278dccc9c11336ce109c7b",
+      "readerPayloadSha256": "68c576b42cd1aaccb17859c9bba71b89c4f56e0b23e115bc6245236dcb0b4986",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/jupiter/pisces",
+      "rowWithoutApprovalSha256": "16f91ed25a1307f2c7e039676ed64f256dad6a168c09315e1562477b50fa3439",
+      "readerPayloadSha256": "ac16fef58b3511369eb6b955783a42e846ba9c6f0c4fc8e1f84de58f7cb7d3f0",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/jupiter/sagittarius",
+      "rowWithoutApprovalSha256": "9c83dc1441aa805f46f77f042bf1c532e201bc08ce460e083412c8a5ac5e5fee",
+      "readerPayloadSha256": "6d73fb34a510b964529aca15b882a827b19964dc51769a1c97a5c9b5ef34c955",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/jupiter/scorpio",
+      "rowWithoutApprovalSha256": "f2d3baf84db426f623a77c35581049baa92b954430ca15428016d3d270847724",
+      "readerPayloadSha256": "9d97e2d3a826d762bf13c1aa3626c46dfd58a6f0c1ecc3b3246af01e510c1870",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/jupiter/taurus",
+      "rowWithoutApprovalSha256": "526db998e20015ecc2c7d4418f926d8ac05d41cfa33b771065d68980a8907699",
+      "readerPayloadSha256": "56fd5c7c9c5ebc294d486ad39503194354f4cf98a99f5900aedb8fe1da9f1214",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/jupiter/virgo",
+      "rowWithoutApprovalSha256": "f2a220cb4f5eac384456618fe200f8a8c1a9a6da1919479e0593b83d94b09d22",
+      "readerPayloadSha256": "3abcd059dd910644a1c6ee5ef205e9601db68becd4a0fb8bdaf4f4298661d37a",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/saturn/aquarius",
+      "rowWithoutApprovalSha256": "2d9b79be0ae729c0a4b0121f978803fac40d8c4cdb25cdb142bf800ac787aea6",
+      "readerPayloadSha256": "d207c5d640dd84f4e5d0b24266ff81699f7971ea78050b9df0a28c9794ad2ed2",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/saturn/aries",
+      "rowWithoutApprovalSha256": "eaa178a1b1f06c9285ab5987650e71631b6f66aa283148c82dc3c692cd5ce42c",
+      "readerPayloadSha256": "fff63ba2426c0f6f48d2270f9b5b38643c2a63af15dc5c7aa842bf86afa8ba27",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/saturn/cancer",
+      "rowWithoutApprovalSha256": "1dd736dd3665195eccfa55032e44b5b02b1e79d52fbbe23a48608f784f052a79",
+      "readerPayloadSha256": "7ac42ce27e511b2e8e7ab4352ff5b2e3d6573d66344a6bc35bdcce5ae28b51c1",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/saturn/capricorn",
+      "rowWithoutApprovalSha256": "34ff89c5223f35200304cf5d7848045dcd57b206f0167d268f21fa677f968eb9",
+      "readerPayloadSha256": "58f6b71dbeb8eb5eea3b606226fca8e1bdb829a6fb0ce57efe2286376f9e50dc",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/saturn/gemini",
+      "rowWithoutApprovalSha256": "75b3504dab9b544aa750e4dfc1184e5a274fd1f390b9521c833e0f3784c6e51f",
+      "readerPayloadSha256": "b3c3b9b3b8e0c790f835d6c98048c950f0af08b065bd5919a6f54c5b14a478ed",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/saturn/leo",
+      "rowWithoutApprovalSha256": "905b41a6baadb26a4f8831b5e45985d9ca221dbac87570a99bd927d54ccb0403",
+      "readerPayloadSha256": "23e6626cd41f74aba2f303a11cedb11d897767007df65a45bad8c1666334a421",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/saturn/libra",
+      "rowWithoutApprovalSha256": "fe815f0de6157df7a86e36a4e8d54ac0d1e566554e81cf593cdf652da72ce166",
+      "readerPayloadSha256": "38ce8413c12e68faef10e365c06c3eff2dd74e1e1a65d08da9057cc7990c84b3",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/saturn/pisces",
+      "rowWithoutApprovalSha256": "76625f6412fe2e829e1b794ce3ff85c50c46ed1e5c29f7fcd3ea200a0ef183cd",
+      "readerPayloadSha256": "cb99c7222c5e9573e1ea7e035c36624f3a02cb3b0cbd33a791286dd75f403d6a",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/saturn/sagittarius",
+      "rowWithoutApprovalSha256": "01200bdf7d95b9a5c4ee3675d361097518ecaf6803cefb01a315bda6692432c4",
+      "readerPayloadSha256": "36224599dddba039d767286094027eb99e4b5853878754293cec2144a7808b46",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/saturn/scorpio",
+      "rowWithoutApprovalSha256": "c381832cd3105005df2440a7283e22a9e94af558a2f8ab207fd6d0da67b4d781",
+      "readerPayloadSha256": "51b62a1e9f8796d3e18529d098b55f279ca0f65aad8604a333edd8c17e01ba4c",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/saturn/taurus",
+      "rowWithoutApprovalSha256": "2f185b6114e7d054943cff925d20c35e9109ee6b8af912ce0bff7925ff7fb044",
+      "readerPayloadSha256": "9d345d1571431079a74515bf14b73f7bbd087dcb5019f862c114f3cb3ebb405d",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-wants",
+      "contentKey": "fallback-hook/transit-house-event-wants/saturn/virgo",
+      "rowWithoutApprovalSha256": "c9f3261a3d8357612c065d67109cf137c3c12166c3f9c6fb38ed0de53bda78ab",
+      "readerPayloadSha256": "3d518834dc7193b4fca12e8ecc91f2f633d919b020310e76ef16a43a679ff680",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/conjunction/chiron",
+      "rowWithoutApprovalSha256": "0bad568130033bcdef9c1b7be0933fe8ce937dfbc24d160175a385f16a89495a",
+      "readerPayloadSha256": "2b557b05242dd7009f98a8d61378dac281c64a5aa691ad2e9ff072268049befe",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/conjunction/lilith",
+      "rowWithoutApprovalSha256": "684a305c25afd7d00ba0d9bd7c6db7f95b6c70fd31a3660bc7b935c2816da3c7",
+      "readerPayloadSha256": "ec1a8814108237673cea3a75226b266393fab1c3da3443f00125184b6a9b211c",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/conjunction/mars",
+      "rowWithoutApprovalSha256": "4c13f498d4379bb5b5d01a7ec3c54c3035a2d39ded1b73aec1cc4f8611ad24ff",
+      "readerPayloadSha256": "22210ae61f2e04e67a9c806b40051c4a0ac38d37444a83e9791a315f3272a058",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/conjunction/moon",
+      "rowWithoutApprovalSha256": "3f15f633bad3c1dd684b73059480378caaf1813b785f50d5a6adde9e9b290e98",
+      "readerPayloadSha256": "e30ffd62b63c1d6865815c413314df33493f207196f89cb3e3eea04e1ab233d0",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/conjunction/north-node",
+      "rowWithoutApprovalSha256": "f5ae20f62ddd97cdc3e8dffb8493695d6512d4614384dc2f801aca562d391014",
+      "readerPayloadSha256": "c1a7af25b11608ac896dd377ade0fe9a1ec40f0ee46d6ee3ad6d8e2ded1114ff",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/conjunction/uranus",
+      "rowWithoutApprovalSha256": "43953b630b0aa659a7cc2e835f80fab6553f231a50a0a5ed906936f538d86f3f",
+      "readerPayloadSha256": "8cb3b2a96de54cb3a257674fd83302f5e60239d1dfc6e5633d8337989e598fc6",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/house/1",
+      "rowWithoutApprovalSha256": "3ebf22bae491cc408354acefa31b593d955bbde15d45137848c1ba97c565df44",
+      "readerPayloadSha256": "7852d2f600aca320bddd544638981a1a48dc1232ac8625217e926b2eb667e7bd",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/house/11",
+      "rowWithoutApprovalSha256": "e35fbb494a3c81174c5e58a7d59c5bc418f84ed5bb61c92aae249c36cc1f825e",
+      "readerPayloadSha256": "ea564f20876945f4d411e7d9ea35684f7cc7ee2b889288df4e9fb4c412b82eab",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/opposition/chiron",
+      "rowWithoutApprovalSha256": "178dd40f08547208b2d3eddeffb92e57a70bbe7a61ced2267dfc7e3fd3b12072",
+      "readerPayloadSha256": "c9a5bf97714503905b5e9ff63b306ef5bee5b7457b93a9908677dce18c3c1edd",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/opposition/mars",
+      "rowWithoutApprovalSha256": "315a36d9bc119e2415fd89242a8246f4603b247b0149ee0c3c12e3d00ac1bb09",
+      "readerPayloadSha256": "2ef1ea99150f2503f152710855ca39f7f8bfb08c5805c693e1f2d3430c8c5a96",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/opposition/south-node",
+      "rowWithoutApprovalSha256": "b2191b5f70af719fd1920cd8e5dfb15a5f5aeeaa37543ec3fdb00e2659faa286",
+      "readerPayloadSha256": "7384b33b9ef43c3c4388cffa50ba251e995be2d67a4838ad9b20af552a62a506",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/opposition/sun",
+      "rowWithoutApprovalSha256": "21f4ec16bca5b5e51d36f566eda85216410fbf540e10daab7e411e4a63f2d53b",
+      "readerPayloadSha256": "3f226c6c190d58f38acf05f4f3eef440de56c43751f74cddcef550093e8ac8d7",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/soft/lilith",
+      "rowWithoutApprovalSha256": "467faee8a77969266dfe1dc2da03bc980094004118e32c907fb5530b81fd0ade",
+      "readerPayloadSha256": "95f9d0b8a6e0ef6b097b7515bf8d29e4920f411b37864c43a61399b2baa1b042",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/soft/mars",
+      "rowWithoutApprovalSha256": "46b842823bfd82ed378042f2bc087511cb93b502174ad8461d5d3522fa7ca9f4",
+      "readerPayloadSha256": "3e2c1e0c596dcb260c9a746dd3aafbc2804d85418c96eae14c891cf7865af6bf",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/soft/pluto",
+      "rowWithoutApprovalSha256": "13286de706e8172f643f166b29e611bad6ecabe2fb33963d7bba858ef07ade51",
+      "readerPayloadSha256": "ccdf4c31c5e7de3318301c8d28d89f6e35ceaabde83eac98e53985f8539ac26c",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/square/chiron",
+      "rowWithoutApprovalSha256": "ec6a39fce5e05e64e1e00fe9bff6ca7075288a7044072c5741f67eccd9e74e9b",
+      "readerPayloadSha256": "b89bed66dedcdddb92c9360a4d2df3583ca4b19d187e6f088f3b6059db9a3398",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/square/lilith",
+      "rowWithoutApprovalSha256": "62d295b86b6524d6ed4133355c07314fe2aa4ffac640f223e853d081bcc4dc0c",
+      "readerPayloadSha256": "7933b26996bd47af541ebef15718d5b8c0465e67b1421241e7f6968a3bc6f9bf",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-headline",
+      "contentKey": "fallback-hook/daily-headline/square/moon",
+      "rowWithoutApprovalSha256": "8745d9ab47c2de5a3d2c0a101f89f69c00eb38ea10bcac9bf113dcf7b12ab979",
+      "readerPayloadSha256": "13477bfa475c4acfae510952b29a545caf79b20a703478c5488e630a7554b7bf",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/conjunction/chiron",
+      "rowWithoutApprovalSha256": "63f6eb499d6d9353cfed48240a6dbdd82a05f17cbe8167351544cbad86787e4d",
+      "readerPayloadSha256": "4176da82bc145797320732d88bfc8c5f14eee00711ba4e12d82ac80657af0ad4",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/conjunction/lilith",
+      "rowWithoutApprovalSha256": "87e7c515f4b68903c86700acdf1ef56dace061089b7814198b3617b79d6ddfd0",
+      "readerPayloadSha256": "bd6434c2c55606fe73e74eafe2c185fc6bfd47393aab2dc14928910662dafcdb",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/conjunction/mars",
+      "rowWithoutApprovalSha256": "cec799574613c2f5f0edc947780410d4d3a3ad276057c246ed9d6454a00a0263",
+      "readerPayloadSha256": "64ba3bc1de50a4b01d450dac5b6a8fd059eedbeebae3f7a0171f0758ce30ae25",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/conjunction/moon",
+      "rowWithoutApprovalSha256": "c0c40545ed5181665b322f549964852691287cea6687a204db4eba2d47d3d10e",
+      "readerPayloadSha256": "426de392ed060b9324efbb65b54325e0ffead693b441fc89a63a5fa9a8ac2bf8",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/conjunction/north-node",
+      "rowWithoutApprovalSha256": "eb13abc6eabac83937a0ac1ab518899ee29c62daf1aac1e66035024436f31f72",
+      "readerPayloadSha256": "0abba56d60410963136874eaf9ee008b437acc775f7b35018bacdc832b07f3b5",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/conjunction/uranus",
+      "rowWithoutApprovalSha256": "30c254d945ee4350906e4e3226d353dc2d423a2db63bd88525de1d1e7abe4170",
+      "readerPayloadSha256": "dad18c29e99ce894bcac510e322f437cdfbf924a5896dc78804a3feb53b64e3f",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/house/1",
+      "rowWithoutApprovalSha256": "e251dca13fd37c76d1aa133a96311dd354fa50535d547ec2104b197ee2d132b0",
+      "readerPayloadSha256": "f2b99ef92cd30a52090e81824cc3c4d880d2f704aee1b7b79866712c1c4640d1",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/house/11",
+      "rowWithoutApprovalSha256": "ac567cbd20e5bcf41497f731921efc151782c8e7dc285c92c1d2510fdd572c30",
+      "readerPayloadSha256": "ae399c100596072933313a19f475c8860beead6c965ec50c29589b26e1a3cd58",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/opposition/chiron",
+      "rowWithoutApprovalSha256": "ae0299c7bf24880f80458ec6dc5705aa5b435c97f1abaf198e223b7f29226cd2",
+      "readerPayloadSha256": "9cf7d70468ff891422c213ecb27ed5005a35302db909361acf597b3f5fb1d26f",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/opposition/mars",
+      "rowWithoutApprovalSha256": "e11b46a1dd42e99e92256eb0ebaed636fb49c5abc09465574f67cad1897ebe89",
+      "readerPayloadSha256": "1bf82e968c3c046ffaa5fe75935904245fb90b123a20f443797050b0d82ace29",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/opposition/south-node",
+      "rowWithoutApprovalSha256": "29c5644d217c88ba0539d7641c27e191e85daf893240fffc86bfe84f4bf66e4b",
+      "readerPayloadSha256": "b73915bb73607b9e1f4050f1e6e98c8bd454cf2ea8091f634b8b5aecfc0b959e",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/opposition/sun",
+      "rowWithoutApprovalSha256": "2e0b616dc99f24252bb6961fa3858e75feecf59124608799be74af335fa5a926",
+      "readerPayloadSha256": "54f29a022c3a515ec0634c2cce531ac66bff5347bff8809633d27840758d280a",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/soft/lilith",
+      "rowWithoutApprovalSha256": "1dd81ecf4e3a70b5ee35cbe02a20d90b62367b790ca210b400f7d3782e02dcbf",
+      "readerPayloadSha256": "ed10c2bfee3a37ae424e7956451c1bf7056101b007cc95974e19f0ed2ad88982",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/soft/mars",
+      "rowWithoutApprovalSha256": "9164b7809d02d4de0b6a75c1d5fc5ea413526fe0863296e6d38979b0f836cbb4",
+      "readerPayloadSha256": "36684b8538851cba8ac7bfb731b13dd0b9615f9cde1e40ab4b41c808be38bfbc",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/soft/pluto",
+      "rowWithoutApprovalSha256": "81c689488d83e801476ceaec31a3258a914809d3b267ce05aa3b08fd38c1c65d",
+      "readerPayloadSha256": "09fef50607dd1b9d37eb71a5cbf9a2112baad529d9882132fe37706f10a3b076",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/square/chiron",
+      "rowWithoutApprovalSha256": "59e343603d8f71572455181e91ad7f5aa1dc3b56d94ec75cbb94bfff094ab16b",
+      "readerPayloadSha256": "3c144515efb1210c933637bc53e087388ea9cfb4d668f54fa344d945671afa33",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/square/lilith",
+      "rowWithoutApprovalSha256": "b15cc42412588b4b6bea004d532aa786c30c1502706a89a0d9aedc21eebe4b38",
+      "readerPayloadSha256": "342e6925c9633e74a4867fb2c35170f5ed21b34916e3644886b5360a0b0a3ab8",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/daily-body",
+      "contentKey": "fallback-hook/daily-body/square/moon",
+      "rowWithoutApprovalSha256": "27fc96a44a7836b6be1e5a6d6622ad1d3da97e61ae331d6caec76770d2b29875",
+      "readerPayloadSha256": "a8a0f7ad2f1872c29e238752314c567b4d731b5e46224a4bdb9c1c8ccd4ed9a8",
+      "approvalLevelAtManifest": "exact_owner_approved"
+    },
+    {
+      "family": "fallback-hook/lunation-release",
+      "contentKey": "fallback-hook/lunation-release/1",
+      "rowWithoutApprovalSha256": "69bd6099f2df17f791650510b7798f31f2b53b06d9a6b6998bc4977caecac9ac",
+      "readerPayloadSha256": "505a387ae4e4060d4fc39ac71580234abe8a9529c5b81ca50e016a8c57fe55ee",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-release",
+      "contentKey": "fallback-hook/lunation-release/10",
+      "rowWithoutApprovalSha256": "0bc6d193daf3eca13b867b107ebb53b300166e038a20643ea03dc641f9ce0759",
+      "readerPayloadSha256": "1d7310da567c935887a8524862ea648e2a05e9b152d8961dcc06c29b4b1f2a2a",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-release",
+      "contentKey": "fallback-hook/lunation-release/11",
+      "rowWithoutApprovalSha256": "8675b9bebb323d77ccc9e68256fd420bd3403d507b9e51c073a623aedc2de48a",
+      "readerPayloadSha256": "3fe4078a212b34de51902ccab433d744cae6e443882a53c4f80a39450ff9aeef",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-release",
+      "contentKey": "fallback-hook/lunation-release/12",
+      "rowWithoutApprovalSha256": "8575ff19684af33aee065e9dfb790ce901574284eb89a32594acfbad2c6f2683",
+      "readerPayloadSha256": "df60fd8f180b551f2495add3acff5d781c82f63846fbe345292d7d92f19625bd",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-release",
+      "contentKey": "fallback-hook/lunation-release/2",
+      "rowWithoutApprovalSha256": "b672956dfe0b89d1feba47996b95d73dc8e358aa5df29fa88a7d6499c344ff17",
+      "readerPayloadSha256": "590e3a440f7471d893f6ead92a06784de4b222380198e9f7741076b704e5f76e",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-release",
+      "contentKey": "fallback-hook/lunation-release/3",
+      "rowWithoutApprovalSha256": "166eddbd06f42f187b673474407ac733ca8c38bcca6a24f77a374fa3d0b39477",
+      "readerPayloadSha256": "acb5e1342a1f289a496523f4906967c0fec4fa687dac5a6ddea44f9c895cff83",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-release",
+      "contentKey": "fallback-hook/lunation-release/4",
+      "rowWithoutApprovalSha256": "4e39c7b3b9ca6d4e2ec2b1b13ddf0606dd77d12c9b4591cf6b8dc1a551d265ff",
+      "readerPayloadSha256": "8e132254ff1690f2c8160383d10609744c7ce02c801f662adff8f6f4ecb05f9e",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-release",
+      "contentKey": "fallback-hook/lunation-release/5",
+      "rowWithoutApprovalSha256": "f4310ef75ae50cb81771cf74e233e3c30a915caeb9a3f36d185f90e75d086d23",
+      "readerPayloadSha256": "941078d50fa958f191d8d9614337bbc03897d5379180420552972c2687d8c576",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-release",
+      "contentKey": "fallback-hook/lunation-release/6",
+      "rowWithoutApprovalSha256": "e9a2c5a14e25b8e632ce56b88196f63bfa3efe399464aba54a70647fecf3fc68",
+      "readerPayloadSha256": "d47c53546b20b101e5306045b4f6d073e8839fbb2ea30bff94744ee3687933a1",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-release",
+      "contentKey": "fallback-hook/lunation-release/7",
+      "rowWithoutApprovalSha256": "92695495d0c3e7ba1f1c85259e7112dc6b8e44203ff3f6fb7daae720903fe5b3",
+      "readerPayloadSha256": "d849bf250720a59292183d1b7bcf039284bd6a7fb21719a24f63b5886d084d41",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-release",
+      "contentKey": "fallback-hook/lunation-release/8",
+      "rowWithoutApprovalSha256": "1666300e1f46aca1d67d79bebee39d08adb99c6b53d1d2391ecd5224e87abd93",
+      "readerPayloadSha256": "06bb843cc09f817dc130ae792ce7a2c727f5eadd4148e16c517d9e169763b6a6",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-release",
+      "contentKey": "fallback-hook/lunation-release/9",
+      "rowWithoutApprovalSha256": "bb4b1c9721bb5666bc4fa189850e137e5047f757f88867dae20eca351a24c30a",
+      "readerPayloadSha256": "ead91b40b0ea7e43485e5f45a5e6152180f14c50e2a2d6fbcf3c03abc4617a2e",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-higher-path",
+      "contentKey": "fallback-hook/lunation-higher-path/1",
+      "rowWithoutApprovalSha256": "90495a8f18840106f4535a95ae4fce4d680be95dd40958507490257c2384cfbb",
+      "readerPayloadSha256": "c9a2b17f8e5f0cc3dee34b398186efe49d6708492529b71473c81d6b4783c7c0",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-higher-path",
+      "contentKey": "fallback-hook/lunation-higher-path/10",
+      "rowWithoutApprovalSha256": "3e6f39879d39cf37b799ea3db4ede6e9dbb5c51fa4b59e2c0cf5a662048e3cef",
+      "readerPayloadSha256": "56c138e0b8dccce6f7e4800015098e492693b43668db7b23983be09b9d67762d",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-higher-path",
+      "contentKey": "fallback-hook/lunation-higher-path/11",
+      "rowWithoutApprovalSha256": "b0127802a1b62fd775488ecb769e2851c6465f724fb1cede104015df1fbab7d3",
+      "readerPayloadSha256": "69752fd92dcc54c244eb6051dee5ecd746c2621a1e1c30df21f83a0e31f62686",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-higher-path",
+      "contentKey": "fallback-hook/lunation-higher-path/12",
+      "rowWithoutApprovalSha256": "691b03531dcf4ee2ed44f89b94f84a34ead884b52ce9b2a2777d4580b16bee6d",
+      "readerPayloadSha256": "8a2a010d53b5ada86ca13dcdc33452351e5bb86efd786c57696a2be09f7cde18",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-higher-path",
+      "contentKey": "fallback-hook/lunation-higher-path/2",
+      "rowWithoutApprovalSha256": "690cf5324175a66df12204259c07903127cc8aa33cde199aa741510d23a0fcdb",
+      "readerPayloadSha256": "e5d860e17a1f2dbab9610fedec6882a485a0ff802ff9e72005c2e5d71c3ecacc",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-higher-path",
+      "contentKey": "fallback-hook/lunation-higher-path/3",
+      "rowWithoutApprovalSha256": "20cf50693b1a9b3f44aa2d78500f39dfb80f23c9c2672ccdc76701d20a13aaa8",
+      "readerPayloadSha256": "8be891e97bc3c6d29a620d89ca69bc8cf8cdaa20a91d000a3e644e4f7be0866e",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-higher-path",
+      "contentKey": "fallback-hook/lunation-higher-path/4",
+      "rowWithoutApprovalSha256": "6174722f42f11b309273cf270f6fe14cce1148023a8a6e625dd3b3a30336e76e",
+      "readerPayloadSha256": "9c8a6d3e6f049c80a1ed009b536fdc24dac2e640c7b65f10369b73220d0b47ec",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-higher-path",
+      "contentKey": "fallback-hook/lunation-higher-path/5",
+      "rowWithoutApprovalSha256": "d97bae7fdca513a4471380a56eb1fd2c61eaa0bed817db0484c5c9217be4803b",
+      "readerPayloadSha256": "39261dc5b2e3de7d30d7eff4a0aa4df18b0bb58ac78bab63082b2cb76c538f1e",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-higher-path",
+      "contentKey": "fallback-hook/lunation-higher-path/6",
+      "rowWithoutApprovalSha256": "155e0a90863fd2d5d2065b39f2463a5414307aa0123e40b7ec08b1a631bb7932",
+      "readerPayloadSha256": "1989bda9bffbff3c1085fc96d40a14880ecf17f423060f6e25ac777bb87a6e78",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-higher-path",
+      "contentKey": "fallback-hook/lunation-higher-path/7",
+      "rowWithoutApprovalSha256": "12bed90bfad247081d347711b9971fa4e0d46858502cc4a9e0eb1f9a940603ff",
+      "readerPayloadSha256": "61bc7c1fff6e9025d72ed36ec99963e6ee35d1d3765613d5b448a6013d1274ff",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-higher-path",
+      "contentKey": "fallback-hook/lunation-higher-path/8",
+      "rowWithoutApprovalSha256": "b80180b05580d53128f36d8b3cda1057f4fd3d1f25628d5a87331ac2321a3891",
+      "readerPayloadSha256": "2e4e93b47b6319b428f891c2a352990deb126cdaa699fafe127ec4f8ccd06ca9",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/lunation-higher-path",
+      "contentKey": "fallback-hook/lunation-higher-path/9",
+      "rowWithoutApprovalSha256": "ab7207c2ca11b66346fb898e5d376096370386a8653012057e2686a4ff91f74f",
+      "readerPayloadSha256": "4b2b3d3ac1717610a40c4415255303bf5b78ee61a6d827a2d87017975e5f532d",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/house-glossary",
+      "contentKey": "fallback-hook/house-glossary/1",
+      "rowWithoutApprovalSha256": "e2e8d30c8bde06706eb2a45e17876ef99aedb847cf5b1df6af7928bf47259b01",
+      "readerPayloadSha256": "40659310b3312ffffe51bce807e6b0dab88bef399a6ccb2997aecd54a45bfcdf",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/house-glossary",
+      "contentKey": "fallback-hook/house-glossary/10",
+      "rowWithoutApprovalSha256": "300b725427601679d4cbf6ce9bd61eed1b2c0443e83914b62f7213dc9ba0e3f0",
+      "readerPayloadSha256": "2e137116359adc3880970200487c0125b66c578e1d43309b029a9c455fc58cb8",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/house-glossary",
+      "contentKey": "fallback-hook/house-glossary/11",
+      "rowWithoutApprovalSha256": "bd06b4db017a3a8fdf28d07024dba15c5ae3b0d41e7a346f34385c237027a455",
+      "readerPayloadSha256": "91ac8526fc548cd332750df5974c9e536f74b73af3353c4da39725f4077024cd",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/house-glossary",
+      "contentKey": "fallback-hook/house-glossary/12",
+      "rowWithoutApprovalSha256": "3a227d2059b830cdd29e10bd0ebe1ce6011002c32c5521275debfca5df11ce5b",
+      "readerPayloadSha256": "ffd2e1051ec082a8c11f30333f81527bcdc5660919787842872530c5b2e35075",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/house-glossary",
+      "contentKey": "fallback-hook/house-glossary/2",
+      "rowWithoutApprovalSha256": "ba718439d4253d448824ad5b4cbd9c69d184784555f7bb75467f1bfb8378b6a7",
+      "readerPayloadSha256": "c44a5ceef13ab2c50eef6483e53235c2b37224a695084067c68eed02f7413bff",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/house-glossary",
+      "contentKey": "fallback-hook/house-glossary/3",
+      "rowWithoutApprovalSha256": "4b64c7e8fccfd72c1f50122639d1f79102a3473fb8ed8fa55e301e1c95850910",
+      "readerPayloadSha256": "563dabeabbe52dc99af841991c26e1edb638f62635bad2a2b5bb7dade773d4fa",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/house-glossary",
+      "contentKey": "fallback-hook/house-glossary/4",
+      "rowWithoutApprovalSha256": "fe63cca3465498d12e7f43d486f75aa91a484bcd26ca331b3490814b50778cca",
+      "readerPayloadSha256": "f151b1fe9d119dd0fde7eda29f6e0bb545facd1021178bb32a73a690dad14222",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/house-glossary",
+      "contentKey": "fallback-hook/house-glossary/5",
+      "rowWithoutApprovalSha256": "fef2bc47fe0e9599a4eacdf3d432d11ebddbf79e148d859d3c5b61e7cb00ca3a",
+      "readerPayloadSha256": "a63f6d2a38a349bf70029745c03028b8d259df99a94263dbf1e1518190af4006",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/house-glossary",
+      "contentKey": "fallback-hook/house-glossary/6",
+      "rowWithoutApprovalSha256": "b205ab0fb15a8e8effb9f10232724e640ff07ee64022fbe6d48421d7ed120476",
+      "readerPayloadSha256": "8c94b12e3210658ed999672a40227930e663fb042be2952806a70328ad53c0e0",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/house-glossary",
+      "contentKey": "fallback-hook/house-glossary/7",
+      "rowWithoutApprovalSha256": "88bdcf573dc28b19e16b47f05977ba64174c3ab40ec9e8d5c5b4dc2c137cfde7",
+      "readerPayloadSha256": "a55042634d3ca4b196dbe57b70d7f45f50ebe25d1f90f30ce90e57bc1e475a0b",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/house-glossary",
+      "contentKey": "fallback-hook/house-glossary/8",
+      "rowWithoutApprovalSha256": "f65c3deef1128aa13a6af0497cef2cb19b3f7eeae1ef616df20b757cf5426eef",
+      "readerPayloadSha256": "532d5e9f5351b7479f59ec46da51b3432b2818dd3487dc06dc04a857aae12c3b",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/house-glossary",
+      "contentKey": "fallback-hook/house-glossary/9",
+      "rowWithoutApprovalSha256": "e9cac157a16f4c307ed7b0cf0743b970eb286f485a683946e9de6b5f7cc42c7c",
+      "readerPayloadSha256": "c922d75c676a3293c95ba23dbea5f08f1a8b607237afd435664667df2c78196d",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-sign-essence",
+      "contentKey": "fallback-hook/career-sign-essence/aquarius",
+      "rowWithoutApprovalSha256": "d5e5da53be5de1e9fda87c224cab79eb3167257c1a25ba3d52388b4ac345be45",
+      "readerPayloadSha256": "eccb678acf9acdc977833be97b34ffbb005b2b0dc7e52c0fe2c02e2d8088d7a7",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-sign-essence",
+      "contentKey": "fallback-hook/career-sign-essence/aries",
+      "rowWithoutApprovalSha256": "336a621bb604a9e3e539357a76d7858b9325eb38a3ee468221dfd167c649bdcb",
+      "readerPayloadSha256": "525b6d25e5efc803a827fff946747475a516c673c9173b9f98f289b2a4ce9c79",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-sign-essence",
+      "contentKey": "fallback-hook/career-sign-essence/cancer",
+      "rowWithoutApprovalSha256": "4c2ed961260db454a64d546332092c55a7fdfba70e4245fe2423edca73813ec2",
+      "readerPayloadSha256": "a7bb40918cc2eb9193c6f56361ca6e3766cc1b14550172b004280e0ca2aafabf",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-sign-essence",
+      "contentKey": "fallback-hook/career-sign-essence/capricorn",
+      "rowWithoutApprovalSha256": "e046d5cf9a2532910da78bf7a73b35754e5aad98a3f20a51c726b4367ed932f2",
+      "readerPayloadSha256": "d0a35d6c21b56baf2d63b759b9d0fc08549a8bd61492a3e639a60664ec164f29",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-sign-essence",
+      "contentKey": "fallback-hook/career-sign-essence/gemini",
+      "rowWithoutApprovalSha256": "19c8cb03de491f09537526d82adbe7e7bd3ee802f616ac96ca0cca3872c7f05f",
+      "readerPayloadSha256": "3c20d4edd63bdf7f3d1935172e2157f0c513a37f4bbb281df1a22be2d686f6fd",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-sign-essence",
+      "contentKey": "fallback-hook/career-sign-essence/leo",
+      "rowWithoutApprovalSha256": "8b32301339d197e9da746c8eaf46db985d0ab597f73056aad9c7f3d6b7c57d85",
+      "readerPayloadSha256": "e71c930f67095d2af920ef5b5daea56f85b6cb3b376ff047d25b965f47f70c2b",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-sign-essence",
+      "contentKey": "fallback-hook/career-sign-essence/libra",
+      "rowWithoutApprovalSha256": "1e029300811511212081ae4a58021e8fce138280153550140209c6d1940a8c38",
+      "readerPayloadSha256": "df79f41c6c54a7fe0d818ab6ea65bb98cc69884f78df94e16ad4fb22ad6caa97",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-sign-essence",
+      "contentKey": "fallback-hook/career-sign-essence/pisces",
+      "rowWithoutApprovalSha256": "245a3e537392e4f248f29248e1d9aa9f8b249f6ef0f92706b3442963894efda6",
+      "readerPayloadSha256": "d46dc6d5ac99858df2b3f604dff83a4c6372d32bcc59e331206cfa161cad1787",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-sign-essence",
+      "contentKey": "fallback-hook/career-sign-essence/sagittarius",
+      "rowWithoutApprovalSha256": "483aec405be52d7c6326cd6c649adfa5bb4c8fc2a44abbd1a4687202ac3fd1e1",
+      "readerPayloadSha256": "404e7bddfd914b584cf668f23cbbea1e773d558213f0157c5db4810a1b3c4ffe",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-sign-essence",
+      "contentKey": "fallback-hook/career-sign-essence/scorpio",
+      "rowWithoutApprovalSha256": "3b208fc06347239d95e5522524dc843b159ace115c44ad6a41db81d02a1736c9",
+      "readerPayloadSha256": "6a2fc45846e12e8e79ecabed1d1c0cf3ec4e39d563d82e602fca092937ff0c44",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-sign-essence",
+      "contentKey": "fallback-hook/career-sign-essence/taurus",
+      "rowWithoutApprovalSha256": "6ae39baa1b72b7536a8d819cf757de456fa0dccf698a615f81c2fb9281761dda",
+      "readerPayloadSha256": "8c2fce64f961129b797a01dd1690516da3fdfc0f6fdecb1df51475704941fc6e",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-sign-essence",
+      "contentKey": "fallback-hook/career-sign-essence/virgo",
+      "rowWithoutApprovalSha256": "e7ece8d0a9b5cd723e1aa69572c7beae297ebe32e083126e32a94ea6723abde6",
+      "readerPayloadSha256": "2ad072990a5fdb4ae22cd2610a3d645407c4bea411a6847bbecc04ed5e8b5460",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/sky-placement-retro-frame",
+      "contentKey": "fallback-hook/sky-placement-retro-frame/chiron",
+      "rowWithoutApprovalSha256": "79053b9b6f3851e32c70494bcbb25a4f7188da5c4980a6367d432732cc2b3642",
+      "readerPayloadSha256": "8647e88f116d4a2b33e0b4f914c1652ba32ef22b0556978a2e5eeb7c0300c7ed",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/sky-placement-retro-frame",
+      "contentKey": "fallback-hook/sky-placement-retro-frame/jupiter",
+      "rowWithoutApprovalSha256": "4d0670527bbbb84f4a657d15a00172b75182065081003c2aed70357622ad8382",
+      "readerPayloadSha256": "05291146509d2423002e1faaba1ec5006b3e363efc4a624e898b025f8c391444",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/sky-placement-retro-frame",
+      "contentKey": "fallback-hook/sky-placement-retro-frame/mars",
+      "rowWithoutApprovalSha256": "c1cad8f1a6a410981e6dc62693da12ac1bac62a7c1b7935be29b0d1277f3bee0",
+      "readerPayloadSha256": "a4f8cf1e11079e20f07f18ae23dd9cd5a3c73a1ced0f83cd4c54f4c3dd1d0b84",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/sky-placement-retro-frame",
+      "contentKey": "fallback-hook/sky-placement-retro-frame/mercury",
+      "rowWithoutApprovalSha256": "2ebf50d987dd118922f9020db0d2151befd053eb427d168f6eb91f24f0fa94d1",
+      "readerPayloadSha256": "ead549848e5ee3f05e1bab4b4c6e66889b977033ae25eba8c00e77b1613791b9",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/sky-placement-retro-frame",
+      "contentKey": "fallback-hook/sky-placement-retro-frame/neptune",
+      "rowWithoutApprovalSha256": "3cc5a7d6ca00bc21df755b6ae4f58c9602dc666aa73a7c405a944138deff7286",
+      "readerPayloadSha256": "14370b6bb95113d9d25a0b60fe16efdae756708aa669d85e5ad24f9c27b3fc39",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/sky-placement-retro-frame",
+      "contentKey": "fallback-hook/sky-placement-retro-frame/pluto",
+      "rowWithoutApprovalSha256": "a9c5aa6e6e14aa90b0106d150841fb66edb0a8fd5da3b1d56ae8de7ed0a65db3",
+      "readerPayloadSha256": "b229c5f0adac962d2d951084e162e8b4defb0c764f0582be82091ab87ae77e6b",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/sky-placement-retro-frame",
+      "contentKey": "fallback-hook/sky-placement-retro-frame/saturn",
+      "rowWithoutApprovalSha256": "64e5cee7c45fcbdf91a20082ddec611345cae07dd4740487d5b9afb776ae4b02",
+      "readerPayloadSha256": "6bac6ffed8e50a41f5524201246c2a3b16d0198512a407b88d28809fd50bb673",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/sky-placement-retro-frame",
+      "contentKey": "fallback-hook/sky-placement-retro-frame/uranus",
+      "rowWithoutApprovalSha256": "278234c1721ce12171b985fde449f346c403f1ca64ca66c3e4e811df686bf805",
+      "readerPayloadSha256": "6423907686ae75079507ef2f7c2bbcc98ccae93e34e332c9b7870cd34199a287",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/sky-placement-retro-frame",
+      "contentKey": "fallback-hook/sky-placement-retro-frame/venus",
+      "rowWithoutApprovalSha256": "1c286a305eb007ec3c71ab9edabff2e655115bec0da9d43475e032ef81c78f68",
+      "readerPayloadSha256": "7d99ee2cd2fd8efcfe43dc7d18458d1feb0a4db45e88bdc1d6736b2040cff5fd",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-planet-tenth",
+      "contentKey": "fallback-hook/career-planet-tenth/jupiter",
+      "rowWithoutApprovalSha256": "2f7cf2714449b68a97352f543733df4071460ad9609f1bc2a52e094a09b16840",
+      "readerPayloadSha256": "def13a2a2572c7d99b349d438a76df236346f9a5f5065ab2219dd7e904c71354",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-planet-tenth",
+      "contentKey": "fallback-hook/career-planet-tenth/mars",
+      "rowWithoutApprovalSha256": "e8fc89dba1d414d481cdbb430452fefa12bb8fb51bd9a477d7567fbba28251a7",
+      "readerPayloadSha256": "c45e3e789631b586cf04df2e1de649ede37be854c0c66e90c5b2e9854b15e0e0",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-planet-tenth",
+      "contentKey": "fallback-hook/career-planet-tenth/mercury",
+      "rowWithoutApprovalSha256": "beaafd3e7ca04b86e8f05b71fcd523f6e0d4ccc1e7b80937666cb722f2ccb2b2",
+      "readerPayloadSha256": "a704e48255366deb88ce1b3f61355715fdf4058e96314b61676f41933c2a9250",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-planet-tenth",
+      "contentKey": "fallback-hook/career-planet-tenth/moon",
+      "rowWithoutApprovalSha256": "456db9829e067770e0ece8deb692be11cb9bf2cca4be6f9002fd2faed230cf52",
+      "readerPayloadSha256": "495f35d13087cb3ee3ec4ac7412095f43ec2bf97cdf4897a5aa2b5e7817fa470",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-planet-tenth",
+      "contentKey": "fallback-hook/career-planet-tenth/saturn",
+      "rowWithoutApprovalSha256": "328156ec78d285d05981936bd456761d5e183f4b512fd21fc0bf4615de065516",
+      "readerPayloadSha256": "14d7995071452cc700b5501ebc2d5fd0d7094489f64959af501008175134d411",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-planet-tenth",
+      "contentKey": "fallback-hook/career-planet-tenth/sun",
+      "rowWithoutApprovalSha256": "eddef1544bc29daaeddefba183df2fbf3105704e43be9157a2a8e8490112ce48",
+      "readerPayloadSha256": "797ed908bd878f5e79f9d45e2e969736a2c33640edfae727eaaa16b9eaa6a9ad",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-planet-tenth",
+      "contentKey": "fallback-hook/career-planet-tenth/venus",
+      "rowWithoutApprovalSha256": "4918b9e308e1ac3ffefc8af6bafda61d6f5765dc8e3375668beb40eef79811cd",
+      "readerPayloadSha256": "c995515e902227d955dea5c9a1ba0d3f9a681315b09fe6a566d3c9334205cb32",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/aspect-pattern",
+      "contentKey": "fallback-hook/aspect-pattern/grand_square",
+      "rowWithoutApprovalSha256": "3f789cf82b1c3a54c2d4e81727bad0a23b0abbb5378d6dcf18755ecb559fab77",
+      "readerPayloadSha256": "e7f8247ec5be7d45c86cd4685108b993f6405428e739bf0199ed15aa24fdc787",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/aspect-pattern",
+      "contentKey": "fallback-hook/aspect-pattern/grand_trine",
+      "rowWithoutApprovalSha256": "ead63ee12324b10acc61ab857fd4f112d5e5922d19c3b24e776b02ed6c91df2f",
+      "readerPayloadSha256": "2e4eb882f12ffbda97f6106117e0cb8e71d1e2c30813a75165e26697a8c5beed",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/aspect-pattern",
+      "contentKey": "fallback-hook/aspect-pattern/kite",
+      "rowWithoutApprovalSha256": "53fd8c888b6e16c2b91da0324b13f11a85922369a75f517ccee7b69b4cf599d2",
+      "readerPayloadSha256": "8008d98adb2c7e22a15665c8681aceffd7cca111a6a97d6ef43ea9c7f829a011",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/aspect-pattern",
+      "contentKey": "fallback-hook/aspect-pattern/mystic_rectangle",
+      "rowWithoutApprovalSha256": "18a601e5411a9674da0ab55830e7d46c16885d3b29bb5509455acf4efe1b3a7d",
+      "readerPayloadSha256": "90bcc6494e27dc2a4d1e8a65f24e92698794f9769b278872a7b3005d26b0b605",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/aspect-pattern",
+      "contentKey": "fallback-hook/aspect-pattern/t_square",
+      "rowWithoutApprovalSha256": "fdba91b0dde8eda65576bb280ada1ef1d24ede9b0ed2b9ace070f6ca16ffce37",
+      "readerPayloadSha256": "29e8e2558b3d3aa6843b19c0ab3ad5f4286ab716d6e7a2137d26c8bef3acf6f9",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/aspect-pattern",
+      "contentKey": "fallback-hook/aspect-pattern/yod",
+      "rowWithoutApprovalSha256": "7a29313ef3da44742782c3315ddbeb265e173b2c75f18281813dd7b9f8360acc",
+      "readerPayloadSha256": "497fb256184458ed137a5dbdc2ba581c1cfd73728133e15f5c27b22d05c2b672",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/aspect-pattern-activation",
+      "contentKey": "fallback-hook/aspect-pattern-activation/grand_square",
+      "rowWithoutApprovalSha256": "39afd0a2a6c52298ccacad3ed0976e150716e62b42a0003fa861a7c4b9234ec8",
+      "readerPayloadSha256": "fbafb9c0a6374ca650bf22026884f8e95d552a334e244e0fcfb46f4e7f72c735",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/aspect-pattern-activation",
+      "contentKey": "fallback-hook/aspect-pattern-activation/grand_trine",
+      "rowWithoutApprovalSha256": "4873e4308d3aedca92b8c78d6cef892e6cf5b6c6f2420f8f1eca5d2d978b8e6c",
+      "readerPayloadSha256": "93ae18209de529ed8de0ec4005298da4974c64d0ef9ed49d46ed3a01360b1456",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/aspect-pattern-activation",
+      "contentKey": "fallback-hook/aspect-pattern-activation/kite",
+      "rowWithoutApprovalSha256": "d6ac95367aa52499be1bd43f7a76d0ed5acc06b5a8ba90f179bf25a96bb2c5fe",
+      "readerPayloadSha256": "5c044bab836fa9959804184afd0e5236b85c70a011e1d84f1690f678e3b43b19",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/aspect-pattern-activation",
+      "contentKey": "fallback-hook/aspect-pattern-activation/mystic_rectangle",
+      "rowWithoutApprovalSha256": "2a576566c17667f758610f68da0617bea75a7d5c16166cebcd061f812a309660",
+      "readerPayloadSha256": "8be83933b6eca66497c3cdf0a95cbf37575c764ab493ab06f6b5f8ab8b624610",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/aspect-pattern-activation",
+      "contentKey": "fallback-hook/aspect-pattern-activation/t_square",
+      "rowWithoutApprovalSha256": "24572c194d71fe5d3064c2efe6f13eb6af711bc9dd70db0ad4462a7b685a1c11",
+      "readerPayloadSha256": "72f62532c92f44e5cb53870dfd9fc8ea2ad87298d5f033be5f05c5dce21f4c79",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/aspect-pattern-activation",
+      "contentKey": "fallback-hook/aspect-pattern-activation/yod",
+      "rowWithoutApprovalSha256": "7ffdaac6d13141672ffaaabd914380ffb808fc0fb997c4140af3f0f9a504c91a",
+      "readerPayloadSha256": "f12c646284d3fc3f883381cd8f9c46b57ec7e18f2d44c513c977656e222e8c34",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/synastry-aspect-type",
+      "contentKey": "fallback-hook/synastry-aspect-type/conjunction",
+      "rowWithoutApprovalSha256": "37797061a6be6d59a89c4fefc7f28c8562e71a4ca6e25983bc0cddb3099c4a5a",
+      "readerPayloadSha256": "670578c877e904f0d4ed3a2cf5829d1e56300083c993832f587c5cbcafc7b892",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/synastry-aspect-type",
+      "contentKey": "fallback-hook/synastry-aspect-type/opposition",
+      "rowWithoutApprovalSha256": "8d6e20d4771c34eb58f1ac7b0453fcd777d6820546f38b10572543fb826099c6",
+      "readerPayloadSha256": "f9555bce61d1f72e4c289f6f3fcc37d442dc7574738c4437927ae70dbb7314d4",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/synastry-aspect-type",
+      "contentKey": "fallback-hook/synastry-aspect-type/sextile",
+      "rowWithoutApprovalSha256": "1cac9801fb7bc1035820c3a5efc19a1f9fc0c89fbc2c0e83461992dab51b0030",
+      "readerPayloadSha256": "7161395f598e2bbb91a9b4974c31c760d017722f97dff54b077313832a00c159",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/synastry-aspect-type",
+      "contentKey": "fallback-hook/synastry-aspect-type/square",
+      "rowWithoutApprovalSha256": "2a358b7700c56a2fc3415f4bbf20683747205dc413295fddeba57c6979952857",
+      "readerPayloadSha256": "b0da0d57d2b59785e21621a480111c925b8341ba44b64d286a577e1918c63216",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/synastry-aspect-type",
+      "contentKey": "fallback-hook/synastry-aspect-type/trine",
+      "rowWithoutApprovalSha256": "1a202c80fb1965168ce3da169fe55ae6a687d58ee0b0595c8e1394b8a892aeea",
+      "readerPayloadSha256": "c118ec7a22f1dee8cdbfad7645cb471b8cd84ad52070572e975086beab44d97c",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-hemisphere",
+      "contentKey": "fallback-hook/career-hemisphere/east",
+      "rowWithoutApprovalSha256": "defc818bc471abb6e827079015ce6ed2374607c9456b02f6ad20c4dd09239001",
+      "readerPayloadSha256": "2c890d71d612adc1a9a95871b1dfe92a057b22ebb77be997f441a932ff272493",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-hemisphere",
+      "contentKey": "fallback-hook/career-hemisphere/north",
+      "rowWithoutApprovalSha256": "3d4fa5cbe01d1ff90417c585efabb11ff1f85ba80830521e3a729bcc75e898cd",
+      "readerPayloadSha256": "d0602b036483cb9ee260ba1487ba58c6fc01061615a7edf5376a18ad0884367d",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-hemisphere",
+      "contentKey": "fallback-hook/career-hemisphere/south",
+      "rowWithoutApprovalSha256": "cbdf1bad7d80d12f4870f1d604c1373bf608f72ad935ef6d9af74ac9f1968e4f",
+      "readerPayloadSha256": "8763674695b298bb6fb40761ada40fe1bc8d6947fb8145c6b93a7fe9b3f33a26",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-hemisphere",
+      "contentKey": "fallback-hook/career-hemisphere/west",
+      "rowWithoutApprovalSha256": "323d5df659e004e357b9512e48e4d94fdd289cffbbac9152bca9501cc939d7af",
+      "readerPayloadSha256": "518f7c25ad10a6699099c1ca760fd8096130ef913f9bfabf847b8dab055027fa",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-node-mode",
+      "contentKey": "fallback-hook/career-node-mode/cardinal",
+      "rowWithoutApprovalSha256": "0636f320c03e947cd071b69eb20f46a95f5af6273aefbf9c755b4b323208b0f8",
+      "readerPayloadSha256": "4ed38676a4b0b315b28000f2ecbc35549906e9e309caecfb72fa8f0c17618358",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-node-mode",
+      "contentKey": "fallback-hook/career-node-mode/fixed",
+      "rowWithoutApprovalSha256": "85392a4c7697368b93530097c0480c0807ba7a5e914dd6d5f621a94731a8ef93",
+      "readerPayloadSha256": "a91d3f3f2b93a18a8eedf1fcad413519b2d5d6bbe67b7932eab9995afc164179",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/career-node-mode",
+      "contentKey": "fallback-hook/career-node-mode/mutable",
+      "rowWithoutApprovalSha256": "3f6b7499da4c9bb8a990a05b23e6b75031e149a2d7701afb1db66cd72debff14",
+      "readerPayloadSha256": "9a4deb335b4baa487fc5d70ec98564fd991ec0b79b3892e4bca95c9a72e011b9",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/aspect-pattern-apex",
+      "contentKey": "fallback-hook/aspect-pattern-apex/kite",
+      "rowWithoutApprovalSha256": "0d5a70aa6f1047a5d53456054eb9251ceaef3a6490d94afd96a7622965f83446",
+      "readerPayloadSha256": "6f1162d2f34ccef2859403057c26e20b54c83015a734bfe34e032b2e975a8bd2",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/aspect-pattern-apex",
+      "contentKey": "fallback-hook/aspect-pattern-apex/t_square",
+      "rowWithoutApprovalSha256": "416f956b5c929ccf6c65a39a5cf2bafbd4f0c8bea6a3b3d99f7d3f1a31794d9d",
+      "readerPayloadSha256": "0fea89a767f7ff7cc1983c30d7afb5db119790450de627e79122ba0ea484203f",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/aspect-pattern-apex",
+      "contentKey": "fallback-hook/aspect-pattern-apex/yod",
+      "rowWithoutApprovalSha256": "2b5f51be3dcee46c972ee42b0dafba76006e0e39f715c1be77879663f99b1bfe",
+      "readerPayloadSha256": "a9e49245dd3d202570ad3610e446e3cc968b6fce5dd176749c6a760f11fe44f9",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-frame",
+      "contentKey": "fallback-hook/transit-house-event-frame/jupiter",
+      "rowWithoutApprovalSha256": "0745194e845d6ed62b411c680b0ea3eb697a90882031b77973e0c78782eafe39",
+      "readerPayloadSha256": "b5ecf8ca6cb39244a1b1a724ae76921bddeb87d5bf2ada49c692c8871904ec2b",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-event-frame",
+      "contentKey": "fallback-hook/transit-house-event-frame/saturn",
+      "rowWithoutApprovalSha256": "a191257f80620b52612d5298ce7fe092221e804335b6c529b81eb3a9119eb943",
+      "readerPayloadSha256": "88b9d1a268200179c9f5c6b13053b975660292de25c3cb03cb9595d278a77d3f",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-retro-overlay",
+      "contentKey": "fallback-hook/transit-house-retro-overlay/jupiter",
+      "rowWithoutApprovalSha256": "2b97020b310214d1649cb043130fb8b2308f77ba77b0902720d54769982ed5ad",
+      "readerPayloadSha256": "65836cd36aa925e67fef887439a92afec228c7047ff394cf3d3cc1385a61f974",
+      "approvalLevelAtManifest": null
+    },
+    {
+      "family": "fallback-hook/transit-house-retro-overlay",
+      "contentKey": "fallback-hook/transit-house-retro-overlay/saturn",
+      "rowWithoutApprovalSha256": "72e95fd9442c2df03761615cca92b05e77654b2b18d8479df289ed9554f14517",
+      "readerPayloadSha256": "f90a58861df1bf3e4f2d6b0e9bfde3765b2c7349ed80c298ea20fca0a9809e95",
+      "approvalLevelAtManifest": null
+    }
+  ]
+}
