@@ -8,7 +8,7 @@
     "ownerReference": "artifacts/marie-satori-year-ahead-2026-FINAL.md",
     "productionSnapshot": "artifacts/marie-satori-general-12m-report-8b3e266e-review-snapshot.md",
     "ownerInstructionDate": "2026-08-13",
-    "note": "Nineteen title/sentence pairs are owner-authored reference lines. MAY 12 and AUG 19 are needs-review date-specific repair lines for Production-only selected events. Dates and attributions remain calculation-owned."
+    "note": "Nineteen title/sentence pairs are owner-authored reference lines. MAY 12 and AUG 19 preserve existing needs-review date-specific repair lines. Key Dates contains only eligible factors interpreted by the report; fact-only placeholders are excluded. All remain needs_review; dates and attributions remain calculation-owned."
   },
   "sourceUnits": {
     "winter-current": [
