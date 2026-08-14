@@ -233,9 +233,11 @@ import {
   clearPendingSocialInvitation,
   claimPendingSocialInvitation,
   declinePendingSocialInvitation,
+  hasPendingSocialInvitation,
   listSocialFriendRequests,
   loadOwnSocialProfile,
   previewPendingSocialInvitation,
+  preservePendingSocialInvitationForEmailConfirmation,
   subscribeToSocialChanges,
   syncOwnSocialProfile
 } from "./services/socialFriends";
@@ -10400,6 +10402,7 @@ export function App() {
     setAccountIntentState(intent);
   }, []);
   const pendingInvitationCapturedRef = useRef(false);
+  const [pendingInvitationForSignup, setPendingInvitationForSignup] = useState(false);
   const [launchChartSetupAfterAuth, setLaunchChartSetupAfterAuth] = useState(false);
   const [chartModalOpen, setChartModalOpen] = useState(false);
   const [chartModalStep, setChartModalStep] = useState<"overview" | "birth" | "city">("overview");
@@ -10610,9 +10613,11 @@ export function App() {
 
   useEffect(() => {
     const capturedInvitation = captureSocialInvitationFromUrl();
+    const hasPendingInvitation = Boolean(capturedInvitation) || hasPendingSocialInvitation();
 
-    pendingInvitationCapturedRef.current = Boolean(capturedInvitation);
-    if (capturedInvitation && !userProfile) {
+    pendingInvitationCapturedRef.current = hasPendingInvitation;
+    setPendingInvitationForSignup(hasPendingInvitation);
+    if (hasPendingInvitation && !userProfile) {
       setAccountIntent("create");
       navigateToPortalMode("profile");
     }
@@ -13561,6 +13566,7 @@ export function App() {
                     <Suspense fallback={<FeatureLoadingFallback />}>
                       <SignupView
                         key={accountIntent}
+                        hasPendingInvitation={pendingInvitationForSignup}
                         initialForm={defaultSignupForm}
                         initialMode={accountIntent}
                         onAuthenticated={({ account, form, isNewAccount, provider }) => {
@@ -13579,6 +13585,7 @@ export function App() {
                           setAccountIntent("create");
                           navigateToPortalMode(userProfile ? "profile" : "guest");
                         }}
+                        onEmailConfirmationRequired={preservePendingSocialInvitationForEmailConfirmation}
                         onSavePendingForm={savePendingSignupForm}
                       />
                     </Suspense>
