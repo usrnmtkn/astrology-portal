@@ -533,10 +533,17 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("navigation", { name: "Content operations" })).toBeVisible();
     await expectAdminHeader(page, "Content Studio", "Admin / Home");
 
-    for (const adminPage of adminPages) {
+    for (const [index, adminPage] of adminPages.entries()) {
+      if (index === 1) {
+        await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+        await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+      }
       await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: adminPage.nav }).click();
       await expectAdminHeader(page, adminPage.title, adminPage.breadcrumb);
       await expect(page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: adminPage.nav })).toHaveAttribute("aria-current", "page");
+      if (index === 1) {
+        await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+      }
     }
 
     await assertNoBrowserErrors();
@@ -597,6 +604,44 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page).toHaveURL(/\/admin\/content#articles$/);
 
     await assertNoBrowserErrors();
+  });
+
+  test("deferred hook catalog exposes failures, retries, and loads exact source bodies on demand", async ({ page }) => {
+    let indexRequests = 0;
+    let skyBodyRequests = 0;
+    await page.route("**/generated/admin-hook-catalog-index-v1.json", async (route) => {
+      indexRequests += 1;
+      if (indexRequests === 1) {
+        await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: "QA index failure" }) });
+        return;
+      }
+      await route.continue();
+    });
+    await page.route("**/generated/admin-hook-catalog-sky-v1.json", async (route) => {
+      skyBodyRequests += 1;
+      if (skyBodyRequests === 1) {
+        await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: "QA domain failure" }) });
+        return;
+      }
+      await route.continue();
+    });
+    await seedAdminApi(page);
+
+    await expectAdminRouteLoads(page, "/admin/content#surface-map");
+    await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
+    await expect(page.getByRole("alert")).toContainText("failed with HTTP 503");
+    await page.getByRole("button", { name: "Retry catalog" }).click();
+
+    const firstHook = page.locator("article.admin-fallback-row").filter({ hasText: "fallback-hook/angle-intro/ascendant" }).first();
+    await expect(firstHook).toBeVisible();
+    await firstHook.getByRole("button", { name: "Author" }).click();
+    await expect(page.getByText(/Select Author to retry\./)).toBeVisible();
+    await firstHook.getByRole("button", { name: "Author" }).click();
+
+    await expectAdminHeader(page, "Fallback Hooks", "Admin / Composition / Fallback hooks");
+    await expect(page.getByLabel("Body")).not.toHaveValue("");
+    expect(indexRequests).toBe(2);
+    expect(skyBodyRequests).toBe(2);
   });
 
   test("create menu routes writing actions to the right editors", async ({ page }) => {
