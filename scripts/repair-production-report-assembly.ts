@@ -1,7 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
-import { validateAssembledReport, validateReportKeyDateFormat } from "../api/_lib/report-assembly.js";
+import {
+  repairMechanicalPostDedupSeams,
+  validateAssembledReport,
+  validateReportKeyDateFormat
+} from "../api/_lib/report-assembly.js";
 import { verifyReportFactLock } from "../api/_lib/report-fact-lock.js";
+import { reportFactors } from "../api/_lib/report-generation.js";
 import { assembleDeterministicReportKeyDates, reportKeyDateEventManifest } from "../api/_lib/report-key-dates.js";
 
 type JsonRecord = Record<string, unknown>;
@@ -44,8 +49,20 @@ async function request<T>(resource: string, init: RequestInit = {}) {
 
 const [report] = await request<Array<JsonRecord>>(`user_reports?id=eq.${manifest.reportId}&select=*`);
 if (!report) throw new Error(`Report ${manifest.reportId} was not found.`);
-if (report.status !== "needs_review") throw new Error(`Report must be needs_review before repair; found ${String(report.status)}.`);
+if (report.status !== "needs_review" && report.fulfillment_status !== "exception") {
+  throw new Error(`Report must be needs_review or the reviewed assembly exception; found ${String(report.status)}/${String(report.fulfillment_status)}.`);
+}
 const rows = await request<Array<JsonRecord>>(`user_generated_interpretations?subject_id=eq.${manifest.reportId}&subject_type=eq.report_unit&select=*`);
+const [job] = await request<Array<JsonRecord>>(`report_fulfillment_jobs?report_id=eq.${manifest.reportId}&select=*&order=created_at.desc&limit=1`);
+if (!job) throw new Error("Report fulfillment job was not found.");
+if (apply && report.fulfillment_status === "exception") {
+  if (!["exception", "paused"].includes(String(job.state))) {
+    throw new Error(`Reviewed assembly repair expected a stopped job; found ${String(job.state)}.`);
+  }
+  if (!String(job.last_error ?? "").includes("REPORT_ASSEMBLY_COHERENCE_REPAIR_REJECTED")) {
+    throw new Error(`Reviewed assembly repair found an unrelated failure: ${String(job.last_error)}`);
+  }
+}
 const prefix = `report:${manifest.reportId}:`;
 const byUnit = new Map(rows.map((row) => [String(row.content_key).replace(prefix, ""), row]));
 const sourceUnits = Object.entries(manifest.sourceUnits).map(([unitId, keyDates]) => {
@@ -61,10 +78,19 @@ const sourceUnits = Object.entries(manifest.sourceUnits).map(([unitId, keyDates]
   };
 });
 const facts = report.facts as Record<string, unknown>;
+const eligibleManifest = reportKeyDateEventManifest(
+  facts,
+  "12_months",
+  reportFactors(facts).map((factor) => factor.id)
+);
+const eligibleEventIds = eligibleManifest.map((event) => event.eventId);
+const interpretedEventIds = Object.values(manifest.sourceUnits).flat().map((event) => event.eventId);
 const keyDatesDraft = assembleDeterministicReportKeyDates({
   reportHorizon: String(report.report_horizon) as "12_months",
   frozenFacts: facts,
-  sourceUnits
+  sourceUnits,
+  eligibleEventIds,
+  interpretedEventIds
 });
 const formatIssues = validateReportKeyDateFormat(keyDatesDraft, sourceUnits);
 const factLock = verifyReportFactLock(keyDatesDraft, facts);
@@ -79,11 +105,15 @@ const assembledUnits = rows.flatMap((row) => {
     }
   }];
 });
-const assemblyIssues = validateAssembledReport([...assembledUnits, { unitId: "key-dates", draft: keyDatesDraft }]);
+const mechanicalCoherence = repairMechanicalPostDedupSeams(assembledUnits);
+if (mechanicalCoherence.remaining.length) {
+  throw new Error(`Repair manifest leaves non-mechanical coherence gaps: ${JSON.stringify(mechanicalCoherence.remaining)}`);
+}
+const assemblyIssues = validateAssembledReport([...mechanicalCoherence.units, { unitId: "key-dates", draft: keyDatesDraft }]);
 const blocking = [...formatIssues, ...factLock.issues, ...assemblyIssues.filter((issue) => issue.severity === "error")];
 if (blocking.length) throw new Error(`Repair manifest failed validation: ${JSON.stringify(blocking)}`);
 
-const eventIds = new Set(reportKeyDateEventManifest(facts, "12_months").map((event) => event.eventId));
+const eventIds = new Set(eligibleEventIds);
 for (const [unitId, entries] of Object.entries(manifest.sourceUnits)) {
   for (const entry of entries) if (!eventIds.has(entry.eventId)) throw new Error(`Unknown event ${entry.eventId} in ${unitId}.`);
 }
@@ -92,8 +122,11 @@ const result = {
   mode: apply ? "apply" : "dry_run",
   reportId: manifest.reportId,
   currentStatus: report.status,
+  currentFulfillmentStatus: report.fulfillment_status,
+  currentJobState: job.state,
   selectedKeyDates: Object.values(manifest.sourceUnits).flat().length,
   keyDates: keyDatesDraft.body,
+  mechanicalCoherenceRepairs: mechanicalCoherence.repairs,
   warnings: assemblyIssues.filter((issue) => issue.severity !== "error")
 };
 if (outputArgument) {
@@ -121,7 +154,34 @@ for (const sourceUnit of sourceUnits) {
       source_snapshot: {
         ...row.source_snapshot as JsonRecord,
         keyDateEntries: sourceUnit.draft.keyDates,
+        keyDateEligibleEventIds: eligibleEventIds.filter((eventId) => (
+          eligibleManifest.find((event) => event.eventId === eventId)?.sourceUnitId === sourceUnit.unitId
+        )),
+        keyDateInterpretedEventIds: sourceUnit.draft.keyDates.map((event) => event.eventId),
         assemblyRepairManifest: { schema: manifest.schema, provenance: manifest.provenance }
+      }
+    })
+  });
+}
+for (const repair of mechanicalCoherence.repairs) {
+  const row = byUnit.get(repair.unitId) as JsonRecord;
+  const assembled = mechanicalCoherence.units.find((unit) => unit.unitId === repair.unitId);
+  if (!row || !assembled) throw new Error(`Missing persisted coherence-repair unit ${repair.unitId}.`);
+  await request(`user_generated_interpretations?id=eq.${String(row.id)}`, {
+    method: "PATCH",
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({
+      headline: assembled.draft.headline ?? "",
+      summary: assembled.draft.summary ?? "",
+      body: assembled.draft.body ?? "",
+      sections: assembled.draft.sections ?? [],
+      source_snapshot: {
+        ...row.source_snapshot as JsonRecord,
+        assemblyCoherenceRepairs: [
+          ...(Array.isArray((row.source_snapshot as JsonRecord | undefined)?.assemblyCoherenceRepairs)
+            ? (row.source_snapshot as JsonRecord).assemblyCoherenceRepairs as unknown[] : []),
+          { schema: "report-assembly-coherence-repair.v2", ...repair, boundedCallCount: 0 }
+        ]
       }
     })
   });
@@ -140,7 +200,7 @@ await request(`user_generated_interpretations?id=eq.${String(keyDateRow.id)}`, {
       ...keyDateRow.source_snapshot as JsonRecord,
       fulfillmentPassed: true,
       deterministicAssembly: {
-        schema: "report-key-dates-assembly.v2",
+        schema: "report-key-dates-assembly.v4",
         sourceUnitIds: sourceUnits.map((unit) => unit.unitId),
         writerChainSkipped: true,
         coldReadSkipped: true,
@@ -153,17 +213,15 @@ await request(`user_generated_interpretations?id=eq.${String(keyDateRow.id)}`, {
     }
   })
 });
-const [job] = await request<Array<JsonRecord>>(`report_fulfillment_jobs?report_id=eq.${manifest.reportId}&select=*&order=created_at.desc&limit=1`);
-if (!job) throw new Error("Report fulfillment job was not found.");
 await request(`user_reports?id=eq.${manifest.reportId}`, {
   method: "PATCH", headers: { Prefer: "return=minimal" },
-  body: JSON.stringify({ status: "draft", fulfillment_status: "validating" })
+  body: JSON.stringify({ status: "needs_review", fulfillment_status: "needs_review" })
 });
 await request(`report_fulfillment_jobs?id=eq.${String(job.id)}`, {
   method: "PATCH", headers: { Prefer: "return=minimal" },
   body: JSON.stringify({
-    state: "queued", step: "validating", run_after: new Date().toISOString(),
+    state: "complete", step: "complete", run_after: new Date().toISOString(),
     locked_at: null, locked_by: null, lease_expires_at: null, last_error: null
   })
 });
-console.log(JSON.stringify({ applied: true, jobId: job.id, countersPreserved: true, status: "queued" }));
+console.log(JSON.stringify({ applied: true, jobId: job.id, countersPreserved: true, status: "needs_review" }));
