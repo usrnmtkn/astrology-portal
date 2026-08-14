@@ -1,9 +1,11 @@
 # Daily Glance scene-context compiler v1
 
-Status: non-serving writer-input pilot. The four v1 licenses were approved as
-revised by the owner on 2026-08-11 and are `writerEligible: true`. They remain
-`renderEligible: false`; approval authorizes candidate construction, not serving
-reader copy. Approved source evidence never automatically approves a normalization.
+Status: non-serving writer-input pilot. Four v1 licenses were approved as
+revised by the owner on 2026-08-11. The Moon-conjunction-North-Node mechanism
+and its context-guarded House-4 subset were approved on 2026-08-14. All six are
+`writerEligible: true` and remain `renderEligible: false`; approval authorizes
+candidate construction, not serving reader copy. Approved source evidence never
+automatically approves a normalization.
 
 ## Cross-surface provenance rule
 
@@ -118,6 +120,12 @@ mechanism but no arena; a house license may carry arena, roles, settings, object
 and arena activities but no behavioral mechanism; a sign license may carry manner
 but no domains, roles, settings, objects, or consequences. Every value-level
 provenance grant records the matching scope role (`mechanism`, `arena`, or `manner`).
+
+A house license may be narrowed by an exact aspect `contextGuard`. Such a license
+must carry its causal guard and cannot execute for a different planet, aspect,
+target, or an unreliable house calculation. The compiled writer boundary carries
+both the causal guard and the owner-ruled disallowed inferences. The House-4 pilot
+is therefore not a global House-4 master license.
 
 The active Daily Glance writer lane also requires a calculation-resolved chart
 context for every requested key. If either the context or explicitly approved

@@ -1,9 +1,14 @@
 # Daily Glance house-4 / North-Node scene-license review
 
 Date: 2026-08-14  
-Status: OWNER REVIEW REQUIRED  
+Status: SUPERSEDED BY OWNER RULING
 Serving effect: none  
-Writer effect: none until the owner approves the exact normalized fields below
+Writer effect: the exact revised fields are approved in
+`daily-glance-house4-north-node-owner-ruling-2026-08-14.md`
+
+This proposal is retained as review history. Its proposed meanings are not
+operative and must not be treated as approved; the narrower owner ruling is the
+canonical authority.
 
 ## Target calculated context
 
