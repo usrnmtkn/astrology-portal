@@ -120,13 +120,20 @@ export function createReportFulfillmentStore(admin = createSupabaseReportAdmin()
       content_key: `eq.report:${reportId}:${unitId}`, subject_type: "eq.report_unit", select: "id,headline,summary,body,sections,source_snapshot"
     })),
     async saveUnit(report, unitId, draft, sourceSnapshot) {
-      const value = draft as { headline?: string; summary?: string; body?: string; sections?: unknown };
+      const value = draft as { headline?: string; summary?: string; body?: string; timing?: string; sections?: unknown };
+      const existingRenderMetadata = sourceSnapshot.renderMetadata && typeof sourceSnapshot.renderMetadata === "object"
+        ? sourceSnapshot.renderMetadata as Record<string, unknown>
+        : {};
       await admin.insert("user_generated_interpretations", {
         user_id: report.user_id, subject_type: "report_unit", subject_id: report.id,
         content_key: `report:${report.id}:${unitId}`, target_date: report.period_start,
         surface: "year_ahead", mode: "report", status: "DRAFT",
         event_type: "report_unit", headline: value.headline ?? "", summary: value.summary ?? "", body: value.body ?? "",
-        sections: value.sections ?? [], facts: report.facts, source_snapshot: sourceSnapshot
+        sections: value.sections ?? [], facts: report.facts,
+        source_snapshot: {
+          ...sourceSnapshot,
+          renderMetadata: { ...existingRenderMetadata, timing: value.timing ?? "" }
+        }
       }, { onConflict: "user_id,subject_type,subject_id,content_key,target_date,mode" });
     },
     unitRows: async (reportId) => admin.request(`user_generated_interpretations?subject_id=eq.${reportId}&subject_type=eq.report_unit&select=content_key,headline,summary,body,sections,source_snapshot&order=content_key.asc`),

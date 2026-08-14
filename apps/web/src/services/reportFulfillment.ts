@@ -23,7 +23,7 @@ export type ReportDeliveryPayload = {
   report?: {
     id: string; reportDomain: string; reportHorizon: string; periodStart: string; periodEnd: string;
     factsEngine: string; factsHash: string; deliveredAt: string | null;
-    units: Array<{ content_key: string; headline: string | null; summary: string | null; body: string | null; sections: Array<{ heading?: string; body?: string }> | null }>;
+    units: Array<{ content_key: string; headline: string | null; timing: string | null; summary: string | null; body: string | null; sections: Array<{ heading?: string; body?: string }> | null }>;
   };
 };
 

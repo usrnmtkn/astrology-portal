@@ -14,6 +14,7 @@ import {
   assembleReportGenerationPayload,
   isAstrologyMechanismStatement,
   reportFactors,
+  reportLegacyPromptFromPayload,
   reportPromptFromPayload,
   validateReportDraft
 } from "../api/_lib/report-generation.ts";
@@ -229,6 +230,27 @@ assert.equal(validateAssembledReport(productionDeduplication.units).filter((entr
 assert.equal(productionRepetitionUnits[3].draft.body, `${manageable} ${overcommit} ${goodOpportunities} ${publicCommunication}`,
   "Mechanical deduplication must not mutate the persisted input object in place.");
 
+const synthesisExemptionUnits = [{ unitId: "overview", draft: { body: grief } }, {
+  unitId: "spring", draft: { body: grief }
+}, { unitId: "review-current-year", draft: { body: grief } }];
+assert.equal(validateAssembledReport(synthesisExemptionUnits, {
+  allowSynthesisRepetition: true
+}).filter((entry) => entry.code === "repeated_exact_sentence").length, 0,
+"Candidate assembly must permit one canonical sentence in Overview/Year-in-Review and its introducing unit.");
+assert.equal(validateAssembledReport(synthesisExemptionUnits).filter((entry) => entry.code === "repeated_exact_sentence").length, 2,
+"Optionless assembly validation remains strict; fulfillment must opt into the approved synthesis exemption explicitly.");
+const nonSynthesisRepeat = [{ unitId: "spring", draft: { body: grief } }, {
+  unitId: "autumn", draft: { body: grief }
+}];
+assert.equal(validateAssembledReport(nonSynthesisRepeat, {
+  allowSynthesisRepetition: true
+}).filter((entry) => entry.code === "repeated_exact_sentence" && entry.severity === "error").length, 1,
+"Candidate assembly must still block exact repetition between two season units.");
+assert.equal(deduplicateAssembledReport(nonSynthesisRepeat, {
+  allowSynthesisRepetition: true
+}).removals.length, 1,
+"Bounded deterministic deletion must remain the fallback for non-synthesis repetition.");
+
 const exactPostDedupHoleUnits = [{
   unitId: "spring",
   draft: { body: "The change may be your decision, but it does not have to begin as a preference.  Different hours, fewer responsibilities, or more notice may become necessary." }
@@ -361,6 +383,65 @@ assert.equal(payload.coldProseRuling.sourcePath, "tldr-astro-phrasebank/TLDR-REP
 assert.match(payload.noClevernessRuling.text, /New report rule: no cleverness tax/u);
 assert.match(payload.ownerReviewEvidence.text, /Each new opportunity can look manageable by itself\./u);
 assert.match(reportPromptFromPayload(payload), /NO_CLEVERNESS_TAX_OWNER_RULING[\s\S]*OWNER_REVIEW_EVIDENCE[\s\S]*COLD_RENDERED_PROSE_OWNER_RULING/u);
+assert.equal(payload.naturalnessRuling.sourcePath, "tldr-astro-phrasebank/TLDR-REPORT-NATURALNESS-RULING-OWNER.md");
+assert.match(reportPromptFromPayload(payload), /NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING/u);
+assert.doesNotMatch(reportLegacyPromptFromPayload(payload), /NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING/u);
+
+const candidatePayload = assembleReportGenerationPayload({
+  reportId: "fixture-report-naturalness-candidate",
+  reportDomain: "general",
+  reportHorizon: "12_months",
+  unitId: "autumn",
+  frozenFacts: frozen,
+  priorUnitContext: [{
+    unitId: "spring",
+    synthesis: false,
+    headline: "SPRING 2026: FIXTURE_ONLY",
+    summary: "FIXTURE_ONLY earlier summary.",
+    body: "The earlier persisted sentence must be visible to the later writer.",
+    sections: [{ heading: "FIXTURE_ONLY", body: "A prior manifestation menu names a class, contract, and application." }]
+  }]
+});
+const candidatePrompt = reportPromptFromPayload(candidatePayload);
+assert.equal(candidatePayload.naturalnessRuling.sourcePath,
+  "tldr-astro-phrasebank/TLDR-REPORT-NATURALNESS-RULING-OWNER.md");
+assert.match(candidatePrompt, /PRIOR_UNIT_REPETITION_PREVENTION[\s\S]*The earlier persisted sentence must be visible to the later writer\./u,
+  "A later active unit must receive the exact persisted text of earlier units.");
+assert.match(candidatePrompt, /Do not repeat their sentences or re-run their manifestation menus/u);
+assert.match(candidatePrompt, /The only synthesis units are overview and review-current-year/u);
+assert.match(candidatePrompt, /The reply you wanted can still create more work than the silence did\./u,
+  "The naturalness do-not-flag control must be present in the writer exemplar packet.");
+for (const evidence of ["REJECTED:", "OWNER:", "SHARPER OWNER ALTERNATIVE:", "KEEP EXACTLY", "ACCEPTABLE IN CONTEXT", "OWNER STANDALONE VERSION"]) {
+  assert.ok(candidatePrompt.includes(evidence), `Active writer prompt is missing naturalness evidence label ${evidence}.`);
+}
+
+const winterCandidate = assembleReportGenerationPayload({
+  reportId: "fixture-report-winter-structure",
+  reportDomain: "general",
+  reportHorizon: "12_months",
+  unitId: "winter-next",
+  frozenFacts: frozen
+});
+assert.deepEqual(winterCandidate.structuralRequirements, { headingPrefix: "WINTER 2027", dateRange: "Dec 21 - Feb 17" });
+const missingWinterStructure = validateReportDraft({
+  headline: "The year closes on a different schedule",
+  body: "FIXTURE_ONLY body."
+}, winterCandidate, { enforceSeasonStructure: true });
+assert.ok(missingWinterStructure.some((entry) => entry.code === "missing_season_heading"));
+assert.ok(missingWinterStructure.some((entry) => entry.code === "missing_season_date_range"));
+const completeWinterDraft = {
+  headline: "WINTER 2027: The year closes on a different schedule",
+  timing: "Dec 21 - Feb 17",
+  body: "FIXTURE_ONLY body."
+};
+assert.ok(!validateReportDraft(completeWinterDraft, winterCandidate, {
+  enforceSeasonStructure: true
+}).some((entry) => entry.code === "missing_season_heading" || entry.code === "missing_season_date_range"));
+assert.ok(!validateAssembledReport([{ unitId: "winter-next", draft: completeWinterDraft }], {
+  enforceSeasonStructure: true,
+  allowSynthesisRepetition: true
+}).some((entry) => entry.code === "missing_season_heading" || entry.code === "missing_season_date_range"),
+"WINTER 2027 and its explicit date range must survive active assembly.");
 
 const unitCodes = (body) => validateReportDraft({ body }, payload).map((entry) => entry.code);
 for (const [body, code] of [
@@ -423,4 +504,4 @@ for (const term of ["grief when an emotionally significant ending supports it", 
 assert.ok(twelfthHouse.possibleLivedManifestations.some((entry) => entry.includes("wanted or necessary")));
 assert.ok(!JSON.stringify(twelfthHouse).includes("protect your energy"));
 
-console.log(`Report assembly passed: ${issues.length} exact-review findings, report-level budgets, owner-ruling wiring, and activated v2/v3.3/v6 prompts.`);
+console.log(`Report assembly passed: ${issues.length} exact-review findings, report-level budgets, owner-ruling wiring, and activated naturalness/v3.4/v7 prompts.`);

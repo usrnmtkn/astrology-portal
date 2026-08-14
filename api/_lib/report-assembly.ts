@@ -1,10 +1,15 @@
-import { manifestationEnumerationSize, type ReportDraft, type ReportGenerationPayload, type ReportValidationIssue } from "./report-generation.js";
+import { isReportSynthesisUnit, manifestationEnumerationSize, type ReportDraft, type ReportGenerationPayload, type ReportValidationIssue } from "./report-generation.js";
 import { callReportModel, writerModelTarget, type ReportModelCall, type ReportModelUsage } from "./report-model-client.js";
 import { loadVersionedReportPrompt, REPORT_REDUNDANCY_PROMPT_PATH } from "./report-prompt-versions.js";
 
 export type AssembledReportUnit = {
   unitId: string;
   draft: ReportDraft;
+};
+
+export type ReportAssemblyValidationOptions = {
+  enforceSeasonStructure?: boolean;
+  allowSynthesisRepetition?: boolean;
 };
 
 export type ReportAssemblyIssue = ReportValidationIssue & {
@@ -331,6 +336,33 @@ function validateMarkdown(units: AssembledReportUnit[], issues: ReportAssemblyIs
   }
 }
 
+const SEASON_UNIT_IDS = new Set(["winter-current", "spring", "summer", "autumn", "winter-next"]);
+const ASSEMBLED_DATE_RANGE = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:,?\s+\d{4})?\s*(?:-|–|to)\s*(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:,?\s+\d{4})?\b/iu;
+
+function validateSeasonStructure(units: AssembledReportUnit[], issues: ReportAssemblyIssue[]) {
+  for (const unit of units.filter((candidate) => SEASON_UNIT_IDS.has(candidate.unitId))) {
+    const expectedSeason = unit.unitId === "winter-current" || unit.unitId === "winter-next"
+      ? "WINTER"
+      : unit.unitId.toUpperCase();
+    const headline = unit.draft.headline?.trim() ?? "";
+    if (!new RegExp(`^${expectedSeason}\\s+\\d{4}\\b`, "u").test(headline)) {
+      issues.push(issue({
+        code: "missing_season_heading",
+        message: `${unit.unitId} must preserve its season/year heading through assembly.`,
+        unitId: unit.unitId, location: "headline", sentenceIndex: 0, scopeStart: 0, scopeEnd: 0, quote: headline
+      }, "error"));
+    }
+    const timing = unit.draft.timing?.trim() ?? "";
+    if (!ASSEMBLED_DATE_RANGE.test(timing)) {
+      issues.push(issue({
+        code: "missing_season_date_range",
+        message: `${unit.unitId} must preserve its explicit date range through assembly.`,
+        unitId: unit.unitId, location: "timing", sentenceIndex: 0, scopeStart: 0, scopeEnd: 0, quote: timing
+      }, "error"));
+    }
+  }
+}
+
 export function validateReportKeyDateFormat(draft: ReportDraft, sourceUnits: AssembledReportUnit[] = []) {
   const units = [...sourceUnits, { unitId: "key-dates", draft }];
   const issues: ReportAssemblyIssue[] = [];
@@ -339,7 +371,11 @@ export function validateReportKeyDateFormat(draft: ReportDraft, sourceUnits: Ass
   return issues;
 }
 
-function validateRepeatedSentences(units: AssembledReportUnit[], issues: ReportAssemblyIssue[]) {
+function validateRepeatedSentences(
+  units: AssembledReportUnit[],
+  issues: ReportAssemblyIssue[],
+  allowSynthesisRepetition = false
+) {
   const all = sentences(units);
   for (let index = 0; index < all.length; index += 1) {
     const current = all[index];
@@ -353,6 +389,10 @@ function validateRepeatedSentences(units: AssembledReportUnit[], issues: ReportA
       const near = current.tokens.length >= 12 && prior.tokens.length >= 12 && similarity(current.tokens, prior.tokens) >= nearThreshold;
       if (!exact && !near) continue;
       const acrossUnits = current.unitId !== prior.unitId;
+      if (allowSynthesisRepetition && acrossUnits
+        && (isReportSynthesisUnit(current.unitId) || isReportSynthesisUnit(prior.unitId))) {
+        continue;
+      }
       issues.push(issue({
         code: exact ? "repeated_exact_sentence" : "repeated_near_sentence",
         message: `${exact ? "Exact" : "Near-exact"} sentence repetition between ${prior.unitId} and ${current.unitId}.`,
@@ -458,12 +498,16 @@ function validateMenus(units: AssembledReportUnit[], issues: ReportAssemblyIssue
   }
 }
 
-export function validateAssembledReport(units: AssembledReportUnit[]) {
+export function validateAssembledReport(
+  units: AssembledReportUnit[],
+  options: ReportAssemblyValidationOptions = {}
+) {
   const issues: ReportAssemblyIssue[] = [];
   validateHeadings(units, issues);
   validateKeyDates(units, issues);
   validateMarkdown(units, issues);
-  validateRepeatedSentences(units, issues);
+  if (options.enforceSeasonStructure) validateSeasonStructure(units, issues);
+  validateRepeatedSentences(units, issues, options.allowSynthesisRepetition);
   validateLexicalBudgets(units, issues);
   validateMenus(units, issues);
   return issues;
@@ -616,11 +660,14 @@ export function repairMechanicalPostDedupSeams(
  * pairs. No prose is generated: every operation is a deletion at a
  * deterministic persisted coordinate.
  */
-export function deduplicateAssembledReport(units: AssembledReportUnit[]) {
+export function deduplicateAssembledReport(
+  units: AssembledReportUnit[],
+  options: ReportAssemblyValidationOptions = {}
+) {
   const deduplicated = structuredClone(units);
   const removals: ReportAssemblyDeduplication[] = [];
   for (let pass = 0; pass < 20; pass += 1) {
-    const repeated = validateAssembledReport(deduplicated).filter((entry) => (
+    const repeated = validateAssembledReport(deduplicated, options).filter((entry) => (
       entry.severity === "error"
       && (entry.code === "repeated_exact_sentence" || entry.code === "repeated_near_sentence")
     ));
