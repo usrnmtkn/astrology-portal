@@ -37,7 +37,26 @@ reader-facing prose as new source truth.
 
 ## C. Temporality and register are deterministic
 
-Determine register from the canonical object before writing.
+Resolve the rendered product surface, route, renderer, and content-key family
+before choosing a register. The surface selects the register; the canonical
+object then verifies that its temporality and identity belong on that surface.
+Never infer register from a content key that merely names a planet and sign:
+the same planet-plus-sign shape can feed Sky Placement, Calendar, You, or
+Friends, where it may represent current sky, a collective event, a natal
+placement, a personal transit, or a relationship condition depending on the
+renderer.
+
+- SKY PAGE: current-sky register. A Sky Placement article may address the
+  reader when its surface contract calls for direct address, but it remains a
+  time-bound current-sky interpretation and never becomes a natal personality
+  profile.
+- CALENDAR PAGE: current-sky register. Calendar aspects and events are shared
+  sky conditions, use the Calendar's collective voice, and never become natal
+  personality profiles.
+- YOU / FRIENDS: inspect the actual renderer before choosing a register. A
+  natal renderer describes a standing pattern; a personal-transit renderer
+  describes a temporary event; a relationship renderer describes interaction
+  between two charts.
 
 - NATAL: standing pattern in the person's life.
 - TRANSIT: time-bound pressure, opening, event, or change.
@@ -45,7 +64,15 @@ Determine register from the canonical object before writing.
   natal framing.
 - RELATIONSHIP / SYNASTRY: interaction between two people's placements.
 
-Do not let the writer choose temporality stylistically.
+Do not let the writer choose temporality stylistically. Second person does not
+prove that copy is natal: a current-sky article may speak directly to the
+reader while remaining current-sky in meaning. If the route, renderer, or
+surface is ambiguous, fail closed and ask the owner instead of guessing.
+
+Incident record, 2026-08-15: an owner-directed natal register normalization
+was applied to Sky Placement review rows because the surface was assumed from
+the content key instead of resolved; review caught the error, the change was
+reverted, and it remained non-serving throughout.
 
 ## D. Natal register
 
