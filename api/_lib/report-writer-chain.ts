@@ -20,7 +20,8 @@ export const REPORT_DEFECT_CATEGORIES = [
   "repeated_generated_syntax",
   "emotional_temperature",
   "keyword_stack",
-  "density_violation"
+  "density_violation",
+  "no_earned_sentence"
 ] as const;
 export type ReportDefectCategory = typeof REPORT_DEFECT_CATEGORIES[number];
 
@@ -728,6 +729,7 @@ export async function runReportWriterChain(input: {
         `LIVED_PROSE_STANDARD\n${payload.livedProseStandard.text}`,
         `NO_CLEVERNESS_TAX_OWNER_RULING\n${payload.noClevernessRuling.text}`,
         `OWNER_REVIEW_EVIDENCE\n${payload.ownerReviewEvidence.text}`,
+        `EARNED_SENTENCE_OWNER_RULING\n${payload.earnedSentenceRuling.text}`,
         FLATNESS_DIAGNOSTIC_ROUTING,
         "SENTENCE_ADDRESS_CONTRACT\nEvery finding must reference one or more supplied sentence_ids. The runtime owns source segmentation and resolves those IDs to exact replacement spans. quote is informational only and is never used as an address or compared for byte equality.",
         `SENTENCE_ADDRESSED_UNIT\n${sentenceAddressedReportUnit(draft)}`,

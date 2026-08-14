@@ -1,6 +1,18 @@
 # Earned-sentence ruling (owner ruling, canonical)
 
-**Status: DRAFT FOR OWNER APPROVAL, 2026-08-13. `needs_review`. REPORT register. Companion to `TLDR-REPORT-NO-CLEVERNESS-TAX-RULING-OWNER.md` — that ruling sets the clarity floor; this one sets the aliveness floor. Neither overrides the other: a sentence must be immediately understandable AND worth reading. Origin: the second production report (`8b3e266e`) passed every clarity gate and scored owner_voice 3 on nine of ten units. It was accurate, clear, and did not sound like the owner. Prohibitions alone produced safe prose.**
+**Status:** `owner_approved`
+**Version:** `report-earned-sentence-ruling-v1`
+**Approved:** 2026-08-14
+**Owner approved:** `true`
+**Active in production:** `true`
+**Promotion authorized:** `true`
+**Approved source SHA-256:** `e9a56a474f0ac6a94724d43a425fc1a887f5f79e266b7c8a37a6c2ac0e0ca5ce`
+**Register:** REPORT
+**Companion:** `TLDR-REPORT-NO-CLEVERNESS-TAX-RULING-OWNER.md`; that ruling sets the clarity floor and this ruling sets the aliveness floor. Neither overrides the other.
+**Origin:** The second production report (`8b3e266e`) passed every clarity gate and scored `owner_voice` 3 on nine of ten units. It was accurate, clear, and did not sound like the owner. Prohibitions alone produced safe prose.
+**Governance:** Owner-approved and active in the report draft, critique, and judge packets. Any later revision requires a new version and fresh owner approval.
+
+> I approve the earned-sentence ruling at SHA e9a56a47…, critique checklist v6 at SHA 73a57573…, and judge rubric v3.3 at SHA 9f74b1ad…. Activate all three.
 
 ## The rule
 

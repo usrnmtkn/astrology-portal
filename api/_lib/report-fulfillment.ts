@@ -594,6 +594,7 @@ export async function processReportFulfillmentJob(input: {
     promptVersions.noCleverness = versions.noCleverness.version;
     promptVersions.ownerReviewEvidence = versions.ownerReviewEvidence.version;
     promptVersions.coldProse = versions.coldProse.version;
+    promptVersions.earnedSentence = versions.earnedSentence.version;
     const validatorAttemptCap = reportValidatorAttemptCap(input.job, unitId, config.validatorAttemptCap);
     let persistedCheckpointConsumed = false;
     const runCheckpointedWriterChain = async (failureContext?: string[], resumePersistedCheckpoint = false) => {

@@ -12,9 +12,12 @@ import {
   loadActiveReportCritiquePrompt,
   loadActiveReportJudgePrompt,
   REPORT_CRITIQUE_BASELINE_PROMPT_PATH,
+  REPORT_CRITIQUE_PREVIOUS_PROMPT_PATH,
   REPORT_CRITIQUE_PROMPT_PATH,
   REPORT_CRITIQUE_PROMPT_VERSION,
+  REPORT_EARNED_SENTENCE_RULING_PATH,
   REPORT_JUDGE_BASELINE_PROMPT_PATH,
+  REPORT_JUDGE_PREVIOUS_PROMPT_PATH,
   REPORT_JUDGE_PROMPT_PATH,
   REPORT_JUDGE_PROMPT_VERSION
 } from "../api/_lib/report-prompt-versions.ts";
@@ -33,8 +36,11 @@ const manifest = JSON.parse(fs.readFileSync(new URL("./fixtures/report-judge-com
 const facts = JSON.parse(fs.readFileSync(manifest.factsSourcePath, "utf8"));
 const judgeV3 = fs.readFileSync(REPORT_JUDGE_BASELINE_PROMPT_PATH, "utf8");
 const critiqueV3 = fs.readFileSync(REPORT_CRITIQUE_BASELINE_PROMPT_PATH, "utf8");
-const judgeV32 = fs.readFileSync(REPORT_JUDGE_PROMPT_PATH, "utf8");
-const critiqueV5 = fs.readFileSync(REPORT_CRITIQUE_PROMPT_PATH, "utf8");
+const judgeV32 = fs.readFileSync(REPORT_JUDGE_PREVIOUS_PROMPT_PATH, "utf8");
+const critiqueV5 = fs.readFileSync(REPORT_CRITIQUE_PREVIOUS_PROMPT_PATH, "utf8");
+const judgeV33 = fs.readFileSync(REPORT_JUDGE_PROMPT_PATH, "utf8");
+const critiqueV6 = fs.readFileSync(REPORT_CRITIQUE_PROMPT_PATH, "utf8");
+const earnedSentenceRuling = fs.readFileSync(REPORT_EARNED_SENTENCE_RULING_PATH, "utf8");
 const livedProseStandard = fs.readFileSync("tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md", "utf8");
 const archivedJudgeV2 = fs.readFileSync("tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V2-OWNER.md", "utf8");
 const archivedCritiqueV2 = fs.readFileSync("tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V2-OWNER.md", "utf8");
@@ -149,10 +155,10 @@ assert.deepEqual(manifest.proposedCalibrationCallBudget, {
 });
 assert.equal(new Set(manifest.pairs.map((pair) => pair.reportDomain)).size, 4);
 assert.ok(manifest.pairs.some((pair) => pair.reportDomain === "personal_health"));
-assert.equal(REPORT_JUDGE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3.2-OWNER.md");
-assert.equal(REPORT_CRITIQUE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V5-OWNER.md");
-assert.equal(REPORT_JUDGE_PROMPT_VERSION, "report-judge-rubric-v3.2");
-assert.equal(REPORT_CRITIQUE_PROMPT_VERSION, "report-critique-checklist-v5");
+assert.equal(REPORT_JUDGE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3.3-OWNER.md");
+assert.equal(REPORT_CRITIQUE_PROMPT_PATH, "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V6-OWNER.md");
+assert.equal(REPORT_JUDGE_PROMPT_VERSION, "report-judge-rubric-v3.3");
+assert.equal(REPORT_CRITIQUE_PROMPT_VERSION, "report-critique-checklist-v6");
 assert.match(archivedJudgeV2, /^\*\*Active in production:\*\* `false`$/mu);
 assert.match(archivedCritiqueV2, /^\*\*Active in production:\*\* `false`$/mu);
 assert.equal(REPORT_JUDGE_THRESHOLD, 0.85);
@@ -184,17 +190,38 @@ for (const [name, document, version, approvedSourceSha] of [
   assert.match(document, /^\*\*Promotion authorized:\*\* `true`$/mu);
   assert.ok(document.includes("**Approved source SHA-256:** `" + approvedSourceSha + "`"));
 }
+for (const [name, document, version, approvedSourceSha] of [
+  ["judge", judgeV33, "report-judge-rubric-v3.3", "9f74b1ad1c4057286ca7acc6687b7ab8349e93d8b0e5de7f94c354ad83ea7f03"],
+  ["critique", critiqueV6, "report-critique-checklist-v6", "73a575734822ae895bf67e940bb00f591cb381762d55d4a45cc8c1cdf910ff6e"],
+  ["earned sentence", earnedSentenceRuling, "report-earned-sentence-ruling-v1", "e9a56a474f0ac6a94724d43a425fc1a887f5f79e266b7c8a37a6c2ac0e0ca5ce"]
+]) {
+  assert.match(document, /^\*\*Status:\*\* `owner_approved`$/mu, `${name} activation approval must be recorded.`);
+  assert.ok(document.includes("**Version:** `" + version + "`"));
+  assert.match(document, /^\*\*Active in production:\*\* `true`$/mu);
+  assert.match(document, /^\*\*Owner approved:\*\* `true`$/mu);
+  assert.match(document, /^\*\*Promotion authorized:\*\* `true`$/mu);
+  assert.ok(document.includes("**Approved source SHA-256:** `" + approvedSourceSha + "`"));
+}
 const activeJudgePrompt = loadActiveReportJudgePrompt();
 const activeCritiquePrompt = loadActiveReportCritiquePrompt();
-assert.deepEqual(activeJudgePrompt.sourcePaths, [REPORT_JUDGE_BASELINE_PROMPT_PATH, REPORT_JUDGE_PROMPT_PATH]);
+assert.deepEqual(activeJudgePrompt.sourcePaths, [
+  REPORT_JUDGE_BASELINE_PROMPT_PATH,
+  REPORT_JUDGE_PREVIOUS_PROMPT_PATH,
+  REPORT_JUDGE_PROMPT_PATH
+]);
 assert.match(activeJudgePrompt.text, /report-judge-rubric-v3\.1/u);
 assert.match(activeJudgePrompt.text, /report-judge-rubric-v3\.2/u);
+assert.match(activeJudgePrompt.text, /report-judge-rubric-v3\.3/u);
 assert.deepEqual(activeCritiquePrompt.sourcePaths, [
   REPORT_CRITIQUE_BASELINE_PROMPT_PATH,
+  REPORT_CRITIQUE_PREVIOUS_PROMPT_PATH,
   REPORT_CRITIQUE_PROMPT_PATH
 ]);
 assert.match(activeCritiquePrompt.text, /report-critique-checklist-v3/u);
 assert.match(activeCritiquePrompt.text, /report-critique-checklist-v5/u);
+assert.match(activeCritiquePrompt.text, /report-critique-checklist-v6/u);
+assert.match(activeCritiquePrompt.text, /no_earned_sentence/u);
+assert.match(activeJudgePrompt.text, /same unit-level function: overview with overview, season with season/iu);
 assert.equal(calibrationRunTwo.status, "passed");
 assert.equal(calibrationRunTwo.completedCalls, 9);
 assert.deepEqual(calibrationRunTwo.failures, []);
