@@ -4,7 +4,7 @@
 
 Write and revise TLDR Astro copy so every sentence is observed, natural, exact, and authored. Passing lint is necessary but insufficient.
 
-Use only the provided astrology facts and governed evidence. Never invent a domain because it is convenient. Never treat an unapproved candidate as proof of voice.
+Use only the provided astrology facts and governed evidence. Never invent a domain because it is convenient. Never treat an unapproved candidate as proof of voice. Every article packet must contain the four separately labeled roles from `docs/writing/SHARED_EVIDENCE_STANDARD.md`: meaning, register, scene, and argument.
 
 ## Before drafting
 
@@ -14,7 +14,9 @@ Name the feeling underneath that pressure in one short phrase. Search the owner 
 
 Keep the transit as the subject. Lived moments illustrate the placement; one invented scenario must not carry the whole card. Use a few related, recognizable moments when they reveal the same pressure, but do not turn them into a coverage inventory.
 
-The writer may invent lived moments from the governed planet and sign meanings inside the listed supported domains. Do not require an existing owner article about the placement or a prewritten owner scenario. Invent the scene, never the astrology.
+Use approved same-planet-sign house cores as the first scene source, approved serving rows second, and governed matrix scene rows third. The writer may invent lived moments only when the scene role contains no approved evidence. Any invented scenes must be ordinary rather than niche, plural, and unable to carry the article's argument alone. Invent the scene only under that exception; never invent the astrology.
+
+Matrix evidence is loaded through the owner-supplied derived sidecar index in `data/writing/matrix-evidence-index/`. Filter by exact planet-sign and relevant event, select meaning, scene, and argument candidates as distinct roles, and deduplicate within the target and role by `copy_sha` under governance precedence. The canonical workbook is not changed by this indexing step.
 
 Warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are allowed when supported. They are never required. Do not solve thematic drift by making the prose colder, and do not manufacture imitation warmth when the harvest finds no owner foundation.
 
@@ -23,6 +25,24 @@ Marie determines what the article notices. When the astrology supports them, pre
 Collective does not mean advocacy by default. Do not reach automatically for campaigns, institutions denying services, public complaints, organizing, policy reform, advocacy work, social movements, collective healing, community care, or systemic-harm language. Use those domains only when the governed astrology and eligible owner material directly support them.
 
 Write human behavior before or alongside astrology. Do not begin by defining a planet and sign unless the same sentence contains a recognizable event.
+
+Spine slots are checks, not templates. Satisfy the planet, condition, job, thesis, lived
+evidence, failure, strategy, and close through what the prose actually says. Do not announce
+those labels to the reader with default constructions such as `the job of`, `this is a period
+for`, or `the collective lesson is`. An approved line is not a reusable template.
+
+Presence does not satisfy quality. Follow the unified Sky Placement article spine in
+`docs/writing/ASTROLOGY_CONTRACT.md`: planet, condition, handoff, thesis, lived evidence,
+failure mechanism, strategy, and close; slow movers add era frame, recurrence, conditional
+older analogs, and collective lesson. The outline must state a one-line intention for each
+applicable gate. The draft reports element and reason as advisory findings; because every
+element is required, any failed element makes the draft `spine-quality-incomplete`. No finding authorizes an automatic
+rewrite, and inherited copy receives no approval exemption.
+
+Use no more than one negation pivot per page and no more than three across a twelve-item set.
+This includes `X is not Y. It is Z.`, `the problem is not`, `X is not the problem`, and `not X
+but Y`. After the cap is reached, state the consequence, ask the question, or name what happens
+next without another negation pivot.
 
 ## Sentence standard
 

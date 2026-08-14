@@ -8,6 +8,7 @@
     "packages/*"
   ],
   "scripts": {
+    "build:approved-collocations": "node scripts/build-approved-collocations.mjs",
     "dev": "npm run dev:web",
     "dev:admin": "npm run dev -w @tldr/admin",
     "dev:vercel": "npx vercel dev --listen 3000 --local --yes",
@@ -24,6 +25,10 @@
     "pretest:content": "node scripts/test-friends-natal-fallback-runtime.mjs && node scripts/test-calendar-exact-sky-aspect-routing.mjs && npm run test:report-generation && npm run test:report-fulfillment",
     "build:writing-harness": "node scripts/build-reviewer-gold-exemplars.mjs && node scripts/build-writing-harness-instructions.mjs && node scripts/build-writing-harness-data.mjs && node scripts/build-cold-rendered-prose-fixtures.mjs && node scripts/build-cold-rendered-prose-round-2-fixtures.mjs",
     "test:astro-writing": "node tests/astro-writing/harness.test.mjs && node tests/astro-writing/gemini-interactions.test.mjs && node tests/astro-writing/card-judge-v3.test.mjs && node tests/astro-writing/card-judge-v3-1-draft.test.mjs",
+    "audit:writing-pipeline-v3": "node scripts/audit-writing-pipeline-v3-deterministic.mjs",
+    "build:shared-evidence-index": "node scripts/build-shared-evidence-index.mjs",
+    "audit:venus-libra-shared-evidence": "npm run build:shared-evidence-index && node scripts/prepare-venus-libra-v2-writer-request.mjs && node scripts/build-venus-libra-v2-packet-audit.mjs",
+    "prepare:writing-pipeline-v3-sample": "node scripts/prepare-writing-pipeline-v3-argument-sample.mjs",
     "eval:astro-writing:v3": "node scripts/run-astro-writing-live-reviewer-eval-v3.mjs",
     "eval:astro-writing:v3.1": "node scripts/run-astro-writing-live-reviewer-eval-v3-1.mjs",
     "eval:astro-writing:v3.1:run-2c": "node scripts/run-astro-writing-live-reviewer-eval-v3-1-run-2c.mjs",
@@ -138,7 +143,8 @@
   "devDependencies": {
     "@playwright/test": "^1.61.0",
     "@types/node": "^25.9.1",
-    "tsx": "^4.23.12"
+    "tsx": "^4.23.12",
+    "wink-pos-tagger": "^2.2.2"
   },
   "dependencies": {
     "@vercel/functions": "^3.9.2"

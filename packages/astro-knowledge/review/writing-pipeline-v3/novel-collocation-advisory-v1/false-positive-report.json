@@ -1,0 +1,1141 @@
+{
+  "sourceSummary": {
+    "approvedExampleRowsRead": 11388,
+    "ownerCorpusEntriesRead": 3390,
+    "ownerCorpusDocuments": 47,
+    "ownerCorrectionsUsed": 22,
+    "deduplicatedSourcesUsed": 9766,
+    "duplicateTextsRemoved": 1691,
+    "bySourceType": {
+      "approved_serving": 7822,
+      "knowledge_matrix": 1876,
+      "owner_corpus": 47,
+      "owner_correction": 21
+    }
+  },
+  "tableCounts": {
+    "sources": 9766,
+    "sentences": 49284,
+    "collocationOccurrences": 111878,
+    "uniquePairs": 48375
+  },
+  "falsePositiveReport": {
+    "method": "leave-one-source-out",
+    "interpretation": "Every flag on owner-approved held-out copy is counted as a false positive.",
+    "totals": {
+      "sourcesEvaluated": 9766,
+      "sourcesFlagged": 5632,
+      "sourceFalsePositiveRate": 0.5766946549252508,
+      "sentencesEvaluated": 49284,
+      "sentencesFlagged": 17516,
+      "sentenceFalsePositiveRate": 0.35540946351757163,
+      "pairOccurrencesEvaluated": 111878,
+      "pairOccurrencesFlagged": 29038,
+      "pairFalsePositiveRate": 0.2595505818838377
+    },
+    "bySourceType": {
+      "approved_serving": {
+        "sources": 7822,
+        "sourcesFlagged": 5027,
+        "sentences": 30100,
+        "sentencesFlagged": 11128,
+        "pairs": 76361,
+        "pairsFlagged": 18936,
+        "sourceFalsePositiveRate": 0.642674507798517,
+        "sentenceFalsePositiveRate": 0.36970099667774087,
+        "pairFalsePositiveRate": 0.24797998978536165
+      },
+      "knowledge_matrix": {
+        "sources": 1876,
+        "sourcesFlagged": 558,
+        "sentences": 4770,
+        "sentencesFlagged": 1008,
+        "pairs": 13363,
+        "pairsFlagged": 1618,
+        "sourceFalsePositiveRate": 0.2974413646055437,
+        "sentenceFalsePositiveRate": 0.21132075471698114,
+        "pairFalsePositiveRate": 0.12108059567462397
+      },
+      "owner_corpus": {
+        "sources": 47,
+        "sourcesFlagged": 46,
+        "sentences": 14388,
+        "sentencesFlagged": 5379,
+        "pairs": 22101,
+        "pairsFlagged": 8483,
+        "sourceFalsePositiveRate": 0.9787234042553191,
+        "sentenceFalsePositiveRate": 0.3738532110091743,
+        "pairFalsePositiveRate": 0.38382878602778153
+      },
+      "owner_correction": {
+        "sources": 21,
+        "sourcesFlagged": 1,
+        "sentences": 26,
+        "sentencesFlagged": 1,
+        "pairs": 53,
+        "pairsFlagged": 1,
+        "sourceFalsePositiveRate": 0.047619047619047616,
+        "sentenceFalsePositiveRate": 0.038461538461538464,
+        "pairFalsePositiveRate": 0.018867924528301886
+      }
+    },
+    "sampleFalsePositives": [
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|arrive|gemini",
+        "type": "verb_noun",
+        "modifier": "arrive",
+        "noun": "gemini",
+        "relation": "subject",
+        "sentence": "Gemini Season arrives as Saturn makes its first tentative steps into Aries."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|meet|planet",
+        "type": "verb_noun",
+        "modifier": "meet",
+        "noun": "planet",
+        "relation": "object",
+        "sentence": "The sign that multiplies meets the planet that refines."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|speak|gemini",
+        "type": "verb_noun",
+        "modifier": "speak",
+        "noun": "gemini",
+        "relation": "subject",
+        "sentence": "Gemini speaks in options; Saturn speaks in absolutes."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|saturn|jump",
+        "type": "verb_noun",
+        "modifier": "saturn",
+        "noun": "jump",
+        "relation": "subject",
+        "sentence": "Jump to Horoscopes Saturn enters Aries on May 24, 2025, beginning a new 29-year cycle that will fundamentally reshape how we understand independence, initiative, and the courage to begin again."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|enter|jump",
+        "type": "verb_noun",
+        "modifier": "enter",
+        "noun": "jump",
+        "relation": "subject",
+        "sentence": "Jump to Horoscopes Saturn enters Aries on May 24, 2025, beginning a new 29-year cycle that will fundamentally reshape how we understand independence, initiative, and the courage to begin again."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|understand|independence",
+        "type": "verb_noun",
+        "modifier": "understand",
+        "noun": "independence",
+        "relation": "object",
+        "sentence": "Jump to Horoscopes Saturn enters Aries on May 24, 2025, beginning a new 29-year cycle that will fundamentally reshape how we understand independence, initiative, and the courage to begin again."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|generational|shift",
+        "type": "adjective_noun",
+        "modifier": "generational",
+        "noun": "shift",
+        "relation": "attributive",
+        "sentence": "A generational shift in what it means to lead, to start, to claim space in a world that demands both speed and substance."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|deserve|determination",
+        "type": "verb_noun",
+        "modifier": "deserve",
+        "noun": "determination",
+        "relation": "object",
+        "sentence": "What deserves your determination?"
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|teach|freedom",
+        "type": "verb_noun",
+        "modifier": "teach",
+        "noun": "freedom",
+        "relation": "object",
+        "sentence": "The planet of structure enters the sign of initiation, teaching us that freedom doesn't come from avoiding limits, it comes from choosing which ones matter."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|avoid|limit",
+        "type": "verb_noun",
+        "modifier": "avoid",
+        "noun": "limit",
+        "relation": "object",
+        "sentence": "The planet of structure enters the sign of initiation, teaching us that freedom doesn't come from avoiding limits, it comes from choosing which ones matter."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|solar|system",
+        "type": "adjective_noun",
+        "modifier": "solar",
+        "noun": "system",
+        "relation": "attributive",
+        "sentence": "During the weeks that follow, Mercury (mind) forms conversations with nearly every planet in our solar system."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|first|look",
+        "type": "adjective_noun",
+        "modifier": "first",
+        "noun": "look",
+        "relation": "attributive",
+        "sentence": "It stays for just over three months before retrograding back into Pisces on September 1, giving us a first look at a longer transit that will shape the years ahead: February 15, 2026, through April 14, 2028."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|shape|transit",
+        "type": "verb_noun",
+        "modifier": "shape",
+        "noun": "transit",
+        "relation": "subject",
+        "sentence": "It stays for just over three months before retrograding back into Pisces on September 1, giving us a first look at a longer transit that will shape the years ahead: February 15, 2026, through April 14, 2028."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|carry|you're",
+        "type": "verb_noun",
+        "modifier": "carry",
+        "noun": "you're",
+        "relation": "object",
+        "sentence": "And whether the version of self you’ve been clinging to can carry you where you're going."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|offer|dissolution",
+        "type": "verb_noun",
+        "modifier": "offer",
+        "noun": "dissolution",
+        "relation": "object",
+        "sentence": "In Pisces, Saturn offered the dissolution of structures."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|demand|commitment",
+        "type": "verb_noun",
+        "modifier": "demand",
+        "noun": "commitment",
+        "relation": "object",
+        "sentence": "It demands commitment."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|next|saturn",
+        "type": "adjective_noun",
+        "modifier": "next",
+        "noun": "saturn",
+        "relation": "attributive",
+        "sentence": "The next Saturn–Neptune conjunction meets at 0° Aries."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|collective|cycle",
+        "type": "adjective_noun",
+        "modifier": "collective",
+        "noun": "cycle",
+        "relation": "attributive",
+        "sentence": "The very beginning of the zodiac, where initiations take root and collective cycles reset."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|imagine|call",
+        "type": "verb_noun",
+        "modifier": "imagine",
+        "noun": "call",
+        "relation": "subject",
+        "sentence": "It’s a call to imagine, and build a new world."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|build|world",
+        "type": "verb_noun",
+        "modifier": "build",
+        "noun": "world",
+        "relation": "object",
+        "sentence": "It’s a call to imagine, and build a new world."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|new|world",
+        "type": "adjective_noun",
+        "modifier": "new",
+        "noun": "world",
+        "relation": "attributive",
+        "sentence": "It’s a call to imagine, and build a new world."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|draw|conjunction",
+        "type": "verb_noun",
+        "modifier": "draw",
+        "noun": "conjunction",
+        "relation": "subject",
+        "sentence": "The conjunction draws close in July 2025 and becomes exact on February 20, 2026, seeding the start of a generation-defining era."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|close|conjunction",
+        "type": "verb_noun",
+        "modifier": "close",
+        "noun": "conjunction",
+        "relation": "subject",
+        "sentence": "The conjunction draws close in July 2025 and becomes exact on February 20, 2026, seeding the start of a generation-defining era."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|seed|start",
+        "type": "verb_noun",
+        "modifier": "seed",
+        "noun": "start",
+        "relation": "object",
+        "sentence": "The conjunction draws close in July 2025 and becomes exact on February 20, 2026, seeding the start of a generation-defining era."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|define|generation",
+        "type": "verb_noun",
+        "modifier": "define",
+        "noun": "generation",
+        "relation": "subject",
+        "sentence": "The conjunction draws close in July 2025 and becomes exact on February 20, 2026, seeding the start of a generation-defining era."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|define|era",
+        "type": "verb_noun",
+        "modifier": "define",
+        "noun": "era",
+        "relation": "object",
+        "sentence": "The conjunction draws close in July 2025 and becomes exact on February 20, 2026, seeding the start of a generation-defining era."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|grow|conjunction",
+        "type": "verb_noun",
+        "modifier": "grow",
+        "noun": "conjunction",
+        "relation": "subject",
+        "sentence": "The conjunction grows close in July 2025 and becomes exact on February 20, 2026."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|become|s",
+        "type": "verb_noun",
+        "modifier": "become",
+        "noun": "s",
+        "relation": "object",
+        "sentence": "Because now we know how dangerous a dream can become when it’s used to justify power."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|justify|power",
+        "type": "verb_noun",
+        "modifier": "justify",
+        "noun": "power",
+        "relation": "object",
+        "sentence": "Because now we know how dangerous a dream can become when it’s used to justify power."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|inspire|belief",
+        "type": "verb_noun",
+        "modifier": "inspire",
+        "noun": "belief",
+        "relation": "object",
+        "sentence": "Neptune in Aries inspires belief in the future, in beginnings, in bold ideals."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|bold|ideal",
+        "type": "adjective_noun",
+        "modifier": "bold",
+        "noun": "ideal",
+        "relation": "attributive",
+        "sentence": "Neptune in Aries inspires belief in the future, in beginnings, in bold ideals."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|lose|soul",
+        "type": "verb_noun",
+        "modifier": "lose",
+        "noun": "soul",
+        "relation": "object",
+        "sentence": "A world built with no room for dreaming loses its soul."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|touch|structure",
+        "type": "verb_noun",
+        "modifier": "touch",
+        "noun": "structure",
+        "relation": "subject",
+        "sentence": "A dream with no structure never touches the ground."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|touch|ground",
+        "type": "verb_noun",
+        "modifier": "touch",
+        "noun": "ground",
+        "relation": "object",
+        "sentence": "A dream with no structure never touches the ground."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|come|t",
+        "type": "verb_noun",
+        "modifier": "come",
+        "noun": "t",
+        "relation": "object",
+        "sentence": "What comes next can’t be built just to survive, it has to mean something."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|build|freedom",
+        "type": "verb_noun",
+        "modifier": "build",
+        "noun": "freedom",
+        "relation": "object",
+        "sentence": "Saturn in Aries reminds us: if you want freedom, you have to build what freedom needs."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|believe|s",
+        "type": "verb_noun",
+        "modifier": "believe",
+        "noun": "s",
+        "relation": "object",
+        "sentence": "Neptune in Aries adds: and you have to believe it’s possible."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|key|aspect",
+        "type": "adjective_noun",
+        "modifier": "key",
+        "noun": "aspect",
+        "relation": "attributive",
+        "sentence": "While Saturn is in Aries in 2025, it makes two key aspects that deepen these themes: On June 15th, Saturn squares Jupiter in Cancer, creating tension between expansion and discipline."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|grow|aspect",
+        "type": "verb_noun",
+        "modifier": "grow",
+        "noun": "aspect",
+        "relation": "subject",
+        "sentence": "This aspect challenges us to grow with integrity, and to check whether our ambitions are aligned with our responsibilities."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|offer|opening",
+        "type": "verb_noun",
+        "modifier": "offer",
+        "noun": "opening",
+        "relation": "object",
+        "sentence": "This moment offers an opening to innovate within structure."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|innovate|opening",
+        "type": "verb_noun",
+        "modifier": "innovate",
+        "noun": "opening",
+        "relation": "subject",
+        "sentence": "This moment offers an opening to innovate within structure."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|ground|breakthrough",
+        "type": "verb_noun",
+        "modifier": "ground",
+        "noun": "breakthrough",
+        "relation": "object",
+        "sentence": "It asks us to disrupt wisely, to ground our breakthroughs in strategy, and to build systems that are both future-forward and functional."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|remember|–",
+        "type": "verb_noun",
+        "modifier": "remember",
+        "noun": "–",
+        "relation": "object",
+        "sentence": "If you remember 1998–2000, pay attention."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|watch|system",
+        "type": "verb_noun",
+        "modifier": "watch",
+        "noun": "system",
+        "relation": "object",
+        "sentence": "We were bracing for a new millennium, watching systems glitch and global powers reshuffle."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|global|power",
+        "type": "adjective_noun",
+        "modifier": "global",
+        "noun": "power",
+        "relation": "attributive",
+        "sentence": "We were bracing for a new millennium, watching systems glitch and global powers reshuffle."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|inflate|dot",
+        "type": "verb_noun",
+        "modifier": "inflate",
+        "noun": "dot",
+        "relation": "subject",
+        "sentence": "The dot-com bubble was inflating and Y2K anxieties were high."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|become|internet",
+        "type": "verb_noun",
+        "modifier": "become",
+        "noun": "internet",
+        "relation": "subject",
+        "sentence": "The internet was becoming a household presence."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|adopt|future",
+        "type": "verb_noun",
+        "modifier": "adopt",
+        "noun": "future",
+        "relation": "object",
+        "sentence": "And yet, so was the awareness that not everyone was adopting the digital future."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|digital|future",
+        "type": "adjective_noun",
+        "modifier": "digital",
+        "noun": "future",
+        "relation": "attributive",
+        "sentence": "And yet, so was the awareness that not everyone was adopting the digital future."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|trust|system",
+        "type": "verb_noun",
+        "modifier": "trust",
+        "noun": "system",
+        "relation": "subject",
+        "sentence": "The systems we were told to trust were already showing signs of decay."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|name|language",
+        "type": "verb_noun",
+        "modifier": "name",
+        "noun": "language",
+        "relation": "subject",
+        "sentence": "The illusion of the “American dream” was beginning to crack, even if we didn’t yet have the language to name the disillusionment we were witnessing."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|trust|falter",
+        "type": "verb_noun",
+        "modifier": "trust",
+        "noun": "falter",
+        "relation": "object",
+        "sentence": "We were watching the systems we were told to trust falter in real time."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|surface|transit",
+        "type": "verb_noun",
+        "modifier": "surface",
+        "noun": "transit",
+        "relation": "subject",
+        "sentence": "This transit may surface as pressure to define yourself beyond job titles, identity categories, or the curated versions of self designed to survive within broken systems."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|tell|algorithm",
+        "type": "verb_noun",
+        "modifier": "tell",
+        "noun": "algorithm",
+        "relation": "subject",
+        "sentence": "It may feel like collapse, because without external approval, there’s no algorithm to tell you you’re doing it right."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|teach|self",
+        "type": "verb_noun",
+        "modifier": "teach",
+        "noun": "self",
+        "relation": "object",
+        "sentence": "Saturn in Aries teaches self-governance in a culture that profits off your dependence."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|witness|people",
+        "type": "verb_noun",
+        "modifier": "witness",
+        "noun": "people",
+        "relation": "object",
+        "sentence": "Collectively, we may witness more people rejecting roles that exist only to appease power."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|reject|role",
+        "type": "verb_noun",
+        "modifier": "reject",
+        "noun": "role",
+        "relation": "object",
+        "sentence": "Collectively, we may witness more people rejecting roles that exist only to appease power."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|punish|authenticity",
+        "type": "verb_noun",
+        "modifier": "punish",
+        "noun": "authenticity",
+        "relation": "object",
+        "sentence": "Opting out of institutions that reward conformity while punishing authenticity."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|reduce|complexity",
+        "type": "verb_noun",
+        "modifier": "reduce",
+        "noun": "complexity",
+        "relation": "object",
+        "sentence": "Refusing labels that reduce complexity to brand."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|state|value",
+        "type": "verb_noun",
+        "modifier": "state",
+        "noun": "value",
+        "relation": "object",
+        "sentence": "Saturn in Aries tests leadership by how well your actions align with your stated values."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|begin|pull",
+        "type": "verb_noun",
+        "modifier": "begin",
+        "noun": "pull",
+        "relation": "subject",
+        "sentence": "You may feel the pull to begin again."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|burn|agreement",
+        "type": "verb_noun",
+        "modifier": "burn",
+        "noun": "agreement",
+        "relation": "object",
+        "sentence": "To burn the false agreement."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|false|agreement",
+        "type": "adjective_noun",
+        "modifier": "false",
+        "noun": "agreement",
+        "relation": "attributive",
+        "sentence": "To burn the false agreement."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|choose|refusal",
+        "type": "verb_noun",
+        "modifier": "choose",
+        "noun": "refusal",
+        "relation": "object",
+        "sentence": "To choose refusal over assimilation."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|explain|medicine",
+        "type": "verb_noun",
+        "modifier": "explain",
+        "noun": "medicine",
+        "relation": "object",
+        "sentence": "Writing about Saturn transits feels like being asked to explain why medicine tastes bitter while you're being forced to swallow it."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|rise|planet",
+        "type": "verb_noun",
+        "modifier": "rise",
+        "noun": "planet",
+        "relation": "object",
+        "sentence": "Horoscopes for Saturn in Aries Aries & Aries Rising The planet of time finds you at last."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|ask|feeling",
+        "type": "verb_noun",
+        "modifier": "ask",
+        "noun": "feeling",
+        "relation": "subject",
+        "sentence": "You know that feeling when someone asks you to explain yourself and suddenly you forget every word?"
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|forget|word",
+        "type": "verb_noun",
+        "modifier": "forget",
+        "noun": "word",
+        "relation": "object",
+        "sentence": "You know that feeling when someone asks you to explain yourself and suddenly you forget every word?"
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|teach|speed",
+        "type": "verb_noun",
+        "modifier": "teach",
+        "noun": "speed",
+        "relation": "object",
+        "sentence": "In 1998-2001, you were taught that speed equaled strength, that reaction was the same as action."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|equal|strength",
+        "type": "verb_noun",
+        "modifier": "equal",
+        "noun": "strength",
+        "relation": "object",
+        "sentence": "In 1998-2001, you were taught that speed equaled strength, that reaction was the same as action."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|same|reaction",
+        "type": "adjective_noun",
+        "modifier": "same",
+        "noun": "reaction",
+        "relation": "predicate",
+        "sentence": "In 1998-2001, you were taught that speed equaled strength, that reaction was the same as action."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|tell|nobody",
+        "type": "verb_noun",
+        "modifier": "tell",
+        "noun": "nobody",
+        "relation": "subject",
+        "sentence": "But here's what nobody told you then: the difference between surviving and living lies in the spaces between impulse and choice."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|care|saturn",
+        "type": "verb_noun",
+        "modifier": "care",
+        "noun": "saturn",
+        "relation": "subject",
+        "sentence": "Saturn doesn't care how fast you go."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|teach|generation",
+        "type": "verb_noun",
+        "modifier": "teach",
+        "noun": "generation",
+        "relation": "object",
+        "sentence": "If you weren't around for 1998-2001, or too young to remember, here's the context: that transit taught an entire generation that being first meant everything, that hesitation was weakness, that your worth was measured by how quickly you could move and how loudly you could claim space."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|entire|generation",
+        "type": "adjective_noun",
+        "modifier": "entire",
+        "noun": "generation",
+        "relation": "attributive",
+        "sentence": "If you weren't around for 1998-2001, or too young to remember, here's the context: that transit taught an entire generation that being first meant everything, that hesitation was weakness, that your worth was measured by how quickly you could move and how loudly you could claim space."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|older|mentor",
+        "type": "adjective_noun",
+        "modifier": "older",
+        "noun": "mentor",
+        "relation": "attributive",
+        "sentence": "Your parents or older mentors may have unconsciously modeled this pattern of constant motion as survival strategy."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|model|pattern",
+        "type": "verb_noun",
+        "modifier": "model",
+        "noun": "pattern",
+        "relation": "object",
+        "sentence": "Your parents or older mentors may have unconsciously modeled this pattern of constant motion as survival strategy."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|inherit|you're",
+        "type": "verb_noun",
+        "modifier": "inherit",
+        "noun": "you're",
+        "relation": "subject",
+        "sentence": "You're inheriting their restlessness without their context."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|inherit|restlessness",
+        "type": "verb_noun",
+        "modifier": "inherit",
+        "noun": "restlessness",
+        "relation": "object",
+        "sentence": "You're inheriting their restlessness without their context."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|discover|chance",
+        "type": "verb_noun",
+        "modifier": "discover",
+        "noun": "chance",
+        "relation": "subject",
+        "sentence": "This transit offers you the chance to discover what true strength looks like when it doesn't need to prove itself."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|discover|strength",
+        "type": "verb_noun",
+        "modifier": "discover",
+        "noun": "strength",
+        "relation": "object",
+        "sentence": "This transit offers you the chance to discover what true strength looks like when it doesn't need to prove itself."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|look|chance",
+        "type": "verb_noun",
+        "modifier": "look",
+        "noun": "chance",
+        "relation": "subject",
+        "sentence": "This transit offers you the chance to discover what true strength looks like when it doesn't need to prove itself."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|live|communication",
+        "type": "verb_noun",
+        "modifier": "live",
+        "noun": "communication",
+        "relation": "subject",
+        "sentence": "Your communication becomes a living contract with reality."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|live|contract",
+        "type": "verb_noun",
+        "modifier": "live",
+        "noun": "contract",
+        "relation": "object",
+        "sentence": "Your communication becomes a living contract with reality."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|root|reminder",
+        "type": "verb_noun",
+        "modifier": "root",
+        "noun": "reminder",
+        "relation": "subject",
+        "sentence": "It’s a reminder to root deeply before reaching far."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|clear|mythology",
+        "type": "adjective_noun",
+        "modifier": "clear",
+        "noun": "mythology",
+        "relation": "predicate",
+        "sentence": "The mythology here is clear: you are Ares learning patience, Mars discovering strategy."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|discover|strategy",
+        "type": "verb_noun",
+        "modifier": "discover",
+        "noun": "strategy",
+        "relation": "object",
+        "sentence": "The mythology here is clear: you are Ares learning patience, Mars discovering strategy."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|rise|saturn",
+        "type": "verb_noun",
+        "modifier": "rise",
+        "noun": "saturn",
+        "relation": "object",
+        "sentence": "Taurus & Taurus Rising Saturn enters your twelfth house, initiating a period of quiet internal work and reflection."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|initiate|period",
+        "type": "verb_noun",
+        "modifier": "initiate",
+        "noun": "period",
+        "relation": "object",
+        "sentence": "Taurus & Taurus Rising Saturn enters your twelfth house, initiating a period of quiet internal work and reflection."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|unresolved|grief",
+        "type": "verb_noun",
+        "modifier": "unresolved",
+        "noun": "grief",
+        "relation": "object",
+        "sentence": "This transit may bring attention to unconscious patterns, unresolved grief, or habits that no longer serve you."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|perfect|art",
+        "type": "verb_noun",
+        "modifier": "perfect",
+        "noun": "art",
+        "relation": "object",
+        "sentence": "You perfected the art of becoming invisible when the world felt too sharp."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|unconscious|water",
+        "type": "adjective_noun",
+        "modifier": "unconscious",
+        "noun": "water",
+        "relation": "attributive",
+        "sentence": "But Saturn in your unconscious waters isn't asking you to hide."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|ask|water",
+        "type": "verb_noun",
+        "modifier": "ask",
+        "noun": "water",
+        "relation": "subject",
+        "sentence": "But Saturn in your unconscious waters isn't asking you to hide."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|hide|water",
+        "type": "verb_noun",
+        "modifier": "hide",
+        "noun": "water",
+        "relation": "subject",
+        "sentence": "But Saturn in your unconscious waters isn't asking you to hide."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|mean|safety",
+        "type": "verb_noun",
+        "modifier": "mean",
+        "noun": "safety",
+        "relation": "subject",
+        "sentence": "If you weren't around for 1998-2001, or too young to remember, here's the context: that transit taught an entire generation that safety meant invisibility, that survival required making yourself small."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|require|survival",
+        "type": "verb_noun",
+        "modifier": "require",
+        "noun": "survival",
+        "relation": "subject",
+        "sentence": "If you weren't around for 1998-2001, or too young to remember, here's the context: that transit taught an entire generation that safety meant invisibility, that survival required making yourself small."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|make|survival",
+        "type": "verb_noun",
+        "modifier": "make",
+        "noun": "survival",
+        "relation": "subject",
+        "sentence": "If you weren't around for 1998-2001, or too young to remember, here's the context: that transit taught an entire generation that safety meant invisibility, that survival required making yourself small."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|develop|chance",
+        "type": "verb_noun",
+        "modifier": "develop",
+        "noun": "chance",
+        "relation": "subject",
+        "sentence": "This transit offers you the chance to develop different strategies for security."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|develop|strategy",
+        "type": "verb_noun",
+        "modifier": "develop",
+        "noun": "strategy",
+        "relation": "object",
+        "sentence": "This transit offers you the chance to develop different strategies for security."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "adjective_noun|different|strategy",
+        "type": "adjective_noun",
+        "modifier": "different",
+        "noun": "strategy",
+        "relation": "attributive",
+        "sentence": "This transit offers you the chance to develop different strategies for security."
+      }
+    ]
+  },
+  "targetChecks": [
+    {
+      "text": "The clearest voice makes the choice.",
+      "advisories": [
+        {
+          "category": "novel_collocation",
+          "detail": "clearest + voice",
+          "pairKey": "adjective_noun|clearest|voice",
+          "pairType": "adjective_noun",
+          "relation": "attributive",
+          "modifier": "clearest",
+          "noun": "voice",
+          "text": "The clearest voice makes the choice.",
+          "advisory": true,
+          "blocking": false,
+          "ownerReviewPriorityOnly": true
+        }
+      ]
+    },
+    {
+      "text": "Resentment then grows inside an arrangement that still looks calm.",
+      "advisories": [
+        {
+          "category": "novel_collocation",
+          "detail": "calm + arrangement",
+          "pairKey": "adjective_noun|calm|arrangement",
+          "pairType": "adjective_noun",
+          "relation": "predicate",
+          "modifier": "calm",
+          "noun": "arrangement",
+          "text": "Resentment then grows inside an arrangement that still looks calm.",
+          "advisory": true,
+          "blocking": false,
+          "ownerReviewPriorityOnly": true
+        }
+      ]
+    },
+    {
+      "text": "The connection can stay easy.",
+      "advisories": [
+        {
+          "category": "novel_collocation",
+          "detail": "stay + connection",
+          "pairKey": "verb_noun|stay|connection",
+          "pairType": "verb_noun",
+          "relation": "subject",
+          "modifier": "stay",
+          "noun": "connection",
+          "text": "The connection can stay easy.",
+          "advisory": true,
+          "blocking": false,
+          "ownerReviewPriorityOnly": true
+        }
+      ]
+    }
+  ]
+}

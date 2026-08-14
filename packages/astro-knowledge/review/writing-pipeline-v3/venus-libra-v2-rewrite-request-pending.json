@@ -1,0 +1,269 @@
+{
+  "meaningInput": {
+    "contentType": "placement_article",
+    "object": "venus",
+    "sign": "libra",
+    "objectFunction": "Venus governs relationships, creativity, attraction, and what is valued.",
+    "signMechanics": "Libra notices balance, exchange, connection, and how a shared choice is made.",
+    "coreTension": "Agreement can look fair while one side keeps adjusting.",
+    "likelyObservableBehaviors": [
+      "A preference is withheld until everyone else has answered.",
+      "A shared cost or responsibility stays uneven because naming the exact difference feels impolite.",
+      "A connection changes once both sides can state what they want without punishment."
+    ],
+    "likelyConsequences": [
+      "The clearest voice makes the decision while the more accommodating side absorbs the cost.",
+      "Resentment grows inside an arrangement that still looks calm.",
+      "Honesty shows which connections can hold an actual preference."
+    ],
+    "risks": [
+      "Fairness is reduced to avoiding disagreement."
+    ],
+    "allowedLivedDomains": [
+      "relationships",
+      "work",
+      "money",
+      "creative decisions",
+      "access"
+    ]
+  },
+  "task": "PARTIAL REWRITE ONLY. Return exactly one JSON field named development. Write only the replacement lived section. Do not return or regenerate the opening, tension, or close.\n\nSpine slots are semantic checks, not sentence templates. CUT the job sentence entirely and do not replace it. The protected first paragraph already carries the transit's job. Do not announce 'the job of,' 'this is a period for,' or 'the collective lesson is.'\n\nThe harness assembles your development between three byte-protected owner-authored fields after the call. You have no authority to alter those fields.\n\nKeep the approved argument recorded in the outline, but discard the old Venus article's voice. The old article is not a register model or positive evidence.\n\nHARD REGISTER REQUIREMENT: speak directly to the reader using you/your under the 2026-08-12 sky-page ruling. Third-person observations may appear inside lived scenes, but the page must address the reader's life.\n\nUse the Saturn in Capricorn register-gold page as the PRIMARY model for register and scene specificity. The other owner passages are supporting voice evidence, not equal concreteness models.\n\nReplace the failed single website scenario with two or three quick concrete situations drawn primarily from the approved Venus in Libra house-core scene evidence. Name the actual decision, the actual cost, and the actual follow-up work across the situations. No niche professional scenario may carry the article.\n\nRemove the sentence 'A real compromise needs two stated positions.' Express any necessary consequence without an empty intensifier and without copying the sentence into a new form.\n\nThe page's one allowed negation-pivot budget is already spent by the protected tension opening. Use zero further negation pivots. Do not use 'X is not Y. It is Z.,' 'the problem is not,' 'X is not the problem,' or 'not X but Y.' State consequences directly.\n\nUse {{exitDate}} once in the protected close. Do not introduce any other placeholders.\n\nDo not add a retrograde look-back, an era or recurrence layer, romance as the default, a dinner scene, a scheduling scene, a house interpretation, a tip list, headings, or aspect copy.\n\nThe prose is unapproved and will be shown to the owner exactly once for a cold read.\n\nPROTECTED OPENING — BYTE-EXACT\nAfter moving through Virgo from July 9 to August 6, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus rules Libra, so compromise comes easily here. You can see both sides, find the middle ground, and make an arrangement work without much friction. That is useful until your own preference disappears somewhere inside the compromise.\n\nPROTECTED TENSION OPENING — BYTE-EXACT\nThe cost appears when keeping the agreement easy matters more than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left.\n\nPROTECTED APPROVED CLOSE — BYTE-EXACT\nBefore {{exitDate}}, an arrangement may strain when the person who kept agreeing can no longer accept what they do not want.",
+  "family": "fast-mover-article",
+  "register": "second_person",
+  "surface": "sky-placement-page",
+  "engineFacts": {
+    "schemaVersion": 1,
+    "factOwner": "app-engine",
+    "planet": "venus",
+    "sign": "libra",
+    "timeZone": "America/New_York",
+    "transitStart": "August 6, 2026",
+    "transitEnd": "December 4, 2026",
+    "transitStartIso": "2026-08-06T19:12:45.999Z",
+    "transitEndIso": "2026-12-04T08:12:40.999Z",
+    "priorSign": "virgo",
+    "priorSignEntryDate": "July 9, 2026",
+    "priorSignExitDate": "August 6, 2026",
+    "previousResidency": {
+      "sign": "libra",
+      "entryDate": "August 29, 2024",
+      "exitDate": "September 22, 2024",
+      "entryDateIso": "2024-08-29T13:22:44.999Z",
+      "exitDateIso": "2024-09-23T02:36:11.999Z"
+    },
+    "eventsDuringTransit": [
+      {
+        "id": "aspect-venus-trine-pluto-2026-08-10t18:08:38.999z",
+        "body": "venus-trine-pluto",
+        "bodies": [
+          "venus",
+          "pluto"
+        ],
+        "eventType": "exact-aspect",
+        "aspect": "trine",
+        "date": "August 10, 2026",
+        "dateIso": "2026-08-10T18:08:38.999Z",
+        "rank": 1,
+        "meaning": "Love and value meet intensity. All-or-nothing attraction, deep desire, and a strong pull toward control in relationships. The trine makes this a natural strength: Depth and devotion in love, used deliberately. The growth edge is not to coast on the ease.",
+        "meaningSource": "packages/astro-knowledge/data/transits/venus-trine-pluto.json"
+      },
+      {
+        "id": "aspect-venus-trine-uranus-2026-08-12t03:46:10.999z",
+        "body": "venus-trine-uranus",
+        "bodies": [
+          "venus",
+          "uranus"
+        ],
+        "eventType": "exact-aspect",
+        "aspect": "trine",
+        "date": "August 11, 2026",
+        "dateIso": "2026-08-12T03:46:10.999Z",
+        "rank": 2,
+        "meaning": "Connection and value meet disruption and freedom. Attraction runs electric, sudden, and unattached to convention. The trine makes this a natural strength: Exciting, unconventional bonds and an original aesthetic; freedom inside closeness. The growth edge is not to coast on the ease.",
+        "meaningSource": "packages/astro-knowledge/data/transits/venus-trine-uranus.json"
+      }
+    ],
+    "provenance": {
+      "calculationSource": "local-swisseph-wasm",
+      "zodiac": "tropical",
+      "requestedReferenceDate": "2026-08-13T16:00:00.000Z",
+      "locatedTransitReferenceDate": "2026-08-13T16:00:00.000Z",
+      "dateRenderingTimeZone": "America/New_York",
+      "meanings": [
+        "packages/astro-knowledge/data/transits/venus-trine-pluto.json",
+        "packages/astro-knowledge/data/transits/venus-trine-uranus.json"
+      ]
+    },
+    "serving": false,
+    "note": "Calculation-only authoring facts. This file does not approve, import, or serve prose."
+  },
+  "argumentSource": {
+    "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+    "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+    "authority": "exact-current-owner-approved",
+    "ownerApproved": true,
+    "permittedUse": "argument-and-close-only-not-voice-evidence",
+    "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra on {{entryDate}}, and we pay closer attention to whether interest, effort, and consideration are being returned. Venus governs relationships, creativity, and what we value. Libra is the sign of balance, connection, and how we get along with each other. A shared decision includes both preferences. A purchase feels worth making because it is useful and beautiful. Affection becomes easier to trust when care does not have to be requested every time.",
+    "tension": "The cost appears when agreement matters more than an honest answer. We ask what works for everyone else before admitting what works for us. We revise a preference until nobody can object, accept an arrangement because it looks even, and keep the peace after the effort stops being mutual. The decision then belongs to whoever was clearest, while the more accommodating side carries the extra cost. Resentment enters a relationship that still looks perfectly calm.",
+    "development": "The issue may be a relationship where the same person always chooses the harmless answer, a shared expense left unequal because asking for the exact amount feels rude, or an attraction sustained by being admired rather than being known. Each compromise seems small. Together they teach others that our preferences can be moved and our limits can wait. By the time a real disagreement arrives, nobody knows which agreement was sincere.",
+    "close": "Before {{exitDate}}, an arrangement may strain when the person who kept agreeing can no longer accept what they do not want."
+  },
+  "argumentInput": {
+    "thesis": "Add why the existing imbalance can be hard to notice: Venus works easily in Libra, so smooth agreement can look complete before both preferences are known.",
+    "cultural_rule": "Do not replace the approved fairness argument; add only the assumption that an easy agreement must be a fair one.",
+    "transit_job": "Add a condition-based test of Venus in Libra's home-ground skill: can the connection stay easy after both sides state what they actually want?",
+    "failure_mechanism": "Clarify the existing mechanism by showing skill at compromise becoming automatic adjustment before anyone asks for it.",
+    "lived_scene_1": "Consolidate the approved shared-decision material into one collaboration where one side waits for the other preference before naming its own.",
+    "lived_scene_2": "Continue the same collaboration when the accommodating side absorbs the follow-up work or cost required to keep the agreement easy.",
+    "lived_scene_3": "Finish the same sequence when the withheld preference is stated and the other side's response shows whether the connection can hold honesty.",
+    "strategy": "Add one strategic bias inside the article: state the preference before smoothing the arrangement; do not add a tip list.",
+    "intended_close": "Keep the approved close's consequence rather than adding a second moral: the arrangement strains when the person who kept agreeing stops accepting what they do not want.",
+    "scope_guard": "Retain the existing one-sentence handoff; add no slow-mover contrast paragraph, romance default, dinner or scheduling scene, seventh-house substitution, or retrograde look-back."
+  },
+  "approvedArgumentOutline": {
+    "version": "argument-outline-v1-2026-08-12",
+    "status": "owner-approved",
+    "ownerApproved": true,
+    "family": "fast-mover-article",
+    "surface": "sky-placement-page",
+    "meaningPlanObject": "venus",
+    "meaningPlanSign": "libra",
+    "meaningPlanHash": "c1bb6370a6a72d43b28b11e0c91fae2bcc0116dba5663d59c6e515ac63e3acc0",
+    "thesis": "Add why the existing imbalance can be hard to notice: Venus works easily in Libra, so smooth agreement can look complete before both preferences are known.",
+    "cultural_rule": "Do not replace the approved fairness argument; add only the assumption that an easy agreement must be a fair one.",
+    "transit_job": "Add a condition-based test of Venus in Libra's home-ground skill: can the connection stay easy after both sides state what they actually want?",
+    "failure_mechanism": "Clarify the existing mechanism by showing skill at compromise becoming automatic adjustment before anyone asks for it.",
+    "lived_scene_1": "Consolidate the approved shared-decision material into one collaboration where one side waits for the other preference before naming its own.",
+    "lived_scene_2": "Continue the same collaboration when the accommodating side absorbs the follow-up work or cost required to keep the agreement easy.",
+    "lived_scene_3": "Finish the same sequence when the withheld preference is stated and the other side's response shows whether the connection can hold honesty.",
+    "strategy": "Add one strategic bias inside the article: state the preference before smoothing the arrangement; do not add a tip list.",
+    "intended_close": "Keep the approved close's consequence rather than adding a second moral: the arrangement strains when the person who kept agreeing stops accepting what they do not want.",
+    "scope_guard": "Retain the existing one-sentence handoff; add no slow-mover contrast paragraph, romance default, dinner or scheduling scene, seventh-house substitution, or retrograde look-back.",
+    "outlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49",
+    "exactOwnerRuling": "Venus in Libra v2 outline approved.",
+    "approvedOutlineHash": "d80637c242a97a476dd5bc0c7184ecd83d6d0caf505d2f0f5fcb557ec44d3d49"
+  },
+  "partialRewrite": {
+    "mode": "lived-section-only",
+    "generatedFields": [
+      "development"
+    ],
+    "protectedFields": {
+      "opening": "After moving through Virgo from July 9 to August 6, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus rules Libra, so compromise comes easily here. You can see both sides, find the middle ground, and make an arrangement work without much friction. That is useful until your own preference disappears somewhere inside the compromise.",
+      "tension": "The cost appears when keeping the agreement easy matters more than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left.",
+      "close": "Before {{exitDate}}, an arrangement may strain when the person who kept agreeing can no longer accept what they do not want."
+    },
+    "jobSentence": "cut-without-replacement",
+    "websiteScenario": "remove",
+    "emptyIntensifierSentence": "remove"
+  },
+  "reservedNegationPivots": 1,
+  "expectedPlaceholders": [
+    "exitDate"
+  ],
+  "protectedOwnerLines": [
+    "After moving through Virgo from July 9 to August 6, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus rules Libra, so compromise comes easily here. You can see both sides, find the middle ground, and make an arrangement work without much friction. That is useful until your own preference disappears somewhere inside the compromise.",
+    "The cost appears when keeping the agreement easy matters more than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left.",
+    "Before {{exitDate}}, an arrangement may strain when the person who kept agreeing can no longer accept what they do not want."
+  ],
+  "literalEvidenceRequirements": {
+    "field": "development",
+    "forbiddenAbstractPlaceholders": [
+      "one collaboration",
+      "one person",
+      "the other"
+    ],
+    "requiredConceptTerms": {
+      "decision": [
+        "decision",
+        "decisions",
+        "choose",
+        "chooses",
+        "chosen",
+        "choice",
+        "choices",
+        "agree",
+        "agreed",
+        "preference",
+        "preferences",
+        "approve",
+        "option",
+        "options"
+      ],
+      "cost": [
+        "cost",
+        "costs",
+        "pay",
+        "paid",
+        "money",
+        "fee",
+        "fees",
+        "bill",
+        "bills",
+        "hour",
+        "hours",
+        "time",
+        "workload",
+        "extra work",
+        "budget",
+        "expense",
+        "expenses"
+      ],
+      "follow_up_work": [
+        "follow-up",
+        "follow up",
+        "revision",
+        "revisions",
+        "correction",
+        "corrections",
+        "reminder",
+        "reminders",
+        "invoice",
+        "invoices",
+        "message",
+        "messages",
+        "email",
+        "emails",
+        "draft",
+        "drafts",
+        "redo",
+        "finish",
+        "fix",
+        "update",
+        "updates"
+      ]
+    }
+  },
+  "additionalOwnerEvidenceSourceIds": [
+    "owner-article:libra-season-autumn-equinox:p095"
+  ],
+  "preferredEvidenceContentKeys": [
+    "owner-article:libra-season-autumn-equinox:p016",
+    "owner-article:libra-season-autumn-equinox:p095"
+  ],
+  "excludedEvidenceContentKeys": [
+    "fallback-hook/sky-sign-copy/venus/libra",
+    "owner-article:gemini-season-2025:p018"
+  ],
+  "models": {
+    "writer": {
+      "provider": "openai",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "xhigh",
+      "maxOutputTokens": 12000
+    }
+  },
+  "governance": {
+    "authorization": "I authorize exactly one billed Sol-xhigh Venus in Libra partial-rewrite call, capped at 12,000 output tokens, with no Terra and no retries.",
+    "authorizedCalls": 1,
+    "nextAuthorizationRequired": null,
+    "estimatedCalls": 1,
+    "reviewerCalls": 0,
+    "retries": 0,
+    "stagingAuthorized": false,
+    "servingAuthorized": false,
+    "retrogradeLookbackAuthorized": false,
+    "partialRewriteOnly": true,
+    "spineSlotsAreChecksNotTemplates": true
+  }
+}
