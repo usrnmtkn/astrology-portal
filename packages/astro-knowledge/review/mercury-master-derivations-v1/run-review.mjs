@@ -156,9 +156,9 @@ function markdownFor(candidates, records, summary) {
   const lines = [
     "# Mercury master derivations v1: owner selection sheet",
     "",
-    "Status: `needs_review`. These are derivations from the landed owner-approved masters, not approved fallback rows.",
+    "Status: `needs_review`. These are natal-register rewrites from canonical Mercury-in-sign mechanisms, not approved fallback rows.",
     "",
-    "No new claims or scenes were authorized. Each slot below is selection or compression from the exact master excerpts shown beside it. Aquarius is excluded because the owner already derived that card on 2026-08-11.",
+    "No canonical claims were changed. The ingress-master excerpts shown below are historical audit references only, not wording templates. Aquarius is excluded because the owner already derived that card on 2026-08-11.",
     "",
     "## Batch result",
     "",
@@ -179,7 +179,7 @@ function markdownFor(candidates, records, summary) {
     lines.push(`## Mercury in ${entry.sign[0].toUpperCase()}${entry.sign.slice(1)}`, "");
     lines.push(`Status: \`${result.status}\` · Lint: \`${result.lint.decision}\` · Terra: \`${result.review.decision}\``, "");
     for (const slot of ["tagline", "hook", "lived", "turn"]) {
-      lines.push(`### ${slot[0].toUpperCase()}${slot.slice(1)}`, "", `**Derived card:** ${entry.card[slot]}`, "", "**Master excerpt(s):**", "");
+      lines.push(`### ${slot[0].toUpperCase()}${slot.slice(1)}`, "", `**Natal candidate:** ${entry.card[slot]}`, "", "**Historical master excerpt(s):**", "");
       for (const excerpt of entry.masterExcerpts[slot]) lines.push(`> ${excerpt.replaceAll("\n", "\n> ")}`, "");
     }
     lines.push("**Allowed operations recorded:**", "");
@@ -256,8 +256,8 @@ for (const entry of candidates.cards) {
     draft: entry.card,
     plan,
     context: { corrections },
-    family: "sky-placement",
-    register: "collective",
+    family: "natal-specialized-placement",
+    register: "second_person",
     expectedPlaceholders: [],
     requiredFields: ["tagline", "hook", "lived", "turn"],
     protectedOwnerLines: []
@@ -267,8 +267,8 @@ for (const entry of candidates.cards) {
     draft: entry.card,
     plan,
     context: { corrections },
-    family: "sky-placement",
-    register: "collective",
+    family: "natal-specialized-placement",
+    register: "second_person",
     expectedPlaceholders: [],
     requiredFields: ["tagline", "hook", "lived", "turn"],
     protectedOwnerLines: [],
@@ -276,7 +276,7 @@ for (const entry of candidates.cards) {
       const { response, payload } = await callOpenAIResponses({
         apiKey: process.env.OPENAI_API_KEY,
         role: "REVIEWER",
-        taskInstructions: "Review this selection-and-compression derivation as a complete four-slot Sky Placement card. Diagnose only. Use exact rubric category IDs. Return PASS or REVISE; never replacement prose.",
+        taskInstructions: "Review this natal Mercury-in-sign rewrite as a complete four-slot natal placement card. Diagnose only. Use exact rubric category IDs. Return PASS or REVISE; never replacement prose.",
         request: {
           model: REVIEW_MODEL,
           input,
