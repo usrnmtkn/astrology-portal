@@ -7,7 +7,7 @@ import { createReportFulfillmentStore } from "../api/_lib/report-fulfillment-sto
 import { ReportBirthDataError, birthProfileFromPersistedData } from "../api/_lib/report-billing-window.ts";
 import { ReportCalculationApiClientError } from "../api/_lib/report-facts.ts";
 import { REPORT_JUDGE_CATEGORIES, reportJudgeOverall, reportJudgeVerdict } from "../api/_lib/report-judge.ts";
-import { authorizeReportGeneration, grantCompEntitlement, revokeEntitlement } from "../api/_lib/report-entitlements.ts";
+import { authorizeReportGeneration, createFreshReportGeneration, grantCompEntitlement, revokeEntitlement } from "../api/_lib/report-entitlements.ts";
 import { verifyReportFactLock } from "../api/_lib/report-fact-lock.ts";
 import { assembleDeterministicReportKeyDates } from "../api/_lib/report-key-dates.ts";
 import { createReportMailProvider } from "../api/_lib/report-mail.ts";
@@ -786,6 +786,27 @@ assert.equal(jobAuthorization.authorization_token_count, 0);
 assert.equal("model_call_count" in jobAuthorization, false, "A new authorization must not reset immutable lifetime call numbering.");
 assert.equal(jobAuthorization.state, "queued");
 assert.ok(authorizationUpdates.some((entry) => entry.table === "user_reports" && entry.patch.fulfillment_status === "queued"));
+
+const explicitBudgetUpdates = [];
+const explicitBudgetAuthorization = await authorizeReportGeneration({
+  async update(table, query, patch) {
+    explicitBudgetUpdates.push({ table, query, patch });
+    return table === "report_fulfillment_jobs" ? [{ id: "fresh-job-2" }] : [{ id: "fresh-report-2" }];
+  }
+}, { reportId: "fresh-report-2", callBudget: 70, tokenBudget: 1_800_000, now: "2026-08-14T00:00:00Z" });
+assert.deepEqual(explicitBudgetAuthorization, { authorized: true, callBudget: 70, tokenBudget: 1_800_000, jobId: "fresh-job-2" });
+assert.equal(explicitBudgetUpdates.find((entry) => entry.table === "report_fulfillment_jobs").patch.authorized_token_budget, 1_800_000);
+
+const freshGenerationRequests = [];
+const freshGeneration = await createFreshReportGeneration({
+  async request(path, init) {
+    freshGenerationRequests.push({ path, init });
+    return [{ report_id: "fresh-report-2", job_id: "fresh-job-2", generation_number: 2 }];
+  }
+}, "source-report-1");
+assert.deepEqual(freshGeneration, { reportId: "fresh-report-2", jobId: "fresh-job-2", generationNumber: 2 });
+assert.equal(freshGenerationRequests[0].path, "rpc/create_fresh_report_generation");
+assert.deepEqual(JSON.parse(freshGenerationRequests[0].init.body), { source_report_id: "source-report-1" });
 
 delete process.env.REPORT_MAIL_ENDPOINT;
 delete process.env.REPORT_MAIL_TOKEN;
@@ -1781,8 +1802,9 @@ assert.equal(retryPatch.state, "retry", "Transient model failures remain resumab
 
 const adminSource = fs.readFileSync(new URL("../api/admin/report-fulfillment.ts", import.meta.url), "utf8");
 assert.ok(!/edit(?:_|\s|-)?prose|update(?:_|\s|-)?body/iu.test(adminSource), "The exception dashboard must not add a prose-editing path.");
-for (const actionName of ["grant_comp", "authorize_generation", "revoke_comp", "set_lifetime_token_budget"]) assert.ok(adminSource.includes(`body.action === "${actionName}"`));
+for (const actionName of ["grant_comp", "fresh_generation", "authorize_generation", "revoke_comp", "set_lifetime_token_budget"]) assert.ok(adminSource.includes(`body.action === "${actionName}"`));
 assert.ok(adminSource.includes("token_budget_lifetime"), "The owner-only admin endpoint must expose the adjustable lifetime token backstop.");
+assert.ok(adminSource.includes("tokenBudget: body.tokenBudget"), "Owner authorization must accept an explicit authorization-scoped token ceiling.");
 assert.ok(adminSource.includes('code: "ACTIVE_COMP_EXISTS"'), "Duplicate comp grants must return a stable, human-readable conflict code.");
 assert.ok(adminSource.includes("status: 409"), "Duplicate comp grants must return HTTP 409.");
 assert.ok(adminSource.includes("An active comp report already exists"), "Duplicate comp grants must explain that the existing queue row should be used.");
