@@ -999,10 +999,10 @@ function modelCallWithCrash(crashAt = Infinity) {
     const keyDateRequirements = payloadMatch
       ? (JSON.parse(payloadMatch[1]).keyDateRequirements ?? [])
       : [];
-    uniqueDraft.keyDates = keyDateRequirements.slice(0, 1).map((event) => ({
+    uniqueDraft.keyDates = keyDateRequirements.map((event, index) => ({
       eventId: event.eventId,
-      title: `FIXTURE_ONLY ${event.eventId} title`,
-      sentence: `A unique supported consequence belongs to ${event.eventId}.`
+      title: `Event ${index + 1} ${unitId}`,
+      sentence: `A unique supported consequence belongs to event ${index + 1} in ${unitId}.`
     }));
     const result = {
       value: input.schemaName === "report_unit_critique" || input.schemaName === "report_unit_cold_read" ? {
@@ -1462,7 +1462,7 @@ async function seedAssemblyUnits(targetStore, report, bodyByUnit = {}) {
       }] : []
     }, {
       fulfillmentPassed: true,
-      ...(unitId === "key-dates" ? { deterministicAssembly: { schema: "report-key-dates-assembly.v2" } } : {}),
+      ...(unitId === "key-dates" ? { deterministicAssembly: { schema: "report-key-dates-assembly.v3" } } : {}),
       validatorResults: [],
       judge: { scores: passingJudgeScores, overall: 1, verdict: "pass", findings: [] },
       promptVersions: { judge: "report-judge-v3.1" },
@@ -1539,10 +1539,10 @@ const coherenceJob = authorizedJob({ id: "coherence-job", report_id: coherenceRe
 const coherenceResult = await processReportFulfillmentJob({
   job: coherenceJob, store: coherenceStore, calculateFacts, callModel: coherenceModel, judgeCall
 });
-assert.equal(coherenceResult.status, "queued");
-assert.equal(coherenceCalls, 1, "A post-dedup coherence hole must receive exactly one bounded paragraph-splice call.");
+assert.equal(coherenceResult.status, "needs_review");
+assert.equal(coherenceCalls, 0, "A whitespace-only post-dedup seam must be repaired mechanically without a billed call.");
 assert.doesNotMatch(coherenceStore.units.get("coherence-report:domain:main").body, /[ \t]{2,}/u);
-assert.equal(coherenceStore.units.get("coherence-report:domain:main").source_snapshot.assemblyCoherenceRepairs[0].boundedCallCount, 1);
+assert.equal(coherenceStore.units.get("coherence-report:domain:main").source_snapshot.assemblyValidation.mechanicalCoherenceRepairs.length, 1);
 
 const persistenceStore = createMemoryStore();
 const persistenceReport = {

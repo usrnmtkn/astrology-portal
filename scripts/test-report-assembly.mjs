@@ -5,6 +5,7 @@ import {
   deduplicateAssembledReport,
   detectPostDedupCoherenceScopes,
   normalizeAssembledReportWhitespace,
+  repairMechanicalPostDedupSeams,
   REPORT_LEVEL_LEXICAL_BUDGETS,
   runReportRedundancyPass,
   validateAssembledReport
@@ -15,6 +16,7 @@ import {
   reportPromptFromPayload,
   validateReportDraft
 } from "../api/_lib/report-generation.ts";
+import { assembleDeterministicReportKeyDates, reportKeyDateEventManifest } from "../api/_lib/report-key-dates.ts";
 
 const reviewFixture = JSON.parse(fs.readFileSync(new URL("./fixtures/report-assembly-review-74951c07.json", import.meta.url), "utf8"));
 const frozen = JSON.parse(fs.readFileSync(new URL("./fixtures/marie-report-frozen-facts.json", import.meta.url), "utf8"));
@@ -67,10 +69,54 @@ assert.equal(exactBrokenKeyDateIssues.filter((entry) => entry.code === "key_date
   "Both exact parent-heading titles must fail the key-date contract.");
 assert.equal(exactBrokenKeyDateIssues.filter((entry) => entry.code === "duplicate_key_date_sentence").length, 1,
   "The exact MAY 12/MAY 14 duplicate sentence must fail the key-date contract.");
+assert.ok(exactBrokenKeyDateIssues.some((entry) => entry.code === "key_date_incomplete_sentence" && entry.quote.includes("Together,")),
+  "The exact dangling MAY 12/MAY 14 sentence must fail the standalone-sentence contract.");
+
+const nineRepeatedParentTitles = [{
+  unitId: "spring",
+  draft: { headline: "The old plan needs different terms", body: "FIXTURE_ONLY." }
+}, {
+  unitId: "key-dates",
+  draft: {
+    headline: "KEY DATES",
+    body: Array.from({ length: 9 }, (_, index) => (
+      `APR ${index + 1} · The old plan needs different terms · Entry ${index + 1} has its own complete sentence. · *FIXTURE_ONLY attribution ${index + 1}.*`
+    )).join("\n\n")
+  }
+}];
+const nineRepeatedTitleIssues = validateAssembledReport(nineRepeatedParentTitles);
+assert.equal(nineRepeatedTitleIssues.filter((entry) => entry.code === "key_date_title_reuses_section_heading").length, 9,
+  "All nine exact parent-heading titles must hard-fail.");
+assert.equal(nineRepeatedTitleIssues.filter((entry) => entry.code === "duplicate_key_date_title").length, 8,
+  "Nine identical titles must expose all eight later duplicates.");
+
+for (const dangling of ["Saturn also trines Jupiter, adding limits, order, and repetition.", "This sextile makes the schedule easier to keep."]) {
+  const danglingIssues = validateAssembledReport([{
+    unitId: "key-dates",
+    draft: { body: `MAY 12 · A unique useful title · ${dangling} · *FIXTURE_ONLY attribution.*` }
+  }]);
+  assert.ok(danglingIssues.some((entry) => entry.code === "key_date_incomplete_sentence"),
+    `The dangling key-date fragment '${dangling}' must hard-fail.`);
+}
+
+const ownerFinalKeyDates = [{
+  unitId: "key-dates",
+  draft: {
+    headline: "KEY DATES",
+    body: [
+      "**MAY 19 · Make the change specific** · Put the new hours, boundary, appointment, or responsibility change into the actual calendar. · *Saturn sextiles your natal Ascendant, pass 1.*",
+      "**AUG 27 · Watch what gets pushed out** · Sleep, meals, appointments, movement, recovery, or another routine may show you where the week is already too full. · *Jupiter squares your natal Moon.*",
+      "**OCT 6 · Look at what actually worked** · Keep the changes that survived real life and revise the ones that disappeared as soon as the week got busy. · *Saturn sextiles your natal Ascendant, pass 2.*",
+      "**FEB 6 · A public change reaches the calendar** · A professional development may alter hours, travel, commute, physical demands, or the amount of time left around the work. · *A solar eclipse conjoins your natal Midheaven.*"
+    ].join("\n\n")
+  }
+}];
+assert.deepEqual(validateAssembledReport(ownerFinalKeyDates).filter((entry) => entry.severity === "error"), [],
+  "The four owner FINAL key-date records must pass unchanged.");
 
 const repairManifest = JSON.parse(fs.readFileSync(new URL("./fixtures/report-8b3e266e-assembly-repair-v1.json", import.meta.url), "utf8"));
 const repairedEntries = Object.values(repairManifest.sourceUnits).flat();
-assert.equal(repairedEntries.length, 21);
+assert.equal(repairedEntries.length, 27);
 assert.equal(new Set(repairedEntries.map((entry) => entry.title.toLowerCase())).size, repairedEntries.length,
   "The repaired Production Key Dates titles must all be unique.");
 assert.equal(new Set(repairedEntries.map((entry) => entry.sentence.toLowerCase())).size, repairedEntries.length,
@@ -171,6 +217,33 @@ assert.ok(exactPostDedupScopes.find((entry) => entry.unitId === "summer")?.reaso
 const whitespaceNormalized = normalizeAssembledReportWhitespace(exactPostDedupHoleUnits);
 assert.ok(whitespaceNormalized.every((unit) => !/[ \t]{2,}/u.test(unit.draft.body)),
   "Whitespace left by sentence removal must normalize mechanically.");
+const mechanicallyRepaired = repairMechanicalPostDedupSeams(exactPostDedupHoleUnits);
+assert.equal(mechanicallyRepaired.repairs.length, 3);
+assert.deepEqual(mechanicallyRepaired.remaining, []);
+assert.equal(mechanicallyRepaired.units.find((unit) => unit.unitId === "summer")?.draft.body,
+  "You still only have so many hours in a day, so a quick yes may cut into lunch or sleep.",
+  "The exact Summer seam must lose only its stranded connector and whitespace.");
+assert.match(mechanicallyRepaired.units.find((unit) => unit.unitId === "spring")?.draft.body ?? "", /preference\. Different hours/u);
+assert.match(mechanicallyRepaired.units.find((unit) => unit.unitId === "winter-next")?.draft.body ?? "", /Ascendant\. A schedule/u);
+
+const completeManifest = reportKeyDateEventManifest(frozen, "12_months");
+const completeSourceUnits = [...new Set(completeManifest.map((entry) => entry.sourceUnitId).filter(Boolean))].map((unitId) => ({
+  unitId,
+  draft: {
+    keyDates: completeManifest.filter((entry) => entry.sourceUnitId === unitId).map((entry, index) => ({
+      eventId: entry.eventId,
+      title: `Event ${index + 1} ${unitId}`,
+      sentence: `Event ${index + 1} for ${unitId} has a complete factual sentence.`
+    }))
+  }
+}));
+assert.doesNotThrow(() => assembleDeterministicReportKeyDates({ reportHorizon: "12_months", frozenFacts: frozen, sourceUnits: completeSourceUnits }));
+completeSourceUnits[0].draft.keyDates.pop();
+assert.throws(
+  () => assembleDeterministicReportKeyDates({ reportHorizon: "12_months", frozenFacts: frozen, sourceUnits: completeSourceUnits }),
+  /REPORT_KEY_DATES_MISSING_EVENTS/u,
+  "Omitting any eligible frozen fact date must hard-fail deterministic assembly."
+);
 
 let staleRedundancyCalls = 0;
 const staleRedundancyResult = await runReportRedundancyPass({

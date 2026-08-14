@@ -1217,7 +1217,7 @@ export function reportPromptFromPayload(payload: ReportGenerationPayload) {
     `OWNER_REVIEW_EVIDENCE\n${ownerReviewEvidence.text}`,
     `COLD_RENDERED_PROSE_OWNER_RULING\n${coldProseRuling.text}`,
     reportKeyDateSourceUnitIds(payload.reportHorizon).includes(payload.unit.unitId)
-      ? `STRUCTURED_KEY_DATE_CONTRACT\nFor every frozen key-date event this unit deliberately selects, return one keyDates entry with the exact supplied eventId, a unique date-specific title, and one date-specific reader sentence. Never reuse the unit headline or a section heading as the title. Never lift a body sentence as the key-date sentence. Do not repeat a title or sentence. The runtime owns the date label and technical attribution. Eligible events for this unit:\n${JSON.stringify(payload.keyDateRequirements, null, 2)}`
+      ? `STRUCTURED_KEY_DATE_CONTRACT\nFor every eligible frozen key-date event supplied to this unit, return exactly one keyDates entry with the exact supplied eventId, a unique date-specific title, and one date-specific reader sentence. No supplied event may be omitted. Never reuse the unit headline or a section heading as the title. Never lift a body sentence as the key-date sentence. Do not repeat a title or sentence. The runtime owns the date label and technical attribution. Eligible events for this unit:\n${JSON.stringify(payload.keyDateRequirements, null, 2)}`
       : "STRUCTURED_KEY_DATE_CONTRACT\nReturn keyDates as an empty array for this unit.",
     INTERNAL_LIVED_PROSE_SCAFFOLD,
     `REPORT_GENERATION_PAYLOAD\n${JSON.stringify(taskPayload, null, 2)}`
