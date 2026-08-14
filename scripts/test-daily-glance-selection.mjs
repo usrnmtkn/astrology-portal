@@ -87,6 +87,16 @@ assert.match(
 );
 assert.match(
   appSource,
+  /const moonHouse = !birthTimeUnknown && natalSky\.ascendant[\s\S]*?wholeSignHouseForSign\(moon\.sign, natalSky\.ascendant\)[\s\S]*?moonContext/u,
+  "Friends daily must derive the Moon's house from the friend's reliable Ascendant independently of the prose driver."
+);
+assert.match(
+  appSource,
+  /return \{[\s\S]*?headline: rendered\.headline[\s\S]*?body: rendered\.body[\s\S]*?moonContext/u,
+  "Aspect-driven and house-fallback Friends daily copy must retain the computed Moon context."
+);
+assert.match(
+  appSource,
   /author 2–3 approved variants per[\s\S]*?chart id \+ date \+ driver/u,
   "The approved deterministic copy-variant follow-up must remain recorded without changing today's driver."
 );

@@ -45,6 +45,11 @@ export type FriendPersonalTransitGroup = {
 export type FriendDailyForecastView = {
   headline: string;
   body: string;
+  moonContext: {
+    sign: string;
+    houseLabel: string | null;
+    topic: string | null;
+  };
 };
 
 type FriendPersonalTransit = FriendPersonalTransitGroup["transits"][number];
@@ -140,6 +145,28 @@ export function FriendTransitsTab({
         {dailyForecast ? (
           <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Daily forecast for ${friendName}`}>
             <span className="eyebrow section-label friend-section-label">{dateLabel} for {friendName}</span>
+            <div
+              aria-label={[
+                `Moon in ${dailyForecast.moonContext.sign}`,
+                dailyForecast.moonContext.houseLabel,
+                dailyForecast.moonContext.topic
+              ].filter(Boolean).join(", ")}
+              className="updates-aspect-row__meta-line friend-daily-forecast__moon-context"
+            >
+              <span>Moon in {dailyForecast.moonContext.sign}</span>
+              {dailyForecast.moonContext.houseLabel ? (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <span>{dailyForecast.moonContext.houseLabel}</span>
+                </>
+              ) : null}
+              {dailyForecast.moonContext.topic ? (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <span>{dailyForecast.moonContext.topic}</span>
+                </>
+              ) : null}
+            </div>
             <h3>{dailyForecast.headline}</h3>
             <p>{dailyForecast.body}</p>
           </section>
