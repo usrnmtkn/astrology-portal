@@ -10,6 +10,7 @@ import {
   type ReportDomain,
   type ReportHorizon
 } from "./report-types.js";
+import { canonicalReportEvents } from "./report-events.ts";
 
 const DEFAULT_TLDRASTRO_API_URL = "https://tldrastro-api-27165565299.us-central1.run.app";
 
@@ -29,6 +30,7 @@ export type ReportChartSubject = {
     latitude: number;
     longitude: number;
     timeZone?: string | null;
+    coordinateSource?: { provider: string; sourceId: string; resolution: "municipal_centroid" | "borough_centroid" | "legacy_unprovenanced" };
   };
   settings?: {
     houseSystem?: "whole_sign";
@@ -36,8 +38,6 @@ export type ReportChartSubject = {
     aspectProfile?: "standard" | "tight";
   };
 };
-
-export type ReportNatalPointLongitudes = Partial<Record<"Ascendant" | "Midheaven", number>>;
 
 export type ComposeReportFactsInput = {
   userId: string;
@@ -48,7 +48,6 @@ export type ComposeReportFactsInput = {
   reportHorizon: ReportHorizon;
   start: string;
   end: string;
-  natalPointLongitudes?: ReportNatalPointLongitudes;
   regenerate?: boolean;
 };
 
@@ -136,6 +135,19 @@ function validateInput(input: ComposeReportFactsInput) {
   }
 }
 
+export function assertCanonicalReportFacts(facts: Record<string, unknown>) {
+  const natal = facts.natal && typeof facts.natal === "object" ? facts.natal as JsonObject : null;
+  const metadata = natal?.metadata && typeof natal.metadata === "object" ? natal.metadata as JsonObject : null;
+  const ephemeris = metadata?.ephemeris && typeof metadata.ephemeris === "object" ? metadata.ephemeris as JsonObject : null;
+  const provenance = metadata?.chartProvenance && typeof metadata.chartProvenance === "object" ? metadata.chartProvenance as JsonObject : null;
+  if (ephemeris?.actualEngine !== "swiss" || ephemeris.fallback !== false) {
+    throw new Error("REPORT_FACTS_NONCANONICAL_EPHEMERIS: report facts require Swiss data with no fallback.");
+  }
+  if (typeof provenance?.provenanceHash !== "string" || !/^[a-f0-9]{64}$/u.test(provenance.provenanceHash)) {
+    throw new Error("REPORT_FACTS_PROVENANCE_MISSING: the natal chart must carry its canonical provenance hash.");
+  }
+}
+
 export async function composeReportFacts(
   input: ComposeReportFactsInput,
   dependencies: ReportFactsDependencies
@@ -155,13 +167,19 @@ export async function composeReportFacts(
       periodEnd
     });
     if (reusable) {
-      return createReportEnvelope(dependencies.envelopeStore, {
-        ...reportIdentity,
-        periodEnd,
-        facts: reusable.facts,
-        factsEngine: reusable.facts_engine,
-        status: "draft"
-      });
+      try {
+        assertCanonicalReportFacts(reusable.facts);
+        return createReportEnvelope(dependencies.envelopeStore, {
+          ...reportIdentity,
+          periodEnd,
+          facts: reusable.facts,
+          factsEngine: reusable.facts_engine,
+          status: "draft"
+        });
+      } catch {
+        // Pre-ruling bundles are immutable evidence, but cannot seed a new
+        // report. Recalculate through the canonical path below.
+      }
     }
   }
 
@@ -173,17 +191,18 @@ export async function composeReportFacts(
       reportHorizon: input.reportHorizon,
       start: input.start,
       end: input.end,
-      natalPointLongitudes: input.natalPointLongitudes
     })
   ]);
   if (facts.reportHorizon !== input.reportHorizon) {
     throw new Error("TLDR Astro report-window response did not match the requested horizon.");
   }
+  assertCanonicalReportFacts(facts);
+  const canonicalFacts = { ...facts, canonicalEvents: canonicalReportEvents(facts) };
   const factsEngine = `tldrastro-api@${version}`;
   return createReportEnvelope(dependencies.envelopeStore, {
     ...reportIdentity,
     periodEnd,
-    facts,
+    facts: canonicalFacts,
     factsEngine,
     status: "draft"
   }, { regenerate: input.regenerate });
@@ -309,10 +328,10 @@ export function createTldrAstroReportFactsClient({
           aspectProfile: "standard"
         },
         includeSolarReturn: input.reportHorizon === "12_months",
-        includeContentFacts: false,
-        natalPointLongitudes: input.natalPointLongitudes ?? {}
+        includeContentFacts: false
       });
-      return normalizeReportFactDates(facts, input.location.timeZone || "UTC");
+      const normalized = normalizeReportFactDates(facts, input.location.timeZone || "UTC");
+      return { ...normalized, canonicalEvents: canonicalReportEvents(normalized) };
     }
   };
 }

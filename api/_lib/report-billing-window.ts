@@ -5,8 +5,10 @@ export type BirthProfile = {
   birthDate: string;
   birthTime: string | null;
   birthTimeUnknown: boolean;
-  birthLocation: { label: string; latitude: number; longitude: number; timeZone?: string } | null;
-  natalPointLongitudes?: Partial<Record<"Ascendant" | "Midheaven", number>>;
+  birthLocation: {
+    label: string; latitude: number; longitude: number; timeZone?: string;
+    coordinateSource?: { provider: string; sourceId: string; resolution: "municipal_centroid" | "borough_centroid" | "legacy_unprovenanced" };
+  } | null;
 };
 
 export class ReportBirthDataError extends Error {
@@ -27,14 +29,6 @@ function stringValue(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-export function natalPointLongitudesFromChart(value: unknown) {
-  const natalChart = recordValue(value);
-  return {
-    ...(typeof natalChart?.ascendantLongitude === "number" ? { Ascendant: natalChart.ascendantLongitude } : {}),
-    ...(typeof natalChart?.midheavenLongitude === "number" ? { Midheaven: natalChart.midheavenLongitude } : {})
-  } satisfies Partial<Record<"Ascendant" | "Midheaven", number>>;
-}
-
 export function birthProfileFromPersistedData(data: unknown): BirthProfile | null {
   const root = recordValue(data);
   const profile = recordValue(root?.profile) ?? root;
@@ -45,7 +39,6 @@ export function birthProfileFromPersistedData(data: unknown): BirthProfile | nul
   const rawBirthTime = stringValue(chart.birthTime);
   const birthTimeUnknown = rawBirthTime === "Time unknown";
   const location = recordValue(chart.birthLocation);
-  const natalChart = recordValue(chart.natalChart);
   const latitude = typeof location?.latitude === "number" ? location.latitude : NaN;
   const longitude = typeof location?.longitude === "number" ? location.longitude : NaN;
   if (!/^\d{4}-\d{2}-\d{2}$/u.test(birthDate)) return null;
@@ -61,9 +54,15 @@ export function birthProfileFromPersistedData(data: unknown): BirthProfile | nul
       label: stringValue(location.label),
       latitude,
       longitude,
-      timeZone: stringValue(location.timeZone) || undefined
-    } : null,
-    natalPointLongitudes: natalPointLongitudesFromChart(natalChart)
+      timeZone: stringValue(location.timeZone) || undefined,
+      coordinateSource: recordValue(location.coordinateSource) ? {
+        provider: stringValue(recordValue(location.coordinateSource)?.provider) || "legacy",
+        sourceId: stringValue(recordValue(location.coordinateSource)?.sourceId) || "unknown",
+        resolution: (["municipal_centroid", "borough_centroid", "legacy_unprovenanced"].includes(stringValue(recordValue(location.coordinateSource)?.resolution))
+          ? stringValue(recordValue(location.coordinateSource)?.resolution)
+          : "legacy_unprovenanced") as "municipal_centroid" | "borough_centroid" | "legacy_unprovenanced"
+      } : { provider: "legacy", sourceId: "unrecorded", resolution: "legacy_unprovenanced" }
+    } : null
   };
 }
 

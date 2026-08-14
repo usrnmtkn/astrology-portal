@@ -104,29 +104,6 @@ def _fixed_points(natal) -> List[Position]:
     return points
 
 
-def _with_verified_natal_points(natal, overrides):
-    """Use explicitly supplied frozen-chart angle facts for report timing.
-
-    A rounded place label can recalculate an angle differently from the
-    already-verified natal chart. The override is part of the request's fact
-    contract; it is never inferred or hardcoded by the service.
-    """
-    if not overrides:
-        return natal
-    unsupported = set(overrides) - {"Ascendant", "Midheaven"}
-    if unsupported:
-        raise ValueError(f"Unsupported verified natal points: {', '.join(sorted(unsupported))}.")
-    angles = dict(natal.angles)
-    for name, longitude in overrides.items():
-        if not 0 <= longitude < 360:
-            raise ValueError(f"Verified natal longitude for {name} must be in [0, 360).")
-        original = angles.get(name)
-        if original is None:
-            raise ValueError(f"Natal chart does not contain {name}.")
-        angles[name] = make_position(name, original.glyph, original.theme, longitude, original.house, speed=0)
-    return natal.model_copy(update={"angles": angles})
-
-
 def _root_for_aspect(
     lower: float,
     upper: float,
@@ -404,17 +381,25 @@ def _fast_key_dates(
                     settings,
                     0.25,
                 )
-                for root in roots:
-                    score = 45
-                    if planet == lord:
-                        score += 25
-                    if natal_point.point in activated:
-                        score += 15
-                    if natal_point.point in {"Sun", "Moon", "Ascendant", "Midheaven"}:
-                        score += 15
-                    if score < 70:
-                        continue
-                    event_id = f"{planet.lower()}-{aspect_name}-{natal_point.point.lower().replace(' ', '-')}-{_iso(root)[:10]}"
+                score = 45
+                if planet == lord:
+                    score += 25
+                if natal_point.point in activated:
+                    score += 15
+                if natal_point.point in {"Sun", "Moon", "Ascendant", "Midheaven"}:
+                    score += 15
+                if score < 70:
+                    continue
+                for pass_index, root in enumerate(roots):
+                    _, _, speed = _raw_position(root, planet, settings)
+                    motion = "retrograde" if speed < 0 else "direct"
+                    date = _iso(root)[:10]
+                    house = natal_point.house if natal_point.house is not None else "na"
+                    event_id = ":".join((
+                        "report-event-v1", date, planet.lower(), aspect_name,
+                        natal_point.point.lower().replace(" ", "-"), f"house-{house}",
+                        motion, f"pass-{pass_index + 1}-of-{len(roots)}",
+                    ))
                     dates.append(
                         ReportKeyDate(
                             id=event_id,
@@ -423,6 +408,10 @@ def _fast_key_dates(
                             transitPlanet=planet,
                             natalPoint=natal_point.point,
                             aspect=aspect_name,
+                            natalHouse=natal_point.house,
+                            motion=motion,
+                            passNumber=pass_index + 1,
+                            passCount=len(roots),
                             category=_category_for_house(natal_point.house),
                             score=score,
                             exactAt=_iso(root),
@@ -673,7 +662,6 @@ def calculate_report_window(request: ReportWindowRequest) -> ReportWindowRespons
     natal = calculate_natal_chart(
         NatalChartRequest(subject=request.natalSubject, includeContentFacts=False)
     )
-    natal = _with_verified_natal_points(natal, request.natalPointLongitudes)
     profections = calculate_profections(
         ProfectionsRequest(
             natalSubject=request.natalSubject,

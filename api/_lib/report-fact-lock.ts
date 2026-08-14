@@ -1,6 +1,7 @@
 import type { ReportDraft } from "./report-generation.ts";
+import { canonicalReportEvents, type CanonicalReportEvent } from "./report-events.ts";
 
-export type ReportFactLockIssue = { code: "untraceable_date" | "untraceable_degree" | "untraceable_attribution"; value: string; message: string };
+export type ReportFactLockIssue = { code: "untraceable_date" | "untraceable_degree" | "untraceable_attribution" | "unresolved_event_tuple"; value: string; message: string };
 
 function strings(value: unknown): string[] {
   if (typeof value === "string") return [value];
@@ -13,29 +14,36 @@ function draftText(draft: ReportDraft, omitTiming = false) {
   return [draft.headline, draft.tldr, draft.summary, draft.body, draft.action, omitTiming ? "" : draft.timing, ...(draft.sections ?? []).flatMap((section) => [section.heading, section.body])].filter(Boolean).join("\n");
 }
 
-function recordValue(value: unknown): Record<string, unknown> | null {
-  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
+function eventDateLabels(event: CanonicalReportEvent) {
+  const date = new Date(`${event.date}T00:00:00Z`);
+  return new Set([
+    event.date.toLowerCase(),
+    date.toLocaleString("en-US", { month: "long", day: "numeric", timeZone: "UTC" }).toLowerCase(),
+    date.toLocaleString("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).toLowerCase()
+  ]);
 }
 
-function attributionMatchesFacts(attribution: string, facts: Record<string, unknown>) {
-  const root = recordValue(facts.reportWindow) ?? facts;
-  const arcs = Array.isArray(root.slowTransitArcs) ? root.slowTransitArcs.map(recordValue).filter(Boolean) as Record<string, unknown>[] : [];
-  const events = Array.isArray(root.lunarEvents) ? root.lunarEvents.map(recordValue).filter(Boolean) as Record<string, unknown>[] : [];
-  const transit = attribution.match(/\b(sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron)\s+(?:retrograde\s+)?(conjuncts?|opposes?|squares?|trines?|sextiles?|returns?)\s+(?:to\s+)?(?:your\s+)?natal\s+(sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|ascendant|midheaven)\b/iu);
-  if (transit) {
-    const [, planet, rawAspect, natalPoint] = transit;
-    const aspect = ({ conjunct: "conjunction", conjuncts: "conjunction", opposes: "opposition", square: "square", squares: "square", trine: "trine", trines: "trine", sextile: "sextile", sextiles: "sextile", return: "return", returns: "return" } as Record<string, string>)[rawAspect.toLowerCase()] ?? rawAspect.toLowerCase();
-    return arcs.some((arc) => String(arc.transitPlanet).toLowerCase() === planet.toLowerCase()
-      && String(arc.natalPoint).toLowerCase() === natalPoint.toLowerCase()
-      && (aspect === "return" ? arc.isReturn === true : String(arc.aspect).toLowerCase() === aspect));
-  }
-  const eclipsePoint = attribution.match(/\b(solar|lunar)\s+eclipse\b.*\bnatal\s+(sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|ascendant|midheaven)\b/iu);
-  if (eclipsePoint) {
-    const [, kind, point] = eclipsePoint;
-    return events.some((event) => String(event.kind).toLowerCase() === `${kind.toLowerCase()}_eclipse`
-      && (Array.isArray(event.natalContacts) ? event.natalContacts : []).some((contact) => String(recordValue(contact)?.natalPoint).toLowerCase() === point.toLowerCase()));
-  }
-  return null;
+function tupleCandidates(line: string, attribution: string, facts: Record<string, unknown>) {
+  const normalized = attribution.toLowerCase();
+  const aliases: Record<string, string> = { conjunct: "conjunction", conjoins: "conjunction", conjuncts: "conjunction", opposes: "opposition", square: "square", squares: "square", trine: "trine", trines: "trine", sextile: "sextile", sextiles: "sextile", returns: "return" };
+  const aspectWord = normalized.match(/\b(conjunction|conjuncts?|conjoins|opposition|opposes|squares?|trines?|sextiles?|returns?)\b/u)?.[1];
+  const aspect = aspectWord ? aliases[aspectWord] ?? aspectWord : normalized.includes("eclipse") ? null : "";
+  const pass = normalized.match(/\bpass\s+(\d+)\s+of\s+(\d+)\b/u);
+  const house = normalized.match(/\b(?:natal\s+)?(\d+)(?:st|nd|rd|th)?\s+house\b/u);
+  const explicitMotion = /\bretrograde\b/u.test(normalized) ? "retrograde" : /\bdirect\b/u.test(normalized) ? "direct" : null;
+  return canonicalReportEvents(facts).filter((event) => {
+    const lineLower = line.toLowerCase();
+    const claimedDates = lineLower.match(/\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{1,2}\b/gu) ?? [];
+    if (claimedDates.length && ![...eventDateLabels(event)].some((label) => lineLower.includes(label))) return false;
+    if (!normalized.includes(event.movingBody.toLowerCase()) && !normalized.includes("eclipse")) return false;
+    const eclipseHouseClaim = normalized.includes("eclipse") && Boolean(house);
+    if (!eclipseHouseClaim && event.natalBody !== "house cusp" && !normalized.includes(event.natalBody.toLowerCase())) return false;
+    if (aspect && event.aspect !== aspect) return false;
+    if (pass && (event.passNumber !== Number(pass[1]) || event.passCount !== Number(pass[2]))) return false;
+    if (house && event.natalHouse !== Number(house[1])) return false;
+    if (explicitMotion && event.motion !== explicitMotion) return false;
+    return true;
+  });
 }
 
 function dateTokens(facts: Record<string, unknown>) {
@@ -63,7 +71,6 @@ export function verifyReportFactLock(
   const text = draftText(draft, timingIsGoverned);
   const allowedDates = dateTokens(facts);
   const factsText = JSON.stringify(facts);
-  const normalizedFacts = factsText.toLowerCase().replace(/[^a-z0-9]+/gu, " ");
   const issues: ReportFactLockIssue[] = [];
   const dates = text.match(/\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}\b/giu) ?? [];
   for (const date of dates) if (!allowedDates.has(date.toLowerCase())) issues.push({ code: "untraceable_date", value: date, message: `${date} is not present in the scoped frozen facts.` });
@@ -72,30 +79,38 @@ export function verifyReportFactLock(
     const numeric = degree.slice(0, -1);
     if (!factsText.includes(numeric)) issues.push({ code: "untraceable_degree", value: degree, message: `${degree} is not traceable to the scoped frozen facts.` });
   }
-  const attributionTerms = new Set([
-    "sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron",
-    "ascendant", "midheaven", "eclipse", "retrograde", "conjunction", "opposition", "square", "trine", "sextile", "return"
-  ]);
-  const aliases: Record<string, string> = {
-    conjunct: "conjunction", conjuncts: "conjunction", opposes: "opposition", opposed: "opposition",
-    squares: "square", trines: "trine", sextiles: "sextile", returns: "return"
-  };
   const attributionLines = text.split("\n").filter((line) => line.includes("·") && /\*[^*]+\*/u.test(line));
   for (const line of attributionLines) {
     const attribution = line.match(/\*([^*]+)\*\s*$/u)?.[1] ?? "";
-    const structuredMatch = attributionMatchesFacts(attribution, facts);
-    const required = attribution.toLowerCase().match(/[a-z]+/gu)?.map((term) => aliases[term] ?? term)
-      .filter((term) => attributionTerms.has(term)) ?? [];
-    const missing = [...new Set(required.filter((term) => !normalizedFacts.includes(term)))];
-    if (structuredMatch === false || missing.length) {
+    const candidates = tupleCandidates(line, attribution, facts);
+    if (candidates.length !== 1) {
       issues.push({
-        code: "untraceable_attribution",
+        code: "unresolved_event_tuple",
         value: attribution,
-        message: structuredMatch === false
-          ? "The attribution does not match a transit or eclipse in the scoped frozen facts."
-          : `Attribution terms are not traceable to the scoped frozen facts: ${missing.join(", ")}.`
+        message: candidates.length === 0
+          ? "The date, aspect, bodies, house, motion, and pass claim do not resolve to one calculated event ID."
+          : `The technical claim is ambiguous across ${candidates.length} calculated event IDs.`
       });
     }
+  }
+  const technicalSentences = text.match(/[^.!?]+[.!?]?/gu)?.map((sentence) => sentence.trim()).filter((sentence) => (
+    /\b(?:conjuncts?|conjoins|opposes?|squares?|trines?|sextiles?|returns?)\b/iu.test(sentence)
+    && /\b(?:natal|eclipse)\b/iu.test(sentence)
+    && !attributionLines.some((line) => line.includes(sentence))
+  )) ?? [];
+  for (const sentence of technicalSentences) {
+    const candidates = tupleCandidates(sentence, sentence, facts);
+    const bodies = [...new Set(candidates.map((event) => event.movingBody.toLowerCase()).filter((body) => sentence.toLowerCase().includes(body)))];
+    const resolvesMultipleExplicitClaims = bodies.length > 1
+      && candidates.length === bodies.length
+      && bodies.every((body) => candidates.filter((event) => event.movingBody.toLowerCase() === body).length === 1);
+    if (candidates.length !== 1 && !resolvesMultipleExplicitClaims) issues.push({
+      code: "unresolved_event_tuple",
+      value: sentence,
+      message: candidates.length === 0
+        ? "The technical sentence does not resolve to a calculated event ID. Use a runtime-rendered technical attribution."
+        : `The technical sentence is ambiguous across ${candidates.length} calculated event IDs; include the runtime-rendered date, motion, house, and pass.`
+    });
   }
   return { passed: issues.length === 0, issues };
 }

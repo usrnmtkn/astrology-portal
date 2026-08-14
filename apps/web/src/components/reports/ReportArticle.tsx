@@ -32,6 +32,7 @@ export type ReportKeyDate = {
   title: string;
   paragraphs: string[];
   attribution?: AttributionFacts;
+  attributionText?: string;
 };
 
 export type ReportColophon = {
@@ -92,7 +93,7 @@ function ReportKeyDateSheet({
         {readerFacingParagraphs(keyDate.paragraphs).map((paragraph, index) => (
           <p key={`${keyDate.id}-paragraph-${index}`}>{paragraph}</p>
         ))}
-        {keyDate.attribution ? <AttributionLine facts={keyDate.attribution} /> : null}
+        {keyDate.attribution ? <AttributionLine facts={keyDate.attribution} /> : keyDate.attributionText ? <p className="report-attribution">{keyDate.attributionText}</p> : null}
       </div>
     </ModalPortal>
   );

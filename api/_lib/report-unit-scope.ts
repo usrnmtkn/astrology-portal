@@ -1,4 +1,5 @@
 import type { ReportFactor, ReportGenerationPayload } from "./report-generation.ts";
+import { reportSeasonContract } from "./report-season-contract.ts";
 
 type DateRange = { start: number; end: number };
 
@@ -15,7 +16,7 @@ function parsed(value: unknown) {
   return Number.isFinite(result) ? result : null;
 }
 
-function rangeForUnit(payload: ReportGenerationPayload): DateRange | null {
+export function reportUnitScopeRange(payload: ReportGenerationPayload): DateRange | null {
   const unit = payload.unit.unitId;
   if (!["winter-current", "spring", "summer", "autumn", "winter-next", "phase-1", "phase-2"].includes(unit)) return null;
   const facts = reportWindow(payload.frozenFacts);
@@ -28,17 +29,8 @@ function rangeForUnit(payload: ReportGenerationPayload): DateRange | null {
       ? { start: start.getTime(), end: midpoint }
       : { start: midpoint + 1, end: end.getTime() };
   }
-  const startYear = start.getUTCFullYear();
-  const endYear = end.getUTCFullYear();
-  const bounds: Record<string, DateRange> = {
-    "winter-current": { start: start.getTime(), end: Date.UTC(startYear, 2, 31, 23, 59, 59, 999) },
-    spring: { start: Date.UTC(startYear, 3, 1), end: Date.UTC(startYear, 5, 30, 23, 59, 59, 999) },
-    summer: { start: Date.UTC(startYear, 6, 1), end: Date.UTC(startYear, 8, 30, 23, 59, 59, 999) },
-    autumn: { start: Date.UTC(startYear, 9, 1), end: Date.UTC(startYear, 11, 31, 23, 59, 59, 999) },
-    "winter-next": { start: Date.UTC(endYear, 0, 1), end: end.getTime() }
-  };
-  const range = bounds[unit];
-  return range ? { start: Math.max(range.start, start.getTime()), end: Math.min(range.end, end.getTime()) } : null;
+  const season = reportSeasonContract(unit, payload.frozenFacts);
+  return season ? { start: season.startMs, end: season.endMs } : null;
 }
 
 function sourceDates(value: unknown): number[] {
@@ -79,7 +71,7 @@ function scopedWindowFacts(facts: Record<string, unknown>, range: DateRange) {
 }
 
 export function scopeReportPayloadToUnit(payload: ReportGenerationPayload): ReportGenerationPayload {
-  const range = rangeForUnit(payload);
+  const range = reportUnitScopeRange(payload);
   if (!range) return structuredClone(payload);
   const factorIds = new Set(payload.factors.filter((factor) => factorInRange(factor, range)).map((factor) => factor.id));
   const scopedFacts = reportWindow(payload.frozenFacts);
@@ -94,6 +86,10 @@ export function scopeReportPayloadToUnit(payload: ReportGenerationPayload): Repo
     factorSelection: payload.factorSelection.filter((selection) => factorIds.has(selection.factorId)),
     manifestationSets: payload.manifestationSets.filter((item) => factorIds.has(item.factor.id)),
     sourceGaps: payload.sourceGaps.filter((gap) => factorIds.has(gap.factorId)),
-    writingQueue: payload.writingQueue.filter((gap) => factorIds.has(gap.factorId))
+    writingQueue: payload.writingQueue.filter((gap) => factorIds.has(gap.factorId)),
+    technicalEvents: (payload.technicalEvents ?? []).filter((event) => {
+      const exact = Date.parse(event.occursAt);
+      return Number.isFinite(exact) && exact >= range.start && exact < range.end;
+    })
   };
 }

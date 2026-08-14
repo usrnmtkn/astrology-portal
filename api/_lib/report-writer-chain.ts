@@ -713,6 +713,7 @@ export async function runReportWriterChain(input: {
     const draftResult = await callModel<ReportDraft>({
       ...target,
       prompt: [
+        "TECHNICAL FACT CONTRACT: use only the exact rendered attribution strings in REPORT_GENERATION_PAYLOAD.technicalEvents. Never compose or alter a date, body, aspect, house, motion, or pass number.",
         promptMode === "active" ? reportPromptFromPayload(payload) : reportLegacyPromptFromPayload(payload),
         input.failureContext?.length ? `FAILURE_CONTEXT\n${input.failureContext.join("\n")}` : "",
         "Return one report unit using the structured output contract."

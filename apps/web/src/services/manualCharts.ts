@@ -101,6 +101,9 @@ type ManualChartRow = {
   birth_latitude: number;
   birth_longitude: number;
   birth_timezone: string | null;
+  birth_coordinate_provider?: string | null;
+  birth_coordinate_source_id?: string | null;
+  birth_coordinate_resolution?: "municipal_centroid" | "borough_centroid" | "legacy_unprovenanced" | null;
   natal_chart: SkySnapshot | null;
   notes: string | null;
   created_at: string;
@@ -183,7 +186,12 @@ function rowToManualChart(row: ManualChartRow): ManualChart {
       label: row.birth_place,
       latitude: row.birth_latitude,
       longitude: row.birth_longitude,
-      timeZone: row.birth_timezone ?? undefined
+      timeZone: row.birth_timezone ?? undefined,
+      coordinateSource: {
+        provider: row.birth_coordinate_provider ?? "legacy",
+        sourceId: row.birth_coordinate_source_id ?? "unrecorded",
+        resolution: row.birth_coordinate_resolution ?? "legacy_unprovenanced"
+      }
     },
     natalChart: row.natal_chart,
     notes: row.notes,
@@ -229,6 +237,9 @@ function inputToRow(userId: string, input: ManualChartInput, options: { omitPron
     birth_latitude: input.birthLocation.latitude,
     birth_longitude: input.birthLocation.longitude,
     birth_timezone: input.birthLocation.timeZone ?? null,
+    birth_coordinate_provider: input.birthLocation.coordinateSource?.provider ?? "legacy",
+    birth_coordinate_source_id: input.birthLocation.coordinateSource?.sourceId ?? "unrecorded",
+    birth_coordinate_resolution: input.birthLocation.coordinateSource?.resolution ?? "legacy_unprovenanced",
     natal_chart: natalChartWithPronouns(input.natalChart, pronouns),
     notes: input.notes ?? null
   };

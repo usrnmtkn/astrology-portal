@@ -3,11 +3,13 @@ import { isTldrAstroApiConfigured, resolveTimezone } from "./tldrastroApi";
 
 type MapboxFeature = {
   id: string;
+  feature_type?: "place" | "locality" | string;
   name?: string;
   place_formatted?: string;
   full_address?: string;
   properties?: {
     mapbox_id?: string;
+    feature_type?: "place" | "locality" | string;
     name?: string;
     name_preferred?: string;
     place_formatted?: string;
@@ -149,7 +151,14 @@ export async function searchCities(query: string): Promise<CitySuggestion[]> {
       region,
       latitude,
       longitude,
-      timeZone: timeZone ?? undefined
+      timeZone: timeZone ?? undefined,
+      coordinateSource: {
+        provider: "mapbox",
+        sourceId: feature.properties?.mapbox_id ?? feature.id,
+        resolution: (feature.feature_type ?? feature.properties?.feature_type) === "locality"
+          ? "borough_centroid"
+          : "municipal_centroid"
+      }
     };
   }));
 

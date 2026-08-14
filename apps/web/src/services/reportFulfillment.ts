@@ -1,4 +1,5 @@
 import { getSupabaseClient } from "./auth";
+import type { ReportDocument } from "../components/reports/ReportArticle";
 
 async function accessToken() {
   const client = await getSupabaseClient();
@@ -23,7 +24,7 @@ export type ReportDeliveryPayload = {
   report?: {
     id: string; reportDomain: string; reportHorizon: string; periodStart: string; periodEnd: string;
     factsEngine: string; factsHash: string; deliveredAt: string | null;
-    units: Array<{ content_key: string; headline: string | null; timing: string | null; summary: string | null; body: string | null; sections: Array<{ heading?: string; body?: string }> | null }>;
+    reviewDocumentHash: string; legacyReviewArtifact: boolean; document: ReportDocument;
   };
 };
 

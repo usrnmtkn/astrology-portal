@@ -1,5 +1,6 @@
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
+import { reportUnitDisplayOrder } from "./report-unit-order.ts";
 
 export type FulfillmentJobRow = {
   id: string; report_id: string; entitlement_id: string; state: string; step: string; attempt: number;
@@ -129,6 +130,7 @@ export function createReportFulfillmentStore(admin = createSupabaseReportAdmin()
         content_key: `report:${report.id}:${unitId}`, target_date: report.period_start,
         surface: "year_ahead", mode: "report", status: "DRAFT",
         event_type: "report_unit", headline: value.headline ?? "", summary: value.summary ?? "", body: value.body ?? "",
+        display_order: reportUnitDisplayOrder(report.report_domain, report.report_horizon, unitId),
         sections: value.sections ?? [], facts: report.facts,
         source_snapshot: {
           ...sourceSnapshot,
@@ -136,7 +138,7 @@ export function createReportFulfillmentStore(admin = createSupabaseReportAdmin()
         }
       }, { onConflict: "user_id,subject_type,subject_id,content_key,target_date,mode" });
     },
-    unitRows: async (reportId) => admin.request(`user_generated_interpretations?subject_id=eq.${reportId}&subject_type=eq.report_unit&select=content_key,headline,summary,body,sections,source_snapshot&order=content_key.asc`),
+    unitRows: async (reportId) => admin.request(`user_generated_interpretations?subject_id=eq.${reportId}&subject_type=eq.report_unit&select=content_key,headline,summary,body,sections,source_snapshot,display_order&order=display_order.asc`),
     async countCombination(report, promptVersions) {
       const combinationKey = `${report.report_domain}:${report.report_horizon}:${String(promptVersions.canonical ?? "")}`;
       const rows = await admin.request<Array<{ id: string }>>(`report_audit_samples?select=id&combination_key=eq.${encodeURIComponent(combinationKey)}`);

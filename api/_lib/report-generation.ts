@@ -12,6 +12,8 @@ import {
   REPORT_OWNER_REVIEW_EVIDENCE_PATH
 } from "./report-prompt-versions.js";
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
+import { reportSeasonContract } from "./report-season-contract.ts";
+import { canonicalReportEvents, type CanonicalReportEvent } from "./report-events.ts";
 
 export type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
@@ -125,6 +127,7 @@ export type ReportGenerationPayload = {
   sourceGaps: ReportSourceGap[];
   writingQueue: ReportSourceGap[];
   keyDateRequirements: ReportKeyDateEventManifestEntry[];
+  technicalEvents: CanonicalReportEvent[];
   voiceEvidence: Array<{
     sourcePath: string;
     sourceType: "owner_authored_final";
@@ -1172,34 +1175,8 @@ function reportStructuralRequirements(
   unitId: string,
   frozenFacts: Record<string, unknown>
 ): ReportStructuralRequirements | null {
-  const season = ({
-    "winter-current": "WINTER",
-    spring: "SPRING",
-    summer: "SUMMER",
-    autumn: "AUTUMN",
-    "winter-next": "WINTER"
-  } as Record<string, string | undefined>)[unitId];
-  if (!season) return null;
-  const window = reportWindowFacts(frozenFacts);
-  const startYear = Number(stringValue(window.startsAt).slice(0, 4));
-  const endYear = Number(stringValue(window.endsAt).slice(0, 4));
-  const year = unitId === "winter-next" ? endYear : startYear;
-  if (!Number.isFinite(year) || year < 1900) return null;
-  const monthDay = (value: unknown, dayOffset = 0) => {
-    const parsed = new Date(stringValue(value));
-    if (!Number.isFinite(parsed.getTime())) return "";
-    parsed.setUTCDate(parsed.getUTCDate() + dayOffset);
-    return `${parsed.toLocaleString("en-US", { month: "short", timeZone: "UTC" })} ${parsed.getUTCDate()}`;
-  };
-  const dateRange = ({
-    "winter-current": `${monthDay(window.startsAt)} - Mar 20`,
-    spring: "Mar 20 - Jun 21",
-    summer: "Jun 21 - Sep 22",
-    autumn: "Sep 22 - Dec 21",
-    "winter-next": `Dec 21 - ${monthDay(window.endsAt, -1)}`
-  } as Record<string, string>)[unitId];
-  if (!dateRange || dateRange.startsWith(" -") || dateRange.endsWith("- ")) return null;
-  return { headingPrefix: `${season} ${year}`, dateRange };
+  const season = reportSeasonContract(unitId, frozenFacts);
+  return season ? { headingPrefix: season.headingPrefix, dateRange: season.dateRange } : null;
 }
 
 export function assembleReportGenerationPayload(
@@ -1265,6 +1242,7 @@ export function assembleReportGenerationPayload(
       factors.map((factor) => factor.id)
     )
       .filter((event) => event.sourceUnitId === input.unitId),
+    technicalEvents: canonicalReportEvents(input.frozenFacts),
     voiceEvidence: [{
       sourcePath: configuration.voiceEvidencePath,
       sourceType: "owner_authored_final",
