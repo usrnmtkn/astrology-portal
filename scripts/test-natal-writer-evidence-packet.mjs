@@ -24,6 +24,8 @@ const ready = buildNatalWritingPacket({
 });
 assert.equal(ready.status, "ready");
 assert.equal(ready.generationAllowed, true);
+assert.equal(ready.targetVoice, "self");
+assert.equal(ready.evidencePolicy.evidenceSurface, "natal-aspect");
 assert.ok(ready.ownerPassages.length >= 4 && ready.ownerPassages.length <= 6);
 assert.ok(ready.ownerPassages.every((entry) => entry.authorityClass === "exact_owner_approved"));
 assert.ok(new Set(ready.ownerPassages.map((entry) => entry.sourceRowId)).size >= 3);
@@ -61,11 +63,45 @@ assert.throws(
   () => renderNatalModelInput(ready, { inputText: currentCopy }),
   /PRIOR_COPY_FORBIDDEN/u
 );
-const friendModelInput = renderNatalModelInput(ready, { voice: "friend", task: "Write Friend natal aspect copy." });
+assert.throws(
+  () => renderNatalModelInput(ready, { voice: "friend", task: "Write Friend natal aspect copy." }),
+  /NATAL_VOICE_PACKET_MISMATCH/u
+);
+const friendBlocked = buildNatalWritingPacket({
+  surface: "natal-aspect",
+  key: "moon|sextile|venus",
+  voice: "friend"
+});
+assert.equal(friendBlocked.targetVoice, "friend");
+assert.equal(friendBlocked.evidencePolicy.evidenceSurface, "natal-friend");
+assert.equal(friendBlocked.generationAllowed, false);
+assert.ok(friendBlocked.evidenceSummary.reasons.includes("fewer-than-four-owner-passages"));
+const syntheticFriendEntries = ["moon|trine|venus", "moon|square|saturn", "mercury|conjunction|neptune", "jupiter|conjunction|pluto"].map((key, index) => ({
+  surface: "natal-friend",
+  authorityClass: "exact_owner_approved",
+  ownerApproved: true,
+  useAsPositiveVoiceEvidence: true,
+  text: `Owner-approved Friend calibration passage ${index + 1}.`,
+  sourceId: `synthetic-friend-${index + 1}`,
+  sourcePath: `synthetic/friend-${index + 1}.json`,
+  sourceSha256: String(index + 1).repeat(64),
+  workbookSourceRow: index + 1,
+  governedKey: key
+}));
+const friendReady = buildNatalWritingPacket({
+  surface: "natal-aspect",
+  key: "moon|sextile|venus",
+  voice: "friend",
+  indexEntries: syntheticFriendEntries
+});
+assert.equal(friendReady.generationAllowed, true);
+assert.equal(friendReady.ownerPassages.length, 4);
+assert.ok(friendReady.ownerPassages.every((entry) => entry.authorityClass === "exact_owner_approved"));
+const friendModelInput = renderNatalModelInput(friendReady, { voice: "friend", task: "Write Friend natal aspect copy." });
 assert.match(friendModelInput, /FRIEND ENTRY POINT/u);
 assert.match(friendModelInput, /observer/u);
 assert.doesNotMatch(friendModelInput, /SELF ENTRY POINT/u);
-assert.throws(() => renderNatalModelInput(ready, { voice: "friend", inputText: modelInput }), /PRIOR_COPY_FORBIDDEN/u);
+assert.throws(() => renderNatalModelInput(friendReady, { voice: "friend", inputText: modelInput }), /PRIOR_COPY_FORBIDDEN/u);
 
 const pointReady = buildNatalWritingPacket({
   surface: "natal-aspect",
@@ -122,6 +158,16 @@ try {
   ], { cwd: repoRoot, encoding: "utf8" });
   assert.notEqual(rejectedInput.status, 0);
   assert.match(rejectedInput.stderr, /PRIOR_COPY_FORBIDDEN/u);
+  const blockedFriendCli = spawnSync(process.execPath, [
+    ".agents/skills/marie-satori-writer/scripts/compile-writing-packet.js",
+    "--surface", "natal-aspect",
+    "--voice", "friend",
+    "--id", "moon|sextile|venus",
+    "--task", "Write Friend natal aspect copy.",
+    "--out", tempDir
+  ], { cwd: repoRoot, encoding: "utf8" });
+  assert.equal(blockedFriendCli.status, 2);
+  assert.match(blockedFriendCli.stderr, /insufficient-evidence/u);
 } finally {
   fs.rmSync(tempDir, { recursive: true, force: true });
 }

@@ -20,12 +20,10 @@ function sha256(value) {
 }
 
 const rows = batch.rows.map((row) => {
-  const packet = buildNatalWritingPacket({ surface: "natal-aspect", key: row.rowKey, indexEntries: entries });
+  const packet = buildNatalWritingPacket({ surface: "natal-aspect", key: row.rowKey, voice: "self", indexEntries: entries });
+  const friendPacket = buildNatalWritingPacket({ surface: "natal-aspect", key: row.rowKey, voice: "friend", indexEntries: entries });
   const selfModelInput = packet.generationAllowed
     ? renderNatalModelInput(packet, { voice: "self", task: `Author one fresh, owner-review-gated self natal delineation for ${row.rowKey}. Return only the finished passage.` })
-    : null;
-  const friendModelInput = packet.generationAllowed
-    ? renderNatalModelInput(packet, { voice: "friend", task: `Author one fresh, owner-review-gated Friend natal delineation for ${row.rowKey}. Use the token Name. Return only the finished passage.` })
     : null;
   return {
     rowKey: row.rowKey,
@@ -43,9 +41,15 @@ const rows = batch.rows.map((row) => {
       ownerPassages: packet.ownerPassages,
       promptBlockSha256: sha256(packet.promptBlock),
       authoringTasks: packet.generationAllowed ? [
-        { voice: "self", entryPoint: "reader-own-experience", modelInputSha256: sha256(selfModelInput) },
-        { voice: "friend", entryPoint: "observer-in-the-room", derivedFromPairedPassage: false, modelInputSha256: sha256(friendModelInput) }
+        { voice: "self", entryPoint: "reader-own-experience", modelInputSha256: sha256(selfModelInput) }
       ] : [],
+      friendAuthoring: {
+        status: friendPacket.status,
+        generationAllowed: friendPacket.generationAllowed,
+        evidenceSurface: friendPacket.evidencePolicy.evidenceSurface,
+        evidenceSummary: friendPacket.evidenceSummary,
+        blockedPendingOwnerCalibration: !friendPacket.generationAllowed
+      },
       governance: packet.governance
     }
   };
@@ -68,7 +72,7 @@ const output = {
     ready: rows.filter((row) => row.generationAllowed).length,
     insufficientEvidence: rows.filter((row) => !row.generationAllowed).length
   },
-  standards: buildNatalWritingPacket({ surface: "natal-aspect", key: "moon|sextile|venus", indexEntries: entries }).standards,
+  standards: buildNatalWritingPacket({ surface: "natal-aspect", key: "moon|sextile|venus", voice: "self", indexEntries: entries }).standards,
   rows
 };
 const outputPath = path.join(repoRoot, "packages/astro-knowledge/review/natal-writer-evidence-2026-08-13/ll-v13-wp1-batch-01-writing-packets-v2.json");

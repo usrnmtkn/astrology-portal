@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "friend-voice-person-contract-policy-v1",
+  "status": "pending-owner-ruling",
+  "ruling": null,
+  "allowedRulings": [
+    "reader observer address allowed",
+    "pure third person"
+  ],
+  "note": "Blocking. Do not choose or implement either person contract until the owner rules."
+}
