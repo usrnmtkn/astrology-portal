@@ -70,13 +70,13 @@ delete process.env.REPORT_BILLING_MODE;
 
 process.env.REPORT_AUTO_PUBLISH = "true";
 delete process.env.REPORT_AUTOMATION_OWNER_RULING_VERSION;
-assert.equal(reportCallEstimate("12_months").redundancyPassCalls, 1);
+assert.equal(reportCallEstimate("12_months").redundancyPassCalls, 0);
 assert.equal(reportCallEstimate("12_months").writerUnitCount, 10);
 assert.equal(reportCallEstimate("12_months").coldReadCalls, 10);
-assert.equal(reportCallEstimate("12_months").cleanPathCalls, 41);
-assert.equal(reportCallEstimate("12_months").expectedCallBudget, 51);
+assert.equal(reportCallEstimate("12_months").cleanPathCalls, 40);
+assert.equal(reportCallEstimate("12_months").expectedCallBudget, 50);
 assert.equal(reportCallEstimate("12_months").safetyMarginCalls, 10);
-assert.equal(reportCallEstimate("12_months").recommendedCallBudget, 61);
+assert.equal(reportCallEstimate("12_months").recommendedCallBudget, 60);
 assert.equal(reportFulfillmentConfig().authorizationTokenBudget, 1_450_000);
 assert.equal(reportFulfillmentConfig().reportLifetimeTokenBudget, 1_450_000);
 assert.equal(reportFulfillmentConfig().workerBatchSize, 1, "The 300-second worker may claim only one report per invocation.");
@@ -132,11 +132,11 @@ assert.throws(() => assertReportTokenBudgets({
   lifetimeTokenCount: 4_500_001,
   lifetimeTokenBudget: 4_500_000
 }), /Report lifetime token budget exceeded/u);
-assert.equal(reportModelPricing().version, "2026-08-10");
+assert.equal(reportModelPricing().version, "2026-08-13");
 assert.equal(estimateReportModelCost("gpt-5.6-sol", { inputTokens: 1_000_000, outputTokens: 0, totalTokens: 1_000_000 }), 5);
-assert.equal(estimateReportPlanningProfile("12_months").totalTokens, 1_222_200);
-assert.equal(estimateReportPlanningProfile("12_months").estimatedCostUsd, 6.9805);
-assert.equal(estimateReportPlanningProfile("12_months").operationsPerReport[0].stage, "assembled_redundancy");
+assert.equal(estimateReportPlanningProfile("12_months").totalTokens, 1_190_200);
+assert.equal(estimateReportPlanningProfile("12_months").estimatedCostUsd, 6.7705);
+assert.deepEqual(estimateReportPlanningProfile("12_months").operationsPerReport, []);
 delete process.env.REPORT_JUDGE_THRESHOLD;
 assert.equal(reportFulfillmentConfig().judgeThreshold, 0.85, "V3.1 must default to the owner-approved 0.85 threshold.");
 assert.equal(reportFulfillmentConfig().autoPublishEnabled, false, "Auto-publish requires the owner ruling version as well as its feature flag.");
@@ -419,7 +419,7 @@ const normalizedCoordinateFinding = normalizeReportColdReadCritique(coordinateDr
   result: "defects", applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
   defects: [{
     id: "cold-coordinate", category: "unnatural_phrasing",
-    sentence_ids: ["S4"], quote: "FIXTURE_ONLY_BODY_SECOND_WITH_NORMALIZATION_DIFFERENCE",
+    sentence_ids: ["S4"], quote: "FIXTURE_ONLY_BODY_SECOND.",
     evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY_REPLACE"
   }]
 });
@@ -429,7 +429,20 @@ assert.deepEqual({
   start: normalizedCoordinateFinding.defects[0].scope_start,
   end: normalizedCoordinateFinding.defects[0].scope_end
 }, { location: "body", sentenceIndex: 1, start: 1, end: 1 },
-"A sentence ID must resolve to a bounded internal sentence scope without quote matching.");
+"A current finding must resolve by sentence ID to a bounded internal sentence scope.");
+const staleCoordinateFinding = normalizeReportColdReadCritique(coordinateDraft, {
+  result: "defects", applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
+  defects: [{
+    id: "stale-cold-coordinate", category: "unnatural_phrasing",
+    sentence_ids: ["S4"], quote: "FIXTURE_ONLY_REMOVED_BY_EARLIER_EDIT.",
+    evidence: "FIXTURE_ONLY", evidence_ids: [], instruction: "FIXTURE_ONLY_REPLACE"
+  }]
+});
+assert.deepEqual(staleCoordinateFinding, {
+  result: "no_defects",
+  applicability: { interpretive_movement: "applicable", reason: "The rendered unit contains at least two substantive prose paragraphs." },
+  defects: []
+}, "A revision finding whose quoted text is no longer present in the edited unit must be discarded as stale.");
 
 for (const inventedAddress of ["S999", "body; paragraph 0"]) {
   assert.throws(() => normalizeReportColdReadCritique(coordinateDraft, {
@@ -675,10 +688,14 @@ for (const rejected of productionRejectedFindings) {
       evidence: "FIXTURE_ONLY_REJECTED_QUOTE", evidence_ids: [], instruction: "FIXTURE_ONLY_CORRECT_THE_SENTENCE"
     }]
   });
-  assert.equal(normalized.defects[0].location, "sections.0.body");
-  assert.equal(normalized.defects[0].sentence_index, sentence.sentenceIndex);
-  assert.equal(normalized.defects[0].quote, rejected.quote,
-    `${rejected.id}'s normalized markdown quote must remain informational and never participate in addressing.`);
+  if (sentenceAddressedReportUnit(markdownKeyDatesDraft).includes(rejected.quote)) {
+    assert.equal(normalized.defects[0].location, "sections.0.body");
+    assert.equal(normalized.defects[0].sentence_index, sentence.sentenceIndex);
+  } else {
+    assert.equal(normalized.result, "no_defects");
+    assert.deepEqual(normalized.defects, [],
+      `${rejected.id}'s exact Production payload must be discarded when its quote is absent from the edited markdown-heavy unit.`);
+  }
 }
 
 let exhaustedResponseAttempts = 0;
@@ -1389,7 +1406,7 @@ await assert.rejects(processReportFulfillmentJob({ job: authorizedJob({ id: "res
 assert.ok(resumeStore.units.has("resume-report:overview"));
 const resumeCall = modelCallWithCrash();
 await processReportFulfillmentJob({ job: authorizedJob({ id: "resume-job", report_id: resumeReport.id, entitlement_id: "resume-ent", state: "running", step: "writing", attempt: 2 }), store: resumeStore, calculateFacts, callModel: resumeCall, judgeCall });
-assert.equal(resumeCall.count(), 7, "Resume must skip the completed unit, run the two remaining writer chains, assemble key dates deterministically, and run one report-level redundancy pass.");
+assert.equal(resumeCall.count(), 6, "Resume must skip the completed unit, run the two remaining writer chains, assemble key dates deterministically, and proceed to review without a report-level model call.");
 
 function assemblyReadyReport(id) {
   return {
@@ -1436,7 +1453,12 @@ const structuralReport = assemblyReadyReport("structural-report");
 structuralStore.reports.set(structuralReport.id, structuralReport);
 structuralStore.entitlements.set("structural-ent", { id: "structural-ent", user_id: structuralReport.user_id, status: "active", product_key: "general_1m" });
 const repeatedClose = "The same closing sentence must not appear in two report units.";
-await seedAssemblyUnits(structuralStore, structuralReport, { overview: repeatedClose, "what-matters-most": repeatedClose });
+const warningOnlyBody = "An application may begin. The application may need revision. An application may receive an answer. Another application may require a deadline.";
+await seedAssemblyUnits(structuralStore, structuralReport, {
+  overview: repeatedClose,
+  "what-matters-most": repeatedClose,
+  "domain:main": warningOnlyBody
+});
 for (const unitId of ["overview", "what-matters-most", "domain:main"]) {
   const row = structuralStore.units.get(`structural-report:${unitId}`);
   row.source_snapshot = {
@@ -1453,7 +1475,7 @@ await processReportFulfillmentJob({
   job: authorizedJob({ id: "structural-job", report_id: structuralReport.id, entitlement_id: "structural-ent", state: "running", step: "validating", attempt: 1 }),
   store: structuralStore, calculateFacts, callModel: structuralModel, judgeCall
 });
-assert.equal(structuralModel.count(), 1, "Assembly-only recovery must skip every writer call and run only the report-level review pass.");
+assert.equal(structuralModel.count(), 0, "Zero assembly errors must proceed to needs_review without any report-level model call.");
 assert.equal(structuralStore.units.get("structural-report:overview").source_snapshot.fulfillmentPassed, true);
 assert.equal(structuralStore.units.get("structural-report:what-matters-most").source_snapshot.fulfillmentPassed, true);
 assert.equal(structuralStore.units.get("structural-report:what-matters-most").body, "",
@@ -1461,47 +1483,8 @@ assert.equal(structuralStore.units.get("structural-report:what-matters-most").bo
 assert.equal(structuralStore.reports.get(structuralReport.id).fulfillment_status, "needs_review");
 const structuralAssemblyReview = structuralStore.reports.get(structuralReport.id).validator_results.find((entry) => entry.unitId === "assembled-report");
 assert.equal(structuralAssemblyReview.mechanicalRemovals.length, 1);
-
-const redundancyStore = createMemoryStore();
-const redundancyReport = assemblyReadyReport("redundancy-report");
-redundancyStore.reports.set(redundancyReport.id, redundancyReport);
-redundancyStore.entitlements.set("redundancy-ent", { id: "redundancy-ent", user_id: redundancyReport.user_id, status: "active", product_key: "general_1m" });
-await seedAssemblyUnits(redundancyStore, redundancyReport);
-let redundancyProviderCalls = 0;
-const redundancyFindingCall = async (input) => {
-  redundancyProviderCalls += 1;
-  const attempt = { provider: input.provider, model: input.model, schemaName: input.schemaName };
-  await input.beforeProviderCall?.(attempt);
-  assert.equal(input.schemaName, "report_redundancy_pass");
-  assert.doesNotMatch(input.prompt, /FIXTURE KEY DATES|FEB 18 · FIXTURE TITLE/u,
-    "Deterministically copied key-date material must not enter any prose-evaluation provider call.");
-  const quote = "A distinct body consequence belongs to marker 222.";
-  const result = {
-    value: {
-      result: "findings",
-      findings: [{
-        id: "fixture-semantic-repeat", category: "semantic_duplication", unit_id: "what-matters-most",
-        related_unit_ids: ["overview"], location: "body", sentence_index: 0, scope_start: 0, scope_end: 0,
-        quote, evidence: "FIXTURE_ONLY supported comparison evidence.", instruction: "FIXTURE_ONLY regenerate the named unit without repeating the overview job."
-      }]
-    },
-    model: input.model, provider: input.provider,
-    usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }
-  };
-  await input.afterProviderCall?.(attempt, result);
-  return result;
-};
-await processReportFulfillmentJob({
-  job: authorizedJob({ id: "redundancy-job", report_id: redundancyReport.id, entitlement_id: "redundancy-ent", state: "running", step: "validating", attempt: 1 }),
-  store: redundancyStore, calculateFacts, callModel: redundancyFindingCall, judgeCall
-});
-assert.equal(redundancyProviderCalls, 1, "The report-level pass is one findings-only provider call.");
-assert.equal(redundancyStore.units.get("redundancy-report:what-matters-most").source_snapshot.fulfillmentPassed, true);
-assert.equal(redundancyStore.reports.get(redundancyReport.id).token_count, 2, "Accepted report-level evaluation tokens must remain accounted when a named unit is requeued.");
-assert.equal(redundancyStore.reports.get(redundancyReport.id).fulfillment_status, "needs_review");
-const redundancyReview = redundancyStore.reports.get(redundancyReport.id).validator_results.find((entry) => entry.unitId === "assembled-report");
-assert.equal(redundancyReview.warnings[0].code, "report_semantic_duplication");
-assert.equal(redundancyReview.warnings[0].severity, "warning");
+assert.ok(structuralAssemblyReview.warnings.some((issue) => issue.code === "report_lexical_budget"),
+  "Warning-severity assembly findings must remain attached to the needs_review packet without becoming model work items.");
 
 const persistenceStore = createMemoryStore();
 const persistenceReport = {
@@ -1589,8 +1572,8 @@ const persistenceResume = await runReportFulfillmentBatch({
   persistenceRetry: { attempts: 3, baseDelayMs: 10, sleep: async () => {} }
 });
 assert.equal(persistenceResume.processed[0].result.status, "needs_review");
-assert.equal(secondPersistenceModel.count(), 7, "The retry must persist cached overview work, generate only two remaining written units, assemble key dates without calls, and run one report-level redundancy pass.");
-assert.equal(firstPersistenceModel.count() + secondPersistenceModel.count(), 10, "Infrastructure retry must not add calls above the clean three-writer-unit path and its report-level redundancy pass.");
+assert.equal(secondPersistenceModel.count(), 6, "The retry must persist cached overview work, generate only two remaining written units, assemble key dates without calls, and proceed to review without a report-level model call.");
+assert.equal(firstPersistenceModel.count() + secondPersistenceModel.count(), 9, "Infrastructure retry must not add calls above the clean three-writer-unit path.");
 assert.equal(persistenceJudgeCalls, 3, "Infrastructure retry must not re-bill the cached overview judge or judge deterministic key dates.");
 assert.deepEqual(persistenceStore.jobs.get(persistenceJob.id).passing_unit_cache, {}, "A cached unit clears only after its write and report accounting succeed.");
 assert.deepEqual(persistenceStore.units.get("persistence-report:overview").source_snapshot.judge.scores, passingJudgeScores);
@@ -1654,8 +1637,8 @@ const resumedChainBatch = await runReportFulfillmentBatch({
   judgeCall
 });
 assert.equal(resumedChainBatch.processed[0].result.status, "needs_review");
-assert.equal(resumedChainModel.count(), 8,
-  "The resumed overview starts at cold read, then only the other two writer chains and report-level pass are billed; key dates remain deterministic.");
+assert.equal(resumedChainModel.count(), 7,
+  "The resumed overview starts at cold read, then only the other two writer chains are billed; key dates remain deterministic.");
 assert.deepEqual(chainCheckpointStore.jobs.get(chainCheckpointJob.id).passing_unit_cache, {},
   "The in-progress checkpoint clears only after the resumed unit passes and persists.");
 assert.deepEqual(
@@ -1722,8 +1705,8 @@ const judgeRetryResume = await processReportFulfillmentJob({
   judgeCall
 });
 assert.equal(judgeRetryResume.status, "needs_review");
-assert.equal(judgeRetryResumeModel.count(), 7,
-  "A retry chain checkpoint with a judge-derived key must resume at judging; only the other two writer chains and report-level pass are billed.");
+assert.equal(judgeRetryResumeModel.count(), 6,
+  "A retry chain checkpoint with a judge-derived key must resume at judging; only the other two writer chains are billed.");
 assert.deepEqual(judgeRetryCheckpointStore.units.get(`${judgeRetryCheckpointReport.id}:overview`).body, judgeRetryDraft.body,
   "The completed judge-retry draft must persist byte-identically without another draft call.");
 

@@ -4,6 +4,7 @@ import fs from "node:fs";
 import {
   deduplicateAssembledReport,
   REPORT_LEVEL_LEXICAL_BUDGETS,
+  runReportRedundancyPass,
   validateAssembledReport
 } from "../api/_lib/report-assembly.ts";
 import {
@@ -113,6 +114,33 @@ assert.equal(productionDeduplication.removals.filter((entry) => entry.code === "
 assert.equal(validateAssembledReport(productionDeduplication.units).filter((entry) => entry.severity === "error").length, 0);
 assert.equal(productionRepetitionUnits[3].draft.body, `${manageable} ${overcommit} ${goodOpportunities} ${publicCommunication}`,
   "Mechanical deduplication must not mutate the persisted input object in place.");
+
+let staleRedundancyCalls = 0;
+const staleRedundancyResult = await runReportRedundancyPass({
+  units: [{ unitId: "overview", draft: { body: "The edited overview keeps only its current sentence." } }],
+  payload: assembleReportGenerationPayload({
+    reportId: "fixture-stale-redundancy", reportDomain: "general", reportHorizon: "12_months", unitId: "overview", frozenFacts: frozen
+  }),
+  callModel: async (input) => {
+    staleRedundancyCalls += 1;
+    return {
+      value: {
+        result: "findings",
+        findings: [{
+          id: "stale-production-scope", category: "semantic_duplication", unit_id: "overview",
+          related_unit_ids: ["year-theme"], location: "body", sentence_index: 0, scope_start: 0, scope_end: 0,
+          quote: "The sentence removed by deterministic assembly cleanup.",
+          evidence: "FIXTURE_ONLY stale finding.", instruction: "FIXTURE_ONLY"
+        }]
+      },
+      model: input.model, provider: input.provider,
+      usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }
+    };
+  }
+});
+assert.equal(staleRedundancyCalls, 1);
+assert.deepEqual(staleRedundancyResult.findings, [],
+  "A report redundancy finding whose quote is absent from the edited unit must be discarded as stale, not throw REPORT_REDUNDANCY_SCOPE_INVALID.");
 
 const payload = assembleReportGenerationPayload({
   reportId: "fixture-report-assembly",
