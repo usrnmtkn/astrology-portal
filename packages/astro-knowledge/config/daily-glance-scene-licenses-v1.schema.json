@@ -85,6 +85,7 @@
               "sourcePath": { "type": "string" },
               "selector": { "type": "string" },
               "field": { "enum": ["copy", "body_you"] },
+              "evidenceRole": { "enum": ["executable", "supporting-reference"] },
               "match": { "enum": ["exact", "includes"] },
               "text": { "type": "string", "minLength": 1 },
               "sourceApproval": { "enum": ["approved", "reviewed", "draft", "unapproved"] }
