@@ -73,11 +73,13 @@ export async function grantCompEntitlement(admin: SupabaseReportAdmin, input: {
 export async function authorizeReportGeneration(admin: SupabaseReportAdmin, input: {
   reportId: string;
   callBudget: number;
+  tokenBudget?: number;
   now: string;
 }) {
   if (!Number.isInteger(input.callBudget) || input.callBudget < 1) throw new Error("A positive whole-number call budget is required.");
   const token = crypto.randomUUID();
-  const tokenBudget = reportFulfillmentConfig().authorizationTokenBudget;
+  const tokenBudget = input.tokenBudget ?? reportFulfillmentConfig().authorizationTokenBudget;
+  if (!Number.isInteger(tokenBudget) || tokenBudget < 1) throw new Error("A positive whole-number token budget is required.");
   const jobs = await admin.update<{ id: string }>("report_fulfillment_jobs", `report_id=eq.${encodeURIComponent(input.reportId)}&state=eq.paused&select=id`, {
     state: "queued",
     step: "calculating",
@@ -98,6 +100,20 @@ export async function authorizeReportGeneration(admin: SupabaseReportAdmin, inpu
     fulfillment_status: "queued"
   });
   return { authorized: true, callBudget: input.callBudget, tokenBudget, jobId: jobs[0].id };
+}
+
+export async function createFreshReportGeneration(admin: SupabaseReportAdmin, sourceReportId: string) {
+  const rows = await admin.request<Array<{ report_id: string; job_id: string; generation_number: number }>>(
+    "rpc/create_fresh_report_generation",
+    { method: "POST", body: JSON.stringify({ source_report_id: sourceReportId }) }
+  );
+  const created = rows[0];
+  if (!created) throw new Error("Fresh report generation was not created.");
+  return {
+    reportId: created.report_id,
+    jobId: created.job_id,
+    generationNumber: created.generation_number
+  };
 }
 
 export async function revokeEntitlement(admin: SupabaseReportAdmin, input: {
