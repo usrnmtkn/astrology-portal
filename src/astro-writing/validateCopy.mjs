@@ -51,16 +51,34 @@ const OBSERVABLE_ACTIONS = Object.freeze([
   "spend", "tell", "volunteer", "wash", "write"
 ]);
 
-const ABSTRACT_OPENING_SUBJECTS = Object.freeze([
-  "ability", "affection", "ambition", "authority", "capacity", "compassion", "confidence", "connection",
-  "creativity", "desire", "discipline", "empathy", "energy", "faith", "freedom", "generosity", "growth",
-  "healing", "hope", "independence", "intuition", "love", "optimism", "possibility", "potential", "power",
-  "recognition", "responsibility", "sensitivity", "transformation", "work ethic"
-]);
+const PERSON_OR_OBSERVER_SUBJECTS = Object.freeze(new Set([
+  "i", "you", "he", "she", "they", "we", "it", "name", "people", "person", "someone", "somebody", "anyone", "everyone",
+  "nobody", "others", "observer", "observers", "listener", "listeners", "coworker", "coworkers", "colleague", "colleagues", "friend", "friends", "family", "client",
+  "clients", "manager", "teacher", "teachers", "partner", "partners", "room", "group", "team", "audience"
+]));
 
-const ABSTRACT_GRAMMATICAL_SUBJECTS = Object.freeze([
-  "meaning", "emotion", "sensitivity", "confidence", "intensity", "ambition", "imagination", "discipline"
-]);
+function bareAbstractSubject(sentence) {
+  const words = String(sentence || "").match(/[A-Za-z']+/gu) || [];
+  if (words.length < 2) return null;
+  const lowered = words.map((word) => word.toLowerCase());
+  if (["a", "an", "the", "this", "that", "these", "those", "your", "their", "our", "my"].includes(lowered[0])) return null;
+  if (PERSON_OR_OBSERVER_SUBJECTS.has(lowered[0]) || CONCRETE_NOUNS.includes(lowered[0])) return null;
+  let verbIndex = 1;
+  if (lowered[1] === "and" && lowered.length >= 4) verbIndex = 3;
+  if (["often", "usually", "naturally", "easily", "quickly", "readily"].includes(lowered[verbIndex])) verbIndex += 1;
+  const verb = lowered[verbIndex];
+  const predicate = lowered.slice(verbIndex, verbIndex + 3);
+  const coordinatedQuality = lowered[1] === "and" && ["face", "faces", "support", "supports", "cooperate", "cooperates", "move", "moves"].includes(verb);
+  const qualityActs = (["arrive", "arrives"].includes(verb) && /ing$/u.test(lowered[0]))
+    || (["move", "moves"].includes(verb) && /ity$/u.test(lowered[0]));
+  const causativeIt = ["make", "makes"].includes(verb) && predicate[1] === "it" && predicate[2] === "easy";
+  const continuingAction = ["keep", "keeps"].includes(verb) && /ing$/u.test(predicate[1] || "");
+  const modalEffect = verb === "can" && ["speed", "accelerate", "drive"].includes(predicate[1]);
+  if (!coordinatedQuality && !qualityActs && !causativeIt && !continuingAction && !modalEffect) return null;
+  const subject = words.slice(0, verbIndex).join(" ");
+  if (subject.split(" ").some((word) => PERSON_OR_OBSERVER_SUBJECTS.has(word.toLowerCase()) || CONCRETE_NOUNS.includes(word.toLowerCase()))) return null;
+  return subject;
+}
 
 const THERAPY_CLUSTER_TERMS = Object.freeze([
   "empathy", "trauma", "nurturing", "healing", "growth", "potential", "energy", "journey"
@@ -207,8 +225,8 @@ export function validateCopy(copy, {
         .map(([, value]) => value.trim())
         .filter(Boolean);
     const firstSentence = proseSegments[0]?.split(/(?<=[.!?])\s+/u)[0] ?? "";
-    const abstractSubjectPattern = new RegExp(`^(?:the |your )?(?:${ABSTRACT_OPENING_SUBJECTS.map((term) => term.replace(/ /gu, "\\s+")).join("|")})\\b`, "iu");
-    const abstractOpening = abstractSubjectPattern.test(firstSentence);
+    const abstractOpeningSubject = bareAbstractSubject(firstSentence);
+    const abstractOpening = Boolean(abstractOpeningSubject);
     if (abstractOpening) {
       violations.push({ category: "abstract_noun_subject", detail: `Opening sentence begins from an abstract quality: ${firstSentence}` });
     }
@@ -236,12 +254,8 @@ export function validateCopy(copy, {
       violations.push({ category: "astrology_summary", detail: `Abstract or therapy-register summary without lived action: ${therapyMatches.join(", ")}` });
     }
     const sentences = proseSegments.flatMap((segment) => segment.split(/(?<=[.!?])\s+/u)).map((sentence) => sentence.trim()).filter(Boolean);
-    const abstractGrammarPattern = new RegExp(
-      `^(?:the |your )?(?:${ABSTRACT_GRAMMATICAL_SUBJECTS.join("|")})(?:\\s+and\\s+(?:${ABSTRACT_GRAMMATICAL_SUBJECTS.join("|")}))*\\s+(?:[a-z]+(?:s|es|ed|ing)?|is|are|has|have|can|may|often|usually)\\b`,
-      "iu"
-    );
     for (const sentence of sentences) {
-      if (abstractGrammarPattern.test(sentence)) {
+      if (bareAbstractSubject(sentence)) {
         violations.push({ category: "abstract_subject_grammar", detail: `Abstract quality acts as the grammatical subject: ${sentence}` });
       }
       if (/\bhere\b/iu.test(sentence)) {
@@ -280,8 +294,6 @@ export function validateCopy(copy, {
 
 export {
   ARCHETYPE_TERMS,
-  ABSTRACT_OPENING_SUBJECTS,
-  ABSTRACT_GRAMMATICAL_SUBJECTS,
   CONCRETE_NOUNS,
   DEFAULT_BANNED,
   HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS,

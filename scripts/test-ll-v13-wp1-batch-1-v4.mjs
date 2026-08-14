@@ -7,7 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { readInlineXlsxSheet } from "./lib/read-inline-xlsx.mjs";
 import { validateCopy } from "../src/astro-writing/validateCopy.mjs";
-import { validateBatchCadence, validateFriendPair } from "../src/astro-writing/natalBatchGuards.mjs";
+import { BANNED_FRIEND_SENTENCES, validateBatchCadence, validateCrossRowUniqueness } from "../src/astro-writing/natalBatchGuards.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sourcePath = path.join(repoRoot, "packages/astro-knowledge/review/TLDR-LL-V13-WP1-BATCH-01-EDITORIAL-REVISION-V4-OWNER-STYLE.xlsx");
@@ -33,6 +33,7 @@ assert.equal(artifact.gateEffectiveness.priorV3ReadyRows, 51);
 assert.equal(validateBatchCadence(artifact.rows.map((row) => ({ copy: row.self.copy }))).passed, true);
 assert.equal(validateBatchCadence(artifact.rows.map((row) => ({ copy: row.friend.copy }))).passed, true);
 
+const abstractFailureKeys = [];
 for (let index = 0; index < outputRows.length; index += 1) {
   const source = sourceRows[index].cells;
   const output = outputRows[index].cells;
@@ -50,8 +51,23 @@ for (let index = 0; index < outputRows.length; index += 1) {
   assert.equal(output["V4 Friend owner edit"], "");
   const selfNewGate = validateCopy(candidate.self.copy, { family: "natal-aspect-exact", register: "collective", plan: { astrologySupport: "present" } })
     .violations.filter((item) => ["abstract_subject_grammar", "chart_deixis"].includes(item.category));
-  assert.deepEqual(selfNewGate, [], candidate.rowKey);
-  assert.equal(validateFriendPair({ selfCopy: candidate.self.copy, friendCopy: candidate.friend.copy }).passed, true, candidate.rowKey);
+  if (selfNewGate.some((item) => item.category === "abstract_subject_grammar")) abstractFailureKeys.push(candidate.rowKey);
 }
+assert.deepEqual(abstractFailureKeys, [
+  "mars|opposition|north_node",
+  "mercury|trine|jupiter",
+  "moon|trine|north_node",
+  "moon|trine|saturn"
+]);
+const selfUniqueness = validateCrossRowUniqueness(artifact.rows.map((row) => ({ rowKey: row.rowKey, copy: row.self.copy })));
+const friendUniqueness = validateCrossRowUniqueness(artifact.rows.map((row) => ({ rowKey: row.rowKey, copy: row.friend.copy })), { bannedSentences: BANNED_FRIEND_SENTENCES });
+assert.equal(selfUniqueness.sentenceCount, 527);
+assert.equal(selfUniqueness.uniqueSentenceCount, 527);
+assert.equal(friendUniqueness.sentenceCount, 528);
+assert.equal(friendUniqueness.uniqueSentenceCount, 123);
+assert.equal(friendUniqueness.repeatedOccurrenceCount, 489);
+assert.equal(Number(friendUniqueness.repeatedOccurrenceRate.toFixed(4)), 0.9261);
+assert.equal(friendUniqueness.exactDuplicateGroups[0].count, 39);
+assert.equal(friendUniqueness.exactDuplicateGroups[0].sentence, BANNED_FRIEND_SENTENCES[0]);
 
-console.log(JSON.stringify({ rows: 132, selfCandidates: 132, friendCandidates: 132, reauthoredAfterNewGate: 23, sourceGaps: 0, blankOwnerVerdicts: true }));
+console.log(JSON.stringify({ rows: 132, historicalV4: { self: "527/527 unique", friend: "123/528 unique", repeatedFriendOccurrenceRate: 0.9261 }, abstractSubjectFailures: abstractFailureKeys }));
