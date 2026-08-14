@@ -734,7 +734,9 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
   const ARTICLE_SECTION_ORDER = {
     "seasonal-context": 1,
     ingress: 2,
+    "planet-education": 3,
     "collective-read": 3,
+    "collective-era": 4,
     "dated-aspect": 4,
     "event-interaction": 5,
     "exit-tone-shift": 6,
@@ -1423,6 +1425,16 @@ ${passHook}`;
     "north-node",
     "south-node"
   ]);
+  const SKY_PLACEMENT_ERA_PLANETS = /* @__PURE__ */ new Set([
+    "saturn",
+    "uranus",
+    "neptune",
+    "pluto",
+    "chiron",
+    "north-node",
+    "south-node",
+    "nodes"
+  ]);
   const RETIRED_SUN_IDENTITY_HOOKS = [
     "Somewhere along the way, you switched to autopilot.",
     "You keep rescheduling a decision.",
@@ -1462,7 +1474,8 @@ ${passHook}`;
     }
     return {
       body: `${month} ${Number(match[2])}`,
-      year: match[3] ?? null
+      year: match[3] ?? null,
+      full: match[3] ? `${month} ${Number(match[2])}, ${match[3]}` : `${month} ${Number(match[2])}`
     };
   }
   function continuousSkyPlacementDateContext(entryDate, exitDate) {
@@ -1499,10 +1512,33 @@ ${passHook}`;
       priorSignEntryDate: priorSignEntryDate ? continuousSkyPlacementDate(priorSignEntryDate, "prior-sign entry").body : null,
       priorSignExitDate: priorSignExitDate ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").body : null,
       previousResidencyEntryDate: previousResidencyEntryDate ? continuousSkyPlacementDate(previousResidencyEntryDate, "previous-residency entry").body : null,
-      previousResidencyExitDate: previousResidencyExitDate ? continuousSkyPlacementDate(previousResidencyExitDate, "previous-residency exit").body : null
+      previousResidencyExitDate: previousResidencyExitDate ? continuousSkyPlacementDate(previousResidencyExitDate, "previous-residency exit").body : null,
+      priorSignEntryDateWithYear: priorSignEntryDate ? continuousSkyPlacementDate(priorSignEntryDate, "prior-sign entry").full : null,
+      priorSignExitDateWithYear: priorSignExitDate ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").full : null,
+      previousResidencyEntryDateWithYear: previousResidencyEntryDate ? continuousSkyPlacementDate(previousResidencyEntryDate, "previous-residency entry").full : null,
+      previousResidencyExitDateWithYear: previousResidencyExitDate ? continuousSkyPlacementDate(previousResidencyExitDate, "previous-residency exit").full : null
     };
     const factLine = dates.factLine;
+    const educationRow = hooks.get(`fallback-hook/sky-planet-education/${planet}`);
+    const educationBody = educationRow?.render_policy === "sky-placement-planet-education-v1" ? educationRow.body : null;
+    const planetEducation = typeof educationBody === "string" && educationBody.trim() ? educationBody : null;
     const collective = [signCopy.opening, signCopy.tension, signCopy.development].map((part) => fillKeep(part, ctx));
+    const eraSource = signCopy.era_layer;
+    let eraLayer = [];
+    if (eraSource) {
+      if (!SKY_PLACEMENT_ERA_PLANETS.has(planet)) {
+        throw new SourceGapError(`SOURCE_GAP: slow-mover era layer ${planet}/${sign}`);
+      }
+      const eraFields = ["frame", "handoff", "recurrence", "collective_lesson"];
+      const hasCompleteEraCopy = eraFields.every((field) => typeof eraSource[field] === "string" && Boolean(eraSource[field].trim()));
+      const hasCompleteEraFacts = Boolean(
+        priorSign && priorSignEntryDate && priorSignExitDate && previousResidencyEntryDate && previousResidencyExitDate
+      );
+      if (!hasCompleteEraCopy || !hasCompleteEraFacts) {
+        throw new SourceGapError(`SOURCE_GAP: slow-mover era layer ${planet}/${sign}`);
+      }
+      eraLayer = eraFields.map((field) => fillKeep(eraSource[field], ctx));
+    }
     const close = fillKeep(signCopy.close, ctx);
     const masterHeadings = [
       signCopy.opening_heading,
@@ -1529,15 +1565,18 @@ ${passHook}`;
         body: aspectParts.join("\n\n")
       };
     }
-    const parts = [factLine, ...collective, ...aspectParts, close];
+    const parts = [factLine, ...planetEducation ? [planetEducation] : [], ...collective, ...eraLayer, ...aspectParts, close];
     const articleSections = rendersArticleMaster ? [
+      ...planetEducation ? [{ kind: "planet-education", heading: "", body: planetEducation }] : [],
       { kind: "collective-read", heading: fillKeep(signCopy.opening_heading, ctx), body: [factLine, collective[0]].join("\n\n") },
       { kind: "collective-read", heading: fillKeep(signCopy.tension_heading, ctx), body: collective[1] },
       { kind: "collective-read", heading: fillKeep(signCopy.development_heading, ctx), body: collective[2] },
+      ...eraLayer.length ? [{ kind: "collective-era", heading: "", body: eraLayer.join("\n\n") }] : [],
       ...aspectSection ? [aspectSection] : [],
       { kind: "exit-tone-shift", heading: fillKeep(signCopy.close_heading, ctx), body: close }
     ] : [
-      { kind: "collective-read", heading: "", body: [factLine, ...collective].join("\n\n") },
+      { kind: "collective-read", heading: "", body: [factLine, ...planetEducation ? [planetEducation] : [], ...collective].join("\n\n") },
+      ...eraLayer.length ? [{ kind: "collective-era", heading: "", body: eraLayer.join("\n\n") }] : [],
       ...aspectSection ? [aspectSection] : [],
       { kind: "exit-tone-shift", heading: "", body: close }
     ];
@@ -2559,7 +2598,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-14d";
+var PACKAGE_VERSION = "v3-2026-08-14e";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

@@ -1,0 +1,72 @@
+{
+  "schema": "tldrastro-slow-mover-era-layer-rendered-sample-v1",
+  "candidateId": "sky-placement-saturn-capricorn-era-layer-rendered-sample-v1",
+  "planet": "saturn",
+  "sign": "capricorn",
+  "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+  "planetEducationContentKey": "fallback-hook/sky-planet-education/saturn",
+  "reviewStatus": "needs_review",
+  "editorialStatus": "writer_authorship_candidate",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonical": false,
+  "generationEvidenceAuthorized": false,
+  "servingAuthorized": false,
+  "apiCalls": 0,
+  "engineSnapshot": {
+    "referenceDate": "2048-08-11T12:00:00.000Z",
+    "timeZone": "UTC",
+    "transitStart": "2047-01-24T15:40:42.999Z",
+    "transitEnd": "2050-01-21T13:15:43.999Z",
+    "priorSign": "sagittarius",
+    "priorSignEntryDate": "2044-10-31T12:52:22.999Z",
+    "priorSignExitDate": "2047-01-24T15:40:42.999Z",
+    "previousResidencyEntryDate": "2017-12-20T04:48:42.999Z",
+    "previousResidencyExitDate": "2020-12-17T05:04:02.999Z"
+  },
+  "planetEducation": {
+    "renderPolicy": "sky-placement-planet-education-v1",
+    "body": "Saturn is the farthest planet easily seen without a telescope, and it takes about 29 years to orbit the Sun. In astrology, Saturn governs time, limits, responsibility, and the work required to make something last. Its lessons show up when a deadline arrives, a cost comes due, or a weak structure finally fails."
+  },
+  "article": {
+    "fact_line": "{{entryDate}} to {{exitDate}}",
+    "aspect_insert": "{{aspectInsert}}",
+    "opening": "Ambition stops looking impressive when the person holding everything together cannot take a day off. Saturn in Capricorn exposes the plans that only work because someone remembers every deadline, catches every mistake, and stays late to make up the difference.",
+    "tension": "A project can win praise while one person sends corrections at midnight, covers a vacant role, and logs in on vacation. The same problem can show up at home: a household looks organized because the same person remembers every appointment, payment, and form. When that person stops doing all of it, deadlines slip, messages go unanswered, and everyone discovers how much of the plan depended on work nobody else was prepared to do.",
+    "development": "Being needed can feel like proof of competence until every problem belongs to the same person. We take the task back when someone else does it differently, answer messages during dinner, and postpone rest so the work stays on schedule. The deadline gets met, but the knowledge and responsibility stay in one set of hands.",
+    "era_layer": {
+      "frame": "Saturn in Capricorn begins a period when standards get stricter and authority has to prove it deserves to stay in charge. Rules, budgets, deadlines, and chains of responsibility become harder to treat as background details. Authority means little if it cannot answer for the cost of its decisions.",
+      "handoff": "Saturn moved through {{priorSign}} from {{priorSignEntryDateWithYear}} to {{priorSignExitDateWithYear}}. That transit tested the beliefs and long-range promises used to justify a plan. Capricorn changes the question from what everyone says they believe to who does the work, who has authority, and what happens when the plan meets a limit.",
+      "recurrence": "Saturn last moved through Capricorn from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}.",
+      "collective_lesson": "The collective lesson is that responsibility has to be visible before it can be shared. A company, family, or institution has not built real stability if the person setting the standard never has to answer for the time, money, and labor it requires."
+    },
+    "close": "Work that holds its value over time cannot depend on one person giving up every evening, weekend, and day off."
+  },
+  "sourceAuthority": [
+    {
+      "id": "planet-intros-saturn-seed",
+      "path": "tldr-astro-phrasebank/PLANET-INTROS.md",
+      "use": "meaning seed only; no sentence reused verbatim"
+    },
+    {
+      "id": "nasa-saturn-facts",
+      "url": "https://science.nasa.gov/saturn/facts/",
+      "use": "plain astronomy: unaided-eye visibility and 29.4-year orbit"
+    },
+    {
+      "id": "planetary-saturn-reviewed",
+      "path": "packages/astro-knowledge/data/planetary/saturn.json",
+      "use": "governed Saturn function and cycle boundary"
+    },
+    {
+      "id": "ll-matrix-v13-saturn-capricorn",
+      "path": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json",
+      "use": "governed Saturn-in-Capricorn topics only"
+    },
+    {
+      "id": "sky-placement-engine-facts",
+      "path": "apps/web/src/services/ephemeris.ts#getSkyPlacementTransitFacts",
+      "use": "current residency, prior-sign handoff, and previous same-sign residency dates"
+    }
+  ]
+}

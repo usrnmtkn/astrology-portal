@@ -57,6 +57,9 @@ try {
   const cases = [
     { planet: "jupiter", sign: "libra", date: new Date("2026-08-03T12:00:00Z"), planetId: swe.SE_JUPITER },
     { planet: "saturn", sign: "aries", date: new Date("2026-08-03T12:00:00Z"), planetId: swe.SE_SATURN },
+    { planet: "uranus", sign: "gemini", date: new Date("2026-08-03T12:00:00Z"), planetId: swe.SE_URANUS },
+    { planet: "neptune", sign: "aries", date: new Date("2026-08-03T12:00:00Z"), planetId: swe.SE_NEPTUNE },
+    { planet: "pluto", sign: "aquarius", date: new Date("2026-08-03T12:00:00Z"), planetId: swe.SE_PLUTO },
     { planet: "chiron", sign: "aries", date: new Date("2026-08-03T12:00:00Z"), planetId: 15, structuralPoint: true },
     { planet: "north-node", sign: "aquarius", date: new Date("2026-08-03T12:00:00Z"), planetId: swe.SE_TRUE_NODE, structuralPoint: true },
     { planet: "south-node", sign: "leo", date: new Date("2026-08-03T12:00:00Z"), planetId: swe.SE_TRUE_NODE, longitudeOffset: 180, structuralPoint: true }
@@ -89,9 +92,17 @@ try {
     assert.notEqual(sign(swe, testCase.planetId, new Date(end.getTime() + HOUR_MS), testCase.longitudeOffset), facts.sign);
     assert.equal(facts.priorSign, sign(swe, testCase.planetId, new Date(start.getTime() - HOUR_MS), testCase.longitudeOffset));
     assert.ok(new Date(facts.priorSignEntryDate) < new Date(facts.priorSignExitDate));
-    assert.ok(facts.previousResidency, `${facts.planet} needs a previous same-sign residency`);
-    assert.ok(new Date(facts.previousResidency.exitDate) < start);
-    assert.equal(facts.previousResidency.sign, facts.sign);
+    if (facts.planet === "Pluto" && facts.sign === "Aquarius") {
+      assert.equal(
+        facts.previousResidency,
+        null,
+        "Pluto's prior Aquarius residency predates the verified 1800 boundary of the shipped Swiss planetary file."
+      );
+    } else {
+      assert.ok(facts.previousResidency, `${facts.planet} needs a previous same-sign residency`);
+      assert.ok(new Date(facts.previousResidency.exitDate) < start);
+      assert.equal(facts.previousResidency.sign, facts.sign);
+    }
     if (testCase.structuralPoint) assert.deepEqual(facts.rankedEventsDuringTransit, []);
     else assert.ok(facts.rankedEventsDuringTransit.length >= 2, `${facts.planet} transit needs ranked exact aspects`);
     assert.deepEqual(
@@ -108,6 +119,23 @@ try {
       assert.equal(event.dateKey, localDateKey(exactAt, facts.timeZone));
     }
   }
+
+  const saturnCapricorn = await ephemeris.getSkyPlacementTransitFacts({
+    planet: "saturn",
+    sign: "capricorn",
+    referenceDate: new Date("2047-02-01T12:00:00Z"),
+    timeZone: "UTC"
+  });
+  assert.equal(saturnCapricorn.transitStart, "2047-01-24T15:40:42.999Z");
+  assert.equal(saturnCapricorn.transitEnd, "2050-01-21T13:15:43.999Z");
+  assert.equal(saturnCapricorn.priorSign, "Sagittarius");
+  assert.equal(saturnCapricorn.priorSignEntryDate, "2044-10-31T12:52:22.999Z");
+  assert.equal(saturnCapricorn.priorSignExitDate, "2047-01-24T15:40:42.999Z");
+  assert.deepEqual(saturnCapricorn.previousResidency, {
+    sign: "Capricorn",
+    entryDate: "2017-12-20T04:48:42.999Z",
+    exitDate: "2020-12-17T05:04:02.999Z"
+  });
 
   const currentSky = await ephemeris.getAstrodienstSky(
     { ...ephemeris.defaultLocation, timeZone: "America/New_York" },
@@ -139,7 +167,7 @@ try {
     "Reader placement dates must use the calculated user's time zone instead of a fixed zone"
   );
 
-  console.log("Sky Placement engine facts passed: five ephemeris windows including Chiron and both Nodes, prior-sign handoffs, previous residencies, ranked exact aspects where supported, and local-time rendering.");
+  console.log("Sky Placement engine facts passed: all slow-mover families expose prior-sign handoffs; Saturn, Uranus, Neptune, Chiron, and both Nodes expose previous same-sign residencies; Pluto-in-Aquarius correctly returns no prior range because its last residency predates the verified 1800 Swiss-data boundary; the Saturn-in-Capricorn 2047-2050 sample and 2017-2020 recurrence are byte-verified.");
 } finally {
   await vite.close();
 }
