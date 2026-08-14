@@ -318,9 +318,9 @@ try {
       headline: "An opening just appeared.",
       body: "Alex gets an answer sooner than expected and can use the opening while it is here.",
       moonContext: {
-        sign: "Virgo",
-        houseLabel: "4th house",
-        topic: "home, family, and private foundation"
+        sign: "Sagittarius",
+        houseLabel: "7th house",
+        topic: "partnership and one-to-one relationships"
       }
     },
     dailyDoItems: ["Name the plan", "Keep it practical", "Leave room"],
@@ -362,8 +362,10 @@ try {
   assert.match(populatedTransitsHtml, /Daily forecast for Alex/);
   assert.match(populatedTransitsHtml, /An opening just appeared/);
   assert.match(populatedTransitsHtml, /Alex gets an answer sooner than expected/);
-  assert.match(populatedTransitsHtml, />Moon in<\/span>/);
-  assert.match(populatedTransitsHtml, /Virgo · 4th house · home, family, and private foundation/);
+  assert.match(populatedTransitsHtml, />Moon in Sagittarius<\/span>/);
+  assert.match(populatedTransitsHtml, />7th house<\/span>/);
+  assert.match(populatedTransitsHtml, />Partnership<\/span>/);
+  assert.match(populatedTransitsHtml, />One-to-one relationships<\/span>/);
   assert.doesNotMatch(populatedTransitsHtml, /most relevant transit|friend-transit-focus/);
   assert.doesNotMatch(populatedTransitsHtml, /current weather|Start here|near-term theme|shared theme/);
   assert.match(populatedTransitsHtml, /Between you two/);
@@ -387,7 +389,7 @@ try {
       headline: "Keep the pace simple.",
       body: "Alex can leave one decision open until there is more information.",
       moonContext: {
-        sign: "Virgo",
+        sign: "Sagittarius",
         houseLabel: null,
         topic: null
       }
@@ -402,8 +404,8 @@ try {
     patternTimingOverrides: {},
     personalTransitGroups: []
   }));
-  assert.match(unknownBirthTimeTransitsHtml, />Virgo<\/span>/);
-  assert.doesNotMatch(unknownBirthTimeTransitsHtml, /4th house|private foundation/);
+  assert.match(unknownBirthTimeTransitsHtml, />Moon in Sagittarius<\/span>/);
+  assert.doesNotMatch(unknownBirthTimeTransitsHtml, /7th house|Partnership|One-to-one relationships/);
 
   assert.ok(
     populatedTransitsHtml.indexOf("Between you two") < populatedTransitsHtml.indexOf("Mars trine Moon"),

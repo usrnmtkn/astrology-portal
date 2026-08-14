@@ -1,5 +1,6 @@
 import { Fragment, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
+import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { AspectGiftLessonGroup } from "../../components/charts/AspectGiftLessonGroup";
@@ -37,11 +38,7 @@ export type PersonalTimingSummary = {
   headline: string;
   summary: string;
   secondary?: string;
-  moonContext?: {
-    sign: string;
-    houseLabel: string | null;
-    topic: string | null;
-  };
+  moonContext?: DailyMoonContext;
   writeup?: Array<{
     heading?: string;
     body: string[];
@@ -574,23 +571,7 @@ function YouUpdatesTab({
             </div>
           )}
           {dailyUpdateSummary.moonContext ? (
-            <div
-              aria-label={[
-                `Moon in ${dailyUpdateSummary.moonContext.sign}`,
-                dailyUpdateSummary.moonContext.houseLabel,
-                dailyUpdateSummary.moonContext.topic
-              ].filter(Boolean).join(", ")}
-              className="updates-aspect-row__meta-line daily-horoscope-summary__moon-tags"
-            >
-              <span className="ui-pill ui-pill--neutral ui-pill--mixed">Moon in</span>
-              <span className="ui-pill ui-pill--neutral ui-pill--mixed">
-                {[
-                  dailyUpdateSummary.moonContext.sign,
-                  dailyUpdateSummary.moonContext.houseLabel,
-                  dailyUpdateSummary.moonContext.topic
-                ].filter(Boolean).join(" · ")}
-              </span>
-            </div>
+            <DailyMoonContextTags context={dailyUpdateSummary.moonContext} />
           ) : null}
         </section>
       )}
