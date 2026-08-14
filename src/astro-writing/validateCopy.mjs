@@ -42,7 +42,15 @@ const CONCRETE_NOUNS = Object.freeze([
   "claim", "deadline", "desk", "dinner", "document", "dollar", "door", "email", "evidence", "fact", "flight", "food", "form",
   "friend", "game", "hour", "invoice", "job", "kitchen", "lamp", "meal", "meeting", "message",
   "information", "money", "office", "phone", "presentation", "project", "purchase", "receipt", "rematch", "room",
-  "schedule", "source", "table", "text", "ticket", "time", "train", "trip", "vehicle", "week", "workout"
+  "schedule", "source", "table", "text", "ticket", "time", "train", "trip", "vehicle", "week", "workout",
+  "afternoon", "apartment", "audience", "bed", "blanket", "boss", "bottle", "breakfast", "building", "cash",
+  "child", "coach", "colleague", "customer", "day", "doctor", "evening", "family", "folder", "glass", "guest",
+  "landlord", "manager", "mentor", "morning", "neighbor", "notebook", "parent", "passenger", "plate", "restaurant",
+  "road", "school", "sibling", "snack", "student", "teacher", "tenant", "wallet", "workplace",
+  "bench", "counter", "equipment", "gym", "machine", "roommate", "tool", "workbench",
+  "assignment", "boardroom", "cafe", "conversation", "draft", "elevator", "expression", "floor", "group", "hand",
+  "head", "invitation", "jaw", "journal", "letter", "line", "list", "margin", "mouth", "page", "paragraph", "party",
+  "proposal", "report", "reservation", "sender", "spreadsheet", "stranger", "workshop", "whiteboard", "doorway", "face"
 ]);
 
 const OBSERVABLE_ACTIONS = Object.freeze([
@@ -57,27 +65,58 @@ const PERSON_OR_OBSERVER_SUBJECTS = Object.freeze(new Set([
   "clients", "manager", "teacher", "teachers", "partner", "partners", "room", "group", "team", "audience"
 ]));
 
-function bareAbstractSubject(sentence) {
+const SUBJECT_DETERMINERS = Object.freeze(new Set(["a", "an", "the", "this", "that", "these", "those", "your", "their", "our", "my", "his", "her"]));
+const SUBJECT_MODIFIERS = Object.freeze(new Set(["public", "private", "personal", "professional", "emotional", "spiritual", "larger", "deeper", "ordinary", "shared", "inner", "outer", "same"]));
+const FINITE_VERBS = Object.freeze(new Set([
+  "am", "are", "is", "was", "were", "be", "become", "becomes", "became", "remain", "remains", "stays", "stay",
+  "appear", "appears", "arrive", "arrives", "return", "returns", "lose", "loses", "protect", "protects", "support",
+  "supports", "face", "faces", "cooperate", "cooperates", "move", "moves", "make", "makes", "keep", "keeps",
+  "speed", "speeds", "drive", "drives", "grow", "grows", "follow", "follows", "carry", "carries", "cost", "costs",
+  "create", "creates", "turn", "turns", "pull", "pulls", "push", "pushes", "reach", "reaches", "land", "lands",
+  "help", "helps", "hide", "hides", "open", "opens", "close", "closes", "change", "changes", "shape", "shapes",
+  "decide", "decides", "demand", "demands", "need", "needs", "matter", "matters", "work", "works", "feel", "feels",
+  "sound", "sounds", "look", "looks", "show", "shows", "give", "gives", "take", "takes", "start", "starts",
+  "can", "could", "may", "might", "will", "would", "should", "must", "has", "have", "had", "does", "do", "did"
+]));
+const ABSTRACT_PERFORMING_VERBS = Object.freeze(new Set([
+  "appear", "appears", "arrive", "arrives", "become", "becomes", "became", "cooperate", "cooperates", "face", "faces",
+  "keep", "keeps", "lose", "loses", "make", "makes", "move", "moves", "protect", "protects", "remain", "remains",
+  "return", "returns", "speed", "speeds", "support", "supports"
+]));
+const IRREGULAR_ABSTRACT_QUALITIES = Object.freeze(new Set([
+  "ambition", "curiosity", "desire", "discipline", "emotion", "feeling", "hope", "imagination", "meaning", "pride",
+  "reason", "sensitivity", "trust"
+]));
+
+function subjectHead(tokens) {
+  const filtered = tokens.filter((token) => !SUBJECT_DETERMINERS.has(token) && !SUBJECT_MODIFIERS.has(token) && token !== "and");
+  return filtered.at(-1) || null;
+}
+
+function isAbstractQualityHead(head) {
+  return IRREGULAR_ABSTRACT_QUALITIES.has(head)
+    || /(?:ance|ence|hood|ism|ity|ment|ness|ship|th)$/u.test(head);
+}
+
+export function abstractSubjectFinding(sentence) {
   const words = String(sentence || "").match(/[A-Za-z']+/gu) || [];
   if (words.length < 2) return null;
   const lowered = words.map((word) => word.toLowerCase());
-  if (["a", "an", "the", "this", "that", "these", "those", "your", "their", "our", "my"].includes(lowered[0])) return null;
-  if (PERSON_OR_OBSERVER_SUBJECTS.has(lowered[0]) || CONCRETE_NOUNS.includes(lowered[0])) return null;
-  let verbIndex = 1;
-  if (lowered[1] === "and" && lowered.length >= 4) verbIndex = 3;
-  if (["often", "usually", "naturally", "easily", "quickly", "readily"].includes(lowered[verbIndex])) verbIndex += 1;
-  const verb = lowered[verbIndex];
-  const predicate = lowered.slice(verbIndex, verbIndex + 3);
-  const coordinatedQuality = lowered[1] === "and" && ["face", "faces", "support", "supports", "cooperate", "cooperates", "move", "moves"].includes(verb);
-  const qualityActs = (["arrive", "arrives"].includes(verb) && /ing$/u.test(lowered[0]))
-    || (["move", "moves"].includes(verb) && /ity$/u.test(lowered[0]));
-  const causativeIt = ["make", "makes"].includes(verb) && predicate[1] === "it" && predicate[2] === "easy";
-  const continuingAction = ["keep", "keeps"].includes(verb) && /ing$/u.test(predicate[1] || "");
-  const modalEffect = verb === "can" && ["speed", "accelerate", "drive"].includes(predicate[1]);
-  if (!coordinatedQuality && !qualityActs && !causativeIt && !continuingAction && !modalEffect) return null;
-  const subject = words.slice(0, verbIndex).join(" ");
-  if (subject.split(" ").some((word) => PERSON_OR_OBSERVER_SUBJECTS.has(word.toLowerCase()) || CONCRETE_NOUNS.includes(word.toLowerCase()))) return null;
-  return subject;
+  if (SUBJECT_DETERMINERS.has(lowered[0])) return null;
+  let verbIndex = lowered.findIndex((word, index) => index > 0 && FINITE_VERBS.has(word));
+  if (verbIndex < 1) return null;
+  let lexicalVerb = lowered[verbIndex];
+  if (["can", "could", "may", "might", "will", "would", "should", "must", "has", "have", "had", "does", "do", "did"].includes(lexicalVerb)) {
+    const lexicalIndex = lowered.findIndex((word, index) => index > verbIndex && ABSTRACT_PERFORMING_VERBS.has(word));
+    if (lexicalIndex < 0) return null;
+    lexicalVerb = lowered[lexicalIndex];
+  }
+  if (!ABSTRACT_PERFORMING_VERBS.has(lexicalVerb)) return null;
+  const subjectTokens = lowered.slice(0, verbIndex).filter((token) => !["often", "usually", "naturally", "easily", "quickly", "readily"].includes(token));
+  if (subjectTokens.some((word) => PERSON_OR_OBSERVER_SUBJECTS.has(word) || CONCRETE_NOUNS.includes(word))) return null;
+  const head = subjectHead(subjectTokens);
+  if (!head || !isAbstractQualityHead(head)) return null;
+  return words.slice(0, verbIndex).join(" ");
 }
 
 const THERAPY_CLUSTER_TERMS = Object.freeze([
@@ -225,7 +264,7 @@ export function validateCopy(copy, {
         .map(([, value]) => value.trim())
         .filter(Boolean);
     const firstSentence = proseSegments[0]?.split(/(?<=[.!?])\s+/u)[0] ?? "";
-    const abstractOpeningSubject = bareAbstractSubject(firstSentence);
+    const abstractOpeningSubject = abstractSubjectFinding(firstSentence);
     const abstractOpening = Boolean(abstractOpeningSubject);
     if (abstractOpening) {
       violations.push({ category: "abstract_noun_subject", detail: `Opening sentence begins from an abstract quality: ${firstSentence}` });
@@ -255,7 +294,7 @@ export function validateCopy(copy, {
     }
     const sentences = proseSegments.flatMap((segment) => segment.split(/(?<=[.!?])\s+/u)).map((sentence) => sentence.trim()).filter(Boolean);
     for (const sentence of sentences) {
-      if (bareAbstractSubject(sentence)) {
+      if (abstractSubjectFinding(sentence)) {
         violations.push({ category: "abstract_subject_grammar", detail: `Abstract quality acts as the grammatical subject: ${sentence}` });
       }
       if (/\bhere\b/iu.test(sentence)) {

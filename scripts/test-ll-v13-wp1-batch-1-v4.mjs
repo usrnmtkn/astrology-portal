@@ -53,12 +53,14 @@ for (let index = 0; index < outputRows.length; index += 1) {
     .violations.filter((item) => ["abstract_subject_grammar", "chart_deixis"].includes(item.category));
   if (selfNewGate.some((item) => item.category === "abstract_subject_grammar")) abstractFailureKeys.push(candidate.rowKey);
 }
-assert.deepEqual(abstractFailureKeys, [
+for (const historicalFixture of [
   "mars|opposition|north_node",
   "mercury|trine|jupiter",
   "moon|trine|north_node",
   "moon|trine|saturn"
-]);
+]) assert.ok(abstractFailureKeys.includes(historicalFixture), historicalFixture);
+// This is a historical V4 packet. A stronger later grammar gate may find
+// additional failures here; V6 is the artifact required to clear the gate.
 const selfUniqueness = validateCrossRowUniqueness(artifact.rows.map((row) => ({ rowKey: row.rowKey, copy: row.self.copy })));
 const friendUniqueness = validateCrossRowUniqueness(artifact.rows.map((row) => ({ rowKey: row.rowKey, copy: row.friend.copy })), { bannedSentences: BANNED_FRIEND_SENTENCES });
 assert.equal(selfUniqueness.sentenceCount, 527);
