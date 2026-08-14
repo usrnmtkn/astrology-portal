@@ -247,6 +247,7 @@ export interface TransitRenderResult {
   headline: string;
   body: string;
   parts: string[];
+  partSourceKeys?: string[][];
   templateKey: string;
   contentKey?: string;
   sourceKeys?: string[];
@@ -827,7 +828,15 @@ export function createTransitSynastryRenderer(
     return r ? ((voice === "you" ? r.body_you : r.body_they) ?? null) : null;
   };
   const result = (c: AuthoredCard, templateKey: string): TransitRenderResult =>
-    ({ headline: c.headline || "", body: c.body as string, parts: [c.body as string], templateKey, contentKey: c.contentKey });
+    ({
+      headline: c.headline || "",
+      body: c.body as string,
+      parts: [c.body as string],
+      partSourceKeys: [[c.contentKey]],
+      sourceKeys: [c.contentKey],
+      templateKey,
+      contentKey: c.contentKey
+    });
 
   const fillKeep = (body: string, ctx: Ctx): string => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => (ctx[k] != null ? String(ctx[k]) : `{{${k}}}`)).trim();
 
@@ -847,33 +856,60 @@ export function createTransitSynastryRenderer(
         const pick = (c: AuthoredCard) => (v === "you" ? (c.body_you ?? c.body) : (c.body_they ?? c.body)) as string;
         const nameCtx: Ctx = { Name: v === "they" ? voice : "" };
         const parts = [fillKeep(pick(intro), nameCtx), fillKeep(pick(synth), nameCtx)];
+        const partSourceKeys = [[intro.contentKey], [synth.contentKey]];
         const headline = v === "you"
           ? `${title(planet)} moving through your ${ordinal(house)} house`
           : `${title(planet)} moving through ${voice}'s ${ordinal(house)} house`;
         if (isRetrograde) {
-          const ro = hookVoice(`fallback-hook/transit-house-retro-overlay/${planet}`, v);
-          if (ro) parts.push(fillKeep(ro, { Name: v === "they" ? voice : "" } as Ctx));
+          const retroKey = `fallback-hook/transit-house-retro-overlay/${planet}`;
+          const ro = hookVoice(retroKey, v);
+          if (ro) {
+            parts.push(fillKeep(ro, { Name: v === "they" ? voice : "" } as Ctx));
+            partSourceKeys.push([retroKey]);
+          }
         }
         for (const e of events ?? []) {
           try {
             const quality = EVENT_QUALITY[e.aspect];
             const cls = quality === "conjunction" ? (CONJ_SOFT.has(planet) ? "soft" : "hard") : quality;
-            const frameRaw = quality ? hookVoice(`fallback-hook/transit-house-event-frame/${planet}`, v) : null;
+            const frameKey = `fallback-hook/transit-house-event-frame/${planet}`;
+            const frameRaw = quality ? hookVoice(frameKey, v) : null;
             const windowClause = e.window ? (/^(until|through|till|before|by)\b/i.test(e.window) ? ` ${e.window.charAt(0).toLowerCase()}${e.window.slice(1)}` : ` until ${e.window}`) : "";
             const frame = frameRaw ? fillKeep(frameRaw, { houseOrdinal: ordinal(house), natalTitle: title(e.natal), Name: v === "they" ? voice : "", windowClause, aspectVerb: EVENT_VERB[e.aspect] } as Ctx) : null;
-            const wants = sign ? hookVoice(`fallback-hook/transit-house-event-wants/${planet}/${sign}`, v) : null;
-            const holds = hookVoice(`fallback-hook/transit-house-event-natal/${e.natal}`, v);
-            const scenes = hookVoice(`fallback-hook/transit-house-event-scenes/${planet}/${e.natal}/${cls}`, v)
-              ?? hookVoice(`fallback-hook/transit-effect-${cls}/${planet}/${e.natal}`, v);
-            if (frame && wants && holds && scenes) {
+            const wantsKey = `fallback-hook/transit-house-event-wants/${planet}/${sign}`;
+            const holdsKey = `fallback-hook/transit-house-event-natal/${e.natal}`;
+            const sceneKeys = [
+              `fallback-hook/transit-house-event-scenes/${planet}/${e.natal}/${cls}`,
+              `fallback-hook/transit-effect-${cls}/${planet}/${e.natal}`
+            ];
+            const wants = sign ? hookVoice(wantsKey, v) : null;
+            const holds = hookVoice(holdsKey, v);
+            const sceneKey = sceneKeys.find((key) => Boolean(hookVoice(key, v))) ?? null;
+            const scenes = sceneKey ? hookVoice(sceneKey, v) : null;
+            if (frame && wants && holds && scenes && sceneKey) {
               parts.push(`${frame} ${wants}; ${holds}. ${scenes}`.trim());
+              partSourceKeys.push([frameKey, wantsKey, holdsKey, sceneKey]);
             } else {
               const asp = renderTransitAspect({ transiting: planet, natal: e.natal, aspect: e.aspect, voice, window: e.window ?? null });
               parts.push(frame ? `${frame} ${asp.body}` : asp.body);
+              partSourceKeys.push([
+                ...(frame ? [frameKey] : []),
+                ...(asp.contentKey ? [asp.contentKey] : []),
+                asp.templateKey
+              ]);
             }
           } catch { /* SOURCE_GAP on an event never blocks the house card */ }
         }
-        return { headline, body: parts.join("\n\n"), parts, templateKey: "authored/transit-house-layered", contentKey: synth.contentKey, window: win ?? WINDOW_HOUSE[planet] ?? null };
+        return {
+          headline,
+          body: parts.join("\n\n"),
+          parts,
+          partSourceKeys,
+          sourceKeys: [...new Set(partSourceKeys.flat())],
+          templateKey: "authored/transit-house-layered",
+          contentKey: synth.contentKey,
+          window: win ?? WINDOW_HOUSE[planet] ?? null
+        };
       }
     }
     if (v === "you") { const c = card(`authored/transit-house/${planet}/${house}`); if (c) return result(c, "authored/transit-house"); }
