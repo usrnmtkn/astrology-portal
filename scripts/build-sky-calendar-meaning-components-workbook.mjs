@@ -12,6 +12,7 @@ import {
   signs,
   wordingForSignUnit,
 } from "./sky-calendar-meaning-component-wording.mjs";
+import { assertManifestationShapeCap } from "./sky-calendar-manifestation-shape.mjs";
 
 const repoRoot = process.cwd();
 const reviewDir = path.join(
@@ -203,6 +204,7 @@ const elements = elementComponents.map((record) => {
 const OPENING_CAP = 4;
 const JOIN_PHRASE_CAP = 4;
 const MANIFESTATION_REPEAT_CAP = 2;
+const MANIFESTATION_SHAPE_CAP = 3;
 const DETAILS_LANGUAGE_REPEAT_CAP = 2;
 const EVIDENCE_LAYER_SHA256 = "0ceb85f5897fb42238dfdd69e7b02271f87befe202f009da8659add9b9337c23";
 
@@ -242,6 +244,8 @@ function countDistribution(entries) {
 
 const openingCounts = countValues(signUnits.map((row) => openingConstruction(row.combined_position)));
 const manifestationCounts = countValues(signUnits.flatMap((row) => row.reader_manifestations));
+const manifestationShapeReport = assertManifestationShapeCap(signUnits, MANIFESTATION_SHAPE_CAP);
+const manifestationShapeCounts = manifestationShapeReport.shapes;
 const detailsLanguageCounts = countValues(signUnits.map((row) => row.details_language));
 const connectiveCounts = countValues(signUnits.flatMap((row) => connectiveNgrams(row.combined_position)));
 const detailsCopied = signUnits.filter((row) => row.details_language === row.combined_position).map((row) => row.key);
@@ -254,16 +258,20 @@ const wordingQuality = {
     openingConstruction: OPENING_CAP,
     connectiveNgram: JOIN_PHRASE_CAP,
     repeatedManifestation: MANIFESTATION_REPEAT_CAP,
+    manifestationShape: MANIFESTATION_SHAPE_CAP,
     repeatedDetailsLanguage: DETAILS_LANGUAGE_REPEAT_CAP,
   },
   openingConstructionDistribution: countDistribution(openingCounts),
   openingConstructions: openingCounts,
   manifestationRepeatDistribution: countDistribution(manifestationCounts),
   repeatedManifestations: manifestationCounts.filter(([, count]) => count > 1),
+  manifestationShapeDistribution: countDistribution(manifestationShapeCounts),
+  manifestationShapes: manifestationShapeCounts,
   connectiveNgramDistribution: countDistribution(connectiveCounts),
   repeatedConnectiveNgrams: connectiveCounts.filter(([, count]) => count > 1),
   maximumOpeningConstructionUse: openingCounts[0]?.[1] ?? 0,
   maximumManifestationUse: manifestationCounts[0]?.[1] ?? 0,
+  maximumManifestationShapeUse: manifestationShapeCounts[0]?.[1] ?? 0,
   maximumDetailsLanguageUse: detailsLanguageCounts[0]?.[1] ?? 0,
   maximumConnectiveNgramUse: connectiveCounts[0]?.[1] ?? 0,
   detailsCopiedFromCombinedPosition: detailsCopied,
@@ -538,7 +546,7 @@ titleBand(
   "Frame uniqueness gate",
   "Beats are required. Connective wording is not. The future composer must vary openers and connective constructions across the corpus.",
 );
-gateSheet.getRange("A4:F11").values = [
+gateSheet.getRange("A4:F12").values = [
   ["Rule", "Scope", "Cap", "Pass example", "Fail example", "Reason"],
   ["Exact sentence uniqueness", "Forecast + Details", 1, "Every sentence appears once", "Same full sentence in two cards", "Prevents copied frames"],
   ["Forecast opener construction", "Forecast first sentence", 4, "Four or fewer uses", "Five cards begin with the same normalized opening", "Prevents opener monoculture"],
@@ -547,31 +555,33 @@ gateSheet.getRange("A4:F11").values = [
   ["Required forecast beats", "Each forecast", 4, "All four meanings present", "A moral replaces what can move", "Meaning is required even when wording varies"],
   ["Required Details beats", "Each Details block", 4, "Reader order preserved", "Planet-by-planet concatenation", "Astrology explains the reader beats"],
   ["Verbatim component emission", "All components", 0, "Composer paraphrases and integrates", "A stored component appears as a full sentence", "Components govern meaning, not prose"],
+  ["Manifestation shape reuse", "Sign-unit manifestations", 3, "Planet-sign events use distinct grammar", "A sign frame survives after planet nouns are stripped", "String uniqueness alone does not catch slot templates"],
 ];
 gateSheet.getRange("A4:F4").format = { fill: teal, font: { bold: true, color: white }, wrapText: true };
-gateSheet.getRange("A5:F11").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+gateSheet.getRange("A5:F12").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
 [["A", 34], ["B", 28], ["C", 10], ["D", 38], ["E", 42], ["F", 38]].forEach(([column, width]) => {
   gateSheet.getRange(`${column}:${column}`).format.columnWidth = width;
 });
 
 titleBand(
   wordingQaSheet,
-  "A1:E1",
+  "A1:H1",
   "Wording-layer QA",
-  "The evidence layer is hash-locked. These checks show whether fixed joins, repeated bullets, or opener monoculture have returned.",
+  "The evidence layer is hash-locked. These checks show whether fixed joins, repeated bullets, structural slot templates, or opener monoculture have returned.",
 );
-wordingQaSheet.getRange("A4:C11").values = [
+wordingQaSheet.getRange("A4:C12").values = [
   ["Measure", "Result", "Cap"],
   ["Evidence-layer SHA-256", evidenceLayerSha256, "locked"],
   ["Mechanical join rows", oldJoinRows.length, 0],
   ["Details copied from combined position", detailsCopied.length, 0],
   ["Maximum opening construction use", wordingQuality.maximumOpeningConstructionUse, OPENING_CAP],
   ["Maximum exact manifestation use", wordingQuality.maximumManifestationUse, MANIFESTATION_REPEAT_CAP],
+  ["Maximum manifestation skeleton use", wordingQuality.maximumManifestationShapeUse, MANIFESTATION_SHAPE_CAP],
   ["Maximum details-language use", wordingQuality.maximumDetailsLanguageUse, DETAILS_LANGUAGE_REPEAT_CAP],
   ["Maximum connective n-gram use", wordingQuality.maximumConnectiveNgramUse, JOIN_PHRASE_CAP],
 ];
 wordingQaSheet.getRange("A4:C4").format = { fill: teal, font: { bold: true, color: white } };
-wordingQaSheet.getRange("A5:C11").format = { fill: light, wrapText: true, borders: { insideHorizontal: { style: "thin", color: line } } };
+wordingQaSheet.getRange("A5:C12").format = { fill: light, wrapText: true, borders: { insideHorizontal: { style: "thin", color: line } } };
 
 const topOpeningRows = wordingQuality.openingConstructions.slice(0, 20).map(([construction, count]) => [construction, count]);
 wordingQaSheet.getRange("A13:B13").values = [["Opening construction", "Uses"]];
@@ -584,12 +594,22 @@ wordingQaSheet.getRange(`D5:E${4 + wordingQuality.manifestationRepeatDistributio
 wordingQaSheet.getRange("D4:E4").format = { fill: teal, font: { bold: true, color: white } };
 wordingQaSheet.getRange(`D5:E${4 + wordingQuality.manifestationRepeatDistribution.length}`).format = { fill: light };
 
+wordingQaSheet.getRange("G4:H4").values = [["Skeleton occurrence count", "Distinct skeletons"]];
+wordingQaSheet.getRange(`G5:H${4 + wordingQuality.manifestationShapeDistribution.length}`).values = wordingQuality.manifestationShapeDistribution.map((row) => [row.occurrences, row.distinctValues]);
+wordingQaSheet.getRange("G4:H4").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`G5:H${4 + wordingQuality.manifestationShapeDistribution.length}`).format = { fill: light };
+
 wordingQaSheet.getRange("D13:E13").values = [["Repeated connective n-gram", "Uses"]];
 const topConnectiveRows = wordingQuality.repeatedConnectiveNgrams.slice(0, 20).map(([construction, count]) => [construction, count]);
 wordingQaSheet.getRange(`D14:E${13 + topConnectiveRows.length}`).values = topConnectiveRows;
 wordingQaSheet.getRange("D13:E13").format = { fill: teal, font: { bold: true, color: white } };
 wordingQaSheet.getRange(`D14:E${13 + topConnectiveRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
-[["A", 38], ["B", 48], ["C", 12], ["D", 44], ["E", 16]].forEach(([column, width]) => {
+wordingQaSheet.getRange("G13:H13").values = [["Manifestation skeleton", "Uses"]];
+const topShapeRows = wordingQuality.manifestationShapes.slice(0, 20).map(([construction, count]) => [construction, count]);
+wordingQaSheet.getRange(`G14:H${13 + topShapeRows.length}`).values = topShapeRows;
+wordingQaSheet.getRange("G13:H13").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`G14:H${13 + topShapeRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
+[["A", 38], ["B", 48], ["C", 12], ["D", 44], ["E", 16], ["F", 3], ["G", 64], ["H", 12]].forEach(([column, width]) => {
   wordingQaSheet.getRange(`${column}:${column}`).format.columnWidth = width;
 });
 wordingQaSheet.freezePanes.freezeRows(3);
@@ -615,8 +635,8 @@ for (const [sheetName, range] of [
   ["Aspect Mechanisms", "A1:H8"],
   ["Modality Units", "A1:H12"],
   ["Element Units", "A1:H12"],
-  ["Frame Gate", "A1:F11"],
-  ["Wording QA", "A1:E33"],
+  ["Frame Gate", "A1:F12"],
+  ["Wording QA", "A1:H33"],
 ]) {
   const preview = await workbook.render({ sheetName, range, scale: 1, format: "png" });
   await fs.writeFile(
