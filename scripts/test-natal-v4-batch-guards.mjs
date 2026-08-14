@@ -2,7 +2,7 @@
 
 import assert from "node:assert/strict";
 import { validateCopy } from "../src/astro-writing/validateCopy.mjs";
-import { validateBatchCadence, validateFriendPair } from "../src/astro-writing/natalBatchGuards.mjs";
+import { BANNED_FRIEND_SENTENCES, validateBatchCadence, validateCrossRowUniqueness, validateFriendPair } from "../src/astro-writing/natalBatchGuards.mjs";
 
 const fixtures = [
   "Meaning often arrives through tone and association before it arrives as a clean list of facts.",
@@ -31,4 +31,39 @@ assert.equal(validateFriendPair({
   friendCopy: "People start looking at Name when the meeting reaches the decision nobody wants to make. Name names the tradeoff on the whiteboard, and the room finally chooses a direction."
 }).passed, true);
 
-console.log("Natal V4 guards passed: abstract subjects, chart deixis, batch cadence, and independent Friend entry.");
+const newlyCaught = [
+  "Desire makes it easy to count the goal and ignore the spending.",
+  "Curiosity keeps supplying better material for the next plan.",
+  "Trust can speed up learning without making every idea the teacher offers correct.",
+  "Feeling and reason cooperate well enough that you can stay useful under pressure."
+];
+for (const copy of newlyCaught) {
+  const result = validateCopy(copy, { family: "natal-aspect-exact", register: "collective", plan: { astrologySupport: "present" } });
+  assert.ok(result.violations.some((item) => item.category === "abstract_subject_grammar"), copy);
+}
+
+const exactFailure = validateCrossRowUniqueness([
+  { rowKey: "one", copy: "People see Name finish the report." },
+  { rowKey: "two", copy: "People see Name finish the report." }
+]);
+assert.equal(exactFailure.passed, false);
+assert.equal(exactFailure.exactDuplicateGroups.length, 1);
+const nearFailure = validateCrossRowUniqueness([
+  { rowKey: "one", copy: "People see Name finish the difficult report before lunch." },
+  { rowKey: "two", copy: "People watch Name finish the difficult report before lunch." }
+]);
+assert.equal(nearFailure.passed, false);
+assert.ok(nearFailure.nearDuplicates[0].score > 0.85);
+const seriesFailure = validateCrossRowUniqueness([
+  { rowKey: "one", copy: "People see the pattern in a call, a bill, or a deadline." },
+  { rowKey: "two", copy: "Friends notice the evidence in a call, a bill, or a deadline." }
+]);
+assert.equal(seriesFailure.passed, false);
+assert.equal(seriesFailure.sharedThreeItemSeries.length, 1);
+const bannedFailure = validateCrossRowUniqueness([
+  { rowKey: "one", copy: BANNED_FRIEND_SENTENCES[0] }
+], { bannedSentences: BANNED_FRIEND_SENTENCES });
+assert.equal(bannedFailure.passed, false);
+assert.equal(bannedFailure.bannedFindings.length, 1);
+
+console.log("Natal batch guards passed: grammatical subjects, chart deixis, cadence, independent Friend entry, exact/near uniqueness, shared-series, and banned fixtures.");
