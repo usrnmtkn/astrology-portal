@@ -1872,18 +1872,16 @@ function normalizeDailyTimingSurface(generated: LiveGeneratedContent | null, sum
   };
 }
 
-function dailyGlanceDriver(currentSky: SkySnapshot, natalSky: SkySnapshot) {
+function dailyGlanceDriver(currentSky: SkySnapshot, natalSky: SkySnapshot, birthTimeUnknown = false) {
   const moon = currentSky.positions.find((position) => position.planet === "Moon");
 
   if (!moon || typeof moon.longitude !== "number") {
     return null;
   }
 
-  const house = typeof moon.house === "number" && moon.house >= 1 && moon.house <= 12
-    ? moon.house
-    : natalSky.ascendant
-      ? wholeSignHouseForSign(moon.sign, natalSky.ascendant)
-      : null;
+  const house = !birthTimeUnknown && natalSky.ascendant
+    ? wholeSignHouseForSign(moon.sign, natalSky.ascendant)
+    : null;
   const driver = selectDailyGlanceDriver(moon.longitude, natalSky.positions, house);
 
   return driver?.kind === "aspect"
@@ -1902,8 +1900,14 @@ const pairDailyAspectGroups: Record<string, string> = {
 
 
 
-function dailyGlanceGeneratedContent(profile: UserProfile, currentSky: SkySnapshot, natalSky: SkySnapshot, targetDate: string): LiveGeneratedContent | null {
-  const driver = dailyGlanceDriver(currentSky, natalSky);
+function dailyGlanceGeneratedContent(
+  profile: UserProfile,
+  currentSky: SkySnapshot,
+  natalSky: SkySnapshot,
+  targetDate: string,
+  birthTimeUnknown = false
+): LiveGeneratedContent | null {
+  const driver = dailyGlanceDriver(currentSky, natalSky, birthTimeUnknown);
 
   if (!driver) {
     return null;
@@ -12129,7 +12133,13 @@ export function App() {
       return;
     }
 
-    const rendered = dailyGlanceGeneratedContent(userProfile, selectedDateSky, profileNatalSky, skyDate);
+    const rendered = dailyGlanceGeneratedContent(
+      userProfile,
+      selectedDateSky,
+      profileNatalSky,
+      skyDate,
+      primaryChart.birthTime === "Time unknown"
+    );
 
     setPersonalTimingGenerated(rendered);
     setPersonalTimingGeneratedStatus(rendered ? "ready" : "error");
@@ -12139,7 +12149,8 @@ export function App() {
     skyDate,
     profileNatalSky,
     userProfile?.id,
-    userProfile?.charts[0]?.id
+    userProfile?.charts[0]?.id,
+    userProfile?.charts[0]?.birthTime
   ]);
 
   useEffect(() => {
@@ -15829,7 +15840,7 @@ function ProfileView({
     setWeeklyHoroscopeAssembly((current) => current
       ? { ...current, status: "loading" }
       : null);
-    const dailyDriver = currentSky ? dailyGlanceDriver(currentSky, natalSky) : null;
+    const dailyDriver = currentSky ? dailyGlanceDriver(currentSky, natalSky, unknownBirthTime) : null;
     const dailyServedUnitsByDate = dailyDriver
       ? {
           [targetDate]: [
@@ -15880,6 +15891,7 @@ function ProfileView({
     natalSky?.generatedAt,
     currentSky?.generatedAt,
     displayRising,
+    unknownBirthTime,
     targetDate
   ]);
   const profileTiming = savedBirthDate && !unknownBirthTime && natalSky?.ascendant
@@ -16213,13 +16225,13 @@ function ProfileView({
     );
   });
   const dailyMoon = currentSky?.positions.find((position) => position.planet === "Moon") ?? null;
-  const dailyMoonDriver = currentSky && natalSky ? dailyGlanceDriver(currentSky, natalSky) : null;
+  const dailyMoonDriver = currentSky && natalSky
+    ? dailyGlanceDriver(currentSky, natalSky, unknownBirthTime)
+    : null;
   const dailyMoonHouse = dailyMoon
-    ? typeof dailyMoon.house === "number" && dailyMoon.house >= 1 && dailyMoon.house <= 12
-      ? dailyMoon.house
-      : natalSky?.ascendant
-        ? wholeSignHouseForSign(dailyMoon.sign, natalSky.ascendant)
-        : null
+    ? !unknownBirthTime && natalSky?.ascendant
+      ? wholeSignHouseForSign(dailyMoon.sign, natalSky.ascendant)
+      : null
     : null;
   const dailyMoonLabel = (() => {
     if (!dailyMoonDriver || dailyMoonDriver.kind !== "aspect") return null;
@@ -16668,6 +16680,13 @@ function ProfileView({
     ? {
         headline: generatedDailyHeadline,
         summary: generatedDailySummary,
+        moonContext: dailyMoon
+          ? {
+              sign: dailyMoon.sign,
+              houseLabel: dailyMoonHouse ? `${ordinalHouse(dailyMoonHouse)} house` : null,
+              topic: dailyMoonHouse ? houseLifeAreas[dailyMoonHouse] || null : null
+            }
+          : undefined,
         writeup: generatedDailyWriteup,
         keyFactors: [],
         status: "ready" as const

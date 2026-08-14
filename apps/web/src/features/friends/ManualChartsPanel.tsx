@@ -324,7 +324,8 @@ export function ManualChartsPanel({
   function pairDailyDriver(
     currentSky: SkySnapshot,
     natalSky: SkySnapshot,
-    variant: number
+    variant: number,
+    birthTimeUnknown = false
   ) {
     const moon = currentSky.positions.find((position) => position.planet === "Moon");
 
@@ -332,11 +333,9 @@ export function ManualChartsPanel({
       return null;
     }
 
-    const house = typeof moon.house === "number" && moon.house >= 1 && moon.house <= 12
-      ? moon.house
-      : natalSky.ascendant
-        ? wholeSignHouseForSign(moon.sign, natalSky.ascendant)
-        : null;
+    const house = !birthTimeUnknown && natalSky.ascendant
+      ? wholeSignHouseForSign(moon.sign, natalSky.ascendant)
+      : null;
     const drivers = selectDailyGlanceDriverPool(
       moon.longitude,
       natalSky.positions,
@@ -378,7 +377,7 @@ export function ManualChartsPanel({
     birthTimeUnknown = false,
     userId?: string | null
   ): FriendDailyForecastView | null {
-    const driver = dailyGlanceDriver(currentSky, natalSky);
+    const driver = dailyGlanceDriver(currentSky, natalSky, birthTimeUnknown);
     const moon = currentSky.positions.find((position) => position.planet === "Moon") ?? null;
 
     if (!driver || !moon) return null;
@@ -388,9 +387,7 @@ export function ManualChartsPanel({
       : null;
     const moonContext: FriendDailyForecastView["moonContext"] = {
       sign: moon.sign,
-      houseLabel: moonHouse
-        ? `${possessiveLabel(ownerName)} ${ordinalHouse(moonHouse)} house`
-        : null,
+      houseLabel: moonHouse ? `${ordinalHouse(moonHouse)} house` : null,
       topic: moonHouse ? houseLifeAreas[moonHouse] || null : null
     };
 
@@ -1371,8 +1368,18 @@ export function ManualChartsPanel({
     // Pair Daily reuses the Daily At-a-Glance applying-contact selector, then
     // rotates only within its tightest three qualifying contacts. The canonical
     // selector returns the unchanged single house fallback when no contact applies.
-    const readerDriver = pairDailyDriver(currentSky, profileNatalSky, pairVariant);
-    const friendDriver = pairDailyDriver(currentSky, selectedChart.natalChart, pairVariant);
+    const readerDriver = pairDailyDriver(
+      currentSky,
+      profileNatalSky,
+      pairVariant,
+      profile.charts[0]?.birthTime === "Time unknown"
+    );
+    const friendDriver = pairDailyDriver(
+      currentSky,
+      selectedChart.natalChart,
+      pairVariant,
+      selectedChart.birthTimeUnknown
+    );
     if (!readerDriver || !friendDriver) return null;
 
     const driverSelection = { readerDriver, friendDriver, pairVariant };
