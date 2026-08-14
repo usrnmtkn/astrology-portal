@@ -196,7 +196,7 @@ assert.equal(
 );
 assert.match(
   appSource,
-  /friendDeferredFallbackRequested = friendRelationshipContentRequests\.has\("compatibility"\)[\s\S]*friendRelationshipContentRequests\.has\("transits"\)[\s\S]*friendRelationshipContentRequests\.has\("synastry"\)[\s\S]*friendRelationshipContentRequests\.has\("composite"\)[\s\S]*loadDeferredFallbackArchitectureV3Bundle\(\)/,
+  /friendDeferredFallbackRequested = friendNatalContentRequested[\s\S]*friendRelationshipContentRequests\.has\("compatibility"\)[\s\S]*friendRelationshipContentRequests\.has\("transits"\)[\s\S]*friendRelationshipContentRequests\.has\("synastry"\)[\s\S]*friendRelationshipContentRequests\.has\("composite"\)[\s\S]*loadDeferredFallbackArchitectureV3Bundle\(\)/,
   "Compatibility must load its deferred synastry rows while bare Friends and Natal-only views stay on the eager core."
 );
 assert.match(
