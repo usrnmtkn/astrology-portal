@@ -53,15 +53,13 @@ assert.ok(skuCatalog.skus.every((sku) => sku.price_cents === 0 && sku.stripe_pro
 assert.equal(reportSku("general_1_month").key, "general_1m", "Legacy entitlement keys must resolve to the compact catalog key.");
 assert.equal(birthProfileFromPersistedData({ profile: { charts: [{
   birthDate: "1979-02-18", birthTime: "11:20 aM",
-  birthLocation: { label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" },
-  natalChart: { ascendantLongitude: 71.15, midheavenLongitude: 316.6 }
+  birthLocation: { label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" }
 }] } }).birthTime, "11:20", "Fulfillment must normalize legacy human birth times before any calculation payload.");
 assert.deepEqual(birthProfileFromPersistedData({ profile: { charts: [{
   birthDate: "1979-02-18", birthTime: "11:20",
-  birthLocation: { label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" },
-  natalChart: { ascendantLongitude: 71.15, midheavenLongitude: 316.6 }
-}] } }).natalPointLongitudes, { Ascendant: 71.15, Midheaven: 316.6 },
-"Fulfillment must carry verified stored natal angles into the single report calculation source.");
+  birthLocation: { label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" }
+}] } }).birthLocation.coordinateSource, { provider: "legacy", sourceId: "unrecorded", resolution: "legacy_unprovenanced" },
+"Legacy charts must be marked unprovenanced instead of lending cached angles to a new calculation.");
 delete process.env.REPORT_BILLING_MODE;
 assert.equal(reportBillingMode(), "free_test");
 process.env.REPORT_BILLING_MODE = "stripe";
@@ -739,6 +737,17 @@ assert.equal(verifyReportFactLock({ ...draft, timing: "Mar 20 - Jun 22" }, froze
 }).passed, false, "Only the exact governed structural range may bypass event-date traceability.");
 assert.equal(verifyReportFactLock({ ...draft, body: "MAR 3 · FIXTURE_ONLY · FIXTURE_ONLY. · *A lunar eclipse falls on your natal Saturn.*" }, frozen).passed, true);
 assert.equal(verifyReportFactLock({ ...draft, body: "MAR 3 · FIXTURE_ONLY · FIXTURE_ONLY. · *Pluto squares your natal Venus.*" }, frozen).passed, false);
+const saturnTuple = (date, detail) => verifyReportFactLock({ ...draft, body: `${date} · FIXTURE_ONLY · FIXTURE_ONLY. · *${detail}*` }, frozen);
+assert.equal(saturnTuple("MAY 19", "Saturn sextiles your natal Ascendant in your natal 1st house, pass 1 of 3 (direct).").passed, true);
+const falsePair = saturnTuple("MAY 14", "Saturn sextiles your natal Ascendant in your natal 1st house, pass 1 of 3 (direct).");
+assert.deepEqual(falsePair, { passed: false, issues: [{
+  code: "unresolved_event_tuple",
+  value: "Saturn sextiles your natal Ascendant in your natal 1st house, pass 1 of 3 (direct).",
+  message: "The date, aspect, bodies, house, motion, and pass claim do not resolve to one calculated event ID."
+}] });
+assert.equal(saturnTuple("MAY 19", "Saturn sextiles your natal Ascendant in your natal 1st house, pass 2 of 3 (direct).").passed, false, "The right aspect with the wrong pass must fail.");
+assert.equal(saturnTuple("MAY 19", "Saturn sextiles your natal Ascendant in your natal 2nd house, pass 1 of 3 (direct).").passed, false, "The right date with the wrong house must fail.");
+assert.equal(saturnTuple("MAY 19", "Saturn retrograde sextiles your natal Ascendant in your natal 1st house, pass 1 of 3.").passed, false, "The right bodies with the wrong motion must fail.");
 
 const refundCalls = [];
 await revokeEntitlement({
@@ -901,6 +910,7 @@ assert.equal(
 );
 assert.equal(productionShapedUnitWrites[0].row.source_snapshot.renderMetadata.timing, "FIXTURE_ONLY_TIMING.",
   "The report-unit persistence layer must preserve the reader-facing season date range through assembly and delivery.");
+assert.equal(productionShapedUnitWrites[0].row.display_order, 0, "Unit persistence must store the governed display order, never infer it from content_key.");
 assert.deepEqual({
   user_id: productionShapedUnitWrites[0].row.user_id,
   subject_type: productionShapedUnitWrites[0].row.subject_type,
@@ -1001,8 +1011,8 @@ function fixtureUnitDraft(unitId) {
   const seasonTiming = {
     "winter-current": "Feb 18 - Mar 20",
     spring: "Mar 20 - Jun 21",
-    summer: "Jun 21 - Sep 22",
-    autumn: "Sep 22 - Dec 21",
+    summer: "Jun 21 - Sep 23",
+    autumn: "Sep 23 - Dec 21",
     "winter-next": "Dec 21 - Feb 17"
   };
   return {
@@ -1182,7 +1192,7 @@ const releaseInserts = [];
 const releaseResult = await releaseReviewedReport({
   admin: {
     async update(table, query, patch) { releaseUpdates.push({ table, query, patch }); return [{ id: completedCompReport.id }]; },
-    async request() { return []; },
+    async request(path) { return path.startsWith("user_generated_interpretations?") ? store.unitRows(completedCompReport.id) : []; },
     async insert(table, row) { releaseInserts.push({ table, row }); return [row]; }
   },
   report: completedCompReport,
@@ -1191,6 +1201,7 @@ const releaseResult = await releaseReviewedReport({
 });
 assert.deepEqual(releaseResult, { ok: true, deliveryMode: "log_only" });
 assert.ok(releaseUpdates.some((entry) => entry.table === "user_reports" && entry.patch.fulfillment_status === "live"));
+assert.ok(releaseUpdates.some((entry) => entry.patch.review_document?.chapters?.[0]?.id === "overview" && entry.patch.review_document_bytes === JSON.stringify(entry.patch.review_document) && /^[a-f0-9]{64}$/u.test(entry.patch.review_document_hash)), "Release must atomically freeze the exact owner-reviewed delivery bytes.");
 assert.ok(releaseInserts.some((entry) => entry.table === "report_audit_samples"));
 assert.ok(releaseInserts.some((entry) => entry.table === "report_delivery_events" && entry.row.status === "queued" && entry.row.provider === "log-only"));
 

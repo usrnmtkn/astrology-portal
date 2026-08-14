@@ -71,7 +71,7 @@ class MemoryStore {
 const natalSubject = {
   name: "FIXTURE_ONLY_SUBJECT",
   datetime: { date: "1979-02-18", time: "11:20", timeKnown: true, timeZone: "America/New_York" },
-  location: { label: "FIXTURE_ONLY_LOCATION", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" }
+  location: { label: "FIXTURE_ONLY_LOCATION", latitude: 40.7831, longitude: -73.9712, timeZone: "America/New_York", coordinateSource: { provider: "owner_ruling_2026-08-14", sourceId: "manhattan-borough-centroid", resolution: "borough_centroid" } }
 };
 const input = {
   userId: "fixture-user",
@@ -81,8 +81,7 @@ const input = {
   reportDomain: "general",
   reportHorizon: "1_month",
   start: "2026-02-18T01:59:11Z",
-  end: "2026-03-18T01:59:11Z",
-  natalPointLongitudes: { Ascendant: 71.15, Midheaven: 316.6 }
+  end: "2026-03-18T01:59:11Z"
 };
 const store = new MemoryStore();
 let calls = 0;
@@ -97,6 +96,7 @@ const astroClient = {
       reportHorizon: request.reportHorizon,
       startsAt: request.start,
       endsAt: request.end,
+      natal: { metadata: { ephemeris: { actualEngine: "swiss", fallback: false }, chartProvenance: { provenanceHash: "a".repeat(64) } } },
       slowTransitArcs: [],
       lunarEvents: []
     };
@@ -180,7 +180,8 @@ assert.equal(fetchCalls[4].url, "https://fixture.invalid/timing/report-window");
 const sent = JSON.parse(fetchCalls[4].init.body);
 assert.equal(sent.includeSolarReturn, false);
 assert.equal(sent.includeContentFacts, false);
-assert.deepEqual(sent.natalPointLongitudes, { Ascendant: 71.15, Midheaven: 316.6 });
+assert.equal("natalPointLongitudes" in sent, false, "Cached angles must never enter the canonical report calculation request.");
+assert.equal(sent.natalSubject.location.coordinateSource.sourceId, "manhattan-borough-centroid");
 assert.equal(normalizedWindow.slowTransitArcs[0].passes[0].exactAtDate, "2026-05-18",
   "All report prose dates must be normalized once through the report-location timezone.");
 assert.equal(normalizeReportFactDates({ occursAt: "2026-10-07T02:10:26Z" }, "America/New_York").occursAtDate, "2026-10-06");

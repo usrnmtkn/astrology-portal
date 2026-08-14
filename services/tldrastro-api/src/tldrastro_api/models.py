@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any, Dict, List, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class HouseSystem(str, Enum):
@@ -26,11 +26,18 @@ class DateTimeInput(BaseModel):
     utc: Optional[str] = Field(None, examples=["1994-04-12T12:35:00.000Z"])
 
 
+class CoordinateSource(BaseModel):
+    provider: str
+    sourceId: str
+    resolution: Literal["municipal_centroid", "borough_centroid", "legacy_unprovenanced"]
+
+
 class LocationInput(BaseModel):
     label: str = Field(..., examples=["New York, NY"])
     latitude: float = Field(..., ge=-90, le=90)
     longitude: float = Field(..., ge=-180, le=180)
     timeZone: Optional[str] = Field(None, examples=["America/New_York"])
+    coordinateSource: Optional[CoordinateSource] = None
 
 
 class TimezoneRequest(BaseModel):
@@ -151,12 +158,20 @@ class EphemerisProvenance(BaseModel):
     calculations: int = 0
 
 
+class ChartCalculationProvenance(BaseModel):
+    schemaVersion: Literal["canonical-natal-v1"] = "canonical-natal-v1"
+    inputHash: str
+    resultHash: str
+    provenanceHash: str
+
+
 class ChartMetadata(BaseModel):
     houseSystem: HouseSystem
     zodiac: Zodiac
     calculatedAt: str
     inputWarnings: List[str] = Field(default_factory=list)
     ephemeris: Optional[EphemerisProvenance] = None
+    chartProvenance: Optional[ChartCalculationProvenance] = None
 
 
 class NatalChartResponse(BaseModel):
@@ -374,6 +389,8 @@ class SolarReturnResponse(BaseModel):
 
 
 class ReportWindowRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     natalSubject: ChartSubject
     start: str = Field(..., examples=["2026-02-18T01:59:00Z"])
     end: str = Field(..., examples=["2027-02-18T07:40:00Z"])
@@ -382,7 +399,6 @@ class ReportWindowRequest(BaseModel):
     settings: ChartSettings = Field(default_factory=ChartSettings)
     includeSolarReturn: bool = True
     includeContentFacts: bool = False
-    natalPointLongitudes: Dict[str, float] = Field(default_factory=dict)
 
 
 class ReportTransitPass(BaseModel):
@@ -417,6 +433,10 @@ class ReportKeyDate(BaseModel):
     transitPlanet: Optional[str] = None
     natalPoint: Optional[str] = None
     aspect: Optional[str] = None
+    natalHouse: Optional[int] = None
+    motion: Literal["direct", "retrograde"]
+    passNumber: int = Field(..., ge=1)
+    passCount: int = Field(..., ge=1)
     category: Literal["WORK", "SELF", "SEX & LOVE", "FRIENDS & FAMILY"]
     score: int = Field(..., ge=0)
     exactAt: str

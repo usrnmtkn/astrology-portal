@@ -22,6 +22,15 @@ def test_report_window_reproduces_owner_transit_and_eclipse_contract():
 
     assert response.status_code == 200, response.text
     body = response.json()
+    assert body["natal"]["angles"]["Ascendant"]["degree"] == 11
+    assert body["natal"]["angles"]["Ascendant"]["minute"] == 9
+    assert body["natal"]["metadata"]["chartProvenance"]["provenanceHash"]
+    assert body["natal"]["metadata"]["ephemeris"]["requestedEngine"] == "swiss"
+    changed_source = json.loads(json.dumps(FIXTURE["natalSubject"]))
+    changed_source["location"]["coordinateSource"]["sourceId"] = "different-centroid-record"
+    changed = client.post("/chart/natal", json={"subject": changed_source, "includeContentFacts": False})
+    assert changed.status_code == 200
+    assert changed.json()["metadata"]["chartProvenance"]["provenanceHash"] != body["natal"]["metadata"]["chartProvenance"]["provenanceHash"]
     arcs = {
         (arc["transitPlanet"], arc["natalPoint"], arc["aspect"]): arc
         for arc in body["slowTransitArcs"]
@@ -103,3 +112,17 @@ def test_neptune_and_pluto_self_conjunctions_are_not_returns():
     assert _is_return("Neptune", "Neptune", "conjunction") is False
     assert _is_return("Pluto", "Pluto", "conjunction") is False
     assert _is_return("Jupiter", "Jupiter", "conjunction") is True
+
+
+def test_report_window_rejects_unprovenanced_cached_angle_overrides():
+    response = client.post(
+        "/timing/report-window",
+        json={
+            "natalSubject": FIXTURE["natalSubject"],
+            "location": FIXTURE["returnLocation"],
+            **FIXTURE["window"],
+            "natalPointLongitudes": {"Ascendant": 71.15, "Midheaven": 316.6},
+        },
+    )
+    assert response.status_code == 422
+    assert "natalPointLongitudes" in response.text
