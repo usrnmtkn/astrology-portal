@@ -216,7 +216,9 @@ const productionKeyDatesDraft = assembleDeterministicReportKeyDates({
         sentence: "Notice which basic routines lose time every time another commitment gets added."
       }]
     }
-  }]
+  }],
+  eligibleEventIds: ["jupiter-conjunction-jupiter:0", "solar_eclipse-2026-08-12", "jupiter-square-moon:0"],
+  interpretedEventIds: ["jupiter-conjunction-jupiter:0", "solar_eclipse-2026-08-12", "jupiter-square-moon:0"]
 });
 assert.deepEqual(validateReportKeyDateFormat(productionKeyDatesDraft), [],
   "Production-shaped deterministic key dates must pass the existing four-field Markdown format contract.");
@@ -1462,7 +1464,7 @@ async function seedAssemblyUnits(targetStore, report, bodyByUnit = {}) {
       }] : []
     }, {
       fulfillmentPassed: true,
-      ...(unitId === "key-dates" ? { deterministicAssembly: { schema: "report-key-dates-assembly.v3" } } : {}),
+      ...(unitId === "key-dates" ? { deterministicAssembly: { schema: "report-key-dates-assembly.v4" } } : {}),
       validatorResults: [],
       judge: { scores: passingJudgeScores, overall: 1, verdict: "pass", findings: [] },
       promptVersions: { judge: "report-judge-v3.1" },

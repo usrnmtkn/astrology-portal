@@ -6,6 +6,7 @@ import {
   validateReportKeyDateFormat
 } from "../api/_lib/report-assembly.js";
 import { verifyReportFactLock } from "../api/_lib/report-fact-lock.js";
+import { reportFactors } from "../api/_lib/report-generation.js";
 import { assembleDeterministicReportKeyDates, reportKeyDateEventManifest } from "../api/_lib/report-key-dates.js";
 
 type JsonRecord = Record<string, unknown>;
@@ -77,10 +78,19 @@ const sourceUnits = Object.entries(manifest.sourceUnits).map(([unitId, keyDates]
   };
 });
 const facts = report.facts as Record<string, unknown>;
+const eligibleManifest = reportKeyDateEventManifest(
+  facts,
+  "12_months",
+  reportFactors(facts).map((factor) => factor.id)
+);
+const eligibleEventIds = eligibleManifest.map((event) => event.eventId);
+const interpretedEventIds = Object.values(manifest.sourceUnits).flat().map((event) => event.eventId);
 const keyDatesDraft = assembleDeterministicReportKeyDates({
   reportHorizon: String(report.report_horizon) as "12_months",
   frozenFacts: facts,
-  sourceUnits
+  sourceUnits,
+  eligibleEventIds,
+  interpretedEventIds
 });
 const formatIssues = validateReportKeyDateFormat(keyDatesDraft, sourceUnits);
 const factLock = verifyReportFactLock(keyDatesDraft, facts);
@@ -103,7 +113,7 @@ const assemblyIssues = validateAssembledReport([...mechanicalCoherence.units, { 
 const blocking = [...formatIssues, ...factLock.issues, ...assemblyIssues.filter((issue) => issue.severity === "error")];
 if (blocking.length) throw new Error(`Repair manifest failed validation: ${JSON.stringify(blocking)}`);
 
-const eventIds = new Set(reportKeyDateEventManifest(facts, "12_months").map((event) => event.eventId));
+const eventIds = new Set(eligibleEventIds);
 for (const [unitId, entries] of Object.entries(manifest.sourceUnits)) {
   for (const entry of entries) if (!eventIds.has(entry.eventId)) throw new Error(`Unknown event ${entry.eventId} in ${unitId}.`);
 }
@@ -144,6 +154,10 @@ for (const sourceUnit of sourceUnits) {
       source_snapshot: {
         ...row.source_snapshot as JsonRecord,
         keyDateEntries: sourceUnit.draft.keyDates,
+        keyDateEligibleEventIds: eligibleEventIds.filter((eventId) => (
+          eligibleManifest.find((event) => event.eventId === eventId)?.sourceUnitId === sourceUnit.unitId
+        )),
+        keyDateInterpretedEventIds: sourceUnit.draft.keyDates.map((event) => event.eventId),
         assemblyRepairManifest: { schema: manifest.schema, provenance: manifest.provenance }
       }
     })
@@ -186,7 +200,7 @@ await request(`user_generated_interpretations?id=eq.${String(keyDateRow.id)}`, {
       ...keyDateRow.source_snapshot as JsonRecord,
       fulfillmentPassed: true,
       deterministicAssembly: {
-        schema: "report-key-dates-assembly.v3",
+        schema: "report-key-dates-assembly.v4",
         sourceUnitIds: sourceUnits.map((unit) => unit.unitId),
         writerChainSkipped: true,
         coldReadSkipped: true,

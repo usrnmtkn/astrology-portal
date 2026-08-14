@@ -7,6 +7,7 @@ export type ReportKeyDateSourceUnit = {
 
 export type ReportKeyDateEventManifestEntry = {
   eventId: string;
+  factorId: string;
   occursAt: string;
   dateLabel: string;
   attribution: string;
@@ -25,6 +26,7 @@ type LocatedSentence = {
 
 type KeyDateEvent = {
   id: string;
+  factorId: string;
   occursAt: string;
   sortAt: number;
   attribution: string;
@@ -141,6 +143,7 @@ function slowTransitEvents(root: FactRecord): KeyDateEvent[] {
         : `${planet}${motion === "retrograde" ? " retrograde" : ""} ${aspectVerb(aspect)} your natal ${natalPoint}${passClause}.`;
       return [{
         id: `${words(arc.id) || `${planet}-${aspect}-${natalPoint}`}:${passIndex}`,
+        factorId: words(arc.id) || `${planet}-${aspect}-${natalPoint}`,
         occursAt: exactAt,
         sortAt: Date.parse(exactAt),
         attribution,
@@ -171,6 +174,7 @@ function eclipseEvents(root: FactRecord): KeyDateEvent[] {
       : `A ${eclipseKind} eclipse falls in your natal ${ordinal(house)} house.`;
     return [{
       id: words(event.id) || `${kind}:${occursAt}`,
+      factorId: words(event.id) || `${kind}:${occursAt}`,
       occursAt,
       sortAt: Date.parse(occursAt),
       attribution,
@@ -229,14 +233,19 @@ function eventSourceUnitId(root: FactRecord, horizon: ReportHorizon, sortAt: num
 
 export function reportKeyDateEventManifest(
   frozenFacts: Record<string, unknown>,
-  reportHorizon: ReportHorizon
+  reportHorizon: ReportHorizon,
+  eligibleFactorIds?: Iterable<string>
 ): ReportKeyDateEventManifestEntry[] {
   const root = record(frozenFacts.reportWindow) ?? frozenFacts;
+  const eligible = eligibleFactorIds ? new Set(eligibleFactorIds) : null;
   return [...slowTransitEvents(root), ...eclipseEvents(root)]
     .filter((event) => Number.isFinite(event.sortAt))
+    .filter((event) => !eligible || eligible.has(event.factorId)
+      || [...eligible].some((factorId) => factorId.startsWith(`${event.factorId}-`)))
     .sort((left, right) => left.sortAt - right.sortAt || left.id.localeCompare(right.id))
     .map((event) => ({
       eventId: event.id,
+      factorId: event.factorId,
       occursAt: event.occursAt,
       dateLabel: dateLabel(event.occursAt),
       attribution: event.attribution,
@@ -248,9 +257,21 @@ export function assembleDeterministicReportKeyDates(input: {
   reportHorizon: ReportHorizon;
   frozenFacts: Record<string, unknown>;
   sourceUnits: ReportKeyDateSourceUnit[];
+  eligibleEventIds: Iterable<string>;
+  interpretedEventIds: Iterable<string>;
 }): ReportDraft {
   const allowedSourceIds = new Set(reportKeyDateSourceUnitIds(input.reportHorizon));
-  const events = reportKeyDateEventManifest(input.frozenFacts, input.reportHorizon);
+  const allEvents = reportKeyDateEventManifest(input.frozenFacts, input.reportHorizon);
+  const allEventById = new Map(allEvents.map((event) => [event.eventId, event]));
+  const eligibleEventIds = new Set(input.eligibleEventIds);
+  const interpretedEventIds = new Set(input.interpretedEventIds);
+  for (const eventId of eligibleEventIds) {
+    if (!allEventById.has(eventId)) throw new Error(`REPORT_KEY_DATES_FACT_GAP: unknown eligible event '${eventId}'.`);
+  }
+  for (const eventId of interpretedEventIds) {
+    if (!eligibleEventIds.has(eventId)) throw new Error(`REPORT_KEY_DATES_INELIGIBLE_INTERPRETATION: '${eventId}'.`);
+  }
+  const events = allEvents.filter((event) => interpretedEventIds.has(event.eventId));
   const eventById = new Map(events.map((event) => [event.eventId, event]));
   const selected = input.sourceUnits
     .filter((unit) => allowedSourceIds.has(unit.unitId))
@@ -268,7 +289,7 @@ export function assembleDeterministicReportKeyDates(input: {
       || left.eventId.localeCompare(right.eventId);
   })) {
     const event = eventById.get(entry.eventId);
-    if (!event) throw new Error(`REPORT_KEY_DATES_FACT_GAP: unknown structured event '${entry.eventId}'.`);
+    if (!event) throw new Error(`REPORT_KEY_DATES_UNINTERPRETED_EVENT: '${entry.eventId}' is not an eligible interpreted factor.`);
     if (event.sourceUnitId && event.sourceUnitId !== entry.unitId) {
       throw new Error(`REPORT_KEY_DATES_UNIT_MISMATCH: '${entry.eventId}' belongs to ${event.sourceUnitId}, not ${entry.unitId}.`);
     }
