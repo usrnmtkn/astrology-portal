@@ -7,6 +7,7 @@ import { reportKeyDateEventManifest, reportKeyDateSourceUnitIds, type ReportKeyD
 import {
   REPORT_COLD_PROSE_RULE_PATH,
   REPORT_EARNED_SENTENCE_RULING_PATH,
+  REPORT_NATURALNESS_RULING_PATH,
   REPORT_NO_CLEVERNESS_RULING_PATH,
   REPORT_OWNER_REVIEW_EVIDENCE_PATH
 } from "./report-prompt-versions.js";
@@ -109,6 +110,12 @@ export type ReportGenerationPayload = {
     sourcePath: string;
     text: string;
   };
+  naturalnessRuling: {
+    sourcePath: string;
+    text: string;
+  } | null;
+  priorUnitContext: ReportPriorUnitContext[];
+  structuralRequirements: ReportStructuralRequirements | null;
   sharedInvariants: string[];
   domainRelevanceModel: DomainRelevanceTier[];
   frozenFacts: Record<string, unknown>;
@@ -135,12 +142,28 @@ export type ReportGenerationPayload = {
   };
 };
 
+export type ReportPriorUnitContext = {
+  unitId: string;
+  synthesis: boolean;
+  headline: string;
+  summary: string;
+  body: string;
+  sections: Array<{ heading?: string; body?: string }>;
+};
+
+export type ReportStructuralRequirements = {
+  headingPrefix: string;
+  dateRangeRequired: true;
+};
+
 export type AssembleReportPayloadInput = {
   reportId: string;
   reportDomain: ReportDomain;
   reportHorizon: ReportHorizon;
   unitId: string;
   frozenFacts: Record<string, unknown>;
+  priorUnitContext?: ReportPriorUnitContext[];
+  naturalnessCandidate?: boolean;
 };
 
 export type ReportDraft = {
@@ -170,10 +193,17 @@ export type ReportValidationIssue = {
 export type ReportValidatorOptions = {
   signatureNouns?: string[];
   signatureNounCap?: number;
+  enforceSeasonStructure?: boolean;
 };
 
 const GENERATION_STANDARD_PATH = "tldr-astro-phrasebank/TLDR-YEAR-AHEAD-GENERATION-LOGIC-OWNER.md";
 const LIVED_PROSE_STANDARD_PATH = "tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md";
+
+const REPORT_SYNTHESIS_UNIT_IDS = new Set(["overview", "review-current-year"]);
+
+export function isReportSynthesisUnit(unitId: string) {
+  return REPORT_SYNTHESIS_UNIT_IDS.has(unitId);
+}
 export const PERSONAL_HEALTH_PROMPT_PATH = "tldr-astro-phrasebank/TLDR-PERSONAL-HEALTH-DEEPDIVE-GENERATION-PROMPT-OWNER.md";
 const MANIFESTATION_SETS_PATHS = [
   "packages/astro-knowledge/data/manifestation-sets/year-ahead-v1.json",
@@ -1139,6 +1169,26 @@ export function resolveManifestationSets(
   return { resolved, gaps };
 }
 
+function reportStructuralRequirements(
+  unitId: string,
+  frozenFacts: Record<string, unknown>
+): ReportStructuralRequirements | null {
+  const season = ({
+    "winter-current": "WINTER",
+    spring: "SPRING",
+    summer: "SUMMER",
+    autumn: "AUTUMN",
+    "winter-next": "WINTER"
+  } as Record<string, string | undefined>)[unitId];
+  if (!season) return null;
+  const window = reportWindowFacts(frozenFacts);
+  const startYear = Number(stringValue(window.startsAt).slice(0, 4));
+  const endYear = Number(stringValue(window.endsAt).slice(0, 4));
+  const year = unitId === "winter-next" ? endYear : startYear;
+  if (!Number.isFinite(year) || year < 1900) return null;
+  return { headingPrefix: `${season} ${year}`, dateRangeRequired: true };
+}
+
 export function assembleReportGenerationPayload(
   input: AssembleReportPayloadInput
 ): ReportGenerationPayload {
@@ -1182,6 +1232,12 @@ export function assembleReportGenerationPayload(
       sourcePath: REPORT_EARNED_SENTENCE_RULING_PATH,
       text: readRepoText(REPORT_EARNED_SENTENCE_RULING_PATH)
     },
+    naturalnessRuling: input.naturalnessCandidate ? {
+      sourcePath: REPORT_NATURALNESS_RULING_PATH,
+      text: readRepoText(REPORT_NATURALNESS_RULING_PATH)
+    } : null,
+    priorUnitContext: structuredClone(input.priorUnitContext ?? []),
+    structuralRequirements: reportStructuralRequirements(input.unitId, input.frozenFacts),
     sharedInvariants: [...SHARED_INVARIANTS],
     domainRelevanceModel: reportDomainRelevanceModel(input.reportDomain),
     frozenFacts: JSON.parse(JSON.stringify(input.frozenFacts)) as Record<string, unknown>,
@@ -1228,10 +1284,23 @@ It must never appear in reader-facing report output, headings, metadata, attribu
 Its purpose is to force reasoning before prose, not to create visible report structure.`;
 
 export function reportPromptFromPayload(payload: ReportGenerationPayload) {
+  return reportPromptFromPayloadMode(payload, false);
+}
+
+export function reportCandidatePromptFromPayload(payload: ReportGenerationPayload) {
+  return reportPromptFromPayloadMode(payload, true);
+}
+
+function reportPromptFromPayloadMode(payload: ReportGenerationPayload, naturalnessCandidate: boolean) {
   const {
     canonicalOwnerPrompt, livedProseStandard, noClevernessRuling,
-    ownerReviewEvidence, coldProseRuling, earnedSentenceRuling, ...taskPayload
+    ownerReviewEvidence, coldProseRuling, earnedSentenceRuling,
+    naturalnessRuling, priorUnitContext, structuralRequirements, ...taskPayload
   } = payload;
+  if (naturalnessCandidate && !naturalnessRuling) {
+    throw new Error("REPORT_NATURALNESS_RULING_MISSING: candidate prompt requires the governed naturalness ruling.");
+  }
+  const targetIsSynthesis = isReportSynthesisUnit(payload.unit.unitId);
   return [
     canonicalOwnerPrompt.text,
     `LIVED_PROSE_STANDARD\n${livedProseStandard.text}`,
@@ -1239,12 +1308,16 @@ export function reportPromptFromPayload(payload: ReportGenerationPayload) {
     `OWNER_REVIEW_EVIDENCE\n${ownerReviewEvidence.text}`,
     `COLD_RENDERED_PROSE_OWNER_RULING\n${coldProseRuling.text}`,
     `EARNED_SENTENCE_OWNER_RULING\n${earnedSentenceRuling.text}`,
+    naturalnessCandidate ? `NATURALNESS_AND_JUDGING_RESTRAINT_OWNER_RULING\n${naturalnessRuling?.text}` : "",
+    naturalnessCandidate ? `NATURALNESS_BEFORE_AFTER_EXEMPLAR_PACKET\nThe REJECTED, OWNER, SHARPER OWNER ALTERNATIVE, KEEP EXACTLY, ACCEPTABLE IN CONTEXT, and OWNER STANDALONE VERSION passages in the ruling above are labeled writer evidence. Use the owner replacements as positive examples and the rejected versions as negative examples. Never copy a sample when the unit facts do not support it.` : "",
+    naturalnessCandidate ? `PRIOR_UNIT_REPETITION_PREVENTION\nThe units below are already persisted earlier in this report. Do not repeat their sentences or re-run their manifestation menus. Refer back instead of restating. This is a prevention instruction, not permission to become vague.\n\nSYNTHESIS EXEMPTION\nThe only synthesis units are overview and review-current-year (the Year-in-Review unit). A canonical sentence may appear once in one of those synthesis units and once in the non-synthesis unit that introduces it. Repetition between two non-synthesis units remains forbidden. ${targetIsSynthesis ? "This target is a synthesis unit: it may reference the report's themes, but it must not inventory or re-run every manifestation menu." : "This target is not a synthesis unit: prior synthesis prose does not prevent one canonical sentence from appearing in the unit that actually introduces it; all prior non-synthesis prose does."}\n\nEARLIER_PERSISTED_UNITS\n${JSON.stringify(priorUnitContext, null, 2)}` : "",
+    naturalnessCandidate && structuralRequirements ? `STRUCTURAL_DISPLAY_CONTRACT\nThe headline must begin with '${structuralRequirements.headingPrefix}'. The timing field must contain an explicit reader-facing month/day date range. Preserve both fields exactly through revision and assembly.` : "",
     reportKeyDateSourceUnitIds(payload.reportHorizon).includes(payload.unit.unitId)
       ? `STRUCTURED_KEY_DATE_CONTRACT\nThe supplied events are fact-valid candidates, not a mandatory checklist. For each supplied event that this unit substantively interprets in its reader prose, return exactly one keyDates entry with the exact supplied eventId, a unique date-specific title, and one date-specific reader sentence. Omit events the unit does not interpret. Never create fact-only placeholder copy to make the calendar complete. Never reuse the unit headline or a section heading as the title. Never lift a body sentence as the key-date sentence. Do not repeat a title or sentence. The runtime owns the date label and technical attribution. Eligible candidate events for this unit:\n${JSON.stringify(payload.keyDateRequirements, null, 2)}`
       : "STRUCTURED_KEY_DATE_CONTRACT\nReturn keyDates as an empty array for this unit.",
     INTERNAL_LIVED_PROSE_SCAFFOLD,
     `REPORT_GENERATION_PAYLOAD\n${JSON.stringify(taskPayload, null, 2)}`
-  ].join("\n\n");
+  ].filter(Boolean).join("\n\n");
 }
 
 function draftText(draft: ReportDraft) {
@@ -1609,6 +1682,31 @@ function validatePersonalHealthCeiling(draft: ReportDraft, issues: ReportValidat
   }
 }
 
+const DISPLAY_DATE_RANGE = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:,?\s+\d{4})?\s*(?:-|–|to)\s*(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:,?\s+\d{4})?\b/iu;
+
+function validateSeasonStructure(
+  draft: ReportDraft,
+  payload: ReportGenerationPayload,
+  issues: ReportValidationIssue[]
+) {
+  const requirement = payload.structuralRequirements;
+  if (!requirement) return;
+  if (!new RegExp(`^${escaped(requirement.headingPrefix)}\\b`, "iu").test(draft.headline?.trim() ?? "")) {
+    issues.push({
+      code: "missing_season_heading",
+      message: `Seasonal report unit headline must begin with '${requirement.headingPrefix}'.`,
+      severity: "error"
+    });
+  }
+  if (requirement.dateRangeRequired && !DISPLAY_DATE_RANGE.test(draft.timing?.trim() ?? "")) {
+    issues.push({
+      code: "missing_season_date_range",
+      message: "Seasonal report unit timing must contain an explicit month/day date range.",
+      severity: "error"
+    });
+  }
+}
+
 export function validateReportDraft(
   draft: ReportDraft,
   payload: ReportGenerationPayload,
@@ -1690,6 +1788,8 @@ export function validateReportDraft(
       }
     }
   }
+
+  if (options.enforceSeasonStructure) validateSeasonStructure(draft, payload, issues);
 
   validateLivedProseMechanics(draft, issues);
   const domainValidators = REPORT_DOMAIN_CONFIG[payload.reportDomain].validators;

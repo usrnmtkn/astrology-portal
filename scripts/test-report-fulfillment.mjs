@@ -893,6 +893,8 @@ assert.equal(
   "user_id,subject_type,subject_id,content_key,target_date,mode",
   "The report-unit upsert must name the governed Production unique constraint exactly."
 );
+assert.equal(productionShapedUnitWrites[0].row.source_snapshot.renderMetadata.timing, "FIXTURE_ONLY_TIMING.",
+  "The report-unit persistence layer must preserve the reader-facing season date range through assembly and delivery.");
 assert.deepEqual({
   user_id: productionShapedUnitWrites[0].row.user_id,
   subject_type: productionShapedUnitWrites[0].row.subject_type,
@@ -1109,6 +1111,45 @@ assert.equal(calculationCalls, 4, "One facts calculation per user/window must se
 assert.ok([...store.reports.values()].filter((report) => report.report_domain === "personal_health")
   .every((report) => report.status === "needs_review"), "Personal & Health fulfillment must be active and remain review-gated.");
 assert.ok(completedCompReport, "The free-test comp report must complete before release is exercised.");
+
+const candidatePreventionStore = createMemoryStore();
+const candidatePreventionReport = {
+  id: "candidate-prevention-report", user_id: "user-1", subject_id: null,
+  report_domain: "general", report_horizon: "1_month",
+  period_start: frozen.startsAt.slice(0, 10), period_end: factsForHorizon("1_month").endsAt.slice(0, 10),
+  facts: {}, facts_engine: "pending", facts_hash: null, fulfillment_status: "queued", prompt_versions: {}, token_count: 0,
+  attempt_counts: { validator: 0, judge: 0 }, failure_history: [], status: "draft"
+};
+candidatePreventionStore.reports.set(candidatePreventionReport.id, candidatePreventionReport);
+candidatePreventionStore.entitlements.set("candidate-prevention-ent", {
+  id: "candidate-prevention-ent", user_id: "user-1", status: "active", source: "comp",
+  product_key: "general_1m", period_start: candidatePreventionReport.period_start,
+  period_end: candidatePreventionReport.period_end
+});
+const candidateBaseModel = modelCallWithCrash();
+const candidateDraftPrompts = [];
+const candidateModel = async (input) => {
+  if (input.schemaName === "report_unit_draft") candidateDraftPrompts.push(input.prompt);
+  return candidateBaseModel(input);
+};
+await processReportFulfillmentJob({
+  job: authorizedJob({
+    id: "candidate-prevention-job", report_id: candidatePreventionReport.id,
+    entitlement_id: "candidate-prevention-ent", state: "running", step: "calculating", attempt: 1
+  }),
+  store: candidatePreventionStore,
+  calculateFacts,
+  callModel: candidateModel,
+  judgeCall,
+  promptMode: "naturalness_candidate"
+});
+assert.ok(candidateDraftPrompts.length >= 2);
+assert.match(candidateDraftPrompts[0], /EARLIER_PERSISTED_UNITS\n\[\]/u,
+  "The first candidate unit must begin with no invented prior-unit context.");
+assert.ok(candidateDraftPrompts[1].includes(fixtureUnitDraft("overview").body),
+  "The second candidate unit must receive the first unit's exact persisted text before its draft call.");
+assert.match(candidateDraftPrompts[1], /PRIOR_UNIT_REPETITION_PREVENTION/u);
+assert.match(candidateDraftPrompts[1], /NATURALNESS_BEFORE_AFTER_EXEMPLAR_PACKET/u);
 const releaseUpdates = [];
 const releaseInserts = [];
 const releaseResult = await releaseReviewedReport({
