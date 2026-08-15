@@ -273,7 +273,7 @@ function buildPrompt(args) {
     `  - "Steady" is allowed for observable effort, pace, support, light, or reliability; do not use it as vague energy language or an empty positive adjective. Use perform/performance only for literal acting, music, presentations, or measurable job performance. Em dash is banned; use a spaced hyphen " - ".`,
     `  - ${spec.loreBoundary}`,
     `  - No absolute dates, degrees, or ephemeris facts; the app appends the computed current-aspect line separately.`,
-    `  - CURRENT SKY IS COLLECTIVE: never use "people", "you", "your", "yours", "yourself", "yourselves", or "part of you". Use "we", "someone", a named group, or the actual subject. Second person belongs to transit-to-natal copy.`,
+    `  - SKY PLACEMENT MAY ADDRESS THE READER: direct address ("you"/"your") is allowed. Third-person observation and collective language remain available for lived scenes. Address the reader's life; never break the fourth wall or comment on the writing itself. "People" is allowed sparingly; prefer the actual subject when the copy supports one. Overuse is a semantic review signal, not a deterministic failure.`,
     `  - HOOK SENTENCE 1 is a standalone recognition quote. The reader renders it separately in bold and removes it from the body. It must make sense on its own.`,
     `  - The rest of HOOK is the meaning paragraph: explain what ${TITLE[planet]} governs and how ${cap(sign)} changes its method, pace, or priorities. Translate the source layer into natural prose and behavior; never recite a keyword list.`,
     ``,
