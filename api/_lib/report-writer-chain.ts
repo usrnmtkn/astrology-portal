@@ -131,8 +131,12 @@ export const REPORT_DRAFT_SCHEMA = {
       type: "array",
       items: {
         type: "object", additionalProperties: false,
-        required: ["eventId", "title", "sentence"],
-        properties: { eventId: { type: "string" }, title: { type: "string" }, sentence: { type: "string" } }
+        required: ["eventId", "title", "category", "sentence"],
+        properties: {
+          eventId: { type: "string" }, title: { type: "string" },
+          category: { type: ["string", "null"], enum: ["SELF", "WORK", "FRIENDS & FAMILY", "SEX & LOVE", null] },
+          sentence: { type: "string" }
+        }
       }
     }
   }

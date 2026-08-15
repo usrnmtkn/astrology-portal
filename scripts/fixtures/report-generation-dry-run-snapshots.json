@@ -54,20 +54,17 @@
       "allowedUnitIds": [
         "overview",
         "year-theme",
-        "professional-theme",
-        "domain:*",
+        "domain:main",
         "winter-current",
         "spring",
         "summer",
         "autumn",
-        "money",
-        "key-dates",
         "review-current-year",
         "winter-next"
       ]
     },
-    "factorCount": 30,
-    "resolvedCount": 30,
+    "factorCount": 31,
+    "resolvedCount": 31,
     "sourceGapCount": 0
   },
   "work_money_12_months": {

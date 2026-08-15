@@ -34,6 +34,7 @@ export type ReportFulfillmentStore = {
   workerPaused(): Promise<boolean>;
   report(id: string): Promise<FulfillmentReportRow | null>;
   entitlement(id: string): Promise<FulfillmentEntitlementRow | null>;
+  readerProfile?(userId: string): Promise<{ handle: string; displayName: string } | null>;
   updateReport(id: string, patch: Record<string, unknown>): Promise<void>;
   updateEntitlement(id: string, patch: Record<string, unknown>): Promise<void>;
   updateJob(id: string, patch: Record<string, unknown>): Promise<void>;
@@ -73,6 +74,10 @@ export function createReportFulfillmentStore(admin = createSupabaseReportAdmin()
     },
     report: (id) => admin.selectOne("user_reports", new URLSearchParams({ id: `eq.${id}`, select: "*" })),
     entitlement: (id) => admin.selectOne("report_entitlements", new URLSearchParams({ id: `eq.${id}`, select: "*" })),
+    async readerProfile(userId) {
+      const row = await admin.selectOne<{ handle: string | null; display_name: string }>("social_profiles", new URLSearchParams({ user_id: `eq.${userId}`, select: "handle,display_name" }));
+      return row?.handle ? { handle: row.handle, displayName: row.display_name } : null;
+    },
     async updateReport(id, patch) { await admin.update("user_reports", `id=eq.${id}`, patch); },
     async updateEntitlement(id, patch) { await admin.update("report_entitlements", `id=eq.${id}`, patch); },
     async updateJob(id, patch) { await admin.update("report_fulfillment_jobs", `id=eq.${id}`, patch); },
@@ -121,7 +126,7 @@ export function createReportFulfillmentStore(admin = createSupabaseReportAdmin()
       content_key: `eq.report:${reportId}:${unitId}`, subject_type: "eq.report_unit", select: "id,headline,summary,body,sections,source_snapshot"
     })),
     async saveUnit(report, unitId, draft, sourceSnapshot) {
-      const value = draft as { headline?: string; summary?: string; body?: string; timing?: string; sections?: unknown };
+      const value = draft as { headline?: string; tldr?: string; summary?: string; body?: string; action?: string; timing?: string; sections?: unknown; keyDates?: unknown };
       const existingRenderMetadata = sourceSnapshot.renderMetadata && typeof sourceSnapshot.renderMetadata === "object"
         ? sourceSnapshot.renderMetadata as Record<string, unknown>
         : {};
@@ -134,7 +139,8 @@ export function createReportFulfillmentStore(admin = createSupabaseReportAdmin()
         sections: value.sections ?? [], facts: report.facts,
         source_snapshot: {
           ...sourceSnapshot,
-          renderMetadata: { ...existingRenderMetadata, timing: value.timing ?? "" }
+          renderMetadata: { ...existingRenderMetadata, tldr: value.tldr ?? "", action: value.action ?? "", timing: value.timing ?? "" },
+          keyDateEntries: value.keyDates ?? sourceSnapshot.keyDateEntries ?? []
         }
       }, { onConflict: "user_id,subject_type,subject_id,content_key,target_date,mode" });
     },

@@ -1,7 +1,7 @@
 import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
 import { createReportMailProvider, type ReportMailProvider } from "./report-mail.js";
 import type { SupabaseReportAdmin } from "./supabase-report-admin.ts";
-import { buildReviewedReportDocument, reviewedReportDocumentBytes, reviewedReportDocumentHash } from "./report-review-document.ts";
+import { buildReviewedReportDocument, resolveReviewedDeliveryBytes, reviewedReportDocumentBytes, reviewedReportDocumentHash, type ReviewedReportDocument } from "./report-review-document.ts";
 import { reportUnitIds } from "./report-unit-order.ts";
 import type { ReportDomain, ReportHorizon } from "./report-types.ts";
 
@@ -16,6 +16,8 @@ export type ReleasableReport = {
   period_end: string;
   facts_engine: string;
   facts_hash: string;
+  review_document_bytes?: string | null;
+  review_document_hash?: string | null;
 };
 
 export async function releaseReviewedReport(input: {
@@ -36,11 +38,13 @@ export async function releaseReviewedReport(input: {
     if (!row) throw new Error(`REPORT_RELEASE_REVIEW_ARTIFACT_INCOMPLETE: missing ${unitId}.`);
     return { unitId, draft: { headline: row.headline, summary: row.summary, body: row.body, timing: typeof row.source_snapshot?.renderMetadata?.timing === "string" ? row.source_snapshot.renderMetadata.timing : "", sections: row.sections ?? [] } };
   });
-  const reviewDocument = buildReviewedReportDocument({
+  const reviewDocument = input.report.review_document_bytes && input.report.review_document_hash
+    ? resolveReviewedDeliveryBytes(input.report.review_document_bytes, input.report.review_document_hash)
+    : buildReviewedReportDocument({
     id: input.report.id, reportDomain: input.report.report_domain, reportHorizon: input.report.report_horizon,
     periodStart: input.report.period_start, periodEnd: input.report.period_end, factsEngine: input.report.facts_engine,
     factsHash: input.report.facts_hash, units
-  });
+    }) as ReviewedReportDocument;
   await input.admin.update("user_reports", `id=eq.${input.report.id}`, {
     status: "live", fulfillment_status: "live", delivered_at: deliveredAt,
     review_document: reviewDocument, review_document_bytes: reviewedReportDocumentBytes(reviewDocument),
