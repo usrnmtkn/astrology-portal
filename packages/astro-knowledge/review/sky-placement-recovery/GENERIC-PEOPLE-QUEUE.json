@@ -1,0 +1,471 @@
+[
+ {
+  "page": "chiron/aquarius",
+  "slot": "turn",
+  "sentence": "People push against the current to prove they belong, but that push can harden into distance: cold, distant, unapproachable.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "chiron/capricorn",
+  "slot": "lived",
+  "sentence": "This is visible in the way meetings stretch longer to prove a point or people rehearse their 'I'm capable' lines before speaking up.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "work"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "chiron/gemini",
+  "slot": "lived",
+  "sentence": "We see it in the way people pause before replying, double-checking if they're properly heard or if they've accidentally tangled their meaning.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 3,
+   "scene_examples": [
+    "As Chiron moves into Gemini, an old hesitation about being understood might show up in your conversations and ",
+    "This Chiron retrograde in Gemini, an old insecurity about not being clear enough might get tender again. You c"
+   ]
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "jupiter/capricorn",
+  "slot": "lived",
+  "sentence": "You'll notice people adding layers to their work: long meetings, detailed plans, budgets rechecked.",
+  "canonical_evidence": {
+   "meaning_records": 5,
+   "scene_records": 2,
+   "scene_examples": [
+    "Jupiter moves into Capricorn, and bigger goals start meeting real limits, titles, deadlines, and responsibilit",
+    "For about a year, success feels less like a surge and more like a measured ascent. You’ll notice people adding"
+   ]
+  },
+  "likely_subject_domain": [
+   "work"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "jupiter/leo",
+  "slot": "lived",
+  "sentence": "Generosity can grow with it: people use their position to open doors, fund the larger idea, and bring others into the room instead of guarding the spotlight.",
+  "canonical_evidence": {
+   "meaning_records": 15,
+   "scene_records": 1,
+   "scene_examples": [
+    "Jupiter in Leo moves through your 3rd house of communication and daily reality, so more messages, options, int"
+   ]
+  },
+  "likely_subject_domain": [
+   "home"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "jupiter/sagittarius",
+  "slot": "lived",
+  "sentence": "Over the next year, you'll see people doubling down on quests that push their limits: a coworker switching careers after a weekend seminar, a team pitching a project that feels more like a manifesto than a plan.",
+  "canonical_evidence": {
+   "meaning_records": 23,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "work"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "jupiter/scorpio",
+  "slot": "lived",
+  "sentence": "You'll see people double down on research, pooling resources or secrets like currency.",
+  "canonical_evidence": {
+   "meaning_records": 6,
+   "scene_records": 1,
+   "scene_examples": [
+    "Jupiter moving into Scorpio starts opening doors through the stuff you don't usually put on a resume, trust, w"
+   ]
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "neptune/aquarius",
+  "slot": "turn",
+  "sentence": "The detachment that protects ideals also fragments them, leaving people tangled in infinite versions of the same hope.",
+  "canonical_evidence": {
+   "meaning_records": 4,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "neptune/capricorn",
+  "slot": "turn",
+  "sentence": "People retreat into work so deep they forget why they started.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 1,
+   "scene_examples": [
+    "Idealism shows up where you least expect it: behind schedules, budgets, and meetings. Neptune in Capricorn is "
+   ]
+  },
+  "likely_subject_domain": [
+   "work"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "neptune/libra",
+  "slot": "turn",
+  "sentence": "People freeze in polite stalemate, or make vague promises that dissolve under scrutiny.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "neptune/virgo",
+  "slot": "lived",
+  "sentence": "In conversation, you hear people pause to fact-check their hopes before sharing them.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "relationship"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "north-node/aquarius",
+  "slot": "hook",
+  "sentence": "There's an itch to link ideas, people, and causes in a new way.",
+  "canonical_evidence": {
+   "meaning_records": 1,
+   "scene_records": 1,
+   "scene_examples": [
+    "Over the next eighteen months, we spend more time weaving together networks, joining projects that feel larger"
+   ]
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "north-node/cancer",
+  "slot": "turn",
+  "sentence": "Letting people in means risking the mess and the noise, and stopping the quiet judgment that 'they don't get it.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 1,
+   "scene_examples": [
+    "Over the next year and a half, the pull to tend your personal space and inner life grows persistent. You’ll no"
+   ]
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "north-node/libra",
+  "slot": "lived",
+  "sentence": "You'll see it in the way people pause to adjust their tone or reframe their ask so it lands fairer.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "north-node/scorpio",
+  "slot": "turn",
+  "sentence": "When trust is conditional, people close off instead of opening up.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "pluto/cancer",
+  "slot": "lived",
+  "sentence": "We watch people rebuild their closest bonds like architects demolishing walls to pour new foundations.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "pluto/leo",
+  "slot": "lived",
+  "sentence": "We see it in the way people don't just want to be heard: they insist on being remembered, staking claim to their spotlight with bold projects, fierce declarations, or public gestures that refuse to shrink.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "pluto/libra",
+  "slot": "lived",
+  "sentence": "We see people circling the same issues, trying to keep things fair while the need to transform the relationship's core grows without letting go.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "relationship"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "pluto/sagittarius",
+  "slot": "lived",
+  "sentence": "The urge to transform how we see the world drives people to cross borders, literal and mental, until the horizon feels like a line to run through, not a place to rest.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "pluto/sagittarius",
+  "slot": "turn",
+  "sentence": "You watch people double down on their version of truth, cutting off anyone who questions the map they're building.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "pluto/scorpio",
+  "slot": "lived",
+  "sentence": "You'll see it in how people lock their feelings behind ironclad promises or dig into secrets no one asked to share.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "pluto/taurus",
+  "slot": "turn",
+  "sentence": "Fixation on control, especially over what should be fluid, traps people in cycles of silently enforcing rules or hoarding resources.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "pluto/virgo",
+  "slot": "turn",
+  "sentence": "When every flaw demands correction, people shrink under scrutiny or snap at the slightest imperfection.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "south-node/aquarius",
+  "slot": "lived",
+  "sentence": "We notice people choosing a clear, personal stance in meetings or conversations where they used to stay quiet.",
+  "canonical_evidence": {
+   "meaning_records": 1,
+   "scene_records": 1,
+   "scene_examples": [
+    "For about eighteen months, the rhythm shifts from being part of the crowd to standing apart within it. We noti"
+   ]
+  },
+  "likely_subject_domain": [
+   "work"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "south-node/leo",
+  "slot": "lived",
+  "sentence": "You'll notice people circling back to 'remember when I.",
+  "canonical_evidence": {
+   "meaning_records": 1,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "south-node/sagittarius",
+  "slot": "lived",
+  "sentence": "Institutions double-check their mission statements, people pause before repeating slogans they once lived by.",
+  "canonical_evidence": {
+   "meaning_records": 13,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "uranus/aquarius",
+  "slot": "turn",
+  "sentence": "The gift to disrupt becomes a wall of indifference you crash against when people need a bridge, not a break.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "uranus/gemini",
+  "slot": "lived",
+  "sentence": "You'll notice people pivot mid-sentence, chase new facts down rabbit holes, or break a routine call with a sudden curveball.",
+  "canonical_evidence": {
+   "meaning_records": 14,
+   "scene_records": 5,
+   "scene_examples": [
+    "Uranus in Gemini moves through your 3rd house of communication and daily reality, so a message, device, route,",
+    "Uranus in Gemini moves through your 2nd house of disposable income and foundation, so income, expenses, posses"
+   ]
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "uranus/libra",
+  "slot": "lived",
+  "sentence": "We watch people pivot on social contracts mid-sentence, shifting alliances like a new playlist: fast, unpredictable, but strangely tuned to a need for justice.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "uranus/pisces",
+  "slot": "lived",
+  "sentence": "We find people rewiring compassion: offering help that unsettles routines, or dreaming solutions that ignore usual rules.",
+  "canonical_evidence": {
+   "meaning_records": 4,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "uranus/sagittarius",
+  "slot": "lived",
+  "sentence": "On the street or in meetings, you'll see people chasing bigger questions, launching projects that defy neat boxes, and arguing fiercely for a future that feels uncharted yet thrilling.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "work"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ },
+ {
+  "page": "uranus/scorpio",
+  "slot": "lived",
+  "sentence": "Watch it in the way people demand radical honesty in dark corners, hacking into secrets not to expose, but to own them.",
+  "canonical_evidence": {
+   "meaning_records": 2,
+   "scene_records": 0,
+   "scene_examples": []
+  },
+  "likely_subject_domain": [
+   "insufficient_evidence"
+  ],
+  "status": "ADVISORY_REVIEW_SIGNAL"
+ }
+]
