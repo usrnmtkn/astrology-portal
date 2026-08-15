@@ -31,6 +31,14 @@
   "family": "fast-mover-article",
   "register": "collective",
   "surface": "sky-placement-page",
+  "target": {
+    "surface": "sky-placement-page",
+    "route": "sky",
+    "renderer": "renderSkyPlacement",
+    "contentKeyFamily": "fallback-hook/sky-sign-copy/{planet}/{sign}",
+    "temporality": "current_sky",
+    "voiceMode": "current_sky_direct_address"
+  },
   "argumentInput": {
     "thesis": "Add why the existing imbalance can be hard to notice: Venus works easily in Libra, so smooth agreement can look complete before both preferences are known.",
     "cultural_rule": "Do not replace the approved fairness argument; add only the assumption that an easy agreement must be a fair one.",

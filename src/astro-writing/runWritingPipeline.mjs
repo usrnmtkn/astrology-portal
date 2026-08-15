@@ -6,6 +6,7 @@ import { validateCopy } from "./validateCopy.mjs";
 import { buildArgumentOutline, assertArgumentOutlineApproved } from "./argumentGate.mjs";
 import { getContentSpine, assertContentSpine } from "./spineRegistry.mjs";
 import { assertPositiveOwnerEvidenceContext, OwnerEvidencePreconditionError } from "./ownerEvidencePolicy.mjs";
+import { assertSurfaceRegisterContract } from "./surfaceRegisterContract.mjs";
 
 export function failedRetrievalResult({ plan, context, argumentOutline, spine, error }) {
   return {
@@ -49,6 +50,7 @@ export async function runWritingPipeline({
   registerGoldExamples = [],
   corrections,
   task,
+  target,
   family = "sky-placement",
   register = "collective",
   surface = "card",
@@ -70,6 +72,7 @@ export async function runWritingPipeline({
   preferredEvidenceContentKeys = [],
   phraseEvidence = []
 }) {
+  const resolvedTarget = assertSurfaceRegisterContract(target, { surface, register });
   const plan = await resolveAstrology(meaningInput, { plannerClient });
   const resolvedRequiredFields = requiredFields ?? (["fast-mover-article", "slow-mover-article"].includes(family)
     ? ["opening", "tension", "development", "close"]
@@ -137,6 +140,7 @@ export async function runWritingPipeline({
     plan,
     context,
     task,
+    target: resolvedTarget,
     family,
     register,
     surface,

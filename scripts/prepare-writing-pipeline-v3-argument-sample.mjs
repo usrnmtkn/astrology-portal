@@ -68,6 +68,14 @@ if (!approvedBaseline || approvedBaseline.review_status !== "approved") throw ne
 const baselineBodyHash = sha256(approvedBaseline.body_you);
 
 const result = await runWritingPipeline({
+  target: {
+    surface: "sky-placement-page",
+    route: "sky",
+    renderer: "renderSkyPlacement",
+    contentKeyFamily: "fallback-hook/sky-sign-copy/{planet}/{sign}",
+    temporality: "current_sky",
+    voiceMode: "current_sky_direct_address"
+  },
   meaningInput,
   examples: [],
   corrections: allCorrections,
