@@ -12,6 +12,7 @@
 
 import {
   SourceGapError,
+  vocabularyBodyForVoice,
   type DailyGlanceVariantSet,
   type HookRow,
   type TemplatesFile,
@@ -2652,10 +2653,10 @@ export function createTransitSynastryRenderer(
   // ---- Do/Don't engine (TLDR-Remedial-DoDont-Spec): chart-specific lists assembled from
   // seeds. Do = sign seed + house seed + transiting counterweight. Don't = placement shadow
   // + transit friction + the aggravated natal aspect partner's shadow (when supplied). ----
-  function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign, moonSign, moonHouse, dayKey }: { planet: string; sign: string; house?: number | null; transiting: string; weakPlanet?: string; weakSign?: string; moonSign?: string | null; moonHouse?: number | null; dayKey?: number | null }): { do: string[]; dont: string[]; templateKey: string } {
-    const seed = (k: string) => vocab.get(`fallback-vocab/${k}`)?.body ?? null;
+  function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign, moonSign, moonHouse, dayKey, voice = "you" }: { planet: string; sign: string; house?: number | null; transiting: string; weakPlanet?: string; weakSign?: string; moonSign?: string | null; moonHouse?: number | null; dayKey?: number | null; voice?: "you" | "they" }): { do: string[]; dont: string[]; templateKey: string } {
+    const seed = (k: string) => vocabularyBodyForVoice(vocab.get(`fallback-vocab/${k}`), voice);
     const APPROVED = new Set(["approved", "approved_reuse", "reviewed"]);
-    const moonSeed = (k: string) => { const r = vocab.get(`fallback-vocab/${k}`); return r && APPROVED.has(r.review_status ?? "") ? r.body : null; };
+    const moonSeed = (k: string) => { const r = vocab.get(`fallback-vocab/${k}`); return r && APPROVED.has(r.review_status ?? "") ? vocabularyBodyForVoice(r, voice) : null; };
     const day = Number.isFinite(dayKey ?? NaN) ? Math.abs(Math.trunc(dayKey as number)) : 0;
     const dos = [
       seed(`dodont-do/${planet}/${sign}`),

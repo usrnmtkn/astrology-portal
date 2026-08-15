@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "friend-vocabulary-person-inflection-owner-rulings-v1",
+  "recordedAt": "2026-08-15",
+  "context": "The owner reviewed the complete rendered context and explicitly approved both recommended Friend variants.",
+  "rulings": [
+    {
+      "contentKey": "fallback-vocab/placement-gerund/chiron/capricorn/0",
+      "sourceBody": "learning your worth is not your resume",
+      "sourceBodySha256": "8dc1a60958100be56d4bfa4a941d1b95de963236ae4cae8398a9b76497c04bf6",
+      "bodyThey": "learning that their worth is not their resume",
+      "ownerStatement": "1 - approved"
+    },
+    {
+      "contentKey": "fallback-vocab/dodont-reward/moon",
+      "sourceBody": "Feed yourself properly",
+      "sourceBodySha256": "2bc48ff1f28a364702486188ca5c143a186cdcc5f72ec5169fe8a09ef24ed947",
+      "bodyThey": "Eat properly",
+      "ownerStatement": "2- approved"
+    }
+  ],
+  "servingAuthorized": true,
+  "scope": "Exact body_they values only; canonical body values remain unchanged."
+}

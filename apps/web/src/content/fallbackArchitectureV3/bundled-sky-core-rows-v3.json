@@ -9443,7 +9443,10 @@
       "source_keys": [
         "TLDR-FullMoon-Format-Spec.md (locked templates, six verbatim from verified Satori corpus)"
       ],
-      "notes": "Lunation-surface house line: 'This Full Moon lands in your Nth house of {jurisdiction}.'"
+      "notes": "Lunation-surface house line: 'This Full Moon lands in your Nth house of {jurisdiction}.'",
+      "body_they": "their body, their look, and how they come across",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/house-jurisdiction/2",
@@ -9465,7 +9468,10 @@
       "source_keys": [
         "TLDR-FullMoon-Format-Spec.md (locked templates, six verbatim from verified Satori corpus)"
       ],
-      "notes": "Lunation-surface house line: 'This Full Moon lands in your Nth house of {jurisdiction}.'"
+      "notes": "Lunation-surface house line: 'This Full Moon lands in your Nth house of {jurisdiction}.'",
+      "body_they": "conversations, errands, and their daily circles",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/house-jurisdiction/4",
@@ -9509,7 +9515,10 @@
       "source_keys": [
         "TLDR-FullMoon-Format-Spec.md (locked templates, six verbatim from verified Satori corpus)"
       ],
-      "notes": "Lunation-surface house line: 'This Full Moon lands in your Nth house of {jurisdiction}.'"
+      "notes": "Lunation-surface house line: 'This Full Moon lands in your Nth house of {jurisdiction}.'",
+      "body_they": "relationships and the people who match them",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/house-jurisdiction/8",
@@ -9553,7 +9562,10 @@
       "source_keys": [
         "TLDR-FullMoon-Format-Spec.md (locked templates, six verbatim from verified Satori corpus)"
       ],
-      "notes": "Lunation-surface house line: 'This Full Moon lands in your Nth house of {jurisdiction}.'"
+      "notes": "Lunation-surface house line: 'This Full Moon lands in your Nth house of {jurisdiction}.'",
+      "body_they": "friends, community, and the roles they've outgrown",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/house-jurisdiction/12",
@@ -9564,7 +9576,10 @@
       "source_keys": [
         "TLDR-FullMoon-Format-Spec.md (locked templates, six verbatim from verified Satori corpus)"
       ],
-      "notes": "Lunation-surface house line: 'This Full Moon lands in your Nth house of {jurisdiction}.'"
+      "notes": "Lunation-surface house line: 'This Full Moon lands in your Nth house of {jurisdiction}.'",
+      "body_they": "rest, privacy, and what they keep to themselves",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/aspect-adj/conjunction",
@@ -10057,7 +10072,10 @@
       "source_keys": [
         "cc/planet/sun/excess"
       ],
-      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices."
+      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices.",
+      "body_they": "ego inflation, or needing the spotlight to feel like they matter",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/planet-productive/sun",
@@ -10068,7 +10086,10 @@
       "source_keys": [
         "cc/planet/sun/productive"
       ],
-      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices."
+      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices.",
+      "body_they": "confidence, warmth, and being seen for who they are",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/planet-function/sun",
@@ -10079,7 +10100,10 @@
       "source_keys": [
         "cc/planet/sun/function"
       ],
-      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices."
+      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices.",
+      "body_they": "identity, vitality, and where they're meant to shine",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/planet-excess/moon",
@@ -10113,7 +10137,10 @@
       "source_keys": [
         "cc/planet/moon/function"
       ],
-      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices."
+      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices.",
+      "body_they": "emotional needs, moods, and what makes them feel safe",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/planet-excess/mercury",
@@ -10146,7 +10173,10 @@
       "source_keys": [
         "cc/planet/mercury/function"
       ],
-      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices."
+      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices.",
+      "body_they": "thinking, communication, and how they process",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/planet-excess/venus",
@@ -10179,7 +10209,10 @@
       "source_keys": [
         "cc/planet/venus/function"
       ],
-      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices."
+      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices.",
+      "body_they": "love, pleasure, taste, and what they value",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/planet-excess/mars",
@@ -10223,7 +10256,10 @@
       "source_keys": [
         "cc/planet/jupiter/excess"
       ],
-      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices."
+      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices.",
+      "body_they": "overdoing, over-promising, or believing their own hype",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/planet-productive/jupiter",
@@ -10410,7 +10446,10 @@
       "source_keys": [
         "cc/planet/chiron/function"
       ],
-      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices."
+      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices.",
+      "body_they": "the insecurities they carry and slowly make peace with",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/planet-excess/north-node",
@@ -10432,7 +10471,10 @@
       "source_keys": [
         "cc/planet/north-node/productive"
       ],
-      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices."
+      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices.",
+      "body_they": "stretching toward what they're here to develop",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/planet-function/north-node",
@@ -10465,7 +10507,10 @@
       "source_keys": [
         "cc/planet/south-node/productive"
       ],
-      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices."
+      "note": "Verbatim CC source. Generic 'you' in source wording is acceptable in both voices.",
+      "body_they": "the fall-back skills they can lean on",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/planet-function/south-node",
@@ -10487,7 +10532,10 @@
       "source_keys": [
         "cc/house/1"
       ],
-      "note": "Verbatim phrase selected from the CC house keyword list."
+      "note": "Verbatim phrase selected from the CC house keyword list.",
+      "body_they": "how they start and show up",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/house-pressure/2",
@@ -10785,7 +10833,10 @@
       "source_keys": [
         "cc/planet-in-sign/chiron-in-aries"
       ],
-      "note": "Verbatim CC fragment."
+      "note": "Verbatim CC fragment.",
+      "body_they": "learning to accept themselves as they are",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/placement-clause/moon/aries/0",
@@ -11270,7 +11321,10 @@
       "source_keys": [
         "cc/planet-in-sign/chiron-in-gemini"
       ],
-      "note": "Verbatim CC fragment."
+      "note": "Verbatim CC fragment.",
+      "body_they": "learning to trust how they speak, slowly",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/placement-gerund/chiron/leo/0",
@@ -11281,7 +11335,10 @@
       "source_keys": [
         "cc/planet-in-sign/chiron-in-leo"
       ],
-      "note": "Verbatim CC fragment."
+      "note": "Verbatim CC fragment.",
+      "body_they": "learning their right to be seen without performing",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/placement-gerund/chiron/virgo/0",
@@ -11292,7 +11349,10 @@
       "source_keys": [
         "cc/planet-in-sign/chiron-in-virgo"
       ],
-      "note": "Verbatim CC fragment."
+      "note": "Verbatim CC fragment.",
+      "body_they": "learning to accept themselves without fixing everything first",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/placement-gerund/chiron/libra/0",
@@ -11303,7 +11363,10 @@
       "source_keys": [
         "cc/planet-in-sign/chiron-in-libra"
       ],
-      "note": "Verbatim CC fragment."
+      "note": "Verbatim CC fragment.",
+      "body_they": "learning their worth inside relationships",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/placement-gerund/chiron/scorpio/0",
@@ -11314,7 +11377,10 @@
       "source_keys": [
         "cc/planet-in-sign/chiron-in-scorpio"
       ],
-      "note": "Verbatim CC fragment."
+      "note": "Verbatim CC fragment.",
+      "body_they": "learning to let people close on their own terms",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/placement-gerund/chiron/sagittarius/0",
@@ -11325,7 +11391,10 @@
       "source_keys": [
         "cc/planet-in-sign/chiron-in-sagittarius"
       ],
-      "note": "Verbatim CC fragment."
+      "note": "Verbatim CC fragment.",
+      "body_they": "learning to trust their own view",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/placement-gerund/chiron/capricorn/0",
@@ -11336,7 +11405,10 @@
       "source_keys": [
         "cc/planet-in-sign/chiron-in-capricorn"
       ],
-      "note": "Verbatim CC fragment."
+      "note": "Verbatim CC fragment.",
+      "body_they": "learning that their worth is not their resume",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-rulings-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/placement-gerund/chiron/aquarius/0",
@@ -11347,7 +11419,10 @@
       "source_keys": [
         "cc/planet-in-sign/chiron-in-aquarius"
       ],
-      "note": "Verbatim CC fragment."
+      "note": "Verbatim CC fragment.",
+      "body_they": "learning their difference is not a defect",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/placement-gerund/chiron/pisces/0",
@@ -11358,7 +11433,10 @@
       "source_keys": [
         "cc/planet-in-sign/chiron-in-pisces"
       ],
-      "note": "Verbatim CC fragment."
+      "note": "Verbatim CC fragment.",
+      "body_they": "learning they are allowed to matter",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/placement-clause/moon/scorpio/1",
@@ -12706,7 +12784,10 @@
       "grammar_frame": "action_item",
       "body": "Back up your files",
       "review_status": "approved",
-      "notes": "Do/Don't seed (TLDR-Remedial-DoDont-Spec): mercury in aquarius acting well: constructive outlet in its own language"
+      "notes": "Do/Don't seed (TLDR-Remedial-DoDont-Spec): mercury in aquarius acting well: constructive outlet in its own language",
+      "body_they": "Back up their files",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/dodont-do/mercury/pisces",
@@ -13394,7 +13475,10 @@
       "grammar_frame": "action_item",
       "body": "Feed yourself properly",
       "review_status": "approved",
-      "notes": "Do/Don't seed (TLDR-Remedial-DoDont-Spec): what a moon day rewards (Do counterweight)"
+      "notes": "Do/Don't seed (TLDR-Remedial-DoDont-Spec): what a moon day rewards (Do counterweight)",
+      "body_they": "Eat properly",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-rulings-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/dodont-reward/sun",
@@ -15627,7 +15711,10 @@
       "approved_via": "owner approval, chat 2026-07-28",
       "source_keys": [
         "owner design session (do/don't Moon layer)"
-      ]
+      ],
+      "body_they": "Buying comfort they'll return",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/dodont-moon-do/gemini",
@@ -15637,7 +15724,10 @@
       "approved_via": "owner approval, chat 2026-07-28",
       "source_keys": [
         "owner design session (do/don't Moon layer)"
-      ]
+      ],
+      "body_they": "Make the call they've been texting around",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/dodont-moon-dont/gemini",
@@ -15657,7 +15747,10 @@
       "approved_via": "owner approval, chat 2026-07-28",
       "source_keys": [
         "owner design session (do/don't Moon layer)"
-      ]
+      ],
+      "body_they": "Check on their person",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/dodont-moon-dont/cancer",
@@ -15727,7 +15820,10 @@
       "approved_via": "owner approval, chat 2026-07-28",
       "source_keys": [
         "owner design session (do/don't Moon layer)"
-      ]
+      ],
+      "body_they": "Polling everyone they know",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "contentKey": "fallback-vocab/dodont-moon-do/scorpio",
@@ -15851,7 +15947,10 @@
       "approved_via": "owner exact-wording approval 2026-08-11",
       "content_role": "vocabulary",
       "grammar_frame": "noun_phrase",
-      "review_status": "approved"
+      "review_status": "approved",
+      "body_they": "money and what they value",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "body": "communication and daily connections",
@@ -16183,7 +16282,10 @@
       "approved_via": "owner approval, chat 2026-07-29",
       "content_role": "vocabulary",
       "grammar_frame": "noun_phrase",
-      "review_status": "approved"
+      "review_status": "approved",
+      "body_they": "old bruises they stop hiding and slowly learn to hold",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "body": "growth, patience, and where you bet on yourself",
@@ -16194,7 +16296,10 @@
       "approved_via": "owner approval, chat 2026-07-29",
       "content_role": "vocabulary",
       "grammar_frame": "noun_phrase",
-      "review_status": "approved"
+      "review_status": "approved",
+      "body_they": "growth, patience, and where they bet on themselves",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "body": "momentum, direct push, and the heat to take action",
@@ -16216,7 +16321,10 @@
       "approved_via": "owner approval, chat 2026-07-29",
       "content_role": "vocabulary",
       "grammar_frame": "noun_phrase",
-      "review_status": "approved"
+      "review_status": "approved",
+      "body_they": "talking, planning, and how they process raw data",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "body": "moods, gut signals, and what helps your nervous system settle",
@@ -16227,7 +16335,10 @@
       "approved_via": "owner approval, chat 2026-07-29",
       "content_role": "vocabulary",
       "grammar_frame": "noun_phrase",
-      "review_status": "approved"
+      "review_status": "approved",
+      "body_they": "moods, gut signals, and what helps their nervous system settle",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "body": "intuition, imagination, and where rigid lines dissolve",
@@ -16249,7 +16360,10 @@
       "approved_via": "owner approval, chat 2026-07-29",
       "content_role": "vocabulary",
       "grammar_frame": "noun_phrase",
-      "review_status": "approved"
+      "review_status": "approved",
+      "body_they": "the unfamiliar step that levels them up",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "body": "power dynamics, hidden truths, and clean completions",
@@ -16282,7 +16396,10 @@
       "approved_via": "owner approval, chat 2026-07-29",
       "content_role": "vocabulary",
       "grammar_frame": "noun_phrase",
-      "review_status": "approved"
+      "review_status": "approved",
+      "body_they": "autopilot skills and habits they have outgrown",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "body": "vitality, purpose, and where you stop editing yourself",
@@ -16293,7 +16410,10 @@
       "approved_via": "owner approval, chat 2026-07-29",
       "content_role": "vocabulary",
       "grammar_frame": "noun_phrase",
-      "review_status": "approved"
+      "review_status": "approved",
+      "body_they": "vitality, purpose, and where they stop editing themselves",
+      "body_they_review_status": "approved",
+      "body_they_approved_via": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
     },
     {
       "body": "short-notice changes, sharp clarity, and breaking static",

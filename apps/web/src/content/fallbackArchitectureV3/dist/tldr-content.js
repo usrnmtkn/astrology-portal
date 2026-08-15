@@ -2376,12 +2376,12 @@ ${passHook}`;
     }
     throw new SourceGapError(`SOURCE_GAP: daily glance ${aspect ?? "no-aspect"}/${natal ?? house}`);
   }
-  function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign, moonSign, moonHouse, dayKey }) {
-    const seed = (k) => vocab.get(`fallback-vocab/${k}`)?.body ?? null;
+  function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign, moonSign, moonHouse, dayKey, voice = "you" }) {
+    const seed = (k) => vocabularyBodyForVoice(vocab.get(`fallback-vocab/${k}`), voice);
     const APPROVED = /* @__PURE__ */ new Set(["approved", "approved_reuse", "reviewed"]);
     const moonSeed = (k) => {
       const r = vocab.get(`fallback-vocab/${k}`);
-      return r && APPROVED.has(r.review_status ?? "") ? r.body : null;
+      return r && APPROVED.has(r.review_status ?? "") ? vocabularyBodyForVoice(r, voice) : null;
     };
     const day = Number.isFinite(dayKey ?? NaN) ? Math.abs(Math.trunc(dayKey)) : 0;
     const dos = [
