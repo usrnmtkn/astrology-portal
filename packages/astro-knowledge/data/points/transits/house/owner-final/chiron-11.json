@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "chiron-11",
+  "canonicalId": "transit-house/chiron/11",
+  "kind": "house",
+  "transiting": "chiron",
+  "house": 11,
+  "headline": "Belonging after exclusion",
+  "body": "Chiron in your 11th house brings back old memories of being left out in friend groups, social circles, or professional networks. You might leave events early, linger on the sidelines, or assume invitations are just out of pity. That reflex guards against rejection, but it also prevents genuine connection.\n\nBelonging grows slowly with people whose actions match their words. Finding one solid friend, a small working group, or a community where you can disagree without getting kicked out means far more than popularity. Your past makes you sensitive to outsiders; use that insight to invite others in rather than staying out in the cold yourself.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Chiron — 11H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

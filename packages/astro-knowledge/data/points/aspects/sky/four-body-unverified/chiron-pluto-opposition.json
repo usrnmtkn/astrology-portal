@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.opposition.chiron",
+  "canonicalId": "sky-aspect/chiron/pluto/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "pluto",
+  "aspect": "opposition",
+  "humanMoment": "The person doing the deep work and the person managing the surface end up opposed.",
+  "developmentDetail": "One keeps opening what the other keeps closing, and between them stability and truth take turns looking like the enemy.",
+  "planetaryDynamic": "With Pluto opposite Chiron, one insists the buried thing come up while the other insists the household survive the process.",
+  "aspectMechanic": "They are running one necessary process as two rival agendas.",
+  "conditionalConsequence": "Both jobs may be necessary, but the two workers tend to need a treaty, because left unmanaged they turn one household into two campaigns.",
+  "body": "The person doing the deep work and the person managing the surface end up opposed.\n\nOne keeps opening what the other keeps closing, and between them stability and truth take turns looking like the enemy.\n\nWith Pluto opposite Chiron, one insists the buried thing come up while the other insists the household survive the process.\n\nThey are running one necessary process as two rival agendas.\n\nBoth jobs may be necessary, but the two workers tend to need a treaty, because left unmanaged they turn one household into two campaigns.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.pluto.opposition.chiron",
+    "sourceHeading": "Pluto opposition Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

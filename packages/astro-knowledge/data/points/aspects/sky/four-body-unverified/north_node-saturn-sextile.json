@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.sextile.north-node",
+  "canonicalId": "sky-aspect/north_node/saturn/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "saturn",
+  "aspect": "sextile",
+  "humanMoment": "The boring infrastructure for the new life is getting built.",
+  "developmentDetail": "Someone opens the account, blocks the schedule, establishes the routine, unglamorous structures that make the direction survivable instead of merely aspirational.",
+  "planetaryDynamic": "With Saturn sextile the North Node, people can build the scaffolding with skills they already trust, and the old discipline volunteers for the new project, though somebody still has to fill in the forms.",
+  "aspectMechanic": "Nobody applauds plumbing, and everyone living there needs it anyway.",
+  "conditionalConsequence": "The infrastructure may look like nothing from outside, but people whose directions have plumbing tend to outlast people whose directions have only enthusiasm.",
+  "body": "The boring infrastructure for the new life is getting built.\n\nSomeone opens the account, blocks the schedule, establishes the routine, unglamorous structures that make the direction survivable instead of merely aspirational.\n\nWith Saturn sextile the North Node, people can build the scaffolding with skills they already trust, and the old discipline volunteers for the new project, though somebody still has to fill in the forms.\n\nNobody applauds plumbing, and everyone living there needs it anyway.\n\nThe infrastructure may look like nothing from outside, but people whose directions have plumbing tend to outlast people whose directions have only enthusiasm.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.saturn.sextile.north-node",
+    "sourceHeading": "Saturn sextile North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

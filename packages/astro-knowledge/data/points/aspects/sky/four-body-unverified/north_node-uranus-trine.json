@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.trine.north-node",
+  "canonicalId": "sky-aspect/north_node/uranus/trine",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "uranus",
+  "aspect": "trine",
+  "humanMoment": "The unconventional route is turning out to be the efficient one.",
+  "developmentDetail": "Someone runs the nonstandard schedule, the odd alliance, the tool nobody else uses, and moves the direction faster than the approved path was moving it, without asking anyone's permission.",
+  "planetaryDynamic": "With Uranus trine the North Node, people find their strangest methods and their real direction reinforcing each other, so they stop trading originality for progress and start getting both on the same commute.",
+  "aspectMechanic": "Nobody has approved the route, and everybody can see it working.",
+  "conditionalConsequence": "The route may never be approved retroactively, but people who arrive tend to find that arrival ends the conversation.",
+  "body": "The unconventional route is turning out to be the efficient one.\n\nSomeone runs the nonstandard schedule, the odd alliance, the tool nobody else uses, and moves the direction faster than the approved path was moving it, without asking anyone's permission.\n\nWith Uranus trine the North Node, people find their strangest methods and their real direction reinforcing each other, so they stop trading originality for progress and start getting both on the same commute.\n\nNobody has approved the route, and everybody can see it working.\n\nThe route may never be approved retroactively, but people who arrive tend to find that arrival ends the conversation.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.uranus.trine.north-node",
+    "sourceHeading": "Uranus trine North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

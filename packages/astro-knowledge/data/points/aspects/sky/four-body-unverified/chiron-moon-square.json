@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.square.chiron",
+  "canonicalId": "sky-aspect/chiron/moon/square",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "moon",
+  "aspect": "square",
+  "humanMoment": "Someone swallows the need mid-sentence and reroutes it into a test.",
+  "developmentDetail": "Instead of asking, they wait to see whether their person notices on their own, and that person fails an exam nobody handed them.",
+  "planetaryDynamic": "With the Moon square Chiron, people want the need met inside the relationship while doubting the need is allowed to exist, and the doubt runs the evening.",
+  "aspectMechanic": "Both of them go to bed shortchanged.",
+  "conditionalConsequence": "The disappointment may feel like proof, but a test nobody knew they were taking was never a fair exam, and couples who grade it as one pay for the same silence twice.",
+  "body": "Someone swallows the need mid-sentence and reroutes it into a test.\n\nInstead of asking, they wait to see whether their person notices on their own, and that person fails an exam nobody handed them.\n\nWith the Moon square Chiron, people want the need met inside the relationship while doubting the need is allowed to exist, and the doubt runs the evening.\n\nBoth of them go to bed shortchanged.\n\nThe disappointment may feel like proof, but a test nobody knew they were taking was never a fair exam, and couples who grade it as one pay for the same silence twice.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.moon.square.chiron",
+    "sourceHeading": "Moon square Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

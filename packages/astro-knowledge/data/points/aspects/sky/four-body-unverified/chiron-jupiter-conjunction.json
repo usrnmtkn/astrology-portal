@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.conjunction.chiron",
+  "canonicalId": "sky-aspect/chiron/jupiter/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "jupiter",
+  "aspect": "conjunction",
+  "humanMoment": "The good news makes someone open the old file.",
+  "developmentDetail": "They get the promotion, the pregnancy, the purchase, and grief nobody scheduled arrives with it: everyone who is not here for this, every year it was supposed to be impossible.",
+  "planetaryDynamic": "With Jupiter conjunct Chiron, people watch everything get bigger at once, the joy and the sore place and the medicine, because growth does not pick favorites.",
+  "aspectMechanic": "They cry at their own party.",
+  "conditionalConsequence": "The tears may confuse the guests, but more feeling is not more damage, and the people who let both arrive tend to find the grief was part of the delivery.",
+  "body": "The good news makes someone open the old file.\n\nThey get the promotion, the pregnancy, the purchase, and grief nobody scheduled arrives with it: everyone who is not here for this, every year it was supposed to be impossible.\n\nWith Jupiter conjunct Chiron, people watch everything get bigger at once, the joy and the sore place and the medicine, because growth does not pick favorites.\n\nThey cry at their own party.\n\nThe tears may confuse the guests, but more feeling is not more damage, and the people who let both arrive tend to find the grief was part of the delivery.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.jupiter.conjunction.chiron",
+    "sourceHeading": "Jupiter conjunction Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -2,7 +2,13 @@
 
 const fs = require("fs");
 const path = require("path");
-const { validateAll, listJsonFiles, listDirectJsonFiles, readJson } = require("./validate");
+const {
+  validateAll,
+  listJsonFiles,
+  listLegacyPackageJsonFiles,
+  listDirectJsonFiles,
+  readJson
+} = require("./validate");
 
 const root = path.resolve(__dirname, "..");
 const dataRoot = path.join(root, "data");
@@ -34,7 +40,7 @@ function loadPrimitiveCollections() {
 }
 
 function loadEntries(dir) {
-  return listJsonFiles(path.join(dataRoot, dir)).map((filePath) => readJson(filePath));
+  return listLegacyPackageJsonFiles(path.join(dataRoot, dir)).map((filePath) => readJson(filePath));
 }
 
 function loadDirectEntries(dir) {

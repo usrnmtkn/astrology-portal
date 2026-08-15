@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.opposition.chiron",
+  "canonicalId": "sky-aspect/chiron/moon/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "moon",
+  "aspect": "opposition",
+  "humanMoment": "The one who over-gives and the one who cannot receive find each other again.",
+  "developmentDetail": "One pushes the care, the other refuses it, and both walk away hungrier, playing the same old scene from opposite doors.",
+  "planetaryDynamic": "With the Moon opposite Chiron, one person acts out the tending while the other acts out the history that cannot trust it.",
+  "aspectMechanic": "Neither of them is actually asking for anything.",
+  "conditionalConsequence": "The standoff may soften, but usually only after one of them notices that the giving and the refusing were both ways of not asking, and says so.",
+  "body": "The one who over-gives and the one who cannot receive find each other again.\n\nOne pushes the care, the other refuses it, and both walk away hungrier, playing the same old scene from opposite doors.\n\nWith the Moon opposite Chiron, one person acts out the tending while the other acts out the history that cannot trust it.\n\nNeither of them is actually asking for anything.\n\nThe standoff may soften, but usually only after one of them notices that the giving and the refusing were both ways of not asking, and says so.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.moon.opposition.chiron",
+    "sourceHeading": "Moon opposition Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

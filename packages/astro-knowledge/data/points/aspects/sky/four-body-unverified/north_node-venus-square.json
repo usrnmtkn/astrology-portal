@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.square.north-node",
+  "canonicalId": "sky-aspect/north_node/venus/square",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "venus",
+  "aspect": "square",
+  "humanMoment": "The ex is resurfacing on schedule.",
+  "developmentDetail": "Someone gets the message precisely when the new life is demanding the most effort, and they feel the pull as real: the known affection, the settled rhythm, the pleasure that requires no building.",
+  "planetaryDynamic": "With Venus square the North Node, people feel pulled from both sides at once, missing the bond that is finished and owing effort to the bond that is not built yet, and the choice they have been postponing arrives as one text thread.",
+  "aspectMechanic": "Whoever writes back is choosing which life to feed.",
+  "conditionalConsequence": "Chemistry is not a verdict, and people who remember that direction is also information tend to write a different reply than people who only answer the louder feeling.",
+  "body": "The ex is resurfacing on schedule.\n\nSomeone gets the message precisely when the new life is demanding the most effort, and they feel the pull as real: the known affection, the settled rhythm, the pleasure that requires no building.\n\nWith Venus square the North Node, people feel pulled from both sides at once, missing the bond that is finished and owing effort to the bond that is not built yet, and the choice they have been postponing arrives as one text thread.\n\nWhoever writes back is choosing which life to feed.\n\nChemistry is not a verdict, and people who remember that direction is also information tend to write a different reply than people who only answer the louder feeling.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.venus.square.north-node",
+    "sourceHeading": "Venus square North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

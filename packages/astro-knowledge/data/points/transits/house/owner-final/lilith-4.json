@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-4",
+  "canonicalId": "transit-house/lilith/4",
+  "kind": "house",
+  "transiting": "lilith",
+  "house": 4,
+  "headline": "The family rule no one names",
+  "body": "Black Moon Lilith in your 4th house shines a light on the family secrets, taboo topics, or toxic relatives everyone pretends not to notice. You might refuse to keep the peace by sweeping things under the rug, protecting the most difficult family member, or playing the scapegoat. Silence keeps family events smooth, but it destroys real honesty.\n\nYou do not need to start a massive fight at Thanksgiving. It can be as simple as setting a firm personal boundary, confiding in one safe person, or refusing to play along with a fake narrative anymore. A household built on truth will look very different from the one you grew up in.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Lilith — 4H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

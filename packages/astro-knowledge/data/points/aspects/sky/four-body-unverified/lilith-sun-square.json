@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.square.lilith",
+  "canonicalId": "sky-aspect/lilith/sun/square",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "sun",
+  "aspect": "square",
+  "humanMoment": "Someone accepts a promotion and discovers it comes with an unwritten condition: keep the inconvenient part of the story out of view.",
+  "developmentDetail": "They edit the acceptance remarks, trim a chapter from the biography, and start to resent the honor before the applause ends.",
+  "planetaryDynamic": "With the Sun square Lilith, people want the recognition and also refuse to buy it with silence, and this week those two wants belong to the same person.",
+  "aspectMechanic": "Sooner or later they have to pick the cleaner image or the fuller account, and stalling starts to read as an answer.",
+  "conditionalConsequence": "The credit may still land, but everyone watching learns what the platform costs and who is willing to pay it.",
+  "body": "Someone accepts a promotion and discovers it comes with an unwritten condition: keep the inconvenient part of the story out of view.\n\nThey edit the acceptance remarks, trim a chapter from the biography, and start to resent the honor before the applause ends.\n\nWith the Sun square Lilith, people want the recognition and also refuse to buy it with silence, and this week those two wants belong to the same person.\n\nSooner or later they have to pick the cleaner image or the fuller account, and stalling starts to read as an answer.\n\nThe credit may still land, but everyone watching learns what the platform costs and who is willing to pay it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.sun.square.lilith",
+    "sourceHeading": "Sun square Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.chiron.opposition.north-node",
+  "canonicalId": "sky-aspect/chiron/north_node/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "north_node",
+  "aspect": "opposition",
+  "humanMoment": "Someone's old competence volunteers to handle the new chapter.",
+  "developmentDetail": "They reach for the practiced skill they built long ago around the injury, and it offers to do what the unfamiliar direction requires, the familiar way, feeling like strength while pointing backward.",
+  "planetaryDynamic": "With Chiron opposite the North Node, people sit with the earned workaround on the familiar end while the direction asks for a capacity that does not exist yet.",
+  "aspectMechanic": "The most reliable move on the table also defers the chapter.",
+  "conditionalConsequence": "The old method may still work every time, but each use tends to postpone the new capacity, and the chapter keeps waiting on the people who keep reaching backward.",
+  "body": "Someone's old competence volunteers to handle the new chapter.\n\nThey reach for the practiced skill they built long ago around the injury, and it offers to do what the unfamiliar direction requires, the familiar way, feeling like strength while pointing backward.\n\nWith Chiron opposite the North Node, people sit with the earned workaround on the familiar end while the direction asks for a capacity that does not exist yet.\n\nThe most reliable move on the table also defers the chapter.\n\nThe old method may still work every time, but each use tends to postpone the new capacity, and the chapter keeps waiting on the people who keep reaching backward.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.chiron.opposition.north-node",
+    "sourceHeading": "Chiron opposition North Node",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

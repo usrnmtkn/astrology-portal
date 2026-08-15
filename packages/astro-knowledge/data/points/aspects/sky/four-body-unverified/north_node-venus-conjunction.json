@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.conjunction.north-node",
+  "canonicalId": "sky-aspect/north_node/venus/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "venus",
+  "aspect": "conjunction",
+  "humanMoment": "The new connection fits the direction instead of the history.",
+  "developmentDetail": "Someone meets a person, a collaborator, a friend who makes the unfamiliar life more habitable rather than the old one more revisitable, and they notice the difference immediately.",
+  "planetaryDynamic": "With Venus conjunct the North Node, people find their affection landing on candidates the new chapter can actually use, and the heart and the path briefly agree, which takes some getting used to.",
+  "aspectMechanic": "For once nobody has to choose between the person and the plan.",
+  "conditionalConsequence": "The bond may still take work, but people who let a connection face forward tend to watch it grow with the chapter instead of competing against it.",
+  "body": "The new connection fits the direction instead of the history.\n\nSomeone meets a person, a collaborator, a friend who makes the unfamiliar life more habitable rather than the old one more revisitable, and they notice the difference immediately.\n\nWith Venus conjunct the North Node, people find their affection landing on candidates the new chapter can actually use, and the heart and the path briefly agree, which takes some getting used to.\n\nFor once nobody has to choose between the person and the plan.\n\nThe bond may still take work, but people who let a connection face forward tend to watch it grow with the chapter instead of competing against it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.venus.conjunction.north-node",
+    "sourceHeading": "Venus conjunction North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

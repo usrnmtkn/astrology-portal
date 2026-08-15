@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.conjunction.north-node",
+  "canonicalId": "sky-aspect/north_node/sun/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "sun",
+  "aspect": "conjunction",
+  "humanMoment": "Small steps toward new things feel strangely important this week, and the people taking them can tell.",
+  "developmentDetail": "Someone signs up for the first class, sends the modest application, walks into an unfamiliar room and makes one introduction, and that small move outweighs everything bigger they did all week.",
+  "planetaryDynamic": "With the Sun conjunct the North Node, people feel most like themselves in the middle of that unfamiliar move, because who they are and who they are becoming briefly point the same way, and the practiced act loses its pull.",
+  "aspectMechanic": "The old role suddenly fits like a costume.",
+  "conditionalConsequence": "The move may look minor on paper, but people tend to build whatever they let themselves be seen doing, and this week they are being seen in the new room.",
+  "body": "Small steps toward new things feel strangely important this week, and the people taking them can tell.\n\nSomeone signs up for the first class, sends the modest application, walks into an unfamiliar room and makes one introduction, and that small move outweighs everything bigger they did all week.\n\nWith the Sun conjunct the North Node, people feel most like themselves in the middle of that unfamiliar move, because who they are and who they are becoming briefly point the same way, and the practiced act loses its pull.\n\nThe old role suddenly fits like a costume.\n\nThe move may look minor on paper, but people tend to build whatever they let themselves be seen doing, and this week they are being seen in the new room.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.sun.conjunction.north-node",
+    "sourceHeading": "Sun conjunction North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

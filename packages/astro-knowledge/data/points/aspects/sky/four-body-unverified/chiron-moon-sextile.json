@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.sextile.chiron",
+  "canonicalId": "sky-aspect/chiron/moon/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "moon",
+  "aspect": "sextile",
+  "humanMoment": "Someone asks for help in plain words, and the ceiling does not fall.",
+  "developmentDetail": "They name the favor, a ride, a meal, an hour of listening, and the friend simply says yes, without any of the humiliation the asker had budgeted for.",
+  "planetaryDynamic": "With the Moon sextile Chiron, people willing to help are standing right there, and so are all the old reasons nobody ever got asked.",
+  "aspectMechanic": "The yes only exists because somebody spoke the sentence.",
+  "conditionalConsequence": "The next ask may still feel enormous from inside, but people who get one plain request granted tend to find the following one smaller.",
+  "body": "Someone asks for help in plain words, and the ceiling does not fall.\n\nThey name the favor, a ride, a meal, an hour of listening, and the friend simply says yes, without any of the humiliation the asker had budgeted for.\n\nWith the Moon sextile Chiron, people willing to help are standing right there, and so are all the old reasons nobody ever got asked.\n\nThe yes only exists because somebody spoke the sentence.\n\nThe next ask may still feel enormous from inside, but people who get one plain request granted tend to find the following one smaller.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.moon.sextile.chiron",
+    "sourceHeading": "Moon sextile Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

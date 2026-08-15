@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "chiron-4",
+  "canonicalId": "transit-house/chiron/4",
+  "kind": "house",
+  "transiting": "chiron",
+  "house": 4,
+  "headline": "Home after the old story",
+  "body": "As Chiron moves through your 4th house, family history and what \"home\" means get emotionally complicated. Childhood memories, strained relationships with parents, recurring holiday fights, or old living situations resurface because your present life is still tiptoeing around them. Understanding where these patterns started helps, especially if you have spent years blaming yourself for a family role forced on you early on.\n\nThe past does not have to be your permanent home. This transit helps you build a living space and private life that reflect who you are today, even if your family does not fully get it. Repair might look like a frank conversation, therapy, setting distance, moving, or establishing house rules you actually enforce.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Chiron — 4H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

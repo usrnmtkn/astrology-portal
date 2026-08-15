@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.lilith.opposition.north-node",
+  "canonicalId": "sky-aspect/lilith/north_node/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "north_node",
+  "aspect": "opposition",
+  "humanMoment": "Someone's forbidden want shows up wearing the old life's clothes.",
+  "developmentDetail": "It argues for going back, the former scene, the former person, the version of freedom that already ran its course, and the person hearing it feels liberation while facing backward.",
+  "planetaryDynamic": "With Lilith opposite the North Node, people feel the strongest pull of the season coming from the familiar end of the road, while the unfamiliar direction keeps asking for practice.",
+  "aspectMechanic": "The pull points them at territory they have already mined.",
+  "conditionalConsequence": "The return may even be pleasant, but people who take it spend the chapter's momentum on a road already mapped, and the direction waits unpaid.",
+  "body": "Someone's forbidden want shows up wearing the old life's clothes.\n\nIt argues for going back, the former scene, the former person, the version of freedom that already ran its course, and the person hearing it feels liberation while facing backward.\n\nWith Lilith opposite the North Node, people feel the strongest pull of the season coming from the familiar end of the road, while the unfamiliar direction keeps asking for practice.\n\nThe pull points them at territory they have already mined.\n\nThe return may even be pleasant, but people who take it spend the chapter's momentum on a road already mapped, and the direction waits unpaid.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.lilith.opposition.north-node",
+    "sourceHeading": "Lilith opposition North Node",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

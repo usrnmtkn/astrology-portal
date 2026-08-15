@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.quincunx.lilith",
+  "canonicalId": "sky-aspect/lilith/sun/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "sun",
+  "aspect": "quincunx",
+  "humanMoment": "Someone keeps the role everyone sees and the private conviction on separate calendars.",
+  "developmentDetail": "One audience gets the polished version, another gets the honest one, and every week the person running both spends more scheduling, editing, and memory to keep them apart.",
+  "planetaryDynamic": "With the Sun quincunx Lilith, people manage a reputation with one hand and hold a conviction the reputation cannot carry with the other.",
+  "aspectMechanic": "Nothing forces a showdown; each week just asks them to trim one commitment to fit the other.",
+  "conditionalConsequence": "The arrangement may hold a long time, but the trimming is the real cost, and eventually someone notices which half always gets cut.",
+  "body": "Someone keeps the role everyone sees and the private conviction on separate calendars.\n\nOne audience gets the polished version, another gets the honest one, and every week the person running both spends more scheduling, editing, and memory to keep them apart.\n\nWith the Sun quincunx Lilith, people manage a reputation with one hand and hold a conviction the reputation cannot carry with the other.\n\nNothing forces a showdown; each week just asks them to trim one commitment to fit the other.\n\nThe arrangement may hold a long time, but the trimming is the real cost, and eventually someone notices which half always gets cut.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.sun.quincunx.lilith",
+    "sourceHeading": "Sun quincunx Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

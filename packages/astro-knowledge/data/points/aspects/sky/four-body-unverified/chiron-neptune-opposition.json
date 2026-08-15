@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.neptune.opposition.chiron",
+  "canonicalId": "sky-aspect/chiron/neptune/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "neptune",
+  "aspect": "opposition",
+  "humanMoment": "The idealist and the injured one disagree about what the suffering means.",
+  "developmentDetail": "One reads redemption into the pain, the other simply has it, and the two of them end up holding the meaning and the hurt in different chairs.",
+  "planetaryDynamic": "With Neptune opposite Chiron, one person supplies the interpretation while the other holds the untranslated fact.",
+  "aspectMechanic": "Their two accounts compete instead of completing each other.",
+  "conditionalConsequence": "Both accounts may hold something true, but meaning tends to help only when the person in the far chair offers it, and never when they impose it.",
+  "body": "The idealist and the injured one disagree about what the suffering means.\n\nOne reads redemption into the pain, the other simply has it, and the two of them end up holding the meaning and the hurt in different chairs.\n\nWith Neptune opposite Chiron, one person supplies the interpretation while the other holds the untranslated fact.\n\nTheir two accounts compete instead of completing each other.\n\nBoth accounts may hold something true, but meaning tends to help only when the person in the far chair offers it, and never when they impose it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.neptune.opposition.chiron",
+    "sourceHeading": "Neptune opposition Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

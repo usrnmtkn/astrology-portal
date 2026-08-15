@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "south-node-4",
+  "canonicalId": "transit-house/south_node/4",
+  "kind": "house",
+  "transiting": "south-node",
+  "house": 4,
+  "headline": "The family role you know by heart",
+  "body": "The South Node in your 4th house brings old family dynamics and private habits back to the surface. You might step back into being the fixer, the mediator, the memory keeper, or the one who hides away when life gets demanding. Home should offer real comfort, but staying in comfortable patterns can keep you loyal to arrangements you have outgrown.\n\nAcross the chart, the 10th house points toward your public direction, career, and reputation. Your family matters, but the role you learned at home does not have to dictate how visible, ambitious, or independent you are allowed to be.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "South Node — 4H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

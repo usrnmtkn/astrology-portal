@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.conjunction.lilith",
+  "canonicalId": "sky-aspect/lilith/saturn/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "saturn",
+  "aspect": "conjunction",
+  "humanMoment": "Someone carries the obligation and the refusal in the same body at the same desk.",
+  "developmentDetail": "They keep up the compliant performance while something inside it has already quit, and they file the forms with a flatness everyone can read.",
+  "planetaryDynamic": "With Saturn conjunct Lilith, the person enforcing the standard on themselves is also the person the standard exiled to stay presentable.",
+  "aspectMechanic": "Their obedience itself starts carrying the protest.",
+  "conditionalConsequence": "The work may continue, but the flatness is still a message, and institutions that cannot read it eventually receive louder versions.",
+  "body": "Someone carries the obligation and the refusal in the same body at the same desk.\n\nThey keep up the compliant performance while something inside it has already quit, and they file the forms with a flatness everyone can read.\n\nWith Saturn conjunct Lilith, the person enforcing the standard on themselves is also the person the standard exiled to stay presentable.\n\nTheir obedience itself starts carrying the protest.\n\nThe work may continue, but the flatness is still a message, and institutions that cannot read it eventually receive louder versions.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.saturn.conjunction.lilith",
+    "sourceHeading": "Saturn conjunction Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.quincunx.lilith",
+  "canonicalId": "sky-aspect/lilith/moon/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "moon",
+  "aspect": "quincunx",
+  "humanMoment": "Somebody keeps promising the same hour to the nap and to the ambition.",
+  "developmentDetail": "They postpone rest for the want, then postpone the want for rest, and the week turns into a negotiation nobody wins outright.",
+  "planetaryDynamic": "With the Moon quincunx Lilith, the same person needs recovery and the familiar and also needs the thing recovery keeps deferring.",
+  "aspectMechanic": "They never find a clean trade, only weekly adjustments that fit neither need.",
+  "conditionalConsequence": "Both needs may survive, but whoever keeps making the accommodation quietly decides which one is being starved.",
+  "body": "Somebody keeps promising the same hour to the nap and to the ambition.\n\nThey postpone rest for the want, then postpone the want for rest, and the week turns into a negotiation nobody wins outright.\n\nWith the Moon quincunx Lilith, the same person needs recovery and the familiar and also needs the thing recovery keeps deferring.\n\nThey never find a clean trade, only weekly adjustments that fit neither need.\n\nBoth needs may survive, but whoever keeps making the accommodation quietly decides which one is being starved.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.moon.quincunx.lilith",
+    "sourceHeading": "Moon quincunx Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

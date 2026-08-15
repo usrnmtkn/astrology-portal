@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.opposition.north-node",
+  "canonicalId": "sky-aspect/mars/north_node/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "mars",
+  "bodyB": "north_node",
+  "aspect": "opposition",
+  "humanMoment": "The old arena is calling, and people's reflexes answer before their judgment does.",
+  "developmentDetail": "Someone gets offered one more round of the familiar contest, the rivalry, the game already mastered, and their body is warmed up for it before they ask whether it matters.",
+  "planetaryDynamic": "With Mars opposite the North Node, people perform best exactly where their moves are automatic, on ground already conquered, while the new direction offers only beginner effort and no trophies yet.",
+  "aspectMechanic": "The players can barely tell peak form from pointless form.",
+  "conditionalConsequence": "The round may be winnable, but people who spend mastery on finished arenas are giving exhibitions, and the entry fee tends to be another week of the chapter.",
+  "body": "The old arena is calling, and people's reflexes answer before their judgment does.\n\nSomeone gets offered one more round of the familiar contest, the rivalry, the game already mastered, and their body is warmed up for it before they ask whether it matters.\n\nWith Mars opposite the North Node, people perform best exactly where their moves are automatic, on ground already conquered, while the new direction offers only beginner effort and no trophies yet.\n\nThe players can barely tell peak form from pointless form.\n\nThe round may be winnable, but people who spend mastery on finished arenas are giving exhibitions, and the entry fee tends to be another week of the chapter.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.mars.opposition.north-node",
+    "sourceHeading": "Mars opposition North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

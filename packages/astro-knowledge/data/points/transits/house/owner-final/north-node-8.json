@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "north-node-8",
+  "canonicalId": "transit-house/north_node/8",
+  "kind": "house",
+  "transiting": "north-node",
+  "house": 8,
+  "headline": "Sharing more than control",
+  "body": "With the North Node moving through your 8th house, shared finances, joint trust, intimacy, debts, and joint responsibilities demand real honesty. You might need to accept help, pool resources, share private details, or admit a problem is too big for one person to solve. The hard part is not just sharing; it is letting someone see how much you actually care about the outcome.\n\nThe 2nd house across the way holds the familiar comfort of total self-sufficiency and keeping everything under your personal control. That stability matters, but this transit asks you to notice when self-protection stops being smart and starts blocking intimacy.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "North Node — 8H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.trine.north-node",
+  "canonicalId": "sky-aspect/mercury/north_node/trine",
+  "kind": "sky-aspect",
+  "bodyA": "mercury",
+  "bodyB": "north_node",
+  "aspect": "trine",
+  "humanMoment": "The new vocabulary is starting to come out naturally.",
+  "developmentDetail": "Someone uses the terms of the unfamiliar field without air quotes, asks sharper questions, and walks out of conversations in the new territory holding next steps instead of nerves.",
+  "planetaryDynamic": "With Mercury trine the North Node, people learn the destination's language while their old expertise translates instead of interrupting, so the fluency and the direction feed each other without a fight.",
+  "aspectMechanic": "People in the new field are starting to answer them like colleagues.",
+  "conditionalConsequence": "The learning curve may still be long, but people who speak the destination's language early tend to find more hands offering to help along the way.",
+  "body": "The new vocabulary is starting to come out naturally.\n\nSomeone uses the terms of the unfamiliar field without air quotes, asks sharper questions, and walks out of conversations in the new territory holding next steps instead of nerves.\n\nWith Mercury trine the North Node, people learn the destination's language while their old expertise translates instead of interrupting, so the fluency and the direction feed each other without a fight.\n\nPeople in the new field are starting to answer them like colleagues.\n\nThe learning curve may still be long, but people who speak the destination's language early tend to find more hands offering to help along the way.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.mercury.trine.north-node",
+    "sourceHeading": "Mercury trine North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

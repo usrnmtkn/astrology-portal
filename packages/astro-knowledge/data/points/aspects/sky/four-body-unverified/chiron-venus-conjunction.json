@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.conjunction.chiron",
+  "canonicalId": "sky-aspect/chiron/venus/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "venus",
+  "aspect": "conjunction",
+  "humanMoment": "Affection shows up at the door, and the person opening it checks for the catch.",
+  "developmentDetail": "Someone receives a kind gesture and inspects it before thanking anyone, because sweetness once turned out to be a setup, and the inspection got installed then.",
+  "planetaryDynamic": "With Venus conjunct Chiron, people want to be wanted while carrying a standing expectation of rejection, so warmth and wariness walk in together.",
+  "aspectMechanic": "The catch they are checking for is years old.",
+  "conditionalConsequence": "The suspicion may be historical, and the love tends to be most real exactly where the doubt is loudest, which is worth somebody noticing.",
+  "body": "Affection shows up at the door, and the person opening it checks for the catch.\n\nSomeone receives a kind gesture and inspects it before thanking anyone, because sweetness once turned out to be a setup, and the inspection got installed then.\n\nWith Venus conjunct Chiron, people want to be wanted while carrying a standing expectation of rejection, so warmth and wariness walk in together.\n\nThe catch they are checking for is years old.\n\nThe suspicion may be historical, and the love tends to be most real exactly where the doubt is loudest, which is worth somebody noticing.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.venus.conjunction.chiron",
+    "sourceHeading": "Venus conjunction Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

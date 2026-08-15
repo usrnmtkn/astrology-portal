@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-8",
+  "canonicalId": "transit-house/lilith/8",
+  "kind": "house",
+  "transiting": "lilith",
+  "house": 8,
+  "headline": "What nobody wants to discuss",
+  "body": "Black Moon Lilith in your 8th house makes taboos around money, sex, grief, power, and secrets impossible to ignore. These topics need clear, upfront conversation because avoiding them is making decisions for you. You might also realize where you surrendered your personal power during an old crisis and never took it back.\n\nThis is not about oversharing your private life with just anyone. Some details belong only with people who have earned your trust. Bring hidden issues out into honest conversations with trusted people without using vulnerability as a weapon or secrecy as a shield.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Lilith — 8H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

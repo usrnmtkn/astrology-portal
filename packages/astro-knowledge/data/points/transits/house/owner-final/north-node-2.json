@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "north-node-2",
+  "canonicalId": "transit-house/north_node/2",
+  "kind": "house",
+  "transiting": "north-node",
+  "house": 2,
+  "headline": "Building what is yours",
+  "body": "As the North Node moves through your 2nd house, your money, self-worth, and personal assets demand direct attention. You might start saving consistently, raise your prices, buy items that actually improve your daily life, or exit a financial setup that leaves you at the mercy of someone else's mood. Growth here looks quiet from the outside because it happens step by step.\n\nThe old habit comes from the 8th house, where shared funds and emotional crisis feel more familiar. You do not need complete isolation, but this transit proves how much better trust feels when you are standing on your own two feet.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "North Node — 2H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

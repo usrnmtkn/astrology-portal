@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.trine.chiron",
+  "canonicalId": "sky-aspect/chiron/venus/trine",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "venus",
+  "aspect": "trine",
+  "humanMoment": "Someone stays put while the old fear runs its lap, and the evening survives.",
+  "developmentDetail": "They feel the flinch, name it or wait it out, and pick the conversation back up, and the pattern loosens without anyone calling a summit.",
+  "planetaryDynamic": "With Venus trine Chiron, people can hold the warmth in place while the old alarm rings, and nobody has to obey it.",
+  "aspectMechanic": "The affection and the ache sit in the same room without a fight.",
+  "conditionalConsequence": "The progress may be invisible from outside, but the people involved keep score somewhere deep, and this week the evening goes down as a win.",
+  "body": "Someone stays put while the old fear runs its lap, and the evening survives.\n\nThey feel the flinch, name it or wait it out, and pick the conversation back up, and the pattern loosens without anyone calling a summit.\n\nWith Venus trine Chiron, people can hold the warmth in place while the old alarm rings, and nobody has to obey it.\n\nThe affection and the ache sit in the same room without a fight.\n\nThe progress may be invisible from outside, but the people involved keep score somewhere deep, and this week the evening goes down as a win.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.venus.trine.chiron",
+    "sourceHeading": "Venus trine Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

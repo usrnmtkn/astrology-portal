@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.conjunction.lilith",
+  "canonicalId": "sky-aspect/lilith/pluto/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "pluto",
+  "aspect": "conjunction",
+  "humanMoment": "Someone wakes up to find an old obsession has become non-negotiable.",
+  "developmentDetail": "A want dormant for a decade returns with administration, lists, plans, a timetable, because whatever they used to keep it buried has lost its funding.",
+  "planetaryDynamic": "With Pluto conjunct Lilith, the person who governs what stays buried and the exile who never chose to live underground turn out to be the same person.",
+  "aspectMechanic": "So they get the whole return at once rather than by degrees.",
+  "conditionalConsequence": "The return may build something or burn something, and people who choose integration over revenge decide which.",
+  "body": "Someone wakes up to find an old obsession has become non-negotiable.\n\nA want dormant for a decade returns with administration, lists, plans, a timetable, because whatever they used to keep it buried has lost its funding.\n\nWith Pluto conjunct Lilith, the person who governs what stays buried and the exile who never chose to live underground turn out to be the same person.\n\nSo they get the whole return at once rather than by degrees.\n\nThe return may build something or burn something, and people who choose integration over revenge decide which.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.pluto.conjunction.lilith",
+    "sourceHeading": "Pluto conjunction Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

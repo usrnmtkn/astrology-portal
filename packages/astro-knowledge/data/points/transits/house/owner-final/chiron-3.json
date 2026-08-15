@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "chiron-3",
+  "canonicalId": "transit-house/chiron/3",
+  "kind": "house",
+  "transiting": "chiron",
+  "house": 3,
+  "headline": "Using your voice",
+  "body": "Chiron in your 3rd house makes speaking up, writing, learning, and everyday conversations feel vulnerable. You might over-rehearse simple sentences, tone down your opinions until they lose all impact, or replay old memories of being called slow, loud, or weird. That old criticism happened long ago, but it still limits how much you speak up today.\n\nConfidence builds through basic practice. Asking a quick question, sharing an opinion in a low-stakes setting, or writing a page without worrying if it is good matters far more than crafting one perfect statement. You do not need to be fearless to speak your mind.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Chiron — 3H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

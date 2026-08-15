@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.sextile.chiron",
+  "canonicalId": "sky-aspect/chiron/mercury/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "mercury",
+  "aspect": "sextile",
+  "humanMoment": "The conversation everyone postponed helps more than expected once it starts.",
+  "developmentDetail": "Ten minutes in, both people notice the dreaded subject has gone ordinary, and realize they had spent months negotiating with a memory instead of with each other.",
+  "planetaryDynamic": "With Mercury sextile Chiron, people can find the opening line, and they can also feel every old reason it took this long to say it.",
+  "aspectMechanic": "Somebody still has to speak first.",
+  "conditionalConsequence": "The talk may never happen without an opener, and whoever supplies the first sentence tends to inherit most of the credit for the whole exchange.",
+  "body": "The conversation everyone postponed helps more than expected once it starts.\n\nTen minutes in, both people notice the dreaded subject has gone ordinary, and realize they had spent months negotiating with a memory instead of with each other.\n\nWith Mercury sextile Chiron, people can find the opening line, and they can also feel every old reason it took this long to say it.\n\nSomebody still has to speak first.\n\nThe talk may never happen without an opener, and whoever supplies the first sentence tends to inherit most of the credit for the whole exchange.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.mercury.sextile.chiron",
+    "sourceHeading": "Mercury sextile Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

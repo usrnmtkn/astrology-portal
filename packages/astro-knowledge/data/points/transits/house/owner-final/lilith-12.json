@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-12",
+  "canonicalId": "transit-house/lilith/12",
+  "kind": "house",
+  "transiting": "lilith",
+  "house": 12,
+  "headline": "What you buried to keep functioning",
+  "body": "Black Moon Lilith in your 12th house brings buried anger, unfulfilled longing, and old emotional baggage out of storage. Recurring dreams, sudden bursts of irritation, or old memories surface because shoving them down stops working. What comes up might feel intense, but it is just old energy looking for an exit.\n\nGive yourself privacy and a safe place to process. Journaling, therapy, or a private talk with a trusted friend helps separate what is actually yours from stress you absorbed from others. The goal is not to dwell on anger or grief, but to stop letting buried emotions run your life from behind the scenes.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Lilith — 12H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

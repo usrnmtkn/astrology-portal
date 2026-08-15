@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.neptune.conjunction.chiron",
+  "canonicalId": "sky-aspect/chiron/neptune/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "neptune",
+  "aspect": "conjunction",
+  "humanMoment": "The sadness arrives without an owner attached.",
+  "developmentDetail": "Someone absorbs the news cycle, the friend's divorce, the stranger's story, and finds personal grief and borrowed grief pooling in one container.",
+  "planetaryDynamic": "With Neptune conjunct Chiron, people feel their own edges dissolve in the exact place where tending needs the hurt to keep its edges.",
+  "aspectMechanic": "They can no longer tell the ache from the atmosphere.",
+  "conditionalConsequence": "The compassion may be entirely real, but the people who name whose hurt it is first tend to be the ones who can decide what to do with it.",
+  "body": "The sadness arrives without an owner attached.\n\nSomeone absorbs the news cycle, the friend's divorce, the stranger's story, and finds personal grief and borrowed grief pooling in one container.\n\nWith Neptune conjunct Chiron, people feel their own edges dissolve in the exact place where tending needs the hurt to keep its edges.\n\nThey can no longer tell the ache from the atmosphere.\n\nThe compassion may be entirely real, but the people who name whose hurt it is first tend to be the ones who can decide what to do with it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.neptune.conjunction.chiron",
+    "sourceHeading": "Neptune conjunction Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

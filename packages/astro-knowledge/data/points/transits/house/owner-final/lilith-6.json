@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-6",
+  "canonicalId": "transit-house/lilith/6",
+  "kind": "house",
+  "transiting": "lilith",
+  "house": 6,
+  "headline": "The refusal underneath exhaustion",
+  "body": "Black Moon Lilith in your 6th house makes resentment about work, routines, and physical limits impossible to write off as just a bad mood. You become acutely aware of unpaid work, extra duties dumped on you without asking, or a work schedule that completely ignores your health. Burnout is what happens long after \"no\" was the answer.\n\nThe solution is not always quitting on the spot. It looks like turning down tasks that are not your responsibility, holding firm on deadlines, taking real breaks, and admitting that your reliability has been taken for granted. A clean, firm \"no\" works better than an angry exit.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Lilith — 6H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "north-node-4",
+  "canonicalId": "transit-house/north_node/4",
+  "kind": "house",
+  "transiting": "north-node",
+  "house": 4,
+  "headline": "Giving home more weight",
+  "body": "With the North Node moving through your 4th house, your home and private life need more than whatever leftover energy you have at the end of the workday. You might move, fix up your space, spend quality time with family, or address a living situation you have ignored for too long. The work is not glamorous, but it determines how solid your foundation really is.\n\nThe 10th house on the other side brings the constant pull of career, status, and public obligation. Ambition does not have to die, but this transit shows that a career cannot sustain you if your home life is falling apart underneath it.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "North Node — 4H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}
