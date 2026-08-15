@@ -4,7 +4,14 @@
     "calculationFixture": "services/tldrastro-api/tests/fixtures/marie_report_2026.json",
     "houseSystem": "whole_sign",
     "verifiedOn": "2026-08-14",
-    "coordinates": { "latitude": 40.7831, "longitude": -73.9712, "source": "Manhattan borough centroid; owner ruling 2026-08-14" }
+    "coordinates": { "latitude": 40.7831, "longitude": -73.9712, "source": "Manhattan borough centroid; owner ruling 2026-08-14" },
+    "timeZone": "America/New_York"
+  },
+  "reportSubject": {
+    "name": "Marie Satori",
+    "handle": "mariesatori",
+    "datetime": { "date": "1979-02-18", "time": "11:20", "timeKnown": true, "timeZone": "America/New_York" },
+    "location": { "label": "Manhattan, New York, NY, USA", "latitude": 40.7831, "longitude": -73.9712, "timeZone": "America/New_York", "coordinateSource": { "provider": "owner_ruling_2026-08-14", "sourceId": "manhattan-borough-centroid", "resolution": "borough_centroid" } }
   },
   "reportHorizon": "12_months",
   "startsAt": "2026-02-18T01:59:11Z",
@@ -22,26 +29,41 @@
       "chartProvenance": { "schemaVersion": "canonical-natal-v1", "inputHash": "FIXTURE_ONLY_INPUT_HASH", "resultHash": "FIXTURE_ONLY_RESULT_HASH", "provenanceHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }
     },
     "positions": [
-      { "point": "Sun", "house": 9 },
-      { "point": "Moon", "house": 6 },
-      { "point": "Mercury", "house": 10 },
-      { "point": "Mars", "house": 9 },
-      { "point": "Jupiter", "house": 3 },
-      { "point": "Saturn", "house": 4 },
-      { "point": "Uranus", "house": 6 },
-      { "point": "Neptune", "house": 7 },
-      { "point": "Pluto", "house": 5 }
+      { "point": "Sun", "sign": "Aquarius", "degree": 29, "minute": 25, "house": 9, "retrograde": false },
+      { "point": "Moon", "sign": "Scorpio", "degree": 12, "minute": 47, "house": 6, "retrograde": false },
+      { "point": "Mercury", "sign": "Pisces", "degree": 7, "minute": 4, "house": 10, "retrograde": false },
+      { "point": "Venus", "sign": "Capricorn", "degree": 14, "minute": 57, "house": 8, "retrograde": false },
+      { "point": "Mars", "sign": "Aquarius", "degree": 22, "minute": 46, "house": 9, "retrograde": false },
+      { "point": "Jupiter", "sign": "Leo", "degree": 0, "minute": 57, "house": 3, "retrograde": true },
+      { "point": "Saturn", "sign": "Virgo", "degree": 11, "minute": 25, "house": 4, "retrograde": true },
+      { "point": "Uranus", "sign": "Scorpio", "degree": 20, "minute": 59, "house": 6, "retrograde": false },
+      { "point": "Neptune", "sign": "Sagittarius", "degree": 20, "minute": 12, "house": 7, "retrograde": false },
+      { "point": "Pluto", "sign": "Libra", "degree": 19, "minute": 0, "house": 5, "retrograde": false }
     ],
     "angles": {
-      "Ascendant": { "point": "Ascendant", "house": 1 },
-      "Midheaven": { "point": "Midheaven", "house": 10 }
+      "Ascendant": { "point": "Ascendant", "sign": "Gemini", "degree": 11, "minute": 9, "house": 1 },
+      "Midheaven": { "point": "Midheaven", "sign": "Aquarius", "degree": 16, "minute": 36, "house": 10 }
     }
   },
   "profections": {
-    "annual": { "house": 12, "sign": "Taurus", "ruler": "Venus" }
+    "age": 47,
+    "annual": { "age": 47, "house": 12, "sign": "Taurus", "ruler": "Venus" }
   },
   "solarReturn": {
     "returnMoment": "2026-02-18T01:59:11Z",
+    "location": { "label": "Manhattan, New York, NY, USA", "latitude": 40.7831, "longitude": -73.9712, "timeZone": "America/New_York" },
+    "chart": {
+      "positions": [
+        { "point": "Sun", "sign": "Aquarius", "degree": 29, "minute": 25, "house": 5 },
+        { "point": "Venus", "sign": "Pisces", "degree": 9, "minute": 35, "house": 6 },
+        { "point": "Mars", "house": 5 },
+        { "point": "Pluto", "house": 5 }
+      ],
+      "angles": {
+        "Ascendant": { "point": "Ascendant", "sign": "Libra", "degree": 11, "minute": 1, "house": 1 },
+        "Midheaven": { "point": "Midheaven", "sign": "Cancer", "degree": 12, "minute": 46, "house": 10 }
+      }
+    },
     "analysis": {
       "solarReturnToNatalOverlays": [
         { "point": "Sun", "house": 9 },
@@ -57,7 +79,15 @@
         { "point": "North Node", "house": 10 },
         { "point": "Chiron", "house": 11 },
         { "point": "Lilith", "house": 6 }
-      ]
+      ],
+      "lordOfYear": {
+        "ruler": "Venus",
+        "sign": "Pisces",
+        "house": 6,
+        "retrograde": false,
+        "essentialCondition": "exalted",
+        "angular": false
+      }
     }
   },
   "slowTransitArcs": [
@@ -70,6 +100,7 @@
     { "id": "jupiter-conjunction-jupiter", "transitPlanet": "Jupiter", "natalPoint": "Jupiter", "natalHouse": 3, "aspect": "conjunction", "isReturn": true, "passCount": 1, "passes": [{ "exactAt": "2026-07-04T00:00:00Z", "motion": "direct" }] },
     { "id": "jupiter-square-moon", "transitPlanet": "Jupiter", "natalPoint": "Moon", "natalHouse": 6, "aspect": "square", "isReturn": false, "passCount": 1, "passes": [{ "exactAt": "2026-08-27T00:00:00Z", "motion": "direct" }] },
     { "id": "jupiter-opposition-midheaven", "transitPlanet": "Jupiter", "natalPoint": "Midheaven", "natalHouse": 9, "aspect": "opposition", "isReturn": false, "passCount": 1, "passes": [{ "exactAt": "2026-09-15T00:00:00Z", "motion": "direct" }] },
+    { "id": "jupiter-sextile-pluto", "transitPlanet": "Jupiter", "natalPoint": "Pluto", "natalHouse": 5, "aspect": "sextile", "isReturn": false, "passCount": 1, "passes": [{ "exactAt": "2026-09-27T00:00:00Z", "motion": "direct" }] },
     { "id": "jupiter-trine-neptune", "transitPlanet": "Jupiter", "natalPoint": "Neptune", "natalHouse": 7, "aspect": "trine", "isReturn": false, "passes": [{ "exactAt": "2026-10-04T00:00:00Z" }] },
     { "id": "jupiter-square-uranus", "transitPlanet": "Jupiter", "natalPoint": "Uranus", "natalHouse": 6, "aspect": "square", "isReturn": false, "passes": [{ "exactAt": "2026-10-09T00:00:00Z" }] },
     { "id": "jupiter-opposition-mars", "transitPlanet": "Jupiter", "natalPoint": "Mars", "natalHouse": 9, "aspect": "opposition", "isReturn": false, "passCount": 2, "passes": [{ "exactAt": "2026-10-20T00:00:00Z", "motion": "direct" }, { "exactAt": "2027-02-05T00:00:00Z", "motion": "retrograde" }] },

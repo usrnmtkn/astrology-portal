@@ -8,12 +8,11 @@ import { buildReviewedReportDocument, resolveReviewedDeliveryBytes, reviewedRepo
 const facts = JSON.parse(fs.readFileSync(new URL("./fixtures/marie-report-frozen-facts.json", import.meta.url), "utf8"));
 const seasons = reportSeasonContracts(facts);
 assert.equal(seasons.length, 5);
-for (const season of seasons) {
+const benchmarkRanges = ["Feb 18 - Mar 20", "Mar 20 - Jun 21", "Jun 21 - Sep 22", "Sep 22 - Dec 21", "Dec 21 - Feb 17"];
+for (const [index, season] of seasons.entries()) {
   const payload = { unit: { unitId: season.unitId }, frozenFacts: facts };
   assert.deepEqual(reportUnitScopeRange(payload), { start: season.startMs, end: season.endMs }, `${season.unitId} scope and display must use the same calculation-service period.`);
-  const displayEnd = new Date(season.endsAt);
-  if (season.unitId === "winter-next") displayEnd.setUTCDate(displayEnd.getUTCDate() - 1);
-  assert.equal(season.dateRange, `${new Date(season.startsAt).toLocaleString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })} - ${displayEnd.toLocaleString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })}`);
+  assert.equal(season.dateRange, benchmarkRanges[index]);
 }
 
 const saturn = canonicalReportEvents(facts).filter((event) => event.factorId === "saturn-sextile-ascendant");
