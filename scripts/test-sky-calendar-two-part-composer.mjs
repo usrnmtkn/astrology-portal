@@ -18,6 +18,10 @@ const plans = JSON.parse(fs.readFileSync(path.join(
   root,
   "packages/astro-knowledge/review/sky-calendar-two-part-composer-v2/worked-card-plans.json",
 ), "utf8"));
+const workedArtifact = JSON.parse(fs.readFileSync(path.join(
+  root,
+  "packages/astro-knowledge/review/sky-calendar-two-part-composer-v2/worked-cards.json",
+), "utf8"));
 
 assert.equal(plans.schema, "tldr.sky-calendar.two-part.worked-card-plans.v2");
 assert.equal(plans.cards.length, 6);
@@ -25,6 +29,28 @@ assert.throws(
   () => composeSkyCalendarTwoPartCard(registry, plans.cards[0]),
   /component approval is incomplete; composer fails closed/u,
   "Production mode must reject PENDING OWNER components",
+);
+
+const allShadowTrineRegistry = structuredClone(registry);
+const allShadowTrinePlan = plans.cards.find((card) => card.input.aspect === "trine");
+const allShadowPlacementKey = `sky-sign/${allShadowTrinePlan.input.planetA}/${allShadowTrinePlan.input.signA}`;
+const allShadowPlacement = allShadowTrineRegistry.signUnits.find((unit) => unit.key === allShadowPlacementKey);
+allShadowPlacement.supportive_realizations = [];
+allShadowPlacement.neutral_realizations = [];
+assert.ok(allShadowPlacement.shadow_realizations.length > 0, "The trine regression fixture must remain all-shadow");
+assert.throws(
+  () => composeSkyCalendarTwoPartCard(allShadowTrineRegistry, allShadowTrinePlan, { reviewMode: true }),
+  (error) => (
+    error.code === "sky-calendar-missing-required-realization"
+    && error.gaps?.some((gap) => (
+      gap.id === "sky-calendar-missing-required-realization"
+      && gap.componentSlot === "placementA"
+      && gap.componentKey === allShadowPlacementKey
+      && gap.requiredType === "supportive"
+      && gap.availableTypes.includes("shadow")
+    ))
+  ),
+  "The composer must record a named gap and emit no trine when a selected component is all-shadow",
 );
 
 const missingSituation = structuredClone(plans.cards[0]);
@@ -35,8 +61,47 @@ assert.throws(
   "Prose cannot bypass the causal-situation layer",
 );
 
-const cards = plans.cards.map((plan) => composeSkyCalendarTwoPartCard(registry, plan, {
-  reviewMode: true,
+const planResolution = plans.cards.map((plan) => {
+  try {
+    return {
+      contentKey: plan.contentKey,
+      card: composeSkyCalendarTwoPartCard(registry, plan, { reviewMode: true }),
+      gaps: [],
+    };
+  } catch (error) {
+    if (error.code !== "sky-calendar-missing-required-realization") throw error;
+    return { contentKey: plan.contentKey, card: null, gaps: error.gaps };
+  }
+});
+assert.equal(planResolution.filter((result) => result.card).length, 2);
+assert.equal(planResolution.filter((result) => result.gaps.length > 0).length, 4);
+assert.equal(
+  planResolution.filter((result) => result.gaps.length > 0).every((result) => (
+    result.gaps.every((gap) => gap.id === "sky-calendar-missing-required-realization")
+  )),
+  true,
+);
+
+assert.equal(workedArtifact.schema, "tldr.sky-calendar.two-part.worked-cards.v2");
+const componentIndex = new Map([
+  ...registry.signUnits,
+  ...registry.aspectMechanisms,
+  ...registry.modalityUnits,
+  ...registry.elementUnits,
+].map((unit) => [unit.key, unit]));
+const cards = workedArtifact.cards.map((card) => ({
+  ...card,
+  componentProseForGate: Object.values(card.inputs.componentKeys)
+    .filter(Boolean)
+    .flatMap((key) => {
+      const unit = componentIndex.get(key);
+      return Object.entries(unit ?? {}).flatMap(([field, value]) => {
+        if (["key", "source_ids", "source_hashes", "owner_review_status"].includes(field)) return [];
+        if (typeof value === "string") return [value];
+        if (Array.isArray(value)) return value.filter((item) => typeof item === "string");
+        return [];
+      });
+    }),
 }));
 
 const ownerApprovedShape = {

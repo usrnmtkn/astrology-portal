@@ -6,13 +6,28 @@ export const REALIZATION_FIELDS = [
   "shadow_realizations",
 ];
 
-const aspectRealizationPriority = {
-  conjunction: ["neutral", "supportive", "shadow"],
-  opposition: ["neutral", "shadow", "supportive"],
-  square: ["shadow", "neutral", "supportive"],
-  trine: ["supportive", "neutral", "shadow"],
-  sextile: ["supportive", "neutral", "shadow"],
+export const REQUIRED_REALIZATION_TYPE_BY_ASPECT = {
+  conjunction: "neutral",
+  opposition: "neutral",
+  square: "shadow",
+  trine: "supportive",
+  sextile: "supportive",
 };
+
+export const MISSING_REQUIRED_REALIZATION_GAP_ID = "sky-calendar-missing-required-realization";
+
+export class MissingRequiredRealizationError extends Error {
+  constructor(gaps) {
+    const first = gaps[0];
+    super(
+      `${first?.id ?? MISSING_REQUIRED_REALIZATION_GAP_ID}: ${first?.componentKey ?? "component"} `
+      + `has no ${first?.requiredType ?? "required"} realization for ${first?.aspect ?? "this aspect"}`,
+    );
+    this.name = "MissingRequiredRealizationError";
+    this.code = MISSING_REQUIRED_REALIZATION_GAP_ID;
+    this.gaps = gaps;
+  }
+}
 
 const shadowSignals = /\b(?:against|cannot|conflict|consequence|control|cost|delay|denied|difficult|disappear|dismiss|erase|exclude|fail|fight|harder|hidden|ignore|limit|lose|loss|overlook|pressure|punish|refus|reject|risk|surrender|unequal|unsafe|withhold|without)\w*\b/iu;
 const supportiveSignals = /\b(?:accept|available|benefit|clear|closer|connect|credit|deliver|dependable|fair|help|include|improve|maintain|open|opportun|protect|recogniz|repair|reliable|support|trust survives|useful|workable)\w*\b/iu;
@@ -61,15 +76,36 @@ function deterministicIndex(seed, length) {
   return digest.readUInt32BE(0) % length;
 }
 
-function firstAvailableType(unit, priorities) {
-  return priorities.find((type) => unit[fieldForType(type)]?.length > 0) ?? null;
+export function requiredRealizationTypeForAspect(aspect) {
+  const requiredType = REQUIRED_REALIZATION_TYPE_BY_ASPECT[aspect];
+  if (!requiredType) throw new Error(`Unsupported aspect ${aspect}`);
+  return requiredType;
+}
+
+export function requiredRealizationGap(unit, aspect, slot = null) {
+  const requiredType = requiredRealizationTypeForAspect(aspect);
+  const requiredField = fieldForType(requiredType);
+  if (unit[requiredField]?.length > 0) return null;
+  return {
+    id: MISSING_REQUIRED_REALIZATION_GAP_ID,
+    severity: "blocking",
+    blocking: true,
+    componentKey: unit.key,
+    componentSlot: slot,
+    aspect,
+    requiredType,
+    requiredField,
+    availableTypes: ["supportive", "neutral", "shadow"].filter((type) => (
+      unit[fieldForType(type)]?.length > 0
+    )),
+    reason: `${aspect} requires a ${requiredType} realization from every selected component. Silent substitution is prohibited.`,
+  };
 }
 
 export function selectRealizationForAspect(unit, aspect, seed = unit.key) {
-  const priorities = aspectRealizationPriority[aspect];
-  if (!priorities) throw new Error(`${unit.key}: unsupported aspect ${aspect}`);
-  const type = firstAvailableType(unit, priorities);
-  if (!type) throw new Error(`${unit.key}: no typed realization is available`);
+  const type = requiredRealizationTypeForAspect(aspect);
+  const gap = requiredRealizationGap(unit, aspect);
+  if (gap) throw new MissingRequiredRealizationError([gap]);
   const values = unit[fieldForType(type)];
   const value = values[deterministicIndex(`${seed}|${unit.key}|${aspect}|${type}`, values.length)];
   return { type, value };

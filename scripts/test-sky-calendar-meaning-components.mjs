@@ -222,14 +222,30 @@ const noSupportiveFixture = {
   neutral_realizations: ["neutral condition"],
   shadow_realizations: ["shadow cost"],
 };
-assert.equal(selectRealizationForAspect(noSupportiveFixture, "trine").type, "neutral");
+assert.throws(
+  () => selectRealizationForAspect(noSupportiveFixture, "trine"),
+  (error) => (
+    error.code === "sky-calendar-missing-required-realization"
+    && error.gaps?.[0]?.componentKey === "no-supportive-fixture"
+    && error.gaps?.[0]?.requiredType === "supportive"
+  ),
+  "A trine may not silently substitute a neutral realization",
+);
 const allShadowFixture = {
   key: "all-shadow-fixture",
   supportive_realizations: [],
   neutral_realizations: [],
   shadow_realizations: ["shadow cost"],
 };
-assert.equal(selectRealizationForAspect(allShadowFixture, "trine").type, "shadow");
+assert.throws(
+  () => selectRealizationForAspect(allShadowFixture, "trine"),
+  (error) => (
+    error.code === "sky-calendar-missing-required-realization"
+    && error.gaps?.[0]?.availableTypes?.includes("shadow")
+    && error.gaps?.[0]?.requiredType === "supportive"
+  ),
+  "An all-shadow unit must block a trine instead of degrading it to shadow material",
+);
 
 const opposition = registry.aspectMechanisms.find((row) => row.key === "sky-aspect-mechanism/opposition");
 assert.equal(opposition.reader_effect, "people can see both positions at the same time");

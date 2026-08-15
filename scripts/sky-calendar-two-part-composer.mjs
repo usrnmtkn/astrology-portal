@@ -10,7 +10,11 @@ import {
   constructionSkeleton,
   splitSentences,
 } from "./sky-calendar-frame-uniqueness.mjs";
-import { selectRealizationForAspect } from "./sky-calendar-realization-types.mjs";
+import {
+  MissingRequiredRealizationError,
+  requiredRealizationGap,
+  selectRealizationForAspect,
+} from "./sky-calendar-realization-types.mjs";
 
 const moduleRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -196,6 +200,10 @@ export function resolveSkyCalendarComponents(registry, input) {
   for (const [slot, unit] of Object.entries(units)) {
     if (!unit) throw new Error(`${input.key ?? "card"}: missing ${slot} component ${keys[slot]}`);
   }
+  const gaps = Object.entries(units)
+    .map(([slot, unit]) => requiredRealizationGap(unit, input.aspect, slot))
+    .filter(Boolean);
+  if (gaps.length > 0) throw new MissingRequiredRealizationError(gaps);
   const realizationSelections = Object.fromEntries(Object.entries(units).map(([slot, unit]) => [
     slot,
     selectRealizationForAspect(unit, input.aspect, `${input.key ?? "card"}|${slot}`),
