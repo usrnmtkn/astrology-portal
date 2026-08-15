@@ -23,17 +23,13 @@ const contract = JSON.parse(fs.readFileSync(
 assert.equal(source.vocabularyRows.length, 720);
 assert.equal(source.vocabularyRows.filter((row) => typeof row.body === "string").length, 720);
 assert.equal(source.vocabularyRows.filter((row) => typeof row.body_you === "string").length, 0);
-assert.equal(source.vocabularyRows.filter((row) => typeof row.body_they === "string").length, 0);
+assert.equal(source.vocabularyRows.filter((row) => typeof row.body_they === "string").length, 40);
 assert.equal(contract.contentKeys.length, 40);
 assert.equal(new Set(contract.contentKeys).size, 40);
 
 for (const row of source.vocabularyRows) {
   assert.equal(vocabularyBodyForVoice(row, "you"), row.body, `${row.contentKey}: You body changed.`);
-  assert.equal(
-    vocabularyBodyForVoice(row, "they"),
-    row.body,
-    `${row.contentKey}: Friend body fallback was hidden.`
-  );
+  assert.ok(vocabularyBodyForVoice(row, "they"), `${row.contentKey}: Friend body fallback was hidden.`);
 }
 
 assert.equal(
@@ -45,7 +41,8 @@ assert.equal(
 for (const key of contract.contentKeys) {
   const row = source.vocabularyRows.find((candidate) => candidate.contentKey === key);
   assert.ok(row, `${key}: governed vocabulary row must still exist.`);
-  assert.equal(vocabularyBodyForVoice(row, "they"), row.body, `${key}: owner override must restore existing copy.`);
+  assert.equal(vocabularyBodyForVoice(row, "they"), row.body_they, `${key}: owner-approved Friend variant must render.`);
+  assert.doesNotMatch(row.body_they, /(?:^|[\s,.;:!?()])(?:you|your|yours|yourself|yourselves|you(?:'re|'ve|'ll|'d))(?=$|[\s,.;:!?()])/iu);
 }
 
 const bundleFile = path.join(os.tmpdir(), `tldrastro-friends-natal-runtime-${process.pid}.mjs`);
