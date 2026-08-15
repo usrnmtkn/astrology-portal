@@ -413,6 +413,8 @@ def _bisect_aspect_exact(
     settings: ChartSettings,
     move_first: bool,
     move_second: bool,
+    tolerance_degrees: float = 0.0001,
+    max_iterations: int = 64,
 ) -> Optional[float]:
     lower_delta = _aspect_delta_for_positions(
         lower_julian_day,
@@ -432,16 +434,16 @@ def _bisect_aspect_exact(
         move_first,
         move_second,
     )
-    if abs(lower_delta) <= 0.0001:
+    if abs(lower_delta) <= tolerance_degrees:
         return lower_julian_day
-    if abs(upper_delta) <= 0.0001:
+    if abs(upper_delta) <= tolerance_degrees:
         return upper_julian_day
     if lower_delta * upper_delta > 0:
         return None
 
     lower = lower_julian_day
     upper = upper_julian_day
-    for _ in range(64):
+    for _ in range(max_iterations):
         midpoint = (lower + upper) / 2
         midpoint_delta = _aspect_delta_for_positions(
             midpoint,
@@ -452,7 +454,7 @@ def _bisect_aspect_exact(
             move_first,
             move_second,
         )
-        if abs(midpoint_delta) <= 0.0001:
+        if abs(midpoint_delta) <= tolerance_degrees:
             return midpoint
         if lower_delta * midpoint_delta <= 0:
             upper = midpoint
