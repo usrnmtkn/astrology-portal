@@ -1,0 +1,129 @@
+name: Corpus grammar
+
+on:
+  pull_request:
+    paths:
+      - "packages/astro-knowledge/**"
+      - "tldr-astro-phrasebank/**"
+      - "src/astro-writing/**"
+      - "scripts/build-knowledge-index.mjs"
+      - "scripts/build-phrase-index.mjs"
+      - "scripts/lint-corpus-grammar.mjs"
+      - "scripts/test-writing-kernel-drift.mjs"
+      - "scripts/test-packet-builder-migrations.mjs"
+      - "scripts/test-production-evidence-adapter.mjs"
+      - "scripts/test-production-sky-emission-coverage.mjs"
+      - "scripts/test-production-identifier-coverage.mjs"
+      - "scripts/test-production-model-consolidation.mjs"
+      - "scripts/test-production-evidence-inspector.mjs"
+      - "scripts/test-production-surface-permissions.mjs"
+      - "scripts/inspect-production-writing-evidence.mjs"
+      - "scripts/test-production-precall-gate.mjs"
+      - "scripts/build-production-sky-kernel-comparison.mjs"
+      - "scripts/test-sky-aspect-owner-gate-source.mjs"
+      - "config/writing-kernel-drift-allowlist.json"
+      - "config/production-identifier-quarantine.json"
+      - "api/_lib/content-generation.ts"
+      - "api/_lib/report-model-client.ts"
+      - "api/_lib/report-production-gate.ts"
+      - "api/_lib/report-fulfillment.ts"
+      - "api/_lib/report-writer-chain.ts"
+      - "api/_lib/report-judge.ts"
+      - "api/_lib/report-assembly.ts"
+      - "api/cron/generate-sky-aspects.ts"
+      - "packages/astro-knowledge/scripts/generate-sky-aspect-cards.js"
+      - "packages/astro-knowledge/scripts/judge-sky-voice.js"
+      - "packages/astro-knowledge/scripts/editorial-judge-runtime.js"
+      - "api/admin/content-facts.ts"
+      - "api/cron/generate-sky.ts"
+      - "services/tldrastro-api/src/tldrastro_api/data/sky_aspect_profile.json"
+      - "services/tldrastro-api/src/tldrastro_api/services/chart.py"
+      - "services/tldrastro-api/src/tldrastro_api/services/personal_timing.py"
+      - "services/tldrastro-api/src/tldrastro_api/services/report_window.py"
+      - "services/tldrastro-api/src/tldrastro_api/services/synastry.py"
+      - "api/admin/prepopulate-content.ts"
+      - "api/admin/review-records.ts"
+      - "apps/web/src/content/domainRegistry.ts"
+      - "package.json"
+      - ".github/workflows/corpus-grammar.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "packages/astro-knowledge/**"
+      - "tldr-astro-phrasebank/**"
+      - "src/astro-writing/**"
+      - "scripts/build-knowledge-index.mjs"
+      - "scripts/build-phrase-index.mjs"
+      - "scripts/lint-corpus-grammar.mjs"
+      - "scripts/test-writing-kernel-drift.mjs"
+      - "scripts/test-packet-builder-migrations.mjs"
+      - "scripts/test-production-evidence-adapter.mjs"
+      - "scripts/test-production-sky-emission-coverage.mjs"
+      - "scripts/test-production-identifier-coverage.mjs"
+      - "scripts/test-production-model-consolidation.mjs"
+      - "scripts/test-production-evidence-inspector.mjs"
+      - "scripts/test-production-surface-permissions.mjs"
+      - "scripts/inspect-production-writing-evidence.mjs"
+      - "scripts/test-production-precall-gate.mjs"
+      - "scripts/build-production-sky-kernel-comparison.mjs"
+      - "scripts/test-sky-aspect-owner-gate-source.mjs"
+      - "config/writing-kernel-drift-allowlist.json"
+      - "config/production-identifier-quarantine.json"
+      - "api/_lib/content-generation.ts"
+      - "api/_lib/report-model-client.ts"
+      - "api/_lib/report-production-gate.ts"
+      - "api/_lib/report-fulfillment.ts"
+      - "api/_lib/report-writer-chain.ts"
+      - "api/_lib/report-judge.ts"
+      - "api/_lib/report-assembly.ts"
+      - "api/cron/generate-sky-aspects.ts"
+      - "packages/astro-knowledge/scripts/generate-sky-aspect-cards.js"
+      - "packages/astro-knowledge/scripts/judge-sky-voice.js"
+      - "packages/astro-knowledge/scripts/editorial-judge-runtime.js"
+      - "api/admin/content-facts.ts"
+      - "api/cron/generate-sky.ts"
+      - "services/tldrastro-api/src/tldrastro_api/data/sky_aspect_profile.json"
+      - "services/tldrastro-api/src/tldrastro_api/services/chart.py"
+      - "services/tldrastro-api/src/tldrastro_api/services/personal_timing.py"
+      - "services/tldrastro-api/src/tldrastro_api/services/report_window.py"
+      - "services/tldrastro-api/src/tldrastro_api/services/synastry.py"
+      - "api/admin/prepopulate-content.ts"
+      - "api/admin/review-records.ts"
+      - "apps/web/src/content/domainRegistry.ts"
+      - "package.json"
+      - ".github/workflows/corpus-grammar.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  corpus-grammar:
+    name: corpus-grammar
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Reject owner-reported grammar defects
+        run: node scripts/lint-corpus-grammar.mjs
+      - name: Require current writing-evidence indexes
+        run: |
+          node scripts/build-knowledge-index.mjs --check
+          node scripts/build-phrase-index.mjs --check
+      - name: Enforce writing-kernel adoption boundaries
+        run: |
+          node scripts/test-writing-kernel-drift.mjs
+          node scripts/test-packet-builder-migrations.mjs
+          node scripts/test-production-evidence-adapter.mjs
+          node scripts/test-production-sky-emission-coverage.mjs
+          node scripts/test-production-identifier-coverage.mjs
+          node scripts/test-production-precall-gate.mjs
+          node scripts/test-production-model-consolidation.mjs
+          node scripts/test-production-evidence-inspector.mjs
+          node scripts/test-production-surface-permissions.mjs
+          node scripts/build-production-sky-kernel-comparison.mjs
+          node scripts/test-sky-aspect-owner-gate-source.mjs
