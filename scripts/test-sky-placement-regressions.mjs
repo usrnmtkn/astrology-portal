@@ -427,6 +427,15 @@ assert.doesNotMatch(adminDashboard, /skyWriting|localSkySnapshot|skyContentSnaps
 assert.doesNotMatch(writingSurfaceSourceMap, /sky-writing-v1|skyContentSnapshot/u, "Admin source map must not point at retired Sky writing sources.");
 
 assert.match(app, /transitSynastryFallbackRendererV3\.renderSkyPlacement\(\{/, "Sky placement rendering must call the V3 package renderer.");
+for (const [label, source] of [["Node", nodeTransitRenderer], ["browser", browserTransitRenderer]]) {
+  const pairSlotBranch = source.slice(source.indexOf("if (pairHook && pairLived && pairTurn)"), source.indexOf("throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`)"));
+  assert.doesNotMatch(
+    pairSlotBranch,
+    /fillKeep\(part, \{ entryDate, exitDate \}\)/u,
+    `${label} must not impose a universal date-token contract on fact-sourced four-slot durations.`
+  );
+  assert.match(pairSlotBranch, /if \(planet === "lilith"\)/u, `${label} must preserve Lilith's governed exitDate substitution.`);
+}
 assert.match(
   app,
   /hasRetrogradeGuidance = isDisplayRetrograde\(position\)[\s\S]*\["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"\][\s\S]*renderSkyPlacement\(\{[\s\S]*isRetrograde: hasRetrogradeGuidance/u,

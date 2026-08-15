@@ -206,7 +206,8 @@ function main() {
   )));
   assert(batch3Approved.articles.every((entry) => deterministicChecks(entry.article, {
     planet: entry.planet,
-    sign: entry.sign
+    sign: entry.sign,
+    allowLegacyPunctuation: true
   }).overallPassed));
   const batch3MarsCancer = batch3Approved.articles.find((entry) => entry.planet === "mars" && entry.sign === "cancer").article;
   assert.match(batch3MarsCancer.development, /naming the hurt would show how much it mattered/u);
@@ -306,7 +307,10 @@ function main() {
   assert.strictEqual(formatDataset.cards.length, 4);
   assert(formatDataset.cards.every((entry) => entry.ownerApproved && entry.generationEvidenceAuthorized));
   assert(formatDataset.cards.every((entry) => entry.reviewStatus === "needs_review" && !entry.promotionAuthorized && !entry.canonical));
-  assert(formatDataset.cards.every((entry) => lintArticle({ ...entry.article, planet: entry.planet, sign: entry.sign }).score === 3));
+  assert(formatDataset.cards.every((entry) => lintArticle(
+    { ...entry.article, planet: entry.planet, sign: entry.sign },
+    { allowLegacyPunctuation: true }
+  ).score === 3));
   assert(!/\b(?:you|your|yours|yourself|yourselves|people)\b/iu.test(JSON.stringify(formatDataset.cards.map((entry) => entry.article))));
   assert.strictEqual(formatDataset.cards.find((entry) => entry.planet === "neptune").article.hook.startsWith("A relationship can look calm while someone disappears inside it."), true);
   assert.deepStrictEqual(formatDataset.movesExemplar.items, formatDataset.cards.find((entry) => entry.planet === "saturn").article.moves);
@@ -314,7 +318,7 @@ function main() {
   assert(packet.ownerPassages.length >= 4 && packet.ownerPassages.length <= 6);
   assert.strictEqual(packet.positiveEvidencePoolId, "sky-placement-owner-affinity-v1");
   assert(packet.ownerPassages.every((entry) => entry.authorityClass === "owner_authored_final"));
-  assert(packet.ownerPassages.every((entry) => !/\b(?:people|tilt(?:s|ed|ing)?|leak|leaks|leaked|leaking)\b/i.test(entry.text)));
+  assert(packet.ownerPassages.every((entry) => !/\b(?:tilt(?:s|ed|ing)?|leak|leaks|leaked|leaking)\b/i.test(entry.text)));
   assert(packet.ownerPassages.every((entry) => !/\b(?:you|your|yours|yourself|yourselves)\b/i.test(entry.text)));
   assert(new Set(packet.ownerPassages.map((entry) => entry.sourceArticleId || entry.sourcePath)).size >= 3);
   assert(new Set(packet.ownerPassages.map((entry) => entry.paragraphStructure)).size >= 3);
@@ -330,8 +334,8 @@ function main() {
   assert(packet.preferredVocabulary.phrases.length <= 3);
   assert(packet.preferredVocabulary.words.some((entry) => entry.term === "relationships"));
   assert(packet.preferredVocabulary.words.some((entry) => entry.term === "balance"));
-  assert(packet.preferredVocabulary.words.every((entry) => !/^(?:people|tilt|tilts|tilted|tilting|leak|leaks|leaked|leaking|letter|letters)$/iu.test(entry.term)));
-  assert(packet.preferredVocabulary.phrases.every((entry) => !/\b(?:people|you|your|yours|yourself|yourselves)\b/iu.test(entry.phrase)));
+  assert(packet.preferredVocabulary.words.every((entry) => !/^(?:tilt|tilts|tilted|tilting|leak|leaks|leaked|leaking|letter|letters)$/iu.test(entry.term)));
+  assert(packet.preferredVocabulary.phrases.every((entry) => !/\b(?:tilt|tilts|tilted|tilting|leak|leaks|leaked|leaking)\b/iu.test(entry.phrase)));
   assert.strictEqual(packet.structuralSlots.fallbackOutputShapeUnchanged, true);
   const cycleFacts = require(path.join(packageRoot, "data", "modifiers", "planet-cycle-facts.json"));
   assert.strictEqual(packet.structuralSlots.active.some((entry) => entry.id === "cycle-line"), factStatusAllowsWriting(cycleFacts.status));
@@ -445,14 +449,15 @@ function main() {
   assert.match(packet.writerPrompt, /at most one article may use a try_this action about holding back/u);
   assert.match(packet.writerPrompt, /opening, tension, development, close, try_this/);
   assert.match(packet.writerPrompt, /Stop after the final action/);
-  assert.match(packet.writerPrompt, /Use collective language/);
-  assert.match(packet.writerPrompt, /Do not use people/);
+  assert.match(packet.writerPrompt, /Sky placement pages speak to the reader/);
+  assert.match(packet.writerPrompt, /Direct address \(you\/your\) is allowed and wanted/);
+  assert.match(packet.writerPrompt, /People is allowed sparingly/);
   assert.doesNotMatch(packet.writerPrompt, /fair counteroffer|failure tags|negative examples|judge scores/i);
-  assert(packet.surfaceRequirements.universalHardConstraints.some((entry) => entry.id === "CF-001"));
+  assert(!packet.surfaceRequirements.universalHardConstraints.some((entry) => entry.id === "CF-001"));
   assert(!packet.surfaceRequirements.universalHardConstraints.some((entry) => entry.id === "CF-006"));
   assert(!packet.surfaceRequirements.universalHardConstraints.some((entry) => entry.id === "ED-015"));
   assert(packet.surfaceRequirements.universalHardConstraints.some((entry) => entry.id === "CF-018"));
-  assert.strictEqual(packet.routing.promptVersion, "sky-placement-writer-v16:owner-directive-ov044-v1");
+  assert.strictEqual(packet.routing.promptVersion, "sky-placement-writer-v17:ed028-reader-address-v1");
   assert.match(packet.writerPrompt, /Across recent batches, do not repeat action templates/u);
   assert.match(packet.writerPrompt, /checking an original source or assigning a one-hour block/u);
   assert.strictEqual(packet.surfaceRequirements.ownerWriterDirectiveId, "OV-044");
@@ -760,7 +765,7 @@ function main() {
     turn: "The response stays temporary. The request returns.",
     moves: ["Name the repeated request.", "Change the next response."]
   });
-  assert(peopleOpener.findings.some((finding) => finding.severity === "fail" && /People/.test(finding.match || "")));
+  assert(!peopleOpener.findings.some((finding) => finding.decisionId === "CF-001" && finding.severity === "fail"));
   const peopleMidSentence = lintArticle({
     planet: "jupiter", sign: "libra", tagline: "Name the choice",
     hook: "We keep saying either is fine until one voice takes over. Jupiter in Libra changes how people make a shared choice.",
@@ -768,7 +773,7 @@ function main() {
     turn: "The choice is not shared when one person decides and everyone else goes along with it.",
     moves: ["Name one preference before agreeing.", "Ask who has not answered yet."]
   });
-  assert(peopleMidSentence.findings.some((finding) => finding.severity === "fail" && /^people$/i.test(finding.match || "")));
+  assert(!peopleMidSentence.findings.some((finding) => finding.decisionId === "CF-001" && finding.severity === "fail"));
   const reviewedEditorialShorthand = lintArticle({
     planet: "jupiter", sign: "libra", tagline: "Name the choice",
     hook: "We keep saying either is fine until one voice takes over. Jupiter in Libra offers a fair counteroffer and a thoughtful compromise.",

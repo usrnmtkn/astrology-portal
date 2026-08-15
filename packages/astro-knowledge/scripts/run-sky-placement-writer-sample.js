@@ -112,9 +112,9 @@ function lintShape(article) {
   };
 }
 
-function deterministicChecks(article, { planet, sign, factContext = {} }) {
+function deterministicChecks(article, { planet, sign, factContext = {}, allowLegacyPunctuation = false }) {
   const full = [article.opening, article.tension, article.development, article.close, ...article.try_this].join("\n");
-  const lint = lintArticle({ ...lintShape(article), planet, sign, factContext });
+  const lint = lintArticle({ ...lintShape(article), planet, sign, factContext }, { allowLegacyPunctuation });
   const axisMode = planet === "nodes" && sign.includes("-");
   const [northSign, southSign] = axisMode ? sign.split("-") : [null, null];
   const planetPattern = axisMode

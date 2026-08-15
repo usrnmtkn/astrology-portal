@@ -91,7 +91,7 @@
         "registryState": { "const": "candidate" },
         "requestedModel": { "const": "gpt-5.6-sol" },
         "requestedReasoningEffort": { "const": "xhigh" },
-        "promptVersion": { "const": "sky-placement-writer-v16:owner-directive-ov044-v1" }
+        "promptVersion": { "const": "sky-placement-writer-v17:ed028-reader-address-v1" }
       }
     },
     "verifiedAstrology": { "type": "object" },
