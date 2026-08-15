@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "friend-vocabulary-person-inflection-owner-approval-v1",
+  "recordedAt": "2026-08-15",
+  "ownerStatement": "i approve",
+  "scope": "The owner's statement directly answered the request to approve the 38 exact proposed body_they inflections and the Part B role-aware migration plan. This record covers only the 38 inflections in the referenced candidate packet.",
+  "candidateRecord": {
+    "path": "packages/astro-knowledge/review/friend-vocabulary-person-inflection-candidates-2026-08-15.json",
+    "sha256": "5c72c76a3efc99201a944e626c00331fc3e90067de5561aac0b6261279b83b6b"
+  },
+  "approvedDisposition": "ready_for_owner_review",
+  "approvedCount": 38,
+  "approvedContentKeys": [
+    "fallback-vocab/house-jurisdiction/1",
+    "fallback-vocab/house-jurisdiction/3",
+    "fallback-vocab/house-jurisdiction/7",
+    "fallback-vocab/house-jurisdiction/11",
+    "fallback-vocab/house-jurisdiction/12",
+    "fallback-vocab/planet-excess/sun",
+    "fallback-vocab/planet-productive/sun",
+    "fallback-vocab/planet-function/sun",
+    "fallback-vocab/planet-function/moon",
+    "fallback-vocab/planet-function/mercury",
+    "fallback-vocab/planet-function/venus",
+    "fallback-vocab/planet-excess/jupiter",
+    "fallback-vocab/planet-function/chiron",
+    "fallback-vocab/planet-productive/north-node",
+    "fallback-vocab/planet-productive/south-node",
+    "fallback-vocab/house-pressure/1",
+    "fallback-vocab/placement-gerund/chiron/aries/0",
+    "fallback-vocab/placement-gerund/chiron/gemini/0",
+    "fallback-vocab/placement-gerund/chiron/leo/0",
+    "fallback-vocab/placement-gerund/chiron/virgo/0",
+    "fallback-vocab/placement-gerund/chiron/libra/0",
+    "fallback-vocab/placement-gerund/chiron/scorpio/0",
+    "fallback-vocab/placement-gerund/chiron/sagittarius/0",
+    "fallback-vocab/placement-gerund/chiron/aquarius/0",
+    "fallback-vocab/placement-gerund/chiron/pisces/0",
+    "fallback-vocab/dodont-do/mercury/aquarius",
+    "fallback-vocab/dodont-moon-dont/taurus",
+    "fallback-vocab/dodont-moon-do/gemini",
+    "fallback-vocab/dodont-moon-do/cancer",
+    "fallback-vocab/dodont-moon-dont/libra",
+    "fallback-vocab/empty-house-ruler-jurisdiction/2",
+    "fallback-vocab/sky-planet-function/chiron",
+    "fallback-vocab/sky-planet-function/jupiter",
+    "fallback-vocab/sky-planet-function/mercury",
+    "fallback-vocab/sky-planet-function/moon",
+    "fallback-vocab/sky-planet-function/north-node",
+    "fallback-vocab/sky-planet-function/south-node",
+    "fallback-vocab/sky-planet-function/sun"
+  ],
+  "unresolvedContentKeys": [
+    "fallback-vocab/placement-gerund/chiron/capricorn/0",
+    "fallback-vocab/dodont-reward/moon"
+  ],
+  "notAPersonReference": [
+    "fallback-vocab/dodont-reward/mercury"
+  ],
+  "servingAuthorized": false,
+  "servingBlocker": "The two unresolved rows still require exact owner wording; partial serving would leave a known Friend pronoun leak."
+}
