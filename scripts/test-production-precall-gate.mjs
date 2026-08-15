@@ -11,6 +11,7 @@ const require = createRequire(import.meta.url);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const adapter = require("../src/astro-writing/productionEvidenceAdapter.cjs");
 const gateModule = require("../src/astro-writing/productionPreCallGate.cjs");
+const { callGovernedOpenAIResponses } = require("../src/astro-writing/openAIResponses.cjs");
 
 const adminAliases = [
   ["you", "you-natal", "natal-sun-in-aries", "placement-sign/sun/aries"],
@@ -177,6 +178,33 @@ assert.throws(
   () => gateModule.assertProductionPreCallGate(tampered, { role: "WRITER", input: skyInput }),
   /KNOWLEDGE_PACKET_(UNAUTHORIZED|TAMPERED)/u
 );
+
+let governedFetchCalls = 0;
+const governedFetch = async () => {
+  governedFetchCalls += 1;
+  return { ok: true, status: 200, json: async () => ({ output_text: "{}" }) };
+};
+await assert.rejects(
+  callGovernedOpenAIResponses({
+    apiKey: "fixture-key",
+    role: "WRITER",
+    request: { model: "fixture-model", input: "fixture-input" },
+    productionGate: stale,
+    productionInput: skyInput,
+    fetchImpl: governedFetch
+  }),
+  /KNOWLEDGE_MULTI_PACKET_STALE/u
+);
+assert.equal(governedFetchCalls, 0, "A stale governed packet must block before provider fetch.");
+await callGovernedOpenAIResponses({
+  apiKey: "fixture-key",
+  role: "WRITER",
+  request: { model: "fixture-model", input: "fixture-input" },
+  productionGate: first,
+  productionInput: skyInput,
+  fetchImpl: governedFetch
+});
+assert.equal(governedFetchCalls, 1, "A current governed packet may reach the injected provider fixture once.");
 
 const validDraft = validateCopy("Pressure builds, attention narrows, and the next choice stays visible.", {
   validationProfile: first.validation.validationProfile,

@@ -6,6 +6,7 @@ const {
   canonicalAstrologyWritingInstructions,
   coldRenderedProseReviewInstructions
 } = require("./canonicalInstructions.cjs");
+const { assertProductionPreCallGate } = require("./productionPreCallGate.cjs");
 
 const CARD_REVIEWER_V3_CANDIDATE_INSTRUCTIONS = `ROLE: TLDR ASTRO CARD JUDGE V3 CANDIDATE
 
@@ -59,8 +60,22 @@ async function callOpenAIResponses({
   return { response, payload, role, instructions: body.instructions };
 }
 
+async function callGovernedOpenAIResponses({
+  productionGate,
+  productionInput,
+  ...requestInput
+}) {
+  const governedClearance = assertProductionPreCallGate(productionGate, {
+    role: requestInput.role,
+    input: productionInput
+  });
+  const result = await callOpenAIResponses(requestInput);
+  return { ...result, governedClearance };
+}
+
 module.exports = {
   CARD_REVIEWER_V3_CANDIDATE_INSTRUCTIONS,
+  callGovernedOpenAIResponses,
   callOpenAIResponses,
   instructionsForRole
 };

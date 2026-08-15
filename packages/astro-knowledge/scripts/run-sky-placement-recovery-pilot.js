@@ -3,7 +3,8 @@
 
 const fs = require("fs");
 const path = require("path");
-const { callOpenAIResponses } = require("../../../src/astro-writing/openAIResponses.cjs");
+const { callGovernedOpenAIResponses } = require("../../../src/astro-writing/openAIResponses.cjs");
+const { prepareProductionPreCallGate } = require("../../../src/astro-writing/productionPreCallGate.cjs");
 const { lintArticle, lintBatchRepetition } = require("./lint-placement-voice.js");
 const { resolveWriterCandidate } = require("./sky-placement-writer-runtime.js");
 
@@ -159,7 +160,18 @@ function voiceEvidence() {
   }));
 }
 
-function buildPacket(target, manifest, index, cycleFacts) {
+function recoveryProductionInput(target) {
+  return {
+    contentKey: `sky.placement.recovery.${target.planet}.${target.sign}`,
+    surface: "sky",
+    mode: "feed",
+    eventType: "collective-placement-card",
+    facts: { placement: { planet: target.planet, sign: target.sign } },
+    knowledgeIds: [`sky-placement-${target.planet}-${target.sign}`]
+  };
+}
+
+function buildRecoveryPacket(target, manifest, index, cycleFacts) {
   const pageKey = `${target.planet}/${target.sign}`;
   const item = manifest.find((entry) => entry.page_key === pageKey);
   if (!item) throw new Error(`Missing pilot manifest entry for ${pageKey}.`);
@@ -178,6 +190,14 @@ function buildPacket(target, manifest, index, cycleFacts) {
   if (!sourceIds.length || !selected.register.length) throw new Error(`${pageKey}: positive sourceIds are empty.`);
   const cycle = cycleFacts.planets[target.planet];
   if (!cycle) throw new Error(`${pageKey}: missing reviewed planet cycle facts.`);
+  const productionInput = recoveryProductionInput(target);
+  const productionGate = prepareProductionPreCallGate(productionInput, {
+    WRITING_KERNEL_GOVERNED_SURFACES: "sky",
+    WRITING_KERNEL_SKY_CANARY_PERCENT: "100"
+  });
+  if (!productionGate.governedPromptEnabled) {
+    throw new Error(`${pageKey}: governed canonical evidence prompt is required.`);
+  }
   return {
     schemaVersion: 1,
     target,
@@ -187,6 +207,8 @@ function buildPacket(target, manifest, index, cycleFacts) {
     expectedEvidenceAvailability: expected,
     sourceIds,
     selectedEvidence: selected,
+    productionInput,
+    productionGate,
     cycleFacts: {
       status: cycleFacts.status,
       sourcePath: path.relative(repoRoot, cycleFactsPath),
@@ -263,6 +285,9 @@ ${evidenceSection("ARGUMENT EVIDENCE", packet.selectedEvidence.argument)}
 
 ${evidenceSection("REGISTER EVIDENCE", packet.selectedEvidence.register)}
 
+## GOVERNED CANONICAL EVIDENCE
+${packet.productionGate.governedPrompt}
+
 Before returning JSON, silently verify the slot sentence counts, ASCII, literal meaning, planet/sign specificity, and absence of unsupported facts. Do not explain your work.`;
 }
 
@@ -296,10 +321,12 @@ async function makeCall(packet, release) {
       }
     }
   };
-  const result = await callOpenAIResponses({
+  const result = await callGovernedOpenAIResponses({
     apiKey: process.env.OPENAI_API_KEY,
     role: "WRITER",
     request,
+    productionGate: packet.productionGate,
+    productionInput: packet.productionInput,
     taskInstructions: "This request is the owner-authorized sky-placement-recovery card pilot. Its supplied four-slot task contract overrides article-shaped defaults. Do not produce an article, moves list, or extra fields."
   });
   return { ...result, prompt };
@@ -312,7 +339,7 @@ async function main() {
   const manifest = readJson(manifestPath);
   const index = readJson(evidenceIndexPath);
   const cycleFacts = readJson(cycleFactsPath);
-  const packets = targets.map((target) => buildPacket(target, manifest, index, cycleFacts));
+  const packets = targets.map((target) => buildRecoveryPacket(target, manifest, index, cycleFacts));
   fs.mkdirSync(outputRoot, { recursive: true });
   for (const packet of packets) {
     const pageDir = path.join(outputRoot, `${packet.target.planet}-${packet.target.sign}`);
