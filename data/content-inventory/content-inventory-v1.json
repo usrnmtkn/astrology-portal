@@ -1,9 +1,9 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "c73ecee7661fe39654329531785602f1eaed5a19",
+  "sourceCommit": "65a7bba1d013ca4c7c5ca7691be7e2f8bb1532e6",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "83db33c0620a80d5700198b8c1eb9d88806d57ebf5cdb7896dfd885bcb8e37a0",
+  "contentFingerprint": "122a1c0ee875f4c269e852b0fb7ad6c5027f757a5487fe62aafcc15403f1e84a",
   "recordCount": 9539,
   "statusCounts": {
     "owner-approved": 9539
@@ -125125,11 +125125,11 @@
       "provenance": "generated",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "owner approval, cowork session 2026-08-07: 'approve' given for the bridge-rule revisions and 28 compressed bond clauses as staged",
-      "contentHash": "92e7ebf0706e1ecbdb672520094479aaf898c83d2724c62a06831f28c81106f9",
+      "approvalVersionDate": "owner approval, cowork session 2026-08-07: 'approve' given for the bridge-rule revisions and 28 compressed bond clauses as staged; owner exact correction 2026-08-15: replace 'promise all of them' with 'commit to all of them'",
+      "contentHash": "16826681b1270c83b51a80e7b86c3294e0f17fc73cfd3f30e0d2f167d7d661e4",
       "wording": {
-        "body_you": "One idea turns into three plans fast, so check the calendar before you promise all of them.",
-        "body_they": "One idea turns into three plans fast, so check the calendar before you promise all of them."
+        "body_you": "One idea turns into three plans fast, so check the calendar before you commit to all of them.",
+        "body_they": "One idea turns into three plans fast, so check the calendar before you commit to all of them."
       },
       "astrology": {
         "objects": [

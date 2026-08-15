@@ -164,6 +164,16 @@ const softWrap = renderer.renderPairDaily({
   variant: 11
 });
 assert.ok(softWrap.sourceKeys.includes("fallback-hook/pair-daily/shared-bond/soft"));
+const correctedJupiterClause = renderer.renderPairDaily({
+  ...baseFacts,
+  shared: { kind: "bond", family: "soft", transiting: "jupiter" },
+  variant: 1
+});
+assert.match(
+  correctedJupiterClause.body,
+  /One idea turns into three plans fast, so check the calendar before you commit to all of them\./u
+);
+assert.doesNotMatch(correctedJupiterClause.body, /before you promise all of them/u);
 
 for (const [element, count] of [["fire", 3], ["earth", 3], ["air", 2], ["water", 4]]) {
   const last = renderer.renderPairDaily({
