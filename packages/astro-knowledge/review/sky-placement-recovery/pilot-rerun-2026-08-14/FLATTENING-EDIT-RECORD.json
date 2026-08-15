@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-15T05:46:19.509Z",
+  "ownerRuling": "the underlying concepts are good, but the rewrite got too clever i had to think too hard and i missed the point",
+  "billedCalls": 0,
+  "edits": {
+    "jupiter-aries": [
+      {
+        "id": "jupiter-lived-close",
+        "slot": "lived",
+        "before": "The first move produced evidence that more waiting could not supply.",
+        "after": "After you replied, you got the rate and a scheduled call.",
+        "plainMeaning": "Replying produced two concrete answers that waiting had not produced."
+      },
+      {
+        "id": "jupiter-turn-opening",
+        "slot": "turn",
+        "before": "The useful impulse goes wrong when the first yes becomes the pattern for every later demand, even as the terms grow beyond what you first accepted.",
+        "after": "The first quick yes becomes the answer to every later request.",
+        "plainMeaning": "One quick acceptance becomes the expectation for later requests."
+      },
+      {
+        "id": "jupiter-turn-close",
+        "slot": "turn",
+        "before": "You have the opportunity, and it takes more time than the first reply accounted for.",
+        "after": "The offer is real, and the hours no longer fit the calendar.",
+        "plainMeaning": "The offer exists, but its hours exceed the available calendar."
+      }
+    ],
+    "uranus-taurus": [
+      {
+        "id": "uranus-lived-close",
+        "slot": "lived",
+        "before": "Keeping the familiar numbers now produces the insecurity those numbers were supposed to prevent.",
+        "after": "The old budget no longer covers both the grocery order and the fixed payment.",
+        "plainMeaning": "The old budget cannot cover the two ordinary costs shown in the scene."
+      },
+      {
+        "id": "uranus-turn-opening",
+        "slot": "turn",
+        "before": "Changing the setup is the useful impulse, because waiting for complete certainty lets the mismatch grow.",
+        "after": "Changing the budget before the shortfall grows is necessary.",
+        "plainMeaning": "The budget must change before the missing amount increases."
+      },
+      {
+        "id": "uranus-turn-close",
+        "slot": "turn",
+        "before": "Security now rests on what the current numbers can support.",
+        "after": "The new budget has to cover today's bill and next week's payment.",
+        "plainMeaning": "The replacement budget must cover the bills that actually exist now."
+      }
+    ],
+    "pluto-capricorn": [
+      {
+        "id": "pluto-hook-close",
+        "slot": "hook",
+        "before": "Power stays concentrated when rank determines both the decision and whose evidence can reverse it.",
+        "after": "The same leaders make the decision and decide which records matter.",
+        "plainMeaning": "The leaders control both the decision and the records considered in reviewing it."
+      },
+      {
+        "id": "pluto-lived-close",
+        "slot": "lived",
+        "before": "Your objection becomes part of the file, but the leaders who approved the targets still decide what counts as proof.",
+        "after": "The complaint is filed; the leaders who set the targets reject the schedules.",
+        "plainMeaning": "The complaint is recorded, but the target-setters reject the submitted schedules."
+      },
+      {
+        "id": "pluto-turn-opening",
+        "slot": "turn",
+        "before": "The useful Capricorn impulse is to preserve continuity through clear standards and accountable leadership.",
+        "after": "Capricorn's standards are meant to keep the institution running and its leaders accountable.",
+        "plainMeaning": "The standards should preserve the institution while keeping its leaders answerable."
+      }
+    ]
+  },
+  "pages": [
+    {
+      "target": {
+        "planet": "jupiter",
+        "sign": "aries",
+        "tier": "A"
+      },
+      "lint": {
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [],
+        "auditValid": true,
+        "pilotShapeChecks": {
+          "wordCountBySlot": {
+            "hook": 64,
+            "lived": 78,
+            "tagline": 11,
+            "turn": 78
+          },
+          "wordCount": 231,
+          "finalSentenceWords": 12,
+          "threeItemLists": {
+            "count": 0,
+            "matches": []
+          },
+          "asciiOnly": true,
+          "nonAscii": [],
+          "passed": true
+        }
+      },
+      "mechanicalChecksPassed": true
+    },
+    {
+      "target": {
+        "planet": "uranus",
+        "sign": "taurus",
+        "tier": "B"
+      },
+      "lint": {
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [],
+        "auditValid": true,
+        "pilotShapeChecks": {
+          "wordCountBySlot": {
+            "hook": 67,
+            "lived": 74,
+            "tagline": 11,
+            "turn": 67
+          },
+          "wordCount": 219,
+          "finalSentenceWords": 12,
+          "threeItemLists": {
+            "count": 0,
+            "matches": []
+          },
+          "asciiOnly": true,
+          "nonAscii": [],
+          "passed": true
+        }
+      },
+      "mechanicalChecksPassed": true
+    },
+    {
+      "target": {
+        "planet": "pluto",
+        "sign": "capricorn",
+        "tier": "C"
+      },
+      "lint": {
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [],
+        "auditValid": true,
+        "pilotShapeChecks": {
+          "wordCountBySlot": {
+            "hook": 66,
+            "lived": 75,
+            "tagline": 14,
+            "turn": 73
+          },
+          "wordCount": 228,
+          "finalSentenceWords": 13,
+          "threeItemLists": {
+            "count": 0,
+            "matches": []
+          },
+          "asciiOnly": true,
+          "nonAscii": [],
+          "passed": true
+        }
+      },
+      "mechanicalChecksPassed": true
+    }
+  ]
+}
