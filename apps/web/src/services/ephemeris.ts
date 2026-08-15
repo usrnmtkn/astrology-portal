@@ -261,6 +261,10 @@ async function getSwissEph() {
   return swissEphPromise;
 }
 
+export async function preloadSwissEphemeris() {
+  await getSwissEph();
+}
+
 function utcHour(date: Date) {
   return date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600;
 }

@@ -1,4 +1,5 @@
 import bundledDeferredCoreRowsV3 from "./fallbackArchitectureV3/bundled-deferred-core-rows-v3.json";
+import bundledSharedPlacementRowsV3 from "./fallbackArchitectureV3/bundled-shared-placement-rows-v3.json";
 import bundledSkyCoreRowsV3 from "./fallbackArchitectureV3/bundled-sky-core-rows-v3.json";
 import bundledTransitCoreAuthoredCardsV3 from "./fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json";
 import lunationBlendUnitsV1 from "./fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json";
@@ -114,7 +115,8 @@ export const deferredFallbackArchitectureV3Bundle: FallbackArchitectureV3Bundle 
   },
   rowsFile: {
     hookRows: [
-      ...(bundledDeferredCoreRowsV3.hookRows as HookRow[])
+      ...(bundledDeferredCoreRowsV3.hookRows as HookRow[]),
+      ...(bundledSharedPlacementRowsV3.hookRows as HookRow[])
     ],
     vocabularyRows: bundledDeferredCoreRowsV3.vocabularyRows,
     dailyGlanceVariants: bundledDeferredCoreRowsV3.dailyGlanceVariants as unknown as RowsFile["dailyGlanceVariants"]

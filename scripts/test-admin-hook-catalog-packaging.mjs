@@ -10,7 +10,9 @@ const generatedRoot = path.join(repoRoot, "apps/admin/public/generated");
 const webGeneratedRoot = path.join(repoRoot, "apps/web/public/generated");
 const sourceFiles = [
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json"),
-  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json")
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json"),
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-shared-placement-rows-v3.json"),
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json")
 ];
 
 function expectedBody(row) {

@@ -68,16 +68,16 @@ assert.ok(
 );
 
 const hardCeilings = {
-  coldListReadyMs: 2_000,
-  warmDetailReadyMs: 1_000,
-  directLinkSynastryReadyMs: 2_000,
-  mobileNavigationReadyMs: 2_000,
-  incompleteChartListReadyMs: 2_000,
-  incompleteChartRepairReadyMs: 4_000,
-  slowNetworkListReadyMs: 2_000,
-  slowNetworkDetailShellReadyMs: 2_000,
-  slowNetworkRelationshipReadyMs: 4_500,
-  slowNetworkRelationshipEnhancedMs: 7_000
+  coldListReadyMs: 800,
+  warmDetailReadyMs: 500,
+  directLinkSynastryReadyMs: 1_000,
+  mobileNavigationReadyMs: 1_000,
+  incompleteChartListReadyMs: 800,
+  incompleteChartRepairReadyMs: 2_500,
+  slowNetworkListReadyMs: 800,
+  slowNetworkDetailShellReadyMs: 1_200,
+  slowNetworkRelationshipReadyMs: 2_200,
+  slowNetworkRelationshipEnhancedMs: 2_500
 };
 
 for (const [key, ceiling] of Object.entries(hardCeilings)) {

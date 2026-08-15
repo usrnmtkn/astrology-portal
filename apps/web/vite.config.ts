@@ -174,17 +174,23 @@ export default defineConfig(({ mode }) => {
             if (id.includes("fallbackArchitectureV3/bundled-deferred-core-rows-v3.json")) {
               return "fallback-content-deferred-core";
             }
+            if (id.includes("fallbackArchitectureV3/bundled-shared-placement-rows-v3.json")) {
+              return "fallback-content-shared-placement";
+            }
             if (id.includes("fallbackArchitectureV3/bundled-empty-house-rows-v3.json")) {
               return "fallback-content-empty-house";
             }
             if (id.includes("fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json")) {
               return "fallback-content-transit";
             }
+            if (id.includes("fallbackArchitectureV3/bundled-relationship-authored-cards-v3.json")) {
+              return "fallback-content-relationships-authored";
+            }
             if (
-              id.includes("fallbackArchitectureV3/bundled-relationship-authored-cards-v3.json")
+              id.includes("fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json")
               || id.includes("fallbackArchitectureV3/source-rows/bond-language")
             ) {
-              return "fallback-content-relationships";
+              return "fallback-content-relationships-hooks";
             }
             if (
               id.includes("fallbackArchitectureV3/bundled-sky-placement-rows-v3.json")
