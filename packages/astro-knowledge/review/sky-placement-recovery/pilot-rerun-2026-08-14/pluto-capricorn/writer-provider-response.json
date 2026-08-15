@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_0d06654efd9016c9006a7f8399d74c819c8a5ab8b20752f40a",
+  "httpStatus": 200,
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 4499,
+    "input_tokens_details": {
+      "cache_write_tokens": 3406,
+      "cached_tokens": 1090
+    },
+    "output_tokens": 5465,
+    "output_tokens_details": {
+      "reasoning_tokens": 5178
+    },
+    "total_tokens": 9964
+  },
+  "outputText": "{\"tagline\":\"A system can meet every formal standard while keeping decision-making power at ‌\",\"hook\":\"An institution announces that its plan is working because the budget is balanced, even though the cuts fell on those with the least authority and the workload did not shrink. Under Pluto in Capricorn, a hierarchy can point to its own endurance as proof of legitimacy while lower ranks absorb the cost of maintaining it. Power stays concentrated when rank determines both the decision and whose evidence can reverse it.\",\"lived\":\"You challenge a cut through the approved process and submit schedules showing that the remaining staff do not have enough paid hours to meet the deadline. The review measures the plan against the same targets used to justify the cut, excluding the unpaid hours that kept the previous deadline intact. The cut remains, and the next review is scheduled after the deadline. Your objection becomes part of the file, but the leaders who approved the targets still decide what counts as proof.\",\"turn\":\"The useful Capricorn impulse is to preserve continuity through clear standards and accountable leadership. Under this pressure, that impulse fails when continuity becomes the highest standard, allowing the institution to treat endurance as evidence that its decisions are sound. Each missed deadline is assigned to a lower manager, while every challenge is redirected into procedures controlled by the ranks under review. The hierarchy remains intact because the consequences still fall on those below it.\"}"
+}

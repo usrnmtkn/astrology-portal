@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-14T20:34:23.583Z",
+  "status": "completed_with_unretried_failure",
+  "calls": {
+    "writer": 3,
+    "readerJudge": 0,
+    "total": 3
+  },
+  "usage": {
+    "input_tokens": 13006,
+    "output_tokens": 10899,
+    "reasoning_tokens": 10588,
+    "total_tokens": 23905
+  },
+  "readerJudge": {
+    "status": "not_run",
+    "reason": "A second billed call per page was not authorized."
+  },
+  "batchRepetition": {
+    "passed": true,
+    "maxOccurrences": 1,
+    "occurrenceCount": 0,
+    "occurrences": [],
+    "findings": []
+  },
+  "results": [
+    {
+      "target": {
+        "planet": "jupiter",
+        "sign": "aries",
+        "tier": "A"
+      },
+      "status": "failed_no_retry",
+      "calls": {
+        "writer": 1,
+        "readerJudge": 0,
+        "total": 1
+      },
+      "startedAt": "2026-08-14T20:31:01.734Z",
+      "completedAt": "2026-08-14T20:32:11.576Z",
+      "error": "OpenAI response status was incomplete: max_output_tokens."
+    },
+    {
+      "target": {
+        "planet": "uranus",
+        "sign": "taurus",
+        "tier": "B"
+      },
+      "status": "failed_no_retry",
+      "calls": {
+        "writer": 1,
+        "readerJudge": 0,
+        "total": 1
+      },
+      "startedAt": "2026-08-14T20:32:11.576Z",
+      "completedAt": "2026-08-14T20:33:29.669Z",
+      "error": "OpenAI response status was incomplete: max_output_tokens."
+    },
+    {
+      "target": {
+        "planet": "pluto",
+        "sign": "capricorn",
+        "tier": "C"
+      },
+      "status": "needs_review",
+      "ownerApproved": false,
+      "stamped": false,
+      "servingChanged": false,
+      "calls": {
+        "writer": 1,
+        "readerJudge": 0,
+        "total": 1
+      },
+      "readerJudge": {
+        "status": "not_run",
+        "advisory": true,
+        "reason": "No additional billed call was authorized; the one-call-per-page cap was preserved."
+      },
+      "routing": {
+        "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "xhigh",
+        "laneId": "writer:sky-placement"
+      },
+      "usage": {
+        "input_tokens": 4296,
+        "input_tokens_details": {
+          "cache_write_tokens": 3203,
+          "cached_tokens": 1090
+        },
+        "output_tokens": 2899,
+        "output_tokens_details": {
+          "reasoning_tokens": 2588
+        },
+        "total_tokens": 7195
+      },
+      "startedAt": "2026-08-14T20:33:29.669Z",
+      "completedAt": "2026-08-14T20:34:23.583Z",
+      "retrieval": {
+        "countsByRole": {
+          "meaning": 36,
+          "register": 21,
+          "scene": 1,
+          "argument": 3,
+          "phrase": 0
+        },
+        "sourceIds": [
+          "meaning:matrix:meaning:6ae078662fc5",
+          "meaning:matrix:meaning:c9f8a366bb37",
+          "meaning:matrix:meaning:724a7647ff25",
+          "meaning:matrix:meaning:4dfda6d5ff8c",
+          "meaning:matrix:meaning:9fb6a697883d",
+          "meaning:matrix:meaning:8ae24da9b09f",
+          "scene:matrix:scene:98401dc0fc96",
+          "argument:matrix:argument_candidate:6ae078662fc5",
+          "argument:matrix:argument_candidate:4dfda6d5ff8c",
+          "argument:matrix:argument_candidate:b092e91e25ae",
+          "approved:fallback-hook/sky-sign-copy/saturn/capricorn:opening",
+          "approved:fallback-hook/sky-sign-copy/saturn/capricorn:tension",
+          "approved:fallback-hook/sky-sign-copy/saturn/capricorn:development",
+          "approved:fallback-hook/sky-sign-copy/saturn/capricorn:close",
+          "approved:fallback-hook/sky-sign-copy/venus/libra:opening",
+          "approved:fallback-hook/sky-sign-copy/venus/libra:tension",
+          "approved:fallback-hook/sky-sign-copy/venus/libra:development",
+          "approved:fallback-hook/sky-sign-copy/venus/libra:close"
+        ],
+        "voiceEvidence": [
+          {
+            "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:opening",
+            "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+            "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+            "governanceTier": "owner-approved-exact-copy",
+            "family": "sky-placement-continuous-v2",
+            "role": "register",
+            "slot": "opening",
+            "text": "You have been taught to mistake endurance for ability. The person who remembers every deadline, answers after hours, and never drops the ball gets called reliable, and the arrangement is cheaper than hiring anyone else. Saturn in Capricorn asks a harder question: is the system actually working, or has one person become the system?"
+          },
+          {
+            "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:tension",
+            "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+            "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+            "governanceTier": "owner-approved-exact-copy",
+            "family": "sky-placement-continuous-v2",
+            "role": "register",
+            "slot": "tension",
+            "text": "A project can win praise while one person sends corrections at midnight, covers a vacant role, and logs in on vacation. You may recognize the same pattern at home: a household looks organized because one person remembers every appointment, payment, and form. When they stop doing all of it, deadlines slip, messages go unanswered, and everyone discovers how much of the plan depended on work nobody else was prepared to do. If everything falls apart when one person takes a day off, that person was the infrastructure."
+          },
+          {
+            "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:development",
+            "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+            "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+            "governanceTier": "owner-approved-exact-copy",
+            "family": "sky-placement-continuous-v2",
+            "role": "register",
+            "slot": "development",
+            "text": "Before you expand the plan, make sure somebody else can run it. Fix the handoff. Train someone else to do the work. Fund the repair. Document what only one person knows. If training, funding, documentation, or another set of hands fixes the problem, reinforce it. If the structure still requires permanent overwork to function, stop calling it stable."
+          },
+          {
+            "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:close",
+            "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+            "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+            "governanceTier": "owner-approved-exact-copy",
+            "family": "sky-placement-continuous-v2",
+            "role": "register",
+            "slot": "close",
+            "text": "A structure is not stable if it only works when one person never rests."
+          },
+          {
+            "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:opening",
+            "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+            "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+            "governanceTier": "owner-approved-exact-copy",
+            "family": "sky-placement-continuous-v2",
+            "role": "register",
+            "slot": "opening",
+            "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them."
+          },
+          {
+            "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:tension",
+            "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+            "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+            "governanceTier": "owner-approved-exact-copy",
+            "family": "sky-placement-continuous-v2",
+            "role": "register",
+            "slot": "tension",
+            "text": "The problem starts when you keep saying yes because it feels easier than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left. The loudest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility. Resentment builds because the agreement only works by asking one person to keep giving more. You did not agree. You accommodated, and everyone called it agreement."
+          },
+          {
+            "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:development",
+            "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+            "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+            "governanceTier": "owner-approved-exact-copy",
+            "family": "sky-placement-continuous-v2",
+            "role": "register",
+            "slot": "development",
+            "text": "A shared purchase hides the same imbalance. You agree to split the cost, put the charge on your card, and accept a smaller repayment because asking for the exact difference feels awkward. You save the receipt, calculate what is still owed, and send another reminder. The agreement stays easy because you carry the missing money and the work of collecting it."
+          },
+          {
+            "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:close",
+            "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+            "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+            "governanceTier": "owner-approved-exact-copy",
+            "family": "sky-placement-continuous-v2",
+            "role": "register",
+            "slot": "close",
+            "text": "The connections worth keeping are the ones that survive you asking for something."
+          }
+        ]
+      },
+      "unsupportedFactsWithheld": [
+        "calendar dates",
+        "biography",
+        "motives",
+        "specific historical events",
+        "durations beyond the reviewed cycle facts"
+      ],
+      "card": {
+        "hook": "You are told to follow a policy that shifts the cost onto you, even though nobody can show who approved it or why changing it is treated as impossible. Pluto in Capricorn describes the pressure inside an established hierarchy when its order depends on hidden control. This placement puts power, concealment, and irreversible pressure inside Capricorn's rules, rank, and long-term structures, making the beneficiaries of the arrangement harder to ignore.",
+        "lived": "The rule appears neutral on paper: the deadline, rate, and penalties apply to everyone. In practice, the person with approval power grants private exceptions, while everyone else pays the fee, absorbs the delay, or risks losing access. You compare the written policy with the decisions made under it and find that the same office controls both the exception and the official explanation. Your complaint enters that chain of command, receives a case number, and closes without changing the policy. The review protects the rule from the complaint.",
+        "tagline": "The Rules Protect Power",
+        "turn": "Capricorn's useful impulse is to make responsibility visible through standards, records, and a durable chain of command. In this placement, that discipline goes wrong when authority uses procedure to preserve itself, treats endurance as proof of legitimacy, and transfers the cost of stability to those with the least power to challenge it. The policy still exists and the case is officially closed, but it can no longer be treated as neutral: the hierarchy controls the decision, the appeal, and the record of both."
+      },
+      "rendered": "# Pluto in Capricorn\n\n## The Rules Protect Power\n\nYou are told to follow a policy that shifts the cost onto you, even though nobody can show who approved it or why changing it is treated as impossible. Pluto in Capricorn describes the pressure inside an established hierarchy when its order depends on hidden control. This placement puts power, concealment, and irreversible pressure inside Capricorn's rules, rank, and long-term structures, making the beneficiaries of the arrangement harder to ignore.\n\nThe rule appears neutral on paper: the deadline, rate, and penalties apply to everyone. In practice, the person with approval power grants private exceptions, while everyone else pays the fee, absorbs the delay, or risks losing access. You compare the written policy with the decisions made under it and find that the same office controls both the exception and the official explanation. Your complaint enters that chain of command, receives a case number, and closes without changing the policy. The review protects the rule from the complaint.\n\nCapricorn's useful impulse is to make responsibility visible through standards, records, and a durable chain of command. In this placement, that discipline goes wrong when authority uses procedure to preserve itself, treats endurance as proof of legitimacy, and transfers the cost of stability to those with the least power to challenge it. The policy still exists and the case is officially closed, but it can no longer be treated as neutral: the hierarchy controls the decision, the appeal, and the record of both.\n",
+      "lint": {
+        "score": 1,
+        "fails": 2,
+        "warns": 0,
+        "findings": [
+          {
+            "severity": "fail",
+            "source": "compiled-editorial-decision",
+            "decisionId": "CF-014",
+            "slot": null,
+            "term": "regex_with_literal_exception",
+            "match": "on paper",
+            "reason": "Use on paper only for the ordinary looks-good-on-paper idiom or when a physical written document matters."
+          },
+          {
+            "severity": "fail",
+            "source": "compiled-editorial-decision",
+            "decisionId": "CF-006",
+            "slot": "tagline",
+            "term": "tagline_sentence",
+            "match": "The Rules Protect Power",
+            "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+          }
+        ],
+        "notes": [
+          "lived is 5 sentences; spec says 2-4",
+          "closer is long; end on a shorter line with bite"
+        ],
+        "auditValid": true,
+        "pilotShapeChecks": {
+          "wordCount": 244,
+          "targetWordCount": "roughly 250",
+          "failures": [],
+          "passed": true
+        }
+      }
+    }
+  ]
+}

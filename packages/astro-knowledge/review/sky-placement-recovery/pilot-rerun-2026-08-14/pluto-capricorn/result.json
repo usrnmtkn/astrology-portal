@@ -1,0 +1,221 @@
+{
+  "target": {
+    "planet": "pluto",
+    "sign": "capricorn",
+    "tier": "C"
+  },
+  "status": "needs_review",
+  "ownerApproved": false,
+  "stamped": false,
+  "servingChanged": false,
+  "mechanicalChecksPassed": true,
+  "calls": {
+    "writer": 1,
+    "readerJudge": 0,
+    "total": 1
+  },
+  "readerJudge": {
+    "status": "not_run",
+    "advisory": true,
+    "reason": "No additional billed call was authorized; the one-call-per-page cap was preserved."
+  },
+  "routing": {
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement"
+  },
+  "usage": {
+    "input_tokens": 4499,
+    "input_tokens_details": {
+      "cache_write_tokens": 3406,
+      "cached_tokens": 1090
+    },
+    "output_tokens": 5465,
+    "output_tokens_details": {
+      "reasoning_tokens": 5178
+    },
+    "total_tokens": 9964
+  },
+  "startedAt": "2026-08-14T21:07:37.748Z",
+  "completedAt": "2026-08-14T21:09:11.936Z",
+  "retrieval": {
+    "countsByRole": {
+      "meaning": 36,
+      "register": 21,
+      "scene": 1,
+      "argument": 3,
+      "phrase": 0
+    },
+    "sourceIds": [
+      "meaning:matrix:meaning:6ae078662fc5",
+      "meaning:matrix:meaning:c9f8a366bb37",
+      "meaning:matrix:meaning:724a7647ff25",
+      "meaning:matrix:meaning:4dfda6d5ff8c",
+      "meaning:matrix:meaning:9fb6a697883d",
+      "meaning:matrix:meaning:8ae24da9b09f",
+      "scene:matrix:scene:98401dc0fc96",
+      "argument:matrix:argument_candidate:6ae078662fc5",
+      "argument:matrix:argument_candidate:4dfda6d5ff8c",
+      "argument:matrix:argument_candidate:b092e91e25ae",
+      "approved:fallback-hook/sky-sign-copy/saturn/capricorn:opening",
+      "approved:fallback-hook/sky-sign-copy/saturn/capricorn:tension",
+      "approved:fallback-hook/sky-sign-copy/saturn/capricorn:development",
+      "approved:fallback-hook/sky-sign-copy/saturn/capricorn:close",
+      "approved:fallback-hook/sky-sign-copy/venus/libra:opening",
+      "approved:fallback-hook/sky-sign-copy/venus/libra:tension",
+      "approved:fallback-hook/sky-sign-copy/venus/libra:development",
+      "approved:fallback-hook/sky-sign-copy/venus/libra:close"
+    ],
+    "voiceEvidence": [
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:opening",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "opening",
+        "text": "You have been taught to mistake endurance for ability. The person who remembers every deadline, answers after hours, and never drops the ball gets called reliable, and the arrangement is cheaper than hiring anyone else. Saturn in Capricorn asks a harder question: is the system actually working, or has one person become the system?"
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:tension",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "tension",
+        "text": "A project can win praise while one person sends corrections at midnight, covers a vacant role, and logs in on vacation. You may recognize the same pattern at home: a household looks organized because one person remembers every appointment, payment, and form. When they stop doing all of it, deadlines slip, messages go unanswered, and everyone discovers how much of the plan depended on work nobody else was prepared to do. If everything falls apart when one person takes a day off, that person was the infrastructure."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:development",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "development",
+        "text": "Before you expand the plan, make sure somebody else can run it. Fix the handoff. Train someone else to do the work. Fund the repair. Document what only one person knows. If training, funding, documentation, or another set of hands fixes the problem, reinforce it. If the structure still requires permanent overwork to function, stop calling it stable."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:close",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "close",
+        "text": "A structure is not stable if it only works when one person never rests."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:opening",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "opening",
+        "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:tension",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "tension",
+        "text": "The problem starts when you keep saying yes because it feels easier than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left. The loudest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility. Resentment builds because the agreement only works by asking one person to keep giving more. You did not agree. You accommodated, and everyone called it agreement."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:development",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "development",
+        "text": "A shared purchase hides the same imbalance. You agree to split the cost, put the charge on your card, and accept a smaller repayment because asking for the exact difference feels awkward. You save the receipt, calculate what is still owed, and send another reminder. The agreement stays easy because you carry the missing money and the work of collecting it."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:close",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "close",
+        "text": "The connections worth keeping are the ones that survive you asking for something."
+      }
+    ]
+  },
+  "unsupportedFactsWithheld": [
+    "calendar dates",
+    "biography",
+    "motives",
+    "specific historical events",
+    "durations beyond the reviewed cycle facts"
+  ],
+  "card": {
+    "hook": "An institution announces that its plan is working because the budget is balanced, even though the cuts fell on those with the least authority and the workload did not shrink. Under Pluto in Capricorn, a hierarchy can point to its own endurance as proof of legitimacy while lower ranks absorb the cost of maintaining it. The same leaders make the decision and decide which records matter.",
+    "lived": "You challenge a cut through the approved process and submit schedules showing that the remaining staff do not have enough paid hours to meet the deadline. The review measures the plan against the same targets used to justify the cut, excluding the unpaid hours that kept the previous deadline intact. The cut remains, and the next review is scheduled after the deadline. The complaint is filed; the leaders who set the targets reject the schedules.",
+    "tagline": "A system can meet every formal standard while keeping decision-making power at the top.",
+    "turn": "Capricorn's standards are meant to keep the institution running and its leaders accountable. Under this pressure, that impulse fails when continuity becomes the highest standard, allowing the institution to treat endurance as evidence that its decisions are sound. Each missed deadline is assigned to a lower manager, while every challenge is redirected into procedures controlled by the ranks under review. The hierarchy remains intact because the consequences still fall on those below it."
+  },
+  "rendered": "# Pluto in Capricorn\n\n## A system can meet every formal standard while keeping decision-making power at the top.\n\nAn institution announces that its plan is working because the budget is balanced, even though the cuts fell on those with the least authority and the workload did not shrink. Under Pluto in Capricorn, a hierarchy can point to its own endurance as proof of legitimacy while lower ranks absorb the cost of maintaining it. The same leaders make the decision and decide which records matter.\n\nYou challenge a cut through the approved process and submit schedules showing that the remaining staff do not have enough paid hours to meet the deadline. The review measures the plan against the same targets used to justify the cut, excluding the unpaid hours that kept the previous deadline intact. The cut remains, and the next review is scheduled after the deadline. The complaint is filed; the leaders who set the targets reject the schedules.\n\nCapricorn's standards are meant to keep the institution running and its leaders accountable. Under this pressure, that impulse fails when continuity becomes the highest standard, allowing the institution to treat endurance as evidence that its decisions are sound. Each missed deadline is assigned to a lower manager, while every challenge is redirected into procedures controlled by the ranks under review. The hierarchy remains intact because the consequences still fall on those below it.\n",
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "warns": 0,
+    "findings": [],
+    "notes": [],
+    "auditValid": true,
+    "pilotShapeChecks": {
+      "wordCountBySlot": {
+        "hook": 66,
+        "lived": 75,
+        "tagline": 14,
+        "turn": 73
+      },
+      "wordCount": 228,
+      "finalSentenceWords": 13,
+      "threeItemLists": {
+        "count": 0,
+        "matches": []
+      },
+      "asciiOnly": true,
+      "nonAscii": [],
+      "passed": true
+    }
+  },
+  "postflightEdit": {
+    "slot": "tagline",
+    "before": "A system can meet every formal standard while keeping decision-making power at ‌",
+    "after": "A system can meet every formal standard while keeping decision-making power at the top.",
+    "reason": "The generated tagline was truncated after 'at' and ended with U+00A0/U+200C. The sentence was completed in the meaning already stated by the hook."
+  },
+  "flatteningEdits": [
+    {
+      "id": "pluto-hook-close",
+      "slot": "hook",
+      "before": "Power stays concentrated when rank determines both the decision and whose evidence can reverse it.",
+      "after": "The same leaders make the decision and decide which records matter.",
+      "plainMeaning": "The leaders control both the decision and the records considered in reviewing it."
+    },
+    {
+      "id": "pluto-lived-close",
+      "slot": "lived",
+      "before": "Your objection becomes part of the file, but the leaders who approved the targets still decide what counts as proof.",
+      "after": "The complaint is filed; the leaders who set the targets reject the schedules.",
+      "plainMeaning": "The complaint is recorded, but the target-setters reject the submitted schedules."
+    },
+    {
+      "id": "pluto-turn-opening",
+      "slot": "turn",
+      "before": "The useful Capricorn impulse is to preserve continuity through clear standards and accountable leadership.",
+      "after": "Capricorn's standards are meant to keep the institution running and its leaders accountable.",
+      "plainMeaning": "The standards should preserve the institution while keeping its leaders answerable."
+    }
+  ]
+}

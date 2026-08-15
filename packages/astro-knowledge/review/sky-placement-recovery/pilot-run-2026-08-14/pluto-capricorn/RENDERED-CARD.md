@@ -1,0 +1,9 @@
+# Pluto in Capricorn
+
+## The Rules Protect Power
+
+You are told to follow a policy that shifts the cost onto you, even though nobody can show who approved it or why changing it is treated as impossible. Pluto in Capricorn describes the pressure inside an established hierarchy when its order depends on hidden control. This placement puts power, concealment, and irreversible pressure inside Capricorn's rules, rank, and long-term structures, making the beneficiaries of the arrangement harder to ignore.
+
+The rule appears neutral on paper: the deadline, rate, and penalties apply to everyone. In practice, the person with approval power grants private exceptions, while everyone else pays the fee, absorbs the delay, or risks losing access. You compare the written policy with the decisions made under it and find that the same office controls both the exception and the official explanation. Your complaint enters that chain of command, receives a case number, and closes without changing the policy. The review protects the rule from the complaint.
+
+Capricorn's useful impulse is to make responsibility visible through standards, records, and a durable chain of command. In this placement, that discipline goes wrong when authority uses procedure to preserve itself, treats endurance as proof of legitimacy, and transfers the cost of stability to those with the least power to challenge it. The policy still exists and the case is officially closed, but it can no longer be treated as neutral: the hierarchy controls the decision, the appeal, and the record of both.

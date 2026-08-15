@@ -1,0 +1,253 @@
+{
+  "schemaVersion": 1,
+  "target": {
+    "planet": "uranus",
+    "sign": "taurus",
+    "tier": "B"
+  },
+  "status": "ready_for_one_authorized_writer_call",
+  "outputStatus": "needs_review",
+  "evidenceAvailability": {
+    "meaning": 28,
+    "register": 97,
+    "scene": 2,
+    "argument": 8,
+    "phrase": 0
+  },
+  "expectedEvidenceAvailability": {
+    "meaning": 28,
+    "register": 97,
+    "scene": 2,
+    "argument": 8,
+    "phrase": 0
+  },
+  "sourceIds": [
+    "meaning:matrix:meaning:c5e0b0df2a79",
+    "meaning:matrix:meaning:5bb2a312add6",
+    "meaning:matrix:meaning:1bb0c532f98d",
+    "meaning:matrix:meaning:261f6a0270fb",
+    "meaning:matrix:meaning:87e4f397c2e1",
+    "meaning:matrix:meaning:70a08c03fc16",
+    "scene:matrix:scene:b39da4b2b173",
+    "scene:matrix:scene:1625b4b87e7c",
+    "argument:matrix:argument_candidate:c5e0b0df2a79",
+    "argument:matrix:argument_candidate:5bb2a312add6",
+    "argument:matrix:argument_candidate:b39da4b2b173",
+    "approved:fallback-hook/sky-sign-copy/saturn/capricorn:opening",
+    "approved:fallback-hook/sky-sign-copy/saturn/capricorn:tension",
+    "approved:fallback-hook/sky-sign-copy/saturn/capricorn:development",
+    "approved:fallback-hook/sky-sign-copy/saturn/capricorn:close",
+    "approved:fallback-hook/sky-sign-copy/venus/libra:opening",
+    "approved:fallback-hook/sky-sign-copy/venus/libra:tension",
+    "approved:fallback-hook/sky-sign-copy/venus/libra:development",
+    "approved:fallback-hook/sky-sign-copy/venus/libra:close"
+  ],
+  "selectedEvidence": {
+    "meaning": [
+      {
+        "sourceId": "meaning:matrix:meaning:c5e0b0df2a79",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/transitmeanings/uranus|taurus|ingress/c5e0b0df2a79",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "knowledge-matrix-meaning",
+        "role": "meaning",
+        "text": "Pressure can build for a long time underneath a system everyone still calls stable. Uranus moves into Taurus, beginning a longer disruption of material systems such as money, food, technology, and the values attached to them. Early adaptation tends to cost less than waiting for the old structure to break under pressure."
+      },
+      {
+        "sourceId": "meaning:matrix:meaning:5bb2a312add6",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/transitmeanings/uranus|taurus|ingress/5bb2a312add6",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "knowledge-matrix-meaning",
+        "role": "meaning",
+        "text": "A first disruption can be enough to show which material systems were not built for the future. Uranus moves into Taurus for an early preview of longer changes around money, physical resources, technology, and the body. The systems may move slowly. The experiments pressing against them may not."
+      },
+      {
+        "sourceId": "meaning:matrix:meaning:1bb0c532f98d",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/transitmeanings/uranus|taurus|retrograde/1bb0c532f98d",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "knowledge-matrix-meaning",
+        "role": "meaning",
+        "text": "Recent experiments need evaluation more than another round of disruption. Uranus turns retrograde in Taurus, beginning a multi-month review of what the last few months actually changed. Some adaptations will prove useful. Others may have created a new problem while solving the old one."
+      },
+      {
+        "sourceId": "meaning:matrix:meaning:261f6a0270fb",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/transitmeanings/uranus|taurus|direct/261f6a0270fb",
+        "governanceTier": "owner-approved",
+        "family": "knowledge-matrix-meaning",
+        "role": "meaning",
+        "text": "Uranus turns direct in Taurus, and a change that was paused can start moving again. The plan can move again once the cost, pace, or practical limit is clearer."
+      },
+      {
+        "sourceId": "meaning:matrix:meaning:87e4f397c2e1",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/transitmeanings/uranus|taurus|ingress/87e4f397c2e1",
+        "governanceTier": "owner-approved",
+        "family": "knowledge-matrix-meaning",
+        "role": "meaning",
+        "text": "Uranus moves into Taurus, and an arrangement that used to work can start needing different terms because the old setup is no longer practical. The change may be slow, but once the old setup stops working, comfort alone is not enough reason to keep it."
+      },
+      {
+        "sourceId": "meaning:matrix:meaning:70a08c03fc16",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/transitmeanings/uranus|taurus|retrograde/70a08c03fc16",
+        "governanceTier": "owner-approved",
+        "family": "knowledge-matrix-meaning",
+        "role": "meaning",
+        "text": "Uranus turns retrograde in Taurus, bringing a change already underway back into revision. A price, timeline, or practical promise may need another look once the real cost or effort is clear."
+      }
+    ],
+    "scene": [
+      {
+        "sourceId": "scene:matrix:scene:b39da4b2b173",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/houseactivations/aries|uranus|taurus|ingress/b39da4b2b173",
+        "governanceTier": "owner-approved",
+        "family": "knowledge-matrix-scene",
+        "role": "scene",
+        "text": "Uranus in Taurus moves through your 2nd house of disposable income and foundation, so income, expenses, possessions, or what you are willing to pay can change quickly enough that the old budget stops making sense. The new plan may start as a practical necessity, not a desire to rebel. A familiar price or income setup can be hard to change even after the numbers stop working."
+      },
+      {
+        "sourceId": "scene:matrix:scene:1625b4b87e7c",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/houseactivations/aquarius|uranus|taurus|ingress/1625b4b87e7c",
+        "governanceTier": "owner-approved",
+        "family": "knowledge-matrix-scene",
+        "role": "scene",
+        "text": "Uranus in Taurus moves through your 3rd house of communication and daily reality, so a message, device, route, schedule, or piece of information may change the plan with very little warning. You may take longer to answer because you want the wording to hold up after the mood passes."
+      }
+    ],
+    "argument": [
+      {
+        "sourceId": "argument:matrix:argument_candidate:c5e0b0df2a79",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/transitmeanings/uranus|taurus|ingress/c5e0b0df2a79",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "knowledge-matrix-argument",
+        "role": "argument",
+        "text": "Pressure can build for a long time underneath a system everyone still calls stable. Uranus moves into Taurus, beginning a longer disruption of material systems such as money, food, technology, and the values attached to them. Early adaptation tends to cost less than waiting for the old structure to break under pressure."
+      },
+      {
+        "sourceId": "argument:matrix:argument_candidate:5bb2a312add6",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/transitmeanings/uranus|taurus|ingress/5bb2a312add6",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "knowledge-matrix-argument",
+        "role": "argument",
+        "text": "A first disruption can be enough to show which material systems were not built for the future. Uranus moves into Taurus for an early preview of longer changes around money, physical resources, technology, and the body. The systems may move slowly. The experiments pressing against them may not."
+      },
+      {
+        "sourceId": "argument:matrix:argument_candidate:b39da4b2b173",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/houseactivations/aries|uranus|taurus|ingress/b39da4b2b173",
+        "governanceTier": "owner-approved",
+        "family": "knowledge-matrix-argument",
+        "role": "argument",
+        "text": "Uranus in Taurus moves through your 2nd house of disposable income and foundation, so income, expenses, possessions, or what you are willing to pay can change quickly enough that the old budget stops making sense. The new plan may start as a practical necessity, not a desire to rebel. A familiar price or income setup can be hard to change even after the numbers stop working."
+      }
+    ],
+    "register": [
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:opening",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "opening",
+        "text": "You have been taught to mistake endurance for ability. The person who remembers every deadline, answers after hours, and never drops the ball gets called reliable, and the arrangement is cheaper than hiring anyone else. Saturn in Capricorn asks a harder question: is the system actually working, or has one person become the system?"
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:tension",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "tension",
+        "text": "A project can win praise while one person sends corrections at midnight, covers a vacant role, and logs in on vacation. You may recognize the same pattern at home: a household looks organized because one person remembers every appointment, payment, and form. When they stop doing all of it, deadlines slip, messages go unanswered, and everyone discovers how much of the plan depended on work nobody else was prepared to do. If everything falls apart when one person takes a day off, that person was the infrastructure."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:development",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "development",
+        "text": "Before you expand the plan, make sure somebody else can run it. Fix the handoff. Train someone else to do the work. Fund the repair. Document what only one person knows. If training, funding, documentation, or another set of hands fixes the problem, reinforce it. If the structure still requires permanent overwork to function, stop calling it stable."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:close",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "close",
+        "text": "A structure is not stable if it only works when one person never rests."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:opening",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "opening",
+        "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:tension",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "tension",
+        "text": "The problem starts when you keep saying yes because it feels easier than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left. The loudest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility. Resentment builds because the agreement only works by asking one person to keep giving more. You did not agree. You accommodated, and everyone called it agreement."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:development",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "development",
+        "text": "A shared purchase hides the same imbalance. You agree to split the cost, put the charge on your card, and accept a smaller repayment because asking for the exact difference feels awkward. You save the receipt, calculate what is still owed, and send another reminder. The agreement stays easy because you carry the missing money and the work of collecting it."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:close",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "close",
+        "text": "The connections worth keeping are the ones that survive you asking for something."
+      }
+    ]
+  },
+  "cycleFacts": {
+    "status": "REVIEWED",
+    "sourcePath": "packages/astro-knowledge/data/modifiers/planet-cycle-facts.json",
+    "zodiacCircuit": "about 84 years",
+    "typicalSignStay": "about 7 years per sign",
+    "variabilityNote": null
+  },
+  "exclusions": [
+    "July four-slot placement rows: reference-only and not transmitted",
+    "Daily evidence: not transmitted as voice evidence",
+    "Unapproved generated copy: excluded"
+  ],
+  "unsupportedFactsWithheld": [
+    "calendar dates",
+    "biography",
+    "motives",
+    "specific historical events",
+    "durations beyond the reviewed cycle facts"
+  ]
+}
