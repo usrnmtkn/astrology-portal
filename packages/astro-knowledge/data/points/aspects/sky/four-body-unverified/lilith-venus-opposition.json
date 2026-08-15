@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.opposition.lilith",
+  "canonicalId": "sky-aspect/lilith/venus/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "venus",
+  "aspect": "opposition",
+  "humanMoment": "One partner protects how the relationship looks while the other starts refusing to perform it.",
+  "developmentDetail": "One declines the invitations, leaves the photos unposted, drops the scripted answers, and the people watching begin picking sides.",
+  "planetaryDynamic": "With Venus opposite Lilith, the curator holds the version of the bond built for the audience while the refuser holds the appetite that version left out.",
+  "aspectMechanic": "They stand face to face, each holding half of one desire.",
+  "conditionalConsequence": "The standoff may soften, but the couple finds out whether the audience was load-bearing.",
+  "body": "One partner protects how the relationship looks while the other starts refusing to perform it.\n\nOne declines the invitations, leaves the photos unposted, drops the scripted answers, and the people watching begin picking sides.\n\nWith Venus opposite Lilith, the curator holds the version of the bond built for the audience while the refuser holds the appetite that version left out.\n\nThey stand face to face, each holding half of one desire.\n\nThe standoff may soften, but the couple finds out whether the audience was load-bearing.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.venus.opposition.lilith",
+    "sourceHeading": "Venus opposition Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

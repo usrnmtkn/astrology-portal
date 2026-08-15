@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.quincunx.north-node",
+  "canonicalId": "sky-aspect/north_node/uranus/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "uranus",
+  "aspect": "quincunx",
+  "humanMoment": "People keep having breakthroughs that land beside the point.",
+  "developmentDetail": "Someone's genuinely new ideas arrive for everything except the direction: they innovate on the side project while the main build waits, and they can feel the novelty and the progress running on separate tracks.",
+  "planetaryDynamic": "With Uranus quincunx the North Node, people keep trying to aim the invention at the one arrival that needs it, and the aim keeps drifting, with no adjustment holding for long.",
+  "aspectMechanic": "Someone keeps throwing sparks everywhere except the fireplace.",
+  "conditionalConsequence": "The creativity may be real, but people who redirect even one spark tend to get more from it than from a season of scattered ones.",
+  "body": "People keep having breakthroughs that land beside the point.\n\nSomeone's genuinely new ideas arrive for everything except the direction: they innovate on the side project while the main build waits, and they can feel the novelty and the progress running on separate tracks.\n\nWith Uranus quincunx the North Node, people keep trying to aim the invention at the one arrival that needs it, and the aim keeps drifting, with no adjustment holding for long.\n\nSomeone keeps throwing sparks everywhere except the fireplace.\n\nThe creativity may be real, but people who redirect even one spark tend to get more from it than from a season of scattered ones.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.uranus.quincunx.north-node",
+    "sourceHeading": "Uranus quincunx North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

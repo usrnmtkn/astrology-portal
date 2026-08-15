@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "chiron-6",
+  "canonicalId": "transit-house/chiron/6",
+  "kind": "house",
+  "transiting": "chiron",
+  "house": 6,
+  "headline": "The body under pressure",
+  "body": "Chiron in your 6th house forces you to look at the link between your workload, your need to be helpful, and your physical health. You might notice how often you skip rest, ignore physical symptoms, or design schedules for an idealized robot instead of the actual human body you live in. A heavy workload can easily trigger the belief that asking for help means you are failing.\n\nThis transit is not a punishment, but it makes an unsustainable routine impossible to ignore. A doctor's visit, reduced hours, better sleep, or a schedule that accounts for tough days helps you learn that your health is not the entry fee for being reliable.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Chiron — 6H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.opposition.chiron",
+  "canonicalId": "sky-aspect/chiron/mercury/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "mercury",
+  "aspect": "opposition",
+  "humanMoment": "The articulate one and the halting one split the meeting between them.",
+  "developmentDetail": "One talks past the point, the other cannot quite reach it, and the room mistakes speed for sense and silence for absence.",
+  "planetaryDynamic": "With Mercury opposite Chiron, one speaker holds the fluency while the other holds the depth the fluency keeps skating over.",
+  "aspectMechanic": "The room hears half of each.",
+  "conditionalConsequence": "The meeting may end on time anyway, but whoever translates between the two voices tends to walk out holding the actual content.",
+  "body": "The articulate one and the halting one split the meeting between them.\n\nOne talks past the point, the other cannot quite reach it, and the room mistakes speed for sense and silence for absence.\n\nWith Mercury opposite Chiron, one speaker holds the fluency while the other holds the depth the fluency keeps skating over.\n\nThe room hears half of each.\n\nThe meeting may end on time anyway, but whoever translates between the two voices tends to walk out holding the actual content.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.mercury.opposition.chiron",
+    "sourceHeading": "Mercury opposition Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

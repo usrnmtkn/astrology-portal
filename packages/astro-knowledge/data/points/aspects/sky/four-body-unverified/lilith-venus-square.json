@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.square.lilith",
+  "canonicalId": "sky-aspect/lilith/venus/square",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "venus",
+  "aspect": "square",
+  "humanMoment": "Someone says yes to the plan, the purchase, the favor, while everything in them is saying no.",
+  "developmentDetail": "They keep the exchange pleasant and provisional, and underneath the pleasantness they start counting what all this agreeableness is costing them.",
+  "planetaryDynamic": "With Venus square Lilith, people work to stay liked and keep things smooth while carrying a want that refuses to operate on approved terms.",
+  "aspectMechanic": "The longer they polish, the more brittle the charm gets, and when the no finally comes out it comes out too big.",
+  "conditionalConsequence": "The evening may be saved, but a desire that people edit for too long stops negotiating, and it rarely leaves exile gracefully.",
+  "body": "Someone says yes to the plan, the purchase, the favor, while everything in them is saying no.\n\nThey keep the exchange pleasant and provisional, and underneath the pleasantness they start counting what all this agreeableness is costing them.\n\nWith Venus square Lilith, people work to stay liked and keep things smooth while carrying a want that refuses to operate on approved terms.\n\nThe longer they polish, the more brittle the charm gets, and when the no finally comes out it comes out too big.\n\nThe evening may be saved, but a desire that people edit for too long stops negotiating, and it rarely leaves exile gracefully.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.venus.square.lilith",
+    "sourceHeading": "Venus square Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

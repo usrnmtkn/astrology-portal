@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.chiron.square.north-node",
+  "canonicalId": "sky-aspect/chiron/north_node/square",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "north_node",
+  "aspect": "square",
+  "humanMoment": "The step forward and the repair schedule demand the same week from someone.",
+  "developmentDetail": "The direction says advance, the injury says not yet, and the person between them waits on the one piece of work both ends kept skipping.",
+  "planetaryDynamic": "With Chiron square the North Node, people feel the unfinished repair pressing on the practiced route and the unpracticed direction at once.",
+  "aspectMechanic": "The skipped step blocks both roads.",
+  "conditionalConsequence": "Either voice may win the week, but the skipped step tends to stay on the syllabus until somebody takes it, and both roads shorten the day that happens.",
+  "body": "The step forward and the repair schedule demand the same week from someone.\n\nThe direction says advance, the injury says not yet, and the person between them waits on the one piece of work both ends kept skipping.\n\nWith Chiron square the North Node, people feel the unfinished repair pressing on the practiced route and the unpracticed direction at once.\n\nThe skipped step blocks both roads.\n\nEither voice may win the week, but the skipped step tends to stay on the syllabus until somebody takes it, and both roads shorten the day that happens.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.chiron.square.north-node",
+    "sourceHeading": "Chiron square North Node",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

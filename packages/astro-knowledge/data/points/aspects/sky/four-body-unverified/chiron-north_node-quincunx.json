@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.chiron.quincunx.north-node",
+  "canonicalId": "sky-aspect/chiron/north_node/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "north_node",
+  "aspect": "quincunx",
+  "humanMoment": "The path keeps requiring people's tender skill at awkward hours.",
+  "developmentDetail": "The direction needs someone's visible confidence on the exact days the repair needs privacy, and every itinerary gets revised around the ache.",
+  "planetaryDynamic": "With Chiron quincunx the North Node, people set the recovery conditions while the route keeps getting drawn as if they did not exist.",
+  "aspectMechanic": "Each advance costs a fresh accommodation.",
+  "conditionalConsequence": "The revisions may continue indefinitely, but a path that never accommodates the injury was drawn for somebody else, and the people who redraw theirs tend to keep walking it.",
+  "body": "The path keeps requiring people's tender skill at awkward hours.\n\nThe direction needs someone's visible confidence on the exact days the repair needs privacy, and every itinerary gets revised around the ache.\n\nWith Chiron quincunx the North Node, people set the recovery conditions while the route keeps getting drawn as if they did not exist.\n\nEach advance costs a fresh accommodation.\n\nThe revisions may continue indefinitely, but a path that never accommodates the injury was drawn for somebody else, and the people who redraw theirs tend to keep walking it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.chiron.quincunx.north-node",
+    "sourceHeading": "Chiron quincunx North Node",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

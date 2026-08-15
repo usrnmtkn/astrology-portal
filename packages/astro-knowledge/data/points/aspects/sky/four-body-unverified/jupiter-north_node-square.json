@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.square.north-node",
+  "canonicalId": "sky-aspect/jupiter/north_node/square",
+  "kind": "sky-aspect",
+  "bodyA": "jupiter",
+  "bodyB": "north_node",
+  "aspect": "square",
+  "humanMoment": "The big opportunity is pointing backward, and the people weighing it can tell.",
+  "developmentDetail": "Someone receives a genuinely large offer, more money, more scope, more of everything the last chapter valued, and accepting it means staffing the past at premium rates.",
+  "planetaryDynamic": "With Jupiter square the North Node, people feel the squeeze from both sides at once: they can see the growth is real and the direction is wrong, and the question they keep skipping, whether bigger and forward are the same thing, finally demands an answer.",
+  "aspectMechanic": "Someone has to measure the offer by direction instead of size.",
+  "conditionalConsequence": "The yes may be defensible, but people who take a large backward step have still stepped backward, and the size tends to make it harder to reverse.",
+  "body": "The big opportunity is pointing backward, and the people weighing it can tell.\n\nSomeone receives a genuinely large offer, more money, more scope, more of everything the last chapter valued, and accepting it means staffing the past at premium rates.\n\nWith Jupiter square the North Node, people feel the squeeze from both sides at once: they can see the growth is real and the direction is wrong, and the question they keep skipping, whether bigger and forward are the same thing, finally demands an answer.\n\nSomeone has to measure the offer by direction instead of size.\n\nThe yes may be defensible, but people who take a large backward step have still stepped backward, and the size tends to make it harder to reverse.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.jupiter.square.north-node",
+    "sourceHeading": "Jupiter square North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

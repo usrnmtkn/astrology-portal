@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.trine.chiron",
+  "canonicalId": "sky-aspect/chiron/mars/trine",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "mars",
+  "aspect": "trine",
+  "humanMoment": "Someone's old flinch and their needed force finally cooperate.",
+  "developmentDetail": "They have the hard conversation at the right volume, and their strength arrives measured, because it is no longer arguing with shame on the way out.",
+  "planetaryDynamic": "With Mars trine Chiron, people bring the force and the calibration the injury taught in one motion, without paying the usual tax.",
+  "aspectMechanic": "The room hears firmness instead of a fight.",
+  "conditionalConsequence": "The composure may look like nothing special from outside, and that is the achievement; people who can push without the tax are carrying new equipment.",
+  "body": "Someone's old flinch and their needed force finally cooperate.\n\nThey have the hard conversation at the right volume, and their strength arrives measured, because it is no longer arguing with shame on the way out.\n\nWith Mars trine Chiron, people bring the force and the calibration the injury taught in one motion, without paying the usual tax.\n\nThe room hears firmness instead of a fight.\n\nThe composure may look like nothing special from outside, and that is the achievement; people who can push without the tax are carrying new equipment.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.mars.trine.chiron",
+    "sourceHeading": "Mars trine Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

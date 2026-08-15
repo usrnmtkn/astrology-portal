@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "south-node-8",
+  "canonicalId": "transit-house/south_node/8",
+  "kind": "house",
+  "transiting": "south-node",
+  "house": 8,
+  "headline": "Intensity on repeat",
+  "body": "The South Node in your 8th house can make financial drama, secrets, shared debts, or emotional intensity feel strangely familiar. You might get pulled back into an old debt, a relationship built around rescue, or a crisis where everyone plays a set role. Depth matters, but living in constant emergency mode makes normal life feel flat by comparison.\n\nThe 2nd house on the other side brings the focus back to stable income, self-trust, simple pleasures, and what belongs strictly to you. The lesson is not to run from intimacy or shared responsibility, but to check if someone else's money, drama, or pressure is driving your whole life.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "South Node — 8H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.sextile.north-node",
+  "canonicalId": "sky-aspect/mars/north_node/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "mars",
+  "bodyB": "north_node",
+  "aspect": "sextile",
+  "humanMoment": "The established skill is taking a shift on the new project.",
+  "developmentDetail": "Someone loans the competence they built in the old arena, the organizing, the negotiating, the endurance, to the unfamiliar effort and finds it works there too.",
+  "planetaryDynamic": "With Mars sextile the North Node, people can put practiced strength to work on the unbuilt thing, and the old arena raises no objection to the loan, though somebody has to actually make it.",
+  "aspectMechanic": "Nobody else will carry the toolbox over.",
+  "conditionalConsequence": "The skill may stay in its old job either way, but people who transfer it once prove the new territory is workable, and that proof changes the whole calculation.",
+  "body": "The established skill is taking a shift on the new project.\n\nSomeone loans the competence they built in the old arena, the organizing, the negotiating, the endurance, to the unfamiliar effort and finds it works there too.\n\nWith Mars sextile the North Node, people can put practiced strength to work on the unbuilt thing, and the old arena raises no objection to the loan, though somebody has to actually make it.\n\nNobody else will carry the toolbox over.\n\nThe skill may stay in its old job either way, but people who transfer it once prove the new territory is workable, and that proof changes the whole calculation.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.mars.sextile.north-node",
+    "sourceHeading": "Mars sextile North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

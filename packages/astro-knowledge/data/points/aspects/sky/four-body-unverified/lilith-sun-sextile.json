@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.sextile.lilith",
+  "canonicalId": "sky-aspect/lilith/sun/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "sun",
+  "aspect": "sextile",
+  "humanMoment": "A respected name brings up the off-limits topic first, and overnight it costs less for everyone else to agree.",
+  "developmentDetail": "People who kept a position quiet for years hear themselves saying it in a normal voice: the odd ambition, the criticism of a protected process, the plan nobody would sponsor.",
+  "planetaryDynamic": "With the Sun sextile Lilith, the people with standing can lend it to exactly the topic that standing was supposed to exclude.",
+  "aspectMechanic": "The opening stays open only as long as someone keeps going on the record.",
+  "conditionalConsequence": "The topic may slip back into exile if nobody claims it, and whoever does claim it sets the terms everyone else inherits.",
+  "body": "A respected name brings up the off-limits topic first, and overnight it costs less for everyone else to agree.\n\nPeople who kept a position quiet for years hear themselves saying it in a normal voice: the odd ambition, the criticism of a protected process, the plan nobody would sponsor.\n\nWith the Sun sextile Lilith, the people with standing can lend it to exactly the topic that standing was supposed to exclude.\n\nThe opening stays open only as long as someone keeps going on the record.\n\nThe topic may slip back into exile if nobody claims it, and whoever does claim it sets the terms everyone else inherits.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.sun.sextile.lilith",
+    "sourceHeading": "Sun sextile Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

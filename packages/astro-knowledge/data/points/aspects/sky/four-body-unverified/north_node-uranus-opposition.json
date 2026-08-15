@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.opposition.north-node",
+  "canonicalId": "sky-aspect/north_node/uranus/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "uranus",
+  "aspect": "opposition",
+  "humanMoment": "People are getting ejected from the outgrown chapter all at once.",
+  "developmentDetail": "Someone's role ends, the arrangement collapses, the platform changes its rules overnight, and the release they were scheduling gradually completes itself in an afternoon.",
+  "planetaryDynamic": "With Uranus opposite the North Node, people watch the disruption strike exactly where they used to stand, on the familiar ground, while the new direction stands ready to receive whoever stops falling.",
+  "aspectMechanic": "Nobody volunteered, and the leaving happened anyway.",
+  "conditionalConsequence": "The exit may feel like catastrophe, but people who look at the timing often find the path correcting for lost time, and they had the direction on file all along.",
+  "body": "People are getting ejected from the outgrown chapter all at once.\n\nSomeone's role ends, the arrangement collapses, the platform changes its rules overnight, and the release they were scheduling gradually completes itself in an afternoon.\n\nWith Uranus opposite the North Node, people watch the disruption strike exactly where they used to stand, on the familiar ground, while the new direction stands ready to receive whoever stops falling.\n\nNobody volunteered, and the leaving happened anyway.\n\nThe exit may feel like catastrophe, but people who look at the timing often find the path correcting for lost time, and they had the direction on file all along.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.uranus.opposition.north-node",
+    "sourceHeading": "Uranus opposition North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

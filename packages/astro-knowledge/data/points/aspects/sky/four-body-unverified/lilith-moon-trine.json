@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.trine.lilith",
+  "canonicalId": "sky-aspect/lilith/moon/trine",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "moon",
+  "aspect": "trine",
+  "humanMoment": "The household absorbs an unconventional choice as if it had always been the plan.",
+  "developmentDetail": "Somebody rearranges a room for the project, everyone bends the schedule around the new commitment, and nobody performs surprise; the want just gets a place in daily life.",
+  "planetaryDynamic": "With the Moon trine Lilith, the people who run the daily container quietly give the banished appetite a shelf in it.",
+  "aspectMechanic": "Because nobody has to fight for it, the change happens almost silently.",
+  "conditionalConsequence": "The ease may be real, but what a family absorbs without discussion also goes unexamined, and its needs keep growing.",
+  "body": "The household absorbs an unconventional choice as if it had always been the plan.\n\nSomebody rearranges a room for the project, everyone bends the schedule around the new commitment, and nobody performs surprise; the want just gets a place in daily life.\n\nWith the Moon trine Lilith, the people who run the daily container quietly give the banished appetite a shelf in it.\n\nBecause nobody has to fight for it, the change happens almost silently.\n\nThe ease may be real, but what a family absorbs without discussion also goes unexamined, and its needs keep growing.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.moon.trine.lilith",
+    "sourceHeading": "Moon trine Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "chiron-1",
+  "canonicalId": "transit-house/chiron/1",
+  "kind": "house",
+  "transiting": "chiron",
+  "house": 1,
+  "headline": "Being seen without apology",
+  "body": "Chiron can spend several years in your 1st house, making your physical presence and visibility feel extra sensitive. You might notice your posture, feel awkward in photos, or catch yourself constantly apologizing for taking up space. Old comments about your looks, personality, or presence might still dictate how you walk into a room.\n\nThis transit is not asking for fake confidence every single day. It is simply making it harder to live like you have to look, sound, or act differently before you deserve to show up. Over time, you become the person who makes space for others because you know what it feels like to be excluded.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Chiron — 1H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

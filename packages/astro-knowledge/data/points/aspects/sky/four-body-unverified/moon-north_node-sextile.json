@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.sextile.north-node",
+  "canonicalId": "sky-aspect/moon/north_node/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "moon",
+  "bodyB": "north_node",
+  "aspect": "sextile",
+  "humanMoment": "Old comfort rituals are turning out to travel well.",
+  "developmentDetail": "Someone cooks the family recipe in the new kitchen, repurposes the childhood habit for the new schedule, and finds the familiar things willing to support the unfamiliar life.",
+  "planetaryDynamic": "With the Moon sextile the North Node, people can carry comfort from the life they knew into the territory they are moving toward, and the people from the old life hand over the supplies gladly instead of holding them back.",
+  "aspectMechanic": "Someone still has to open the boxes.",
+  "conditionalConsequence": "The boxes may stay taped either way, and people who unpack the rituals tend to feel the difference between relocating and arriving.",
+  "body": "Old comfort rituals are turning out to travel well.\n\nSomeone cooks the family recipe in the new kitchen, repurposes the childhood habit for the new schedule, and finds the familiar things willing to support the unfamiliar life.\n\nWith the Moon sextile the North Node, people can carry comfort from the life they knew into the territory they are moving toward, and the people from the old life hand over the supplies gladly instead of holding them back.\n\nSomeone still has to open the boxes.\n\nThe boxes may stay taped either way, and people who unpack the rituals tend to feel the difference between relocating and arriving.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.moon.sextile.north-node",
+    "sourceHeading": "Moon sextile North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

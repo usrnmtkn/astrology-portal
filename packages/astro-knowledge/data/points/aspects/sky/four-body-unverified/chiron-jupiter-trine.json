@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.trine.chiron",
+  "canonicalId": "sky-aspect/chiron/jupiter/trine",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "jupiter",
+  "aspect": "trine",
+  "humanMoment": "People's generosity goes exactly where the hidden pain is.",
+  "developmentDetail": "Someone moves money, time, or attention toward the cause that maps their own history, and the giver and the receiver get treated by the same act.",
+  "planetaryDynamic": "With Jupiter trine Chiron, people have surplus to give and, at last, the address it was always looking for.",
+  "aspectMechanic": "Nobody has to announce why the cause was chosen.",
+  "conditionalConsequence": "The giving may look selfless from outside, and it is also self-repair, and people who hold both of those facts tend to find nothing about it is a problem.",
+  "body": "People's generosity goes exactly where the hidden pain is.\n\nSomeone moves money, time, or attention toward the cause that maps their own history, and the giver and the receiver get treated by the same act.\n\nWith Jupiter trine Chiron, people have surplus to give and, at last, the address it was always looking for.\n\nNobody has to announce why the cause was chosen.\n\nThe giving may look selfless from outside, and it is also self-repair, and people who hold both of those facts tend to find nothing about it is a problem.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.jupiter.trine.chiron",
+    "sourceHeading": "Jupiter trine Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

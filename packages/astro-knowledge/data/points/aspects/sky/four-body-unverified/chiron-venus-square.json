@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.square.chiron",
+  "canonicalId": "sky-aspect/chiron/venus/square",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "venus",
+  "aspect": "square",
+  "humanMoment": "People are pulling back just as it gets good.",
+  "developmentDetail": "Someone has the best evening in months, then lets the plans go vague and leaves the warm message unanswered, because the closeness has tripped an alarm an older loss installed.",
+  "planetaryDynamic": "With Venus square Chiron, people move toward the connection and brace for the ending they remember at the same time, and the brace keeps winning.",
+  "aspectMechanic": "The alarm is about a door that closed years ago.",
+  "conditionalConsequence": "The retreat may feel like safety, but the people who run it manufacture the exact distance they were bracing against, and the alarm reads that distance as proof.",
+  "body": "People are pulling back just as it gets good.\n\nSomeone has the best evening in months, then lets the plans go vague and leaves the warm message unanswered, because the closeness has tripped an alarm an older loss installed.\n\nWith Venus square Chiron, people move toward the connection and brace for the ending they remember at the same time, and the brace keeps winning.\n\nThe alarm is about a door that closed years ago.\n\nThe retreat may feel like safety, but the people who run it manufacture the exact distance they were bracing against, and the alarm reads that distance as proof.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.venus.square.chiron",
+    "sourceHeading": "Venus square Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

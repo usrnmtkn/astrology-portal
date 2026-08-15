@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.quincunx.chiron",
+  "canonicalId": "sky-aspect/chiron/pluto/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "pluto",
+  "aspect": "quincunx",
+  "humanMoment": "The excavation and the errands keep competing for people's same hours.",
+  "developmentDetail": "Someone runs a heavy season underneath while the surface obligations grant no leave, and neither project will yield a full day to the other.",
+  "planetaryDynamic": "With Pluto quincunx Chiron, people work the underground timetable while needing the tending to happen aboveground too.",
+  "aspectMechanic": "Each project advances only by shortchanging the other.",
+  "conditionalConsequence": "The split may stay in place for a while and remain workable, provided nobody tells either project it is the only one.",
+  "body": "The excavation and the errands keep competing for people's same hours.\n\nSomeone runs a heavy season underneath while the surface obligations grant no leave, and neither project will yield a full day to the other.\n\nWith Pluto quincunx Chiron, people work the underground timetable while needing the tending to happen aboveground too.\n\nEach project advances only by shortchanging the other.\n\nThe split may stay in place for a while and remain workable, provided nobody tells either project it is the only one.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.pluto.quincunx.chiron",
+    "sourceHeading": "Pluto quincunx Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.square.north-node",
+  "canonicalId": "sky-aspect/north_node/sun/square",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "sun",
+  "aspect": "square",
+  "humanMoment": "People are getting applauded for the exact act they want to retire.",
+  "developmentDetail": "Someone gets asked to play the old role for one more season: the room loves it, the request feels flattering, and saying yes means another year in a part that no longer fits, while saying no means disappointing people to their faces.",
+  "planetaryDynamic": "With the Sun square the North Node, people feel pushed from both sides at once, tired of the road behind them and unready for the road ahead, and the reinvention they keep postponing stops waiting politely.",
+  "aspectMechanic": "The applause is for someone they used to be.",
+  "conditionalConsequence": "They may accept the renewal one more time, but crowds tend to clap for what is already finished, and the people who notice that start rehearsing the next act anyway.",
+  "body": "People are getting applauded for the exact act they want to retire.\n\nSomeone gets asked to play the old role for one more season: the room loves it, the request feels flattering, and saying yes means another year in a part that no longer fits, while saying no means disappointing people to their faces.\n\nWith the Sun square the North Node, people feel pushed from both sides at once, tired of the road behind them and unready for the road ahead, and the reinvention they keep postponing stops waiting politely.\n\nThe applause is for someone they used to be.\n\nThey may accept the renewal one more time, but crowds tend to clap for what is already finished, and the people who notice that start rehearsing the next act anyway.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.sun.square.north-node",
+    "sourceHeading": "Sun square North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

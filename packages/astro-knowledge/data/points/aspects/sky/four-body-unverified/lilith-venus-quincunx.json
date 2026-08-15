@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.quincunx.lilith",
+  "canonicalId": "sky-aspect/lilith/venus/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "venus",
+  "aspect": "quincunx",
+  "humanMoment": "The couple keeps working everywhere except the one room where it matters.",
+  "developmentDetail": "In front of everyone they are easy together; in private they shift the schedule, ration the affection, and let certain topics go quiet, each accommodation small enough to skip discussing.",
+  "planetaryDynamic": "With Venus quincunx Lilith, people keep the exchange smooth and presentable while one of them carries a want that does not fit the format.",
+  "aspectMechanic": "They find no fight to win, only a fit that stays slightly wrong after every adjustment.",
+  "conditionalConsequence": "The arrangement may run for years, but eventually somebody compares the cost of almost-right with the price of saying so.",
+  "body": "The couple keeps working everywhere except the one room where it matters.\n\nIn front of everyone they are easy together; in private they shift the schedule, ration the affection, and let certain topics go quiet, each accommodation small enough to skip discussing.\n\nWith Venus quincunx Lilith, people keep the exchange smooth and presentable while one of them carries a want that does not fit the format.\n\nThey find no fight to win, only a fit that stays slightly wrong after every adjustment.\n\nThe arrangement may run for years, but eventually somebody compares the cost of almost-right with the price of saying so.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.venus.quincunx.lilith",
+    "sourceHeading": "Venus quincunx Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

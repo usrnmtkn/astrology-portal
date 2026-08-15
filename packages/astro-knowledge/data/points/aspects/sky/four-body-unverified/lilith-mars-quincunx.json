@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.quincunx.lilith",
+  "canonicalId": "sky-aspect/lilith/mars/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "mars",
+  "aspect": "quincunx",
+  "humanMoment": "Someone's effort keeps missing the anger it was supposed to express.",
+  "developmentDetail": "They work out and it does not drain, they produce and it does not answer, and the busiest week ends with the fury intact and unaddressed.",
+  "planetaryDynamic": "With Mars quincunx Lilith, people convert feeling into action while carrying a rage that no available action fits.",
+  "aspectMechanic": "So they stay busy as a substitute for the confrontation they cannot schedule.",
+  "conditionalConsequence": "The output may impress, but the anger stays employed elsewhere, and it keeps surfacing at odd targets until someone reads what it is actually about.",
+  "body": "Someone's effort keeps missing the anger it was supposed to express.\n\nThey work out and it does not drain, they produce and it does not answer, and the busiest week ends with the fury intact and unaddressed.\n\nWith Mars quincunx Lilith, people convert feeling into action while carrying a rage that no available action fits.\n\nSo they stay busy as a substitute for the confrontation they cannot schedule.\n\nThe output may impress, but the anger stays employed elsewhere, and it keeps surfacing at odd targets until someone reads what it is actually about.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.mars.quincunx.lilith",
+    "sourceHeading": "Mars quincunx Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.sextile.north-node",
+  "canonicalId": "sky-aspect/mercury/north_node/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "mercury",
+  "bodyB": "north_node",
+  "aspect": "sextile",
+  "humanMoment": "The introduction that belongs to the future is getting offered almost casually.",
+  "developmentDetail": "A friend mentions a person worth meeting, a list worth joining, a room worth visiting, and everyone involved can see the connection points squarely at the unfamiliar territory.",
+  "planetaryDynamic": "With Mercury sextile the North Node, people get handed contacts by the old network that serve the new direction, and the message costs almost nothing to send, which is exactly why people find it easy to never send.",
+  "aspectMechanic": "Somebody has to answer the thread for it to become anything.",
+  "conditionalConsequence": "The thread may expire politely, and people who reply on time tend to discover that chapters often begin as exactly this kind of casual message.",
+  "body": "The introduction that belongs to the future is getting offered almost casually.\n\nA friend mentions a person worth meeting, a list worth joining, a room worth visiting, and everyone involved can see the connection points squarely at the unfamiliar territory.\n\nWith Mercury sextile the North Node, people get handed contacts by the old network that serve the new direction, and the message costs almost nothing to send, which is exactly why people find it easy to never send.\n\nSomebody has to answer the thread for it to become anything.\n\nThe thread may expire politely, and people who reply on time tend to discover that chapters often begin as exactly this kind of casual message.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.mercury.sextile.north-node",
+    "sourceHeading": "Mercury sextile North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

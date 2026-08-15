@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.square.lilith",
+  "canonicalId": "sky-aspect/lilith/moon/square",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "moon",
+  "aspect": "square",
+  "humanMoment": "Someone reaches for the comfort purchase, the third snack, or the long scroll instead of the want nobody will say at the table.",
+  "developmentDetail": "They manage the evening instead of living it, rerouting the appetite into safer substitutes that do not satisfy, and the mood sours on schedule.",
+  "planetaryDynamic": "With the Moon square Lilith, people soothe themselves with one hand while the appetite underneath refuses to be paid in substitutes.",
+  "aspectMechanic": "The more they reroute, the less either the comfort or the honesty lands.",
+  "conditionalConsequence": "The routine may hold, but the rerouted appetite shows up as a mood with no name, and someone eventually has to read it.",
+  "body": "Someone reaches for the comfort purchase, the third snack, or the long scroll instead of the want nobody will say at the table.\n\nThey manage the evening instead of living it, rerouting the appetite into safer substitutes that do not satisfy, and the mood sours on schedule.\n\nWith the Moon square Lilith, people soothe themselves with one hand while the appetite underneath refuses to be paid in substitutes.\n\nThe more they reroute, the less either the comfort or the honesty lands.\n\nThe routine may hold, but the rerouted appetite shows up as a mood with no name, and someone eventually has to read it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.moon.square.lilith",
+    "sourceHeading": "Moon square Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

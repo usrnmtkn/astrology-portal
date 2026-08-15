@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.trine.north-node",
+  "canonicalId": "sky-aspect/north_node/sun/trine",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "sun",
+  "aspect": "trine",
+  "humanMoment": "The new direction is starting to recognize people back.",
+  "developmentDetail": "Someone who showed up as a beginner hears their name used correctly in the unfamiliar room, gets real acknowledgment for early work, and realizes people now know them for what they are building rather than what they archived.",
+  "planetaryDynamic": "With the Sun trine the North Node, people become visible exactly where they are growing, and the familiar crowd raises no objection, so nobody has to run a campaign to be seen in the new place.",
+  "aspectMechanic": "The new room is learning their names on its own.",
+  "conditionalConsequence": "The shift may be gradual, but people follow where attention goes, and attention has quietly changed neighborhoods.",
+  "body": "The new direction is starting to recognize people back.\n\nSomeone who showed up as a beginner hears their name used correctly in the unfamiliar room, gets real acknowledgment for early work, and realizes people now know them for what they are building rather than what they archived.\n\nWith the Sun trine the North Node, people become visible exactly where they are growing, and the familiar crowd raises no objection, so nobody has to run a campaign to be seen in the new place.\n\nThe new room is learning their names on its own.\n\nThe shift may be gradual, but people follow where attention goes, and attention has quietly changed neighborhoods.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.sun.trine.north-node",
+    "sourceHeading": "Sun trine North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

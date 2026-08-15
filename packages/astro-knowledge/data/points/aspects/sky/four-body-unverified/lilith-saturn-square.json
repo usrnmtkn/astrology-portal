@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.square.lilith",
+  "canonicalId": "sky-aspect/lilith/saturn/square",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "saturn",
+  "aspect": "square",
+  "humanMoment": "One person arrives with the deadline and another arrives with the boycott, the same morning.",
+  "developmentDetail": "One points to the commitment, the other has stopped honoring commitments made under pressure, and everything the enforcer does hardens the other's position.",
+  "planetaryDynamic": "With Saturn square Lilith, one side holds the requirement while the other holds a refusal that has been waiting years for a hearing.",
+  "aspectMechanic": "They grind against each other until somebody restates one of the two honestly.",
+  "conditionalConsequence": "Compliance may return, but some rules deserve the refusal and some refusals are only old anger, and this pressure sorts which is which.",
+  "body": "One person arrives with the deadline and another arrives with the boycott, the same morning.\n\nOne points to the commitment, the other has stopped honoring commitments made under pressure, and everything the enforcer does hardens the other's position.\n\nWith Saturn square Lilith, one side holds the requirement while the other holds a refusal that has been waiting years for a hearing.\n\nThey grind against each other until somebody restates one of the two honestly.\n\nCompliance may return, but some rules deserve the refusal and some refusals are only old anger, and this pressure sorts which is which.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.saturn.square.lilith",
+    "sourceHeading": "Saturn square Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

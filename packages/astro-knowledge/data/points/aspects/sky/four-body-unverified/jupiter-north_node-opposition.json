@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.opposition.north-node",
+  "canonicalId": "sky-aspect/jupiter/north_node/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "jupiter",
+  "bodyB": "north_node",
+  "aspect": "opposition",
+  "humanMoment": "The golden handcuffs are getting another jewel.",
+  "developmentDetail": "Someone gets the raise, the title, the recognition for the established thing, and watches the exit grow more expensive precisely because they keep performing well.",
+  "planetaryDynamic": "With Jupiter opposite the North Node, people receive the most generous growth exactly where they have already been, while the new direction offers no compensation package at all, so prosperity itself starts arguing for staying.",
+  "aspectMechanic": "The better someone performs, the harder their leaving gets.",
+  "conditionalConsequence": "The package may be genuinely excellent, but people who price a chapter in comfort rarely buy it back later at the same rate.",
+  "body": "The golden handcuffs are getting another jewel.\n\nSomeone gets the raise, the title, the recognition for the established thing, and watches the exit grow more expensive precisely because they keep performing well.\n\nWith Jupiter opposite the North Node, people receive the most generous growth exactly where they have already been, while the new direction offers no compensation package at all, so prosperity itself starts arguing for staying.\n\nThe better someone performs, the harder their leaving gets.\n\nThe package may be genuinely excellent, but people who price a chapter in comfort rarely buy it back later at the same rate.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.jupiter.opposition.north-node",
+    "sourceHeading": "Jupiter opposition North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

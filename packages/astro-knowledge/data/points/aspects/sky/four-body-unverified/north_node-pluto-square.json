@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.square.north-node",
+  "canonicalId": "sky-aspect/north_node/pluto/square",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "pluto",
+  "aspect": "square",
+  "humanMoment": "People are finding a power struggle erupting across the path.",
+  "developmentDetail": "Someone with leverage objects to the direction: they contest the funding, the permission, the blessing, and advancing now requires a confrontation nobody put on the syllabus.",
+  "planetaryDynamic": "With Pluto square the North Node, people cannot move forward or comfortably back until they answer the power question, the confrontation they kept routing around, which now blocks both roads at once.",
+  "aspectMechanic": "Somebody has to sit down at that table.",
+  "conditionalConsequence": "The confrontation may be costly, but people who route around every power question tend to arrive somewhere other than their destination.",
+  "body": "People are finding a power struggle erupting across the path.\n\nSomeone with leverage objects to the direction: they contest the funding, the permission, the blessing, and advancing now requires a confrontation nobody put on the syllabus.\n\nWith Pluto square the North Node, people cannot move forward or comfortably back until they answer the power question, the confrontation they kept routing around, which now blocks both roads at once.\n\nSomebody has to sit down at that table.\n\nThe confrontation may be costly, but people who route around every power question tend to arrive somewhere other than their destination.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.pluto.square.north-node",
+    "sourceHeading": "Pluto square North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

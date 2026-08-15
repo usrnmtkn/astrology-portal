@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-7",
+  "canonicalId": "transit-house/lilith/7",
+  "kind": "house",
+  "transiting": "lilith",
+  "house": 7,
+  "headline": "What equality requires",
+  "body": "Black Moon Lilith in your 7th house brings hidden imbalances in close relationships right out into the open. You will be far less willing to swallow your anger, let the other person make all the choices, or play the easygoing partner just to avoid a fight. Resentment always highlights where an unfair dynamic was accepted instead of negotiated.\n\nThis transit forces real renegotiation, but remember that healthy relationships still involve some friction. A connection gets stronger when both people can voice what they need and work through the differences. Do not throw away a good relationship over minor flaws before giving the other person a chance to step up.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Lilith — 7H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

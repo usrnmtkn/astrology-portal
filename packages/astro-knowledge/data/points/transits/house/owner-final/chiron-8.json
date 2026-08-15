@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "chiron-8",
+  "canonicalId": "transit-house/chiron/8",
+  "kind": "house",
+  "transiting": "chiron",
+  "house": 8,
+  "headline": "Rebuilding trust carefully",
+  "body": "Chiron in your 8th house brings old fears around betrayal, shared finances, intimacy, and vulnerability back into the spotlight. You might guard your privacy fiercely, hesitate to share bank accounts or resources, or constantly watch for signs that someone will use your secrets against you. That caution was learned from experience, and it deserves respect.\n\nTrust is rebuilt in small, manageable steps. Keeping clear financial records, having one honest conversation, seeing a therapist, or sharing one responsibility with someone who proved reliable is enough for now. The goal is not total exposure, but checking if your armor is still protecting you or just keeping you trapped alone.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Chiron — 8H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

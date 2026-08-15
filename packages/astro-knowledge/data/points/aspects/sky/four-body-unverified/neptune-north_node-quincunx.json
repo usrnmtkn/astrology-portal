@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.neptune.quincunx.north-node",
+  "canonicalId": "sky-aspect/neptune/north_node/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "neptune",
+  "bodyB": "north_node",
+  "aspect": "quincunx",
+  "humanMoment": "People keep noticing the dream and the direction almost match.",
+  "developmentDetail": "Someone's actual path resembles the imagined one closely enough to prevent revolt and differently enough to breed a low-grade disappointment they never investigate.",
+  "planetaryDynamic": "With Neptune quincunx the North Node, people keep adjusting the ideal to fit the available and the available to fit the ideal, and neither revision ever quite closes the gap.",
+  "aspectMechanic": "Someone keeps almost feeling satisfied and never quite arriving there.",
+  "conditionalConsequence": "The gap may never fully close, but people who revise the ideal with evidence tend to shrink it faster than people who grade the evidence against the ideal.",
+  "body": "People keep noticing the dream and the direction almost match.\n\nSomeone's actual path resembles the imagined one closely enough to prevent revolt and differently enough to breed a low-grade disappointment they never investigate.\n\nWith Neptune quincunx the North Node, people keep adjusting the ideal to fit the available and the available to fit the ideal, and neither revision ever quite closes the gap.\n\nSomeone keeps almost feeling satisfied and never quite arriving there.\n\nThe gap may never fully close, but people who revise the ideal with evidence tend to shrink it faster than people who grade the evidence against the ideal.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.neptune.quincunx.north-node",
+    "sourceHeading": "Neptune quincunx North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

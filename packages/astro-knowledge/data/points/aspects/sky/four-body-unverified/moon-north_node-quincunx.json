@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.quincunx.north-node",
+  "canonicalId": "sky-aspect/moon/north_node/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "moon",
+  "bodyB": "north_node",
+  "aspect": "quincunx",
+  "humanMoment": "People keep alternating between building the new life and grieving the old one.",
+  "developmentDetail": "Someone spends Monday laying foundations and Tuesday missing a table that no longer exists, and they treat each mode as an interruption of the other instead of a companion to it.",
+  "planetaryDynamic": "With the Moon quincunx the North Node, people keep renegotiating the split between mourning the familiar life and constructing its replacement, and no arrangement they make quite settles.",
+  "aspectMechanic": "People give neither mood a full day.",
+  "conditionalConsequence": "The alternation may be the actual method, and people who put both moods on the schedule tend to fight the calendar less than people who make the moods compete for it.",
+  "body": "People keep alternating between building the new life and grieving the old one.\n\nSomeone spends Monday laying foundations and Tuesday missing a table that no longer exists, and they treat each mode as an interruption of the other instead of a companion to it.\n\nWith the Moon quincunx the North Node, people keep renegotiating the split between mourning the familiar life and constructing its replacement, and no arrangement they make quite settles.\n\nPeople give neither mood a full day.\n\nThe alternation may be the actual method, and people who put both moods on the schedule tend to fight the calendar less than people who make the moods compete for it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.moon.quincunx.north-node",
+    "sourceHeading": "Moon quincunx North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

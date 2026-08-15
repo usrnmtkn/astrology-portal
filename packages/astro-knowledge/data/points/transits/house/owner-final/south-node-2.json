@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "south-node-2",
+  "canonicalId": "transit-house/south_node/2",
+  "kind": "house",
+  "transiting": "south-node",
+  "house": 2,
+  "headline": "What you rely on",
+  "body": "The South Node in your 2nd house brings habits around money, possessions, and self-protection into focus. You might hang onto a job, budget, routine, or piece of property because it is predictable, even when it no longer fits the life you are trying to build. Financial caution makes sense, but fear can easily disguise itself as practical thinking.\n\nThe 8th house on the other side brings shared finances, joint trust, and obligations you cannot handle all by yourself. This is not about taking foolish risks or giving away what belongs to you. It is about noticing if your version of stability helps you live fully, or only keeps you from needing anyone.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "South Node — 2H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

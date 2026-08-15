@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.opposition.north-node",
+  "canonicalId": "sky-aspect/mercury/north_node/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "mercury",
+  "bodyB": "north_node",
+  "aspect": "opposition",
+  "humanMoment": "The old material is performing beautifully, again.",
+  "developmentDetail": "Someone carries the whole dinner on polished stories, reliable jokes, and settled opinions, and never once mentions the unwritten chapter, which contributes nothing because they have not given it a single anecdote yet.",
+  "planetaryDynamic": "With Mercury opposite the North Node, people talk best about where they have already been, because they keep the tested material at the familiar end of things while the new direction goes unmentioned.",
+  "aspectMechanic": "Everyone at the table has heard this one before.",
+  "conditionalConsequence": "The evening may be a success, but people who only quote their past tend to notice, eventually, the audience finishing their sentences.",
+  "body": "The old material is performing beautifully, again.\n\nSomeone carries the whole dinner on polished stories, reliable jokes, and settled opinions, and never once mentions the unwritten chapter, which contributes nothing because they have not given it a single anecdote yet.\n\nWith Mercury opposite the North Node, people talk best about where they have already been, because they keep the tested material at the familiar end of things while the new direction goes unmentioned.\n\nEveryone at the table has heard this one before.\n\nThe evening may be a success, but people who only quote their past tend to notice, eventually, the audience finishing their sentences.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.mercury.opposition.north-node",
+    "sourceHeading": "Mercury opposition North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.quincunx.lilith",
+  "canonicalId": "sky-aspect/lilith/pluto/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "pluto",
+  "aspect": "quincunx",
+  "humanMoment": "Someone's intensity keeps landing next to its actual object.",
+  "developmentDetail": "They fixate on the colleague, the feud, the cause with an energy the object cannot explain, and adjusting the object never adjusts the energy.",
+  "planetaryDynamic": "With Pluto quincunx Lilith, people aim the charge while an older exile, the one the charge actually belongs to, stays off the target list.",
+  "aspectMechanic": "So every new target they pick explains almost everything.",
+  "conditionalConsequence": "The investigations may continue indefinitely, but the charge is the clue, and it belongs to something older than any current suspect.",
+  "body": "Someone's intensity keeps landing next to its actual object.\n\nThey fixate on the colleague, the feud, the cause with an energy the object cannot explain, and adjusting the object never adjusts the energy.\n\nWith Pluto quincunx Lilith, people aim the charge while an older exile, the one the charge actually belongs to, stays off the target list.\n\nSo every new target they pick explains almost everything.\n\nThe investigations may continue indefinitely, but the charge is the clue, and it belongs to something older than any current suspect.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.pluto.quincunx.lilith",
+    "sourceHeading": "Pluto quincunx Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

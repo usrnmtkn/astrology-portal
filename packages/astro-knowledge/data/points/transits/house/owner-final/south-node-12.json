@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "south-node-12",
+  "canonicalId": "transit-house/south_node/12",
+  "kind": "house",
+  "transiting": "south-node",
+  "house": 12,
+  "headline": "Retreating too far",
+  "body": "The South Node in your 12th house can make hiding out feel much safer than showing up. While privacy is necessary, you might find yourself canceling plans, avoiding texts, or getting lost in your head until real-world responsibilities pile up. Solitude restores your energy, but it can also turn into a place where life stays permanently on pause.\n\nAcross from this transit, the 6th house focuses on daily routines, work, health, and basic upkeep. The fix is not non-stop productivity. It is as simple as making one doctor appointment, cooking a meal, or finishing one small task before withdrawing again.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "South Node — 12H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

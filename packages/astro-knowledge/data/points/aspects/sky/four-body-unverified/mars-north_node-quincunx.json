@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.quincunx.north-node",
+  "canonicalId": "sky-aspect/mars/north_node/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "mars",
+  "bodyB": "north_node",
+  "aspect": "quincunx",
+  "humanMoment": "The energy and the direction keep clocking in on different shifts.",
+  "developmentDetail": "Someone peaks during obligations, arrives at the free hours exhausted, and keeps handing the buildable thing the leftovers of days that started full.",
+  "planetaryDynamic": "With Mars quincunx the North Node, people keep rearranging when they push and when they build, and no schedule they draft quite lets the strength and the site meet.",
+  "aspectMechanic": "Somebody is spending the best hours in the wrong place.",
+  "conditionalConsequence": "The exhaustion may be real, but people who move one good hour to the site tend to discover it was a routing problem rather than a capacity problem, and routing problems have solutions.",
+  "body": "The energy and the direction keep clocking in on different shifts.\n\nSomeone peaks during obligations, arrives at the free hours exhausted, and keeps handing the buildable thing the leftovers of days that started full.\n\nWith Mars quincunx the North Node, people keep rearranging when they push and when they build, and no schedule they draft quite lets the strength and the site meet.\n\nSomebody is spending the best hours in the wrong place.\n\nThe exhaustion may be real, but people who move one good hour to the site tend to discover it was a routing problem rather than a capacity problem, and routing problems have solutions.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.mars.quincunx.north-node",
+    "sourceHeading": "Mars quincunx North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.sextile.lilith",
+  "canonicalId": "sky-aspect/lilith/uranus/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "uranus",
+  "aspect": "sextile",
+  "humanMoment": "Someone runs a small rebellion, and it tests well.",
+  "developmentDetail": "They change the schedule, drop the obligation, rename the arrangement, keeping the experiment small and reversible while it proves the point everyone said could not be proven.",
+  "planetaryDynamic": "With Uranus sextile Lilith, people with an appetite for change get handed the specific freedom worth testing.",
+  "aspectMechanic": "The trial is low stakes, but it only counts if somebody actually runs it.",
+  "conditionalConsequence": "The pilot may end quietly, but a freedom people have tested is harder to re-ban than one they only imagined.",
+  "body": "Someone runs a small rebellion, and it tests well.\n\nThey change the schedule, drop the obligation, rename the arrangement, keeping the experiment small and reversible while it proves the point everyone said could not be proven.\n\nWith Uranus sextile Lilith, people with an appetite for change get handed the specific freedom worth testing.\n\nThe trial is low stakes, but it only counts if somebody actually runs it.\n\nThe pilot may end quietly, but a freedom people have tested is harder to re-ban than one they only imagined.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.uranus.sextile.lilith",
+    "sourceHeading": "Uranus sextile Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.quincunx.north-node",
+  "canonicalId": "sky-aspect/north_node/venus/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "venus",
+  "aspect": "quincunx",
+  "humanMoment": "The relationships and the direction keep asking people for adjustments that never quite settle.",
+  "developmentDetail": "A partner wants the old rhythm, the new path wants new hours, and someone in the middle keeps brokering compromises that leave one side slightly underfed in a way nobody names.",
+  "planetaryDynamic": "With Venus quincunx the North Node, people keep re-fitting their attachments to a life that keeps being revised, and every accommodation they make calls for another one soon after.",
+  "aspectMechanic": "Nobody has said the word underfed out loud yet.",
+  "conditionalConsequence": "The adjustments may continue indefinitely, but people who name the shortfall tend to pay less for it than people who keep running the silent arithmetic.",
+  "body": "The relationships and the direction keep asking people for adjustments that never quite settle.\n\nA partner wants the old rhythm, the new path wants new hours, and someone in the middle keeps brokering compromises that leave one side slightly underfed in a way nobody names.\n\nWith Venus quincunx the North Node, people keep re-fitting their attachments to a life that keeps being revised, and every accommodation they make calls for another one soon after.\n\nNobody has said the word underfed out loud yet.\n\nThe adjustments may continue indefinitely, but people who name the shortfall tend to pay less for it than people who keep running the silent arithmetic.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.venus.quincunx.north-node",
+    "sourceHeading": "Venus quincunx North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.sextile.lilith",
+  "canonicalId": "sky-aspect/lilith/mercury/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "mercury",
+  "aspect": "sextile",
+  "humanMoment": "Someone asks a well-timed question, and it gives another person permission to say what half the room has been drafting for months.",
+  "developmentDetail": "Somebody finally sends the message they have written and deleted for weeks, and the reply comes back as relief rather than outrage.",
+  "planetaryDynamic": "With Mercury sextile Lilith, the people who have the words and the channel meet the person carrying the content that never had either.",
+  "aspectMechanic": "The channel stays open only briefly, and someone still has to volunteer the first plain sentence.",
+  "conditionalConsequence": "The silence may resume if nobody follows up, but the first spoken version proves the subject can survive daylight.",
+  "body": "Someone asks a well-timed question, and it gives another person permission to say what half the room has been drafting for months.\n\nSomebody finally sends the message they have written and deleted for weeks, and the reply comes back as relief rather than outrage.\n\nWith Mercury sextile Lilith, the people who have the words and the channel meet the person carrying the content that never had either.\n\nThe channel stays open only briefly, and someone still has to volunteer the first plain sentence.\n\nThe silence may resume if nobody follows up, but the first spoken version proves the subject can survive daylight.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.mercury.sextile.lilith",
+    "sourceHeading": "Mercury sextile Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

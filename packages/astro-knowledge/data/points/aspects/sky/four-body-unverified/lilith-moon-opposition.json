@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.opposition.lilith",
+  "canonicalId": "sky-aspect/lilith/moon/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "moon",
+  "aspect": "opposition",
+  "humanMoment": "One person guards the household calm while another keeps bringing up the thing that disturbs it.",
+  "developmentDetail": "The peacemaker and the truth-teller face off over dinner, and both believe they are protecting the family.",
+  "planetaryDynamic": "With the Moon opposite Lilith, one of them holds the need for safety in the room while the other holds the appetite that safety was built to silence.",
+  "aspectMechanic": "An argument most people have inside themselves gets staged by two people at one table.",
+  "conditionalConsequence": "The evening may end civil, but the family learns whether its peace depends on someone staying hungry.",
+  "body": "One person guards the household calm while another keeps bringing up the thing that disturbs it.\n\nThe peacemaker and the truth-teller face off over dinner, and both believe they are protecting the family.\n\nWith the Moon opposite Lilith, one of them holds the need for safety in the room while the other holds the appetite that safety was built to silence.\n\nAn argument most people have inside themselves gets staged by two people at one table.\n\nThe evening may end civil, but the family learns whether its peace depends on someone staying hungry.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.moon.opposition.lilith",
+    "sourceHeading": "Moon opposition Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "south-node-7",
+  "canonicalId": "transit-house/south_node/7",
+  "kind": "house",
+  "transiting": "south-node",
+  "house": 7,
+  "headline": "Losing your voice",
+  "body": "With the South Node moving through your 7th house, the habit of bending your choices around other people becomes obvious. You might check in with a partner, friend, or coworker before deciding what you want, or keep reading the room until your own preference vanishes. Cooperation is useful, but it becomes a trap when a relationship only works because you stay easy to manage.\n\nAcross from this transit, the 1st house brings your own voice back into the equation. Pay attention to how often you wait for approval before treating your own thoughts as valid. A connection requires two distinct people, not one person constantly giving in.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "South Node — 7H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

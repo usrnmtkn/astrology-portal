@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.opposition.north-node",
+  "canonicalId": "sky-aspect/north_node/sun/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "sun",
+  "aspect": "opposition",
+  "humanMoment": "The comeback offer is arriving, and it is excellent, and it points backward.",
+  "developmentDetail": "Someone gets called back to the old stage on better terms than the new path can match: the familiar role, the guaranteed audience, the version of success they already mastered.",
+  "planetaryDynamic": "With the Sun opposite the North Node, people shine brightest exactly where they have already been, while nobody stands in the new territory yet to hand out recognition, so the most affirming option in view reruns the previous chapter.",
+  "aspectMechanic": "The encore would go beautifully, and everyone knows it.",
+  "conditionalConsequence": "They may take the encore, but chapters rarely advance on encores, and the people who decline tend to spend that season building the stage nobody has applauded yet.",
+  "body": "The comeback offer is arriving, and it is excellent, and it points backward.\n\nSomeone gets called back to the old stage on better terms than the new path can match: the familiar role, the guaranteed audience, the version of success they already mastered.\n\nWith the Sun opposite the North Node, people shine brightest exactly where they have already been, while nobody stands in the new territory yet to hand out recognition, so the most affirming option in view reruns the previous chapter.\n\nThe encore would go beautifully, and everyone knows it.\n\nThey may take the encore, but chapters rarely advance on encores, and the people who decline tend to spend that season building the stage nobody has applauded yet.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.sun.opposition.north-node",
+    "sourceHeading": "Sun opposition North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

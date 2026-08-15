@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.opposition.chiron",
+  "canonicalId": "sky-aspect/chiron/jupiter/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "jupiter",
+  "aspect": "opposition",
+  "humanMoment": "The booster and the bruised one argue about the same door.",
+  "developmentDetail": "One says walk through it, the other knows what doors have cost, and both of them are right about different years.",
+  "planetaryDynamic": "With Jupiter opposite Chiron, one person argues from possibility while the other argues from the record.",
+  "aspectMechanic": "They are quoting different dates at each other.",
+  "conditionalConsequence": "The argument may stall the decision, but if the old evidence gets labeled with its date, the courage tends to get the current file, and the door gets an honest hearing.",
+  "body": "The booster and the bruised one argue about the same door.\n\nOne says walk through it, the other knows what doors have cost, and both of them are right about different years.\n\nWith Jupiter opposite Chiron, one person argues from possibility while the other argues from the record.\n\nThey are quoting different dates at each other.\n\nThe argument may stall the decision, but if the old evidence gets labeled with its date, the courage tends to get the current file, and the door gets an honest hearing.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.jupiter.opposition.chiron",
+    "sourceHeading": "Jupiter opposition Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

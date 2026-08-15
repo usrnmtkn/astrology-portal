@@ -1,0 +1,2037 @@
+{
+  "schemaVersion": 1,
+  "id": "celestial-alchemy-license-quote-extract",
+  "status": "REVIEW NEEDED / FAIL CLOSED",
+  "purpose": "Minimal supporting quotations for Friends house-license provenance verification. Not a reproduction of the work and not a drafting source.",
+  "policies": {
+    "readerServing": false,
+    "directUseAllowed": false,
+    "phrasesNeverEnterGenerationPrompts": true,
+    "fullBodiesRemainInOwnerHeldCopy": true,
+    "derivedArtifactDoNotHandEdit": true
+  },
+  "derivedFrom": {
+    "canonicalWorkId": "MS-CA",
+    "title": "Celestial Alchemy: Tarot And Astrology Correspondences For Self-Discovery",
+    "author": "Marie Satori",
+    "fullExtractSha256": "4d5a55cbe4266b91144f3652014998a29f8141362a6cfbad7ab40cea1e17b47b",
+    "fullExtractSectionCount": 314,
+    "citationSource": "packages/astro-knowledge/review/friends-transit-house-licenses-v3/v3-provenance-audit-data.json",
+    "generator": "packages/astro-knowledge/scripts/build-friends-license-quote-extract.mjs"
+  },
+  "citedSectionCount": 110,
+  "missingSectionIds": [],
+  "sections": [
+    {
+      "id": "aquarius-12th-house",
+      "title": "Aquarius in the natal 12th house",
+      "sign": "Aquarius",
+      "house": 12,
+      "sourceLineRange": "1984-1990",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Aquarius in the natal 12th house: The Star, The Moon\n\nThe mysterious twelfth house holds within it the secrets of karma, of endings, of that which is hidden deep within the subconscious.",
+      "quotedChars": 186,
+      "fullSectionChars": 3904,
+      "citedByRealizations": []
+    },
+    {
+      "id": "aquarius-1st-house",
+      "title": "Aquarius in the natal 1st house",
+      "sign": "Aquarius",
+      "house": 1,
+      "sourceLineRange": "1877-1889",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Aquarius in the natal 1st house: The Star, The Emperor\n\nThe first house is the foundation of your astrological chart.",
+      "quotedChars": 117,
+      "fullSectionChars": 3689,
+      "citedByRealizations": []
+    },
+    {
+      "id": "aquarius-3rd-house",
+      "title": "Aquarius in the natal 3rd house",
+      "sign": "Aquarius",
+      "house": 3,
+      "sourceLineRange": "1898-1908",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Aquarius in the natal 3rd house: The Star, The Lovers\n\nThe third house becomes interpersonal, corresponding to communication, learning, short trips, early education, and an element of curiosity that is reflected in its correlation to toddlerhood.",
+      "quotedChars": 246,
+      "fullSectionChars": 3767,
+      "citedByRealizations": []
+    },
+    {
+      "id": "aquarius-4th-house",
+      "title": "Aquarius in the natal 4th house",
+      "sign": "Aquarius",
+      "house": 4,
+      "sourceLineRange": "1909-1918",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "arrange",
+        "liv"
+      ],
+      "supportingQuote": "You may find that the concept of \"home\" is vastly different from societal standards, drawing you to unorthodox living arrangements and family dynamics.",
+      "quotedChars": 151,
+      "fullSectionChars": 3816,
+      "citedByRealizations": [
+        "change a living arrangement"
+      ]
+    },
+    {
+      "id": "aquarius-7th-house",
+      "title": "Aquarius in the natal 7th house",
+      "sign": "Aquarius",
+      "house": 7,
+      "sourceLineRange": "1937-1945",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Aquarius in the natal 7th house: The Star, Justice\n\nThe 7th house, guided by Venus, is the realm of partnerships and relationships.",
+      "quotedChars": 131,
+      "fullSectionChars": 2721,
+      "citedByRealizations": []
+    },
+    {
+      "id": "aquarius-9th-house",
+      "title": "Aquarius in the natal 9th house",
+      "sign": "Aquarius",
+      "house": 9,
+      "sourceLineRange": "1957-1966",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "culture",
+        "learn"
+      ],
+      "supportingQuote": "It delves into the depths of learning that can be found through self - exploration and the pursuit of understanding oneself, relationships, and one's purpose in life, as well as the greater mysteries of existence. The ninth house speaks of higher learning, of spiritual pursuits, of journeys far and wide. Your love of culture, of ideas, of the unknown, will lead you down paths both physical and intellectual.",
+      "quotedChars": 410,
+      "fullSectionChars": 3557,
+      "citedByRealizations": [
+        "learn from another culture"
+      ]
+    },
+    {
+      "id": "aries-10th-house",
+      "title": "Aries in the natal 10th house",
+      "sign": "Aries",
+      "house": 10,
+      "sourceLineRange": "466-475",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "entrepreneurial",
+        "lead",
+        "project"
+      ],
+      "supportingQuote": "Aries and The Emperor are rich in leadership, authority, and control, each carrying a powerful energy that inspires one to take charge and assert dominance in any given situation. This placement highlights your natural leadership skills and entrepreneurial spirit, and you embody confidence and fearlessness when it comes to taking risks in your career. Your thirst for independence and drive to succeed may lead you to blaze new trails and tackle projects that others dare not approach.",
+      "quotedChars": 487,
+      "fullSectionChars": 3431,
+      "citedByRealizations": [
+        "lead an entrepreneurial project"
+      ]
+    },
+    {
+      "id": "aries-1st-house",
+      "title": "Aries in the natal 1st house",
+      "sign": "Aries",
+      "house": 1,
+      "sourceLineRange": "380-387",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "risk"
+      ],
+      "supportingQuote": "You are not intimidated by risk and embrace challenges with gusto.",
+      "quotedChars": 66,
+      "fullSectionChars": 2723,
+      "citedByRealizations": [
+        "take a personal risk"
+      ]
+    },
+    {
+      "id": "aries-3rd-house",
+      "title": "Aries in the natal 3rd house",
+      "sign": "Aries",
+      "house": 3,
+      "sourceLineRange": "397-406",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "discussion",
+        "short",
+        "spontaneou",
+        "trip"
+      ],
+      "supportingQuote": "Aries in the natal 3rd house: The Emperor, The Lovers, The Magician\n\nThe third house becomes interpersonal, corresponding to communication, learning, short trips, early education, and an element of curiosity that is reflected in its correlation to toddlerhood. Aries in your natal 3rd house suggests a bold and energetic approach to communication, learning, and short - distance travel. The 3rd house governs short trips, and with Aries in this house, you are likely to be adventurous, spontaneous, and independent when it comes to travel.",
+      "quotedChars": 539,
+      "fullSectionChars": 2861,
+      "citedByRealizations": [
+        "have a discussion",
+        "take a spontaneous short trip"
+      ]
+    },
+    {
+      "id": "aries-4th-house",
+      "title": "Aries in the natal 4th house",
+      "sign": "Aries",
+      "house": 4,
+      "sourceLineRange": "407-413",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Aries in the natal 4th house: The Emperor, The Chariot\n\nThe fourth house, also known as the \"home of the heart,\" speaks to the deep and intimate connections we have with our family and our sense of belonging within our home and community.",
+      "quotedChars": 238,
+      "fullSectionChars": 2505,
+      "citedByRealizations": []
+    },
+    {
+      "id": "aries-5th-house",
+      "title": "Aries in the natal 5th house",
+      "sign": "Aries",
+      "house": 5,
+      "sourceLineRange": "414-423",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "excite",
+        "passion",
+        "seek"
+      ],
+      "supportingQuote": "In matters of the heart, your passion and excitement lead the way as you dive headfirst into romantic relationships. You are an adventurous spirit, always seeking new experiences and embracing challenges. You are a nurturing and playful guide for your little ones, inspiring them to express themselves and chase their passions.",
+      "quotedChars": 327,
+      "fullSectionChars": 3757,
+      "citedByRealizations": [
+        "seek more passion or excitement"
+      ]
+    },
+    {
+      "id": "aries-6th-house",
+      "title": "Aries in the natal 6th house",
+      "sign": "Aries",
+      "house": 6,
+      "sourceLineRange": "424-432",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Aries in the natal 6th house: The Emperor, The Hermit\n\nThe Hermit of the Major Arcana corresponds to Virgo and the 6th house, beckoning us to retreat within and seek the wisdom of solitude.",
+      "quotedChars": 189,
+      "fullSectionChars": 3329,
+      "citedByRealizations": []
+    },
+    {
+      "id": "aries-7th-house",
+      "title": "Aries in the natal 7th house",
+      "sign": "Aries",
+      "house": 7,
+      "sourceLineRange": "433-444",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Aries in the natal 7th house: The Emperor, Justice\n\nThe 7th house, guided by Venus, is the realm of partnerships and relationships.",
+      "quotedChars": 131,
+      "fullSectionChars": 3621,
+      "citedByRealizations": []
+    },
+    {
+      "id": "cancer-10th-house",
+      "title": "Cancer in the natal 10th house",
+      "sign": "Cancer",
+      "house": 10,
+      "sourceLineRange": "887-902",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Cancer in the natal 10th house: The Chariot, The Devil\n\nThe tenth house is a powerful portal for understanding our professional paths and the manner in which the world perceives us.",
+      "quotedChars": 181,
+      "fullSectionChars": 6470,
+      "citedByRealizations": []
+    },
+    {
+      "id": "cancer-11th-house",
+      "title": "Cancer in the natal 11th house",
+      "sign": "Cancer",
+      "house": 11,
+      "sourceLineRange": "903-913",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "aspir",
+        "friend",
+        "support"
+      ],
+      "supportingQuote": "Cancer in the natal 11th house: The Chariot, The Star\n\nThe 11th house represents your aspirations, hopes, and the groups you align with. The Star motivates us to weigh the knowledge gained from our past against our intuition, as we strive towards our aspirations. Your sensitivity and emotional depth make you a loyal and empathetic friend, and you may be known for your ability to provide a nurturing and supportive presence for those you care about.",
+      "quotedChars": 451,
+      "fullSectionChars": 4632,
+      "citedByRealizations": [
+        "support a friend’s aspiration"
+      ]
+    },
+    {
+      "id": "cancer-2nd-house",
+      "title": "Cancer in the natal 2nd house",
+      "sign": "Cancer",
+      "house": 2,
+      "sourceLineRange": "794-806",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "career",
+        "freelance",
+        "growth",
+        "invest"
+      ],
+      "supportingQuote": "You take great pride in your home and often invest time and money into improving it. It is important for you to be aware of the potential negative effects of holding onto possessions out of fear or emotional attachment, as this may hinder your long - term growth and abundance. Learning how to love and appreciate without suffocating is crucial for maintaining healthy relationships and personal growth.",
+      "quotedChars": 403,
+      "fullSectionChars": 4070,
+      "citedByRealizations": [
+        "invest in skills for career growth",
+        "take freelance work"
+      ]
+    },
+    {
+      "id": "cancer-3rd-house",
+      "title": "Cancer in the natal 3rd house",
+      "sign": "Cancer",
+      "house": 3,
+      "sourceLineRange": "807-818",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "communicate",
+        "lesson",
+        "local",
+        "teach"
+      ],
+      "supportingQuote": "For business, it can represent a time when you focus on communication — public relations, marketing, teaching, speaking, and writing. In a chart for your business, multiple planets in the 3rd house may indicate a local business rather than an international one. Together, this trio implies that our capacity to connect with others, communicate effectively, and balance our emotional intelligence with our desire to move forward in shaping our personal lives.",
+      "quotedChars": 458,
+      "fullSectionChars": 4991,
+      "citedByRealizations": [
+        "communicate for a local business",
+        "teach a lesson"
+      ]
+    },
+    {
+      "id": "cancer-5th-house",
+      "title": "Cancer in the natal 5th house",
+      "sign": "Cancer",
+      "house": 5,
+      "sourceLineRange": "827-835",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "care",
+        "child",
+        "play"
+      ],
+      "supportingQuote": "It is here where we find the spark of our true selves, where we can tap into the joy of being alive and discover the wellspring of self - confidence, children, and spiritual connection. For example, you may enjoy writing poetry, creating artwork, or playing music as a means of expressing your emotions. Your nurturing energy may manifest as a desire to care for and protect your children or to bring a sense of family to your creative projects.",
+      "quotedChars": 445,
+      "fullSectionChars": 3524,
+      "citedByRealizations": [
+        "care for or play with a child"
+      ]
+    },
+    {
+      "id": "cancer-8th-house",
+      "title": "Cancer in the natal 8th house",
+      "sign": "Cancer",
+      "house": 8,
+      "sourceLineRange": "863-873",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Cancer in the natal 8th house: The Chariot, Death\n\nThe 8th house, ruled by the fierce Mars and the intense Scorpio, holds the key to unlocking the mysteries of the unknown.",
+      "quotedChars": 172,
+      "fullSectionChars": 4005,
+      "citedByRealizations": []
+    },
+    {
+      "id": "cancer-9th-house",
+      "title": "Cancer in the natal 9th house",
+      "sign": "Cancer",
+      "house": 9,
+      "sourceLineRange": "874-886",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "knowledge",
+        "larger",
+        "teach"
+      ],
+      "supportingQuote": "If you have Cancer in your natal 9th house, you carry a deep emotional connection to knowledge, philosophy, and spirituality. You may also be drawn to spiritual practices that allow you to connect with something larger than yourself, seeking to find meaning in life. This placement may teach you the importance of finding a sense of belonging and connection to something larger than yourself.",
+      "quotedChars": 392,
+      "fullSectionChars": 5299,
+      "citedByRealizations": [
+        "teach a larger body of knowledge"
+      ]
+    },
+    {
+      "id": "capricorn-10th-house",
+      "title": "Capricorn in the natal 10th house",
+      "sign": "Capricorn",
+      "house": 10,
+      "sourceLineRange": "1830-1842",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "client",
+        "decision",
+        "develop",
+        "difficult",
+        "greater",
+        "pursue",
+        "responsibility",
+        "start"
+      ],
+      "supportingQuote": "For example, you may be an entrepreneur who starts your own business and works tirelessly to build it up to a successful and profitable enterprise. Alternatively, you may be a lawyer, doctor, or other professional who is dedicated to serving your clients and making a positive impact in your field. You may be comfortable with taking on responsibility and making difficult decisions, which can help you to excel in management positions.",
+      "quotedChars": 436,
+      "fullSectionChars": 3776,
+      "citedByRealizations": [
+        "deal with a difficult client",
+        "make a difficult professional decision",
+        "pursue professional development",
+        "start a business",
+        "take on greater responsibility"
+      ]
+    },
+    {
+      "id": "capricorn-11th-house",
+      "title": "Capricorn in the natal 11th house",
+      "sign": "Capricorn",
+      "house": 11,
+      "sourceLineRange": "1843-1857",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "community",
+        "find",
+        "mentor"
+      ],
+      "supportingQuote": "It guides us on a journey of expanding our community, and collaborating to manifest a brighter future for all. In the realm of business, it illuminates the importance of building relationships with our community, fostering innovation and aligning our actions with a higher purpose. The spiritual lesson of The Star and The Devil is centered around finding inner peace and balance through self - awareness, trust, and personal responsibility.",
+      "quotedChars": 441,
+      "fullSectionChars": 6558,
+      "citedByRealizations": [
+        "find a mentor through a community"
+      ]
+    },
+    {
+      "id": "capricorn-12th-house",
+      "title": "Capricorn in the natal 12th house",
+      "sign": "Capricorn",
+      "house": 12,
+      "sourceLineRange": "1858-1870",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Capricorn in the natal 12th house: The Devil, The Moon\n\nThe mysterious twelfth house holds within it the secrets of karma, of endings, of that which is hidden deep within the subconscious.",
+      "quotedChars": 188,
+      "fullSectionChars": 6061,
+      "citedByRealizations": []
+    },
+    {
+      "id": "capricorn-1st-house",
+      "title": "Capricorn in the natal 1st house",
+      "sign": "Capricorn",
+      "house": 1,
+      "sourceLineRange": "1700-1712",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "appearance",
+        "style"
+      ],
+      "supportingQuote": "It provides insight into your personality, physical appearance, and how you present yourself to the world. Your sense of style is likely to be classic and timeless, reflecting your practical and no - nonsense approach to life.",
+      "quotedChars": 226,
+      "fullSectionChars": 4832,
+      "citedByRealizations": [
+        "change your appearance",
+        "change your personal style"
+      ]
+    },
+    {
+      "id": "capricorn-2nd-house",
+      "title": "Capricorn in the natal 2nd house",
+      "sign": "Capricorn",
+      "house": 2,
+      "sourceLineRange": "1713-1726",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "decision",
+        "invest"
+      ],
+      "supportingQuote": "Capricorn is a sign that values hard work and discipline, which makes it easier for you to save your money and invest in long - term goals. You may be diligent about setting aside a portion of your income each month and investing it in a retirement account or stocks. Your values regarding money and possessions are likely to be traditional, and you may prefer to rely on tried - and - true methods of building financial security, such as saving and investing.",
+      "quotedChars": 460,
+      "fullSectionChars": 5478,
+      "citedByRealizations": [
+        "make a personal investment decision"
+      ]
+    },
+    {
+      "id": "capricorn-3rd-house",
+      "title": "Capricorn in the natal 3rd house",
+      "sign": "Capricorn",
+      "house": 3,
+      "sourceLineRange": "1727-1742",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "explain",
+        "idea"
+      ],
+      "supportingQuote": "For instance, you may be good at explaining technical concepts to others in a way that is easy to understand. You may be drawn to careers in fields such as writing, teaching, or public speaking, where you can use your communication skills to convey important ideas and information.",
+      "quotedChars": 281,
+      "fullSectionChars": 6416,
+      "citedByRealizations": [
+        "explain an idea"
+      ]
+    },
+    {
+      "id": "capricorn-4th-house",
+      "title": "Capricorn in the natal 4th house",
+      "sign": "Capricorn",
+      "house": 4,
+      "sourceLineRange": "1743-1754",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Capricorn in the natal 4th house: The Devil, The Chariot\n\nThe fourth house, also known as the \"home of the heart,\" speaks to the deep and intimate connections we have with our family and our sense of belonging within our home and community.",
+      "quotedChars": 240,
+      "fullSectionChars": 4833,
+      "citedByRealizations": []
+    },
+    {
+      "id": "capricorn-5th-house",
+      "title": "Capricorn in the natal 5th house",
+      "sign": "Capricorn",
+      "house": 5,
+      "sourceLineRange": "1755-1768",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "creative",
+        "project",
+        "share"
+      ],
+      "supportingQuote": "It symbolizes emotional mastery, inner - strength, and trust, reminding you to tap into the power of your inner creative flow, where time seems to stand still. By delving into the secrets of our natal fifth house, we can unlock the keys to unlocking our authentic selves and unleash our creative potential. You may approach your creative projects and hobbies with a sense of purpose and dedication, and be drawn to endeavors that have a practical application or can help you achieve your long - term goals.",
+      "quotedChars": 506,
+      "fullSectionChars": 6769,
+      "citedByRealizations": [
+        "share a creative project"
+      ]
+    },
+    {
+      "id": "capricorn-6th-house",
+      "title": "Capricorn in the natal 6th house",
+      "sign": "Capricorn",
+      "house": 6,
+      "sourceLineRange": "1769-1782",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Capricorn in the natal 6th house: The Devil, The Hermit\n\nThe Hermit of the Major Arcana corresponds to Virgo and the 6th house, beckoning us to retreat within and seek the wisdom of solitude.",
+      "quotedChars": 191,
+      "fullSectionChars": 6488,
+      "citedByRealizations": []
+    },
+    {
+      "id": "capricorn-7th-house",
+      "title": "Capricorn in the natal 7th house",
+      "sign": "Capricorn",
+      "house": 7,
+      "sourceLineRange": "1783-1796",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "seriou",
+        "term"
+      ],
+      "supportingQuote": "The ruling planet of Capricorn, Saturn, teaches you to plan and dedicate yourself to long - term goals — progressing up the metaphorical mountain top — which speaks to the spiritual goal of raising your vibration, elevating your perspective, and allowing kundalini energy to ascend the chakras. If you have Capricorn in the natal 7th house, you may find that your approach to relationships is serious and committed. This could mean that you have a preference for partners who have stable careers, long - term goals, and who are willing to put in the effort to make a relationship work.",
+      "quotedChars": 585,
+      "fullSectionChars": 6144,
+      "citedByRealizations": [
+        "change the terms",
+        "have a relationship become more serious"
+      ]
+    },
+    {
+      "id": "capricorn-8th-house",
+      "title": "Capricorn in the natal 8th house",
+      "sign": "Capricorn",
+      "house": 8,
+      "sourceLineRange": "1797-1813",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "all",
+        "financial",
+        "invest",
+        "joint",
+        "one"
+      ],
+      "supportingQuote": "It represents the ebb and flow of other people's money, the inevitability of death, the power of shared resources, the depth of sexuality, and the secrets that lay hidden in the depths of the soul. You are skilled at planning and strategizing, and are drawn to careers in finance or investment, seeking the security and stability that comes with financial success. You may have a strong desire for financial security and stability, and may be drawn to careers in finance or investment.",
+      "quotedChars": 485,
+      "fullSectionChars": 7111,
+      "citedByRealizations": [
+        "make a joint investment",
+        "notice one person has all the financial information"
+      ]
+    },
+    {
+      "id": "capricorn-9th-house",
+      "title": "Capricorn in the natal 9th house",
+      "sign": "Capricorn",
+      "house": 9,
+      "sourceLineRange": "1814-1829",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "abroad",
+        "develop",
+        "law",
+        "philosophy",
+        "religion",
+        "study"
+      ],
+      "supportingQuote": "You may also approach spirituality and philosophy with a methodical and structured approach, seeking to learn through rigorous study and analysis. You may be drawn to careers in education, law, or other fields that involve extensive study and analysis. For example, you may have a desire to study abroad or to travel to unfamiliar places, but may feel anxious about leaving your comfort zone.",
+      "quotedChars": 392,
+      "fullSectionChars": 6378,
+      "citedByRealizations": [
+        "develop a personal philosophy",
+        "study abroad",
+        "study law",
+        "study philosophy",
+        "study religion"
+      ]
+    },
+    {
+      "id": "gemini-11th-house",
+      "title": "Gemini in the natal 11th house",
+      "sign": "Gemini",
+      "house": 11,
+      "sourceLineRange": "751-765",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Gemini in the natal 11th house: The Lovers, The Star\n\nThe 11th house is a gateway to connection and compassion.",
+      "quotedChars": 111,
+      "fullSectionChars": 5616,
+      "citedByRealizations": []
+    },
+    {
+      "id": "gemini-1st-house",
+      "title": "Gemini in the natal 1st house",
+      "sign": "Gemini",
+      "house": 1,
+      "sourceLineRange": "624-635",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "decision",
+        "first",
+        "lead",
+        "speak"
+      ],
+      "supportingQuote": "Gemini in the natal 1st house: The Lovers, The Emperor\n\nThe first house is the foundation of your astrological chart. The Magician's resourcefulness and manifestation skills help turn the choices and desires into tangible realities, while The Lovers' power of choice and commitment keeps the focus on making decisions that align with our truest selves. This placement often leads to a desire for change and new experiences, which can result in a somewhat scattered energy, but it also means you are able to adapt to new situations with ease.",
+      "quotedChars": 541,
+      "fullSectionChars": 4033,
+      "citedByRealizations": [
+        "speak first",
+        "take the lead on a decision"
+      ]
+    },
+    {
+      "id": "gemini-2nd-house",
+      "title": "Gemini in the natal 2nd house",
+      "sign": "Gemini",
+      "house": 2,
+      "sourceLineRange": "636-645",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "creative",
+        "earn",
+        "financial",
+        "goal",
+        "money",
+        "set"
+      ],
+      "supportingQuote": "With Gemini in the 2nd House, you can quickly become bored and find the most satisfaction when you have multiple opportunities to earn money and engage in work that you are passionate about. To overcome this tendency, it's essential to set clear goals and maintain a structured routine. You often earn from your most creative ideas and you may have more than one source of income.",
+      "quotedChars": 380,
+      "fullSectionChars": 3956,
+      "citedByRealizations": [
+        "earn money from art or creative work",
+        "set a financial goal"
+      ]
+    },
+    {
+      "id": "gemini-3rd-house",
+      "title": "Gemini in the natal 3rd house",
+      "sign": "Gemini",
+      "house": 3,
+      "sourceLineRange": "646-664",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "connection",
+        "local",
+        "useful"
+      ],
+      "supportingQuote": "In a chart for your business, multiple planets in the 3rd house may indicate a local business rather than an international one. The 3rd house, ruled by Gemini and represented by The Lovers and The Magician in Tarot, symbolizes the power of connections and relationships and the importance of making choices that align with our truest selves. The combination of The Lovers and The Magician in this context can suggest the power of connecting with others on an emotional level and transforming that connection into something tangible.",
+      "quotedChars": 532,
+      "fullSectionChars": 6321,
+      "citedByRealizations": [
+        "make a useful local connection"
+      ]
+    },
+    {
+      "id": "gemini-4th-house",
+      "title": "Gemini in the natal 4th house",
+      "sign": "Gemini",
+      "house": 4,
+      "sourceLineRange": "665-675",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "about",
+        "ancestor",
+        "learn"
+      ],
+      "supportingQuote": "If you have Gemini in the 4th house of your natal chart, you may have a strong desire to learn about your family's history, culture, and traditions. Collecting stories, anecdotes, and information about your ancestors and family members may be a hobby of yours, and you may also have an interest in genealogy, tracing your family tree, and connecting with distant relatives. You are enthusiastic about any discussion with your loved ones, and you need your family's support to express your ideas fully.",
+      "quotedChars": 501,
+      "fullSectionChars": 4235,
+      "citedByRealizations": [
+        "learn about an ancestor"
+      ]
+    },
+    {
+      "id": "gemini-7th-house",
+      "title": "Gemini in the natal 7th house",
+      "sign": "Gemini",
+      "house": 7,
+      "sourceLineRange": "704-714",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "partner"
+      ],
+      "supportingQuote": "Gemini in the natal 7th house: The Lovers, Justice\n\nThe 7th house, guided by Venus, is the realm of partnerships and relationships. As we journey through the ethereal dance of desire and bonding, may we find harmony and unity in all our partnerships. With Gemini in the natal 7th house you may possess a curious and versatile nature when it comes to relationships, partnerships, and collaborations.",
+      "quotedChars": 398,
+      "fullSectionChars": 4397,
+      "citedByRealizations": [
+        "work with a business partner"
+      ]
+    },
+    {
+      "id": "gemini-8th-house",
+      "title": "Gemini in the natal 8th house",
+      "sign": "Gemini",
+      "house": 8,
+      "sourceLineRange": "715-725",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "acces",
+        "control",
+        "shar"
+      ],
+      "supportingQuote": "It represents the ebb and flow of other people's money, the inevitability of death, the power of shared resources, the depth of sexuality, and the secrets that lay hidden in the depths of the soul. The 8th house's association with shared resources and other people's money can manifest in a strong entrepreneurial drive, drawing you towards the world of finance, investment, or venture capitalism. You may need to develop your emotional and intuitive capacities to fully access the transformative potential of the 8th house.",
+      "quotedChars": 524,
+      "fullSectionChars": 4776,
+      "citedByRealizations": [
+        "control access to a shared document"
+      ]
+    },
+    {
+      "id": "gemini-9th-house",
+      "title": "Gemini in the natal 9th house",
+      "sign": "Gemini",
+      "house": 9,
+      "sourceLineRange": "726-739",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "foreign",
+        "language",
+        "learn"
+      ],
+      "supportingQuote": "It represents the expansion of the higher self through advanced education, foreign travel, wisdom, philosophy, and elevated thinking. It delves into the depths of learning that can be found through self - exploration and the pursuit of understanding oneself, relationships, and one's purpose in life, as well as the greater mysteries of existence. As we embrace its teachings, we learn to navigate the ebbs and flows of life with grace and equanimity.",
+      "quotedChars": 451,
+      "fullSectionChars": 4393,
+      "citedByRealizations": [
+        "learn a foreign language"
+      ]
+    },
+    {
+      "id": "jupiter-4th-house",
+      "title": "Jupiter in the natal 4th House",
+      "sign": null,
+      "house": 4,
+      "sourceLineRange": "2394-2402",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "expand",
+        "family",
+        "marriage"
+      ],
+      "supportingQuote": "The 4th house is often associated with home, family, roots, and personal security, and Jupiter's placement here can bring a sense of abundance and optimism to these areas of your life. Family ties, traditions, and ancestral roots might hold a special significance for you. Jupiter in your natal 4th house may also guide you towards expanding your family, possibly through marriage, birth, or in other nurturing ways.",
+      "quotedChars": 416,
+      "fullSectionChars": 2861,
+      "citedByRealizations": [
+        "expand the family through marriage"
+      ]
+    },
+    {
+      "id": "jupiter-5th-house",
+      "title": "Jupiter in the natal 5th House",
+      "sign": null,
+      "house": 5,
+      "sourceLineRange": "2411-2420",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "activity",
+        "adoption",
+        "birth",
+        "creative",
+        "family",
+        "ordinary",
+        "project",
+        "turn"
+      ],
+      "supportingQuote": "This house, governed by Leo and aligned with the Strength card in the Tarot, encourages you to channel your emotional mastery, inner strength, and trust in your own creative power. You might also have a natural talent for turning ordinary activities into creative projects or for seeing the creative potential in the world around you. With Jupiter in the 5th house, you might also experience growth or expansion in your family, perhaps through birth or adoption.",
+      "quotedChars": 462,
+      "fullSectionChars": 3085,
+      "citedByRealizations": [
+        "experience birth or adoption expanding the family",
+        "turn an ordinary activity into a creative project"
+      ]
+    },
+    {
+      "id": "jupiter-8th-house",
+      "title": "Jupiter in the natal 8th House",
+      "sign": null,
+      "house": 8,
+      "sourceLineRange": "2461-2469",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "financial",
+        "inheritance",
+        "partner",
+        "psychology",
+        "receive",
+        "study"
+      ],
+      "supportingQuote": "Jupiter, being the planet of growth and expansion, could offer considerable benefits in financial matters related to shared resources. This could mean that you receive an unexpected inheritance, have a successful experience with investing, or benefit from shared financial arrangements in a marriage or business partnership. Similarly, studying psychology might enable you to navigate your relationships and personal challenges with greater empathy and understanding.",
+      "quotedChars": 467,
+      "fullSectionChars": 3650,
+      "citedByRealizations": [
+        "receive an inheritance",
+        "receive financial support from a partner",
+        "study psychology"
+      ]
+    },
+    {
+      "id": "jupiter-9th-house",
+      "title": "Jupiter in the natal 9th House",
+      "sign": null,
+      "house": 9,
+      "sourceLineRange": "2476-2482",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "professor"
+      ],
+      "supportingQuote": "Perhaps you find yourself drawn to teaching, mentoring, or guiding others in some capacity, such as becoming a professor, a spiritual guide, or even a travel guide.",
+      "quotedChars": 164,
+      "fullSectionChars": 2750,
+      "citedByRealizations": [
+        "work with a professor"
+      ]
+    },
+    {
+      "id": "leo-10th-house",
+      "title": "Leo in the natal 10th house",
+      "sign": "Leo",
+      "house": 10,
+      "sourceLineRange": "1047-1056",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "career",
+        "risk"
+      ],
+      "supportingQuote": "If you have Leo in the native 10th house, you have a strong drive for success and recognition in your career. You are ambitious and hardworking, willing to take risks and strive for positions of power and influence. You excel as an entertainer, creator, or CEO, and have a strong desire to leave a lasting legacy through your career.",
+      "quotedChars": 333,
+      "fullSectionChars": 3947,
+      "citedByRealizations": [
+        "take a career risk"
+      ]
+    },
+    {
+      "id": "leo-12th-house",
+      "title": "Leo in the natal 12th house",
+      "sign": "Leo",
+      "house": 12,
+      "sourceLineRange": "1070-1080",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "private"
+      ],
+      "supportingQuote": "Alternatively, you may find that you enjoy more private creative pursuits, such as painting or journaling.",
+      "quotedChars": 106,
+      "fullSectionChars": 4447,
+      "citedByRealizations": [
+        "keep a relationship private for a while"
+      ]
+    },
+    {
+      "id": "leo-1st-house",
+      "title": "Leo in the natal 1st house",
+      "sign": "Leo",
+      "house": 1,
+      "sourceLineRange": "933-946",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Leo in the natal 1st house: Strength, The Emperor\n\nThe first house is the foundation of your astrological chart.",
+      "quotedChars": 112,
+      "fullSectionChars": 4154,
+      "citedByRealizations": []
+    },
+    {
+      "id": "leo-2nd-house",
+      "title": "Leo in the natal 2nd house",
+      "sign": "Leo",
+      "house": 2,
+      "sourceLineRange": "947-959",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "earn",
+        "money",
+        "writ"
+      ],
+      "supportingQuote": "The 2nd house represents our resources, including our money, possessions, and talents, and Leo's energy here can give you a strong desire for abundance and luxury. You may also have a natural talent for earning money or managing your finances. However, this placement can also indicate a tendency towards materialism or a need for external validation through money and possessions.",
+      "quotedChars": 381,
+      "fullSectionChars": 3639,
+      "citedByRealizations": [
+        "earn money from writing"
+      ]
+    },
+    {
+      "id": "leo-3rd-house",
+      "title": "Leo in the natal 3rd house",
+      "sign": "Leo",
+      "house": 3,
+      "sourceLineRange": "960-974",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "communic",
+        "public",
+        "rel"
+      ],
+      "supportingQuote": "Leo in the natal 3rd house: Strength, The Lovers, The Magician\n\nThe third house becomes interpersonal, corresponding to communication, learning, short trips, early education, and an element of curiosity that is reflected in its correlation to toddlerhood. For business, it can represent a time when you focus on communication — public relations, marketing, teaching, speaking, and writing. In business, the 3rd house represents communication, public relations, marketing, teaching, speaking, and writing.",
+      "quotedChars": 504,
+      "fullSectionChars": 4771,
+      "citedByRealizations": [
+        "handle public relations communication"
+      ]
+    },
+    {
+      "id": "leo-9th-house",
+      "title": "Leo in the natal 9th house",
+      "sign": "Leo",
+      "house": 9,
+      "sourceLineRange": "1032-1046",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "advanc",
+        "attend",
+        "belief",
+        "develop",
+        "inform",
+        "knowledge",
+        "learn",
+        "mentor",
+        "open",
+        "path",
+        "specializ",
+        "spiritual",
+        "worldview"
+      ],
+      "supportingQuote": "Your enthusiastic and passionate approach to philosophy, spirituality, higher education, and travel can lead you to seek out activities that challenge your beliefs and expand your horizons. If you choose a more spiritual path, you may find yourself interested in rituals and become a mentor to younger people. The spiritual lesson of Leo in the natal 9th house involves learning to balance your desire for growth with an open - minded and humble approach.",
+      "quotedChars": 455,
+      "fullSectionChars": 4927,
+      "citedByRealizations": [
+        "attend a spiritual retreat for learning or belief development",
+        "change your worldview after learning new information",
+        "use specialized knowledge to open a new professional path",
+        "work with an advanced mentor"
+      ]
+    },
+    {
+      "id": "libra-10th-house",
+      "title": "Libra in the natal 10th house",
+      "sign": "Libra",
+      "house": 10,
+      "sourceLineRange": "1319-1335",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "career"
+      ],
+      "supportingQuote": "If you have Libra in your natal 10th house, you may be highly conscious of your public image, social status, and career. You may be drawn to careers that involve working with others, such as law, diplomacy, or public relations. However, Libra's tendency towards indecisiveness and a desire for balance can make it challenging for you to choose a clear career path or make bold moves in your professional life.",
+      "quotedChars": 409,
+      "fullSectionChars": 6641,
+      "citedByRealizations": [
+        "change careers"
+      ]
+    },
+    {
+      "id": "libra-11th-house",
+      "title": "Libra in the natal 11th house",
+      "sign": "Libra",
+      "house": 11,
+      "sourceLineRange": "1336-1354",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "network",
+        "room",
+        "skill",
+        "volunteer"
+      ],
+      "supportingQuote": "The 11th house is the house of community and social networks, and Libra's influence in this area suggests that you are naturally drawn to creating harmonious relationships with those around you. As a Libra in the 11th house, you are likely skilled in networking and bringing people together, making you a natural leader in social groups. By using your natural skills in networking and bringing people together, you can create positive change and make a difference in the world.",
+      "quotedChars": 477,
+      "fullSectionChars": 7314,
+      "citedByRealizations": [
+        "have a network get you into the room",
+        "volunteer a skill",
+        "volunteer time"
+      ]
+    },
+    {
+      "id": "libra-12th-house",
+      "title": "Libra in the natal 12th house",
+      "sign": "Libra",
+      "house": 12,
+      "sourceLineRange": "1355-1374",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "avoid",
+        "confront",
+        "develop",
+        "dream",
+        "emotion",
+        "hidden",
+        "talent"
+      ],
+      "supportingQuote": "It's important for you to develop healthy boundaries and self - care practices to avoid burnout and maintain your own inner balance. By embracing your natural talents for creativity and beauty while also honoring your own needs and boundaries, you can create a life that is both spiritually fulfilling and emotionally nourishing. Scorpio energy inspires us to be fearless, to confront our inner demons and to unlock our hidden potential.",
+      "quotedChars": 437,
+      "fullSectionChars": 7347,
+      "citedByRealizations": [
+        "confront something you have been avoiding",
+        "develop a hidden talent",
+        "have a dream reveal an emotion you had avoided"
+      ]
+    },
+    {
+      "id": "libra-2nd-house",
+      "title": "Libra in the natal 2nd house",
+      "sign": "Libra",
+      "house": 2,
+      "sourceLineRange": "1228-1240",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Libra in the natal 2nd house: Justice, The Hierophant\n\nThe second house in astrology represents the foundation of your personal identity, including your self - worth, self - esteem, and possessions.",
+      "quotedChars": 198,
+      "fullSectionChars": 4314,
+      "citedByRealizations": []
+    },
+    {
+      "id": "libra-4th-house",
+      "title": "Libra in the natal 4th house",
+      "sign": "Libra",
+      "house": 4,
+      "sourceLineRange": "1253-1263",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "family",
+        "member",
+        "space"
+      ],
+      "supportingQuote": "You may also have a strong sense of justice and fairness within your family dynamics and may strive to create a harmonious and cooperative atmosphere among family members. You may also benefit from learning to communicate more openly and honestly with family members, recognizing the importance of expressing your true thoughts and feelings while still maintaining a sense of fairness and respect for others' perspectives. By balancing your own needs with those of your family members, you can create a sense of emotional balance and harmony that supports your spiritual journey.",
+      "quotedChars": 579,
+      "fullSectionChars": 4108,
+      "citedByRealizations": [
+        "make space for a child or new family member"
+      ]
+    },
+    {
+      "id": "libra-5th-house",
+      "title": "Libra in the natal 5th house",
+      "sign": "Libra",
+      "house": 5,
+      "sourceLineRange": "1264-1280",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "artistic",
+        "child",
+        "interest",
+        "support"
+      ],
+      "supportingQuote": "It is here where we find the spark of our true selves, where we can tap into the joy of being alive and discover the wellspring of self - confidence, children, and spiritual connection. In doing so, we can create relationships that are fulfilling and rewarding and support our spiritual growth and evolution. By cultivating inner harmony and balance, we can create a foundation of peace and stability that supports our spiritual journey and helps us navigate life's ups and downs with grace and resilience.",
+      "quotedChars": 506,
+      "fullSectionChars": 7613,
+      "citedByRealizations": [
+        "flirt",
+        "support a child’s artistic interest"
+      ]
+    },
+    {
+      "id": "libra-6th-house",
+      "title": "Libra in the natal 6th house",
+      "sign": "Libra",
+      "house": 6,
+      "sourceLineRange": "1281-1290",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Libra in the natal 6th house: Justice, The Hermit\n\nThe Hermit of the Major Arcana corresponds to Virgo and the 6th house, beckoning us to retreat within and seek the wisdom of solitude.",
+      "quotedChars": 185,
+      "fullSectionChars": 5481,
+      "citedByRealizations": []
+    },
+    {
+      "id": "libra-7th-house",
+      "title": "Libra in the natal 7th house",
+      "sign": "Libra",
+      "house": 7,
+      "sourceLineRange": "1291-1298",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "compromise",
+        "decision",
+        "different",
+        "marriage"
+      ],
+      "supportingQuote": "In your partnerships, you value fairness and equality and are willing to compromise to maintain peace and harmony. For instance, you may be able to help your partner navigate a difficult situation by helping them see things from a different perspective or by offering them emotional support. However, you may find yourself hesitant to pursue marriage, fearing that your spouse may not fulfill your needs.",
+      "quotedChars": 404,
+      "fullSectionChars": 2488,
+      "citedByRealizations": [
+        "compromise",
+        "deal with a marriage decision",
+        "realize the other person wants something different"
+      ]
+    },
+    {
+      "id": "libra-8th-house",
+      "title": "Libra in the natal 8th house",
+      "sign": "Libra",
+      "house": 8,
+      "sourceLineRange": "1299-1312",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Libra in the natal 8th house: Justice, Death\n\nThe 8th house, ruled by the fierce Mars and the intense Scorpio, holds the key to unlocking the mysteries of the unknown.",
+      "quotedChars": 167,
+      "fullSectionChars": 5440,
+      "citedByRealizations": []
+    },
+    {
+      "id": "mars-11th-house",
+      "title": "Mars in the natal 11th House",
+      "sign": null,
+      "house": 11,
+      "sourceLineRange": "2707-2714",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Mars (The Tower) in the natal 11th House (The Star)\n\nWith Mars (The Tower) in your natal 11th house, it brings its vibrant energy of initiative, drive, and assertiveness into the house of friendships, societal ties, and shared dreams.",
+      "quotedChars": 234,
+      "fullSectionChars": 3516,
+      "citedByRealizations": []
+    },
+    {
+      "id": "mars-12th-house",
+      "title": "Mars in the natal 12th House",
+      "sign": null,
+      "house": 12,
+      "sourceLineRange": "2723-2731",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "dream",
+        "journal"
+      ],
+      "supportingQuote": "It's like you're embarking on inward - bound expeditions, traversing the uncharted territories of your dreams, subconscious patterns, and past experiences. Activities that promote self - reflection, like yoga, journaling, or meditation, might hold special appeal to you.",
+      "quotedChars": 270,
+      "fullSectionChars": 3688,
+      "citedByRealizations": [
+        "keep a dream journal"
+      ]
+    },
+    {
+      "id": "mars-3rd-house",
+      "title": "Mars in the natal 3rd House",
+      "sign": null,
+      "house": 3,
+      "sourceLineRange": "2579-2586",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "nearby",
+        "stuck",
+        "town",
+        "traffic",
+        "visit"
+      ],
+      "supportingQuote": "You might find yourself taking spontaneous short trips, visiting nearby towns, or being the one who organizes the weekend outings among your friends. If you find yourself stuck in a traffic jam, for example, you might feel an overwhelming surge of frustration.",
+      "quotedChars": 260,
+      "fullSectionChars": 3332,
+      "citedByRealizations": [
+        "get stuck in traffic",
+        "visit a nearby town"
+      ]
+    },
+    {
+      "id": "mars-4th-house",
+      "title": "Mars in the natal 4th House",
+      "sign": null,
+      "house": 4,
+      "sourceLineRange": "2595-2602",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "function",
+        "home",
+        "one"
+      ],
+      "supportingQuote": "You may find yourself naturally stepping into a leadership role when it comes to making significant decisions that impact your family or the functioning of your home. It's important to remember that while your intentions might be for the overall well - being of your home and family, this need for control could sometimes come across as domineering or inflexible to your loved ones. It's about maintaining your emotional stability and creating a secure home environment where everyone feels valued and heard.",
+      "quotedChars": 508,
+      "fullSectionChars": 3037,
+      "citedByRealizations": [
+        "notice one person is doing all the work that keeps the home functioning"
+      ]
+    },
+    {
+      "id": "mercury-10th-house",
+      "title": "Mercury in the natal 10th House",
+      "sign": null,
+      "house": 10,
+      "sourceLineRange": "3322-3329",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "present"
+      ],
+      "supportingQuote": "Your mind is naturally attuned to matters related to your work and the way you present yourself to the world. You pay attention to the way you present yourself, both in person and through various communication channels.",
+      "quotedChars": 219,
+      "fullSectionChars": 2465,
+      "citedByRealizations": [
+        "give a presentation",
+        "present your work"
+      ]
+    },
+    {
+      "id": "mercury-11th-house",
+      "title": "Mercury in the natal 11th House",
+      "sign": null,
+      "house": 11,
+      "sourceLineRange": "3335-3342",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "friend",
+        "friendship",
+        "group",
+        "project",
+        "role"
+      ],
+      "supportingQuote": "Your friendships play a significant role in your life, as you value the intellectual stimulation and shared interests they provide. In group settings, you are often the facilitator of discussions and enjoy contributing your ideas to collective projects. Your intellectual contributions and communication skills within these groups can lead to recognition and leadership roles.",
+      "quotedChars": 376,
+      "fullSectionChars": 2602,
+      "citedByRealizations": [
+        "change a friendship role",
+        "make a new friend",
+        "work on a group project"
+      ]
+    },
+    {
+      "id": "mercury-12th-house",
+      "title": "Mercury in the natal 12th House",
+      "sign": null,
+      "house": 12,
+      "sourceLineRange": "3350-3358",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "find",
+        "inner",
+        "struggle",
+        "word"
+      ],
+      "supportingQuote": "However, at times, you may struggle to find the precise words to express yourself, as your mind is finely attuned to subtle nuances and symbolic language. Writing, poetry, or art serve as mediums through which you can express the depths of your inner world. As you journey through life, may the blessings of the 12th house guide you to embrace your intuitive nature, express your inner wisdom, and find solace in the profound depths of your being.",
+      "quotedChars": 447,
+      "fullSectionChars": 2877,
+      "citedByRealizations": [
+        "struggle to find words for an inner experience"
+      ]
+    },
+    {
+      "id": "mercury-2nd-house",
+      "title": "Mercury in the natal 2nd House",
+      "sign": null,
+      "house": 2,
+      "sourceLineRange": "3196-3208",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "financial",
+        "guidance",
+        "mentor",
+        "seek"
+      ],
+      "supportingQuote": "This archetype reminds you to trust in the natural flow of abundance and seek guidance from mentors or financial advisors who can offer valuable insights and support in achieving financial success. Seeking guidance and mentorship in financial matters can be highly beneficial. Embrace your ability to manage your resources effectively, seek guidance from mentors or financial advisors, and strive for a healthy balance between material stability and the deeper values that bring true abundance and fulfillment in your life.",
+      "quotedChars": 523,
+      "fullSectionChars": 4548,
+      "citedByRealizations": [
+        "seek financial guidance from a mentor"
+      ]
+    },
+    {
+      "id": "mercury-3rd-house",
+      "title": "Mercury in the natal 3rd House",
+      "sign": null,
+      "house": 3,
+      "sourceLineRange": "3217-3226",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Mercury (The Magician) in the natal 3rd House (The Lovers)\n\nIn your natal chart, Mercury resides in the 3rd house, which governs communication, learning, and the immediate environment.",
+      "quotedChars": 184,
+      "fullSectionChars": 3352,
+      "citedByRealizations": []
+    },
+    {
+      "id": "mercury-4th-house",
+      "title": "Mercury in the natal 4th House",
+      "sign": null,
+      "house": 4,
+      "sourceLineRange": "3240-3246",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "key"
+      ],
+      "supportingQuote": "Remember, the key to unlocking your potential lies in understanding and harnessing your emotional intelligence.",
+      "quotedChars": 111,
+      "fullSectionChars": 2802,
+      "citedByRealizations": [
+        "change who has a key",
+        "give someone a key"
+      ]
+    },
+    {
+      "id": "mercury-5th-house",
+      "title": "Mercury in the natal 5th House",
+      "sign": null,
+      "house": 5,
+      "sourceLineRange": "3253-3261",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "paint"
+      ],
+      "supportingQuote": "Whether through writing, acting, painting, or other creative pursuits, you excel at breathing life into complex ideas, making them not only comprehensible but also captivating to others.",
+      "quotedChars": 186,
+      "fullSectionChars": 2812,
+      "citedByRealizations": [
+        "paint"
+      ]
+    },
+    {
+      "id": "mercury-6th-house",
+      "title": "Mercury in the natal 6th House",
+      "sign": null,
+      "house": 6,
+      "sourceLineRange": "3271-3276",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Mercury (The Magician) in the natal 6th House (The Hermit)\n\nThe 6th house is ruled by Virgo, and corresponds to The Hermit in the Major Arcana.",
+      "quotedChars": 143,
+      "fullSectionChars": 2147,
+      "citedByRealizations": []
+    },
+    {
+      "id": "mercury-7th-house",
+      "title": "Mercury in the natal 7th House",
+      "sign": null,
+      "house": 7,
+      "sourceLineRange": "3284-3290",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "argu"
+      ],
+      "supportingQuote": "You're often able to see both sides of an argument and articulate them effectively, making you an excellent negotiator and mediator.",
+      "quotedChars": 132,
+      "fullSectionChars": 2351,
+      "citedByRealizations": [
+        "have an argument"
+      ]
+    },
+    {
+      "id": "pisces-1st-house",
+      "title": "Pisces in the natal 1st house",
+      "sign": "Pisces",
+      "house": 1,
+      "sourceLineRange": "1997-2014",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Pisces in the natal 1st house: The Moon, The Emperor\n\nThe first house is the foundation of your astrological chart.",
+      "quotedChars": 115,
+      "fullSectionChars": 6665,
+      "citedByRealizations": []
+    },
+    {
+      "id": "pisces-9th-house",
+      "title": "Pisces in the natal 9th house",
+      "sign": "Pisces",
+      "house": 9,
+      "sourceLineRange": "2083-2092",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Pisces in the natal 9th house: The Moon, Temperance\n\nThe Ninth House is the gateway to self - discovery and enlightenment.",
+      "quotedChars": 122,
+      "fullSectionChars": 3208,
+      "citedByRealizations": []
+    },
+    {
+      "id": "sagittarius-10th-house",
+      "title": "Sagittarius in the natal 10th house",
+      "sign": "Sagittarius",
+      "house": 10,
+      "sourceLineRange": "1655-1670",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "image",
+        "public"
+      ],
+      "supportingQuote": "For those in the realm of commerce, the tenth house shines with a beacon of public recognition, shining brightly in the digital age and fueling growth and expansion. If you have Sagittarius in your natal 10th house, you are someone who is likely to be ambitious and driven when it comes to your career and public image. Sagittarius in the 10th house suggests a need for authenticity and integrity in your public image and career.",
+      "quotedChars": 429,
+      "fullSectionChars": 4910,
+      "citedByRealizations": [
+        "change public image"
+      ]
+    },
+    {
+      "id": "sagittarius-2nd-house",
+      "title": "Sagittarius in the natal 2nd house",
+      "sign": "Sagittarius",
+      "house": 2,
+      "sourceLineRange": "1557-1567",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "monetize",
+        "talent"
+      ],
+      "supportingQuote": "Sagittarius in the 2nd house suggests that you have a natural talent for making money through your own efforts. You can use your adventurous and entrepreneurial spirit to monetize your passions and interests, while also being mindful of your financial responsibilities.",
+      "quotedChars": 269,
+      "fullSectionChars": 3306,
+      "citedByRealizations": [
+        "monetize a talent"
+      ]
+    },
+    {
+      "id": "sagittarius-5th-house",
+      "title": "Sagittarius in the natal 5th house",
+      "sign": "Sagittarius",
+      "house": 5,
+      "sourceLineRange": "1597-1609",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "deepen",
+        "romance"
+      ],
+      "supportingQuote": "This placement suggests that you find joy in taking risks and embracing new experiences, especially when it comes to self - expression and romance. In matters of romance, Sagittarius in the 5th house suggests a desire for a partner who shares your adventurous spirit and your passion for exploration. The spiritual lesson of Sagittarius in the 5th house is to learn how to use your creativity and passion for exploration to connect with others and deepen your spiritual understanding.",
+      "quotedChars": 484,
+      "fullSectionChars": 4859,
+      "citedByRealizations": [
+        "deepen a romance"
+      ]
+    },
+    {
+      "id": "sagittarius-9th-house",
+      "title": "Sagittarius in the natal 9th house",
+      "sign": "Sagittarius",
+      "house": 9,
+      "sourceLineRange": "1645-1654",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Sagittarius in the natal 9th house: Temperance\n\nThe Ninth House is the gateway to self - discovery and enlightenment.",
+      "quotedChars": 117,
+      "fullSectionChars": 2731,
+      "citedByRealizations": []
+    },
+    {
+      "id": "saturn-10th-house",
+      "title": "Saturn in the natal 10th House",
+      "sign": null,
+      "house": 10,
+      "sourceLineRange": "2277-2286",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "build",
+        "reput"
+      ],
+      "supportingQuote": "You are highly ambitious and strive for tangible achievements and a solid reputation in your chosen field. Your sense of duty and responsibility extends beyond personal goals to encompass your career and professional reputation. Saturn reminds you to build a solid foundation, establish credibility, and earn respect through consistent effort and a strong work ethic.",
+      "quotedChars": 367,
+      "fullSectionChars": 4421,
+      "citedByRealizations": [
+        "build a professional reputation"
+      ]
+    },
+    {
+      "id": "saturn-11th-house",
+      "title": "Saturn in the natal 11th House",
+      "sign": null,
+      "house": 11,
+      "sourceLineRange": "2297-2303",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "build",
+        "long",
+        "plan"
+      ],
+      "supportingQuote": "Saturn's influence in this house underscores the importance of responsibility, discipline, and long - term planning in your community interactions. It shapes your approach to community involvement, group dynamics, and the pursuit of your long - term goals. You may be more selective with the communities you join or the causes you support, preferring to invest your time and energy in endeavors that align with your long - term goals and values.",
+      "quotedChars": 445,
+      "fullSectionChars": 3456,
+      "citedByRealizations": [
+        "build a long-range plan with other people"
+      ]
+    },
+    {
+      "id": "saturn-12th-house",
+      "title": "Saturn in the natal 12th House",
+      "sign": null,
+      "house": 12,
+      "sourceLineRange": "2314-2320",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Saturn (The World) in the natal 12th House (The Moon)\n\nWith Saturn in your natal 12th house, ruled by Pisces and corresponding to the Moon in the Major Arcana, you are drawn to the mystical and magickal aspects of life.",
+      "quotedChars": 219,
+      "fullSectionChars": 3228,
+      "citedByRealizations": []
+    },
+    {
+      "id": "saturn-6th-house",
+      "title": "Saturn in the natal 6th House",
+      "sign": null,
+      "house": 6,
+      "sourceLineRange": "2215-2219",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "efficiency",
+        "improve"
+      ],
+      "supportingQuote": "Efficiency is another important theme with Saturn in the 6th house. Your colleagues likely appreciate your ability to find practical solutions to improve productivity.",
+      "quotedChars": 167,
+      "fullSectionChars": 3048,
+      "citedByRealizations": [
+        "improve efficiency"
+      ]
+    },
+    {
+      "id": "saturn-8th-house",
+      "title": "Saturn in the natal 8th House",
+      "sign": null,
+      "house": 8,
+      "sourceLineRange": "2242-2248",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Saturn (The World) in the natal 8th House (Death)\n\nWith Saturn in your natal 8th house, you might feel a magnetic pull towards experiences rich in transformation.",
+      "quotedChars": 162,
+      "fullSectionChars": 2252,
+      "citedByRealizations": []
+    },
+    {
+      "id": "scorpio-2nd-house",
+      "title": "Scorpio in the natal 2nd house",
+      "sign": "Scorpio",
+      "house": 2,
+      "sourceLineRange": "1386-1400",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Scorpio in the natal 2nd house: Death, The Hierophant\n\nThe second house in astrology represents the foundation of your personal identity, including your self - worth, self - esteem, and possessions.",
+      "quotedChars": 198,
+      "fullSectionChars": 6112,
+      "citedByRealizations": []
+    },
+    {
+      "id": "scorpio-4th-house",
+      "title": "Scorpio in the natal 4th house",
+      "sign": "Scorpio",
+      "house": 4,
+      "sourceLineRange": "1417-1429",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "home",
+        "invite"
+      ],
+      "supportingQuote": "Scorpio in the natal 4th house: Death, The Chariot\n\nThe fourth house, also known as the \"home of the heart,\" speaks to the deep and intimate connections we have with our family and our sense of belonging within our home and community. Together, The Chariot and Death invite us to reflect on our journey in life and the obstacles that we must overcome to achieve our goals. When Scorpio is placed in your fourth house in your birth chart, it invites you to embark on a profound spiritual journey related to your roots, family, and sense of security.",
+      "quotedChars": 548,
+      "fullSectionChars": 5916,
+      "citedByRealizations": [
+        "invite people into the home"
+      ]
+    },
+    {
+      "id": "scorpio-6th-house",
+      "title": "Scorpio in the natal 6th house",
+      "sign": "Scorpio",
+      "house": 6,
+      "sourceLineRange": "1443-1456",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "establish",
+        "habit",
+        "health",
+        "nutrition",
+        "routine",
+        "sleep"
+      ],
+      "supportingQuote": "When Scorpio is placed in your sixth house, it invites you to embark on a profound spiritual journey related to your work, health, and daily routines. The sixth house represents the area of life concerned with service, routine, health, and day - to - day work. While Scorpio's tendency towards intensity and control can lead to perfectionism and pushing yourself too hard, you can balance it with self - care and develop healthy habits to create a solid foundation for your personal and spiritual growth.",
+      "quotedChars": 504,
+      "fullSectionChars": 4895,
+      "citedByRealizations": [
+        "change nutrition habits",
+        "establish a health habit",
+        "make sleep part of a health routine"
+      ]
+    },
+    {
+      "id": "scorpio-9th-house",
+      "title": "Scorpio in the natal 9th house",
+      "sign": "Scorpio",
+      "house": 9,
+      "sourceLineRange": "1482-1494",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Scorpio in the natal 9th house: Death, Temperance\n\nThe Ninth House is the gateway to self - discovery and enlightenment.",
+      "quotedChars": 120,
+      "fullSectionChars": 5761,
+      "citedByRealizations": []
+    },
+    {
+      "id": "sun-10th-house",
+      "title": "Sun in the natal 10th House",
+      "sign": null,
+      "house": 10,
+      "sourceLineRange": "2897-2907",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "build",
+        "known",
+        "leadership",
+        "quality",
+        "role"
+      ],
+      "supportingQuote": "You have a natural ability to lead and inspire others, and you thrive in positions of responsibility and leadership. You work diligently to build a positive reputation within your industry, establishing yourself as a go - to expert or a trusted authority in your field. You are known for your professionalism, reliability, and the quality of your work.",
+      "quotedChars": 352,
+      "fullSectionChars": 4519,
+      "citedByRealizations": [
+        "become known for the quality of your work",
+        "build a business",
+        "take a leadership role"
+      ]
+    },
+    {
+      "id": "sun-11th-house",
+      "title": "Sun in the natal 11th House",
+      "sign": null,
+      "house": 11,
+      "sourceLineRange": "2915-2924",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "activism",
+        "advocacy",
+        "build",
+        "clean",
+        "collaborate",
+        "community",
+        "create",
+        "educational",
+        "find",
+        "garden",
+        "group",
+        "join",
+        "like",
+        "mind",
+        "network",
+        "organize",
+        "participate",
+        "program",
+        "project",
+        "shar",
+        "toward",
+        "vision"
+      ],
+      "supportingQuote": "Whether it's through advocacy, activism, or working towards a shared vision, you actively seek opportunities to contribute to the greater good and create positive change. Engaging in community development initiatives, you organize food drives, create educational programs, or establish community gardens. Whether it's through advocacy, activism, or working towards a shared vision, you actively seek opportunities to contribute to the greater good and create positive change.",
+      "quotedChars": 475,
+      "fullSectionChars": 3859,
+      "citedByRealizations": [
+        "build a community garden",
+        "collaborate toward a shared vision",
+        "create an educational program for a community",
+        "find like-minded people",
+        "join a group",
+        "join a professional network",
+        "organize a community clean-up",
+        "organize a community project",
+        "participate in advocacy or activism"
+      ]
+    },
+    {
+      "id": "sun-12th-house",
+      "title": "Sun in the natal 12th House",
+      "sign": null,
+      "house": 12,
+      "sourceLineRange": "2932-2943",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "attach",
+        "boundar",
+        "drain",
+        "emotional",
+        "feeling",
+        "insight",
+        "need",
+        "old",
+        "receive",
+        "release",
+        "retreat",
+        "solitude"
+      ],
+      "supportingQuote": "The 12th house represents the unconscious mind, solitude, retreat, and spiritual introspection. You may receive intuitive flashes, vivid dreams, or gut feelings that guide you in making important decisions or understanding complex situations. You may experience periods of dissolution and letting go, where you release old patterns, beliefs, and attachments that no longer serve your highest good.",
+      "quotedChars": 397,
+      "fullSectionChars": 5425,
+      "citedByRealizations": [
+        "need stronger emotional boundaries because other people’s feelings are draining",
+        "pray",
+        "receive insight during solitude",
+        "release an old attachment",
+        "take a retreat"
+      ]
+    },
+    {
+      "id": "sun-1st-house",
+      "title": "Sun in the natal 1st House",
+      "sign": null,
+      "house": 1,
+      "sourceLineRange": "2755-2760",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Sun in the natal 1st House (The Sun & The Emperor)\n\nThe Sun symbolizes your essential self, your life energy, your spirit, and your conscious identity.",
+      "quotedChars": 151,
+      "fullSectionChars": 2013,
+      "citedByRealizations": []
+    },
+    {
+      "id": "sun-2nd-house",
+      "title": "Sun in the natal 2nd House",
+      "sign": null,
+      "house": 2,
+      "sourceLineRange": "2767-2773",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Sun in the 2nd House (The Sun & The Hierophant)\n\nThe Sun’s placement in your natal chart shines a light on your core traits, ambitions, and the areas of life in which you are intended to radiate.",
+      "quotedChars": 195,
+      "fullSectionChars": 1920,
+      "citedByRealizations": []
+    },
+    {
+      "id": "sun-3rd-house",
+      "title": "Sun in the natal 3rd House",
+      "sign": null,
+      "house": 3,
+      "sourceLineRange": "2782-2790",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Sun in the 3rd House (The Sun & The Lovers)\n\nWith the Sun in your natal 3rd House, your personality may be marked by an inherent curiosity and an energetic thirst for knowledge.",
+      "quotedChars": 177,
+      "fullSectionChars": 3388,
+      "citedByRealizations": []
+    },
+    {
+      "id": "sun-4th-house",
+      "title": "Sun in the natal 4th House",
+      "sign": null,
+      "house": 4,
+      "sourceLineRange": "2797-2805",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "care",
+        "comfortable",
+        "family",
+        "home",
+        "light",
+        "member",
+        "need",
+        "privacy"
+      ],
+      "supportingQuote": "This house encourages us to cultivate a sense of belonging and emotional well - being within the realm of home and family, providing us with the confidence and self - assurance to navigate life's journey. With the Sun in your Natal 4th House, your personality finds deep roots in family values, tradition, and the concept of home. This introspective trait can make you appear somewhat private or withdrawn to others, but this comes from your need for a secure and comfortable home environment where you can retreat and recharge.",
+      "quotedChars": 528,
+      "fullSectionChars": 3324,
+      "citedByRealizations": [
+        "care for a family member at home",
+        "change the lighting or setup so home feels more comfortable",
+        "need more privacy at home"
+      ]
+    },
+    {
+      "id": "sun-6th-house",
+      "title": "Sun in the natal 6th House",
+      "sign": null,
+      "house": 6,
+      "sourceLineRange": "2827-2838",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "every",
+        "practical",
+        "problem",
+        "proces",
+        "provide",
+        "service",
+        "small",
+        "solve"
+      ],
+      "supportingQuote": "Sun in the natal 6th House (Sun & The Hermit)\n\nWith the Sun in your Natal 6th House, your personality is infused with qualities of diligence, practicality, and a strong sense of service. One of your key strengths lies in your attention to detail and your ability to analyze and solve problems effectively. You seize every opportunity to uplift others and contribute to the greater good, knowing that even the smallest gestures can create a ripple effect of positivity and transformation.",
+      "quotedChars": 487,
+      "fullSectionChars": 4796,
+      "citedByRealizations": [
+        "notice the same small process problem steals time every day",
+        "provide practical service",
+        "solve a practical work problem"
+      ]
+    },
+    {
+      "id": "sun-7th-house",
+      "title": "Sun in the natal 7th House",
+      "sign": null,
+      "house": 7,
+      "sourceLineRange": "2847-2856",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "individuality",
+        "maintain",
+        "partnership"
+      ],
+      "supportingQuote": "Sun in the natal 7th House (Sun & Justice)\n\nWith the Sun in your Natal 7th house, your personality is imbued with qualities of partnership, harmony, and a strong focus on relationships. You take the responsibilities of partnership seriously and are willing to make compromises for the sake of maintaining harmony. While partnerships are vital to your well - being, remember to maintain a healthy sense of individuality and nurture your own identity outside of your relationships.",
+      "quotedChars": 479,
+      "fullSectionChars": 3800,
+      "citedByRealizations": [
+        "maintain individuality inside partnership"
+      ]
+    },
+    {
+      "id": "sun-8th-house",
+      "title": "Sun in the natal 8th House",
+      "sign": null,
+      "house": 8,
+      "sourceLineRange": "2863-2876",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "sexual"
+      ],
+      "supportingQuote": "In matters of sexuality, the placement of the Sun in your 8th house infuses your experiences with intensity, depth, and a profound understanding of the power of sexual energy. You understand that sexuality encompasses not only the physical act but also the emotional, psychological, and spiritual aspects. Your sexual experiences are not simply physical, but rather a gateway to exploration and personal growth.",
+      "quotedChars": 411,
+      "fullSectionChars": 5345,
+      "citedByRealizations": [
+        "deal with a sexual relationship"
+      ]
+    },
+    {
+      "id": "sun-9th-house",
+      "title": "Sun in the natal 9th House",
+      "sign": null,
+      "house": 9,
+      "sourceLineRange": "2883-2891",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "cultural",
+        "educ",
+        "live",
+        "metaphysic",
+        "study"
+      ],
+      "supportingQuote": "The 9th house represents your beliefs, higher education, spirituality, and your quest for meaning and purpose in life. This placement highlights your adventurous spirit and your deep desire to broaden your horizons through intellectual pursuits and cultural experiences. You may find joy in studying subjects such as philosophy, religion, law, or metaphysics.",
+      "quotedChars": 359,
+      "fullSectionChars": 3647,
+      "citedByRealizations": [
+        "live abroad for education or cultural experience",
+        "study metaphysics"
+      ]
+    },
+    {
+      "id": "taurus-11th-house",
+      "title": "Taurus in the natal 11th house",
+      "sign": "Taurus",
+      "house": 11,
+      "sourceLineRange": "600-609",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "community",
+        "creative",
+        "find"
+      ],
+      "supportingQuote": "It guides us on a journey of expanding our community, and collaborating to manifest a brighter future for all. In the realm of business, it illuminates the importance of building relationships with our community, fostering innovation and aligning our actions with a higher purpose. Combined, these two energies can bring a sense of stability and guidance to your creative flow and innovative endeavors.",
+      "quotedChars": 402,
+      "fullSectionChars": 4120,
+      "citedByRealizations": [
+        "find a creative community"
+      ]
+    },
+    {
+      "id": "taurus-2nd-house",
+      "title": "Taurus in the natal 2nd house",
+      "sign": "Taurus",
+      "house": 2,
+      "sourceLineRange": "504-514",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Taurus in the natal 2nd house: The Hierophant\n\nThe second house in astrology represents the foundation of your personal identity, including your self - worth, self - esteem, and possessions.",
+      "quotedChars": 190,
+      "fullSectionChars": 3513,
+      "citedByRealizations": []
+    },
+    {
+      "id": "taurus-5th-house",
+      "title": "Taurus in the natal 5th house",
+      "sign": "Taurus",
+      "house": 5,
+      "sourceLineRange": "532-543",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "leisure",
+        "leisurely",
+        "meal",
+        "pleasurable",
+        "together",
+        "travel",
+        "walk"
+      ],
+      "supportingQuote": "When these two archetypes come together, they suggest a path towards personal strength and growth through following the established values and beliefs of one's community or tradition. You may also enjoy indulging in simple pleasures and activities, such as cooking meals together or taking leisurely walks with your partner. You may also enjoy indulging in pleasurable activities, such as fine dining or leisure travel, with your loved ones.",
+      "quotedChars": 441,
+      "fullSectionChars": 5077,
+      "citedByRealizations": [
+        "go out for a pleasurable meal",
+        "take a leisurely walk together",
+        "take leisure travel"
+      ]
+    },
+    {
+      "id": "venus-3rd-house",
+      "title": "Venus in the natal 3rd House",
+      "sign": null,
+      "house": 3,
+      "sourceLineRange": "2995-3002",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "everyday",
+        "learn",
+        "route",
+        "skill"
+      ],
+      "supportingQuote": "She paints your world with Venusian hues, enhancing the beauty, diplomacy, and warmth in your everyday interactions and experiences. Your communication style might be characterized by diplomacy, making you skilled at mediating disputes and facilitating harmonious interactions. You might enjoy engaging with your neighbors, siblings, or other people who are part of your everyday life.",
+      "quotedChars": 385,
+      "fullSectionChars": 3192,
+      "citedByRealizations": [
+        "change a route",
+        "learn a new everyday skill"
+      ]
+    },
+    {
+      "id": "venus-4th-house",
+      "title": "Venus in the natal 4th House",
+      "sign": null,
+      "house": 4,
+      "sourceLineRange": "3010-3015",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "beautiful",
+        "comfortable",
+        "family",
+        "home",
+        "maintain",
+        "one",
+        "tradition"
+      ],
+      "supportingQuote": "With Venus, the planet of love, beauty, and values, is positioned in your natal 4th House, it suggests a strong focus on harmony, affection, and beauty in your home and family life. You may also have a strong connection to your past, ancestry, or roots, and may find beauty and value in maintaining family traditions or exploring your family history. It's important for you to be aware of a potential tendency to overly idealize home and family life, or to seek too much of your sense of self - worth and security from external things like a beautiful home or family relationships.",
+      "quotedChars": 581,
+      "fullSectionChars": 2175,
+      "citedByRealizations": [
+        "maintain or change a family tradition",
+        "realize a beautiful home is not comfortable if one person has to maintain all of it"
+      ]
+    },
+    {
+      "id": "venus-5th-house",
+      "title": "Venus in the natal 5th House",
+      "sign": null,
+      "house": 5,
+      "sourceLineRange": "3022-3024",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "music"
+      ],
+      "supportingQuote": "This might manifest in a range of creative pursuits such as painting, composing music, dancing, writing, or any form of artistic self - expression. This might include hobbies such as painting, music, dance, or any form of artistic self - expression.",
+      "quotedChars": 249,
+      "fullSectionChars": 1924,
+      "citedByRealizations": [
+        "make music"
+      ]
+    },
+    {
+      "id": "venus-7th-house",
+      "title": "Venus in the natal 7th House",
+      "sign": null,
+      "house": 7,
+      "sourceLineRange": "3054-3061",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "common",
+        "find",
+        "ground"
+      ],
+      "supportingQuote": "It focuses on finding emotional balance and fairness in relationships. You excel in collaboration and thrive when you can find common ground with others. Your natural diplomacy and ability to see both sides of a situation make you an adept mediator, helping to find fair solutions and maintain balance in your relationships.",
+      "quotedChars": 324,
+      "fullSectionChars": 2940,
+      "citedByRealizations": [
+        "find common ground"
+      ]
+    },
+    {
+      "id": "virgo-1st-house",
+      "title": "Virgo in the natal 1st house",
+      "sign": "Virgo",
+      "house": 1,
+      "sourceLineRange": "1087-1089",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Virgo in the natal 1st house: The Hermit, The Emperor\n\nThe first house is the foundation of your astrological chart.",
+      "quotedChars": 116,
+      "fullSectionChars": 1085,
+      "citedByRealizations": []
+    },
+    {
+      "id": "virgo-2nd-house",
+      "title": "Virgo in the natal 2nd house",
+      "sign": "Virgo",
+      "house": 2,
+      "sourceLineRange": "1096-1105",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Virgo in the natal 2nd house: The Hermit, The Hierophant\n\nThe second house in astrology represents the foundation of your personal identity, including your self - worth, self - esteem, and possessions.",
+      "quotedChars": 201,
+      "fullSectionChars": 3451,
+      "citedByRealizations": []
+    },
+    {
+      "id": "virgo-4th-house",
+      "title": "Virgo in the natal 4th house",
+      "sign": "Virgo",
+      "house": 4,
+      "sourceLineRange": "1118-1125",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "home"
+      ],
+      "supportingQuote": "Virgo in the natal 4th house: The Hermit, The Chariot\n\nThe fourth house, also known as the \"home of the heart,\" speaks to the deep and intimate connections we have with our family and our sense of belonging within our home and community. By spending more time alone, you can tap into your intuition and gain insight into your emotional foundations, allowing you to build a stronger sense of security and stability in your home life. Take time to reflect on your emotional needs and priorities in order to make practical and logical decisions about your home and family.",
+      "quotedChars": 569,
+      "fullSectionChars": 4267,
+      "citedByRealizations": [
+        "work from home"
+      ]
+    },
+    {
+      "id": "virgo-5th-house",
+      "title": "Virgo in the natal 5th house",
+      "sign": "Virgo",
+      "house": 5,
+      "sourceLineRange": "1129-1135",
+      "directUseAllowed": false,
+      "supportingTerms": [],
+      "supportingQuote": "Virgo in the natal 5th house: The Hermit, Strength\n\nThe Strength card in the Major Arcana, corresponds to Leo and the 5th house.",
+      "quotedChars": 128,
+      "fullSectionChars": 4342,
+      "citedByRealizations": []
+    },
+    {
+      "id": "virgo-6th-house",
+      "title": "Virgo in the natal 6th house",
+      "sign": "Virgo",
+      "house": 6,
+      "sourceLineRange": "1138-1145",
+      "directUseAllowed": false,
+      "supportingTerms": [
+        "daily",
+        "improve",
+        "manage",
+        "routine"
+      ],
+      "supportingQuote": "It is a call to step away from the noise and distractions of the world, and to delve deep within ourselves to examine our daily routines. You may be highly detail - oriented and may be particularly interested in analyzing and improving your daily routines and habits. Combined, these energies may indicate a strong desire for personal growth, self - improvement and to assist others to do the same, in a practical and analytical way, through daily routines and work.",
+      "quotedChars": 466,
+      "fullSectionChars": 2759,
+      "citedByRealizations": [
+        "change a daily routine",
+        "improve time management"
+      ]
+    }
+  ]
+}

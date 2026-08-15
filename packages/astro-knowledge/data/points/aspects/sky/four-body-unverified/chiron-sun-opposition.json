@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.opposition.chiron",
+  "canonicalId": "sky-aspect/chiron/sun/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "sun",
+  "aspect": "opposition",
+  "humanMoment": "The confident one and the wounded one end up across the same table.",
+  "developmentDetail": "One reads the other's ease as arrogance, the other reads the caution as fragility, and both of them are wrong about the person they are facing.",
+  "planetaryDynamic": "With the Sun opposite Chiron, one person carries the untroubled shine while the other carries the history that cannot watch shine neutrally.",
+  "aspectMechanic": "Each one is looking at a piece of themselves they handed away.",
+  "conditionalConsequence": "The meeting may go fine anyway, but whoever recognizes their own disowned piece across the table gets to take it back, and that trade stays open to both chairs.",
+  "body": "The confident one and the wounded one end up across the same table.\n\nOne reads the other's ease as arrogance, the other reads the caution as fragility, and both of them are wrong about the person they are facing.\n\nWith the Sun opposite Chiron, one person carries the untroubled shine while the other carries the history that cannot watch shine neutrally.\n\nEach one is looking at a piece of themselves they handed away.\n\nThe meeting may go fine anyway, but whoever recognizes their own disowned piece across the table gets to take it back, and that trade stays open to both chairs.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.sun.opposition.chiron",
+    "sourceHeading": "Sun opposition Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

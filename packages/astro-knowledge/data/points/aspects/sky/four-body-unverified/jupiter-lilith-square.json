@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.square.lilith",
+  "canonicalId": "sky-aspect/jupiter/lilith/square",
+  "kind": "sky-aspect",
+  "bodyA": "jupiter",
+  "bodyB": "lilith",
+  "aspect": "square",
+  "humanMoment": "Someone puts the justification machine to work for the appetite.",
+  "developmentDetail": "They turn the exception into a philosophy: everyone does it, the rule is outdated, this case is special; the want has hired the ethics instead of consulting them.",
+  "planetaryDynamic": "With Jupiter square Lilith, people supply meaning and permission on demand to a hunger that wants both immediately.",
+  "aspectMechanic": "When someone's appetite starts arguing like a principle, that is exactly when they need a second reader.",
+  "conditionalConsequence": "The case may even be right, but a conviction born this week deserves a date stamp before anyone trusts it.",
+  "body": "Someone puts the justification machine to work for the appetite.\n\nThey turn the exception into a philosophy: everyone does it, the rule is outdated, this case is special; the want has hired the ethics instead of consulting them.\n\nWith Jupiter square Lilith, people supply meaning and permission on demand to a hunger that wants both immediately.\n\nWhen someone's appetite starts arguing like a principle, that is exactly when they need a second reader.\n\nThe case may even be right, but a conviction born this week deserves a date stamp before anyone trusts it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.jupiter.square.lilith",
+    "sourceHeading": "Jupiter square Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

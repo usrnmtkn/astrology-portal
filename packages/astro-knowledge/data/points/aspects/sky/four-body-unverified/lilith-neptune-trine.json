@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.neptune.trine.lilith",
+  "canonicalId": "sky-aspect/lilith/neptune/trine",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "neptune",
+  "aspect": "trine",
+  "humanMoment": "Someone finds the banned want a beautiful costume that actually fits.",
+  "developmentDetail": "They turn the longing into art, ritual, or a story told well, giving it daylight without demanding a confession.",
+  "planetaryDynamic": "With Neptune trine Lilith, people lend the imagery and the audience while the banned want supplies the charge underneath the piece.",
+  "aspectMechanic": "They hardly feel any friction, and the work arrives almost finished.",
+  "conditionalConsequence": "The work may move people, but a maker who stays unclear about what they are expressing finds the audience knowing first.",
+  "body": "Someone finds the banned want a beautiful costume that actually fits.\n\nThey turn the longing into art, ritual, or a story told well, giving it daylight without demanding a confession.\n\nWith Neptune trine Lilith, people lend the imagery and the audience while the banned want supplies the charge underneath the piece.\n\nThey hardly feel any friction, and the work arrives almost finished.\n\nThe work may move people, but a maker who stays unclear about what they are expressing finds the audience knowing first.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.neptune.trine.lilith",
+    "sourceHeading": "Neptune trine Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

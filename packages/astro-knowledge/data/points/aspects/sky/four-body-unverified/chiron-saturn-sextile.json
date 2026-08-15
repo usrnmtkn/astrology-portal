@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.sextile.chiron",
+  "canonicalId": "sky-aspect/chiron/saturn/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "saturn",
+  "aspect": "sextile",
+  "humanMoment": "The structure starts helping people's sore spot instead of grading it.",
+  "developmentDetail": "Someone sets up the routine, the checklist, the standing appointment, and watches the unmanageable thing turn into a Tuesday.",
+  "planetaryDynamic": "With Saturn sextile Chiron, people can build a container, and the tender project that always needed one is right there.",
+  "aspectMechanic": "The scaffolding only holds if somebody assembles it.",
+  "conditionalConsequence": "The system may look rigid from outside, but a container people choose freely tends to be the opposite of the one that was once imposed on them.",
+  "body": "The structure starts helping people's sore spot instead of grading it.\n\nSomeone sets up the routine, the checklist, the standing appointment, and watches the unmanageable thing turn into a Tuesday.\n\nWith Saturn sextile Chiron, people can build a container, and the tender project that always needed one is right there.\n\nThe scaffolding only holds if somebody assembles it.\n\nThe system may look rigid from outside, but a container people choose freely tends to be the opposite of the one that was once imposed on them.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.saturn.sextile.chiron",
+    "sourceHeading": "Saturn sextile Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

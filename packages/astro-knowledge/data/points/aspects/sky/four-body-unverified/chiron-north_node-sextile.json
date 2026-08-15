@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.chiron.sextile.north-node",
+  "canonicalId": "sky-aspect/chiron/north_node/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "north_node",
+  "aspect": "sextile",
+  "humanMoment": "A request for help arrives asking for exactly someone's hardest-earned lesson.",
+  "developmentDetail": "The group starting out wants the person who has already rebuilt, and the helper role shows up before the helper feels ready for it.",
+  "planetaryDynamic": "With Chiron sextile the North Node, people hold the repair knowledge in one hand while the chapter that can finally use it opens, and the familiar end cooperates for once.",
+  "aspectMechanic": "Somebody still has to say yes to the request.",
+  "conditionalConsequence": "The help may land before the healing feels complete, and the wound put to use this way tends to finally start closing.",
+  "body": "A request for help arrives asking for exactly someone's hardest-earned lesson.\n\nThe group starting out wants the person who has already rebuilt, and the helper role shows up before the helper feels ready for it.\n\nWith Chiron sextile the North Node, people hold the repair knowledge in one hand while the chapter that can finally use it opens, and the familiar end cooperates for once.\n\nSomebody still has to say yes to the request.\n\nThe help may land before the healing feels complete, and the wound put to use this way tends to finally start closing.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.chiron.sextile.north-node",
+    "sourceHeading": "Chiron sextile North Node",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

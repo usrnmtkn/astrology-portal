@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "south-node-11",
+  "canonicalId": "transit-house/south_node/11",
+  "kind": "house",
+  "transiting": "south-node",
+  "house": 11,
+  "headline": "Belonging without self-expression",
+  "body": "With the South Node moving through your 11th house, it is easy to stay useful to a group while completely losing touch with what you want. You might manage the group chat, support the team, or keep the community running smoothly just because you know how to fit in. Having a full social calendar can still leave zero room for your personal passions.\n\nThe 5th house on the other side points back to individual creativity, romance, play, and standing out. Community matters, but this transit shows where fitting in has required you to stay agreeable, helpful, and muted.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "South Node — 11H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

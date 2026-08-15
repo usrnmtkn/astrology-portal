@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.sextile.north-node",
+  "canonicalId": "sky-aspect/north_node/uranus/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "uranus",
+  "aspect": "sextile",
+  "humanMoment": "People are getting answers from experiments that months of deliberation never produced.",
+  "developmentDetail": "Someone runs the small trial, the weekend version, the reversible test, and settles in days what their pro-and-con lists debated all season.",
+  "planetaryDynamic": "With Uranus sextile the North Node, people can test the question the direction keeps asking with cheap, unscripted moves, and the old routine tolerates the experiment instead of punishing it.",
+  "aspectMechanic": "Somebody still has to actually run the trial.",
+  "conditionalConsequence": "The test may stay hypothetical forever, and people do not steer on hypotheses; they steer on data, even the homemade kind.",
+  "body": "People are getting answers from experiments that months of deliberation never produced.\n\nSomeone runs the small trial, the weekend version, the reversible test, and settles in days what their pro-and-con lists debated all season.\n\nWith Uranus sextile the North Node, people can test the question the direction keeps asking with cheap, unscripted moves, and the old routine tolerates the experiment instead of punishing it.\n\nSomebody still has to actually run the trial.\n\nThe test may stay hypothetical forever, and people do not steer on hypotheses; they steer on data, even the homemade kind.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.uranus.sextile.north-node",
+    "sourceHeading": "Uranus sextile North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

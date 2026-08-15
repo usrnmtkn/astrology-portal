@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.opposition.lilith",
+  "canonicalId": "sky-aspect/jupiter/lilith/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "jupiter",
+  "bodyB": "lilith",
+  "aspect": "opposition",
+  "humanMoment": "The optimist and the refuser split the room.",
+  "developmentDetail": "One preaches the bigger picture, the other names what the picture leaves out, and the audience hears a debate about hope that is really about whose appetite counts.",
+  "planetaryDynamic": "With Jupiter opposite Lilith, one speaker carries the expansive vision while the other carries the excluded want that keeps interrupting it.",
+  "aspectMechanic": "So the visionary takes the test from the sharpest critic in the room, with everyone watching.",
+  "conditionalConsequence": "The debate may stay friendly, but a visionary who cannot include the exiled want keeps losing the most honest people in the audience.",
+  "body": "The optimist and the refuser split the room.\n\nOne preaches the bigger picture, the other names what the picture leaves out, and the audience hears a debate about hope that is really about whose appetite counts.\n\nWith Jupiter opposite Lilith, one speaker carries the expansive vision while the other carries the excluded want that keeps interrupting it.\n\nSo the visionary takes the test from the sharpest critic in the room, with everyone watching.\n\nThe debate may stay friendly, but a visionary who cannot include the exiled want keeps losing the most honest people in the audience.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.jupiter.opposition.lilith",
+    "sourceHeading": "Jupiter opposition Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

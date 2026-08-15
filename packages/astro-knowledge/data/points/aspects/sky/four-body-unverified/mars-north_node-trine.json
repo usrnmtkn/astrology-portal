@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.trine.north-node",
+  "canonicalId": "sky-aspect/mars/north_node/trine",
+  "kind": "sky-aspect",
+  "bodyA": "mars",
+  "bodyB": "north_node",
+  "aspect": "trine",
+  "humanMoment": "The new work is starting to pull effort toward itself.",
+  "developmentDetail": "Someone wakes up already knowing the next task, watches the project generate its own momentum, and stops needing discipline because appetite showed up instead.",
+  "planetaryDynamic": "With Mars trine the North Node, people find their drive and their direction reinforcing each other, so they experience exertion as traction instead of grinding and nobody has to be dragged to the site.",
+  "aspectMechanic": "People show up without being talked into it.",
+  "conditionalConsequence": "The ease may not last forever, and that is fine; people who build the road during traction weeks tend to travel it during the grinding ones.",
+  "body": "The new work is starting to pull effort toward itself.\n\nSomeone wakes up already knowing the next task, watches the project generate its own momentum, and stops needing discipline because appetite showed up instead.\n\nWith Mars trine the North Node, people find their drive and their direction reinforcing each other, so they experience exertion as traction instead of grinding and nobody has to be dragged to the site.\n\nPeople show up without being talked into it.\n\nThe ease may not last forever, and that is fine; people who build the road during traction weeks tend to travel it during the grinding ones.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.mars.trine.north-node",
+    "sourceHeading": "Mars trine North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

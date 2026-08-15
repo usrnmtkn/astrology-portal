@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.conjunction.north-node",
+  "canonicalId": "sky-aspect/jupiter/north_node/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "jupiter",
+  "bodyB": "north_node",
+  "aspect": "conjunction",
+  "humanMoment": "The opportunity and the direction are arriving as one offer.",
+  "developmentDetail": "Someone opens an invitation that is not a detour from the plan but the plan itself, at larger scale and sooner than they scheduled, and the only obstacle left is their own disbelief.",
+  "planetaryDynamic": "With Jupiter conjunct the North Node, people get to say the biggest available yes and the right available yes in the same breath, because the growth on offer runs straight down the new road instead of circling the old one.",
+  "aspectMechanic": "Nobody feels ready, and the offer is early rather than wrong.",
+  "conditionalConsequence": "The timing may feel premature, but people sometimes scale before they feel ready, and readiness tends to arrive second.",
+  "body": "The opportunity and the direction are arriving as one offer.\n\nSomeone opens an invitation that is not a detour from the plan but the plan itself, at larger scale and sooner than they scheduled, and the only obstacle left is their own disbelief.\n\nWith Jupiter conjunct the North Node, people get to say the biggest available yes and the right available yes in the same breath, because the growth on offer runs straight down the new road instead of circling the old one.\n\nNobody feels ready, and the offer is early rather than wrong.\n\nThe timing may feel premature, but people sometimes scale before they feel ready, and readiness tends to arrive second.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.jupiter.conjunction.north-node",
+    "sourceHeading": "Jupiter conjunction North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

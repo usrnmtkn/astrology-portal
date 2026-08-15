@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.quincunx.north-node",
+  "canonicalId": "sky-aspect/jupiter/north_node/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "jupiter",
+  "bodyB": "north_node",
+  "aspect": "quincunx",
+  "humanMoment": "People keep receiving abundance in the wrong denomination.",
+  "developmentDetail": "Someone watches the offers multiply in the old specialty while the new direction gets silence, and every windfall makes their pivot slightly harder to justify.",
+  "planetaryDynamic": "With Jupiter quincunx the North Node, people keep trying to convert prosperity in the old currency into progress in the new one, and the exchange never settles at a rate anyone likes.",
+  "aspectMechanic": "Everyone can see the windfalls funding the past.",
+  "conditionalConsequence": "The offers may keep coming, but people who call a comfortable headwind luck are still flying into it, and renaming it changes nothing about their heading.",
+  "body": "People keep receiving abundance in the wrong denomination.\n\nSomeone watches the offers multiply in the old specialty while the new direction gets silence, and every windfall makes their pivot slightly harder to justify.\n\nWith Jupiter quincunx the North Node, people keep trying to convert prosperity in the old currency into progress in the new one, and the exchange never settles at a rate anyone likes.\n\nEveryone can see the windfalls funding the past.\n\nThe offers may keep coming, but people who call a comfortable headwind luck are still flying into it, and renaming it changes nothing about their heading.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.jupiter.quincunx.north-node",
+    "sourceHeading": "Jupiter quincunx North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

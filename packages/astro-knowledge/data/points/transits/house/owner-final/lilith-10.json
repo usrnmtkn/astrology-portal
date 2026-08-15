@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-10",
+  "canonicalId": "transit-house/lilith/10",
+  "kind": "house",
+  "transiting": "lilith",
+  "house": 10,
+  "headline": "Work without self-erasure",
+  "body": "Black Moon Lilith in your 10th house exposes how much of your professional image was built around being palatable. You will feel far less willing to downplay your authority, let others take credit for your work, or maintain a safe corporate persona that erases your individuality. Frustration naturally bubbles up where your competence was only welcomed as long as you stayed quiet.\n\nYou do not need to sabotage your career to prove you are authentic. Claim your proper title, insist on correct credit, set firm professional limits, and let your work sound like you created it. Professional respect and self-respect can exist together.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Lilith — 10H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

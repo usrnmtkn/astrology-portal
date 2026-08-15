@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "north-node-11",
+  "canonicalId": "transit-house/north_node/11",
+  "kind": "house",
+  "transiting": "north-node",
+  "house": 11,
+  "headline": "Building with other people",
+  "body": "The North Node in your 11th house pulls you toward real friendships, community groups, professional networks, and big projects that take a team. You might join an organization, contribute to a group effort, back someone else's idea, or realize your goals require collaborators you have not met yet. Belonging here takes work because it grows through showing up, not just getting attention.\n\nThe 5th house across the way holds the temptation to focus strictly on personal recognition, romance, and creative control. Those desires are human, but this transit teaches you how to collaborate without disappearing, and how to share credit without losing your identity.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "North Node — 11H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}
