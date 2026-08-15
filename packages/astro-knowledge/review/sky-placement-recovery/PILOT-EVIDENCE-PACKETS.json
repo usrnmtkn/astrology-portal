@@ -1,0 +1,120 @@
+[
+ {
+  "page_key": "jupiter/aries",
+  "tier": "A",
+  "why_selected": "Straightforward. Fast mover, one-year residency so timing is unambiguous, lint clean, simple complexity, 16 meaning records.",
+  "source_readiness": "ready",
+  "lint_state": "clean",
+  "evidence_packet": {
+   "meaning": [
+    "After months of confusion, an opening can arrive all at once. Jupiter moves into Aries with a sudden burst of confidence, opportunity, or pent-up ener",
+    "Confidence can arrive before the evidence does. Jupiter moves into Aries, making action easier before complete certainty has caught up. A first move m",
+    "Jupiter moves into Aries, and confidence can turn into action very quickly. More people may make the first move, take the risk, or say yes before they",
+    "Jupiter in Aries moves through your 1st house of identity and self-expression, so confidence can grow fast, and so can the temptation to say yes becau",
+    "Jupiter in Aries moves through your 12th house of endings and closure, so hope can return in a private way. Rest, retreat, therapy, spiritual practice",
+    "Jupiter in Aries moves through your 11th house of friendships and community, so your circle may get bigger, invitations may multiply, or a group may c"
+   ],
+   "scene": [
+    "Jupiter in Aries moves through your 3rd house of communication and daily reality, so more messages, options, introductions, or information can open a "
+   ],
+   "argument": [
+    "Confidence can arrive before the evidence does. Jupiter moves into Aries, making action easier before complete certainty has caught up. A first move m",
+    "Jupiter in Aries moves through your 1st house of identity and self-expression, so confidence can grow fast, and so can the temptation to say yes becau",
+    "Jupiter in Aries moves through your 11th house of friendships and community, so your circle may get bigger, invitations may multiply, or a group may c"
+   ],
+   "counts": {
+    "meaning": 16,
+    "register": 11,
+    "scene": 1,
+    "argument": 3,
+    "phrase": 0
+   }
+  },
+  "timing_source": "engine entryDate/exitDate; cycle facts from planet-cycle-facts.json",
+  "historical_reference_only": {
+   "note": "July fallback for this page. NOT positive voice evidence.",
+   "available": true
+  },
+  "voice_evidence_policy": "current owner-approved sky placement prose only; July fallback excluded",
+  "status": "EVIDENCE_PACKET_READY_NO_PROSE_WRITTEN"
+ },
+ {
+  "page_key": "uranus/taurus",
+  "tier": "B",
+  "why_selected": "Medium. Slow mover, 28 meaning and 8 argument records, lint clean but July voice signals present, so it tests whether reauthoring actually changes register.",
+  "source_readiness": "ready",
+  "lint_state": "clean",
+  "evidence_packet": {
+   "meaning": [
+    "Pressure can build for a long time underneath a system everyone still calls stable. Uranus moves into Taurus, beginning a longer disruption of materia",
+    "A first disruption can be enough to show which material systems were not built for the future. Uranus moves into Taurus for an early preview of longer",
+    "Recent experiments need evaluation more than another round of disruption. Uranus turns retrograde in Taurus, beginning a multi-month review of what th",
+    "Uranus turns direct in Taurus, and a change that was paused can start moving again. The plan can move again once the cost, pace, or practical limit is",
+    "Uranus moves into Taurus, and an arrangement that used to work can start needing different terms because the old setup is no longer practical. The cha",
+    "Uranus turns retrograde in Taurus, bringing a change already underway back into revision. A price, timeline, or practical promise may need another loo"
+   ],
+   "scene": [
+    "Uranus in Taurus moves through your 2nd house of disposable income and foundation, so income, expenses, possessions, or what you are willing to pay ca",
+    "Uranus in Taurus moves through your 3rd house of communication and daily reality, so a message, device, route, schedule, or piece of information may c"
+   ],
+   "argument": [
+    "Pressure can build for a long time underneath a system everyone still calls stable. Uranus moves into Taurus, beginning a longer disruption of materia",
+    "A first disruption can be enough to show which material systems were not built for the future. Uranus moves into Taurus for an early preview of longer",
+    "Uranus in Taurus moves through your 2nd house of disposable income and foundation, so income, expenses, possessions, or what you are willing to pay ca"
+   ],
+   "counts": {
+    "meaning": 28,
+    "register": 97,
+    "scene": 2,
+    "argument": 8,
+    "phrase": 0
+   }
+  },
+  "timing_source": "engine entryDate/exitDate; cycle facts from planet-cycle-facts.json",
+  "historical_reference_only": {
+   "note": "July fallback for this page. NOT positive voice evidence.",
+   "available": true
+  },
+  "voice_evidence_policy": "current owner-approved sky placement prose only; July fallback excluded",
+  "status": "EVIDENCE_PACKET_READY_NO_PROSE_WRITTEN"
+ },
+ {
+  "page_key": "pluto/capricorn",
+  "tier": "C",
+  "why_selected": "Difficult. Generational placement with the richest evidence at 36 meaning records, needs condition, era and recurrence handling rather than a lived scene.",
+  "source_readiness": "ready",
+  "lint_state": "clean",
+  "evidence_packet": {
+   "meaning": [
+    "Pluto turns direct in Capricorn, and hidden questions of power or control can start moving closer to the surface again. The shift may be quiet, especi",
+    "The structure starts moving again underneath the surface. Pluto turns direct in Capricorn, restarting a longer process around authority, control, and ",
+    "Some structures only look permanent until the cost of maintaining them becomes impossible to ignore. Pluto moves into Capricorn for a long cycle of pr",
+    "Pluto moves through Capricorn, and concentrated power and economic imbalance become harder to keep hidden. Corporate influence, inequality, and other ",
+    "Nothing has to explode for the pressure to be real. Pluto turns retrograde in Capricorn, making the strain underneath a long-term structure, responsib",
+    "The strategy may have outlived the problem it was built for. Pluto turns retrograde in Capricorn, putting a long-used response back under scrutiny as "
+   ],
+   "scene": [
+    "Pluto in Capricorn moves through your 4th house of home and family. You might feel pulled to face what's really going on with a call from a parent or "
+   ],
+   "argument": [
+    "Pluto turns direct in Capricorn, and hidden questions of power or control can start moving closer to the surface again. The shift may be quiet, especi",
+    "Pluto moves through Capricorn, and concentrated power and economic imbalance become harder to keep hidden. Corporate influence, inequality, and other ",
+    "Pluto in Capricorn moves through your 2nd house of disposable income and foundation, so a rate, income source, possession, or money you depend on may "
+   ],
+   "counts": {
+    "meaning": 36,
+    "register": 21,
+    "scene": 1,
+    "argument": 3,
+    "phrase": 0
+   }
+  },
+  "timing_source": "engine entryDate/exitDate; cycle facts from planet-cycle-facts.json",
+  "historical_reference_only": {
+   "note": "July fallback for this page. NOT positive voice evidence.",
+   "available": true
+  },
+  "voice_evidence_policy": "current owner-approved sky placement prose only; July fallback excluded",
+  "status": "EVIDENCE_PACKET_READY_NO_PROSE_WRITTEN"
+ }
+]

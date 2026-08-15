@@ -1450,6 +1450,24 @@ export function createTransitSynastryRenderer(
     "north-node",
     "south-node"
   ]);
+
+  // A four-slot candidate renders only after the build-time stamping script has
+  // recorded deterministic validation and exact owner approval for every body slot.
+  // Editorial rules stay in the policy compiler and linter; the resolver only reads
+  // the resulting eligibility stamp.
+  function skyPlacementRenderEligible(planet: string, sign: string): boolean {
+    const slots = ["hook", "lived", "turn"].map(
+      (slot) => hooks.get(`fallback-hook/sky-placement-${slot}/${planet}/${sign}`)
+    );
+    if (slots.some((row) => !row || typeof row.body_you !== "string" || !row.body_you.trim())) return false;
+    return slots.every((row) => (
+      (row as Record<string, unknown>).render_eligible === true
+      && (row as Record<string, unknown>).owner_prose_approved === true
+      && (row as Record<string, unknown>).deterministic_validation === "pass"
+      && typeof (row as Record<string, unknown>).source_hash === "string"
+      && String((row as Record<string, unknown>).source_hash).length > 0
+    ));
+  }
   const SKY_PLACEMENT_ERA_PLANETS = new Set([
     "saturn",
     "uranus",
@@ -1953,7 +1971,9 @@ export function createTransitSynastryRenderer(
           contentKey: standaloneHook.contentKey
         };
       }
-      throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
+      if (!skyPlacementRenderEligible(planet, sign)) {
+        throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
+      }
     }
 
     const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));

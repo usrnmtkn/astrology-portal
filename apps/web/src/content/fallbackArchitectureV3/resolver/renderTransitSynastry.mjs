@@ -1849,6 +1849,25 @@ function renderSkyPlacementCopy({
   const continuousSignCopy = signCopyRow?.render_policy === "sky-placement-continuous-v2"
     ? signCopyRow
     : null;
+
+  // A four-slot candidate renders only after the build-time stamping script has
+  // recorded deterministic validation and exact owner approval for every body slot.
+  // Editorial rules stay in the policy compiler and linter; the resolver only reads
+  // the resulting eligibility stamp.
+  function skyPlacementRenderEligible(planet, sign) {
+    const slots = ["hook", "lived", "turn"].map(
+      (slot) => hooks.get(`fallback-hook/sky-placement-${slot}/${planet}/${sign}`)
+    );
+    if (slots.some((row) => !row || typeof row.body_you !== "string" || !row.body_you.trim())) return false;
+    return slots.every((row) => (
+      row.render_eligible === true
+      && row.owner_prose_approved === true
+      && row.deterministic_validation === "pass"
+      && typeof row.source_hash === "string"
+      && row.source_hash.length > 0
+    ));
+  }
+
   if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet)) {
     const standaloneHook = hooks.get(`fallback-hook/sky-placement-sign/${planet}/${sign}`);
     if (!continuousSignCopy && standaloneHook?.body_you) {
@@ -1866,21 +1885,23 @@ function renderSkyPlacementCopy({
         contentKey: standaloneHook.contentKey
       };
     }
-    if (!continuousSignCopy) {
+    if (continuousSignCopy) {
+      return renderContinuousSkyPlacement(continuousSignCopy, {
+        planet,
+        sign,
+        events,
+        entryDate,
+        exitDate,
+        priorSign,
+        priorSignEntryDate,
+        priorSignExitDate,
+        previousResidencyEntryDate,
+        previousResidencyExitDate
+      });
+    }
+    if (!skyPlacementRenderEligible(planet, sign)) {
       throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
     }
-    return renderContinuousSkyPlacement(continuousSignCopy, {
-      planet,
-      sign,
-      events,
-      entryDate,
-      exitDate,
-      priorSign,
-      priorSignEntryDate,
-      priorSignExitDate,
-      previousResidencyEntryDate,
-      previousResidencyExitDate
-    });
   }
 
   const aspectParas = events.map((ev) => skyPlacementAspectParagraph(planet, ev));
