@@ -6,6 +6,7 @@ import path from "node:path";
 import { SpreadsheetFile, Workbook } from "@oai/artifact-tool";
 import {
   aspectComponents,
+  baseWordingForSignUnit,
   elementComponents,
   modalityComponents,
   planets,
@@ -13,6 +14,11 @@ import {
   wordingForSignUnit,
 } from "./sky-calendar-meaning-component-wording.mjs";
 import { assertManifestationShapeCap } from "./sky-calendar-manifestation-shape.mjs";
+import {
+  assertOwnerReplacements,
+  manifestationPlainnessViolations,
+  sourceShadowAudit,
+} from "./sky-calendar-component-repass.mjs";
 
 const repoRoot = process.cwd();
 const reviewDir = path.join(
@@ -204,6 +210,22 @@ const signUnits = planets.flatMap((planet) => signs.map((sign) => {
 
   return record;
 }));
+assertOwnerReplacements(signUnits);
+const shadowAudit = sourceShadowAudit(signUnits);
+if (shadowAudit.oneSidedAfterPass > 0) {
+  throw new Error(`Source-shadow audit failed: ${JSON.stringify(shadowAudit.remainingOneSided)}`);
+}
+const manifestationPlainness = manifestationPlainnessViolations(signUnits);
+if (manifestationPlainness.length > 0) {
+  throw new Error(`Manifestation plainness failed: ${JSON.stringify(manifestationPlainness.slice(0, 12))}`);
+}
+const changedSignUnitKeys = signUnits.filter((row) => {
+  const [, planet, sign] = row.key.split("/");
+  const before = baseWordingForSignUnit(planet, sign);
+  return row.combined_position !== before.combined_position
+    || row.details_language !== before.details_language
+    || JSON.stringify(row.reader_manifestations) !== JSON.stringify(before.reader_manifestations);
+}).map((row) => row.key);
 
 const targetOwnerPlanetCoverage = planets.map((planet) => ({
   planet,
@@ -260,6 +282,12 @@ const elements = elementComponents.map((record) => {
     owner_review_status: "PENDING OWNER",
   };
 });
+const reviewedUnchangedKeys = [
+  ...signUnits.filter((row) => !changedSignUnitKeys.includes(row.key)).map((row) => row.key),
+  ...aspects.map((row) => row.key),
+  ...modalities.map((row) => row.key),
+  ...elements.map((row) => row.key),
+];
 
 const OPENING_CAP = 4;
 const JOIN_PHRASE_CAP = 4;
@@ -398,6 +426,7 @@ const wordingQuality = {
   detailsCopiedFromCombinedPosition: detailsCopied,
   mechanicalJoinRows: oldJoinRows,
   abstractSubjectViolations,
+  manifestationPlainnessViolations: manifestationPlainness,
   ownerVoiceVerbatimMatches,
 };
 
@@ -457,6 +486,20 @@ const registry = {
     signs: targetOwnerSignCoverage,
     derivationCounts: Object.fromEntries(ownerVoiceCoverageCounts),
     rule: "Exact owner-written planet-sign rows govern where present. Missing pairs keep governed doctrine for meaning and use the nearest owner-approved planet or sign rows for register. No personal or second-person wording is copied into collective Sky components.",
+  },
+  systemicRepass: {
+    reviewedUnits: 174,
+    changedUnits: changedSignUnitKeys.length,
+    changedSignUnitKeys,
+    reviewedUnchangedUnits: reviewedUnchangedKeys.length,
+    reviewedUnchangedKeys,
+    sourceShadowAudit: shadowAudit,
+    ownerAuthoredReplacementKeys: [
+      "sky-sign/jupiter/aquarius",
+      "sky-sign/pluto/cancer",
+      "sky-sign/chiron/aries",
+    ],
+    rule: "Every unit was rechecked against its governed meaning and source cost. Manifestations require a person or concrete act; authored abstraction and cumbersome construction fail the build.",
   },
   wordingQuality,
   signUnits,
@@ -554,13 +597,17 @@ titleBand(
   "Sky Calendar meaning components v1",
   "Owner review workbook. These 174 rows govern meaning only. No row is a finished sentence for verbatim emission.",
 );
-overview.getRange("A4:B9").values = [
+overview.getRange("A4:B13").values = [
   ["Measure", "Count"],
   ["Sign units", signUnits.length],
   ["Aspect mechanisms", aspects.length],
   ["Modality units", modalities.length],
   ["Element units", elements.length],
   ["Total", registry.counts.total],
+  ["Units rechecked", registry.systemicRepass.reviewedUnits],
+  ["Units changed", registry.systemicRepass.changedUnits],
+  ["One-sided before pass", registry.systemicRepass.sourceShadowAudit.oneSidedBeforePass],
+  ["One-sided after pass", registry.systemicRepass.sourceShadowAudit.oneSidedAfterPass],
 ];
 overview.getRange("D4:F9").values = [
   ["Governance", "Value", "Meaning"],
@@ -572,12 +619,12 @@ overview.getRange("D4:F9").values = [
 ];
 overview.getRange("A4:B4").format = { fill: teal, font: { bold: true, color: white } };
 overview.getRange("D4:F4").format = { fill: teal, font: { bold: true, color: white } };
-overview.getRange("A5:B9").format = { fill: light, borders: { insideHorizontal: { style: "thin", color: line } } };
+overview.getRange("A5:B13").format = { fill: light, borders: { insideHorizontal: { style: "thin", color: line } } };
 overview.getRange("D5:F9").format = { fill: light, wrapText: true, borders: { insideHorizontal: { style: "thin", color: line } } };
-overview.getRange("A12:F12").merge();
-overview.getRange("A12:F12").values = [["Field definitions"]];
-overview.getRange("A12:F12").format = { fill: navy, font: { bold: true, color: white } };
-overview.getRange("A13:F21").values = [
+overview.getRange("A16:F16").merge();
+overview.getRange("A16:F16").values = [["Field definitions"]];
+overview.getRange("A16:F16").format = { fill: navy, font: { bold: true, color: white } };
+overview.getRange("A17:F25").values = [
   ["Field", "Layer", "Purpose", "May render verbatim?", "Evidence", "Owner action"],
   ["planet_function", "Sign", "What the planet governs in this placement", "No", "Approved rows and matrices", "Approve, revise, or reject"],
   ["sign_expression", "Sign", "How the sign changes that function", "No", "Approved rows and matrices", "Approve, revise, or reject"],
@@ -588,8 +635,8 @@ overview.getRange("A13:F21").values = [
   ["conflict_behavior", "Aspect/How", "Why the pressure behaves this way", "No", "Approved aspect, mode, or element evidence", "Approve, revise, or reject"],
   ["movement_bias", "Aspect/How", "What kind of change is supported", "No", "Approved aspect, mode, or element evidence", "Approve, revise, or reject"],
 ];
-overview.getRange("A13:F13").format = { fill: teal, font: { bold: true, color: white }, wrapText: true };
-overview.getRange("A14:F21").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+overview.getRange("A17:F17").format = { fill: teal, font: { bold: true, color: white }, wrapText: true };
+overview.getRange("A18:F25").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
 [["A", 22], ["B", 14], ["C", 40], ["D", 18], ["E", 30], ["F", 24]].forEach(([column, width]) => {
   overview.getRange(`${column}:${column}`).format.columnWidth = width;
 });
@@ -725,7 +772,7 @@ titleBand(
   "Frame uniqueness gate",
   "Beats are hidden logic, not sentence positions. Forecast concludes; Details explains and stops. The composer must vary openers, closers, entry modes, and connective constructions.",
 );
-gateSheet.getRange("A4:F14").values = [
+gateSheet.getRange("A4:F16").values = [
   ["Rule", "Scope", "Cap", "Pass example", "Fail example", "Reason"],
   ["Exact sentence uniqueness", "Forecast + Details", 1, "Every sentence appears once", "Same full sentence in two cards", "Prevents copied frames"],
   ["Forecast opener construction", "Forecast first sentence", 4, "Four or fewer uses", "Five cards begin with the same normalized opening", "Prevents opener monoculture"],
@@ -736,10 +783,12 @@ gateSheet.getRange("A4:F14").values = [
   ["Verbatim component emission", "All components", 0, "Composer paraphrases and integrates", "A stored component appears as a full sentence", "Components govern meaning, not prose"],
   ["Manifestation shape reuse", "Sign-unit manifestations", 3, "Planet-sign events use distinct grammar", "A sign frame survives after planet nouns are stripped", "String uniqueness alone does not catch slot templates"],
   ["Plain-register subject", "Meaning components", 0, "People, deadlines, messages, rules, and other everyday actors lead", "Recognition, autonomy, or pressure narrates itself", "The owner's register uses active verbs and concrete nouns"],
+  ["Manifestation actor or act", "All sign manifestations", 0, "A person acts or a concrete act is visible", "Care turns into leverage", "An abstraction may not perform the behavior"],
+  ["Source shadow coverage", "All sign units", 0, "A supported cost or overreach remains available", "Jupiter becomes uniformly beneficial", "The component may not erase source challenge, shadow, or cost"],
   ["Owner-source conversion", "All owner-voice evidence", 0, "Personal source meaning is converted for collective Sky", "Eight or more source words are copied verbatim", "Owner voice governs without leaking second-person source prose"],
 ];
 gateSheet.getRange("A4:F4").format = { fill: teal, font: { bold: true, color: white }, wrapText: true };
-gateSheet.getRange("A5:F14").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+gateSheet.getRange("A5:F16").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
 [["A", 34], ["B", 28], ["C", 10], ["D", 38], ["E", 42], ["F", 38]].forEach(([column, width]) => {
   gateSheet.getRange(`${column}:${column}`).format.columnWidth = width;
 });
@@ -750,7 +799,7 @@ titleBand(
   "Wording-layer QA",
   "The evidence layer is hash-locked. These checks show whether fixed joins, repeated bullets, structural slot templates, or opener monoculture have returned.",
 );
-wordingQaSheet.getRange("A4:C14").values = [
+wordingQaSheet.getRange("A4:C19").values = [
   ["Measure", "Result", "Cap"],
   ["Evidence-layer SHA-256", evidenceLayerSha256, "locked"],
   ["Mechanical join rows", oldJoinRows.length, 0],
@@ -761,16 +810,21 @@ wordingQaSheet.getRange("A4:C14").values = [
   ["Maximum details-language use", wordingQuality.maximumDetailsLanguageUse, DETAILS_LANGUAGE_REPEAT_CAP],
   ["Maximum connective n-gram use", wordingQuality.maximumConnectiveNgramUse, JOIN_PHRASE_CAP],
   ["Abstract-subject violations", abstractSubjectViolations.length, 0],
+  ["Manifestation plainness violations", manifestationPlainness.length, 0],
   ["Owner-source verbatim matches (8+ words)", ownerVoiceVerbatimMatches.length, 0],
+  ["Units rechecked", registry.systemicRepass.reviewedUnits, 174],
+  ["Units changed", registry.systemicRepass.changedUnits, "report"],
+  ["One-sided before source-shadow pass", shadowAudit.oneSidedBeforePass, "report"],
+  ["One-sided after source-shadow pass", shadowAudit.oneSidedAfterPass, 0],
 ];
 wordingQaSheet.getRange("A4:C4").format = { fill: teal, font: { bold: true, color: white } };
-wordingQaSheet.getRange("A5:C14").format = { fill: light, wrapText: true, borders: { insideHorizontal: { style: "thin", color: line } } };
+wordingQaSheet.getRange("A5:C19").format = { fill: light, wrapText: true, borders: { insideHorizontal: { style: "thin", color: line } } };
 
 const topOpeningRows = wordingQuality.openingConstructions.slice(0, 20).map(([construction, count]) => [construction, count]);
-wordingQaSheet.getRange("A16:B16").values = [["Opening construction", "Uses"]];
-wordingQaSheet.getRange(`A17:B${16 + topOpeningRows.length}`).values = topOpeningRows;
-wordingQaSheet.getRange("A16:B16").format = { fill: teal, font: { bold: true, color: white } };
-wordingQaSheet.getRange(`A17:B${16 + topOpeningRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
+wordingQaSheet.getRange("A21:B21").values = [["Opening construction", "Uses"]];
+wordingQaSheet.getRange(`A22:B${21 + topOpeningRows.length}`).values = topOpeningRows;
+wordingQaSheet.getRange("A21:B21").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`A22:B${21 + topOpeningRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
 
 wordingQaSheet.getRange("D4:E4").values = [["Manifestation occurrence count", "Distinct bullets"]];
 wordingQaSheet.getRange(`D5:E${4 + wordingQuality.manifestationRepeatDistribution.length}`).values = wordingQuality.manifestationRepeatDistribution.map((row) => [row.occurrences, row.distinctValues]);
@@ -782,16 +836,16 @@ wordingQaSheet.getRange(`G5:H${4 + wordingQuality.manifestationShapeDistribution
 wordingQaSheet.getRange("G4:H4").format = { fill: teal, font: { bold: true, color: white } };
 wordingQaSheet.getRange(`G5:H${4 + wordingQuality.manifestationShapeDistribution.length}`).format = { fill: light };
 
-wordingQaSheet.getRange("D16:E16").values = [["Repeated connective n-gram", "Uses"]];
+wordingQaSheet.getRange("D21:E21").values = [["Repeated connective n-gram", "Uses"]];
 const topConnectiveRows = wordingQuality.repeatedConnectiveNgrams.slice(0, 20).map(([construction, count]) => [construction, count]);
-wordingQaSheet.getRange(`D17:E${16 + topConnectiveRows.length}`).values = topConnectiveRows;
-wordingQaSheet.getRange("D16:E16").format = { fill: teal, font: { bold: true, color: white } };
-wordingQaSheet.getRange(`D17:E${16 + topConnectiveRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
-wordingQaSheet.getRange("G16:H16").values = [["Manifestation skeleton", "Uses"]];
+wordingQaSheet.getRange(`D22:E${21 + topConnectiveRows.length}`).values = topConnectiveRows;
+wordingQaSheet.getRange("D21:E21").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`D22:E${21 + topConnectiveRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
+wordingQaSheet.getRange("G21:H21").values = [["Manifestation skeleton", "Uses"]];
 const topShapeRows = wordingQuality.manifestationShapes.slice(0, 20).map(([construction, count]) => [construction, count]);
-wordingQaSheet.getRange(`G17:H${16 + topShapeRows.length}`).values = topShapeRows;
-wordingQaSheet.getRange("G16:H16").format = { fill: teal, font: { bold: true, color: white } };
-wordingQaSheet.getRange(`G17:H${16 + topShapeRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
+wordingQaSheet.getRange(`G22:H${21 + topShapeRows.length}`).values = topShapeRows;
+wordingQaSheet.getRange("G21:H21").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`G22:H${21 + topShapeRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
 [["A", 38], ["B", 48], ["C", 12], ["D", 44], ["E", 16], ["F", 3], ["G", 64], ["H", 12]].forEach(([column, width]) => {
   wordingQaSheet.getRange(`${column}:${column}`).format.columnWidth = width;
 });
@@ -799,7 +853,7 @@ wordingQaSheet.freezePanes.freezeRows(3);
 
 await workbook.inspect({
   kind: "table",
-  range: "Overview!A1:F21",
+  range: "Overview!A1:F25",
   include: "values,formulas",
   tableMaxRows: 24,
   tableMaxCols: 8,
@@ -813,14 +867,14 @@ const errors = await workbook.inspect({
 if (/"matchCount":\s*[1-9]/u.test(errors.ndjson)) throw new Error(errors.ndjson);
 
 for (const [sheetName, range] of [
-  ["Overview", "A1:F21"],
+  ["Overview", "A1:F25"],
   ["Owner Voice Coverage", "A1:F24"],
   ["Sign Units", "A1:M12"],
   ["Aspect Mechanisms", "A1:H8"],
   ["Modality Units", "A1:H12"],
   ["Element Units", "A1:H12"],
-  ["Frame Gate", "A1:F14"],
-  ["Wording QA", "A1:H36"],
+  ["Frame Gate", "A1:F16"],
+  ["Wording QA", "A1:H41"],
 ]) {
   const preview = await workbook.render({ sheetName, range, scale: 1, format: "png" });
   await fs.writeFile(
