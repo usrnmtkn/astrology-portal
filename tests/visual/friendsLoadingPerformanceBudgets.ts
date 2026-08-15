@@ -4,14 +4,14 @@ export const FRIENDS_SLOW_NETWORK_DOWNLOAD_BYTES_PER_SECOND = 1_000_000;
 export const FRIENDS_INCOMPLETE_CHART_CALCULATION_DELAY_MS = 750;
 
 export const friendsLoadingPerformanceBudgets = {
-  coldListReadyMs: 1_800,
-  warmDetailReadyMs: 700,
-  directLinkSynastryReadyMs: 1_800,
-  mobileNavigationReadyMs: 1_800,
-  incompleteChartListReadyMs: 1_800,
-  incompleteChartRepairReadyMs: 3_500,
-  slowNetworkListReadyMs: 1_800,
-  slowNetworkDetailShellReadyMs: 1_800,
-  slowNetworkRelationshipReadyMs: 3_500,
-  slowNetworkRelationshipEnhancedMs: 6_000
+  coldListReadyMs: 800,
+  warmDetailReadyMs: 500,
+  directLinkSynastryReadyMs: 1_000,
+  mobileNavigationReadyMs: 1_000,
+  incompleteChartListReadyMs: 800,
+  incompleteChartRepairReadyMs: 2_500,
+  slowNetworkListReadyMs: 800,
+  slowNetworkDetailShellReadyMs: 1_200,
+  slowNetworkRelationshipReadyMs: 2_200,
+  slowNetworkRelationshipEnhancedMs: 2_500
 } as const;
