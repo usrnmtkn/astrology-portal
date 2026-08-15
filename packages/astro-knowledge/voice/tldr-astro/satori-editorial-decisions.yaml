@@ -879,18 +879,22 @@
       "status": "approved",
       "category": "mechanical",
       "scope": {"surfaces": ["all-reader-copy"]},
-      "normalized_rule": "Reader copy uses ASCII punctuation. Do not use curly quotes, curly apostrophes, ellipsis characters, or en dashes.",
-      "rationale": "Standing owner punctuation rule. ED-004 already prohibits the em dash; the same rule covers the other typographic substitutes, which arrive invisibly through pasted drafts.",
+      "normalized_rule": "Reader copy uses ASCII punctuation and ordinary spaces. Do not use curly quotes, curly apostrophes, ellipsis characters, en dashes, nonbreaking spaces, or invisible Unicode formatting characters.",
+      "rationale": "Standing owner punctuation rule. ED-004 already prohibits the em dash; the same rule covers typographic substitutes and invisible spacing or formatting characters that can arrive through pasted or generated drafts. Ordinary non-ASCII letters are not punctuation and remain outside this mechanical rule.",
       "owner_source": {"type": "owner_feedback", "reference": "standing rule: plain over clever, ASCII only", "date": "2026-08-14"},
       "effective_date": "2026-08-14",
       "supersedes": [],
       "examples_allowed": ["The plan doesn't survive the first week."],
-      "examples_rejected": ["The plan doesn\u2019t survive the first week."],
+      "examples_rejected": ["The plan doesn\u2019t survive the first week.", "The plan\u00a0changed.", "The plan\u200cchanged."],
       "effect": "prohibit",
       "writer_prompt_exposure": "first_call",
-      "mechanical": {"kind": "regex", "pattern": "[\u2018\u2019\u201c\u201d\u2026\u2013]", "flags": "", "severity": "fail", "message": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."},
-      "enforcement": {"writer": true, "judge": false, "linter": true, "vocabulary_retrieval": false, "regression_tests": ["ascii-punctuation-only"]},
-      "regression_cases": [{"id": "ascii-punctuation-only", "surface": "sky-placement", "kind": "linter", "text": "The plan doesn\u2019t survive the first week.", "expected": "fail"}]
+      "mechanical": {"kind": "regex", "pattern": "[\u00a0\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff\u2018\u2019\u201c\u201d\u2026\u2013]", "flags": "", "severity": "fail", "message": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."},
+      "enforcement": {"writer": true, "judge": false, "linter": true, "vocabulary_retrieval": false, "regression_tests": ["ascii-punctuation-only", "no-nonbreaking-space", "no-invisible-format-character"]},
+      "regression_cases": [
+        {"id": "ascii-punctuation-only", "surface": "sky-placement", "kind": "linter", "text": "The plan doesn\u2019t survive the first week.", "expected": "fail"},
+        {"id": "no-nonbreaking-space", "surface": "sky-placement", "kind": "linter", "text": "The plan\u00a0changed.", "expected": "fail"},
+        {"id": "no-invisible-format-character", "surface": "sky-placement", "kind": "linter", "text": "The plan\u200cchanged.", "expected": "fail"}
+      ]
     },
     {
       "id": "ED-030",

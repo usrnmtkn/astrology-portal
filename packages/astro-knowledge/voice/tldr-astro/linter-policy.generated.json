@@ -4,7 +4,7 @@
   "generatedBy": "scripts/compile-satori-editorial-decisions.js",
   "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
   "decisionSourceId": "satori-editorial-decisions-v1",
-  "decisionSourceSha256": "854476c68bcc62401ef8d2af7020b3ebc94ee5b2a1b45b82f0b34fcbfb4da139",
+  "decisionSourceSha256": "c44c3a067d5dba734f3cd2789cfe9248d33e51f168fd271d85d0da1bb84b3e84",
   "rules": [
     {
       "id": "ED-028",
@@ -645,21 +645,23 @@
           "all-reader-copy"
         ]
       },
-      "rule": "Reader copy uses ASCII punctuation. Do not use curly quotes, curly apostrophes, ellipsis characters, or en dashes.",
-      "rationale": "Standing owner punctuation rule. ED-004 already prohibits the em dash; the same rule covers the other typographic substitutes, which arrive invisibly through pasted drafts.",
+      "rule": "Reader copy uses ASCII punctuation and ordinary spaces. Do not use curly quotes, curly apostrophes, ellipsis characters, en dashes, nonbreaking spaces, or invisible Unicode formatting characters.",
+      "rationale": "Standing owner punctuation rule. ED-004 already prohibits the em dash; the same rule covers typographic substitutes and invisible spacing or formatting characters that can arrive through pasted or generated drafts. Ordinary non-ASCII letters are not punctuation and remain outside this mechanical rule.",
       "effect": "prohibit",
       "examplesAllowed": [
         "The plan doesn't survive the first week."
       ],
       "examplesRejected": [
-        "The plan doesn’t survive the first week."
+        "The plan doesn’t survive the first week.",
+        "The plan changed.",
+        "The plan‌changed."
       ],
       "mechanical": {
         "kind": "regex",
-        "pattern": "[‘’“”…–]",
+        "pattern": "[ ​-‏‪-‮⁠-⁯﻿‘’“”…–]",
         "flags": "",
         "severity": "fail",
-        "message": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "message": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       }
     },
     {
