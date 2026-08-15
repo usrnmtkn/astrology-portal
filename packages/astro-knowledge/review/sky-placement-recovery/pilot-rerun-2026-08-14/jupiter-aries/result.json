@@ -1,0 +1,216 @@
+{
+  "target": {
+    "planet": "jupiter",
+    "sign": "aries",
+    "tier": "A"
+  },
+  "status": "needs_review",
+  "ownerApproved": false,
+  "stamped": false,
+  "servingChanged": false,
+  "mechanicalChecksPassed": true,
+  "calls": {
+    "writer": 1,
+    "readerJudge": 0,
+    "total": 1
+  },
+  "readerJudge": {
+    "status": "not_run",
+    "advisory": true,
+    "reason": "No additional billed call was authorized; the one-call-per-page cap was preserved."
+  },
+  "routing": {
+    "releaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
+    "model": "gpt-5.6-sol",
+    "reasoningEffort": "xhigh",
+    "laneId": "writer:sky-placement"
+  },
+  "usage": {
+    "input_tokens": 4426,
+    "input_tokens_details": {
+      "cache_write_tokens": 4423,
+      "cached_tokens": 0
+    },
+    "output_tokens": 6888,
+    "output_tokens_details": {
+      "reasoning_tokens": 6590
+    },
+    "total_tokens": 11314
+  },
+  "startedAt": "2026-08-14T21:05:00.288Z",
+  "completedAt": "2026-08-14T21:06:59.524Z",
+  "retrieval": {
+    "countsByRole": {
+      "meaning": 16,
+      "register": 11,
+      "scene": 1,
+      "argument": 3,
+      "phrase": 0
+    },
+    "sourceIds": [
+      "meaning:matrix:meaning:409fbb1775aa",
+      "meaning:matrix:meaning:1a9c996b4fa2",
+      "meaning:matrix:meaning:de8779555ba0",
+      "meaning:matrix:meaning:75904df07593",
+      "meaning:matrix:meaning:db9a615e3f59",
+      "meaning:matrix:meaning:5c663c2e830a",
+      "scene:matrix:scene:e518f2874808",
+      "argument:matrix:argument_candidate:1a9c996b4fa2",
+      "argument:matrix:argument_candidate:75904df07593",
+      "argument:matrix:argument_candidate:5c663c2e830a",
+      "approved:fallback-hook/sky-sign-copy/saturn/capricorn:opening",
+      "approved:fallback-hook/sky-sign-copy/saturn/capricorn:tension",
+      "approved:fallback-hook/sky-sign-copy/saturn/capricorn:development",
+      "approved:fallback-hook/sky-sign-copy/saturn/capricorn:close",
+      "approved:fallback-hook/sky-sign-copy/venus/libra:opening",
+      "approved:fallback-hook/sky-sign-copy/venus/libra:tension",
+      "approved:fallback-hook/sky-sign-copy/venus/libra:development",
+      "approved:fallback-hook/sky-sign-copy/venus/libra:close"
+    ],
+    "voiceEvidence": [
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:opening",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "opening",
+        "text": "You have been taught to mistake endurance for ability. The person who remembers every deadline, answers after hours, and never drops the ball gets called reliable, and the arrangement is cheaper than hiring anyone else. Saturn in Capricorn asks a harder question: is the system actually working, or has one person become the system?"
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:tension",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "tension",
+        "text": "A project can win praise while one person sends corrections at midnight, covers a vacant role, and logs in on vacation. You may recognize the same pattern at home: a household looks organized because one person remembers every appointment, payment, and form. When they stop doing all of it, deadlines slip, messages go unanswered, and everyone discovers how much of the plan depended on work nobody else was prepared to do. If everything falls apart when one person takes a day off, that person was the infrastructure."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:development",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "development",
+        "text": "Before you expand the plan, make sure somebody else can run it. Fix the handoff. Train someone else to do the work. Fund the repair. Document what only one person knows. If training, funding, documentation, or another set of hands fixes the problem, reinforce it. If the structure still requires permanent overwork to function, stop calling it stable."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:close",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "close",
+        "text": "A structure is not stable if it only works when one person never rests."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:opening",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "opening",
+        "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:tension",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "tension",
+        "text": "The problem starts when you keep saying yes because it feels easier than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left. The loudest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility. Resentment builds because the agreement only works by asking one person to keep giving more. You did not agree. You accommodated, and everyone called it agreement."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:development",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "development",
+        "text": "A shared purchase hides the same imbalance. You agree to split the cost, put the charge on your card, and accept a smaller repayment because asking for the exact difference feels awkward. You save the receipt, calculate what is still owed, and send another reminder. The agreement stays easy because you carry the missing money and the work of collecting it."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:close",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "close",
+        "text": "The connections worth keeping are the ones that survive you asking for something."
+      }
+    ]
+  },
+  "unsupportedFactsWithheld": [
+    "calendar dates",
+    "biography",
+    "motives",
+    "specific historical events",
+    "durations beyond the reviewed cycle facts"
+  ],
+  "card": {
+    "hook": "An offer has sat unanswered while you check the details, then the sender asks for a decision before every question is resolved. Jupiter in Aries pairs a larger sense of possibility with the urge to move first. The possible gain suddenly carries more weight than the unanswered questions, especially after caution has already delayed the choice. You send the reply before certainty catches up.",
+    "lived": "Your answer starts a real conversation, and the sender now has to respond to a clear expression of interest rather than silence. You ask for the scope and rate before anything is finalized; the reply shows whether the money matches the time the larger role will take. A call is scheduled, giving both sides a concrete commitment to discuss instead of letting assumptions fill the missing space. After you replied, you got the rate and a scheduled call.",
+    "tagline": "The first move becomes easier before the whole plan is clear.",
+    "turn": "The first quick yes becomes the answer to every later request. A larger role starts taking more hours than expected, and each new request gets another quick answer before its cost is measured. The calendar no longer holds the work, yet other people have already planned around the promise and expect the same speed. Leaving now costs trust while staying costs time that was never available. The offer is real, and the hours no longer fit the calendar."
+  },
+  "rendered": "# Jupiter in Aries\n\n## The first move becomes easier before the whole plan is clear.\n\nAn offer has sat unanswered while you check the details, then the sender asks for a decision before every question is resolved. Jupiter in Aries pairs a larger sense of possibility with the urge to move first. The possible gain suddenly carries more weight than the unanswered questions, especially after caution has already delayed the choice. You send the reply before certainty catches up.\n\nYour answer starts a real conversation, and the sender now has to respond to a clear expression of interest rather than silence. You ask for the scope and rate before anything is finalized; the reply shows whether the money matches the time the larger role will take. A call is scheduled, giving both sides a concrete commitment to discuss instead of letting assumptions fill the missing space. After you replied, you got the rate and a scheduled call.\n\nThe first quick yes becomes the answer to every later request. A larger role starts taking more hours than expected, and each new request gets another quick answer before its cost is measured. The calendar no longer holds the work, yet other people have already planned around the promise and expect the same speed. Leaving now costs trust while staying costs time that was never available. The offer is real, and the hours no longer fit the calendar.\n",
+  "lint": {
+    "score": 3,
+    "fails": 0,
+    "warns": 0,
+    "findings": [],
+    "notes": [],
+    "auditValid": true,
+    "pilotShapeChecks": {
+      "wordCountBySlot": {
+        "hook": 64,
+        "lived": 78,
+        "tagline": 11,
+        "turn": 78
+      },
+      "wordCount": 231,
+      "finalSentenceWords": 12,
+      "threeItemLists": {
+        "count": 0,
+        "matches": []
+      },
+      "asciiOnly": true,
+      "nonAscii": [],
+      "passed": true
+    }
+  },
+  "postflightEdit": null,
+  "flatteningEdits": [
+    {
+      "id": "jupiter-lived-close",
+      "slot": "lived",
+      "before": "The first move produced evidence that more waiting could not supply.",
+      "after": "After you replied, you got the rate and a scheduled call.",
+      "plainMeaning": "Replying produced two concrete answers that waiting had not produced."
+    },
+    {
+      "id": "jupiter-turn-opening",
+      "slot": "turn",
+      "before": "The useful impulse goes wrong when the first yes becomes the pattern for every later demand, even as the terms grow beyond what you first accepted.",
+      "after": "The first quick yes becomes the answer to every later request.",
+      "plainMeaning": "One quick acceptance becomes the expectation for later requests."
+    },
+    {
+      "id": "jupiter-turn-close",
+      "slot": "turn",
+      "before": "You have the opportunity, and it takes more time than the first reply accounted for.",
+      "after": "The offer is real, and the hours no longer fit the calendar.",
+      "plainMeaning": "The offer exists, but its hours exceed the available calendar."
+    }
+  ]
+}

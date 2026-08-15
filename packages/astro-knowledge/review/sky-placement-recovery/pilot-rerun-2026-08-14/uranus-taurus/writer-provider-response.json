@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_043bf664ae88f56d006a7f83739bc481a0a7c725974289b1d9",
+  "httpStatus": 200,
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 4553,
+    "input_tokens_details": {
+      "cache_write_tokens": 3460,
+      "cached_tokens": 1090
+    },
+    "output_tokens": 1834,
+    "output_tokens_details": {
+      "reasoning_tokens": 1552
+    },
+    "total_tokens": 6387
+  },
+  "outputText": "{\"tagline\":\"A familiar arrangement can become expensive enough to stop feeling secure.\",\"hook\":\"The same paycheck reaches the end of the month sooner, but the household keeps using the budget that once made everything feel manageable. With Uranus in Taurus, abrupt change reaches material arrangements designed to stay dependable, exposing the gap between a stable routine and a workable one. Taurus holds on through repetition and tangible proof, so the disruption becomes undeniable when the total on the page no longer matches what daily life costs.\",\"lived\":\"The budget is opened again after a routine grocery order costs more than expected, leaving less for a fixed payment due next week. One expense is reduced to preserve the emergency cushion, but the next total shows that small adjustments cannot restore the old margin. The shortfall came from ordinary costs changing while the plan remained built around yesterday's prices. Keeping the familiar numbers now produces the insecurity those numbers were supposed to prevent.\",\"turn\":\"Changing the setup is the useful impulse, because waiting for complete certainty lets the mismatch grow. It goes wrong when novelty itself starts passing for a solution: a new service lowers one charge while adding a fee that appears later. The old routine has lost its practical value, and the replacement remains unproven until its real cost can be seen over time. Security now rests on what the current numbers can support.\"}"
+}
