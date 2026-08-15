@@ -50,6 +50,8 @@ import {
 } from "./report-key-dates.js";
 import { reportUnitIds } from "./report-unit-order.ts";
 import { buildReviewedReportDocument, reviewedReportDocumentBytes, reviewedReportDocumentHash } from "./report-review-document.ts";
+import { buildGeneralYearReviewedReportDocument } from "./report-review-document-general-year.ts";
+import { chartEarnedDomainEvidence, type ReportReaderProfile } from "./report-structure.ts";
 
 function fulfillmentUnitIds(reportDomain: ReportDomain, reportHorizon: ReportHorizon) {
   return reportUnitIds(reportDomain, reportHorizon);
@@ -106,9 +108,10 @@ type PassingUnitCacheEntry = {
     validatorResults: unknown[];
     judge: ReportJudgeResult;
     writerReviews: Array<{ critique: unknown; coldCritique: unknown }>;
-    keyDateEntries?: Array<{ eventId: string; title: string; sentence: string }>;
+    keyDateEntries?: ReportDraft["keyDates"];
     keyDateEligibleEventIds?: string[];
     keyDateInterpretedEventIds?: string[];
+    sectionSelectionEvidence?: ReturnType<typeof chartEarnedDomainEvidence>;
     promptVersions: Record<string, unknown>;
     factsHash: string | null;
     attemptCounts: { validator: number; judge: number };
@@ -287,7 +290,9 @@ export function createReportFactsCalculator(admin: SupabaseReportAdmin = createS
     const birth = preparedBirthProfiles.get(report.id) ?? await prepareBirthProfile(report, true);
     preparedBirthProfiles.delete(report.id);
     if (!birth.birthLocation) throw new ReportBirthDataError("BIRTH_DATA_MISSING", "Add a valid birth place before generating this report.");
+    const social = await admin.selectOne<{ display_name: string }>("social_profiles", new URLSearchParams({ user_id: `eq.${report.user_id}`, select: "display_name" }));
     const natalSubject: ReportChartSubject = {
+      name: social?.display_name ?? null,
       datetime: { date: birth.birthDate, time: birth.birthTime, timeKnown: !birth.birthTimeUnknown && Boolean(birth.birthTime), timeZone: birth.birthLocation.timeZone },
       location: birth.birthLocation,
       settings: { houseSystem: "whole_sign", zodiac: "tropical", aspectProfile: "standard" }
@@ -296,7 +301,7 @@ export function createReportFactsCalculator(admin: SupabaseReportAdmin = createS
       client.serviceVersion(),
       client.reportWindow({ natalSubject, location: birth.birthLocation, reportDomain: report.report_domain, reportHorizon: report.report_horizon, start: report.period_start, end: report.period_end })
     ]);
-    return { facts, facts_engine: `tldrastro-api@${version}` };
+    return { facts: { ...facts, reportSubject: natalSubject }, facts_engine: `tldrastro-api@${version}` };
   };
   calculate.preflight = async (report, requiresBirthTime) => {
     await prepareBirthProfile(report, requiresBirthTime);
@@ -324,6 +329,12 @@ export async function processReportFulfillmentJob(input: {
   const report = await input.store.report(input.job.report_id);
   const entitlement = await input.store.entitlement(input.job.entitlement_id);
   if (!report || !entitlement) throw new Error("Fulfillment job lost its report or entitlement.");
+  const readerProfile: ReportReaderProfile | null = report.report_domain === "general" && report.report_horizon === "12_months"
+    ? await input.store.readerProfile?.(report.user_id) ?? null
+    : null;
+  if (input.store.readerProfile && report.report_domain === "general" && report.report_horizon === "12_months" && !readerProfile) {
+    throw new Error("REPORT_PROFILE_HANDLE_REQUIRED: choose a customer handle before report generation.");
+  }
   if (entitlement.status !== "active") {
     await input.store.updateJob(input.job.id, {
       state: "cancelled",
@@ -500,13 +511,16 @@ export async function processReportFulfillmentJob(input: {
   const persistedDrafts = new Map(initialPersistedRows.flatMap((row) => {
     if (row.source_snapshot?.fulfillmentPassed !== true && !isAssemblyInvalidatedPassingSnapshot(row.source_snapshot)) return [];
     const unitId = row.content_key.replace(`report:${report.id}:`, "");
-    const renderMetadata = row.source_snapshot?.renderMetadata as { timing?: unknown } | undefined;
+    const renderMetadata = row.source_snapshot?.renderMetadata as { tldr?: unknown; action?: unknown; timing?: unknown } | undefined;
     return [[unitId, {
       headline: row.headline,
+      tldr: typeof renderMetadata?.tldr === "string" ? renderMetadata.tldr : "",
       summary: row.summary,
       body: row.body,
+      action: typeof renderMetadata?.action === "string" ? renderMetadata.action : "",
       timing: typeof renderMetadata?.timing === "string" ? renderMetadata.timing : "",
-      sections: Array.isArray(row.sections) ? row.sections as Array<{ heading?: string; body?: string }> : []
+      sections: Array.isArray(row.sections) ? row.sections as Array<{ heading?: string; body?: string }> : [],
+      keyDates: Array.isArray(row.source_snapshot?.keyDateEntries) ? row.source_snapshot.keyDateEntries as ReportDraft["keyDates"] : []
     } satisfies ReportDraft] as const];
   }));
 
@@ -771,6 +785,9 @@ export async function processReportFulfillmentJob(input: {
       keyDateEntries: draft.keyDates ?? [],
       keyDateEligibleEventIds: payload.keyDateRequirements.map((event) => event.eventId),
       keyDateInterpretedEventIds: (draft.keyDates ?? []).map((event) => event.eventId),
+      ...(unitId === "domain:main" && report.report_domain === "general" && report.report_horizon === "12_months"
+        ? { sectionSelectionEvidence: chartEarnedDomainEvidence(report.facts) }
+        : {}),
       factsHash: report.facts_hash, attemptCounts: { validator: validatorAttempts, judge: judgeAttempts },
       tokenAccounting: {
         acceptedTokens: unitAcceptedTokens,
@@ -827,7 +844,7 @@ export async function processReportFulfillmentJob(input: {
               : "",
             sections: Array.isArray(row.sections) ? row.sections as Array<{ heading?: string; body?: string }> : [],
             keyDates: Array.isArray(row.source_snapshot?.keyDateEntries)
-              ? row.source_snapshot.keyDateEntries as Array<{ eventId: string; title: string; sentence: string }>
+              ? row.source_snapshot.keyDateEntries as ReportDraft["keyDates"]
               : []
           }
         }];
@@ -901,13 +918,19 @@ export async function processReportFulfillmentJob(input: {
       unitId,
       draft: {
         headline: row.headline,
+        tldr: typeof (row.source_snapshot?.renderMetadata as { tldr?: unknown } | undefined)?.tldr === "string"
+          ? (row.source_snapshot.renderMetadata as { tldr: string }).tldr : "",
         summary: row.summary,
         body: row.body,
+        action: typeof (row.source_snapshot?.renderMetadata as { action?: unknown } | undefined)?.action === "string"
+          ? (row.source_snapshot.renderMetadata as { action: string }).action : "",
         timing: typeof (row.source_snapshot?.renderMetadata as { timing?: unknown } | undefined)?.timing === "string"
           ? (row.source_snapshot.renderMetadata as { timing: string }).timing
           : "",
-        sections: Array.isArray(row.sections) ? row.sections as Array<{ heading?: string; body?: string }> : []
-      }
+        sections: Array.isArray(row.sections) ? row.sections as Array<{ heading?: string; body?: string }> : [],
+        keyDates: Array.isArray(row.source_snapshot?.keyDateEntries) ? row.source_snapshot.keyDateEntries as ReportDraft["keyDates"] : []
+      },
+      sourceSnapshot: row.source_snapshot
     };
   });
   const invalidateAssemblyUnits = async (issues: ReportAssemblyIssue[]) => {
@@ -1051,7 +1074,7 @@ export async function processReportFulfillmentJob(input: {
     mechanicalCoherenceRepairs: mechanicalCoherence.repairs
   });
 
-  const reviewDocument = buildReviewedReportDocument({
+  const reviewInput = {
     id: report.id,
     reportDomain: report.report_domain,
     reportHorizon: report.report_horizon,
@@ -1060,7 +1083,17 @@ export async function processReportFulfillmentJob(input: {
     factsEngine: report.facts_engine,
     factsHash: report.facts_hash ?? "",
     units: assembledUnits
-  });
+  };
+  const reviewDocument = report.report_domain === "general" && report.report_horizon === "12_months"
+    ? buildGeneralYearReviewedReportDocument({
+      ...reviewInput,
+      facts: report.facts,
+      readerProfile: readerProfile ?? {
+        handle: String((report.facts.reportSubject as Record<string, unknown> | undefined)?.handle ?? ""),
+        displayName: String((report.facts.reportSubject as Record<string, unknown> | undefined)?.name ?? "")
+      }
+    })
+    : buildReviewedReportDocument(reviewInput);
 
   const publicationStatus = config.autoPublishEnabled ? "live" : "needs_review";
   await input.store.updateReport(report.id, {

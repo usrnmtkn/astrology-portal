@@ -6,9 +6,11 @@ const UNITS: Record<ReportHorizon, readonly string[]> = {
   "6_months": ["overview", "period-theme", "phase-1", "phase-2", "key-dates", "review"],
   "12_months": ["overview", "year-theme", "domain:main", "winter-current", "spring", "summer", "autumn", "money", "key-dates", "review-current-year", "winter-next"]
 };
+const GENERAL_YEAR = ["overview", "year-theme", "domain:main", "winter-current", "spring", "summer", "autumn", "review-current-year", "winter-next"];
 const PERSONAL_HEALTH_YEAR = ["overview", "year-theme", "domain:main", "winter-current", "spring", "summer", "autumn", "health-capacity", "key-dates", "review-current-year", "winter-next"];
 
 export function reportUnitIds(domain: ReportDomain, horizon: ReportHorizon) {
+  if (horizon === "12_months" && domain === "general") return [...GENERAL_YEAR];
   return [...(domain === "personal_health" && horizon === "12_months" ? PERSONAL_HEALTH_YEAR : UNITS[horizon])];
 }
 

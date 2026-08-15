@@ -4,7 +4,15 @@
     "calculationFixture": "services/tldrastro-api/tests/fixtures/marie_report_2026.json",
     "houseSystem": "whole_sign",
     "verifiedOn": "2026-08-14",
-    "coordinates": { "latitude": 40.7831, "longitude": -73.9712, "source": "Manhattan borough centroid; owner ruling 2026-08-14" }
+    "coordinates": { "latitude": 40.7831, "longitude": -73.9712, "source": "Manhattan borough centroid; owner ruling 2026-08-14" },
+    "timeZone": "America/New_York",
+    "canonicalProvenancePlatform": "linux-x86_64 production/API CI Swiss profile"
+  },
+  "reportSubject": {
+    "name": "Marie Satori",
+    "handle": "mariesatori",
+    "datetime": { "date": "1979-02-18", "time": "11:20", "timeKnown": true, "timeZone": "America/New_York" },
+    "location": { "label": "Manhattan, New York, NY, USA", "latitude": 40.7831, "longitude": -73.9712, "timeZone": "America/New_York", "coordinateSource": { "provider": "owner_ruling_2026-08-14", "sourceId": "manhattan-borough-centroid", "resolution": "borough_centroid" } }
   },
   "reportHorizon": "12_months",
   "startsAt": "2026-02-18T01:59:11Z",
@@ -19,29 +27,44 @@
   "natal": {
     "metadata": {
       "ephemeris": { "actualEngine": "swiss", "fallback": false },
-      "chartProvenance": { "schemaVersion": "canonical-natal-v1", "inputHash": "FIXTURE_ONLY_INPUT_HASH", "resultHash": "FIXTURE_ONLY_RESULT_HASH", "provenanceHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }
+      "chartProvenance": { "schemaVersion": "canonical-natal-v1", "inputHash": "fb05352ef71f1ef7f7e2dac411cb0a6c1cfaf111041006e5c74e00344be5f533", "resultHash": "010b50926e4b53c1e9a011e3a0fce994b6ff15ab372dc0d38a4983683e3ac51b", "provenanceHash": "0f32a2b01ba5688d0adff9b98da7a59105edd1e9b9d3b41ba266132aa0bfc5ed" }
     },
     "positions": [
-      { "point": "Sun", "house": 9 },
-      { "point": "Moon", "house": 6 },
-      { "point": "Mercury", "house": 10 },
-      { "point": "Mars", "house": 9 },
-      { "point": "Jupiter", "house": 3 },
-      { "point": "Saturn", "house": 4 },
-      { "point": "Uranus", "house": 6 },
-      { "point": "Neptune", "house": 7 },
-      { "point": "Pluto", "house": 5 }
+      { "point": "Sun", "sign": "Aquarius", "degree": 29, "minute": 25, "house": 9, "retrograde": false },
+      { "point": "Moon", "sign": "Scorpio", "degree": 12, "minute": 47, "house": 6, "retrograde": false },
+      { "point": "Mercury", "sign": "Pisces", "degree": 7, "minute": 4, "house": 10, "retrograde": false },
+      { "point": "Venus", "sign": "Capricorn", "degree": 14, "minute": 57, "house": 8, "retrograde": false },
+      { "point": "Mars", "sign": "Aquarius", "degree": 22, "minute": 46, "house": 9, "retrograde": false },
+      { "point": "Jupiter", "sign": "Leo", "degree": 0, "minute": 57, "house": 3, "retrograde": true },
+      { "point": "Saturn", "sign": "Virgo", "degree": 11, "minute": 25, "house": 4, "retrograde": true },
+      { "point": "Uranus", "sign": "Scorpio", "degree": 20, "minute": 59, "house": 6, "retrograde": false },
+      { "point": "Neptune", "sign": "Sagittarius", "degree": 20, "minute": 12, "house": 7, "retrograde": false },
+      { "point": "Pluto", "sign": "Libra", "degree": 19, "minute": 0, "house": 5, "retrograde": true }
     ],
     "angles": {
-      "Ascendant": { "point": "Ascendant", "house": 1 },
-      "Midheaven": { "point": "Midheaven", "house": 10 }
+      "Ascendant": { "point": "Ascendant", "sign": "Gemini", "degree": 11, "minute": 9, "house": 1 },
+      "Midheaven": { "point": "Midheaven", "sign": "Aquarius", "degree": 16, "minute": 36, "house": 9 }
     }
   },
   "profections": {
-    "annual": { "house": 12, "sign": "Taurus", "ruler": "Venus" }
+    "age": 47,
+    "annual": { "age": 47, "house": 12, "sign": "Taurus", "ruler": "Venus" }
   },
   "solarReturn": {
     "returnMoment": "2026-02-18T01:59:11Z",
+    "location": { "label": "Manhattan, New York, NY, USA", "latitude": 40.7831, "longitude": -73.9712, "timeZone": "America/New_York" },
+    "chart": {
+      "positions": [
+        { "point": "Sun", "sign": "Aquarius", "degree": 29, "minute": 25, "house": 5 },
+        { "point": "Venus", "sign": "Pisces", "degree": 9, "minute": 35, "house": 6 },
+        { "point": "Mars", "house": 5 },
+        { "point": "Pluto", "house": 5 }
+      ],
+      "angles": {
+        "Ascendant": { "point": "Ascendant", "sign": "Libra", "degree": 11, "minute": 0, "house": 1 },
+        "Midheaven": { "point": "Midheaven", "sign": "Cancer", "degree": 12, "minute": 46, "house": 10 }
+      }
+    },
     "analysis": {
       "solarReturnToNatalOverlays": [
         { "point": "Sun", "house": 9 },
@@ -57,7 +80,15 @@
         { "point": "North Node", "house": 10 },
         { "point": "Chiron", "house": 11 },
         { "point": "Lilith", "house": 6 }
-      ]
+      ],
+      "lordOfYear": {
+        "ruler": "Venus",
+        "sign": "Pisces",
+        "house": 6,
+        "retrograde": false,
+        "essentialCondition": "exalted",
+        "angular": false
+      }
     }
   },
   "slowTransitArcs": [
@@ -70,6 +101,7 @@
     { "id": "jupiter-conjunction-jupiter", "transitPlanet": "Jupiter", "natalPoint": "Jupiter", "natalHouse": 3, "aspect": "conjunction", "isReturn": true, "passCount": 1, "passes": [{ "exactAt": "2026-07-04T00:00:00Z", "motion": "direct" }] },
     { "id": "jupiter-square-moon", "transitPlanet": "Jupiter", "natalPoint": "Moon", "natalHouse": 6, "aspect": "square", "isReturn": false, "passCount": 1, "passes": [{ "exactAt": "2026-08-27T00:00:00Z", "motion": "direct" }] },
     { "id": "jupiter-opposition-midheaven", "transitPlanet": "Jupiter", "natalPoint": "Midheaven", "natalHouse": 9, "aspect": "opposition", "isReturn": false, "passCount": 1, "passes": [{ "exactAt": "2026-09-15T00:00:00Z", "motion": "direct" }] },
+    { "id": "jupiter-sextile-pluto", "transitPlanet": "Jupiter", "natalPoint": "Pluto", "natalHouse": 5, "aspect": "sextile", "isReturn": false, "passCount": 1, "passes": [{ "exactAt": "2026-09-27T00:00:00Z", "motion": "direct" }] },
     { "id": "jupiter-trine-neptune", "transitPlanet": "Jupiter", "natalPoint": "Neptune", "natalHouse": 7, "aspect": "trine", "isReturn": false, "passes": [{ "exactAt": "2026-10-04T00:00:00Z" }] },
     { "id": "jupiter-square-uranus", "transitPlanet": "Jupiter", "natalPoint": "Uranus", "natalHouse": 6, "aspect": "square", "isReturn": false, "passes": [{ "exactAt": "2026-10-09T00:00:00Z" }] },
     { "id": "jupiter-opposition-mars", "transitPlanet": "Jupiter", "natalPoint": "Mars", "natalHouse": 9, "aspect": "opposition", "isReturn": false, "passCount": 2, "passes": [{ "exactAt": "2026-10-20T00:00:00Z", "motion": "direct" }, { "exactAt": "2027-02-05T00:00:00Z", "motion": "retrograde" }] },
@@ -79,6 +111,6 @@
     { "id": "lunar-eclipse-2026-03-03", "kind": "lunar_eclipse", "subtype": "total", "occursAt": "2026-03-03T11:38:00Z", "natalHouse": 4, "natalContacts": [{ "natalPoint": "Saturn", "natalHouse": 4, "aspect": "conjunction" }] },
     { "id": "solar-eclipse-2026-08-12", "kind": "solar_eclipse", "subtype": "total", "occursAt": "2026-08-12T17:37:00Z", "natalHouse": 3, "natalContacts": [{ "natalPoint": "Uranus", "natalHouse": 6, "aspect": "square" }] },
     { "id": "lunar-eclipse-2026-08-28", "kind": "lunar_eclipse", "subtype": "partial", "occursAt": "2026-08-28T04:19:00Z", "natalHouse": 10, "natalContacts": [{ "natalPoint": "Mercury", "natalHouse": 10, "aspect": "conjunction" }] },
-    { "id": "solar-eclipse-2027-02-06", "kind": "solar_eclipse", "subtype": "annular", "occursAt": "2027-02-06T15:56:00Z", "natalHouse": 9, "natalContacts": [{ "natalPoint": "Midheaven", "natalHouse": 10, "aspect": "conjunction" }] }
+    { "id": "solar-eclipse-2027-02-06", "kind": "solar_eclipse", "subtype": "annular", "occursAt": "2027-02-06T15:56:00Z", "natalHouse": 9, "natalContacts": [{ "natalPoint": "Midheaven", "natalHouse": 9, "aspect": "conjunction" }] }
   ]
 }

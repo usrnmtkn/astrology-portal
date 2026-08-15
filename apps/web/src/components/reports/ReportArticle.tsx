@@ -11,6 +11,9 @@ export type ReportCover = {
   title: string;
   subtitle?: string;
   meta?: string[];
+  periodLine?: string;
+  handleLine?: string;
+  glyphLine?: string;
 };
 
 export type ReportChapter = {
@@ -19,6 +22,8 @@ export type ReportChapter = {
   title: string;
   paragraphs: string[];
   attribution?: AttributionFacts;
+  attributionText?: string;
+  keyDates?: ReportKeyDate[];
   sourceTag?: string;
   image?: {
     src?: string;
@@ -30,15 +35,16 @@ export type ReportKeyDate = {
   id: string;
   date: string;
   title: string;
+  category?: "SELF" | "WORK" | "FRIENDS & FAMILY" | "SEX & LOVE";
   paragraphs: string[];
   attribution?: AttributionFacts;
   attributionText?: string;
 };
 
 export type ReportColophon = {
-  factsEngine: string;
+  factsEngine?: string;
   generatedAt?: string;
-  entries?: Array<{ label: string; value: string }>;
+  entries?: Array<{ label: string; value: string }> | string[];
 };
 
 export type ReportDocument = {
@@ -105,12 +111,15 @@ export function ReportArticle({ report }: { report: ReportDocument }) {
     report.chapters.map((chapter) => ({ ...chapter, heading: chapter.title })),
     report.cover.title
   ), [report.chapters, report.cover.title]);
-  const activeKeyDate = report.keyDates?.find((keyDate) => keyDate.id === activeKeyDateId) ?? null;
+  const allKeyDates = [...(report.keyDates ?? []), ...report.chapters.flatMap((chapter) => chapter.keyDates ?? [])];
+  const activeKeyDate = allKeyDates.find((keyDate) => keyDate.id === activeKeyDateId) ?? null;
   const subtitle = readable(report.cover.subtitle);
-  const colophonEntries = [
-    { label: "Facts engine", value: report.colophon.factsEngine },
+  const publicColophonLines = Array.isArray(report.colophon.entries) && report.colophon.entries.every((entry) => typeof entry === "string")
+    ? report.colophon.entries as string[] : [];
+  const legacyColophonEntries = publicColophonLines.length ? [] : [
+    ...(report.colophon.factsEngine ? [{ label: "Facts engine", value: report.colophon.factsEngine }] : []),
     ...(report.colophon.generatedAt ? [{ label: "Generated", value: report.colophon.generatedAt }] : []),
-    ...(report.colophon.entries ?? [])
+    ...((report.colophon.entries ?? []) as Array<{ label: string; value: string }>)
   ].filter((entry) => readable(entry.label) && readable(entry.value));
 
   return (
@@ -119,6 +128,9 @@ export function ReportArticle({ report }: { report: ReportDocument }) {
         <header className="report-cover" data-report-block="cover">
           <p className="report-label">{report.cover.kicker}</p>
           <h1 id="report-cover-title">{report.cover.title}</h1>
+          {report.cover.periodLine ? <p className="report-cover__period"><strong>{report.cover.periodLine}</strong></p> : null}
+          {report.cover.handleLine ? <h2 className="report-cover__handle">{report.cover.handleLine}</h2> : null}
+          {report.cover.glyphLine ? <><p className="report-cover__glyph">{report.cover.glyphLine}</p><hr /></> : null}
           {subtitle ? <p className="report-cover__subtitle">{subtitle}</p> : null}
           {report.cover.meta?.length ? (
             <ul className="report-cover__meta" aria-label="Report details">
@@ -148,6 +160,19 @@ export function ReportArticle({ report }: { report: ReportDocument }) {
                     <p key={`${chapter.id}-paragraph-${paragraphIndex}`}>{paragraph}</p>
                   ))}
                   {chapter.attribution ? <AttributionLine facts={chapter.attribution} /> : null}
+                  {chapter.attributionText ? <p className="report-attribution"><em>{chapter.attributionText}</em></p> : null}
+                  {chapter.keyDates?.length ? (
+                    <div className="report-season-key-dates" data-report-block="key-dates">
+                      <h3>Key dates</h3>
+                      <div className="report-key-dates__list">
+                        {chapter.keyDates.map((keyDate) => (
+                          <button className="report-key-date" type="button" key={keyDate.id} onClick={() => setActiveKeyDateId(keyDate.id)} aria-haspopup="dialog">
+                            <span>{keyDate.date}</span><strong>{keyDate.title}</strong>{keyDate.category ? <small>{keyDate.category}</small> : null}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
                   {sourceTag ? <p className="report-chapter__source">{sourceTag}</p> : null}
                 </div>
               </section>
@@ -179,13 +204,14 @@ export function ReportArticle({ report }: { report: ReportDocument }) {
         <footer className="report-colophon" data-report-block="colophon" aria-labelledby="report-colophon-title">
           <p className="report-label" id="report-colophon-title">Colophon</p>
           <dl>
-            {colophonEntries.map((entry) => (
+            {legacyColophonEntries.map((entry) => (
               <div key={`${entry.label}-${entry.value}`}>
                 <dt>{entry.label}</dt>
                 <dd>{entry.value}</dd>
               </div>
             ))}
           </dl>
+          {publicColophonLines.map((line, index) => <p key={`${index}-${line}`}><em>{line}</em></p>)}
         </footer>
       </article>
 

@@ -146,6 +146,13 @@ export function assertCanonicalReportFacts(facts: Record<string, unknown>) {
   if (typeof provenance?.provenanceHash !== "string" || !/^[a-f0-9]{64}$/u.test(provenance.provenanceHash)) {
     throw new Error("REPORT_FACTS_PROVENANCE_MISSING: the natal chart must carry its canonical provenance hash.");
   }
+  const subject = facts.reportSubject && typeof facts.reportSubject === "object" ? facts.reportSubject as JsonObject : null;
+  const datetime = subject?.datetime && typeof subject.datetime === "object" ? subject.datetime as JsonObject : null;
+  const location = subject?.location && typeof subject.location === "object" ? subject.location as JsonObject : null;
+  if (!subject || typeof subject.name !== "string" || typeof datetime?.date !== "string" || typeof datetime?.time !== "string"
+    || typeof location?.label !== "string" || typeof location?.timeZone !== "string") {
+    throw new Error("REPORT_FACTS_SUBJECT_PROVENANCE_MISSING: canonical subject, birth time, place label, and timezone are required.");
+  }
 }
 
 export async function composeReportFacts(
@@ -196,8 +203,8 @@ export async function composeReportFacts(
   if (facts.reportHorizon !== input.reportHorizon) {
     throw new Error("TLDR Astro report-window response did not match the requested horizon.");
   }
-  assertCanonicalReportFacts(facts);
-  const canonicalFacts = { ...facts, canonicalEvents: canonicalReportEvents(facts) };
+  const canonicalFacts = { ...facts, reportSubject: input.natalSubject, canonicalEvents: canonicalReportEvents(facts) };
+  assertCanonicalReportFacts(canonicalFacts);
   const factsEngine = `tldrastro-api@${version}`;
   return createReportEnvelope(dependencies.envelopeStore, {
     ...reportIdentity,

@@ -176,8 +176,11 @@ export type ReportDraft = {
   action?: string;
   timing?: string;
   sections?: Array<{ heading?: string; body?: string }>;
-  keyDates?: Array<{ eventId: string; title: string; sentence: string }>;
+  keyDates?: Array<{ eventId: string; title: string; category?: ReportKeyDateCategory | null; sentence: string }>;
 };
+
+export const REPORT_KEY_DATE_CATEGORIES = ["SELF", "WORK", "FRIENDS & FAMILY", "SEX & LOVE"] as const;
+export type ReportKeyDateCategory = typeof REPORT_KEY_DATE_CATEGORIES[number];
 
 export type ReportValidationIssue = {
   code: string;
@@ -229,18 +232,9 @@ function pointToken(value: string) {
 
 const srOverlayEligibleTokens = new Set(SR_OVERLAY_ELIGIBLE_POINTS.map(pointToken));
 const slowTransitExcludedTargetTokens = new Set(SLOW_TRANSIT_EXCLUDED_TARGETS.map(pointToken));
-const CANONICAL_ANGLE_HOUSES = new Map<string, number>([
-  [pointToken("Midheaven"), 10],
-  [pointToken("Ascendant"), 1],
-  [pointToken("IC"), 4],
-  [pointToken("Descendant"), 7]
-]);
-
-function canonicalizeAngularFactorHouse(factor: ReportFactor): ReportFactor {
-  if (!factor.natalPoint) return factor;
-  const canonicalHouse = CANONICAL_ANGLE_HOUSES.get(pointToken(factor.natalPoint));
-  return canonicalHouse === undefined ? factor : { ...factor, house: canonicalHouse };
-}
+const ANGLE_POINT_TOKENS = new Set([
+  "Ascendant", "Midheaven", "IC", "Descendant"
+].map(pointToken));
 
 type FactorRuleMatch = {
   factorTypes?: ManifestationSetRecord["factorType"][];
@@ -720,6 +714,11 @@ const UNIT_IDS: Record<ReportHorizon, string[]> = {
   ]
 };
 
+const GENERAL_12_MONTH_UNIT_IDS = [
+  "overview", "year-theme", "domain:main", "winter-current", "spring", "summer",
+  "autumn", "review-current-year", "winter-next"
+];
+
 const PERSONAL_HEALTH_12_MONTH_UNIT_IDS = [
   "overview",
   "year-theme",
@@ -773,6 +772,7 @@ function reportWindowFacts(facts: Record<string, unknown>) {
 }
 
 function unitIdsFor(reportDomain: ReportDomain, horizon: ReportHorizon) {
+  if (reportDomain === "general" && horizon === "12_months") return GENERAL_12_MONTH_UNIT_IDS;
   return reportDomain === "personal_health" && horizon === "12_months"
     ? PERSONAL_HEALTH_12_MONTH_UNIT_IDS
     : UNIT_IDS[horizon];
@@ -961,7 +961,7 @@ export function reportFactors(facts: Record<string, unknown>) {
     ...solarReturnFactors(windowFacts),
     ...transitFactors(windowFacts),
     ...eclipseFactors(windowFacts)
-  ].map(canonicalizeAngularFactorHouse);
+  ];
   const seen = new Set<string>();
   return factors.filter((factor) => {
     const key = `${factor.id}:${factor.factorType}`;
@@ -974,9 +974,20 @@ export function reportFactors(facts: Record<string, unknown>) {
 function recordMatchScore(record: ManifestationSetRecord, factor: ReportFactor) {
   if (record.factorType !== factor.factorType) return -1;
   let score = 0;
+  const anglePointMatch = Boolean(
+    record.match.natalPoint
+    && factor.natalPoint
+    && pointToken(record.match.natalPoint) === pointToken(factor.natalPoint)
+    && ANGLE_POINT_TOKENS.has(pointToken(factor.natalPoint))
+  );
   for (const field of ["house", "natalPoint", "transitPlanet", "aspect", "overlayPoint"] as const) {
     const expected = record.match[field];
     if (expected === undefined) continue;
+    // Angle doctrine belongs to the exact point. Some legacy records carry a
+    // conventional angular house as an additional discriminator; ignore that
+    // discriminator after the point matches so the calculated whole-sign
+    // house remains intact on the factor.
+    if (field === "house" && anglePointMatch) continue;
     if (expected !== factor[field]) return -1;
     score += 1;
   }
@@ -1289,6 +1300,9 @@ function reportPromptFromPayloadMode(payload: ReportGenerationPayload, naturalne
     naturalnessRuling, priorUnitContext, structuralRequirements, ...taskPayload
   } = payload;
   const targetIsSynthesis = isReportSynthesisUnit(payload.unit.unitId);
+  const generalYearStructure = payload.reportDomain === "general" && payload.reportHorizon === "12_months"
+    ? `GENERAL_12_MONTH_STRUCTURE_CONTRACT\nThe unit sequence is overview, year-theme, one chart-earned domain:main section, winter-current, spring, summer, autumn, review-current-year, winter-next. There is no standalone Money unit and no global Key Dates appendix. The overview action field is the one-sentence year directive used after the customer handle; write it as a complete directive that can follow '@handle, '. The domain:main headline and prose must be earned by the supplied Solar Return concentration and factor-selection evidence, not by a fixed life-domain checklist. The runtime composes all year-theme, domain, and season astrology attribution lines from frozen facts. Do not spend season prose repeating technical planet/aspect strings merely to carry attribution.`
+    : "";
   return [
     canonicalOwnerPrompt.text,
     `LIVED_PROSE_STANDARD\n${livedProseStandard.text}`,
@@ -1300,8 +1314,9 @@ function reportPromptFromPayloadMode(payload: ReportGenerationPayload, naturalne
     naturalnessActive ? `NATURALNESS_BEFORE_AFTER_EXEMPLAR_PACKET\nThe REJECTED, OWNER, SHARPER OWNER ALTERNATIVE, KEEP EXACTLY, ACCEPTABLE IN CONTEXT, and OWNER STANDALONE VERSION passages in the ruling above are labeled writer evidence. Use the owner replacements as positive examples and the rejected versions as negative examples. Never copy a sample when the unit facts do not support it.` : "",
     naturalnessActive ? `PRIOR_UNIT_REPETITION_PREVENTION\nThe units below are already persisted earlier in this report. Do not repeat their sentences or re-run their manifestation menus. Refer back instead of restating. This is a prevention instruction, not permission to become vague.\n\nSYNTHESIS EXEMPTION\nThe only synthesis units are overview and review-current-year (the Year-in-Review unit). A canonical sentence may appear once in one of those synthesis units and once in the non-synthesis unit that introduces it. Repetition between two non-synthesis units remains forbidden. ${targetIsSynthesis ? "This target is a synthesis unit: it may reference the report's themes, but it must not inventory or re-run every manifestation menu." : "This target is not a synthesis unit: prior synthesis prose does not prevent one canonical sentence from appearing in the unit that actually introduces it; all prior non-synthesis prose does."}\n\nEARLIER_PERSISTED_UNITS\n${JSON.stringify(priorUnitContext, null, 2)}` : "",
     naturalnessActive && structuralRequirements ? `STRUCTURAL_DISPLAY_CONTRACT\nThe headline must begin with '${structuralRequirements.headingPrefix}'. The timing field must be exactly '${structuralRequirements.dateRange}'. Preserve both fields exactly through revision and assembly.` : "",
+    generalYearStructure,
     reportKeyDateSourceUnitIds(payload.reportHorizon).includes(payload.unit.unitId)
-      ? `STRUCTURED_KEY_DATE_CONTRACT\nThe supplied events are fact-valid candidates, not a mandatory checklist. For each supplied event that this unit substantively interprets in its reader prose, return exactly one keyDates entry with the exact supplied eventId, a unique date-specific title, and one date-specific reader sentence. Omit events the unit does not interpret. Never create fact-only placeholder copy to make the calendar complete. Never reuse the unit headline or a section heading as the title. Never lift a body sentence as the key-date sentence. Do not repeat a title or sentence. The runtime owns the date label and technical attribution. Eligible candidate events for this unit:\n${JSON.stringify(payload.keyDateRequirements, null, 2)}`
+      ? `STRUCTURED_KEY_DATE_CONTRACT\nThe supplied events are fact-valid candidates, not a mandatory checklist. ${payload.reportDomain === "general" && payload.reportHorizon === "12_months" ? "Key dates live inside this season; there is no global key-dates appendix. Select exactly one category from SELF, WORK, FRIENDS & FAMILY, or SEX & LOVE." : "This deep-dive retains its category-free presentation; return category as null and never print a category tag."} For each supplied event that this unit substantively interprets in its reader prose, return exactly one keyDates entry with the exact supplied eventId, a unique date-specific title, the governed category value, and one date-specific reader sentence (two short sentences are permitted when the entry still stands alone). Omit events the unit does not interpret. Never create fact-only placeholder copy to make the calendar complete. Never reuse the unit headline or a section heading as the title. Never lift a body sentence as the key-date sentence. Do not repeat a title or sentence. The runtime owns the date label and technical attribution and appends the season's deterministic closing attribution. Eligible candidate events for this unit:\n${JSON.stringify(payload.keyDateRequirements, null, 2)}`
       : "STRUCTURED_KEY_DATE_CONTRACT\nReturn keyDates as an empty array for this unit.",
     INTERNAL_LIVED_PROSE_SCAFFOLD,
     `REPORT_GENERATION_PAYLOAD\n${JSON.stringify(taskPayload, null, 2)}`
@@ -1774,6 +1789,16 @@ export function validateReportDraft(
         && new RegExp(`\\b${nextYear}\\b`, "u").test(section.body ?? "")) {
         issues.push({ code: "next_year_in_current_review", message: "Current-year review contains a next-year event." });
       }
+    }
+  }
+
+  for (const entry of draft.keyDates ?? []) {
+    if (payload.reportDomain === "general" && payload.reportHorizon === "12_months") {
+      if (!entry.category || !REPORT_KEY_DATE_CATEGORIES.includes(entry.category)) {
+        issues.push({ code: "key_date_category", message: `Key date '${entry.eventId}' must use one approved category.`, severity: "error" });
+      }
+    } else if (entry.category !== null) {
+      issues.push({ code: "key_date_category", message: `Deep-dive key date '${entry.eventId}' must remain category-free.`, severity: "error" });
     }
   }
 
