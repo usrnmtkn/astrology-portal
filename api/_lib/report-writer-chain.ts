@@ -119,7 +119,7 @@ const EXACT_SENTENCE_LINT_CODES = new Set([
   "love_banned_vocabulary", "personal_health_banned_advice"
 ]);
 
-export const REPORT_DRAFT_SCHEMA = {
+const reportDraftSchema = (category: Record<string, unknown>) => ({
   type: "object",
   additionalProperties: false,
   required: ["headline", "tldr", "summary", "body", "action", "timing", "sections", "keyDates"],
@@ -134,13 +134,34 @@ export const REPORT_DRAFT_SCHEMA = {
         required: ["eventId", "title", "category", "sentence"],
         properties: {
           eventId: { type: "string" }, title: { type: "string" },
-          category: { type: ["string", "null"], enum: ["SELF", "WORK", "FRIENDS & FAMILY", "SEX & LOVE", null] },
+          category,
           sentence: { type: "string" }
         }
       }
     }
   }
-};
+});
+
+/** Deep-dive and non-annual report units retain the category-free key-date
+ * contract by returning null. */
+export const REPORT_DRAFT_SCHEMA = reportDraftSchema({
+  type: ["string", "null"],
+  enum: ["SELF", "WORK", "FRIENDS & FAMILY", "SEX & LOVE", null]
+});
+
+/** General 12-month reports require exactly one governed category for every
+ * selected key date; null is rejected by the provider schema before a call can
+ * become a runtime retry. */
+export const REPORT_GENERAL_YEAR_DRAFT_SCHEMA = reportDraftSchema({
+  type: "string",
+  enum: ["SELF", "WORK", "FRIENDS & FAMILY", "SEX & LOVE"]
+});
+
+export function reportDraftSchemaForPayload(payload: Pick<ReportGenerationPayload, "reportDomain" | "reportHorizon">) {
+  return payload.reportDomain === "general" && payload.reportHorizon === "12_months"
+    ? REPORT_GENERAL_YEAR_DRAFT_SCHEMA
+    : REPORT_DRAFT_SCHEMA;
+}
 
 export function reportSentenceAddressedCritiqueSchema(draft: ReportDraft, movementApplicable: boolean) {
   const sentenceIds = reportUnitSentenceAddresses(draft).map((sentence) => sentence.id);
@@ -723,7 +744,7 @@ export async function runReportWriterChain(input: {
         "Return one report unit using the structured output contract."
       ].filter(Boolean).join("\n\n"),
       schemaName: "report_unit_draft",
-      schema: REPORT_DRAFT_SCHEMA
+      schema: reportDraftSchemaForPayload(payload)
     });
     calls.push({ stage: "draft", model: draftResult.model, provider: draftResult.provider, usage: draftResult.usage });
     draft = draftResult.value;

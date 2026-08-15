@@ -34,6 +34,10 @@ from tldrastro_api.services.profections import calculate_profections
 QUADRANT_HOUSE_SYSTEM = b"P"
 ASPECT_ORB = 1.0
 ANGLE_ORB = 6.0
+SOLAR_RETURN_SEARCH_HALF_WINDOW_DAYS = 8.0
+SOLAR_RETURN_BRACKET_STEP_DAYS = 0.125
+SOLAR_RETURN_CONVERGENCE_TOLERANCE_DEGREES = 0.0001
+SOLAR_RETURN_MAX_BISECTIONS = 64
 
 DOMICILES = {
     "Sun": {"Leo"},
@@ -100,11 +104,18 @@ def _solar_return_julian_day(
     target = datetime.fromisoformat(target_date).replace(tzinfo=timezone.utc)
     center = julian_day_for(target)
     moving_sun = natal_sun.model_copy(update={"point": "Sun"})
-    previous_jd = center - 8.0
+    previous_jd = center - SOLAR_RETURN_SEARCH_HALF_WINDOW_DAYS
     previous_delta = None
 
-    for step in range(1, 129):
-        current_jd = center - 8.0 + step * 0.125
+    bracket_count = int(
+        (SOLAR_RETURN_SEARCH_HALF_WINDOW_DAYS * 2) / SOLAR_RETURN_BRACKET_STEP_DAYS
+    )
+    for step in range(1, bracket_count + 1):
+        current_jd = (
+            center
+            - SOLAR_RETURN_SEARCH_HALF_WINDOW_DAYS
+            + step * SOLAR_RETURN_BRACKET_STEP_DAYS
+        )
         result, _ = tracked_calc_ut(swe, current_jd, BODY_IDS["Sun"], configured_flags(settings))
         delta = ((result[0] - natal_sun.longitude + 180.0) % 360.0) - 180.0
         if (
@@ -121,6 +132,8 @@ def _solar_return_julian_day(
                 settings,
                 True,
                 False,
+                SOLAR_RETURN_CONVERGENCE_TOLERANCE_DEGREES,
+                SOLAR_RETURN_MAX_BISECTIONS,
             )
             if exact is not None:
                 return exact
