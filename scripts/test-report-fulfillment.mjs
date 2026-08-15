@@ -1018,8 +1018,11 @@ function createMemoryStore() {
         ...sourceSnapshot,
         renderMetadata: {
           ...(sourceSnapshot.renderMetadata ?? {}),
+          tldr: value.tldr ?? "",
+          action: value.action ?? "",
           timing: value.timing ?? ""
-        }
+        },
+        keyDateEntries: value.keyDates ?? sourceSnapshot.keyDateEntries ?? []
       }
     }); },
     async unitRows(reportId) { return [...units.entries()].filter(([key]) => key.startsWith(`${reportId}:`)).map(([, value]) => value); },
@@ -1051,8 +1054,8 @@ function fixtureUnitDraft(unitId) {
   const seasonTiming = {
     "winter-current": "Feb 18 - Mar 20",
     spring: "Mar 20 - Jun 21",
-    summer: "Jun 21 - Sep 23",
-    autumn: "Sep 23 - Dec 21",
+    summer: "Jun 21 - Sep 22",
+    autumn: "Sep 22 - Dec 21",
     "winter-next": "Dec 21 - Feb 17"
   };
   return {
@@ -1104,6 +1107,7 @@ function modelCallWithCrash(crashAt = Infinity) {
     uniqueDraft.keyDates = keyDateRequirements.map((event, index) => ({
       eventId: event.eventId,
       title: `Event ${index + 1} ${unitId}`,
+      category: reportPayload?.reportDomain === "general" && reportPayload?.reportHorizon === "12_months" ? "SELF" : null,
       sentence: `A unique supported consequence belongs to event ${index + 1} in ${unitId}.`
     }));
     const result = {
