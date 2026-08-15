@@ -183,8 +183,8 @@ async function main() {
       sign: "scorpio"
     });
     assert.ok(
-      secondPersonSky.findings.some((finding) => finding.severity === "fail" && finding.term === "second-person"),
-      `new Current Sky placement copy must reject ${token}`
+      !secondPersonSky.findings.some((finding) => finding.severity === "fail" && /second-person|second person/iu.test(`${finding.term || ""} ${finding.reason || ""}`)),
+      `Sky placement copy must allow reader address with ${token}`
     );
   }
   for (const phrase of [
@@ -210,8 +210,8 @@ async function main() {
     sign: "scorpio"
   });
   assert.ok(
-    genericPeopleOpener.findings.some((finding) => finding.severity === "fail" && /People/.test(finding.match || "")),
-    "Current Sky must reject the generic noun people"
+    !genericPeopleOpener.findings.some((finding) => finding.decisionId === "CF-001" && finding.severity === "fail"),
+    "Sky Placement must allow a sparing use of people without a deterministic failure"
   );
   const genericPeopleMidSentence = lintArticle({
     ...good,
@@ -220,8 +220,8 @@ async function main() {
     sign: "scorpio"
   });
   assert.ok(
-    genericPeopleMidSentence.findings.some((finding) => finding.severity === "fail" && /^people$/i.test(finding.match || "")),
-    "Current Sky must reject people anywhere in generated copy"
+    !genericPeopleMidSentence.findings.some((finding) => finding.decisionId === "CF-001" && finding.severity === "fail"),
+    "Sky Placement people overuse belongs to semantic review, not deterministic lint"
   );
   const allowedCollective = lintArticle({
     ...good,
@@ -304,8 +304,8 @@ async function main() {
     assert.match(prompt, /Build pressure -> choice -> consequence/);
     assert.match(prompt, /CURRENT SKY SUBJECTS/);
     assert.match(prompt, /EVERYDAY LANGUAGE/);
-    assert.doesNotMatch(prompt, /Owner words prominent on planet-article:[^\n]*\bpeople\b/);
-    assert.match(prompt, /CURRENT SKY IS COLLECTIVE/);
+    assert.match(prompt, /Owner words prominent on planet-article:[^\n]*\bpeople\b/);
+    assert.match(prompt, /SKY PLACEMENT MAY ADDRESS THE READER/);
     assert.match(prompt, /FIRST-READ NATURAL ENGLISH RULE/);
     assert.match(prompt, /OBSERVATION BEFORE POLISH/);
     assert.match(prompt, /STACKED ENDING RULE/);
@@ -347,7 +347,8 @@ async function main() {
     assert.ok(!jp.includes("Nobody claps for the thing we never show them"), `judge prompt must exclude collective adaptation candidates for tier ${tier}`);
     assert.ok(jp.includes("[ED-013]") && jp.includes("CC/SD constructions"), `judge prompt must carry the CC/SD recognizability check for tier ${tier}`);
     assert.ok(jp.includes("[ED-001]") && jp.includes("ordinary, current language"), `judge prompt must enforce everyday language for tier ${tier}`);
-    assert.ok(jp.includes("[ED-003]") && jp.includes("never uses you"), `judge prompt must enforce collective Current Sky for tier ${tier}`);
+    assert.ok(jp.includes("[ED-028]") && jp.includes("Sky placement copy may address the reader directly"), `judge prompt must carry the active Sky placement register for tier ${tier}`);
+    assert.ok(jp.includes("Direct address to the reader is allowed"), `judge prompt must not reject second person on Sky placement for tier ${tier}`);
     assert.ok(jp.includes("[ED-005]") && jp.includes("second conclusion"), `judge prompt must reject stacked endings for tier ${tier}`);
     assert.ok(jp.includes("Does every central sentence sound natural and literal on first read?"), `judge prompt must run a first-read natural-English review for tier ${tier}`);
     assert.ok(jp.includes("A minor broad sentence may survive"), `judge prompt must preserve proportional score-3 tolerance for tier ${tier}`);
@@ -373,6 +374,11 @@ async function main() {
     editorialStatus: "needs_voice_pass",
     promotionAuthorized: false
   });
+  assert.throws(
+    () => auditBundle(reviewBundle, { sourcePath: "/tmp/unrecorded-review-bundle-v1.json" }),
+    /does not lint 3/,
+    "legacy punctuation is exempt only inside the recorded historical bundles"
+  );
   assert.throws(
     () => auditBundle({ ...reviewBundle, promotionAuthorized: true }),
     /explicitly deny promotion authorization/
