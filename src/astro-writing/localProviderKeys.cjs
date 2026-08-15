@@ -6,7 +6,10 @@ const path = require("node:path");
 const ALLOWED_KEYS = new Set(["OPENAI_API_KEY", "GEMINI_API_KEY"]);
 
 function readLocalProviderKeys(repoRoot) {
-  const envPath = path.join(repoRoot, "apps", "web", ".env.local");
+  // LOCAL_PROVIDER_KEYS_FILE lets sandboxed sessions point at the same
+  // apps/web/.env.local when the worktree symlink's absolute host path does
+  // not resolve. Same allowed-keys filter; no key material is copied.
+  const envPath = process.env.LOCAL_PROVIDER_KEYS_FILE || path.join(repoRoot, "apps", "web", ".env.local");
   const keys = {};
   if (fs.existsSync(envPath)) {
     for (const line of fs.readFileSync(envPath, "utf8").split(/\r?\n/u)) {

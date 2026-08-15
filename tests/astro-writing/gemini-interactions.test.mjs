@@ -61,6 +61,28 @@ assert.deepEqual(JSON.parse(calls[0].init.body), {
 assert.equal(result.text, "{\"score\":3}", "The adapter must return the last response text blocks.");
 assert.equal(result.model, "gemini-configured-model-001");
 
+const currentShape = await callGeminiInteractions({
+  apiKey: "fixture-gemini-key",
+  model: "gemini-current-model",
+  systemInstruction: "System contract",
+  input: "Owner content",
+  thinkingLevel: "high",
+  fetchImpl: async () => ({
+    ok: true,
+    status: 200,
+    json: async () => ({
+      id: "interaction-current-1",
+      status: "completed",
+      model: "gemini-current-model-001",
+      usage: { total_input_tokens: 2, total_output_tokens: 3 },
+      steps: [
+        { type: "model_output", content: [{ type: "text", text: "{\"score\":" }, { type: "text", text: "3}" }] }
+      ]
+    })
+  })
+});
+assert.equal(currentShape.text, "{\"score\":3}", "The adapter must read the current Interactions API steps shape.");
+
 await assert.rejects(
   () => callGeminiInteractions({
     apiKey: "fixture-gemini-key",
