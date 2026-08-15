@@ -16620,6 +16620,7 @@ function ProfileView({
 
     try {
       const rendered = transitSynastryFallbackRendererV3.renderDoDont({
+        voice: "you",
         planet: selected.natalPoint,
         sign: selected.natalSign,
         house: selected.house,

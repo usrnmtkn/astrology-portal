@@ -1,9 +1,9 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "c73ecee7661fe39654329531785602f1eaed5a19",
+  "sourceCommit": "79d8def4ef6f1892af835881f551c300c404ebb2",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "83db33c0620a80d5700198b8c1eb9d88806d57ebf5cdb7896dfd885bcb8e37a0",
+  "contentFingerprint": "737cec806a9e5241b4e1aed657ad4785c76d4801843befccd157fa6a8cf95d82",
   "recordCount": 9539,
   "statusCounts": {
     "owner-approved": 9539
@@ -210077,9 +210077,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "31ed4d3f8b9a522d8527988d00b35ac1188851a1cc2e5e0b3cfcfd0cdabb7eba",
+      "contentHash": "c346641da6aaf462c01127eceb8a4338e3e08b6aca1bd5538851be33c325dbfe",
       "wording": {
-        "body": "Back up your files"
+        "body": "Back up your files",
+        "body_they": "Back up their files"
       },
       "astrology": {
         "objects": [
@@ -212073,9 +212074,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner approval, chat 2026-07-28",
-      "contentHash": "8d6576cd076edce1131bdee7eb850bcfed4653df0942846b3db75a44c556b3a5",
+      "contentHash": "88db43353658dc0cb0d2602f5631b0a3ea3a8680e040ca65cd27790d7c0f520c",
       "wording": {
-        "body": "Check on your person"
+        "body": "Check on your person",
+        "body_they": "Check on their person"
       },
       "astrology": {
         "objects": [],
@@ -212123,9 +212125,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner approval, chat 2026-07-28",
-      "contentHash": "576517171df6af2022688bdd9645c22c764e1c7a44d646f89c07b179492fc484",
+      "contentHash": "dfee941e57420fda4a47f7aabb33b605f54bfc5fb6b9b5f63076cf67c9d9b9c0",
       "wording": {
-        "body": "Make the call you've been texting around"
+        "body": "Make the call you've been texting around",
+        "body_they": "Make the call they've been texting around"
       },
       "astrology": {
         "objects": [],
@@ -212473,9 +212476,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner approval, chat 2026-07-28",
-      "contentHash": "27dd74267b626725c6605a5a22e422cd9c0e77ac2f8ee2f5f02cb21570c38c89",
+      "contentHash": "962412098fc7a7ebb6e0d6da4543c4cbcbc336479b86083a7fcc39157b43bbec",
       "wording": {
-        "body": "Polling everyone you know"
+        "body": "Polling everyone you know",
+        "body_they": "Polling everyone they know"
       },
       "astrology": {
         "objects": [],
@@ -212573,9 +212577,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner approval, chat 2026-07-28",
-      "contentHash": "fe75783ab0e22ef1f5c700aef86e85c0fccf33f712e31b79877cbe6a846aafc4",
+      "contentHash": "13f61e73aaf71df0596d444a952f1a6ccb51a190b43116bc296097dacd5f3392",
       "wording": {
-        "body": "Buying comfort you'll return"
+        "body": "Buying comfort you'll return",
+        "body_they": "Buying comfort they'll return"
       },
       "astrology": {
         "objects": [],
@@ -212748,9 +212753,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "a991546ff6fdc6898e9fe8c8b89567ec1399c92a9c0f305cdd8429c7e91e31a4",
+      "contentHash": "ac395b8692a7eb49995ba9bba36de8654fa377c7159ac16ff48026315af19f12",
       "wording": {
-        "body": "Feed yourself properly"
+        "body": "Feed yourself properly",
+        "body_they": "Eat properly"
       },
       "astrology": {
         "objects": [
@@ -214993,9 +214999,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner exact-wording approval 2026-08-11",
-      "contentHash": "e304122897ce58177c959163047f112b422745b3bf844f883b7e90d0224d16e2",
+      "contentHash": "e9daa7db48e9609b5a8967f355e68e7e74f7b7f766cf51eb087df58eeb7fd5c3",
       "wording": {
-        "body": "money and what you value"
+        "body": "money and what you value",
+        "body_they": "money and what they value"
       },
       "astrology": {
         "objects": [],
@@ -215343,9 +215350,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "3577dafa0ca0bcc870870c14a4477e897cca7c684286ffc4d9cdce331fbc2f95",
+      "contentHash": "61b6a608b878ab9c3eada74f6dcdf573d93690b7ef72fa3b58ff531ebe30e12c",
       "wording": {
-        "body": "your body, your look, and how you come across"
+        "body": "your body, your look, and how you come across",
+        "body_they": "their body, their look, and how they come across"
       },
       "astrology": {
         "objects": [],
@@ -215393,9 +215401,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "235e44916d9222a65f474e2b5fbc643155a53a9c2e9e7bf6af154170d245d5c3",
+      "contentHash": "869b3feac42bf46c425332c97756079cfb1968eda47300c50bcbfc2f6789010b",
       "wording": {
-        "body": "friends, community, and the roles you've outgrown"
+        "body": "friends, community, and the roles you've outgrown",
+        "body_they": "friends, community, and the roles they've outgrown"
       },
       "astrology": {
         "objects": [],
@@ -215418,9 +215427,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "684c8c37de3b501ac14be10cef51b7e001b6855d56eff2931d4e158c9f72e3dc",
+      "contentHash": "c987750f152d6095613b4db69c74af86e29cd8e56c83bb7f490596e60cf136bb",
       "wording": {
-        "body": "rest, privacy, and what you keep to yourself"
+        "body": "rest, privacy, and what you keep to yourself",
+        "body_they": "rest, privacy, and what they keep to themselves"
       },
       "astrology": {
         "objects": [],
@@ -215468,9 +215478,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "b6900e1480a91fe2fd12a4a48cef34b72d74d47c7729e4592cb443516f978726",
+      "contentHash": "eeb85fe38340b427372e2232073065577082aaaff078f0f255c584706a48a265",
       "wording": {
-        "body": "conversations, errands, and your daily circles"
+        "body": "conversations, errands, and your daily circles",
+        "body_they": "conversations, errands, and their daily circles"
       },
       "astrology": {
         "objects": [],
@@ -215568,9 +215579,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "a2be79ec30987af5b677c5a5033eb2133639d73138ba5fd1c18a09dc3ebd6031",
+      "contentHash": "57a521e744f31760c8b1b3c1f0b5177e7c8e044874336c40965d5c4e2e068c86",
       "wording": {
-        "body": "relationships and the people who match you"
+        "body": "relationships and the people who match you",
+        "body_they": "relationships and the people who match them"
       },
       "astrology": {
         "objects": [],
@@ -215943,9 +215955,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "eef0066e2d8807f82d9607d43505a41da03caaebbd6dc290fb26cb1081b3aa71",
+      "contentHash": "721d7973c2fcd34ad8f06d927dbbeedc17d5fc8a6931cdc075f788897ca8d7b8",
       "wording": {
-        "body": "how you start and show up"
+        "body": "how you start and show up",
+        "body_they": "how they start and show up"
       },
       "astrology": {
         "objects": [],
@@ -217560,9 +217573,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "bda7d158d311996fbc2eb7b7340e358d19352fc4c42e0e86a06b411a9603bb07",
+      "contentHash": "baa38844dccc35ff992ddab87664112b1353ca84c75b405d0dadb7893c772e9d",
       "wording": {
-        "body": "learning your difference is not a defect"
+        "body": "learning your difference is not a defect",
+        "body_they": "learning their difference is not a defect"
       },
       "astrology": {
         "objects": [
@@ -217587,9 +217601,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "6c30a155c60df3a06b5523f3ef5325cdbf3413ab8b0dcd239bd71714dd3b73b5",
+      "contentHash": "d9bd090944945337006686fd1d904442a89971949a4fdba57388fd93d420a7c7",
       "wording": {
-        "body": "learning to accept yourself as you are"
+        "body": "learning to accept yourself as you are",
+        "body_they": "learning to accept themselves as they are"
       },
       "astrology": {
         "objects": [
@@ -217614,9 +217629,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "24ea628c012931c7756f5bc0ac31369082dcf744f65eb6ad6578bcdb11c16745",
+      "contentHash": "ca37449aee809eee802b5f043800dea0802a2ac2f861a7fdddfef12010bce60b",
       "wording": {
-        "body": "learning your worth is not your resume"
+        "body": "learning your worth is not your resume",
+        "body_they": "learning that their worth is not their resume"
       },
       "astrology": {
         "objects": [
@@ -217641,9 +217657,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "337b4dc1712762d1ee0e1bb839df49b8b0fd820869fcb1f6ec7c0ca90c680451",
+      "contentHash": "8beba86a1ae41c769391055b29a48574098edea94e084f707b64c62ce614d0b7",
       "wording": {
-        "body": "learning to trust how you speak, slowly"
+        "body": "learning to trust how you speak, slowly",
+        "body_they": "learning to trust how they speak, slowly"
       },
       "astrology": {
         "objects": [
@@ -217668,9 +217685,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "a7b029fa9657558bc62f004c7cc9e0a20de30ff5221c7a62fe02622b72926dfe",
+      "contentHash": "8ae4c9a7b175c9e82f5d7fd45c2865e0d93c696dc76f6830bb53ed539cbb678b",
       "wording": {
-        "body": "learning your right to be seen without performing"
+        "body": "learning your right to be seen without performing",
+        "body_they": "learning their right to be seen without performing"
       },
       "astrology": {
         "objects": [
@@ -217695,9 +217713,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "1b763e4eea4be41137d7946cc0401d56394fbbe6f8c0d80aa14f68ae3ca4b200",
+      "contentHash": "19960c829f440dd0e256ec792de726d29325bfd8bafcf459d41cb963cc6ab709",
       "wording": {
-        "body": "learning your worth inside relationships"
+        "body": "learning your worth inside relationships",
+        "body_they": "learning their worth inside relationships"
       },
       "astrology": {
         "objects": [
@@ -217722,9 +217741,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "b5cd85e0cdcc58a353b2bfc53e801a18798e2c4b23426bbfa51f0d81731171cc",
+      "contentHash": "b3a59d4c6dbc55fdde2f724d39a71828b0fd93ede4fe20b9c6490632e44c9fed",
       "wording": {
-        "body": "learning you are allowed to matter"
+        "body": "learning you are allowed to matter",
+        "body_they": "learning they are allowed to matter"
       },
       "astrology": {
         "objects": [
@@ -217749,9 +217769,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "10fb041d0718285c8478659dfcffbdb5d66acd03a1b74117e1d27cd3ff068689",
+      "contentHash": "49bc34a49a7020e5b36333b3045ff7d4247669ca38a2d80c89cd59d4902a1c88",
       "wording": {
-        "body": "learning to trust your own view"
+        "body": "learning to trust your own view",
+        "body_they": "learning to trust their own view"
       },
       "astrology": {
         "objects": [
@@ -217776,9 +217797,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "393064ecb96cc2981db5bc96c7b41a2d2c5975efe23118eca40e0278063bd49d",
+      "contentHash": "948b05c4cae82b4035792ed26a68729dbbfa27dc722f49516bb6583b5b6afa5b",
       "wording": {
-        "body": "learning to let people close on your own terms"
+        "body": "learning to let people close on your own terms",
+        "body_they": "learning to let people close on their own terms"
       },
       "astrology": {
         "objects": [
@@ -217803,9 +217825,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "87b36376f84ede0279261e4cc80823b9f4a80227c6bf79203bfc36e42f462079",
+      "contentHash": "d54ac101498f3909bee93bef358c4bc36f0f2edf695d0b86ccd08658b956642e",
       "wording": {
-        "body": "learning to accept yourself without fixing everything first"
+        "body": "learning to accept yourself without fixing everything first",
+        "body_they": "learning to accept themselves without fixing everything first"
       },
       "astrology": {
         "objects": [
@@ -219888,9 +219911,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "b5a5b74a67e8cbc66fb05955d4d45bb9b245e6131964f86537739702988d17f8",
+      "contentHash": "43237e60ed23b11f78eb49452827acd9759efe9b09018cf4b08f0bf98c9b8a8d",
       "wording": {
-        "body": "overdoing, over-promising, or believing your own hype"
+        "body": "overdoing, over-promising, or believing your own hype",
+        "body_they": "overdoing, over-promising, or believing their own hype"
       },
       "astrology": {
         "objects": [
@@ -220138,9 +220162,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "8a435a0d2d33bfc6841dbe87172fdcf514e33f19d7ba13622cecfcea2a38a921",
+      "contentHash": "89bc258781b58f70470cdd1c793db2e7640ee6ded4b9a918900a6a9df5f2b5c8",
       "wording": {
-        "body": "ego inflation, or needing the spotlight to feel like you matter"
+        "body": "ego inflation, or needing the spotlight to feel like you matter",
+        "body_they": "ego inflation, or needing the spotlight to feel like they matter"
       },
       "astrology": {
         "objects": [
@@ -220213,9 +220238,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "64ec1488822ef85f337a41d4f0b590acb7464dba087b0c0ca0f16cc92226cbf7",
+      "contentHash": "bdd13c5a7438cb746f19c23c89ee18cd7f37cffb095c423c7b47b2f50e69d2a1",
       "wording": {
-        "body": "the insecurities you carry and slowly make peace with"
+        "body": "the insecurities you carry and slowly make peace with",
+        "body_they": "the insecurities they carry and slowly make peace with"
       },
       "astrology": {
         "objects": [
@@ -220288,9 +220314,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "7250b45cec395be73fefdce537178bbc2ac948338b85f2fa4c809325ca6f7962",
+      "contentHash": "e5bcf4e9b2e3047c429aee8bb3ff18d6b07c9cbc511be0ec5828b60d6b84de65",
       "wording": {
-        "body": "thinking, communication, and how you process"
+        "body": "thinking, communication, and how you process",
+        "body_they": "thinking, communication, and how they process"
       },
       "astrology": {
         "objects": [
@@ -220313,9 +220340,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "c85ff04f8fa0af2719bacd26808c9f8e842b495831eb0bd3178967b16c144791",
+      "contentHash": "d7bf1f416015440e7b5c053fe471a13c9f7d1d54f24c0bda6a8061dcca21ef85",
       "wording": {
-        "body": "emotional needs, moods, and what makes you feel safe"
+        "body": "emotional needs, moods, and what makes you feel safe",
+        "body_they": "emotional needs, moods, and what makes them feel safe"
       },
       "astrology": {
         "objects": [
@@ -220463,9 +220491,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "f76e94ce04d4dfb278eddfe72fa93d6573aaed05650d3b60a304688833b2adb7",
+      "contentHash": "2819955c30c8ecfb503ee9b46ec6937dacfca49a82becda84fdc84ede40bf52e",
       "wording": {
-        "body": "identity, vitality, and where you're meant to shine"
+        "body": "identity, vitality, and where you're meant to shine",
+        "body_they": "identity, vitality, and where they're meant to shine"
       },
       "astrology": {
         "objects": [
@@ -220513,9 +220542,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "c0960f98d9d803dfc58cf88b9a60a9a393efd887b611ff7b303fcda59e5dd160",
+      "contentHash": "9bb1ffb9227d6918411492fb6a8e43435ddbfaf179a9c1ffe14ce5d233a43a3a",
       "wording": {
-        "body": "love, pleasure, taste, and what you value"
+        "body": "love, pleasure, taste, and what you value",
+        "body_they": "love, pleasure, taste, and what they value"
       },
       "astrology": {
         "objects": [
@@ -220713,9 +220743,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "cdffb0ce1c6dded44c40b0bd4546e0f81a886e823f9d996b4e6fa9638a8c4a97",
+      "contentHash": "ec69b362f8a9d9f7165df3958f7e4d2e68f158584638346d1193ccab951659a5",
       "wording": {
-        "body": "stretching toward what you're here to develop"
+        "body": "stretching toward what you're here to develop",
+        "body_they": "stretching toward what they're here to develop"
       },
       "astrology": {
         "objects": [
@@ -220788,9 +220819,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "dfa7651950c3a60476e7048290c8dc01c3358c575741f95e02f4e954e0483c88",
+      "contentHash": "b3a012e966a7924ce1654aa9f2905af992c84fce97bc6f953b67cf52948bad5d",
       "wording": {
-        "body": "the fall-back skills you can lean on"
+        "body": "the fall-back skills you can lean on",
+        "body_they": "the fall-back skills they can lean on"
       },
       "astrology": {
         "objects": [
@@ -220813,9 +220845,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "08575fa86ac38472895a9a26b4d02f8a0f753e2a3305c3be474556fd08991030",
+      "contentHash": "7700dcbfc901fbaa780d864e8261c588244cf485a46c29d01512e8431d1e61b0",
       "wording": {
-        "body": "confidence, warmth, and being seen for who you are"
+        "body": "confidence, warmth, and being seen for who you are",
+        "body_they": "confidence, warmth, and being seen for who they are"
       },
       "astrology": {
         "objects": [

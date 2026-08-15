@@ -56,6 +56,6 @@
   "notAPersonReference": [
     "fallback-vocab/dodont-reward/mercury"
   ],
-  "servingAuthorized": false,
-  "servingBlocker": "The two unresolved rows still require exact owner wording; partial serving would leave a known Friend pronoun leak."
+  "servingAuthorized": true,
+  "servingAuthority": "Complete only when combined with packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-rulings-2026-08-15.json."
 }
