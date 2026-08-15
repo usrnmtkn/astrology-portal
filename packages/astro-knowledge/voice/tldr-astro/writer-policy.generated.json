@@ -4,7 +4,7 @@
   "generatedBy": "scripts/compile-satori-editorial-decisions.js",
   "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
   "decisionSourceId": "satori-editorial-decisions-v1",
-  "decisionSourceSha256": "d2a94f8656e00ca6372d46bbd55cf7592c7f3a0984433fff04e086786218e8a2",
+  "decisionSourceSha256": "854476c68bcc62401ef8d2af7020b3ebc94ee5b2a1b45b82f0b34fcbfb4da139",
   "architecture": [
     "Verified astrology supplies meaning.",
     "Sol writes one original draft.",
@@ -71,14 +71,12 @@
     {
       "id": "CF-001",
       "scope": {
-        "prohibited": [
-          "sky-placement"
-        ],
         "conditional": [
+          "sky-placement",
           "all-other-surfaces"
         ]
       },
-      "rule": "Do not use people in Sky Placement. On other surfaces, use it only when the collective itself is the real subject and a more exact subject would be less accurate."
+      "rule": "People is allowed in Sky Placement copy, used sparingly. Overuse is a semantic review signal, not a deterministic failure. On other surfaces, use it only when the collective itself is the real subject."
     },
     {
       "id": "CF-013",
@@ -313,6 +311,24 @@
         ]
       },
       "rule": "Display time in the user's local timezone; computed dates, degrees, motion, and event times come from the engine rather than generated prose."
+    },
+    {
+      "id": "ED-029",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Reader copy uses ASCII punctuation. Do not use curly quotes, curly apostrophes, ellipsis characters, or en dashes."
+    },
+    {
+      "id": "ED-030",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Do not use a spaced hyphen in place of an em dash. Use a comma, a colon, or a second sentence."
     }
   ],
   "compilerOnlyDecisions": [

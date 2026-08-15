@@ -56,10 +56,10 @@
     ]
   },
 
-  "person": "collective-current-sky",
-  "secondPersonAllowed": false,
+  "person": "direct-address-or-observational-sky-placement",
+  "secondPersonAllowed": true,
   "firstPersonPluralAllowed": true,
-  "personNote": "Current Sky describes shared weather. Sky-to-sky placement copy uses collective language: 'we', 'someone', a named group, or a concrete shared scene. Do not use the generic noun 'people'; name the actual subject. Never use 'you', 'your', 'yours', 'yourself', or 'yourselves'. Second person belongs to transit-to-natal copy. Historical owner-approved originals are preserved verbatim for provenance even when they predate current surface rules; they are not permission for newly generated copy to repeat retired language.",
+  "personNote": "Sky placement pages speak to the reader. Direct address ('you') is allowed and wanted. Third-person observation and collective language remain available when a lived scene needs them. Address the reader's life; never break the fourth wall or comment on the writing itself. People is allowed sparingly; prefer the actual subject when the copy supports one.",
 
   "exemplarStatePolicy": {
     "historical_owner_approved": "Original owner-approved copy preserved verbatim for provenance. Never supplied to the active Current Sky judge as positive evidence.",
@@ -79,7 +79,7 @@
     "factGatedSlots": [
       {
         "id": "prior-sign-handoff",
-        "rule": "At or immediately before the hook, use one sentence saying where the planet arrives from and what changes. Use the supplied {{priorSign}}, {{priorSignEntryDate}}, and {{priorSignExitDate}} resolver tokens instead of literal moving facts. Use collective language and the planet's name; never use an appositive planet definition.",
+        "rule": "At or immediately before the hook, use one sentence saying where the planet arrives from and what changes. Use the supplied {{priorSign}}, {{priorSignEntryDate}}, and {{priorSignExitDate}} resolver tokens instead of literal moving facts. Direct address or third-person observation may be used; name the planet and never use an appositive planet definition.",
         "requiresFact": ["priorSign", "priorSignEntryDate", "priorSignExitDate"],
         "maxOccurrences": 1,
         "continuousFallbackTarget": "opening",
@@ -300,9 +300,9 @@
         "The arrangement stopped telling the truth."
       ]
     },
-    "allowedCollectiveLanguage": {
-      "allowed": ["someone", "we", "named groups", "concrete subjects"],
-      "rule": "Do not flag someone or we merely because they are collective language. Current Sky does not use the generic noun people; name the group, person, message, decision, or behavior."
+    "allowedSkyPlacementAddress": {
+      "allowed": ["you", "your", "someone", "we", "named groups", "concrete subjects"],
+      "rule": "Sky placement may address the reader directly or observe a lived scene in third person. Do not flag you, someone, we, or a sparing use of people merely for register. Prefer the group, person, message, decision, or behavior when the copy can name it naturally. Overuse of people is a semantic review signal, not a deterministic failure."
     },
     "stackedEnding": {
       "rule": "When the turn has already named the behavior and cost, any following slogan, metaphor, reassurance, or second conclusion should be marked for deletion.",
@@ -358,7 +358,6 @@
       {"term": "you find yourself", "reason": "crutch hook opener; vary the hook form"},
       {"term": "embrace the", "reason": "generic coaching verb; name the actual action"},
       {"term": "\\bmanifest(s|ing|ation)?\\b", "reason": "manifestation register banned on this surface"},
-      {"term": "\\bpeople\\b", "reason": "owner rule for Current Sky; name the group, person, message, decision, or behavior"},
       {"term": "\\btilt(?:s|ed|ing)?\\b", "reason": "owner avoid word; name the change or the action that caused it"},
       {"term": "\\bfair counteroffer\\b", "reason": "negotiation language imposed on an ordinary choice; name what someone offered or changed"},
       {"term": "\\bthoughtful compromise\\b", "reason": "evaluative label; name what each person agreed to do"},
@@ -426,7 +425,7 @@
     "The seven calibration placements must remain distinct when read without their headings. If two could swap bodies without sounding wrong, the writing is not specific enough. This is the judge's swap test.",
     "No compulsory coverage checklist: if a sentence exists only to satisfy coverage, cut it.",
     "The transit is the subject: lived moments prove the placement, but one invented scenario must not carry the whole card. Related moments may reveal the same pressure without becoming a representative coverage list.",
-    "Do not flag 'someone' or 'we' merely because they are collective language. Current Sky does not use the generic noun 'people'. Name the group, message, decision, or behavior instead.",
+    "Sky placement may address the reader directly. Third-person observation and collective language remain available for lived scenes. Never break the fourth wall or comment on the writing itself. People is allowed sparingly; prefer the group, message, decision, or behavior when it can be named naturally.",
     "Everyday-language register: ordinary scenes use ordinary words. A dinner plan is not a counteroffer, both sides, meaningful influence, or a thoughtful compromise. Name what someone says, chooses, changes, refuses, or goes along with. Do not use 'tilt' as a dressed-up substitute for a change that can be stated directly.",
     "Use ordinary current wording for communication. Default to message or response; reply and what they were told are also natural. Name an email, screenshot, notice, or physical letter only when the delivery method matters. Do not replace letter with portal notification, electronic correspondence, or automated communication.",
     "First-read natural-English rule: read every sentence literally. An abstract noun may not perform an unnatural human action, and a metaphor may not require decoding. Conventional astrology language such as 'Mars governs action' is allowed. A central opaque sentence plus a generalized lived section is score 1; an isolated failure surrounded by strongly grounded writing may reach score 2, never 3.",
