@@ -5,6 +5,11 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import { assertManifestationShapeCap } from "./sky-calendar-manifestation-shape.mjs";
 import {
+  REALIZATION_FIELDS,
+  assertTypedRealizationSchema,
+  selectRealizationForAspect,
+} from "./sky-calendar-realization-types.mjs";
+import {
   assertOwnerReplacements,
   manifestationPlainnessViolations,
   sourceShadowAudit,
@@ -42,7 +47,7 @@ function sourceValue(sourceId) {
   return null;
 }
 
-assert.equal(registry.schema, "tldrastro.sky-calendar-meaning-components.v1");
+assert.equal(registry.schema, "tldrastro.sky-calendar-meaning-components.v2");
 assert.equal(registry.status, "PENDING OWNER");
 assert.deepEqual(registry.counts, {
   signUnits: 144,
@@ -55,6 +60,8 @@ assert.equal(registry.policy.componentsAreMeaningNotSentences, true);
 assert.equal(registry.policy.emitStoredComponentVerbatim, false);
 assert.equal(registry.policy.firstSentenceMustBeComposed, true);
 assert.equal(registry.policy.failClosed, true);
+assert.equal(registry.policy.realizationPoolsAreTypedNotOrdered, true);
+assert.equal(registry.policy.positionalRealizationTemplateForbidden, true);
 assert.equal(registry.evidenceLayerSha256, "0ceb85f5897fb42238dfdd69e7b02271f87befe202f009da8659add9b9337c23");
 assert.equal(registry.wordingQuality.maximumOpeningConstructionUse <= registry.wordingQuality.caps.openingConstruction, true);
 assert.equal(registry.wordingQuality.maximumManifestationUse <= registry.wordingQuality.caps.repeatedManifestation, true);
@@ -73,11 +80,35 @@ assert.deepEqual(registry.wordingQuality.abstractSubjectViolations, []);
 assert.deepEqual(registry.wordingQuality.manifestationPlainnessViolations, []);
 assert.deepEqual(registry.wordingQuality.ownerVoiceVerbatimMatches, []);
 assert.equal(registry.systemicRepass.reviewedUnits, 174);
-assert.equal(registry.systemicRepass.changedUnits, 138);
-assert.equal(registry.systemicRepass.reviewedUnchangedUnits, 36);
+assert.equal(registry.systemicRepass.changedUnits, 174);
+assert.equal(registry.systemicRepass.schemaChangedUnits, 174);
+assert.equal(registry.systemicRepass.reviewedUnchangedUnits, 0);
 assert.equal(registry.systemicRepass.sourceShadowAudit.oneSidedBeforePass, 39);
 assert.equal(registry.systemicRepass.sourceShadowAudit.oneSidedAfterPass, 0);
-assert.equal(registry.systemicRepass.ownerAuthoredReplacementKeys.length, 3);
+assert.equal(registry.systemicRepass.ownerAuthoredReplacementKeys.length, 8);
+assert.equal(registry.systemicRepass.realizationSchema.positionalTemplatePrevented, true);
+assert.equal(registry.systemicRepass.realizationSchema.countShapeDistribution.length >= 2, true);
+assert.deepEqual(registry.systemicRepass.faultAudit.remainingViolations, {
+  analytical_abstraction: [],
+  assembled_construction: [],
+  invented_motive: [],
+  unsupported_borrowed_vocabulary: [],
+});
+assert.deepEqual(
+  Object.fromEntries(Object.entries(registry.systemicRepass.faultAudit.changedUnderFaultCategory).map(([key, value]) => [key, value.units])),
+  {
+    analytical_abstraction: 4,
+    assembled_construction: 1,
+    invented_motive: 2,
+    unsupported_borrowed_vocabulary: 3,
+    generic_actor_removed: 7,
+  },
+);
+assert.deepEqual(registry.systemicRepass.faultAudit.borrowedVocabularyRemoved, [
+  { key: "sky-sign/sun/taurus", removedTerms: ["budget", "material"] },
+  { key: "sky-sign/moon/taurus", removedTerms: ["food", "money", "shelter"] },
+  { key: "sky-sign/mercury/taurus", removedTerms: ["price"] },
+]);
 assert.equal(registry.ownerVoiceCoverage.approvedPlanetRows, 7);
 assert.equal(registry.ownerVoiceCoverage.approvedPlacementRows, 56);
 assert.equal(registry.ownerVoiceCoverage.targetExactPairRows, 46);
@@ -87,10 +118,10 @@ assert.equal(registry.ownerVoiceCoverage.signs.length, 12);
 assert.equal(registry.ownerVoiceCoverage.signs.every((row) => row.placement_sign_lived_planets.length > 0), true);
 assert.throws(
   () => assertManifestationShapeCap([
-    { key: "sky-sign/sun/aries", reader_manifestations: ["credit being claimed before others agree"] },
-    { key: "sky-sign/moon/aries", reader_manifestations: ["care being claimed before others agree"] },
-    { key: "sky-sign/mercury/aries", reader_manifestations: ["information being claimed before others agree"] },
-    { key: "sky-sign/venus/aries", reader_manifestations: ["value being claimed before others agree"] },
+    { key: "sky-sign/sun/aries", supportive_realizations: ["credit being claimed before others agree"], neutral_realizations: [], shadow_realizations: [] },
+    { key: "sky-sign/moon/aries", supportive_realizations: ["care being claimed before others agree"], neutral_realizations: [], shadow_realizations: [] },
+    { key: "sky-sign/mercury/aries", supportive_realizations: ["information being claimed before others agree"], neutral_realizations: [], shadow_realizations: [] },
+    { key: "sky-sign/venus/aries", supportive_realizations: ["value being claimed before others agree"], neutral_realizations: [], shadow_realizations: [] },
   ], 3),
   /Reader manifestation shape cap exceeded/u,
 );
@@ -103,6 +134,7 @@ const all = [
 ];
 assert.equal(all.length, 174);
 assert.equal(new Set(all.map((row) => row.key)).size, 174);
+assertTypedRealizationSchema(all);
 const renderedRegistryText = JSON.stringify({
   signUnits: registry.signUnits,
   aspectMechanisms: registry.aspectMechanisms,
@@ -116,6 +148,8 @@ assert.doesNotMatch(renderedRegistryText, /\bsteady\b/iu, "banned word steady");
 
 for (const row of all) {
   assert.equal(row.owner_review_status, "PENDING OWNER", `${row.key} must remain pending`);
+  assert.equal(Object.hasOwn(row, "reader_manifestations"), false, `${row.key} may not carry the positional legacy field`);
+  REALIZATION_FIELDS.forEach((field) => assert.ok(Array.isArray(row[field]), `${row.key} ${field}`));
   assert.ok(Array.isArray(row.source_ids) && row.source_ids.length > 0, `${row.key} source_ids`);
   assert.equal(row.source_ids.length, row.source_hashes.length, `${row.key} source/hash parity`);
   row.source_ids.forEach((sourceId, index) => {
@@ -128,11 +162,13 @@ for (const row of all) {
 for (const row of registry.signUnits) {
   for (const field of ["planet_function", "sign_expression", "combined_position", "details_language"]) {
     assert.ok(typeof row[field] === "string" && row[field].trim(), `${row.key} ${field}`);
-    assert.doesNotMatch(row[field], /[.!?]$/u, `${row.key} ${field} must remain a meaning component, not a sentence`);
+    if (field !== "combined_position") {
+      assert.doesNotMatch(row[field], /[.!?]$/u, `${row.key} ${field} must remain a meaning component, not a sentence`);
+    }
   }
   assert.notEqual(row.details_language, row.combined_position, `${row.key} details language must be independently phrased`);
   assert.doesNotMatch(row.combined_position, /;\s*expressed through|\bexpressed through\b/iu, `${row.key} mechanical join`);
-  assert.ok(Array.isArray(row.reader_manifestations) && row.reader_manifestations.length === 3);
+  assert.equal(REALIZATION_FIELDS.reduce((total, field) => total + row[field].length, 0), 3);
   assert.ok(typeof row.owner_voice_coverage === "string" && row.owner_voice_coverage.length > 0);
   assert.ok(Array.isArray(row.owner_voice_source_ids) && row.owner_voice_source_ids.length > 0);
   assert.equal(row.owner_voice_source_ids.length, row.owner_voice_source_hashes.length);
@@ -141,7 +177,7 @@ for (const row of registry.signUnits) {
     assert.ok(value, `${row.key} missing owner-voice source ${sourceId}`);
     assert.equal(row.owner_voice_source_hashes[index], sha256(JSON.stringify(value)), `${row.key} owner-voice source hash ${sourceId}`);
   });
-  row.reader_manifestations.forEach((value) => {
+  REALIZATION_FIELDS.flatMap((field) => row[field]).forEach((value) => {
     assert.doesNotMatch(value, /[.!?]$/u, `${row.key} reader manifestation must remain a component`);
   });
 }
@@ -155,6 +191,16 @@ for (const row of [...registry.aspectMechanisms, ...registry.modalityUnits, ...r
     assert.doesNotMatch(row[field], /[.!?]$/u, `${row.key} ${field} must remain a meaning component`);
   }
 }
+
+const typedFixture = {
+  key: "fixture",
+  supportive_realizations: ["supportive opening"],
+  neutral_realizations: ["neutral condition"],
+  shadow_realizations: ["shadow cost"],
+};
+assert.equal(selectRealizationForAspect(typedFixture, "square").type, "shadow");
+assert.equal(selectRealizationForAspect(typedFixture, "opposition").type, "neutral");
+assert.equal(selectRealizationForAspect(typedFixture, "trine").type, "supportive");
 
 const opposition = registry.aspectMechanisms.find((row) => row.key === "sky-aspect-mechanism/opposition");
 assert.equal(opposition.reader_effect, "people can see both positions at the same time");

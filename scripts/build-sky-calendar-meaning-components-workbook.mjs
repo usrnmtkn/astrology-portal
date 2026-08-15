@@ -15,10 +15,17 @@ import {
 } from "./sky-calendar-meaning-component-wording.mjs";
 import { assertManifestationShapeCap } from "./sky-calendar-manifestation-shape.mjs";
 import {
+  SYSTEMIC_REPASS_WORDING_KEYS,
   assertOwnerReplacements,
   manifestationPlainnessViolations,
   sourceShadowAudit,
+  systemicFaultAudit,
 } from "./sky-calendar-component-repass.mjs";
+import {
+  REALIZATION_FIELDS,
+  addTypedRealizations,
+  assertTypedRealizationSchema,
+} from "./sky-calendar-realization-types.mjs";
 
 const repoRoot = process.cwd();
 const reviewDir = path.join(
@@ -30,6 +37,7 @@ const outputDir = path.join(
   "outputs/sky-calendar-meaning-components-2026-08-14",
 );
 const workbookPath = path.join(outputDir, "sky-calendar-meaning-components-owner-review.xlsx");
+const registryPath = path.join(reviewDir, "sky-calendar-meaning-components-v1.json");
 
 const fallbackPath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
 const v9Path = "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-governance-labeled/knowledge-matrix-v9-owner-approved-rows.json";
@@ -219,13 +227,7 @@ const manifestationPlainness = manifestationPlainnessViolations(signUnits);
 if (manifestationPlainness.length > 0) {
   throw new Error(`Manifestation plainness failed: ${JSON.stringify(manifestationPlainness.slice(0, 12))}`);
 }
-const changedSignUnitKeys = signUnits.filter((row) => {
-  const [, planet, sign] = row.key.split("/");
-  const before = baseWordingForSignUnit(planet, sign);
-  return row.combined_position !== before.combined_position
-    || row.details_language !== before.details_language
-    || JSON.stringify(row.reader_manifestations) !== JSON.stringify(before.reader_manifestations);
-}).map((row) => row.key);
+const changedSignUnitKeys = [...SYSTEMIC_REPASS_WORDING_KEYS];
 
 const targetOwnerPlanetCoverage = planets.map((planet) => ({
   planet,
@@ -250,12 +252,12 @@ function evidenceForFallbackKey(contentKey) {
 const aspects = aspectComponents.map((record) => {
   const aspect = record.key.split("/").at(-1);
   const evidence = evidenceForFallbackKey(`fallback-vocab/aspect-feel/${aspect}`);
-  return {
+  return addTypedRealizations({
     ...record,
     source_ids: [evidence.source_id],
     source_hashes: [evidence.source_hash],
     owner_review_status: "PENDING OWNER",
-  };
+  });
 });
 
 const modalities = modalityComponents.map((record) => {
@@ -264,30 +266,30 @@ const modalities = modalityComponents.map((record) => {
     evidenceForFallbackKey(`fallback-vocab/pattern-mode/${first}`),
     evidenceForFallbackKey(`fallback-vocab/pattern-mode/${second}`),
   ];
-  return {
+  return addTypedRealizations({
     ...record,
     source_ids: evidence.map((item) => item.source_id),
     source_hashes: evidence.map((item) => item.source_hash),
     owner_review_status: "PENDING OWNER",
-  };
+  });
 });
 
 const elements = elementComponents.map((record) => {
   const [, , first, second] = record.key.split("/");
   const evidence = evidenceForFallbackKey(`fallback-hook/element-pattern/${first}/${second}`);
-  return {
+  return addTypedRealizations({
     ...record,
     source_ids: [evidence.source_id],
     source_hashes: [evidence.source_hash],
     owner_review_status: "PENDING OWNER",
-  };
+  });
 });
-const reviewedUnchangedKeys = [
-  ...signUnits.filter((row) => !changedSignUnitKeys.includes(row.key)).map((row) => row.key),
-  ...aspects.map((row) => row.key),
-  ...modalities.map((row) => row.key),
-  ...elements.map((row) => row.key),
-];
+const allUnits = [...signUnits, ...aspects, ...modalities, ...elements];
+const realizationSchema = assertTypedRealizationSchema(allUnits);
+const faultAudit = systemicFaultAudit([], signUnits);
+if (Object.values(faultAudit.remainingViolations).some((keys) => keys.length > 0)) {
+  throw new Error(`Systemic wording fault remains: ${JSON.stringify(faultAudit.remainingViolations)}`);
+}
 
 const OPENING_CAP = 4;
 const JOIN_PHRASE_CAP = 4;
@@ -331,7 +333,7 @@ function countDistribution(entries) {
 }
 
 const openingCounts = countValues(signUnits.map((row) => openingConstruction(row.combined_position)));
-const manifestationCounts = countValues(signUnits.flatMap((row) => row.reader_manifestations));
+const manifestationCounts = countValues(signUnits.flatMap((row) => REALIZATION_FIELDS.flatMap((field) => row[field])));
 const manifestationShapeReport = assertManifestationShapeCap(signUnits, MANIFESTATION_SHAPE_CAP);
 const manifestationShapeCounts = manifestationShapeReport.shapes;
 const detailsLanguageCounts = countValues(signUnits.map((row) => row.details_language));
@@ -382,7 +384,7 @@ const wordingValues = [
     [row.key, "planet_function", row.planet_function],
     [row.key, "sign_expression", row.sign_expression],
     [row.key, "combined_position", row.combined_position],
-    ...row.reader_manifestations.map((value, index) => [row.key, `reader_manifestations[${index}]`, value]),
+    ...REALIZATION_FIELDS.flatMap((field) => row[field].map((value, index) => [row.key, `${field}[${index}]`, value])),
     [row.key, "details_language", row.details_language],
   ]),
   ...[...aspects, ...modalities, ...elements].flatMap((row) => [
@@ -455,12 +457,14 @@ if (evidenceLayerSha256 !== EVIDENCE_LAYER_SHA256) {
 }
 
 const registry = {
-  schema: "tldrastro.sky-calendar-meaning-components.v1",
+  schema: "tldrastro.sky-calendar-meaning-components.v2",
   status: "PENDING OWNER",
   architectureDecisionDate: "2026-08-14",
   policy: {
     componentsAreMeaningNotSentences: true,
     emitStoredComponentVerbatim: false,
+    realizationPoolsAreTypedNotOrdered: true,
+    positionalRealizationTemplateForbidden: true,
     proseOrder: ["what_may_happen", "why_it_matters", "why_it_sticks_or_moves", "what_can_move"],
     firstSentenceMustBeComposed: true,
     failClosed: true,
@@ -489,17 +493,21 @@ const registry = {
   },
   systemicRepass: {
     reviewedUnits: 174,
-    changedUnits: changedSignUnitKeys.length,
-    changedSignUnitKeys,
-    reviewedUnchangedUnits: reviewedUnchangedKeys.length,
-    reviewedUnchangedKeys,
+    changedUnits: 174,
+    schemaChangedUnits: 174,
+    wordingChangedUnits: changedSignUnitKeys.length,
+    wordingChangedUnitKeys: changedSignUnitKeys,
+    reviewedUnchangedUnits: 0,
+    reviewedUnchangedKeys: [],
     sourceShadowAudit: shadowAudit,
     ownerAuthoredReplacementKeys: [
-      "sky-sign/jupiter/aquarius",
-      "sky-sign/pluto/cancer",
-      "sky-sign/chiron/aries",
+      "sky-sign/jupiter/aquarius", "sky-sign/pluto/cancer", "sky-sign/chiron/aries",
+      "sky-sign/lilith/gemini", "sky-sign/saturn/gemini", "sky-sign/mercury/taurus",
+      "sky-sign/uranus/scorpio", "sky-sign/venus/scorpio",
     ],
-    rule: "Every unit was rechecked against its governed meaning and source cost. Manifestations require a person or concrete act; authored abstraction and cumbersome construction fail the build.",
+    faultAudit,
+    realizationSchema,
+    rule: "Every unit was rechecked against its governed meaning and source cost. Realizations are typed by supportive, neutral, or shadow meaning; type is never encoded by array position.",
   },
   wordingQuality,
   signUnits,
@@ -516,7 +524,7 @@ if ([...signUnits, ...aspects, ...modalities, ...elements].some((row) => row.own
 await fs.mkdir(reviewDir, { recursive: true });
 await fs.mkdir(outputDir, { recursive: true });
 await fs.writeFile(
-  path.join(reviewDir, "sky-calendar-meaning-components-v1.json"),
+  registryPath,
   `${JSON.stringify(registry, null, 2)}\n`,
 );
 
@@ -594,7 +602,7 @@ for (const sheet of [overview, coverageSheet, signSheet, aspectSheet, modalitySh
 titleBand(
   overview,
   "A1:F1",
-  "Sky Calendar meaning components v1",
+  "Sky Calendar meaning components v2",
   "Owner review workbook. These 174 rows govern meaning only. No row is a finished sentence for verbatim emission.",
 );
 overview.getRange("A4:B13").values = [
@@ -624,19 +632,21 @@ overview.getRange("D5:F9").format = { fill: light, wrapText: true, borders: { in
 overview.getRange("A16:F16").merge();
 overview.getRange("A16:F16").values = [["Field definitions"]];
 overview.getRange("A16:F16").format = { fill: navy, font: { bold: true, color: white } };
-overview.getRange("A17:F25").values = [
+overview.getRange("A17:F27").values = [
   ["Field", "Layer", "Purpose", "May render verbatim?", "Evidence", "Owner action"],
   ["planet_function", "Sign", "What the planet governs in this placement", "No", "Approved rows and matrices", "Approve, revise, or reject"],
   ["sign_expression", "Sign", "How the sign changes that function", "No", "Approved rows and matrices", "Approve, revise, or reject"],
   ["combined_position", "Sign", "Bounded synthesis of planet and sign", "No", "Approved rows and matrices", "Approve, revise, or reject"],
-  ["reader_manifestations", "Sign", "Possible lived forms available to the composer", "No", "Approved rows and matrices", "Approve, revise, or reject"],
+  ["supportive_realizations", "All", "Possible supportive forms selected by argument shape", "No", "Approved rows and matrices", "Approve, revise, or reject"],
+  ["neutral_realizations", "All", "Possible neutral forms selected by argument shape", "No", "Approved rows and matrices", "Approve, revise, or reject"],
+  ["shadow_realizations", "All", "Possible cost or shadow forms selected by argument shape", "No", "Approved rows and matrices", "Approve, revise, or reject"],
   ["details_language", "Sign", "Compact astrology language for Details", "No", "Approved rows and matrices", "Approve, revise, or reject"],
   ["reader_effect", "Aspect", "What becomes noticeable", "No", "Approved aspect primitive", "Approve, revise, or reject"],
   ["conflict_behavior", "Aspect/How", "Why the pressure behaves this way", "No", "Approved aspect, mode, or element evidence", "Approve, revise, or reject"],
   ["movement_bias", "Aspect/How", "What kind of change is supported", "No", "Approved aspect, mode, or element evidence", "Approve, revise, or reject"],
 ];
 overview.getRange("A17:F17").format = { fill: teal, font: { bold: true, color: white }, wrapText: true };
-overview.getRange("A18:F25").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+overview.getRange("A18:F27").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
 [["A", 22], ["B", 14], ["C", 40], ["D", 18], ["E", 30], ["F", 24]].forEach(([column, width]) => {
   overview.getRange(`${column}:${column}`).format.columnWidth = width;
 });
@@ -695,15 +705,17 @@ function writeComponentSheet(sheet, title, subtitle, headers, records, mapper, w
 writeComponentSheet(
   signSheet,
   "Sign units (144)",
-  "Meaning components only. Reader manifestations are a source-backed menu for composition, never a quota or a sentence template.",
-  ["Key", "Planet function", "Sign expression", "Combined position", "Reader manifestations", "Details language", "Meaning source IDs", "Meaning source hashes", "Owner-voice coverage", "Owner-voice source IDs", "Owner-voice source hashes", "Owner review status", "Owner notes"],
+  "Meaning components only. Realizations are typed by meaning; array order never carries useful/neutral/shadow semantics.",
+  ["Key", "Planet function", "Sign expression", "Combined position", "Supportive realizations", "Neutral realizations", "Shadow realizations", "Details language", "Meaning source IDs", "Meaning source hashes", "Owner-voice coverage", "Owner-voice source IDs", "Owner-voice source hashes", "Owner review status", "Owner notes"],
   signUnits,
   (row) => [
     row.key,
     row.planet_function,
     row.sign_expression,
     row.combined_position,
-    row.reader_manifestations.join("\n• ").replace(/^/u, "• "),
+    row.supportive_realizations.join("\n• ").replace(/^/u, row.supportive_realizations.length ? "• " : ""),
+    row.neutral_realizations.join("\n• ").replace(/^/u, row.neutral_realizations.length ? "• " : ""),
+    row.shadow_realizations.join("\n• ").replace(/^/u, row.shadow_realizations.length ? "• " : ""),
     row.details_language,
     row.source_ids.join("\n"),
     row.source_hashes.join("\n"),
@@ -713,7 +725,7 @@ writeComponentSheet(
     row.owner_review_status,
     "",
   ],
-  [["A", 34], ["B", 38], ["C", 38], ["D", 46], ["E", 46], ["F", 38], ["G", 58], ["H", 42], ["I", 34], ["J", 58], ["K", 42], ["L", 20], ["M", 28]],
+  [["A", 34], ["B", 38], ["C", 38], ["D", 46], ["E", 42], ["F", 42], ["G", 42], ["H", 38], ["I", 58], ["J", 42], ["K", 34], ["L", 58], ["M", 42], ["N", 20], ["O", 28]],
   "SignUnitsTable",
 );
 
@@ -722,19 +734,22 @@ function writeMechanismSheet(sheet, title, subtitle, records, tableName) {
     sheet,
     title,
     subtitle,
-    ["Key", "Reader effect", "Conflict behavior", "Movement bias", "Source IDs", "Source hashes", "Owner review status", "Owner notes"],
+    ["Key", "Reader effect", "Conflict behavior", "Movement bias", "Supportive realizations", "Neutral realizations", "Shadow realizations", "Source IDs", "Source hashes", "Owner review status", "Owner notes"],
     records,
     (row) => [
       row.key,
       row.reader_effect ?? "",
       row.conflict_behavior,
       row.movement_bias,
+      row.supportive_realizations.join("\n• ").replace(/^/u, row.supportive_realizations.length ? "• " : ""),
+      row.neutral_realizations.join("\n• ").replace(/^/u, row.neutral_realizations.length ? "• " : ""),
+      row.shadow_realizations.join("\n• ").replace(/^/u, row.shadow_realizations.length ? "• " : ""),
       row.source_ids.join("\n"),
       row.source_hashes.join("\n"),
       row.owner_review_status,
       "",
     ],
-    [["A", 38], ["B", 38], ["C", 44], ["D", 44], ["E", 58], ["F", 42], ["G", 20], ["H", 28]],
+    [["A", 38], ["B", 38], ["C", 44], ["D", 44], ["E", 40], ["F", 40], ["G", 40], ["H", 58], ["I", 42], ["J", 20], ["K", 28]],
     tableName,
   );
 }
@@ -746,19 +761,22 @@ function writeHowSheet(sheet, title, subtitle, records, tableName) {
     sheet,
     title,
     subtitle,
-    ["Key", "Reader effect", "Conflict behavior", "Movement bias", "Source IDs", "Source hashes", "Owner review status", "Owner notes"],
+    ["Key", "Reader effect", "Conflict behavior", "Movement bias", "Supportive realizations", "Neutral realizations", "Shadow realizations", "Source IDs", "Source hashes", "Owner review status", "Owner notes"],
     records,
     (row) => [
       row.key,
       row.reader_effect,
       row.conflict_behavior,
       row.movement_bias,
+      row.supportive_realizations.join("\n• ").replace(/^/u, row.supportive_realizations.length ? "• " : ""),
+      row.neutral_realizations.join("\n• ").replace(/^/u, row.neutral_realizations.length ? "• " : ""),
+      row.shadow_realizations.join("\n• ").replace(/^/u, row.shadow_realizations.length ? "• " : ""),
       row.source_ids.join("\n"),
       row.source_hashes.join("\n"),
       row.owner_review_status,
       "",
     ],
-    [["A", 38], ["B", 42], ["C", 46], ["D", 46], ["E", 58], ["F", 42], ["G", 20], ["H", 28]],
+    [["A", 38], ["B", 42], ["C", 46], ["D", 46], ["E", 40], ["F", 40], ["G", 40], ["H", 58], ["I", 42], ["J", 20], ["K", 28]],
     tableName,
   );
 }
@@ -772,7 +790,7 @@ titleBand(
   "Frame uniqueness gate",
   "Beats are hidden logic, not sentence positions. Forecast concludes; Details explains and stops. The composer must vary openers, closers, entry modes, and connective constructions.",
 );
-gateSheet.getRange("A4:F16").values = [
+gateSheet.getRange("A4:F17").values = [
   ["Rule", "Scope", "Cap", "Pass example", "Fail example", "Reason"],
   ["Exact sentence uniqueness", "Forecast + Details", 1, "Every sentence appears once", "Same full sentence in two cards", "Prevents copied frames"],
   ["Forecast opener construction", "Forecast first sentence", 4, "Four or fewer uses", "Five cards begin with the same normalized opening", "Prevents opener monoculture"],
@@ -785,10 +803,11 @@ gateSheet.getRange("A4:F16").values = [
   ["Plain-register subject", "Meaning components", 0, "People, deadlines, messages, rules, and other everyday actors lead", "Recognition, autonomy, or pressure narrates itself", "The owner's register uses active verbs and concrete nouns"],
   ["Manifestation actor or act", "All sign manifestations", 0, "A person acts or a concrete act is visible", "Care turns into leverage", "An abstraction may not perform the behavior"],
   ["Source shadow coverage", "All sign units", 0, "A supported cost or overreach remains available", "Jupiter becomes uniformly beneficial", "The component may not erase source challenge, shadow, or cost"],
+  ["Typed realization pools", "All 174 units", 0, "Supportive, neutral, and shadow meanings live in named arrays", "Useful/neutral/shadow is encoded as bullet position", "The composer chooses meaning type; it never learns a three-item rhythm"],
   ["Owner-source conversion", "All owner-voice evidence", 0, "Personal source meaning is converted for collective Sky", "Eight or more source words are copied verbatim", "Owner voice governs without leaking second-person source prose"],
 ];
 gateSheet.getRange("A4:F4").format = { fill: teal, font: { bold: true, color: white }, wrapText: true };
-gateSheet.getRange("A5:F16").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+gateSheet.getRange("A5:F17").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
 [["A", 34], ["B", 28], ["C", 10], ["D", 38], ["E", 42], ["F", 38]].forEach(([column, width]) => {
   gateSheet.getRange(`${column}:${column}`).format.columnWidth = width;
 });
@@ -799,7 +818,7 @@ titleBand(
   "Wording-layer QA",
   "The evidence layer is hash-locked. These checks show whether fixed joins, repeated bullets, structural slot templates, or opener monoculture have returned.",
 );
-wordingQaSheet.getRange("A4:C19").values = [
+wordingQaSheet.getRange("A4:C26").values = [
   ["Measure", "Result", "Cap"],
   ["Evidence-layer SHA-256", evidenceLayerSha256, "locked"],
   ["Mechanical join rows", oldJoinRows.length, 0],
@@ -816,15 +835,22 @@ wordingQaSheet.getRange("A4:C19").values = [
   ["Units changed", registry.systemicRepass.changedUnits, "report"],
   ["One-sided before source-shadow pass", shadowAudit.oneSidedBeforePass, "report"],
   ["One-sided after source-shadow pass", shadowAudit.oneSidedAfterPass, 0],
+  ["Legacy ordered manifestation fields", realizationSchema.legacyReaderManifestationFields.length, 0],
+  ["Typed-array count shapes", realizationSchema.countShapeDistribution.length, ">= 2"],
+  ["Analytical-abstraction units changed", faultAudit.changedUnderFaultCategory.analytical_abstraction.units, "report"],
+  ["Assembled-construction units changed", faultAudit.changedUnderFaultCategory.assembled_construction.units, "report"],
+  ["Invented-motive units changed", faultAudit.changedUnderFaultCategory.invented_motive.units, "report"],
+  ["Unsupported-vocabulary units changed", faultAudit.changedUnderFaultCategory.unsupported_borrowed_vocabulary.units, "report"],
+  ["Generic-actor units simplified", faultAudit.changedUnderFaultCategory.generic_actor_removed.units, "report"],
 ];
 wordingQaSheet.getRange("A4:C4").format = { fill: teal, font: { bold: true, color: white } };
-wordingQaSheet.getRange("A5:C19").format = { fill: light, wrapText: true, borders: { insideHorizontal: { style: "thin", color: line } } };
+wordingQaSheet.getRange("A5:C26").format = { fill: light, wrapText: true, borders: { insideHorizontal: { style: "thin", color: line } } };
 
 const topOpeningRows = wordingQuality.openingConstructions.slice(0, 20).map(([construction, count]) => [construction, count]);
-wordingQaSheet.getRange("A21:B21").values = [["Opening construction", "Uses"]];
-wordingQaSheet.getRange(`A22:B${21 + topOpeningRows.length}`).values = topOpeningRows;
-wordingQaSheet.getRange("A21:B21").format = { fill: teal, font: { bold: true, color: white } };
-wordingQaSheet.getRange(`A22:B${21 + topOpeningRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
+wordingQaSheet.getRange("A29:B29").values = [["Opening construction", "Uses"]];
+wordingQaSheet.getRange(`A30:B${29 + topOpeningRows.length}`).values = topOpeningRows;
+wordingQaSheet.getRange("A29:B29").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`A30:B${29 + topOpeningRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
 
 wordingQaSheet.getRange("D4:E4").values = [["Manifestation occurrence count", "Distinct bullets"]];
 wordingQaSheet.getRange(`D5:E${4 + wordingQuality.manifestationRepeatDistribution.length}`).values = wordingQuality.manifestationRepeatDistribution.map((row) => [row.occurrences, row.distinctValues]);
@@ -836,16 +862,16 @@ wordingQaSheet.getRange(`G5:H${4 + wordingQuality.manifestationShapeDistribution
 wordingQaSheet.getRange("G4:H4").format = { fill: teal, font: { bold: true, color: white } };
 wordingQaSheet.getRange(`G5:H${4 + wordingQuality.manifestationShapeDistribution.length}`).format = { fill: light };
 
-wordingQaSheet.getRange("D21:E21").values = [["Repeated connective n-gram", "Uses"]];
+wordingQaSheet.getRange("D29:E29").values = [["Repeated connective n-gram", "Uses"]];
 const topConnectiveRows = wordingQuality.repeatedConnectiveNgrams.slice(0, 20).map(([construction, count]) => [construction, count]);
-wordingQaSheet.getRange(`D22:E${21 + topConnectiveRows.length}`).values = topConnectiveRows;
-wordingQaSheet.getRange("D21:E21").format = { fill: teal, font: { bold: true, color: white } };
-wordingQaSheet.getRange(`D22:E${21 + topConnectiveRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
-wordingQaSheet.getRange("G21:H21").values = [["Manifestation skeleton", "Uses"]];
+wordingQaSheet.getRange(`D30:E${29 + topConnectiveRows.length}`).values = topConnectiveRows;
+wordingQaSheet.getRange("D29:E29").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`D30:E${29 + topConnectiveRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
+wordingQaSheet.getRange("G29:H29").values = [["Manifestation skeleton", "Uses"]];
 const topShapeRows = wordingQuality.manifestationShapes.slice(0, 20).map(([construction, count]) => [construction, count]);
-wordingQaSheet.getRange(`G22:H${21 + topShapeRows.length}`).values = topShapeRows;
-wordingQaSheet.getRange("G21:H21").format = { fill: teal, font: { bold: true, color: white } };
-wordingQaSheet.getRange(`G22:H${21 + topShapeRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
+wordingQaSheet.getRange(`G30:H${29 + topShapeRows.length}`).values = topShapeRows;
+wordingQaSheet.getRange("G29:H29").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`G30:H${29 + topShapeRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
 [["A", 38], ["B", 48], ["C", 12], ["D", 44], ["E", 16], ["F", 3], ["G", 64], ["H", 12]].forEach(([column, width]) => {
   wordingQaSheet.getRange(`${column}:${column}`).format.columnWidth = width;
 });
@@ -853,7 +879,7 @@ wordingQaSheet.freezePanes.freezeRows(3);
 
 await workbook.inspect({
   kind: "table",
-  range: "Overview!A1:F25",
+  range: "Overview!A1:F27",
   include: "values,formulas",
   tableMaxRows: 24,
   tableMaxCols: 8,
@@ -867,14 +893,14 @@ const errors = await workbook.inspect({
 if (/"matchCount":\s*[1-9]/u.test(errors.ndjson)) throw new Error(errors.ndjson);
 
 for (const [sheetName, range] of [
-  ["Overview", "A1:F25"],
+  ["Overview", "A1:F27"],
   ["Owner Voice Coverage", "A1:F24"],
-  ["Sign Units", "A1:M12"],
-  ["Aspect Mechanisms", "A1:H8"],
-  ["Modality Units", "A1:H12"],
-  ["Element Units", "A1:H12"],
-  ["Frame Gate", "A1:F16"],
-  ["Wording QA", "A1:H41"],
+  ["Sign Units", "A1:O12"],
+  ["Aspect Mechanisms", "A1:K8"],
+  ["Modality Units", "A1:K12"],
+  ["Element Units", "A1:K12"],
+  ["Frame Gate", "A1:F17"],
+  ["Wording QA", "A1:H53"],
 ]) {
   const preview = await workbook.render({ sheetName, range, scale: 1, format: "png" });
   await fs.writeFile(
