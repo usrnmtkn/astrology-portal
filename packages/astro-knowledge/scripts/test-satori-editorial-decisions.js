@@ -38,6 +38,8 @@ function main() {
   const { source } = loadDecisionSource();
   assert.doesNotThrow(() => validateDecisionSource(source));
   assert(source.decisions.some((entry) => entry.id === "CF-001" && entry.status === "approved"));
+  assert(source.decisions.some((entry) => entry.id === "ED-003" && entry.status === "superseded" && entry.superseded_by === "ED-028"), "ED-003 must remain superseded by ED-028");
+  assert(source.decisions.some((entry) => entry.id === "ED-028" && entry.status === "approved"), "ED-028 must remain the active surface-register rule");
   for (const id of ["CF-013", "CF-014", "CF-004", "CF-005", "CF-015", "CF-002"]) {
     assert(source.decisions.some((entry) => entry.id === id && entry.status === "approved"), `${id} must record the owner-resolved worksheet decision`);
   }
@@ -72,7 +74,7 @@ function main() {
     "compressed-slogan-ending",
     "stacked-conclusion",
     "dated-communication-language",
-    "current-sky-second-person",
+    "sky-aspect-calendar-second-person",
     "performance-literal-allowed",
     "performance-figurative-rejected",
     "tilt-figurative-fails",
@@ -127,7 +129,13 @@ function main() {
   mustFailDecision(article({ lived: "For about a year, three families compare letters. The same response returns." }), "ED-007");
   const physicalLetter = lintArticle(article({ lived: "For about a year, a handwritten letter arrives in the mail. The family reads the paper letter together." }));
   assert(!physicalLetter.findings.some((entry) => entry.decisionId === "ED-007"), "physical mail must remain allowed");
-  mustFailDecision(article({ hook: "You keep accepting the same answer. Jupiter in Libra changes how a shared choice gets made." }), "ED-003");
+  mustPassDecision(article({ hook: "You keep accepting the same answer. Jupiter in Libra changes how a shared choice gets made." }), "ED-028");
+  const skyAspectCalendarRule = result.compiled.artifacts.linter.rules.find((entry) => entry.id === "ED-028");
+  assert(skyAspectCalendarRule, "ED-028 must remain active in the generated linter policy");
+  assert(
+    new RegExp(skyAspectCalendarRule.mechanical.pattern, skyAspectCalendarRule.mechanical.flags || "i").test("You already know what changed."),
+    "ED-028 must reject second person on the Calendar Sky aspect surface"
+  );
   mustFailDecision(article({ tagline: "Jupiter in Libra helps us grow through fair, honest partnership." }), "ED-015");
   mustFailDecision(article({ turn: "The gift becomes the problem when diplomacy turns into avoidance." }), "ED-016");
   mustFailDecision(article({ turn: "Fairness requires each side to be heard before the choice is made." }), "ED-019");
