@@ -4,6 +4,11 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import { assertManifestationShapeCap } from "./sky-calendar-manifestation-shape.mjs";
+import {
+  assertOwnerReplacements,
+  manifestationPlainnessViolations,
+  sourceShadowAudit,
+} from "./sky-calendar-component-repass.mjs";
 
 const registryPath = "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/sky-calendar-meaning-components-v1.json";
 const fallbackPath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
@@ -65,7 +70,14 @@ assert.equal(registry.wordingQuality.maximumConnectiveNgramUse <= registry.wordi
 assert.deepEqual(registry.wordingQuality.detailsCopiedFromCombinedPosition, []);
 assert.deepEqual(registry.wordingQuality.mechanicalJoinRows, []);
 assert.deepEqual(registry.wordingQuality.abstractSubjectViolations, []);
+assert.deepEqual(registry.wordingQuality.manifestationPlainnessViolations, []);
 assert.deepEqual(registry.wordingQuality.ownerVoiceVerbatimMatches, []);
+assert.equal(registry.systemicRepass.reviewedUnits, 174);
+assert.equal(registry.systemicRepass.changedUnits, 138);
+assert.equal(registry.systemicRepass.reviewedUnchangedUnits, 36);
+assert.equal(registry.systemicRepass.sourceShadowAudit.oneSidedBeforePass, 39);
+assert.equal(registry.systemicRepass.sourceShadowAudit.oneSidedAfterPass, 0);
+assert.equal(registry.systemicRepass.ownerAuthoredReplacementKeys.length, 3);
 assert.equal(registry.ownerVoiceCoverage.approvedPlanetRows, 7);
 assert.equal(registry.ownerVoiceCoverage.approvedPlacementRows, 56);
 assert.equal(registry.ownerVoiceCoverage.targetExactPairRows, 46);
@@ -133,6 +145,9 @@ for (const row of registry.signUnits) {
     assert.doesNotMatch(value, /[.!?]$/u, `${row.key} reader manifestation must remain a component`);
   });
 }
+assertOwnerReplacements(registry.signUnits);
+assert.deepEqual(manifestationPlainnessViolations(registry.signUnits), []);
+assert.equal(sourceShadowAudit(registry.signUnits).oneSidedAfterPass, 0);
 
 for (const row of [...registry.aspectMechanisms, ...registry.modalityUnits, ...registry.elementUnits]) {
   for (const field of ["reader_effect", "conflict_behavior", "movement_bias"]) {
