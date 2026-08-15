@@ -101,7 +101,7 @@ function buildJudgePrompt(article, options = {}) {
     `  Treat moves as the highest-risk section until an exact owner-approved moves exemplar exists. In moves, must-have, flexible detail, decision time, each side, proposal, mutual, negotiate, stakeholder, align or alignment, and action item are facilitation-register failures and score 1.`,
     `  A tagline built as '[Planet] in [Sign] helps us grow through [abstract nouns]' fails. It must state this placement's specific promise as a complete, plain sentence understood on first read.`,
     `  Prior-residency history is limited to an engine-supplied date range. Celebrity references, pop-culture examples, political examples, and descriptions of what an era was like score 1. The deterministic regex catches only registered exact celebrity names; judge recognizable short forms, surnames, mononyms, stage names, and nicknames here.`,
-    `  Natal-facing sections, second person, entering-the-chat language, main-character-era language, and glow-up language do not belong on Current Sky.`,
+    `  Natal-chart interpretation, entering-the-chat language, main-character-era language, and glow-up language do not belong on Sky placement. Direct address to the reader is allowed; narrator commentary and fourth-wall breaks are not.`,
     ``,
     `DETERMINISTIC CHECK RESULTS`,
     JSON.stringify(deterministicResults || { status: "not supplied" }, null, 2),

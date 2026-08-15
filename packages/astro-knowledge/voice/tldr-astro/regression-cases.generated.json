@@ -4,7 +4,7 @@
   "generatedBy": "scripts/compile-satori-editorial-decisions.js",
   "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
   "decisionSourceId": "satori-editorial-decisions-v1",
-  "decisionSourceSha256": "d2a94f8656e00ca6372d46bbd55cf7592c7f3a0984433fff04e086786218e8a2",
+  "decisionSourceSha256": "854476c68bcc62401ef8d2af7020b3ebc94ee5b2a1b45b82f0b34fcbfb4da139",
   "cases": [
     {
       "id": "natural-english-abstract-personification",
@@ -59,9 +59,19 @@
     {
       "id": "sky-placement-no-generic-people",
       "surface": "sky-placement",
-      "kind": "linter",
+      "kind": "judge",
       "text": "People agree because saying no feels uncomfortable.",
       "expected": "fail",
+      "decisionId": "CF-001",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "sky-placement-qualified-people-allowed",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "text": "Missed details, overlooked advice, burning out the people who sprint after you.",
+      "expected": "pass",
       "decisionId": "CF-001",
       "decisionStatus": "approved",
       "active": true
@@ -660,8 +670,38 @@
       "decisionId": "OW-001",
       "decisionStatus": "approved",
       "active": true
+    },
+    {
+      "id": "ascii-punctuation-only",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "The plan doesn’t survive the first week.",
+      "expected": "fail",
+      "decisionId": "ED-029",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "no-spaced-hyphen-em-dash",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "The reward is another problem - the person who handles it becomes the default.",
+      "expected": "fail",
+      "decisionId": "ED-030",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "harness-missing-fact-context",
+      "surface": "sky-placement",
+      "kind": "linter",
+      "text": "This transit lasts about seven years, shaping a generation that disrupts with intense focus.",
+      "expected": "fail",
+      "decisionId": "ED-031",
+      "decisionStatus": "approved",
+      "active": true
     }
   ],
-  "activeCaseCount": 63,
+  "activeCaseCount": 67,
   "unresolvedCaseCount": 0
 }

@@ -902,7 +902,7 @@ function buildPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, t
       } : null,
       compiledPolicySource: compiledWriterPolicy.decisionSource,
       compiledPolicySha256: compiledWriterPolicy.decisionSourceSha256,
-      universalHardConstraints: compiledWriterPolicy.firstCallConstraints.filter((entry) => !["CF-006", "ED-015"].includes(entry.id)),
+      universalHardConstraints: compiledWriterPolicy.firstCallConstraints.filter((entry) => !["CF-001", "CF-006", "ED-015"].includes(entry.id)),
       person: surface.person,
       secondPersonAllowed: surface.secondPersonAllowed,
       generatedSlots: ["opening", "tension", "development", "close", "try_this"],
