@@ -106,6 +106,8 @@ function main() {
     "affinity-owner-passage-retrieval"
     ,"morning-reader-one-tired-read"
     ,"ascii-punctuation-only"
+    ,"no-nonbreaking-space"
+    ,"no-invisible-format-character"
     ,"no-spaced-hyphen-em-dash"
     ,"sky-placement-qualified-people-allowed"
     ,"harness-missing-fact-context"
@@ -143,6 +145,9 @@ function main() {
     new RegExp(skyAspectCalendarRule.mechanical.pattern, skyAspectCalendarRule.mechanical.flags || "i").test("You already know what changed."),
     "ED-028 must reject second person on the Calendar Sky aspect surface"
   );
+  mustFailDecision(article({ tagline: "The plan\u00a0changed after the reply." }), "ED-029");
+  mustFailDecision(article({ tagline: "The plan\u200cchanged after the reply." }), "ED-029");
+  mustPassDecision(article({ tagline: "The cafe sign says caf\u00e9 after the reply." }), "ED-029");
   mustFailDecision(article({ tagline: "Jupiter in Libra helps us grow through fair, honest partnership." }), "ED-015");
   mustFailDecision(article({ turn: "The gift becomes the problem when diplomacy turns into avoidance." }), "ED-016");
   mustFailDecision(article({ turn: "Fairness requires each side to be heard before the choice is made." }), "ED-019");
