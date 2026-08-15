@@ -2,7 +2,7 @@
 
 import fs from "node:fs";
 import { REPORT_JUDGE_THRESHOLD } from "../api/_lib/report-fulfillment-config.ts";
-import { callReportModel } from "../api/_lib/report-model-client.ts";
+import { callReportCalibrationModel } from "../api/_lib/report-model-client.ts";
 import { deterministicCalibrationScore, reportJudgeCalibrationFixtures } from "../api/_lib/report-judge.ts";
 import { judgeModelTarget } from "../api/_lib/report-model-client.ts";
 import { loadActiveReportJudgePrompt } from "../api/_lib/report-prompt-versions.ts";
@@ -18,7 +18,7 @@ async function score(id, text, expected) {
     return { id, expected, score: result.overall, findings: result.defects };
   }
   const rubric = loadActiveReportJudgePrompt();
-  const result = await callReportModel({
+  const result = await callReportCalibrationModel({
     ...judgeModelTarget(),
     prompt: `${rubric.text}\n\nCALIBRATION_TEXT\n${text}`,
     schemaName: "report_judge_calibration",

@@ -4,13 +4,18 @@ import { currentSkyFacts, type PlanetPosition, type SkyAspect } from "../_lib/cu
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { canonicalizeNodeAxisAspects } from "@tldr/astro-knowledge/sky-aspect-engine";
 import { canonicalSkyAspectProfile } from "../../apps/web/src/services/canonicalSkyAspectProfile.js";
+import { validateCopy } from "../../src/astro-writing/validateCopy.mjs";
+import {
+  prepareProductionPreCallGate,
+  assertProductionPreCallGate
+} from "../../src/astro-writing/productionPreCallGate.cjs";
 
 loadLocalWebEnv();
 
-const { generateCard, normalizeCardArgs, reviewPairSources } = skyAspectGenerator;
+const { generate, generateCard, generationConfig, normalizeCardArgs, reviewPairSources } = skyAspectGenerator;
 const supportedAspects = new Set<string>(canonicalSkyAspectProfile.aspects.map((aspect) => aspect.id));
 const maxJudgeRegenerations = 2;
-type JudgeGate = "auto-publish" | "human-review" | "regenerate";
+type JudgeGate = "human-review" | "regenerate";
 type GeneratedCardResult = Awaited<ReturnType<typeof generateCard>>;
 type RepairStats = {
   fired: number;
@@ -66,7 +71,7 @@ function serviceRoleKey() {
   return requireEnv("SUPABASE_SERVICE_ROLE_KEY");
 }
 
-function judgeAutoPublishEnabled() {
+function calibratedJudgeRoutingEnabled() {
   return process.env.SKY_ASPECT_JUDGE_CALIBRATED === "true";
 }
 
@@ -118,16 +123,10 @@ async function existingCard(contentKey: string) {
     judge_gate?: JudgeGate | null;
   }>;
   const row = rows[0];
-  const lint = row?.source_snapshot?.skyAspectVoiceLint as { score?: number; fails?: number } | undefined;
-  const clean = lint?.score === 3 && lint.fails === 0;
 
   if (!row || row.status === "ERROR") return null;
 
   if (row.judge_gate === "human-review") {
-    return row;
-  }
-
-  if (row.judge_gate === "auto-publish" && row.judge_score === 3 && clean) {
     return row;
   }
 
@@ -212,6 +211,59 @@ function firstParagraph(text: string) {
   return text.split(/\n{2,}/).map((paragraph) => paragraph.trim()).find(Boolean) ?? "";
 }
 
+function skyAspectKernel(args: {
+  a: string;
+  b: string;
+  aspect: string;
+  signA: string;
+  signB: string;
+}) {
+  const input = {
+    contentKey: `sky.aspect.${args.a}.${args.aspect}.${args.b}.${args.signA}.${args.signB}`,
+    surface: "sky" as const,
+    mode: "feed" as const,
+    eventType: "collective-aspect-card",
+    facts: {
+      aspect: { from: args.a, type: args.aspect, to: args.b },
+      signA: args.signA,
+      signB: args.signB
+    },
+    knowledgeIds: [`sky-${args.a}-${args.aspect}-${args.b}`]
+  };
+  const gate = prepareProductionPreCallGate(input);
+  const config = generationConfig();
+  const generationMetadata = {
+    provider: config.provider,
+    model: config.model,
+    temperature: config.temperature,
+    reasoningEffort: config.reasoningEffort
+  };
+  const governed = (prompt: string) => gate.governedPromptEnabled
+    ? `${prompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${gate.governedPrompt}`
+    : prompt;
+  const generateFn = (prompt: string, options: Record<string, unknown> = {}) => generate(governed(prompt), {
+    ...options,
+    beforeProviderCall: () => {
+      assertProductionPreCallGate(gate, { role: "WRITER", input, draftValidation: null });
+    }
+  });
+  const judgeBeforeProviderCall = (_attempt: unknown, context: { content?: string } = {}) => {
+    const draftValidation = validateCopy(String(context.content ?? ""), {
+      validationProfile: gate.validation.validationProfile,
+      family: "sky-aspect",
+      register: gate.validation.register
+    });
+    assertProductionPreCallGate(gate, { role: "REVIEWER", input, draftValidation });
+  };
+  return {
+    gate,
+    generateFn,
+    generationMetadata,
+    judgeBeforeProviderCall,
+    judgeGovernedPrompt: gate.governedPromptEnabled ? gate.governedPrompt : ""
+  };
+}
+
 async function generateWithJudgeRouting(args: {
   a: string;
   b: string;
@@ -219,6 +271,7 @@ async function generateWithJudgeRouting(args: {
   signA: string;
   signB: string;
 }, options: { allowReviewSources?: boolean } = {}): Promise<RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false; repair: RepairStats; lintRetryAvoidTerms: string[][] }> {
+  const kernel = skyAspectKernel(args);
   let result: GeneratedCardResult | null = null;
   let feedback = "";
   let totalAttempts = 0;
@@ -237,6 +290,10 @@ async function generateWithJudgeRouting(args: {
     result = await generateCard(args, {
       withJudge: true,
       allowReviewSources: options.allowReviewSources === true,
+      generateFn: kernel.generateFn,
+      generationMetadata: kernel.generationMetadata,
+      judgeBeforeProviderCall: kernel.judgeBeforeProviderCall,
+      judgeGovernedPrompt: kernel.judgeGovernedPrompt,
       ...(feedback ? { judgeFeedback: feedback } : {})
     });
     totalAttempts += result.attempts ?? 0;
@@ -255,10 +312,10 @@ async function generateWithJudgeRouting(args: {
       return { result, gate: null, judgePasses: pass, totalAttempts, cappedRegeneration: false, repair, lintRetryAvoidTerms };
     }
 
-    if (result.gate === "auto-publish" || result.gate === "human-review") {
+    if (result.gate !== "regenerate") {
       return {
         result,
-        gate: result.gate,
+        gate: "human-review",
         judgePasses: pass + 1,
         totalAttempts,
         cappedRegeneration: false,
@@ -307,10 +364,10 @@ async function saveRoutedCard({
   const contentKey = contentKeyFor(result.facts);
   const key = serviceRoleKey();
   const clean = result.status === "clean" && result.lint?.score === 3 && result.lint.fails === 0;
-  const gate = clean ? (routed.gate ?? "human-review") : "human-review";
+  const gate: Exclude<JudgeGate, "regenerate"> = "human-review";
   const judgeEligibleForApproval = clean
     && result.judge?.score === 3
-    && judgeAutoPublishEnabled();
+    && calibratedJudgeRoutingEnabled();
   const reviewState = judgeEligibleForApproval
     ? "sky-owner-approval-required"
     : gate === "human-review"
@@ -559,9 +616,7 @@ async function generateCurrentMatrix() {
       contentKey,
       status: saved.judgeEligibleForApproval
         ? "draft-owner-approval-required"
-        : saved.gate === "auto-publish"
-          ? "draft-calibration-held"
-          : "needs-review",
+        : "needs-review",
       attempts: routed.totalAttempts,
       repairFired: result.repair?.fired ?? false,
       repairResult: result.repair?.result,

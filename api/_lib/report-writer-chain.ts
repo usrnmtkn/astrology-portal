@@ -6,7 +6,8 @@ import {
   sentenceAddressedReportUnit
 } from "./report-evaluation-packet.js";
 import { verifyReportFactLock } from "./report-fact-lock.js";
-import { callReportModel, type ReportModelCall, type ReportModelUsage, writerModelTarget } from "./report-model-client.js";
+import { callProductionReportModel, type ReportModelCall, type ReportModelUsage, writerModelTarget } from "./report-model-client.js";
+import { prepareReportProductionKernel, reportProductionValidation } from "./report-production-gate.js";
 import { loadActiveReportCritiquePrompt, loadLegacyReportCritiquePrompt, type ReportPromptMode } from "./report-prompt-versions.js";
 import { scopeReportPayloadToUnit } from "./report-unit-scope.js";
 
@@ -642,7 +643,7 @@ export async function reviseReportDraftForNamedDefects(input: {
   stage?: "revise" | "cold_revise";
   promptMode?: ReportPromptMode;
 }) {
-  const callModel = input.callModel ?? callReportModel;
+  const callModel = input.callModel ?? callProductionReportModel;
   const target = writerModelTarget();
   const payload = scopeReportPayloadToUnit(input.payload);
   assertReportEvaluationPacketReady(payload);
@@ -663,7 +664,15 @@ export async function reviseReportDraftForNamedDefects(input: {
         : ""
     ].filter(Boolean).join("\n\n"),
     schemaName: "report_unit_revision_spans",
-    schema: REPORT_REVISION_PATCH_SCHEMA
+    schema: REPORT_REVISION_PATCH_SCHEMA,
+    productionKernel: prepareReportProductionKernel(
+      payload,
+      "REVISER",
+      reportProductionValidation(defects.map((defect) => ({
+        category: defect.category,
+        detail: defect.instruction
+      })))
+    )
   });
   const calls: ReportWriterChainResult["calls"] = [{
     stage: input.stage ?? "revise", model: reviseResult.model, provider: reviseResult.provider, usage: reviseResult.usage
@@ -680,7 +689,7 @@ export async function runReportWriterChain(input: {
   persistCheckpoint?: (checkpoint: ReportWriterChainCheckpoint) => Promise<void>;
   promptMode?: ReportPromptMode;
 }): Promise<ReportWriterChainResult> {
-  const callModel = input.callModel ?? callReportModel;
+  const callModel = input.callModel ?? callProductionReportModel;
   const target = writerModelTarget();
   const payload = scopeReportPayloadToUnit(input.payload);
   // Fail closed before draft generation: a packet missing owner comparisons
@@ -718,7 +727,8 @@ export async function runReportWriterChain(input: {
         "Return one report unit using the structured output contract."
       ].filter(Boolean).join("\n\n"),
       schemaName: "report_unit_draft",
-      schema: REPORT_DRAFT_SCHEMA
+      schema: REPORT_DRAFT_SCHEMA,
+      productionKernel: prepareReportProductionKernel(payload, "WRITER")
     });
     calls.push({ stage: "draft", model: draftResult.model, provider: draftResult.provider, usage: draftResult.usage });
     draft = draftResult.value;
@@ -758,6 +768,11 @@ export async function runReportWriterChain(input: {
       ].filter(Boolean).join("\n\n"),
       schemaName: "report_unit_critique",
       schema: reportSentenceAddressedCritiqueSchema(draft, movementApplicable),
+      productionKernel: prepareReportProductionKernel(
+        payload,
+        "REVIEWER",
+        reportProductionValidation(deterministicIssues)
+      ),
       validateResponse: (value) => {
         normalizeReportSentenceAddressedCritique(draft, value, movementApplicable);
       }
@@ -795,6 +810,12 @@ export async function runReportWriterChain(input: {
   // prose that a reader cannot understand cold.
   const coldMovementApplicable = reportDraftMovementApplicable(revised);
   const coldSentenceAddresses = reportUnitSentenceAddresses(revised);
+  const coldValidationIssues = [
+    ...validateReportDraft(revised, payload, { enforceSeasonStructure: promptMode === "active" }),
+    ...verifyReportFactLock(revised, payload.frozenFacts, {
+      trustedTiming: payload.structuralRequirements?.dateRange
+    }).issues
+  ];
   let coldCritique = resumable?.coldCritique;
   if (!coldCritique) {
     const coldResult = await callModel<ReportSentenceAddressedCritique>({
@@ -811,6 +832,11 @@ export async function runReportWriterChain(input: {
       ].join("\n\n"),
       schemaName: "report_unit_cold_read",
       schema: reportSentenceAddressedCritiqueSchema(revised, coldMovementApplicable),
+      productionKernel: prepareReportProductionKernel(
+        payload,
+        "COLD_REVIEWER",
+        reportProductionValidation(coldValidationIssues)
+      ),
       validateResponse: (value) => {
         normalizeReportSentenceAddressedCritique(revised, value, coldMovementApplicable);
       }

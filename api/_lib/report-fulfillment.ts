@@ -27,11 +27,12 @@ import {
   type ReportAssemblyIssue
 } from "./report-assembly.js";
 import {
-  callReportModel,
+  callProductionReportModel,
   ReportModelResponseRejectedError,
   type ReportModelCall,
   withReportModelResponseRetries
 } from "./report-model-client.js";
+import { assertReportProductionKernel } from "./report-production-gate.js";
 import { estimateReportModelCost } from "./report-model-pricing.js";
 import {
   reportValidationIssuesToNamedDefects,
@@ -358,7 +359,7 @@ export async function processReportFulfillmentJob(input: {
   let tokenCountTotal = report.token_count_total ?? 0;
   let authorizationTokenCount = input.job.authorization_token_count ?? 0;
   let estimatedCostTotal = report.token_spend_usd_estimate ?? 0;
-  const providerCall = withReportModelResponseRetries(input.callModel ?? callReportModel);
+  const providerCall = withReportModelResponseRetries(input.callModel ?? callProductionReportModel);
   const callClock = input.continuationPolicy?.now ?? Date.now;
   const callDurationEstimates = reportCallDurationEstimates(
     await input.store.callTimingHistory(input.job.id),
@@ -380,6 +381,9 @@ export async function processReportFulfillmentJob(input: {
   const authorizedCall: ReportModelCall = (modelInput) => providerCall({
     ...modelInput,
     beforeProviderCall: async (attempt) => {
+      // The governed evidence/validation gate must run before deadline logic,
+      // pricing, or the authorization ledger can consume a call.
+      assertReportProductionKernel(modelInput.productionKernel);
       if (input.continuationPolicy) {
         const runtimeDeadlineAtMs = input.continuationPolicy.runtimeDeadlineAtMs ?? input.continuationPolicy.deadlineAtMs;
         const remainingMs = Math.max(0, runtimeDeadlineAtMs - callClock());
