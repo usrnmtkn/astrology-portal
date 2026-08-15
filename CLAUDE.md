@@ -108,6 +108,13 @@ the practical consequence, the persistence or movement behavior, and the
 movable or actionable part. It may not go directly from component clauses
 to sentences.
 
+Meaning realizations are stored in three named pools:
+`supportive_realizations`, `neutral_realizations`, and
+`shadow_realizations`. Type may never be encoded by list position. Pools may
+have different counts, and the composer selects among them from the aspect's
+argument shape. A single ordered useful/neutral/shadow list is a positional
+template and fails governance.
+
 The aspect selects the argument shape:
 
 - Opposition: competing positions, disagreement becomes explicit, neither

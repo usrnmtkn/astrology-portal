@@ -93,6 +93,10 @@ assert.equal(cards.every((card) => card.generationAllowed === false), true);
 assert.equal(cards.every((card) => card.forecastSentences.length >= 2 && card.forecastSentences.length <= 5), true);
 assert.equal(cards.every((card) => !Object.hasOwn(card.detailsBeats, "whatCanMove")), true);
 assert.equal(cards.every((card) => Object.keys(card.causalSituation).length === 5), true);
+assert.equal(cards.every((card) => Object.keys(card.inputs.realizationSelections).length >= 3), true);
+assert.equal(cards.every((card) => Object.values(card.inputs.realizationSelections).every((selection) => (
+  ["supportive", "neutral", "shadow"].includes(selection.type) && typeof selection.value === "string"
+))), true);
 
 const repeatedShapeCards = cards.slice(0, 3).map((card, index) => ({
   ...structuredClone(card),
