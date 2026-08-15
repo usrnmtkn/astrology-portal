@@ -156,7 +156,9 @@ assert.equal(covered("outside/unbundled-source.json"), false, "Guard must reject
 // 2. A brace-mangled pattern must be rejected, not silently treated as literal.
 //    This is the exact regression the previous guard shipped green: every
 //    fragment is still present as a substring of the string below.
-const braceMangled = includeFiles.slice(0, -1);
+const finalClosingBrace = includeFiles.lastIndexOf("}");
+assert.notEqual(finalClosingBrace, -1, "Expected includeFiles to contain a brace group for the malformed-brace fixture.");
+const braceMangled = `${includeFiles.slice(0, finalClosingBrace)}${includeFiles.slice(finalClosingBrace + 1)}`;
 assert.throws(
   () => compileIncludeFiles(braceMangled),
   /Unbalanced/u,
@@ -168,7 +170,7 @@ const nestedDataSource = runtimeSources.find(
   (relativePath) => /^packages\/astro-knowledge\/data\/[^/]+\/.+\.json$/u.test(relativePath)
 );
 assert.ok(nestedDataSource, "Expected at least one nested packages/astro-knowledge/data source to test narrowing.");
-const narrowed = compileIncludeFiles(includeFiles.replaceAll("data/**/*.json", "data/*.json"));
+const narrowed = compileIncludeFiles("packages/astro-knowledge/data/*.json");
 assert.equal(
   narrowed(nestedDataSource),
   false,
