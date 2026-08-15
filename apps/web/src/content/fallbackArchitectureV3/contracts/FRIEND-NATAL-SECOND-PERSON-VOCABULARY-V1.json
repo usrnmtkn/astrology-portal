@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-friend-natal-second-person-vocabulary-v1",
-  "version": "2026-08-14",
+  "version": "2026-08-15",
   "contentKeys": [
     "fallback-vocab/house-jurisdiction/1",
     "fallback-vocab/house-jurisdiction/3",
@@ -28,13 +28,13 @@
     "fallback-vocab/placement-gerund/chiron/capricorn/0",
     "fallback-vocab/placement-gerund/chiron/aquarius/0",
     "fallback-vocab/placement-gerund/chiron/pisces/0",
-    "fallback-vocab/dodont-do/mercury/libra",
     "fallback-vocab/dodont-do/mercury/aquarius",
     "fallback-vocab/dodont-reward/moon",
     "fallback-vocab/dodont-moon-dont/taurus",
     "fallback-vocab/dodont-moon-do/gemini",
     "fallback-vocab/dodont-moon-do/cancer",
     "fallback-vocab/dodont-moon-dont/libra",
+    "fallback-vocab/empty-house-ruler-jurisdiction/2",
     "fallback-vocab/sky-planet-function/chiron",
     "fallback-vocab/sky-planet-function/jupiter",
     "fallback-vocab/sky-planet-function/mercury",

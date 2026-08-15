@@ -541,6 +541,7 @@ export function ManualChartsPanel({
     try {
       const targetDate = currentSky.generatedAt.slice(0, 10);
       const rendered = transitSynastryFallbackRendererV3.renderDoDont({
+        voice: "they",
         planet: natalPoint,
         sign: natalSign,
         house,

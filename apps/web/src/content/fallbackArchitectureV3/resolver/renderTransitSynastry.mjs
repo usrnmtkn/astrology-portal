@@ -4,7 +4,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
-import { SourceGapError } from "./renderFallback.mjs";
+import { SourceGapError, vocabularyBodyForVoice } from "./renderFallback.mjs";
 import {
   fillDailyGlancePersonSlots,
   lintDailyGlanceFriendVoice
@@ -2329,10 +2329,10 @@ export function renderDailyGlance({
 // seeds. The transit picks which natal planet needs tending; the natal chart writes the
 // list. Do = sign seed + house seed + transiting counterweight. Don't = placement shadow
 // + transit friction + the aggravated natal aspect partner's shadow (when supplied). ----
-export function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign, moonSign, moonHouse, dayKey }) {
-  const seed = (k) => vocab.get(`fallback-vocab/${k}`)?.body ?? null;
+export function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign, moonSign, moonHouse, dayKey, voice = "you" }) {
+  const seed = (k) => vocabularyBodyForVoice(vocab.get(`fallback-vocab/${k}`), voice);
   const APPROVED = new Set(["approved", "approved_reuse", "reviewed"]);
-  const moonSeed = (k) => { const r = vocab.get(`fallback-vocab/${k}`); return r && APPROVED.has(r.review_status) ? r.body : null; };
+  const moonSeed = (k) => { const r = vocab.get(`fallback-vocab/${k}`); return r && APPROVED.has(r.review_status) ? vocabularyBodyForVoice(r, voice) : null; };
   const day = Number.isFinite(dayKey) ? Math.abs(Math.trunc(dayKey)) : 0;
   const dos = [
     seed(`dodont-do/${planet}/${sign}`),
