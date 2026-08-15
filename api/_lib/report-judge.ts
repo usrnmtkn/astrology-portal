@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import type { ReportDraft, ReportGenerationPayload } from "./report-generation.ts";
 import { reportDraftMovementApplicable, reportEvaluationPacket } from "./report-evaluation-packet.js";
-import { callReportModel, judgeModelTarget, type ReportModelCall, type ReportModelUsage } from "./report-model-client.js";
+import { callProductionReportModel, judgeModelTarget, type ReportModelCall, type ReportModelUsage } from "./report-model-client.js";
+import { prepareReportProductionKernel, reportProductionValidation } from "./report-production-gate.js";
 import { loadActiveReportJudgePrompt, loadLegacyReportJudgePrompt, type ReportPromptMode } from "./report-prompt-versions.js";
 
 export const REPORT_JUDGE_CATEGORIES = [
@@ -78,7 +79,14 @@ export async function judgeReportUnit(input: {
   const prompt = promptMode === "active" ? loadActiveReportJudgePrompt() : loadLegacyReportJudgePrompt();
   const target = judgeModelTarget();
   const packet = reportEvaluationPacket(input.payload, input.draft);
-  const response = await (input.callModel ?? callReportModel)<ReportJudgeResult>({
+  const validatorIssues = Array.isArray(input.validatorResults)
+    ? input.validatorResults.map((issue) => issue && typeof issue === "object"
+      ? issue as { code?: string; category?: string; message?: string; detail?: string }
+      : { category: "report_validation", detail: String(issue) })
+    : input.validatorResults == null
+      ? []
+      : [{ category: "report_validation", detail: String(input.validatorResults) }];
+  const response = await (input.callModel ?? callProductionReportModel)<ReportJudgeResult>({
     ...target,
     prompt: [
       prompt.text,
@@ -100,7 +108,12 @@ export async function judgeReportUnit(input: {
       `CONFIGURED_THRESHOLD\n${input.threshold}`
     ].filter(Boolean).join("\n\n"),
     schemaName: "report_fulfillment_judge",
-    schema: REPORT_JUDGE_SCHEMA
+    schema: REPORT_JUDGE_SCHEMA,
+    productionKernel: prepareReportProductionKernel(
+      input.payload,
+      "REVIEWER",
+      reportProductionValidation(validatorIssues)
+    )
   });
   const movementApplicable = reportDraftMovementApplicable(input.draft);
   const scores: ReportJudgeScores = {

@@ -1,5 +1,6 @@
 import { isReportSynthesisUnit, manifestationEnumerationSize, type ReportDraft, type ReportGenerationPayload, type ReportValidationIssue } from "./report-generation.js";
-import { callReportModel, writerModelTarget, type ReportModelCall, type ReportModelUsage } from "./report-model-client.js";
+import { callProductionReportModel, writerModelTarget, type ReportModelCall, type ReportModelUsage } from "./report-model-client.js";
+import { prepareReportProductionKernel, reportProductionValidation } from "./report-production-gate.js";
 import { loadVersionedReportPrompt, REPORT_REDUNDANCY_PROMPT_PATH } from "./report-prompt-versions.js";
 
 export type AssembledReportUnit = {
@@ -774,7 +775,7 @@ export async function runReportRedundancyPass(input: {
 }): Promise<{ findings: ReportRedundancyFinding[]; usage: ReportModelUsage; promptVersion: string }> {
   const prompt = loadVersionedReportPrompt(REPORT_REDUNDANCY_PROMPT_PATH);
   const target = writerModelTarget();
-  const response = await (input.callModel ?? callReportModel)<{ result: "no_findings" | "findings"; findings: ReportRedundancyFinding[] }>({
+  const response = await (input.callModel ?? callProductionReportModel)<{ result: "no_findings" | "findings"; findings: ReportRedundancyFinding[] }>({
     ...target,
     prompt: [
       prompt.text,
@@ -786,7 +787,8 @@ export async function runReportRedundancyPass(input: {
       "Return findings only. Never write replacement prose."
     ].join("\n\n"),
     schemaName: "report_redundancy_pass",
-    schema: REPORT_REDUNDANCY_SCHEMA
+    schema: REPORT_REDUNDANCY_SCHEMA,
+    productionKernel: prepareReportProductionKernel(input.payload, "REVIEWER", reportProductionValidation())
   });
   const findings = discardStaleRedundancyFindings(
     input.units,

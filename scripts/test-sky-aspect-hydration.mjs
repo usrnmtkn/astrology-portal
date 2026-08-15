@@ -122,6 +122,7 @@ function approvedContent({ first, aspect, second, firstSign, secondSign }) {
     contentKey,
     surface: "sky",
     mode: "feed",
+    status: "LIVE",
     eventType: "current-sky-aspect",
     targetDate: null,
     headline: `${first} ${aspect} ${second}`,
@@ -137,7 +138,7 @@ function approvedContent({ first, aspect, second, firstSign, secondSign }) {
       skyAspectVoiceLint: { score: 3, fails: 0 }
     },
     judgeScore: 3,
-    judgeGate: "auto-publish",
+    judgeGate: "human-review",
     model: "test",
     updatedAt: "2026-07-31T12:00:00.000Z"
   }];
@@ -147,6 +148,27 @@ const generatedContent = new Map([
   approvedContent({ first: "Venus", aspect: "square", second: "Mars", firstSign: "Virgo", secondSign: "Gemini" }),
   approvedContent({ first: "Sun", aspect: "opposition", second: "Pluto", firstSign: "Leo", secondSign: "Aquarius" })
 ]);
+
+const [autoPublishKey, autoPublishRow] = approvedContent({
+  first: "Moon",
+  aspect: "trine",
+  second: "Mercury",
+  firstSign: "Pisces",
+  secondSign: "Cancer"
+});
+const legacyAutoPublishContent = new Map([[autoPublishKey, {
+  ...autoPublishRow,
+  judgeGate: "auto-publish"
+}]]);
+assert.equal(resolveSkyAspectGeneratedContent({
+  generatedContent: legacyAutoPublishContent,
+  first: "Moon",
+  second: "Mercury",
+  aspect: "trine",
+  firstSign: "Pisces",
+  secondSign: "Cancer",
+  targetDate
+}), null, "A legacy auto-publish score must not substitute for explicit human approval.");
 
 const hydrated = aspects.filter(([first, aspect, second]) => resolveSkyAspectGeneratedContent({
   generatedContent,

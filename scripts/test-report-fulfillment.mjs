@@ -30,6 +30,7 @@ import {
   normalizeReportColdReadCritique, reviseReportDraftForNamedDefects, runReportWriterChain, spliceReportRevision
 } from "../api/_lib/report-writer-chain.ts";
 import { validateAssembledReport, validateReportKeyDateFormat } from "../api/_lib/report-assembly.ts";
+import { prepareReportProductionKernel, reportProductionValidation } from "../api/_lib/report-production-gate.ts";
 
 process.env.REPORT_AUTO_PUBLISH = "false";
 const frozen = JSON.parse(fs.readFileSync(new URL("./fixtures/marie-report-frozen-facts.json", import.meta.url), "utf8"));
@@ -1116,7 +1117,18 @@ for (const [index, sku] of activeSkus.entries()) {
   store.entitlements.set(entitlementId, { id: entitlementId, user_id: "user-1", status: "active", source: isCompEndToEnd ? "comp" : "stripe", product_key: sku.key, period_start: frozen.startsAt.slice(0, 10), period_end: factsForHorizon(sku.reportHorizon).endsAt.slice(0, 10) });
   const providerMock = modelCallWithCrash();
   const meteredJudgeCall = isCompEndToEnd ? async (judgeInput) => {
-    await judgeInput.callModel({ provider: "openai", model: "gpt-5.6-terra", prompt: "FIXTURE_ONLY", schemaName: "fixture_judge_meter", schema: {} });
+    await judgeInput.callModel({
+      provider: "openai",
+      model: "gpt-5.6-terra",
+      prompt: "FIXTURE_ONLY",
+      schemaName: "fixture_judge_meter",
+      schema: {},
+      productionKernel: prepareReportProductionKernel(
+        judgeInput.payload,
+        "REVIEWER",
+        reportProductionValidation()
+      )
+    });
     return judgeCall();
   } : judgeCall;
   const result = await processReportFulfillmentJob({

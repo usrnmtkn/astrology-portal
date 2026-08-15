@@ -1,9 +1,29 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import skyAspectGenerator from "../../packages/astro-knowledge/scripts/generate-sky-aspect-cards.js";
+import productionPreCallGate from "../../src/astro-writing/productionPreCallGate.cjs";
+import skyPlacementCachePolicy from "../../src/astro-writing/skyPlacementCachePolicy.cjs";
+import { validateCopy } from "../../src/astro-writing/validateCopy.mjs";
 import { currentSkyFacts, type PlanetPosition, type SkySnapshot } from "../_lib/current-sky.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 
 loadLocalWebEnv();
+
+const { prepareProductionPreCallGate, assertProductionPreCallGate } = productionPreCallGate as unknown as {
+  prepareProductionPreCallGate: (input: Record<string, unknown>) => {
+    governedPromptEnabled: boolean;
+    governedPrompt: string;
+    validation: { validationProfile: string; register: string };
+  };
+  assertProductionPreCallGate: (
+    gate: unknown,
+    options: { role: string; input: Record<string, unknown>; draftValidation: unknown }
+  ) => unknown;
+};
+const { isLegacyLiveBase, isReusableLiveTopper, requiresBaseRegeneration } = skyPlacementCachePolicy as unknown as {
+  isLegacyLiveBase: (existing: ExistingPlacementRow | null) => boolean;
+  isReusableLiveTopper: (existing: ExistingTopperRow | null, clean: boolean) => boolean;
+  requiresBaseRegeneration: (existing: ExistingPlacementRow | null, staleBefore: number) => boolean;
+};
 
 const planets = [
   "sun",
@@ -48,20 +68,6 @@ const traditionalPlacementBodies = new Set([
   "pluto"
 ]);
 const pointPlacementBodies = new Set(["chiron", "north-node", "lilith"]);
-const oppositeSign: Record<string, string> = {
-  aries: "libra",
-  taurus: "scorpio",
-  gemini: "sagittarius",
-  cancer: "capricorn",
-  leo: "aquarius",
-  virgo: "pisces",
-  libra: "aries",
-  scorpio: "taurus",
-  sagittarius: "gemini",
-  capricorn: "cancer",
-  aquarius: "leo",
-  pisces: "virgo"
-};
 const maxJudgeRegenerations = 2;
 const topperMaxOrb = 1;
 const supportedTopperAspects = new Set(["conjunction", "sextile", "square", "trine", "opposition"]);
@@ -81,7 +87,7 @@ type PlacementLint = {
 type PlacementJudge = {
   score?: number;
   verdict?: string;
-  gate?: "auto-publish" | "human-review" | "regenerate";
+  gate?: "human-review" | "regenerate";
   weakest?: string;
   why?: string;
 };
@@ -95,6 +101,7 @@ type PlacementResult = {
   provider?: string;
   model?: string;
   temperature?: number | null;
+  reasoningEffort?: string | null;
   lint?: PlacementLint | null;
   judge?: PlacementJudge | null;
   gate?: PlacementJudge["gate"];
@@ -124,6 +131,10 @@ type PlacementGenerator = (
   options: {
     withJudge: true;
     judgeFeedback?: string;
+    generateFn?: (prompt: string, options?: Record<string, unknown>) => Promise<string>;
+    generationMetadata?: Record<string, unknown>;
+    judgeBeforeProviderCall?: (attempt: unknown, context?: { content?: string }) => void;
+    judgeGovernedPrompt?: string;
   }
 ) => Promise<PlacementResult>;
 
@@ -140,6 +151,10 @@ type PlacementTopperGenerator = (
   options: {
     withJudge: true;
     judgeFeedback?: string;
+    generateFn?: (prompt: string, options?: Record<string, unknown>) => Promise<string>;
+    generationMetadata?: Record<string, unknown>;
+    judgeBeforeProviderCall?: (attempt: unknown, context?: { content?: string }) => void;
+    judgeGovernedPrompt?: string;
   }
 ) => Promise<PlacementResult>;
 
@@ -147,6 +162,7 @@ type ExistingPlacementRow = {
   id: string;
   content_key: string;
   status: string;
+  judge_gate: string | null;
   updated_at: string;
 };
 
@@ -179,6 +195,21 @@ const generatePlacementTopper = (
     generatePlacementTopper?: PlacementTopperGenerator;
   }
 ).generatePlacementTopper;
+const generate = (
+  skyAspectGenerator as unknown as {
+    generate: (prompt: string, options?: Record<string, unknown>) => Promise<string>;
+  }
+).generate;
+const generationConfig = (
+  skyAspectGenerator as unknown as {
+    generationConfig: () => {
+      provider: string;
+      model: string;
+      temperature: number | null;
+      reasoningEffort?: string | null;
+    };
+  }
+).generationConfig;
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
@@ -214,19 +245,8 @@ function serviceRoleKey() {
   return requireEnv("SUPABASE_SERVICE_ROLE_KEY");
 }
 
-function judgeAutoPublishEnabled() {
-  return process.env.SKY_ASPECT_JUDGE_CALIBRATED === "true"
-    && process.env.SKY_PLACEMENT_JUDGE_CALIBRATED === "true";
-}
-
 function topperEnabled() {
   return process.env.SKY_PLACEMENT_TOPPERS_ENABLED === "true";
-}
-
-function topperAutoPublishEnabled() {
-  return topperEnabled()
-    && judgeAutoPublishEnabled()
-    && process.env.SKY_PLACEMENT_TOPPER_JUDGE_CALIBRATED === "true";
 }
 
 function boundedInteger(value: string | undefined, fallback: number, minimum: number, maximum: number) {
@@ -253,8 +273,8 @@ function placementSource(planet: string, sign: string) {
     return `data/points/placements/sign/${planet}-${sign}.json`;
   }
 
-  if (planet === "south-node" && oppositeSign[sign]) {
-    return `data/points/placements/sign/north-node-${oppositeSign[sign]}.json`;
+  if (planet === "south-node") {
+    return `data/placements/sign/south-node-${sign}.json`;
   }
 
   throw new Error(`No canonical sky-placement source path for ${planet} in ${sign}.`);
@@ -262,6 +282,80 @@ function placementSource(planet: string, sign: string) {
 
 function contentKeyFor({ planet, sign }: PlacementArgs) {
   return `sky.placement.base.${planet.replace(/-/g, "_")}.${sign.replace(/-/g, "_")}`;
+}
+
+function placementKnowledgeId({ planet, sign }: PlacementArgs) {
+  return `sky-placement-${planet}-${sign}`;
+}
+
+function placementKernel(
+  args: PlacementArgs,
+  options: {
+    eventType?: "collective-placement-card" | "collective-placement-topper";
+    aspect?: string;
+    other?: string;
+    otherSign?: string;
+    orb?: number;
+  } = {}
+) {
+  const eventType = options.eventType ?? "collective-placement-card";
+  const knowledgeIds = [
+    placementKnowledgeId(args),
+    ...(options.aspect && options.other ? [`sky-${args.planet}-${options.aspect}-${options.other}`] : [])
+  ];
+  const input = {
+    contentKey: eventType === "collective-placement-card"
+      ? contentKeyFor(args)
+      : topperContentKeyFor({
+          planet: args.planet,
+          sign: args.sign,
+          aspect: options.aspect ?? "",
+          other: options.other ?? ""
+        }),
+    surface: "sky",
+    mode: "feed",
+    eventType,
+    facts: {
+      placement: { planet: args.planet, sign: args.sign },
+      ...(options.aspect && options.other
+        ? { aspect: { from: args.planet, type: options.aspect, to: options.other }, otherSign: options.otherSign, orb: options.orb }
+        : {})
+    },
+    knowledgeIds
+  };
+  const gate = prepareProductionPreCallGate(input);
+  const config = generationConfig();
+  const generationMetadata = {
+    provider: config.provider,
+    model: config.model,
+    temperature: config.temperature,
+    reasoningEffort: config.reasoningEffort ?? null
+  };
+  const governed = (prompt: string) => gate.governedPromptEnabled
+    ? `${prompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${gate.governedPrompt}`
+    : prompt;
+  const generateFn = (prompt: string, generateOptions: Record<string, unknown> = {}) => generate(governed(prompt), {
+    ...generateOptions,
+    beforeProviderCall: () => {
+      assertProductionPreCallGate(gate, { role: "WRITER", input, draftValidation: null });
+    }
+  });
+  const judgeBeforeProviderCall = (_attempt: unknown, context: { content?: string } = {}) => {
+    const draftValidation = validateCopy(String(context.content ?? ""), {
+      validationProfile: gate.validation.validationProfile,
+      family: "sky-placement",
+      register: gate.validation.register
+    });
+    assertProductionPreCallGate(gate, { role: "REVIEWER", input, draftValidation });
+  };
+  return {
+    input,
+    gate,
+    generateFn,
+    generationMetadata,
+    judgeBeforeProviderCall,
+    judgeGovernedPrompt: gate.governedPromptEnabled ? gate.governedPrompt : ""
+  };
 }
 
 function topperContentKeyFor({
@@ -315,7 +409,7 @@ async function existingPlacementRows() {
     content_key: "like.sky.placement.base.*",
     target_date: "is.null",
     mode: "eq.feed",
-    select: "id,content_key,status,updated_at",
+    select: "id,content_key,status,judge_gate,updated_at",
     order: "updated_at.asc"
   });
   const key = serviceRoleKey();
@@ -341,6 +435,7 @@ async function livePlacementBaseRows() {
     status: "eq.LIVE",
     lane: "eq.serving",
     review_state: "is.null",
+    judge_gate: "eq.human-review",
     select: "id,content_key,status,updated_at,body,judge_score,judge_gate,review_state,source_snapshot"
   });
   const key = serviceRoleKey();
@@ -456,8 +551,8 @@ async function deactivateTopper(row: ExistingTopperRow, reason: string) {
 
 async function reactivateTopperDraft(
   row: ExistingTopperRow,
-  reviewState: "sky-placement-topper-calibration-required" | "sky-placement-topper-voice-needs-review",
-  flag: "SKY_PLACEMENT_TOPPER_CALIBRATION_REQUIRED" | "SKY_PLACEMENT_TOPPER_VOICE_REVIEW_REQUIRED"
+  reviewState: "sky-placement-topper-voice-needs-review",
+  flag: "SKY_PLACEMENT_TOPPER_VOICE_REVIEW_REQUIRED"
 ) {
   const key = serviceRoleKey();
   const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(row.id)}`, {
@@ -498,37 +593,11 @@ function topperRowMatches(
     && row.source_snapshot?.baseUpdatedAt === base.updated_at;
 }
 
-async function promoteTopper(row: ExistingTopperRow) {
-  const key = serviceRoleKey();
-  const now = new Date().toISOString();
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(row.id)}`, {
-    method: "PATCH",
-    headers: {
-      apikey: key,
-      authorization: `Bearer ${key}`,
-      "content-type": "application/json"
-    },
-    body: JSON.stringify({
-      status: "LIVE",
-      lane: "serving",
-      review_state: null,
-      flags: [],
-      reviewed_at: now,
-      published_at: now,
-      error: null,
-      updated_at: now
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error(`Sky-placement topper promotion failed with ${response.status}.`);
-  }
-}
-
 function generationCandidates(rows: ExistingPlacementRow[], positions: PlanetPosition[]) {
   const byKey = new Map(rows.map((row) => [row.content_key, row]));
   const currentPriority = currentPlacementPriority(positions);
   const staleBefore = Date.now() - refreshDays() * 24 * 60 * 60 * 1000;
+  const legacy: Array<{ args: PlacementArgs; existing: ExistingPlacementRow | null }> = [];
   const missing: Array<{ args: PlacementArgs; existing: ExistingPlacementRow | null }> = [];
   const stale: Array<{ args: PlacementArgs; existing: ExistingPlacementRow | null }> = [];
 
@@ -539,17 +608,18 @@ function generationCandidates(rows: ExistingPlacementRow[], positions: PlanetPos
 
       if (!existing) {
         missing.push({ args, existing });
-      } else if (
-        existing.status === "ERROR"
-        || !Number.isFinite(Date.parse(existing.updated_at))
-        || Date.parse(existing.updated_at) < staleBefore
-      ) {
+      } else if (isLegacyLiveBase(existing)) {
+        legacy.push({ args, existing });
+      } else if (requiresBaseRegeneration(existing, staleBefore)) {
         stale.push({ args, existing });
       }
     }
   }
 
-  return [...missing, ...stale].sort((first, second) => {
+  return [...legacy, ...missing, ...stale].sort((first, second) => {
+    const firstClass = isLegacyLiveBase(first.existing) ? 0 : first.existing ? 2 : 1;
+    const secondClass = isLegacyLiveBase(second.existing) ? 0 : second.existing ? 2 : 1;
+    if (firstClass !== secondClass) return firstClass - secondClass;
     const firstPriority = currentPriority.get(contentKeyFor(first.args)) ?? Number.MAX_SAFE_INTEGER;
     const secondPriority = currentPriority.get(contentKeyFor(second.args)) ?? Number.MAX_SAFE_INTEGER;
 
@@ -562,6 +632,7 @@ async function generateWithJudgeRouting(args: PlacementArgs) {
     throw new Error("sky-placement-engine-not-ready");
   }
 
+  const kernel = placementKernel(args);
   let result: PlacementResult | null = null;
   let feedback = "";
   let attempts = 0;
@@ -569,6 +640,10 @@ async function generateWithJudgeRouting(args: PlacementArgs) {
   for (let pass = 0; pass <= maxJudgeRegenerations; pass += 1) {
     result = await generatePlacementCard(args, {
       withJudge: true,
+      generateFn: kernel.generateFn,
+      generationMetadata: kernel.generationMetadata,
+      judgeBeforeProviderCall: kernel.judgeBeforeProviderCall,
+      judgeGovernedPrompt: kernel.judgeGovernedPrompt,
       ...(feedback ? { judgeFeedback: feedback } : {})
     });
     attempts += result.attempts ?? 0;
@@ -623,16 +698,8 @@ async function savePlacementCard(
   const clean = result.status === "clean"
     && result.lint?.score === 3
     && result.lint.fails === 0;
-  const gate = clean && routed.gate === "auto-publish" ? "auto-publish" : "human-review";
-  const canAutoPublish = clean
-    && gate === "auto-publish"
-    && result.judge?.score === 3
-    && judgeAutoPublishEnabled();
-  const reviewState = canAutoPublish
-    ? null
-    : gate === "auto-publish"
-      ? "sky-placement-judge-calibration-required"
-      : "sky-placement-voice-needs-review";
+  const gate = "human-review" as const;
+  const reviewState = "sky-placement-voice-needs-review";
   const now = new Date().toISOString();
   const key = serviceRoleKey();
   const contentKey = contentKeyFor(args);
@@ -652,8 +719,8 @@ async function savePlacementCard(
         content_key: contentKey,
         surface: "sky",
         mode: "feed",
-        status: canAutoPublish ? "LIVE" : "DRAFT",
-        lane: "serving",
+        status: "DRAFT",
+        lane: "reference",
         review_state: reviewState,
         event_type: "collective-placement-card",
         target_date: null,
@@ -662,7 +729,7 @@ async function savePlacementCard(
           planet: args.planet,
           sign: args.sign
         },
-        knowledge_ids: [`${args.planet}-${args.sign}`],
+        knowledge_ids: [placementKnowledgeId(args)],
         source_snapshot: {
           contentType: "sky-placement-card",
           placementFacts: {
@@ -705,13 +772,9 @@ async function savePlacementCard(
         summary: firstParagraph(result.text ?? ""),
         body: result.text ?? "",
         sections: {},
-        flags: canAutoPublish
-          ? []
-          : gate === "auto-publish"
-            ? ["SKY_PLACEMENT_JUDGE_CALIBRATION_REQUIRED"]
-            : ["SKY_PLACEMENT_VOICE_REVIEW_REQUIRED"],
-        reviewed_at: canAutoPublish ? now : null,
-        published_at: canAutoPublish ? now : null,
+        flags: ["SKY_PLACEMENT_VOICE_REVIEW_REQUIRED"],
+        reviewed_at: null,
+        published_at: null,
         error: clean ? null : result.note ?? "Sky-placement voice lint failed.",
         updated_at: now
       })
@@ -725,7 +788,7 @@ async function savePlacementCard(
 
   return {
     contentKey,
-    status: canAutoPublish ? "live-auto-publish" : "needs-review",
+    status: "needs-review",
     gate,
     clean
   };
@@ -739,6 +802,16 @@ async function generateTopperWithJudgeRouting(
     throw new Error("sky-placement-topper-engine-not-ready");
   }
 
+  const kernel = placementKernel(
+    { planet: contact.planet, sign: contact.sign },
+    {
+      eventType: "collective-placement-topper",
+      aspect: contact.aspect,
+      other: contact.other,
+      otherSign: contact.otherSign,
+      orb: contact.orb
+    }
+  );
   let result: PlacementResult | null = null;
   let feedback = "";
   let attempts = 0;
@@ -754,6 +827,10 @@ async function generateTopperWithJudgeRouting(
       baseText
     }, {
       withJudge: true,
+      generateFn: kernel.generateFn,
+      generationMetadata: kernel.generationMetadata,
+      judgeBeforeProviderCall: kernel.judgeBeforeProviderCall,
+      judgeGovernedPrompt: kernel.judgeGovernedPrompt,
       ...(feedback ? { judgeFeedback: feedback } : {})
     });
     attempts += result.attempts ?? 0;
@@ -809,16 +886,8 @@ async function savePlacementTopper(
   const clean = result.status === "clean"
     && result.lint?.score === 3
     && result.lint.fails === 0;
-  const gate = clean && routed.gate === "auto-publish" ? "auto-publish" : "human-review";
-  const canAutoPublish = clean
-    && gate === "auto-publish"
-    && result.judge?.score === 3
-    && topperAutoPublishEnabled();
-  const reviewState = canAutoPublish
-    ? null
-    : gate === "auto-publish"
-      ? "sky-placement-topper-calibration-required"
-      : "sky-placement-topper-voice-needs-review";
+  const gate = "human-review" as const;
+  const reviewState = "sky-placement-topper-voice-needs-review";
   const now = new Date().toISOString();
   const key = serviceRoleKey();
   const contentKey = topperContentKeyFor(contact);
@@ -838,8 +907,8 @@ async function savePlacementTopper(
         content_key: contentKey,
         surface: "sky",
         mode: "feed",
-        status: canAutoPublish ? "LIVE" : "DRAFT",
-        lane: canAutoPublish ? "serving" : "reference",
+        status: "DRAFT",
+        lane: "reference",
         review_state: reviewState,
         event_type: "collective-placement-topper",
         target_date: null,
@@ -852,7 +921,10 @@ async function savePlacementTopper(
           otherSign: contact.otherSign,
           orb: contact.orb
         },
-        knowledge_ids: [facts.pairKey, base.content_key].filter(Boolean),
+        knowledge_ids: [
+          placementKnowledgeId({ planet: contact.planet, sign: contact.sign }),
+          `sky-${contact.planet}-${contact.aspect}-${contact.other}`
+        ],
         source_snapshot: {
           contentType: "sky-placement-topper",
           skyPlacementTopperFacts: {
@@ -904,13 +976,9 @@ async function savePlacementTopper(
         summary: firstParagraph(result.text ?? ""),
         body: result.text ?? "",
         sections: {},
-        flags: canAutoPublish
-          ? []
-          : gate === "auto-publish"
-            ? ["SKY_PLACEMENT_TOPPER_CALIBRATION_REQUIRED"]
-            : ["SKY_PLACEMENT_TOPPER_VOICE_REVIEW_REQUIRED"],
-        reviewed_at: canAutoPublish ? now : null,
-        published_at: canAutoPublish ? now : null,
+        flags: ["SKY_PLACEMENT_TOPPER_VOICE_REVIEW_REQUIRED"],
+        reviewed_at: null,
+        published_at: null,
         error: clean ? null : result.note ?? "Sky-placement topper voice lint failed.",
         updated_at: now
       })
@@ -924,7 +992,7 @@ async function savePlacementTopper(
 
   return {
     contentKey,
-    status: canAutoPublish ? "live-auto-publish" : "needs-review",
+    status: "needs-review",
     gate,
     clean
   };
@@ -938,7 +1006,6 @@ async function syncPlacementToppers(sky: SkySnapshot) {
     currentContacts: 0,
     generated: 0,
     cached: 0,
-    autoPublished: 0,
     needsReview: 0,
     deactivated: 0,
     skipped: [] as Array<{ contentKey: string; reason: string }>,
@@ -976,7 +1043,6 @@ async function syncPlacementToppers(sky: SkySnapshot) {
     if (
       !base
       || base.judge_score !== 3
-      || base.judge_gate !== "auto-publish"
       || baseLint?.score !== 3
       || baseLint.fails !== 0
     ) {
@@ -991,32 +1057,9 @@ async function syncPlacementToppers(sky: SkySnapshot) {
       const lint = existing.source_snapshot?.skyPlacementTopperVoiceLint as PlacementLint | undefined;
       const clean = lint?.score === 3 && lint.fails === 0;
 
-      if (
-        existing.judge_gate === "auto-publish"
-        && existing.judge_score === 3
-        && clean
-      ) {
-        if (topperAutoPublishEnabled() && existing.status !== "LIVE") {
-          await promoteTopper(existing);
-          report.autoPublished += 1;
-          report.cards.push({ contentKey, status: "promoted-live" });
-        } else {
-          if (
-            existing.status !== "LIVE"
-            && existing.review_state === "sky-placement-topper-inactive"
-          ) {
-            await reactivateTopperDraft(
-              existing,
-              "sky-placement-topper-calibration-required",
-              "SKY_PLACEMENT_TOPPER_CALIBRATION_REQUIRED"
-            );
-          }
-          report.cached += 1;
-          report.cards.push({
-            contentKey,
-            status: existing.status === "LIVE" ? "cached-live" : "cached-calibration-held"
-          });
-        }
+      if (isReusableLiveTopper(existing, clean)) {
+        report.cached += 1;
+        report.cards.push({ contentKey, status: "cached-live" });
         continue;
       }
 
@@ -1049,7 +1092,6 @@ async function syncPlacementToppers(sky: SkySnapshot) {
 
     const saved = await savePlacementTopper(contact, base, existing, routed);
     report.generated += 1;
-    report.autoPublished += saved.status === "live-auto-publish" ? 1 : 0;
     report.needsReview += saved.status === "needs-review" ? 1 : 0;
     report.cards.push({
       contentKey: saved.contentKey,
@@ -1071,7 +1113,6 @@ async function generatePlacementBatch() {
     requested: limit,
     candidates: candidates.length,
     generated: 0,
-    autoPublished: 0,
     needsReview: 0,
     skipped: [] as Array<{ contentKey: string; reason: string }>,
     cards: [] as Array<{ contentKey: string; status: string }>
@@ -1093,7 +1134,6 @@ async function generatePlacementBatch() {
 
     const saved = await savePlacementCard(candidate.args, candidate.existing, routed);
     report.generated += 1;
-    report.autoPublished += saved.status === "live-auto-publish" ? 1 : 0;
     report.needsReview += saved.status === "needs-review" ? 1 : 0;
     report.cards.push({
       contentKey: saved.contentKey,

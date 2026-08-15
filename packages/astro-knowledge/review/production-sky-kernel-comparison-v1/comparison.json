@@ -1,0 +1,571 @@
+{
+  "schemaVersion": 1,
+  "artifactKind": "non-serving-production-request-comparison",
+  "surface": "sky",
+  "fixtureCount": 6,
+  "comparisonBoundary": "deterministic request/evidence construction only",
+  "outputParityStatus": "NOT_RUN_LIVE_CALLS_REQUIRE_SEPARATE_BOUNDED_AUTHORIZATION",
+  "providerCallsMade": 0,
+  "servingChanged": false,
+  "approvalChanged": false,
+  "geminiProductionEnabled": false,
+  "rows": [
+    {
+      "fixtureId": "daily-multi-object",
+      "contentKey": "sky-daily-2026-08-14",
+      "legacy": {
+        "promptMode": "unchanged-existing-production-prompt",
+        "legacyRequestEvidenceSha256": "6e7840bc84bc69c21a10459221c7447bcdbedf45cddf686920a8f532707039a5",
+        "governedKnowledgeAppended": false
+      },
+      "governed": {
+        "promptMode": "existing-surface-prompt-plus-governed-evidence",
+        "governedKnowledgeAppended": true,
+        "governedPromptSha256": "0b9ecc2018b34bdac371c4964f4b7b306dac7faf25dfaa5549f28fdc86cbef9b",
+        "governedPromptChars": 15054
+      },
+      "evidence": {
+        "canonicalIds": [
+          "placement-sign/sun/leo",
+          "placement-sign/moon/pisces",
+          "body/jupiter",
+          "aspect/opposition",
+          "body/moon",
+          "body/mars",
+          "aspect/trine",
+          "body/saturn"
+        ],
+        "targets": [
+          {
+            "canonicalId": "placement-sign/sun/leo",
+            "temporality": "lifelong-pattern",
+            "recordsIncluded": 8,
+            "chars": 1338,
+            "packetSha256": "c9eca6b6f2abb110374a8277c44b1c6192e780c29d955f5963a17ab0137ba20a",
+            "evidenceSha256": [
+              "8ddd92b50af94ab306f2cddb82cd939d11d5ababf9d124194f81435fa77d9297",
+              "4730c296b400088526eb5e7f9ea71dfadad305f422fd0f25e5a6d6cc0b2315a0",
+              "49df3813e6a2f5ca3ac3c07c85cce33b7354b85089978e2c938fdbd2b2231464",
+              "9d14190ce7f5dc8b9c7328aea49815c9fb59edeef3c6a6e2618e4218157caf3b",
+              "2f7cc7039f14bdac630df09ac2af460c8acbc32a28f2c11b029dc06d2058ce49",
+              "6dee30fe5efed7bb7431f282a6bae86f06c1cdad467b980242aef782dad4cffd",
+              "8a2774e74f01a461ae319904a1f74506dce491fd2b5f9c3ff549cfe4732eea6e",
+              "630f2ba431612e885bc213feebee4369562584f93aa1f53e943f940957372459"
+            ]
+          },
+          {
+            "canonicalId": "placement-sign/moon/pisces",
+            "temporality": "lifelong-pattern",
+            "recordsIncluded": 7,
+            "chars": 1463,
+            "packetSha256": "c5bf414f6cdfea57c24ac15d030808a44a87eb39668be566531d9e4cec783f29",
+            "evidenceSha256": [
+              "269a180791755b9c8f4a4fc0f64cbcc34cde11146fd4a5c3fd20a1f0bd95eacb",
+              "d7cfe420c02187781c0036094f266b0ac15ba4f4787456f2a1388846e1974326",
+              "b54befc20a114c09483684ba2e4e1bbc0557b10f7d146ac66700f17d3e44423c",
+              "8f61cce3557e8b5cfc24890718ef4711dddda164f992187517b0ea5330c85437",
+              "dbce9e810e4c027e524889a50584b50f82a6e3cc04ed539262e7ed7c00f57dd4",
+              "03adbf024a369c2b998f11e8a663076a9001ed77ae9406cb19202f863f0bd3f0",
+              "75062ff8d4c81dd098e177897a2d344ab4a3d39faab87e2a59896bcb4958d2fe"
+            ]
+          },
+          {
+            "canonicalId": "body/jupiter",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 3,
+            "chars": 801,
+            "packetSha256": "016b93a2a73e6ec848e328a2bd6ab7aac4c25bdce7fbacd2067502314dea5903",
+            "evidenceSha256": [
+              "0899c673d64071121eb170ed45b78c915a9c53b7b5dedac19aedc3616e1fc920",
+              "9b42e9368f89ac54e0b0a1f68ebabf8c1d6c1e593d1e29469e6c53300c2286d7",
+              "c643a9bcb586c43c2f85b7d26fdc06847921396639e5df2842804ed6f9e55ce1"
+            ]
+          },
+          {
+            "canonicalId": "aspect/opposition",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 1,
+            "chars": 405,
+            "packetSha256": "e597cb7091ecdc477f24e5a6d79f45582190de571042161aae99f236d2ead762",
+            "evidenceSha256": [
+              "9ec11e8e804b1ae645bf3037c590fdad14e3b227435e05402a2d1d5c73360525"
+            ]
+          },
+          {
+            "canonicalId": "body/moon",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 2,
+            "chars": 497,
+            "packetSha256": "5e833e9e987da00c561002ddd81ee29570659054d4744287761980d700cbb840",
+            "evidenceSha256": [
+              "e3b5917c08ba610f3263ced46f963a8730570a354387e0dd2e61149c1b886fee",
+              "3a299630302b742533acf50ccfebd47ff5f8451d1bad0d22238c82959dfa6793"
+            ]
+          },
+          {
+            "canonicalId": "body/mars",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 3,
+            "chars": 994,
+            "packetSha256": "466151a5689cb2f611da35de1f9df3fb8d4ff7314e56d8f2a8212c28b0a9c44f",
+            "evidenceSha256": [
+              "d75fd7e21a1face7d2249266504e8ff0984e0d7fa534b84732e8903de91a7b30",
+              "c94dbe784bc45c6c8e1250e0b5ddb7b0893a63bb0ecb041cef6680edf936abee",
+              "6c2c9877a1d05a01b4774afb08fd77cc898e502899b5a4cbcab2225b4bef4673"
+            ]
+          },
+          {
+            "canonicalId": "aspect/trine",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 1,
+            "chars": 509,
+            "packetSha256": "2a982e457c20a5a702705fc536599172d648bc555ed16256503e635934e2901b",
+            "evidenceSha256": [
+              "231a27b7900ef659ac04641f3306363c49c1ceed259b4918fadcec7b59d4ef54"
+            ]
+          },
+          {
+            "canonicalId": "body/saturn",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 3,
+            "chars": 1108,
+            "packetSha256": "b015619bb5e04b8a67bd812460aff8568d484980f7be1a6a578088142d180f7c",
+            "evidenceSha256": [
+              "c0bfc06dc63a44cdc48c89cc8a9dafac6ab0f3c4b1fa6282aef327a74be49569",
+              "e4788ea6bd07e11d4a1c2031c0e8cc9e7cfbf5ddd9154a508d41362365ef17a0",
+              "ee3489cd2e8094433534b39a5cd4d4f3d83a9ca694a7ff14d41eb88f2935f654"
+            ]
+          }
+        ],
+        "knowledgeIndexSha256": "62ab87248f5fa6791e8b5186aa546f926e5ec3fef75b15268297f6cb0849dae5",
+        "packetSha256": "ab5fd02c927671daa0aceb93661b71c18137e104670d84499df74a677b6df66f",
+        "recordsIncluded": 28,
+        "chars": 7115
+      },
+      "voiceIsolation": {
+        "friendsPhraseEvidenceIncluded": false,
+        "phraseIndexSha256": [
+          "457fddc54734df2e9ae633b0425cd647d0371a421dfbc2776a69878e2b8c5173"
+        ]
+      },
+      "governance": {
+        "servingChanged": false,
+        "ownerApproved": false,
+        "servingEligible": false
+      }
+    },
+    {
+      "fixtureId": "season-with-supporting-aspect",
+      "contentKey": "sky-season-leo-2026-08-14",
+      "legacy": {
+        "promptMode": "unchanged-existing-production-prompt",
+        "legacyRequestEvidenceSha256": "a071805d14e34e2c0dc4e0356f366be2acc05723f9903b7a984211f9c99916ca",
+        "governedKnowledgeAppended": false
+      },
+      "governed": {
+        "promptMode": "existing-surface-prompt-plus-governed-evidence",
+        "governedKnowledgeAppended": true,
+        "governedPromptSha256": "c71a5f1838d5cb9cb5641d2061c0c77c954fc9228bdff2462457cdecac01371e",
+        "governedPromptChars": 9443
+      },
+      "evidence": {
+        "canonicalIds": [
+          "placement-sign/sun/leo",
+          "body/sun",
+          "aspect/trine",
+          "body/saturn"
+        ],
+        "targets": [
+          {
+            "canonicalId": "placement-sign/sun/leo",
+            "temporality": "lifelong-pattern",
+            "recordsIncluded": 12,
+            "chars": 2692,
+            "packetSha256": "f45b297f13938c4342f8b0c733f3720a07261f8a44bc847072d7f9bc403505be",
+            "evidenceSha256": [
+              "8ddd92b50af94ab306f2cddb82cd939d11d5ababf9d124194f81435fa77d9297",
+              "4730c296b400088526eb5e7f9ea71dfadad305f422fd0f25e5a6d6cc0b2315a0",
+              "49df3813e6a2f5ca3ac3c07c85cce33b7354b85089978e2c938fdbd2b2231464",
+              "9d14190ce7f5dc8b9c7328aea49815c9fb59edeef3c6a6e2618e4218157caf3b",
+              "2f7cc7039f14bdac630df09ac2af460c8acbc32a28f2c11b029dc06d2058ce49",
+              "6dee30fe5efed7bb7431f282a6bae86f06c1cdad467b980242aef782dad4cffd",
+              "8a2774e74f01a461ae319904a1f74506dce491fd2b5f9c3ff549cfe4732eea6e",
+              "630f2ba431612e885bc213feebee4369562584f93aa1f53e943f940957372459",
+              "310068709856cd7d2be20ca5dabe20e90db5dbd5262a99a4523fd01b209db41c",
+              "f9ef61fe66c221e724dde7cd5a7e63bc95a143ee78a8046b7e693b35a5eb6425",
+              "35238261828ff4d37fe63ef38c95d314333be16093e820ff6eba8066032bb567",
+              "8d6ab137157ac8f9d630d86c68fdce54e58585958a86bde813df03cf66de6e47"
+            ]
+          },
+          {
+            "canonicalId": "body/sun",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 3,
+            "chars": 1070,
+            "packetSha256": "840544ce2d35bf3e80baa0ee5913075163e9e44e7d0b4aa317a8a08daa3612b5",
+            "evidenceSha256": [
+              "e73299fc05be8a20c10214407443e0452ff182250d64ddec0bad6c098f59d342",
+              "352e41b71ee300832d49461875a62935dbd9c3f9c935ca4a2729a888291e0424",
+              "2e2d39ae7f80b32b1cffaa94a64137b08029c3f60c4eb9d7757ca2888aaacd67"
+            ]
+          },
+          {
+            "canonicalId": "aspect/trine",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 1,
+            "chars": 509,
+            "packetSha256": "2a982e457c20a5a702705fc536599172d648bc555ed16256503e635934e2901b",
+            "evidenceSha256": [
+              "231a27b7900ef659ac04641f3306363c49c1ceed259b4918fadcec7b59d4ef54"
+            ]
+          },
+          {
+            "canonicalId": "body/saturn",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 3,
+            "chars": 1108,
+            "packetSha256": "b015619bb5e04b8a67bd812460aff8568d484980f7be1a6a578088142d180f7c",
+            "evidenceSha256": [
+              "c0bfc06dc63a44cdc48c89cc8a9dafac6ab0f3c4b1fa6282aef327a74be49569",
+              "e4788ea6bd07e11d4a1c2031c0e8cc9e7cfbf5ddd9154a508d41362365ef17a0",
+              "ee3489cd2e8094433534b39a5cd4d4f3d83a9ca694a7ff14d41eb88f2935f654"
+            ]
+          }
+        ],
+        "knowledgeIndexSha256": "62ab87248f5fa6791e8b5186aa546f926e5ec3fef75b15268297f6cb0849dae5",
+        "packetSha256": "28b0aacbf0b25d628b1141d1dd02f06bbfdf8c09439b7c947e9810126823b705",
+        "recordsIncluded": 19,
+        "chars": 5379
+      },
+      "voiceIsolation": {
+        "friendsPhraseEvidenceIncluded": false,
+        "phraseIndexSha256": [
+          "457fddc54734df2e9ae633b0425cd647d0371a421dfbc2776a69878e2b8c5173"
+        ]
+      },
+      "governance": {
+        "servingChanged": false,
+        "ownerApproved": false,
+        "servingEligible": false
+      }
+    },
+    {
+      "fixtureId": "lunar-cycle-with-supporting-aspect",
+      "contentKey": "sky-moon-pisces-2026-08-14",
+      "legacy": {
+        "promptMode": "unchanged-existing-production-prompt",
+        "legacyRequestEvidenceSha256": "1a2b8bf11fdef0ad7d5713d15e2aa451aa49e180b059d75c43df1ad4c0c0ff58",
+        "governedKnowledgeAppended": false
+      },
+      "governed": {
+        "promptMode": "existing-surface-prompt-plus-governed-evidence",
+        "governedKnowledgeAppended": true,
+        "governedPromptSha256": "ac71af174193bac944701a9eeeaf69785c4705caf5c09a682e8ea3b2914021fc",
+        "governedPromptChars": 9169
+      },
+      "evidence": {
+        "canonicalIds": [
+          "placement-sign/moon/pisces",
+          "body/moon",
+          "aspect/square",
+          "body/mercury"
+        ],
+        "targets": [
+          {
+            "canonicalId": "placement-sign/moon/pisces",
+            "temporality": "lifelong-pattern",
+            "recordsIncluded": 10,
+            "chars": 2521,
+            "packetSha256": "28b115b3614e0a7bd5293f145d12ea8ee2571906e99ac53bba92802224bbcc55",
+            "evidenceSha256": [
+              "269a180791755b9c8f4a4fc0f64cbcc34cde11146fd4a5c3fd20a1f0bd95eacb",
+              "d7cfe420c02187781c0036094f266b0ac15ba4f4787456f2a1388846e1974326",
+              "b54befc20a114c09483684ba2e4e1bbc0557b10f7d146ac66700f17d3e44423c",
+              "8f61cce3557e8b5cfc24890718ef4711dddda164f992187517b0ea5330c85437",
+              "dbce9e810e4c027e524889a50584b50f82a6e3cc04ed539262e7ed7c00f57dd4",
+              "03adbf024a369c2b998f11e8a663076a9001ed77ae9406cb19202f863f0bd3f0",
+              "75062ff8d4c81dd098e177897a2d344ab4a3d39faab87e2a59896bcb4958d2fe",
+              "97968c7079713f8c11ab10980febfa47649bcf80121b39ee0566b0801332a6cd",
+              "61389207ee078a0526c24141cbb747bc8aa87797b24517e4b02e398ed37475ac",
+              "e4f67302f9e1bd500d390a440f2fc3792ab6b82e4aa60304ec56b356de5a4c91"
+            ]
+          },
+          {
+            "canonicalId": "body/moon",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 2,
+            "chars": 497,
+            "packetSha256": "5e833e9e987da00c561002ddd81ee29570659054d4744287761980d700cbb840",
+            "evidenceSha256": [
+              "e3b5917c08ba610f3263ced46f963a8730570a354387e0dd2e61149c1b886fee",
+              "3a299630302b742533acf50ccfebd47ff5f8451d1bad0d22238c82959dfa6793"
+            ]
+          },
+          {
+            "canonicalId": "aspect/square",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 1,
+            "chars": 446,
+            "packetSha256": "9c3bdb7dc8b8fd636b4c0d3b836ce5f246e15bf0f17cdb90db8bd17387805cb5",
+            "evidenceSha256": [
+              "2f75d995dfd9228022445f1bd3534dae592c619b3ce7319be3bb0a493ce661e3"
+            ]
+          },
+          {
+            "canonicalId": "body/mercury",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 3,
+            "chars": 1116,
+            "packetSha256": "d57d688472e70eaf4fdbb2e52fa1e2c3e2863b017b47951c952e6682d2c4b448",
+            "evidenceSha256": [
+              "2a247c44b0302cffcbceb03e9baa172278f76f4507abff2a9f2f2022be3b6ad6",
+              "8ad407f373cb90671678192f1cc7904d73d25ea670e3abeadb2c52d1192fcb83",
+              "d34b9f5ab15b34dddf9b938c26198ca5a7b88769bb1eb9bf3dffbd34525b5f01"
+            ]
+          }
+        ],
+        "knowledgeIndexSha256": "62ab87248f5fa6791e8b5186aa546f926e5ec3fef75b15268297f6cb0849dae5",
+        "packetSha256": "602a8747a638278403c89e4eea8aa9de6405c67b43edc237666ef46234b2647d",
+        "recordsIncluded": 16,
+        "chars": 4580
+      },
+      "voiceIsolation": {
+        "friendsPhraseEvidenceIncluded": false,
+        "phraseIndexSha256": [
+          "457fddc54734df2e9ae633b0425cd647d0371a421dfbc2776a69878e2b8c5173"
+        ]
+      },
+      "governance": {
+        "servingChanged": false,
+        "ownerApproved": false,
+        "servingEligible": false
+      }
+    },
+    {
+      "fixtureId": "exact-sky-aspect",
+      "contentKey": "sky-aspect-jupiter-opposition-moon-2026-08-14",
+      "legacy": {
+        "promptMode": "unchanged-existing-production-prompt",
+        "legacyRequestEvidenceSha256": "288b9365b9f82237bd822adcdaabf223bf23c33d6aad185e1270916145423b7d",
+        "governedKnowledgeAppended": false
+      },
+      "governed": {
+        "promptMode": "existing-surface-prompt-plus-governed-evidence",
+        "governedKnowledgeAppended": true,
+        "governedPromptSha256": "71f20edc85b6ae4a72a58c2b4009fae54b41dff715ee7447cf41ff0aacbd19c7",
+        "governedPromptChars": 4048
+      },
+      "evidence": {
+        "canonicalIds": [
+          "body/jupiter",
+          "aspect/opposition",
+          "body/moon"
+        ],
+        "targets": [
+          {
+            "canonicalId": "body/jupiter",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 3,
+            "chars": 801,
+            "packetSha256": "016b93a2a73e6ec848e328a2bd6ab7aac4c25bdce7fbacd2067502314dea5903",
+            "evidenceSha256": [
+              "0899c673d64071121eb170ed45b78c915a9c53b7b5dedac19aedc3616e1fc920",
+              "9b42e9368f89ac54e0b0a1f68ebabf8c1d6c1e593d1e29469e6c53300c2286d7",
+              "c643a9bcb586c43c2f85b7d26fdc06847921396639e5df2842804ed6f9e55ce1"
+            ]
+          },
+          {
+            "canonicalId": "aspect/opposition",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 1,
+            "chars": 405,
+            "packetSha256": "e597cb7091ecdc477f24e5a6d79f45582190de571042161aae99f236d2ead762",
+            "evidenceSha256": [
+              "9ec11e8e804b1ae645bf3037c590fdad14e3b227435e05402a2d1d5c73360525"
+            ]
+          },
+          {
+            "canonicalId": "body/moon",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 2,
+            "chars": 497,
+            "packetSha256": "5e833e9e987da00c561002ddd81ee29570659054d4744287761980d700cbb840",
+            "evidenceSha256": [
+              "e3b5917c08ba610f3263ced46f963a8730570a354387e0dd2e61149c1b886fee",
+              "3a299630302b742533acf50ccfebd47ff5f8451d1bad0d22238c82959dfa6793"
+            ]
+          }
+        ],
+        "knowledgeIndexSha256": "62ab87248f5fa6791e8b5186aa546f926e5ec3fef75b15268297f6cb0849dae5",
+        "packetSha256": "4a876fa74184b845a317938fdab769e882365b80c2e8e89082fdcc5bae221342",
+        "recordsIncluded": 6,
+        "chars": 1703
+      },
+      "voiceIsolation": {
+        "friendsPhraseEvidenceIncluded": false,
+        "phraseIndexSha256": [
+          "457fddc54734df2e9ae633b0425cd647d0371a421dfbc2776a69878e2b8c5173"
+        ]
+      },
+      "governance": {
+        "servingChanged": false,
+        "ownerApproved": false,
+        "servingEligible": false
+      }
+    },
+    {
+      "fixtureId": "retrograde-body",
+      "contentKey": "sky-retrograde-mercury-2026-08-14",
+      "legacy": {
+        "promptMode": "unchanged-existing-production-prompt",
+        "legacyRequestEvidenceSha256": "ae25e730d96101da983505f0d70b9e2a76e651cc515573c97a390bdf97338bbf",
+        "governedKnowledgeAppended": false
+      },
+      "governed": {
+        "promptMode": "existing-surface-prompt-plus-governed-evidence",
+        "governedKnowledgeAppended": true,
+        "governedPromptSha256": "21846056e91ec013a12c9ed27e8c568f1ffce9586c891a833f87f5b9d683c201",
+        "governedPromptChars": 1954
+      },
+      "evidence": {
+        "canonicalIds": [
+          "body/mercury"
+        ],
+        "targets": [
+          {
+            "canonicalId": "body/mercury",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 3,
+            "chars": 1116,
+            "packetSha256": "d57d688472e70eaf4fdbb2e52fa1e2c3e2863b017b47951c952e6682d2c4b448",
+            "evidenceSha256": [
+              "2a247c44b0302cffcbceb03e9baa172278f76f4507abff2a9f2f2022be3b6ad6",
+              "8ad407f373cb90671678192f1cc7904d73d25ea670e3abeadb2c52d1192fcb83",
+              "d34b9f5ab15b34dddf9b938c26198ca5a7b88769bb1eb9bf3dffbd34525b5f01"
+            ]
+          }
+        ],
+        "knowledgeIndexSha256": "62ab87248f5fa6791e8b5186aa546f926e5ec3fef75b15268297f6cb0849dae5",
+        "packetSha256": "d57d688472e70eaf4fdbb2e52fa1e2c3e2863b017b47951c952e6682d2c4b448",
+        "recordsIncluded": 3,
+        "chars": 1116
+      },
+      "voiceIsolation": {
+        "friendsPhraseEvidenceIncluded": false,
+        "phraseIndexSha256": [
+          "457fddc54734df2e9ae633b0425cd647d0371a421dfbc2776a69878e2b8c5173"
+        ]
+      },
+      "governance": {
+        "servingChanged": false,
+        "ownerApproved": false,
+        "servingEligible": false
+      }
+    },
+    {
+      "fixtureId": "lunation-with-supporting-aspect",
+      "contentKey": "sky-lunation-full-moon-aquarius-2026-08-14",
+      "legacy": {
+        "promptMode": "unchanged-existing-production-prompt",
+        "legacyRequestEvidenceSha256": "227643cb502f16b4777b7f30ec29b13d827910c63a05b8b03bcb92910a56eaf2",
+        "governedKnowledgeAppended": false
+      },
+      "governed": {
+        "promptMode": "existing-surface-prompt-plus-governed-evidence",
+        "governedKnowledgeAppended": true,
+        "governedPromptSha256": "7fbd0a086307f25aea832bb60ee4611d1db7720bae75d05828aa8ab1505ae449",
+        "governedPromptChars": 5662
+      },
+      "evidence": {
+        "canonicalIds": [
+          "lunation/full-moon/aquarius",
+          "body/moon",
+          "aspect/opposition",
+          "body/sun"
+        ],
+        "targets": [
+          {
+            "canonicalId": "lunation/full-moon/aquarius",
+            "temporality": "dated-event",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 3,
+            "chars": 323,
+            "packetSha256": "5695365c96fe5993f9e8a69b7faa8ede29ed4bba1b090c6ee6b2eb39668d199b",
+            "evidenceSha256": [
+              "224c6ee64555c5696cbd3dc2213529002ae5bbe470157ab1ea7052ea35d77058",
+              "48681f9f9821e730abed5a4c84801b7e371ae6133da41cdb507e3ba563ca8832",
+              "b73e7164c07f7e561dc2bd5801a2646483d04b69dbe6af88ce75874cfb0beef4"
+            ]
+          },
+          {
+            "canonicalId": "body/moon",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 2,
+            "chars": 497,
+            "packetSha256": "5e833e9e987da00c561002ddd81ee29570659054d4744287761980d700cbb840",
+            "evidenceSha256": [
+              "e3b5917c08ba610f3263ced46f963a8730570a354387e0dd2e61149c1b886fee",
+              "3a299630302b742533acf50ccfebd47ff5f8451d1bad0d22238c82959dfa6793"
+            ]
+          },
+          {
+            "canonicalId": "aspect/opposition",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 1,
+            "chars": 405,
+            "packetSha256": "e597cb7091ecdc477f24e5a6d79f45582190de571042161aae99f236d2ead762",
+            "evidenceSha256": [
+              "9ec11e8e804b1ae645bf3037c590fdad14e3b227435e05402a2d1d5c73360525"
+            ]
+          },
+          {
+            "canonicalId": "body/sun",
+            "temporality": "reference",
+            "targetUsage": "mechanism-reference",
+            "recordsIncluded": 3,
+            "chars": 1070,
+            "packetSha256": "840544ce2d35bf3e80baa0ee5913075163e9e44e7d0b4aa317a8a08daa3612b5",
+            "evidenceSha256": [
+              "e73299fc05be8a20c10214407443e0452ff182250d64ddec0bad6c098f59d342",
+              "352e41b71ee300832d49461875a62935dbd9c3f9c935ca4a2729a888291e0424",
+              "2e2d39ae7f80b32b1cffaa94a64137b08029c3f60c4eb9d7757ca2888aaacd67"
+            ]
+          }
+        ],
+        "knowledgeIndexSha256": "62ab87248f5fa6791e8b5186aa546f926e5ec3fef75b15268297f6cb0849dae5",
+        "packetSha256": "9bbaea41630e2df49d38d338e2b5145012e4b8792728e447df6d0343b86c01d4",
+        "recordsIncluded": 9,
+        "chars": 2295
+      },
+      "voiceIsolation": {
+        "friendsPhraseEvidenceIncluded": false,
+        "phraseIndexSha256": [
+          "457fddc54734df2e9ae633b0425cd647d0371a421dfbc2776a69878e2b8c5173"
+        ]
+      },
+      "governance": {
+        "servingChanged": false,
+        "ownerApproved": false,
+        "servingEligible": false
+      }
+    }
+  ]
+}
