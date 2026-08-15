@@ -16,31 +16,31 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -83,37 +83,37 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -150,19 +150,19 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -199,19 +199,19 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       }
     ],
     "lint_advisories": [],
@@ -255,19 +255,19 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -298,43 +298,43 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -377,31 +377,31 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -432,31 +432,31 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -487,25 +487,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -536,19 +536,19 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -579,31 +579,31 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -634,13 +634,13 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -683,7 +683,7 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -720,25 +720,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -775,13 +775,13 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -826,73 +826,73 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -923,43 +923,43 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -996,7 +996,7 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -1052,19 +1052,19 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -1101,7 +1101,7 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       }
     ],
     "lint_advisories": [],
@@ -1126,25 +1126,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -1175,25 +1175,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -1232,25 +1232,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -1287,19 +1287,19 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -1330,7 +1330,7 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       }
     ],
     "lint_advisories": [],
@@ -1355,43 +1355,43 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -1440,25 +1440,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -1495,13 +1495,13 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       }
     ],
     "lint_advisories": [],
@@ -1532,25 +1532,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -1589,37 +1589,37 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       }
     ],
     "lint_advisories": [],
@@ -1644,19 +1644,19 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -1693,13 +1693,13 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       }
     ],
     "lint_advisories": [],
@@ -1730,37 +1730,37 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -1791,25 +1791,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -1858,7 +1858,7 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       }
     ],
     "lint_advisories": [],
@@ -1883,19 +1883,19 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -1926,13 +1926,13 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -1975,13 +1975,13 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -2030,49 +2030,49 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -2103,49 +2103,49 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -2182,31 +2182,31 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       }
     ],
     "lint_advisories": [],
@@ -2231,19 +2231,19 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -2280,7 +2280,7 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -2323,13 +2323,13 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -2379,25 +2379,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -2459,13 +2459,13 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       }
     ],
     "lint_advisories": [],
@@ -2490,49 +2490,49 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -2575,43 +2575,43 @@
         "rule": "ED-029",
         "slot": null,
         "match": "“",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "”",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -2660,25 +2660,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -2715,7 +2715,7 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -2746,37 +2746,37 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       }
     ],
     "lint_advisories": [],
@@ -2801,25 +2801,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -2858,37 +2858,37 @@
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -2931,73 +2931,73 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -3034,85 +3034,85 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -3167,19 +3167,19 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -3216,73 +3216,73 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -3325,13 +3325,13 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -3368,37 +3368,37 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -3435,61 +3435,61 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -3526,19 +3526,19 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -3581,25 +3581,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -3632,43 +3632,43 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -3711,7 +3711,7 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -3748,31 +3748,31 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -3803,25 +3803,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -3858,25 +3858,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -3919,61 +3919,61 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -4004,43 +4004,43 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -4079,43 +4079,43 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -4158,49 +4158,49 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -4233,19 +4233,19 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -4282,43 +4282,43 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -4355,61 +4355,61 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       }
     ],
     "lint_advisories": [],
@@ -4440,31 +4440,31 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -4501,25 +4501,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -4550,25 +4550,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -4605,7 +4605,7 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -4638,19 +4638,19 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "‘",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
@@ -4681,25 +4681,25 @@
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-029",
         "slot": null,
         "match": "’",
-        "reason": "Reader copy uses ASCII punctuation; replace curly quotes, ellipsis characters, and en dashes."
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
       },
       {
         "rule": "ED-030",
