@@ -16,6 +16,11 @@ const review = JSON.parse(fs.readFileSync(
   path.join(repoRoot, "packages/astro-knowledge/review/friend-vocabulary-person-inflection-candidates-2026-08-15.json"),
   "utf8"
 ));
+const approvalPath = path.join(
+  repoRoot,
+  "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
+);
+const approval = JSON.parse(fs.readFileSync(approvalPath, "utf8"));
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 const secondPersonPronoun = /(?:^|[\s,.;:!?()])(?:you|your|yours|yourself|yourselves|you(?:'re|'ve|'ll|'d))(?=$|[\s,.;:!?()])/iu;
 
@@ -29,6 +34,19 @@ assert.deepEqual(review.counts, {
 assert.equal(review.governance.reviewState, "needs_review");
 assert.equal(review.governance.ownerApproved, false);
 assert.equal(review.governance.servingAuthorized, false);
+assert.equal(approval.ownerStatement, "i approve");
+assert.equal(approval.approvedCount, 38);
+assert.equal(approval.servingAuthorized, false);
+assert.equal(
+  sha256(fs.readFileSync(path.join(repoRoot, approval.candidateRecord.path))),
+  approval.candidateRecord.sha256,
+  "Owner approval must remain locked to the exact reviewed candidate packet."
+);
+
+const approvedCandidates = review.candidates
+  .filter((candidate) => candidate.disposition === approval.approvedDisposition)
+  .map((candidate) => candidate.contentKey);
+assert.deepEqual(approval.approvedContentKeys, approvedCandidates);
 
 const sourceByKey = new Map(source.vocabularyRows.map((row) => [row.contentKey, row]));
 for (const row of source.vocabularyRows) {
@@ -56,5 +74,6 @@ assert.deepEqual(unresolved.map((candidate) => candidate.contentKey), [
   "fallback-vocab/placement-gerund/chiron/capricorn/0",
   "fallback-vocab/dodont-reward/moon"
 ]);
+assert.deepEqual(approval.unresolvedContentKeys, unresolved.map((candidate) => candidate.contentKey));
 
-console.log("Friend vocabulary inflection candidates: canonical self bodies unchanged across 720 rows; 38 proposed Friend variants are pronoun-safe; 2 remain owner-blocked and nothing is serving.");
+console.log("Friend vocabulary inflection candidates: canonical self bodies unchanged across 720 rows; 38 exact Friend variants are owner-approved and pronoun-safe; 2 remain owner-blocked and nothing is serving.");
