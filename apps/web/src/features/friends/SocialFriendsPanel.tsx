@@ -369,6 +369,12 @@ export function SocialFriendsPanel({
   }, [onPendingRequestCountChange, publishFriends, refreshSocialData]);
 
   useEffect(() => {
+    if (available === false && activeView !== "charts") {
+      onSelectView("charts", "replace");
+    }
+  }, [activeView, available, onSelectView]);
+
+  useEffect(() => {
     let refreshTimer: number | undefined;
 
     const refreshOnFocus = () => {
@@ -1095,10 +1101,10 @@ export function SocialFriendsPanel({
         <div className="friends-unified-tab-row">
           <span className="friends-unified-tabs" role="tablist" aria-label="Friends views">
             <button
-              className={activeView === "circle" ? "active" : ""}
+              className=""
               type="button"
               role="tab"
-              aria-selected={activeView === "circle"}
+              aria-selected={false}
               aria-controls="friends-circle-panel"
               id="friends-circle-tab"
               onClick={() => onSelectView("circle")}
@@ -1106,10 +1112,10 @@ export function SocialFriendsPanel({
               Circle · 0
             </button>
             <button
-              className={activeView === "charts" ? "active" : ""}
+              className="active"
               type="button"
               role="tab"
-              aria-selected={activeView === "charts"}
+              aria-selected={true}
               aria-controls="friends-charts-panel"
               id="friends-charts-tab"
               onClick={() => onSelectView("charts")}
@@ -1117,7 +1123,7 @@ export function SocialFriendsPanel({
               Charts · {chartCount}
             </button>
           </span>
-          {activeView === "charts" && chartContent && (
+          {chartContent && (
             <button className="friends-add-chart-action" type="button" onClick={onAddChart}>
               Add a chart
             </button>
@@ -1125,11 +1131,11 @@ export function SocialFriendsPanel({
         </div>
         <div
           className="friends-unified-content"
-          id={`friends-${activeView}-panel`}
+          id="friends-charts-panel"
           role="tabpanel"
-          aria-labelledby={`friends-${activeView}-tab`}
+          aria-labelledby="friends-charts-tab"
         >
-          {activeView === "charts" && chartContent ? chartContent : (
+          {chartContent ? chartContent : (
             <div className="friends-unified-empty">
               <h2>Friends are unavailable.</h2>
               <p>Sign in and finish setting up your profile to use social friends.</p>
