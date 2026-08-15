@@ -105,11 +105,20 @@ function main() {
     "generic-product-copy-owner-register",
     "affinity-owner-passage-retrieval"
     ,"morning-reader-one-tired-read"
+    ,"ascii-punctuation-only"
+    ,"no-nonbreaking-space"
+    ,"no-invisible-format-character"
+    ,"no-spaced-hyphen-em-dash"
+    ,"sky-placement-qualified-people-allowed"
+    ,"harness-missing-fact-context"
   ];
   const regressionIds = new Set(result.compiled.artifacts.regression.cases.map((entry) => entry.id));
   assert(requiredRegressionIds.every((id) => regressionIds.has(id)), "every requested durable correction needs a regression case");
 
-  mustFailDecision(article({ hook: "People keep accepting the same answer. Jupiter in Libra changes how a shared choice gets made." }), "CF-001");
+  // Owner ruling 2026-08-14 (applying the 2026-08-11 ruling): people is allowed in Sky
+  // Placement, used sparingly. Overuse is a semantic review signal, not a deterministic
+  // failure, so CF-001 no longer fails the linter.
+  mustPassDecision(article({ hook: "People keep accepting the same answer. Jupiter in Libra changes how a shared choice gets made." }), "CF-001");
   mustPassDecision(article({ hook: "The person who remembers every birthday keeps the spare key. Jupiter in Libra changes how a shared choice gets made." }), "CF-013");
   mustFailDecision(article({ hook: "One person decides, and one person explains the choice. Jupiter in Libra changes how a shared choice gets made." }), "CF-013");
   mustPassDecision(article({ lived: "For about a year, the plan looks good on paper. The cost appears after someone agrees." }), "CF-014");
@@ -136,6 +145,9 @@ function main() {
     new RegExp(skyAspectCalendarRule.mechanical.pattern, skyAspectCalendarRule.mechanical.flags || "i").test("You already know what changed."),
     "ED-028 must reject second person on the Calendar Sky aspect surface"
   );
+  mustFailDecision(article({ tagline: "The plan\u00a0changed after the reply." }), "ED-029");
+  mustFailDecision(article({ tagline: "The plan\u200cchanged after the reply." }), "ED-029");
+  mustPassDecision(article({ tagline: "The cafe sign says caf\u00e9 after the reply." }), "ED-029");
   mustFailDecision(article({ tagline: "Jupiter in Libra helps us grow through fair, honest partnership." }), "ED-015");
   mustFailDecision(article({ turn: "The gift becomes the problem when diplomacy turns into avoidance." }), "ED-016");
   mustFailDecision(article({ turn: "Fairness requires each side to be heard before the choice is made." }), "ED-019");
@@ -217,7 +229,10 @@ function main() {
   assert(packet.ownerPassages.length >= 4 && packet.ownerPassages.length <= 6);
   assert(new Set(packet.ownerPassages.map((entry) => entry.sourceArticleId)).size >= 3);
   assert(packet.ownerPassages.every((entry) => entry.authorityClass === "owner_authored_final"));
-  assert(packet.ownerPassages.every((entry) => !/\b(?:people|you|your|yours|yourself|yourselves|leak|leaks|leaked|leaking)\b/iu.test(entry.text)));
+  // ED-028 (2026-08-14) permits direct address in sky placement, and the 2026-08-11
+  // people ruling was applied on the same date, so neither term belongs in a hard ban
+  // on retrieved owner passages. CF-018 leak stays prohibited.
+  assert(packet.ownerPassages.every((entry) => !/\b(?:leak|leaks|leaked|leaking)\b/iu.test(entry.text)));
 
   const legacyGlobalBans = JSON.parse(fs.readFileSync(path.join(packageRoot, "voice", "banned-words.json"), "utf8")).bannedWords;
   assert(!legacyGlobalBans.some((entry) => /^(?:leak|leaks|leaked|leaking)$/iu.test(typeof entry === "string" ? entry : entry.term)), "CF-018 must not retroactively invalidate historical data through the legacy global validator");

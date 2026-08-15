@@ -1,0 +1,243 @@
+{
+  "schemaVersion": 1,
+  "target": {
+    "planet": "jupiter",
+    "sign": "aries",
+    "tier": "A"
+  },
+  "status": "ready_for_one_authorized_writer_call",
+  "outputStatus": "needs_review",
+  "evidenceAvailability": {
+    "meaning": 16,
+    "register": 11,
+    "scene": 1,
+    "argument": 3,
+    "phrase": 0
+  },
+  "expectedEvidenceAvailability": {
+    "meaning": 16,
+    "register": 11,
+    "scene": 1,
+    "argument": 3,
+    "phrase": 0
+  },
+  "sourceIds": [
+    "meaning:matrix:meaning:409fbb1775aa",
+    "meaning:matrix:meaning:1a9c996b4fa2",
+    "meaning:matrix:meaning:de8779555ba0",
+    "meaning:matrix:meaning:75904df07593",
+    "meaning:matrix:meaning:db9a615e3f59",
+    "meaning:matrix:meaning:5c663c2e830a",
+    "scene:matrix:scene:e518f2874808",
+    "argument:matrix:argument_candidate:1a9c996b4fa2",
+    "argument:matrix:argument_candidate:75904df07593",
+    "argument:matrix:argument_candidate:5c663c2e830a",
+    "approved:fallback-hook/sky-sign-copy/saturn/capricorn:opening",
+    "approved:fallback-hook/sky-sign-copy/saturn/capricorn:tension",
+    "approved:fallback-hook/sky-sign-copy/saturn/capricorn:development",
+    "approved:fallback-hook/sky-sign-copy/saturn/capricorn:close",
+    "approved:fallback-hook/sky-sign-copy/venus/libra:opening",
+    "approved:fallback-hook/sky-sign-copy/venus/libra:tension",
+    "approved:fallback-hook/sky-sign-copy/venus/libra:development",
+    "approved:fallback-hook/sky-sign-copy/venus/libra:close"
+  ],
+  "selectedEvidence": {
+    "meaning": [
+      {
+        "sourceId": "meaning:matrix:meaning:409fbb1775aa",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/transitmeanings/jupiter|aries|ingress/409fbb1775aa",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "knowledge-matrix-meaning",
+        "role": "meaning",
+        "text": "After months of confusion, an opening can arrive all at once. Jupiter moves into Aries with a sudden burst of confidence, opportunity, or pent-up energy that makes immediate action tempting. The opening may be real. So is the difference between giving momentum a direction and simply letting it loose."
+      },
+      {
+        "sourceId": "meaning:matrix:meaning:1a9c996b4fa2",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/transitmeanings/jupiter|aries|ingress/1a9c996b4fa2",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "knowledge-matrix-meaning",
+        "role": "meaning",
+        "text": "Confidence can arrive before the evidence does. Jupiter moves into Aries, making action easier before complete certainty has caught up. A first move may reveal more than another round of waiting, especially after fear has been making too many decisions in advance."
+      },
+      {
+        "sourceId": "meaning:matrix:meaning:de8779555ba0",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/transitmeanings/jupiter|aries|ingress/de8779555ba0",
+        "governanceTier": "owner-approved",
+        "family": "knowledge-matrix-meaning",
+        "role": "meaning",
+        "text": "Jupiter moves into Aries, and confidence can turn into action very quickly. More people may make the first move, take the risk, or say yes before they have had time to measure the commitment."
+      },
+      {
+        "sourceId": "meaning:matrix:meaning:75904df07593",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/houseactivations/aries|jupiter|aries|ingress/75904df07593",
+        "governanceTier": "owner-approved",
+        "family": "knowledge-matrix-meaning",
+        "role": "meaning",
+        "text": "Jupiter in Aries moves through your 1st house of identity and self-expression, so confidence can grow fast, and so can the temptation to say yes because being asked feels flattering. A bigger role may sound exciting before you know what it will actually require. The first move may matter more than consensus, especially if waiting starts to feel like somebody else deciding for you."
+      },
+      {
+        "sourceId": "meaning:matrix:meaning:db9a615e3f59",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/houseactivations/taurus|jupiter|aries|ingress/db9a615e3f59",
+        "governanceTier": "owner-approved",
+        "family": "knowledge-matrix-meaning",
+        "role": "meaning",
+        "text": "Jupiter in Aries moves through your 12th house of endings and closure, so hope can return in a private way. Rest, retreat, therapy, spiritual practice, or work done out of sight may give you more room than pushing for an immediate public result. What has been buried can come up suddenly, especially when you have been trying to outpace it."
+      },
+      {
+        "sourceId": "meaning:matrix:meaning:5c663c2e830a",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/houseactivations/gemini|jupiter|aries|ingress/5c663c2e830a",
+        "governanceTier": "owner-approved",
+        "family": "knowledge-matrix-meaning",
+        "role": "meaning",
+        "text": "Jupiter in Aries moves through your 11th house of friendships and community, so your circle may get bigger, invitations may multiply, or a group may connect you to people you would not have met on your own. More people does not automatically mean more support. You may be the one who makes the plan or says what the group has been avoiding."
+      }
+    ],
+    "scene": [
+      {
+        "sourceId": "scene:matrix:scene:e518f2874808",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/houseactivations/aquarius|jupiter|aries|ingress/e518f2874808",
+        "governanceTier": "owner-approved",
+        "family": "knowledge-matrix-scene",
+        "role": "scene",
+        "text": "Jupiter in Aries moves through your 3rd house of communication and daily reality, so more messages, options, introductions, or information can open a door. They can also make it harder to decide which conversation is actually worth following. The first reply may feel obvious. Ten minutes later, you may realize there was another way to say the same point."
+      }
+    ],
+    "argument": [
+      {
+        "sourceId": "argument:matrix:argument_candidate:1a9c996b4fa2",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/transitmeanings/jupiter|aries|ingress/1a9c996b4fa2",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "knowledge-matrix-argument",
+        "role": "argument",
+        "text": "Confidence can arrive before the evidence does. Jupiter moves into Aries, making action easier before complete certainty has caught up. A first move may reveal more than another round of waiting, especially after fear has been making too many decisions in advance."
+      },
+      {
+        "sourceId": "argument:matrix:argument_candidate:75904df07593",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/houseactivations/aries|jupiter|aries|ingress/75904df07593",
+        "governanceTier": "owner-approved",
+        "family": "knowledge-matrix-argument",
+        "role": "argument",
+        "text": "Jupiter in Aries moves through your 1st house of identity and self-expression, so confidence can grow fast, and so can the temptation to say yes because being asked feels flattering. A bigger role may sound exciting before you know what it will actually require. The first move may matter more than consensus, especially if waiting starts to feel like somebody else deciding for you."
+      },
+      {
+        "sourceId": "argument:matrix:argument_candidate:5c663c2e830a",
+        "sourcePath": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
+        "contentKey": "matrix/houseactivations/gemini|jupiter|aries|ingress/5c663c2e830a",
+        "governanceTier": "owner-approved",
+        "family": "knowledge-matrix-argument",
+        "role": "argument",
+        "text": "Jupiter in Aries moves through your 11th house of friendships and community, so your circle may get bigger, invitations may multiply, or a group may connect you to people you would not have met on your own. More people does not automatically mean more support. You may be the one who makes the plan or says what the group has been avoiding."
+      }
+    ],
+    "register": [
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:opening",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "opening",
+        "text": "You have been taught to mistake endurance for ability. The person who remembers every deadline, answers after hours, and never drops the ball gets called reliable, and the arrangement is cheaper than hiring anyone else. Saturn in Capricorn asks a harder question: is the system actually working, or has one person become the system?"
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:tension",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "tension",
+        "text": "A project can win praise while one person sends corrections at midnight, covers a vacant role, and logs in on vacation. You may recognize the same pattern at home: a household looks organized because one person remembers every appointment, payment, and form. When they stop doing all of it, deadlines slip, messages go unanswered, and everyone discovers how much of the plan depended on work nobody else was prepared to do. If everything falls apart when one person takes a day off, that person was the infrastructure."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:development",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "development",
+        "text": "Before you expand the plan, make sure somebody else can run it. Fix the handoff. Train someone else to do the work. Fund the repair. Document what only one person knows. If training, funding, documentation, or another set of hands fixes the problem, reinforce it. If the structure still requires permanent overwork to function, stop calling it stable."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/saturn/capricorn:close",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/saturn/capricorn",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "close",
+        "text": "A structure is not stable if it only works when one person never rests."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:opening",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "opening",
+        "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Venus enters Libra and the focus shifts from what needs fixing to how two people make a choice together. Venus governs relationships, creativity, attraction, and what we value. Venus shows up in what you agree to, what you let go of, and what you tell yourself you do not mind. Libra's scales are not a symbol of peace. They are a measuring instrument, and they only balance when both sides are actually on them."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:tension",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "tension",
+        "text": "The problem starts when you keep saying yes because it feels easier than saying what you actually want. You ask what works for everyone else first, then shape your answer around what is left. The loudest voice makes the choice while the more accommodating person takes the extra bill, revisions, or responsibility. Resentment builds because the agreement only works by asking one person to keep giving more. You did not agree. You accommodated, and everyone called it agreement."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:development",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "development",
+        "text": "A shared purchase hides the same imbalance. You agree to split the cost, put the charge on your card, and accept a smaller repayment because asking for the exact difference feels awkward. You save the receipt, calculate what is still owed, and send another reminder. The agreement stays easy because you carry the missing money and the work of collecting it."
+      },
+      {
+        "sourceId": "approved:fallback-hook/sky-sign-copy/venus/libra:close",
+        "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+        "contentKey": "fallback-hook/sky-sign-copy/venus/libra",
+        "governanceTier": "owner-approved-exact-copy",
+        "family": "sky-placement-continuous-v2",
+        "role": "register",
+        "slot": "close",
+        "text": "The connections worth keeping are the ones that survive you asking for something."
+      }
+    ]
+  },
+  "cycleFacts": {
+    "status": "REVIEWED",
+    "sourcePath": "packages/astro-knowledge/data/modifiers/planet-cycle-facts.json",
+    "zodiacCircuit": "about 12 years",
+    "typicalSignStay": "about 1 year per sign",
+    "variabilityNote": null
+  },
+  "exclusions": [
+    "July four-slot placement rows: reference-only and not transmitted",
+    "Daily evidence: not transmitted as voice evidence",
+    "Unapproved generated copy: excluded"
+  ],
+  "unsupportedFactsWithheld": [
+    "calendar dates",
+    "biography",
+    "motives",
+    "specific historical events",
+    "durations beyond the reviewed cycle facts"
+  ]
+}
