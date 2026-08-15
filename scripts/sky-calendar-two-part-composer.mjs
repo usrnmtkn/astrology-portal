@@ -10,6 +10,7 @@ import {
   constructionSkeleton,
   splitSentences,
 } from "./sky-calendar-frame-uniqueness.mjs";
+import { selectRealizationForAspect } from "./sky-calendar-realization-types.mjs";
 
 const moduleRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -195,7 +196,11 @@ export function resolveSkyCalendarComponents(registry, input) {
   for (const [slot, unit] of Object.entries(units)) {
     if (!unit) throw new Error(`${input.key ?? "card"}: missing ${slot} component ${keys[slot]}`);
   }
-  return { keys, units };
+  const realizationSelections = Object.fromEntries(Object.entries(units).map(([slot, unit]) => [
+    slot,
+    selectRealizationForAspect(unit, input.aspect, `${input.key ?? "card"}|${slot}`),
+  ]));
+  return { keys, units, realizationSelections };
 }
 
 function allComponentProse(units) {
@@ -350,6 +355,7 @@ export function composeSkyCalendarTwoPartCard(registry, specification, { reviewM
       componentKeys: resolved.keys,
       componentSha256: Object.fromEntries(Object.entries(resolved.units).map(([slot, unit]) => [slot, unitSha256(unit)])),
       componentStatuses: Object.fromEntries(Object.entries(resolved.units).map(([slot, unit]) => [slot, unit.owner_review_status])),
+      realizationSelections: resolved.realizationSelections,
     },
     forecast,
     forecastRenderedPreview: `${normalizeWhitespace(specification.forecastLeadIn)} ${forecast}`,

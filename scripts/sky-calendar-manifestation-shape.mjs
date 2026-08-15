@@ -28,7 +28,7 @@ export function manifestationSkeleton(key, value) {
 export function manifestationShapeReport(rows, cap = 3) {
   const counts = new Map();
   for (const row of rows) {
-    for (const manifestation of row.reader_manifestations) {
+    for (const manifestation of REALIZATION_FIELDS.flatMap((field) => row[field] ?? [])) {
       const skeleton = manifestationSkeleton(row.key, manifestation);
       counts.set(skeleton, (counts.get(skeleton) ?? 0) + 1);
     }
@@ -50,3 +50,4 @@ export function assertManifestationShapeCap(rows, cap = 3) {
   }
   return report;
 }
+import { REALIZATION_FIELDS } from "./sky-calendar-realization-types.mjs";

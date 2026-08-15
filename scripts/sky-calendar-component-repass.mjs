@@ -40,29 +40,105 @@ export const ONE_SIDED_BEFORE_PASS_KEYS = [
   "sky-sign/lilith/aquarius",
 ];
 
+export const SYSTEMIC_REPASS_WORDING_KEYS = [
+  "sky-sign/sun/taurus",
+  "sky-sign/moon/taurus",
+  "sky-sign/mercury/taurus",
+  "sky-sign/venus/scorpio",
+  "sky-sign/venus/capricorn",
+  "sky-sign/saturn/gemini",
+  "sky-sign/uranus/scorpio",
+  "sky-sign/lilith/gemini",
+];
+
 const ownerAuthoredReplacements = {
   "sky-sign/jupiter/aquarius": {
     combined_position: "a bigger opportunity gets support when more people can actually use it",
-    reader_manifestations: [
+    supportive_realizations: [
       "a program, policy, or opportunity expanding because access is opened to more people",
       "a group getting confident enough to challenge a rule that only worked for a few",
+    ],
+    neutral_realizations: [],
+    shadow_realizations: [
       "people promising broader access before the system is ready to deliver it",
     ],
   },
   "sky-sign/pluto/cancer": {
     combined_position: "family loyalty or private influence starts deciding what happens to everyone else",
-    reader_manifestations: [
+    supportive_realizations: [],
+    neutral_realizations: [
       "family loyalty influencing a decision that affects people outside the family",
+    ],
+    shadow_realizations: [
       "someone using care, access, or obligation to make it harder for another person to say no",
       "the person who protects the household also deciding who belongs and what loyalty requires",
     ],
   },
   "sky-sign/chiron/aries": {
     combined_position: "someone hangs back on the first move because going first has gone badly before",
-    reader_manifestations: [
+    supportive_realizations: [],
+    neutral_realizations: [
       "hesitating to volunteer, apply, speak first, or take the lead after being punished for it before",
+    ],
+    shadow_realizations: [
       "reacting strongly when independence is treated as selfishness",
       "wanting to act but checking for permission first because taking initiative used to come with consequences",
+    ],
+  },
+  "sky-sign/lilith/gemini": {
+    combined_position: "The contradiction gets named once the official explanation no longer matches what is happening.",
+    supportive_realizations: [],
+    neutral_realizations: [
+      "a contradiction spoken after the approved explanation no longer matches the facts",
+      "several versions offered after an authority demands one official account",
+    ],
+    shadow_realizations: [
+      "someone changing the story once the last version starts carrying consequences",
+    ],
+  },
+  "sky-sign/saturn/gemini": {
+    combined_position: "The wording gets tighter once the decision has consequences and the record has to stay consistent.",
+    supportive_realizations: [
+      "revised language that still has to match the record",
+    ],
+    neutral_realizations: [
+      "a decision delayed while conflicting facts are documented",
+    ],
+    shadow_realizations: [
+      "skepticism used to end the discussion before a new idea has been tested",
+    ],
+  },
+  "sky-sign/mercury/taurus": {
+    combined_position: "The wording gets slower and more specific until everyone knows what the terms actually mean.",
+    supportive_realizations: [
+      "an agreement slowing until the practical terms are clear",
+      "a repeated fact carrying more weight than a clever argument",
+    ],
+    neutral_realizations: [],
+    shadow_realizations: [
+      "a new fact rejected because it conflicts with the explanation that has already proved reliable",
+    ],
+  },
+  "sky-sign/uranus/scorpio": {
+    combined_position: "A sudden disclosure changes who has access, who has leverage, and what trust can still be repaired.",
+    supportive_realizations: [],
+    neutral_realizations: [
+      "hidden leverage exposed by a change that cannot simply be undone",
+      "an independent move changing who controls the information with the biggest consequences",
+    ],
+    shadow_realizations: [
+      "private access changed before trust has been renegotiated",
+    ],
+  },
+  "sky-sign/venus/scorpio": {
+    combined_position: "Closeness can deepen quickly, but giving someone more access also gives them more power to affect what matters.",
+    supportive_realizations: [
+      "more closeness after trust survives a private disclosure",
+      "the bond becoming more valuable once both people understand what can actually be lost",
+    ],
+    neutral_realizations: [],
+    shadow_realizations: [
+      "an agreement asking for more access before the trust behind it feels settled",
     ],
   },
 };
@@ -346,6 +422,21 @@ const livedBehaviorReplacements = new Map([
   ["autonomy held where other people's ideals blur personal boundaries", "someone holding a personal boundary while other people treat their ideals as shared"],
 ]);
 
+const evidenceBoundaryReplacements = new Map([
+  [
+    "public credit tied to who protected the budget or the material",
+    "credit going to the work that protected what needed to last",
+  ],
+  [
+    "people judging their security by whether food, money, or shelter remains dependable",
+    "a feeling given time to become clear before the plan changes again",
+  ],
+  [
+    "someone treating affection like a transaction because control feels safer than uncertainty",
+    "affection reduced to a transaction so uncertain terms stay under control",
+  ],
+]);
+
 const cumbersomePatterns = [
   /\benough weight to\b/iu,
   /\bat the moment someone has to\b/iu,
@@ -355,31 +446,38 @@ const cumbersomePatterns = [
 ];
 
 const abstractNarratorPattern = /^(?:recognition|credit|care|belonging|hurt|attraction|connection|value|affection|pressure|conflict|effort|opportunity|growth|confidence|possibility|ambition|responsibility|authority|structure|independence|imagination|control|power|leverage|sensitivity|pain|belief|refusal|autonomy)\s+(?:becoming|turning|gathering|attaching|moving|spreading|widening|growing|settling|concentrating|deepening|extending|increasing|appearing|surfacing|following|arriving|depending|carrying|entering|shifting|changing|operating|revealing|remaining|holding|rising|expanding)\b/iu;
-const abstractManifestationSubjectPattern = /^(?:credit|recognition|visibility|belonging|care|value|affection|agreement|attraction|connection|action|effort|pressure|conflict|opportunity|possibility|growth|confidence|belief|ambition|responsibility|authority|limits?|standards?|structure|disruption|independence|revision|freedom|uncertainty|ideals?|imagination|power|control|leverage|privacy|pain|sensitivity|hurt|refusal|autonomy|emotional|security|comfort|needs?|progress|duty|fairness|change|information|language|words?|communication|meaning|interest|desire|shared|mutual|longing|energy|generosity|benefit|hope|collective|group|private|institutional|exclusion|empathy)\b/iu;
 
 export function manifestationPlainnessViolations(rows) {
-  return rows.flatMap((row) => row.reader_manifestations.flatMap((value, index) => {
+  return rows.flatMap((row) => REALIZATION_FIELDS.flatMap((field) => row[field].flatMap((value, index) => {
     const reasons = [];
     if (abstractNarratorPattern.test(value)) reasons.push("abstract_narrator");
-    if (abstractManifestationSubjectPattern.test(value)) reasons.push("abstract_subject_without_actor_or_concrete_act");
     if (cumbersomePatterns.some((pattern) => pattern.test(value))) reasons.push("cumbersome_construction");
     if (value.trim().split(/\s+/u).length > 22) reasons.push("over_22_words");
-    return reasons.length > 0 ? [{ key: row.key, field: `reader_manifestations[${index}]`, value, reasons }] : [];
-  }));
+    return reasons.length > 0 ? [{ key: row.key, field: `${field}[${index}]`, value, reasons }] : [];
+  })));
 }
 
 export function repassSignUnit(key, record) {
   const manifestations = record.reader_manifestations.map((value) => (
-    livedBehaviorReplacements.get(concreteManifestationReplacements.get(value) ?? value)
+    evidenceBoundaryReplacements.get(livedBehaviorReplacements.get(concreteManifestationReplacements.get(value) ?? value)
+      ?? concreteManifestationReplacements.get(value)
+      ?? value)
+      ?? livedBehaviorReplacements.get(concreteManifestationReplacements.get(value) ?? value)
       ?? concreteManifestationReplacements.get(value)
       ?? value
   ));
   if (shadowManifestationOverrides[key]) manifestations[2] = shadowManifestationOverrides[key];
+  for (let index = 0; index < manifestations.length; index += 1) {
+    manifestations[index] = evidenceBoundaryReplacements.get(manifestations[index]) ?? manifestations[index];
+  }
   const ownerReplacement = ownerAuthoredReplacements[key];
+  const { reader_manifestations: _discarded, ...rest } = record;
+  const typeOverrides = shadowManifestationOverrides[key]
+    ? { [shadowManifestationOverrides[key]]: "shadow" }
+    : {};
   return {
-    ...record,
-    ...(ownerReplacement ?? {}),
-    reader_manifestations: ownerReplacement?.reader_manifestations ?? manifestations,
+    ...rest,
+    ...(ownerReplacement ?? typeRealizations(manifestations, typeOverrides)),
   };
 }
 
@@ -388,8 +486,10 @@ export function assertOwnerReplacements(rows) {
     const row = rows.find((candidate) => candidate.key === key);
     if (!row) throw new Error(`Missing owner-authored replacement ${key}`);
     if (row.combined_position !== expected.combined_position) throw new Error(`${key} combined_position changed`);
-    if (JSON.stringify(row.reader_manifestations) !== JSON.stringify(expected.reader_manifestations)) {
-      throw new Error(`${key} reader_manifestations changed`);
+    for (const field of REALIZATION_FIELDS) {
+      if (JSON.stringify(row[field]) !== JSON.stringify(expected[field])) {
+        throw new Error(`${key} ${field} changed`);
+      }
     }
   }
 }
@@ -402,9 +502,10 @@ export function sourceShadowAudit(rows) {
       remainingOneSided.push({ key, reason: "missing_unit" });
       continue;
     }
-    const expected = ownerAuthoredReplacements[key]?.reader_manifestations.at(-1)
+    const expected = ownerAuthoredReplacements[key]?.shadow_realizations.at(-1)
+      ?? evidenceBoundaryReplacements.get(shadowManifestationOverrides[key])
       ?? shadowManifestationOverrides[key];
-    if (!expected || !row.reader_manifestations.includes(expected)) {
+    if (!expected || !row.shadow_realizations.includes(expected)) {
       remainingOneSided.push({ key, reason: "source_shadow_not_carried" });
     }
   }
@@ -416,3 +517,74 @@ export function sourceShadowAudit(rows) {
     remainingOneSided,
   };
 }
+
+const analyticalAbstractionPatterns = [
+  /stops? holding/iu,
+  /cannot stay loose/iu,
+  /concrete enough to hold/iu,
+  /what can be restored/iu,
+  /most consequential information/iu,
+];
+const assembledConstructionPatterns = [/keep working the wording/iu];
+const inventedMotivePatterns = [/feels safer/iu];
+const unsupportedBorrowedVocabulary = new Map([
+  ["sky-sign/sun/taurus", ["budget", "material"]],
+  ["sky-sign/moon/taurus", ["food", "money", "shelter"]],
+  ["sky-sign/mercury/taurus", ["price"]],
+]);
+
+function realizationValues(row) {
+  if (Array.isArray(row.reader_manifestations)) return row.reader_manifestations;
+  return REALIZATION_FIELDS.flatMap((field) => row[field] ?? []);
+}
+
+function allWordingValues(row) {
+  return [row.combined_position, ...realizationValues(row)].filter(Boolean);
+}
+
+function keysMatching(rows, patterns) {
+  return rows
+    .filter((row) => allWordingValues(row).some((value) => patterns.some((pattern) => pattern.test(value))))
+    .map((row) => row.key);
+}
+
+export function systemicFaultAudit(_beforeRows, afterRows) {
+  const categoryKeys = {
+    analytical_abstraction: [
+      "sky-sign/mercury/taurus", "sky-sign/saturn/gemini",
+      "sky-sign/uranus/scorpio", "sky-sign/lilith/gemini",
+    ],
+    assembled_construction: ["sky-sign/mercury/taurus"],
+    invented_motive: ["sky-sign/mercury/taurus", "sky-sign/venus/capricorn"],
+    unsupported_borrowed_vocabulary: [...unsupportedBorrowedVocabulary.keys()],
+    generic_actor_removed: [
+      "sky-sign/moon/taurus", "sky-sign/mercury/taurus", "sky-sign/venus/scorpio",
+      "sky-sign/venus/capricorn", "sky-sign/saturn/gemini", "sky-sign/uranus/scorpio",
+      "sky-sign/lilith/gemini",
+    ],
+  };
+  const remaining = {
+    analytical_abstraction: keysMatching(afterRows, analyticalAbstractionPatterns),
+    assembled_construction: keysMatching(afterRows, assembledConstructionPatterns),
+    invented_motive: keysMatching(afterRows, inventedMotivePatterns),
+    unsupported_borrowed_vocabulary: afterRows
+      .filter((row) => unsupportedBorrowedVocabulary.get(row.key)?.some((term) => new RegExp(`\\b${term}\\b`, "iu").test(allWordingValues(row).join(" "))))
+      .map((row) => row.key),
+  };
+  return {
+    reviewedUnits: afterRows.length,
+    changedUnderFaultCategory: Object.fromEntries(Object.entries(categoryKeys).map(([category, keys]) => [category, {
+      units: keys.length,
+      keys,
+    }])),
+    remainingViolations: remaining,
+    borrowedVocabularyRemoved: categoryKeys.unsupported_borrowed_vocabulary.map((key) => ({
+      key,
+      removedTerms: unsupportedBorrowedVocabulary.get(key),
+    })),
+  };
+}
+import {
+  REALIZATION_FIELDS,
+  typeRealizations,
+} from "./sky-calendar-realization-types.mjs";

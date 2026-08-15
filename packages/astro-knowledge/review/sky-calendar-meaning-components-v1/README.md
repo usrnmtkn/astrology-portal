@@ -1,4 +1,4 @@
-# Sky Calendar meaning components v1
+# Sky Calendar meaning components v2
 
 Status: `PENDING OWNER`. Nothing in this review set is approved or serving.
 
@@ -46,7 +46,7 @@ Every sign has at least two owner-written placement rows. Exact source IDs, SHA-
 
 ## Wording-layer regeneration
 
-The owner rejected the first wording layer because 142 sign units used the same mechanical join and their manifestations were unions of reusable planet and sign lists. A second pass fixed the joined position language but still built manifestations from three reusable frames per sign. The next pass replaced that slot system with manifestations authored separately for every planet-sign unit. This pass keeps that structural fix and moves the full component set into the owner's plain register: people, deadlines, budgets, messages, rules, work, and consequences replace abstract nouns narrating themselves. The evidence layer remains unchanged at SHA-256 `0ceb85f5897fb42238dfdd69e7b02271f87befe202f009da8659add9b9337c23`.
+The owner rejected the first wording layer because 142 sign units used the same mechanical join and their manifestations were unions of reusable planet and sign lists. A second pass fixed the joined position language but still built manifestations from three reusable frames per sign. The next pass replaced that slot system with manifestations authored separately for every planet-sign unit. The current schema removes the last positional template: there is no ordered `reader_manifestations` list. All 174 units carry named `supportive_realizations`, `neutral_realizations`, and `shadow_realizations` arrays, and the composer selects a meaning type from the aspect's argument shape. Array counts vary by unit. The evidence layer remains unchanged at SHA-256 `0ceb85f5897fb42238dfdd69e7b02271f87befe202f009da8659add9b9337c23`.
 
 The regenerated wording layer has:
 
@@ -69,8 +69,10 @@ The owner sampled Jupiter in Aquarius, Pluto in Cancer, and Chiron in Aries and 
 
 All 174 units were rechecked. The evidence pointers, source hashes, coverage classes, fail-closed policy, and `PENDING OWNER` status did not change.
 
-- 138 units changed; 36 were reviewed and retained.
+- All 174 units changed schema; 8 sign units changed wording in this pass.
 - 39 sign units were one-sided relative to their source challenge or shadow before the pass; 0 remain one-sided.
-- Manifestations now fail the build when an abstraction narrates itself, a known cumbersome construction returns, or a manifestation exceeds 22 words.
+- Realizations now fail the build when an abstraction narrates itself, a known cumbersome construction returns, or a realization exceeds 22 words.
 - Every formerly one-sided unit carries a concrete source-backed cost, overreach, avoidance, rigidity, or consequence.
-- The three owner-authored replacements are pinned by an exact regression test.
+- Eight owner-authored replacements are pinned by an exact regression test.
+- The five latest owner samples removed analytical abstraction from 4 units, an assembled construction from 1, invented motive from 2, unsupported Taurus money vocabulary from 3, and unnecessary generic actors from 7.
+- The Taurus evidence audit removed `budget` and `material` from Sun, `food`, `money`, and `shelter` from Moon, and `price` from Mercury. Money language remains only where that unit's own evidence supports it.
