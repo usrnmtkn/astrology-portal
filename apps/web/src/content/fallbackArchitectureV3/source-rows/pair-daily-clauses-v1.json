@@ -1005,12 +1005,13 @@
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
       "source_key": "fallback-hook/bond-effect-soft/jupiter",
-      "body_you": "One idea turns into three plans fast, so check the calendar before you promise all of them.",
-      "body_they": "One idea turns into three plans fast, so check the calendar before you promise all of them.",
+      "body_you": "One idea turns into three plans fast, so check the calendar before you commit to all of them.",
+      "body_they": "One idea turns into three plans fast, so check the calendar before you commit to all of them.",
       "review_status": "approved",
       "drafted_via": "owner-authored compressed bond clause 2026-08-07 (today-scale, timescale words stripped; replaces full bond-card effect in pair-daily slot C); needs explicit approval",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
-      "approved_via": "owner approval, cowork session 2026-08-07: 'approve' given for the bridge-rule revisions and 28 compressed bond clauses as staged"
+      "approved_via": "owner approval, cowork session 2026-08-07: 'approve' given for the bridge-rule revisions and 28 compressed bond clauses as staged; owner exact correction 2026-08-15: replace 'promise all of them' with 'commit to all of them'",
+      "superseded_wording": "One idea turns into three plans fast, so check the calendar before you promise all of them."
     },
     {
       "contentKey": "fallback-hook/pair-daily/bond-clause/soft/lilith",
