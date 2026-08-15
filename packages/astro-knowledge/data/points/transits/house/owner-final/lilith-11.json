@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-11",
+  "canonicalId": "transit-house/lilith/11",
+  "kind": "house",
+  "transiting": "lilith",
+  "house": 11,
+  "headline": "Belonging without silence",
+  "body": "Black Moon Lilith in your 11th house highlights the hidden price of staying in certain friendships, groups, or social circles. You become hyper-aware of the opinions you hide, the events you attend purely out of obligation, or the quiet role you play because disagreement would get you ousted. Belonging gets way too expensive when it requires you to censor yourself.\n\nThe answer is not burning down every friendship before anyone can criticize you. Test the waters by speaking your mind, skipping an event you hate, or setting a boundary on your time. Real friends do not require your silence to keep you around.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Lilith — 11H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

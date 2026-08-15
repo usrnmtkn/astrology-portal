@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.square.north-node",
+  "canonicalId": "sky-aspect/mercury/north_node/square",
+  "kind": "sky-aspect",
+  "bodyA": "mercury",
+  "bodyB": "north_node",
+  "aspect": "square",
+  "humanMoment": "The catch-up call is rehearsing the past for the third time this month.",
+  "developmentDetail": "Two old friends retell the same stories with the same beats, bump the conversation the new chapter actually needs, and hang up pleasantly unchanged.",
+  "planetaryDynamic": "With Mercury square the North Node, people feel the pinch from both directions: they find the archived material easy and the unopened agenda awkward, and the talk they keep skipping is the exact step the season keeps asking for.",
+  "aspectMechanic": "Nobody has said the new plan out loud yet.",
+  "conditionalConsequence": "The calls may stay warm forever, but people who never discuss a chapter never plan it, and the silence around it works like a decision too.",
+  "body": "The catch-up call is rehearsing the past for the third time this month.\n\nTwo old friends retell the same stories with the same beats, bump the conversation the new chapter actually needs, and hang up pleasantly unchanged.\n\nWith Mercury square the North Node, people feel the pinch from both directions: they find the archived material easy and the unopened agenda awkward, and the talk they keep skipping is the exact step the season keeps asking for.\n\nNobody has said the new plan out loud yet.\n\nThe calls may stay warm forever, but people who never discuss a chapter never plan it, and the silence around it works like a decision too.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.mercury.square.north-node",
+    "sourceHeading": "Mercury square North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

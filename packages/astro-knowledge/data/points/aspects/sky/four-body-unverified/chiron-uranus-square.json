@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.square.chiron",
+  "canonicalId": "sky-aspect/chiron/uranus/square",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "uranus",
+  "aspect": "square",
+  "humanMoment": "The shock and the sore spot hit people in the same week.",
+  "developmentDetail": "Someone absorbs the reorganization, the breakup, the move at their least defended point, and everything new in their life starts negotiating with everything unhealed.",
+  "planetaryDynamic": "With Uranus square Chiron, people take the change as it forces through while the oldest vulnerability catches the impact, and adaptation and repair fight for the same energy.",
+  "aspectMechanic": "They can feed one only by starving the other.",
+  "conditionalConsequence": "The pileup may feel like punishment, but it tends to be coincidence with leverage, and the people who notice that get to choose where the leverage points.",
+  "body": "The shock and the sore spot hit people in the same week.\n\nSomeone absorbs the reorganization, the breakup, the move at their least defended point, and everything new in their life starts negotiating with everything unhealed.\n\nWith Uranus square Chiron, people take the change as it forces through while the oldest vulnerability catches the impact, and adaptation and repair fight for the same energy.\n\nThey can feed one only by starving the other.\n\nThe pileup may feel like punishment, but it tends to be coincidence with leverage, and the people who notice that get to choose where the leverage points.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.uranus.square.chiron",
+    "sourceHeading": "Uranus square Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

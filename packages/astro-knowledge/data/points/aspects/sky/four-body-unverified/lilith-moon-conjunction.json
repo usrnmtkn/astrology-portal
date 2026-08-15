@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.conjunction.lilith",
+  "canonicalId": "sky-aspect/lilith/moon/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "moon",
+  "aspect": "conjunction",
+  "humanMoment": "Someone's comfortable evening at home turns restless for no reason anyone can point to.",
+  "developmentDetail": "Dinner is made and the shows are queued, and still they are scrolling for a different life, because the want underneath the routine has stopped accepting substitutes.",
+  "planetaryDynamic": "With the Moon conjunct Lilith, the same person who built the routine to feel safe is carrying the hunger the routine was built to quiet.",
+  "aspectMechanic": "Comfort and the refusal of comfort arrive in them as a single mood.",
+  "conditionalConsequence": "The night may pass fine, but the restlessness keeps coming back until someone names the actual want.",
+  "body": "Someone's comfortable evening at home turns restless for no reason anyone can point to.\n\nDinner is made and the shows are queued, and still they are scrolling for a different life, because the want underneath the routine has stopped accepting substitutes.\n\nWith the Moon conjunct Lilith, the same person who built the routine to feel safe is carrying the hunger the routine was built to quiet.\n\nComfort and the refusal of comfort arrive in them as a single mood.\n\nThe night may pass fine, but the restlessness keeps coming back until someone names the actual want.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.moon.conjunction.lilith",
+    "sourceHeading": "Moon conjunction Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

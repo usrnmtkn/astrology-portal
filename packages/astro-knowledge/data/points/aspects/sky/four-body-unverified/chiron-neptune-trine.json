@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.neptune.trine.chiron",
+  "canonicalId": "sky-aspect/chiron/neptune/trine",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "neptune",
+  "aspect": "trine",
+  "humanMoment": "The old injury becomes material, and the material helps strangers.",
+  "developmentDetail": "Someone puts out the song, the essay, the honest post, and it travels farther than anything more polished did; people the maker will never meet write to say they felt found by it.",
+  "planetaryDynamic": "With Neptune trine Chiron, people carry their work outward with an accuracy only the injury could have taught them.",
+  "aspectMechanic": "The maker did not have to bleed through it to make it true.",
+  "conditionalConsequence": "The reach may exceed the craft for a while, because the accuracy came from somewhere real, and audiences tend to be able to tell.",
+  "body": "The old injury becomes material, and the material helps strangers.\n\nSomeone puts out the song, the essay, the honest post, and it travels farther than anything more polished did; people the maker will never meet write to say they felt found by it.\n\nWith Neptune trine Chiron, people carry their work outward with an accuracy only the injury could have taught them.\n\nThe maker did not have to bleed through it to make it true.\n\nThe reach may exceed the craft for a while, because the accuracy came from somewhere real, and audiences tend to be able to tell.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.neptune.trine.chiron",
+    "sourceHeading": "Neptune trine Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

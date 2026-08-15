@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.quincunx.chiron",
+  "canonicalId": "sky-aspect/chiron/jupiter/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "jupiter",
+  "aspect": "quincunx",
+  "humanMoment": "The opportunity and the old limit keep sending people to separate advisors.",
+  "developmentDetail": "Someone eyes the dream role and finds it demands the exact capacity the injury rationed, so every plan they draft carries a clause for managing the ache, and growth advances in awkward increments.",
+  "planetaryDynamic": "With Jupiter quincunx Chiron, people draft the bigger plan while they keep having to attach the rider the plan would rather forget.",
+  "aspectMechanic": "Each new version needs a new accommodation.",
+  "conditionalConsequence": "The clause may be permanent, and that tends to be workable; the plans that fail are the ones their owners write as if it were not there.",
+  "body": "The opportunity and the old limit keep sending people to separate advisors.\n\nSomeone eyes the dream role and finds it demands the exact capacity the injury rationed, so every plan they draft carries a clause for managing the ache, and growth advances in awkward increments.\n\nWith Jupiter quincunx Chiron, people draft the bigger plan while they keep having to attach the rider the plan would rather forget.\n\nEach new version needs a new accommodation.\n\nThe clause may be permanent, and that tends to be workable; the plans that fail are the ones their owners write as if it were not there.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.jupiter.quincunx.chiron",
+    "sourceHeading": "Jupiter quincunx Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

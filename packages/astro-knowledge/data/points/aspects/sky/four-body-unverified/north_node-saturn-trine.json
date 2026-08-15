@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.trine.north-node",
+  "canonicalId": "sky-aspect/north_node/saturn/trine",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "saturn",
+  "aspect": "trine",
+  "humanMoment": "The new discipline has stopped requiring enforcement.",
+  "developmentDetail": "Someone's practice keeps itself now, the routine runs without negotiation, and the people around them start treating the direction as a commitment rather than an enthusiasm.",
+  "planetaryDynamic": "With Saturn trine the North Node, people find their repetition hardening into structure right where the growth is, and the old competence supports the build instead of competing with it.",
+  "aspectMechanic": "Nobody has to talk anyone into showing up anymore.",
+  "conditionalConsequence": "The progress may be quiet, but consistency is the loudest signal people can send about a direction, and others have already started reading it.",
+  "body": "The new discipline has stopped requiring enforcement.\n\nSomeone's practice keeps itself now, the routine runs without negotiation, and the people around them start treating the direction as a commitment rather than an enthusiasm.\n\nWith Saturn trine the North Node, people find their repetition hardening into structure right where the growth is, and the old competence supports the build instead of competing with it.\n\nNobody has to talk anyone into showing up anymore.\n\nThe progress may be quiet, but consistency is the loudest signal people can send about a direction, and others have already started reading it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.saturn.trine.north-node",
+    "sourceHeading": "Saturn trine North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

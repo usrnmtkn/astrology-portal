@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.quincunx.chiron",
+  "canonicalId": "sky-aspect/chiron/uranus/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "uranus",
+  "aspect": "quincunx",
+  "humanMoment": "Each new freedom asks people's oldest sore spot for a fresh adjustment.",
+  "developmentDetail": "Someone takes the new schedule, the new city, the new openness, and each one presses differently on the crooked-healed place, so the freedom keeps needing aftercare.",
+  "planetaryDynamic": "With Uranus quincunx Chiron, people keep changing the terrain while re-fitting the old injury to every new map.",
+  "aspectMechanic": "Every liberation ships with an unadvertised installation period.",
+  "conditionalConsequence": "The adjustments may be worth it, and the people who plan the freedom and the aftercare as one package tend to be the ones telling the truth about the price.",
+  "body": "Each new freedom asks people's oldest sore spot for a fresh adjustment.\n\nSomeone takes the new schedule, the new city, the new openness, and each one presses differently on the crooked-healed place, so the freedom keeps needing aftercare.\n\nWith Uranus quincunx Chiron, people keep changing the terrain while re-fitting the old injury to every new map.\n\nEvery liberation ships with an unadvertised installation period.\n\nThe adjustments may be worth it, and the people who plan the freedom and the aftercare as one package tend to be the ones telling the truth about the price.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.uranus.quincunx.chiron",
+    "sourceHeading": "Uranus quincunx Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

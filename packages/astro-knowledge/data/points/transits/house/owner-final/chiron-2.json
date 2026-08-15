@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "chiron-2",
+  "canonicalId": "transit-house/chiron/2",
+  "kind": "house",
+  "transiting": "chiron",
+  "house": 2,
+  "headline": "What your work is worth",
+  "body": "Chiron in your 2nd house surfaces old doubts about money, self-worth, and what your labor is actually worth. You might undercharge, over-deliver, delay sending invoices, or feel guilty spending money on yourself even when it is totally reasonable. That insecurity usually spikes right when you need to state your rates or ask for a raise.\n\nMoney does not define your value, but fear does not get to set your price either. Naming a fair price, sticking to a realistic budget, or making a purchase without feeling guilty proves to yourself that your basic needs matter.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Chiron — 2H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

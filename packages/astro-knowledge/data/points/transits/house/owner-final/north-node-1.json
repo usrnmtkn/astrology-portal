@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "north-node-1",
+  "canonicalId": "transit-house/north_node/1",
+  "kind": "house",
+  "transiting": "north-node",
+  "house": 1,
+  "headline": "Choosing for yourself",
+  "body": "The North Node in your 1st house begins a year and a half of learning what happens when your own preferences come first. You might feel exposed when you make a call without taking a poll, change your style, or pursue a plan that others do not get right away. Feeling uncomfortable does not mean you made a mistake; it just means you are no longer waiting for permission.\n\nThe 7th house across the chart still matters; partnership and compromise are not going anywhere. The challenge is learning how to stay close to people without handing them the keys to your direction.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "North Node — 1H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

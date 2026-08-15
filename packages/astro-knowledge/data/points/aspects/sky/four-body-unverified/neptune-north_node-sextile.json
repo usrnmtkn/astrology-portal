@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.neptune.sextile.north-node",
+  "canonicalId": "sky-aspect/neptune/north_node/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "neptune",
+  "bodyB": "north_node",
+  "aspect": "sextile",
+  "humanMoment": "People are getting clarity from practice that certainty never delivered.",
+  "developmentDetail": "Someone takes the trial shift, the volunteer month, the small commission, and comes back with actual information: this part energizes, that part drains, and the dream acquires edges.",
+  "planetaryDynamic": "With Neptune sextile the North Node, people get a low-stakes way to field-test the imagined version against the real direction, and the people from the old life hold the safety net while they do.",
+  "aspectMechanic": "Somebody has to put the test on the calendar.",
+  "conditionalConsequence": "The dream may survive the contact or be corrected by it, and people gain ground either way; only the ones who never test it stall.",
+  "body": "People are getting clarity from practice that certainty never delivered.\n\nSomeone takes the trial shift, the volunteer month, the small commission, and comes back with actual information: this part energizes, that part drains, and the dream acquires edges.\n\nWith Neptune sextile the North Node, people get a low-stakes way to field-test the imagined version against the real direction, and the people from the old life hold the safety net while they do.\n\nSomebody has to put the test on the calendar.\n\nThe dream may survive the contact or be corrected by it, and people gain ground either way; only the ones who never test it stall.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.neptune.sextile.north-node",
+    "sourceHeading": "Neptune sextile North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

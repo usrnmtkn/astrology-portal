@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.trine.lilith",
+  "canonicalId": "sky-aspect/lilith/mars/trine",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "mars",
+  "aspect": "trine",
+  "humanMoment": "Someone's wildness finally gets a track to run on.",
+  "developmentDetail": "They set the unreasonable training goal, make the off-script pitch, use the blunt style that usually costs, and this time it functions; ferocity reads as competence.",
+  "planetaryDynamic": "With Mars trine Lilith, people turn energy into motion and draw on the untamed reserve that motion usually cannot reach.",
+  "aspectMechanic": "They run at full force without the usual collateral.",
+  "conditionalConsequence": "The run may be excellent, but people who spend the whole reserve this easily can make a rough default out of what was liberating as an exception.",
+  "body": "Someone's wildness finally gets a track to run on.\n\nThey set the unreasonable training goal, make the off-script pitch, use the blunt style that usually costs, and this time it functions; ferocity reads as competence.\n\nWith Mars trine Lilith, people turn energy into motion and draw on the untamed reserve that motion usually cannot reach.\n\nThey run at full force without the usual collateral.\n\nThe run may be excellent, but people who spend the whole reserve this easily can make a rough default out of what was liberating as an exception.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.mars.trine.lilith",
+    "sourceHeading": "Mars trine Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

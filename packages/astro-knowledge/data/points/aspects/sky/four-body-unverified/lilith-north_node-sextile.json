@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.lilith.sextile.north-node",
+  "canonicalId": "sky-aspect/lilith/north_node/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "north_node",
+  "aspect": "sextile",
+  "humanMoment": "Someone says the private ambition out loud and gets a collaborator instead of a fight.",
+  "developmentDetail": "The confessed want meets a person already building in that direction, and together they convert the secret into a plan with very little ceremony.",
+  "planetaryDynamic": "With Lilith sextile the North Node, the person holding the off-record appetite finds the direction has room for it.",
+  "aspectMechanic": "The door is open and the admission is cheap, but somebody still has to say the sentence while it is.",
+  "conditionalConsequence": "The opening may pass quietly, but people who name the want while the door is open start building instead of waiting.",
+  "body": "Someone says the private ambition out loud and gets a collaborator instead of a fight.\n\nThe confessed want meets a person already building in that direction, and together they convert the secret into a plan with very little ceremony.\n\nWith Lilith sextile the North Node, the person holding the off-record appetite finds the direction has room for it.\n\nThe door is open and the admission is cheap, but somebody still has to say the sentence while it is.\n\nThe opening may pass quietly, but people who name the want while the door is open start building instead of waiting.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.lilith.sextile.north-node",
+    "sourceHeading": "Lilith sextile North Node",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

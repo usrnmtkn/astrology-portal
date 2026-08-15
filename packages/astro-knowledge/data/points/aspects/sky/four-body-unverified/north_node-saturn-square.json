@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.square.north-node",
+  "canonicalId": "sky-aspect/north_node/saturn/square",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "saturn",
+  "aspect": "square",
+  "humanMoment": "The maintenance bill for the old structure is arriving during the new construction.",
+  "developmentDetail": "Someone's standing commitments demand their full cost exactly as the direction needs investment, and they cannot pay both invoices in full, so something gets renegotiated.",
+  "planetaryDynamic": "With Saturn square the North Node, people feel obligated in both directions at once, to the aging structure and to the unbuilt one, and the honest reckoning about what is still worth maintaining is the step they keep skipping.",
+  "aspectMechanic": "Somebody has to decide which structure still earns its keep.",
+  "conditionalConsequence": "The renegotiation may be uncomfortable, but people pay the same for structures kept out of habit as for structures kept on purpose, and only the second kind pays anything back.",
+  "body": "The maintenance bill for the old structure is arriving during the new construction.\n\nSomeone's standing commitments demand their full cost exactly as the direction needs investment, and they cannot pay both invoices in full, so something gets renegotiated.\n\nWith Saturn square the North Node, people feel obligated in both directions at once, to the aging structure and to the unbuilt one, and the honest reckoning about what is still worth maintaining is the step they keep skipping.\n\nSomebody has to decide which structure still earns its keep.\n\nThe renegotiation may be uncomfortable, but people pay the same for structures kept out of habit as for structures kept on purpose, and only the second kind pays anything back.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.saturn.square.north-node",
+    "sourceHeading": "Saturn square North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

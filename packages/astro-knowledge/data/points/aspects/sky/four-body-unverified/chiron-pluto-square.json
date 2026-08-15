@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.square.chiron",
+  "canonicalId": "sky-aspect/chiron/pluto/square",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "pluto",
+  "aspect": "square",
+  "humanMoment": "The current crisis retells someone's first story beat for beat.",
+  "developmentDetail": "The power shift, the exclusion, the loss casts today's people in decades-old roles, and the person at the center reacts to both stories at once, which is why the reaction outsizes the event.",
+  "planetaryDynamic": "With Pluto square Chiron, people feel present pressure landing on the original script, and the deep work reads as an attack even when nobody is attacking.",
+  "aspectMechanic": "Today's cast is playing borrowed parts.",
+  "conditionalConsequence": "The crisis may get handled either way, but if nobody notices the casting, the next crisis tends to inherit the same script and the same borrowed parts.",
+  "body": "The current crisis retells someone's first story beat for beat.\n\nThe power shift, the exclusion, the loss casts today's people in decades-old roles, and the person at the center reacts to both stories at once, which is why the reaction outsizes the event.\n\nWith Pluto square Chiron, people feel present pressure landing on the original script, and the deep work reads as an attack even when nobody is attacking.\n\nToday's cast is playing borrowed parts.\n\nThe crisis may get handled either way, but if nobody notices the casting, the next crisis tends to inherit the same script and the same borrowed parts.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.pluto.square.chiron",
+    "sourceHeading": "Pluto square Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

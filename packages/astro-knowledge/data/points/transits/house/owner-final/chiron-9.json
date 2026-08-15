@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "chiron-9",
+  "canonicalId": "transit-house/chiron/9",
+  "kind": "house",
+  "transiting": "chiron",
+  "house": 9,
+  "headline": "Belief after disappointment",
+  "body": "Chiron in your 9th house reopens old wounds around education, authority figures, religion, or the core beliefs that used to give your life direction. A mentor might have let you down, an institution may have failed you, or a past academic failure might still make you doubt yourself. Being cynical feels smart because it guards against future disappointment.\n\nThis transit lets you learn and believe on your own terms. You can question the teacher, drop outdated dogmas, go back to school, or hold onto only what actually works for you. You do not need absolute certainty anymore; a grounded outlook leaves room for healthy doubt.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Chiron — 9H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

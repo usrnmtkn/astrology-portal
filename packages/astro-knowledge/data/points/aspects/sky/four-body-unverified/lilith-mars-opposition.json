@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.opposition.lilith",
+  "canonicalId": "sky-aspect/lilith/mars/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "mars",
+  "aspect": "opposition",
+  "humanMoment": "Someone starts an argument with an opponent picked almost at random.",
+  "developmentDetail": "The provoker, the contrarian, the one who says the forbidden thing draws fire meant for an older address, and both sides end up fighting a stand-in war.",
+  "planetaryDynamic": "With Mars opposite Lilith, one fighter brings the open push while the other carries a banished conviction that never got its own hearing.",
+  "aspectMechanic": "They argue the oldest anger with a substitute.",
+  "conditionalConsequence": "A winner may emerge, but the size of the fight measured the age of the grievance, and somebody still owes the real conversation.",
+  "body": "Someone starts an argument with an opponent picked almost at random.\n\nThe provoker, the contrarian, the one who says the forbidden thing draws fire meant for an older address, and both sides end up fighting a stand-in war.\n\nWith Mars opposite Lilith, one fighter brings the open push while the other carries a banished conviction that never got its own hearing.\n\nThey argue the oldest anger with a substitute.\n\nA winner may emerge, but the size of the fight measured the age of the grievance, and somebody still owes the real conversation.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.mars.opposition.lilith",
+    "sourceHeading": "Mars opposition Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

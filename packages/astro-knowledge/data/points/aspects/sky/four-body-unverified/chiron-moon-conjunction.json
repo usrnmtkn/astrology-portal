@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.conjunction.chiron",
+  "canonicalId": "sky-aspect/chiron/moon/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "moon",
+  "aspect": "conjunction",
+  "humanMoment": "An ordinary kindness makes someone cry at the kitchen table.",
+  "developmentDetail": "A friend brings soup or checks in unprompted, and the person receiving it dissolves, more embarrassed by the tears than they ever were by the need.",
+  "planetaryDynamic": "With the Moon conjunct Chiron, people reach out to tend each other in the exact place that learned early not to ask.",
+  "aspectMechanic": "They are not crying about the soup; they are crying about every year nobody brought it.",
+  "conditionalConsequence": "The tears may look disproportionate, but the person who lets the comfort in anyway tends to find that accepting it was the day's actual work.",
+  "body": "An ordinary kindness makes someone cry at the kitchen table.\n\nA friend brings soup or checks in unprompted, and the person receiving it dissolves, more embarrassed by the tears than they ever were by the need.\n\nWith the Moon conjunct Chiron, people reach out to tend each other in the exact place that learned early not to ask.\n\nThey are not crying about the soup; they are crying about every year nobody brought it.\n\nThe tears may look disproportionate, but the person who lets the comfort in anyway tends to find that accepting it was the day's actual work.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.moon.conjunction.chiron",
+    "sourceHeading": "Moon conjunction Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

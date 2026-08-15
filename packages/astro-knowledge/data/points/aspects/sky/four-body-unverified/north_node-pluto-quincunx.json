@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.quincunx.north-node",
+  "canonicalId": "sky-aspect/north_node/pluto/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "pluto",
+  "aspect": "quincunx",
+  "humanMoment": "People keep double-booking the deep work and the forward work.",
+  "developmentDetail": "Someone's reckoning underneath demands attention in the same seasons the direction demands construction, and they treat each claim as a distraction from the other.",
+  "planetaryDynamic": "With Pluto quincunx the North Node, people keep splitting themselves between an excavation that runs on its own slow clock and a chapter that runs on the calendar, and no split they draw holds for long.",
+  "aspectMechanic": "Nobody gets an uninterrupted season for either project.",
+  "conditionalConsequence": "The interference may be chronic, but people carry both projects in one biography, and the ones who stop treating them as rivals tend to stop failing both.",
+  "body": "People keep double-booking the deep work and the forward work.\n\nSomeone's reckoning underneath demands attention in the same seasons the direction demands construction, and they treat each claim as a distraction from the other.\n\nWith Pluto quincunx the North Node, people keep splitting themselves between an excavation that runs on its own slow clock and a chapter that runs on the calendar, and no split they draw holds for long.\n\nNobody gets an uninterrupted season for either project.\n\nThe interference may be chronic, but people carry both projects in one biography, and the ones who stop treating them as rivals tend to stop failing both.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.pluto.quincunx.north-node",
+    "sourceHeading": "Pluto quincunx North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

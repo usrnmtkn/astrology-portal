@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.quincunx.chiron",
+  "canonicalId": "sky-aspect/chiron/mars/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "mars",
+  "aspect": "quincunx",
+  "humanMoment": "People are assertive everywhere except the one relationship that needs it.",
+  "developmentDetail": "Someone handles the counter confidently and the vendor clearly, then goes wordless at the family table, and the skill refuses to transfer to the original venue.",
+  "planetaryDynamic": "With Mars quincunx Chiron, people own the general capacity while guarding the specific room where it was first confiscated.",
+  "aspectMechanic": "Their competence elsewhere keeps standing in for progress at home.",
+  "conditionalConsequence": "The competence may be entirely real, but they built it away from home, and the people who want it there tend to find the installation is a separate project.",
+  "body": "People are assertive everywhere except the one relationship that needs it.\n\nSomeone handles the counter confidently and the vendor clearly, then goes wordless at the family table, and the skill refuses to transfer to the original venue.\n\nWith Mars quincunx Chiron, people own the general capacity while guarding the specific room where it was first confiscated.\n\nTheir competence elsewhere keeps standing in for progress at home.\n\nThe competence may be entirely real, but they built it away from home, and the people who want it there tend to find the installation is a separate project.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.mars.quincunx.chiron",
+    "sourceHeading": "Mars quincunx Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

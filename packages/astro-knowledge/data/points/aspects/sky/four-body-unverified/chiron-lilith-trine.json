@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.chiron.trine.lilith",
+  "canonicalId": "sky-aspect/chiron/lilith/trine",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "lilith",
+  "aspect": "trine",
+  "humanMoment": "Someone reclaims the appetite and finds it was the medicine.",
+  "developmentDetail": "The forbidden thing they finally do, the art, the speech, the leaving, does what the treatment plan could not, and recovery and rebellion stop being opposites.",
+  "planetaryDynamic": "With Chiron trine Lilith, people bring the knowledge earned through repair together with the want the repair was missing.",
+  "aspectMechanic": "Nobody has to defend either one, so both do their work at once.",
+  "conditionalConsequence": "The improvement may embarrass the original plan, but evidence is evidence, and the people holding it deserve to believe it.",
+  "body": "Someone reclaims the appetite and finds it was the medicine.\n\nThe forbidden thing they finally do, the art, the speech, the leaving, does what the treatment plan could not, and recovery and rebellion stop being opposites.\n\nWith Chiron trine Lilith, people bring the knowledge earned through repair together with the want the repair was missing.\n\nNobody has to defend either one, so both do their work at once.\n\nThe improvement may embarrass the original plan, but evidence is evidence, and the people holding it deserve to believe it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.chiron.trine.lilith",
+    "sourceHeading": "Chiron trine Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

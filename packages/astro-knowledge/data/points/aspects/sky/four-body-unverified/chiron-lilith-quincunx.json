@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.chiron.quincunx.lilith",
+  "canonicalId": "sky-aspect/chiron/lilith/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "lilith",
+  "aspect": "quincunx",
+  "humanMoment": "Someone's support system keeps treating the want as a symptom.",
+  "developmentDetail": "Every time they mention the banished ambition, the caring people answer with concern instead of interest, and the vocabulary of care misfiles the appetite again.",
+  "planetaryDynamic": "With Chiron quincunx Lilith, some people speak the language of injury and repair while one person speaks a language of appetite that sounds to the first group like risk.",
+  "aspectMechanic": "The two vocabularies never map, so somebody translates by hand, repeatedly.",
+  "conditionalConsequence": "The care may be sincere, but a want is not a relapse, and the person carrying it keeps explaining the difference until the file gets corrected.",
+  "body": "Someone's support system keeps treating the want as a symptom.\n\nEvery time they mention the banished ambition, the caring people answer with concern instead of interest, and the vocabulary of care misfiles the appetite again.\n\nWith Chiron quincunx Lilith, some people speak the language of injury and repair while one person speaks a language of appetite that sounds to the first group like risk.\n\nThe two vocabularies never map, so somebody translates by hand, repeatedly.\n\nThe care may be sincere, but a want is not a relapse, and the person carrying it keeps explaining the difference until the file gets corrected.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.chiron.quincunx.lilith",
+    "sourceHeading": "Chiron quincunx Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.conjunction.chiron",
+  "canonicalId": "sky-aspect/chiron/mercury/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "mercury",
+  "aspect": "conjunction",
+  "humanMoment": "The sentence someone rehearsed for days finally gets said, and the voice shakes on schedule.",
+  "developmentDetail": "The speaker knows the content is fine; what shakes is the delivery, because riding along with the words is the old feeling of being the slower or less articulate one in the room.",
+  "planetaryDynamic": "With Mercury conjunct Chiron, people want to say the thing in the same breath they doubt anyone will hear it.",
+  "aspectMechanic": "Speaking and being exposed happen at once.",
+  "conditionalConsequence": "The shake may be audible, but the person who says the imperfect version out loud tends to get further than the one still polishing a draft.",
+  "body": "The sentence someone rehearsed for days finally gets said, and the voice shakes on schedule.\n\nThe speaker knows the content is fine; what shakes is the delivery, because riding along with the words is the old feeling of being the slower or less articulate one in the room.\n\nWith Mercury conjunct Chiron, people want to say the thing in the same breath they doubt anyone will hear it.\n\nSpeaking and being exposed happen at once.\n\nThe shake may be audible, but the person who says the imperfect version out loud tends to get further than the one still polishing a draft.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.mercury.conjunction.chiron",
+    "sourceHeading": "Mercury conjunction Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

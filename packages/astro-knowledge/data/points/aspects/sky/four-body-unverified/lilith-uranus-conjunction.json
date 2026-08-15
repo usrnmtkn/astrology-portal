@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.conjunction.lilith",
+  "canonicalId": "sky-aspect/lilith/uranus/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "uranus",
+  "aspect": "conjunction",
+  "humanMoment": "Someone writes the resignation letter in a single afternoon.",
+  "developmentDetail": "They convert years of silence into one irreversible act, the quit, the move-out, the post everyone can see, and the exit runs on stored fuel.",
+  "planetaryDynamic": "With Uranus conjunct Lilith, the same person supplies the sudden break and the long-banned reason for it.",
+  "aspectMechanic": "So they take their freedom all at once instead of by degrees.",
+  "conditionalConsequence": "The liberation may be correct while the timing and the exit speech still deserve a day of thought.",
+  "body": "Someone writes the resignation letter in a single afternoon.\n\nThey convert years of silence into one irreversible act, the quit, the move-out, the post everyone can see, and the exit runs on stored fuel.\n\nWith Uranus conjunct Lilith, the same person supplies the sudden break and the long-banned reason for it.\n\nSo they take their freedom all at once instead of by degrees.\n\nThe liberation may be correct while the timing and the exit speech still deserve a day of thought.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.uranus.conjunction.lilith",
+    "sourceHeading": "Uranus conjunction Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

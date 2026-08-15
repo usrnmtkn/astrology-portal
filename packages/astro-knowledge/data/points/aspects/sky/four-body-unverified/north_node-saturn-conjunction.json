@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.conjunction.north-node",
+  "canonicalId": "sky-aspect/north_node/saturn/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "saturn",
+  "aspect": "conjunction",
+  "humanMoment": "The postponed decision is acquiring a date.",
+  "developmentDetail": "Someone's lease ends, the program closes applications, the window gets a number on it, and the direction they kept alive on someday suddenly requires paperwork.",
+  "planetaryDynamic": "With Saturn conjunct the North Node, people feel the deadline and the direction arrive as one event: the pressure is not interrupting the assignment, it is the assignment growing up.",
+  "aspectMechanic": "Nobody gets to answer someday anymore.",
+  "conditionalConsequence": "The pressure may feel external, but people watching closely can see the assignment maturing, and mature assignments tend to stop accepting deferrals.",
+  "body": "The postponed decision is acquiring a date.\n\nSomeone's lease ends, the program closes applications, the window gets a number on it, and the direction they kept alive on someday suddenly requires paperwork.\n\nWith Saturn conjunct the North Node, people feel the deadline and the direction arrive as one event: the pressure is not interrupting the assignment, it is the assignment growing up.\n\nNobody gets to answer someday anymore.\n\nThe pressure may feel external, but people watching closely can see the assignment maturing, and mature assignments tend to stop accepting deferrals.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.saturn.conjunction.north-node",
+    "sourceHeading": "Saturn conjunction North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

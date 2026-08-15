@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "north-node-10",
+  "canonicalId": "transit-house/north_node/10",
+  "kind": "house",
+  "transiting": "north-node",
+  "house": 10,
+  "headline": "Letting your work be seen",
+  "body": "As the North Node moves through your 10th house, your career, reputation, and public presence demand a bigger step forward. You might apply for a job that feels slightly out of your league, take on a leadership role, publish under your own name, or take responsibility for public results. Being seen can feel uncomfortable because you can no longer pretend the work does not matter to you.\n\nAcross the chart, the 4th house offers the safe sanctuary of home and private life. You will always need a personal life, but do not let privacy become the excuse for keeping your talent and ambition hidden away.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "North Node — 10H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}
