@@ -15,6 +15,8 @@ const outputPath = path.join(packageRoot, "bundled-manifest-v3.json");
 const summaryOutputPath = path.join(packageRoot, "bundled-manifest-summary-v3.json");
 const skyCoreOutputPath = path.join(packageRoot, "bundled-sky-core-rows-v3.json");
 const deferredCoreOutputPath = path.join(packageRoot, "bundled-deferred-core-rows-v3.json");
+const sharedPlacementOutputPath = path.join(packageRoot, "bundled-shared-placement-rows-v3.json");
+const relationshipHookOutputPath = path.join(packageRoot, "bundled-relationship-hook-rows-v3.json");
 const emptyHouseOutputPath = path.join(packageRoot, "bundled-empty-house-rows-v3.json");
 const transitCoreAuthoredOutputPath = path.join(packageRoot, "bundled-transit-core-authored-cards-v3.json");
 const relationshipAuthoredOutputPath = path.join(packageRoot, "bundled-relationship-authored-cards-v3.json");
@@ -115,6 +117,24 @@ function isSkyPlacementDeferredHook(row) {
 
 function isEmptyHouseHook(row) {
   return String(row?.contentKey ?? "").startsWith("fallback-hook/empty-house/");
+}
+
+function isSharedPlacementHook(row) {
+  return String(row?.contentKey ?? "").startsWith("fallback-hook/placement-sentence/");
+}
+
+function isRelationshipHook(row) {
+  const contentKey = String(row?.contentKey ?? "");
+
+  return [
+    "fallback-hook/bond-effect-",
+    "fallback-hook/compat-domain/",
+    "fallback-hook/element-pattern/",
+    "fallback-hook/planet-grates/",
+    "fallback-hook/planet-mode/",
+    "fallback-hook/synastry-aspect-type/",
+    "fallback-hook/synastry-pair/"
+  ].some((prefix) => contentKey.startsWith(prefix));
 }
 
 function isDistributionEligible(row) {
@@ -267,12 +287,27 @@ const skyCoreRows = {
 };
 const deferredCoreRows = {
   hookRows: [
-    ...sourceRows.hookRows.filter((row) => !isSkyCoreHook(row) && !isEmptyHouseHook(row)),
-    ...pairDailyFrames.rows,
-    ...pairDailyClauses.rows
+    ...sourceRows.hookRows.filter((row) => (
+      !isSkyCoreHook(row)
+      && !isEmptyHouseHook(row)
+      && !isSharedPlacementHook(row)
+      && !isRelationshipHook(row)
+    ))
   ],
   vocabularyRows: [],
   dailyGlanceVariants
+};
+const sharedPlacementRows = {
+  hookRows: sourceRows.hookRows.filter(isSharedPlacementHook),
+  vocabularyRows: []
+};
+const relationshipHookRows = {
+  hookRows: [
+    ...sourceRows.hookRows.filter(isRelationshipHook),
+    ...pairDailyFrames.rows,
+    ...pairDailyClauses.rows
+  ],
+  vocabularyRows: []
 };
 const emptyHouseRows = {
   hookRows: sourceRows.hookRows.filter(isEmptyHouseHook),
@@ -343,6 +378,8 @@ const summary = {
 const serializedSummary = `${JSON.stringify(summary, null, 2)}\n`;
 const serializedSkyCore = `${JSON.stringify(skyCoreRows, null, 2)}\n`;
 const serializedDeferredCore = `${JSON.stringify(deferredCoreRows, null, 2)}\n`;
+const serializedSharedPlacement = `${JSON.stringify(sharedPlacementRows, null, 2)}\n`;
+const serializedRelationshipHooks = `${JSON.stringify(relationshipHookRows, null, 2)}\n`;
 const serializedEmptyHouse = `${JSON.stringify(emptyHouseRows, null, 2)}\n`;
 const serializedTransitCoreAuthored = `${JSON.stringify(transitCoreAuthoredCards, null, 2)}\n`;
 const serializedRelationshipAuthored = `${JSON.stringify(relationshipAuthoredCards, null, 2)}\n`;
@@ -358,6 +395,8 @@ if (checkOnly) {
   const existingSummary = fs.existsSync(summaryOutputPath) ? fs.readFileSync(summaryOutputPath, "utf8") : "";
   const existingSkyCore = fs.existsSync(skyCoreOutputPath) ? fs.readFileSync(skyCoreOutputPath, "utf8") : "";
   const existingDeferredCore = fs.existsSync(deferredCoreOutputPath) ? fs.readFileSync(deferredCoreOutputPath, "utf8") : "";
+  const existingSharedPlacement = fs.existsSync(sharedPlacementOutputPath) ? fs.readFileSync(sharedPlacementOutputPath, "utf8") : "";
+  const existingRelationshipHooks = fs.existsSync(relationshipHookOutputPath) ? fs.readFileSync(relationshipHookOutputPath, "utf8") : "";
   const existingEmptyHouse = fs.existsSync(emptyHouseOutputPath) ? fs.readFileSync(emptyHouseOutputPath, "utf8") : "";
   const existingTransitCoreAuthored = fs.existsSync(transitCoreAuthoredOutputPath) ? fs.readFileSync(transitCoreAuthoredOutputPath, "utf8") : "";
   const existingRelationshipAuthored = fs.existsSync(relationshipAuthoredOutputPath) ? fs.readFileSync(relationshipAuthoredOutputPath, "utf8") : "";
@@ -374,6 +413,8 @@ if (checkOnly) {
     || existingSummary !== serializedSummary
     || existingSkyCore !== serializedSkyCore
     || existingDeferredCore !== serializedDeferredCore
+    || existingSharedPlacement !== serializedSharedPlacement
+    || existingRelationshipHooks !== serializedRelationshipHooks
     || existingEmptyHouse !== serializedEmptyHouse
     || existingTransitCoreAuthored !== serializedTransitCoreAuthored
     || existingRelationshipAuthored !== serializedRelationshipAuthored
@@ -393,6 +434,8 @@ if (checkOnly) {
   fs.writeFileSync(summaryOutputPath, serializedSummary);
   fs.writeFileSync(skyCoreOutputPath, serializedSkyCore);
   fs.writeFileSync(deferredCoreOutputPath, serializedDeferredCore);
+  fs.writeFileSync(sharedPlacementOutputPath, serializedSharedPlacement);
+  fs.writeFileSync(relationshipHookOutputPath, serializedRelationshipHooks);
   fs.writeFileSync(emptyHouseOutputPath, serializedEmptyHouse);
   fs.writeFileSync(transitCoreAuthoredOutputPath, serializedTransitCoreAuthored);
   fs.writeFileSync(relationshipAuthoredOutputPath, serializedRelationshipAuthored);
@@ -405,6 +448,8 @@ if (checkOnly) {
   console.log(`Wrote ${path.relative(repoRoot, summaryOutputPath)}.`);
   console.log(`Wrote ${path.relative(repoRoot, skyCoreOutputPath)} (${skyCoreRows.hookRows.length} hooks, ${skyCoreRows.vocabularyRows.length} vocabulary rows).`);
   console.log(`Wrote ${path.relative(repoRoot, deferredCoreOutputPath)} (${deferredCoreRows.hookRows.length} hooks).`);
+  console.log(`Wrote ${path.relative(repoRoot, sharedPlacementOutputPath)} (${sharedPlacementRows.hookRows.length} hooks).`);
+  console.log(`Wrote ${path.relative(repoRoot, relationshipHookOutputPath)} (${relationshipHookRows.hookRows.length} hooks).`);
   console.log(`Wrote ${path.relative(repoRoot, emptyHouseOutputPath)} (${emptyHouseRows.hookRows.length} hooks).`);
   console.log(`Wrote ${path.relative(repoRoot, transitCoreAuthoredOutputPath)} (${transitCoreAuthoredCards.authoredCards.length} authored cards).`);
   console.log(`Wrote ${path.relative(repoRoot, relationshipAuthoredOutputPath)} (${relationshipAuthoredCards.authoredCards.length} authored cards).`);

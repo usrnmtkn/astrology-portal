@@ -26,7 +26,7 @@ const transitLib = JSON.parse(
 const rows = new Map(source.hookRows.map((row) => [row.contentKey, row]));
 const bundledDeferred = JSON.parse(
   fs.readFileSync(
-    "apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json",
+    "apps/web/src/content/fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json",
     "utf8",
   ),
 );

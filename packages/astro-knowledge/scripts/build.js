@@ -137,6 +137,18 @@ function pruneModifiersForWeb(modifiers) {
     .filter(Boolean);
 }
 
+function runtimeVoiceContentForWeb(voiceContent) {
+  // createDomainRegistry indexes reader voice by sourceId + voiceId. Authoring
+  // corpora without those fields are unreachable in the web runtime and belong
+  // in the full package only.
+  return voiceContent.filter((entry) => (
+    typeof entry.sourceId === "string"
+    && entry.sourceId.trim()
+    && typeof entry.voiceId === "string"
+    && entry.voiceId.trim()
+  ));
+}
+
 function runtimeEligiblePlacements(placements) {
   return placements.filter((entry) => entry.runtimeEligible !== false);
 }
@@ -510,7 +522,7 @@ function build() {
     synastryAspects,
     synastryHouseOverlays,
     composite,
-    voiceContent
+    voiceContent: runtimeVoiceContentForWeb(voiceContent)
   };
   const skyWebKnowledge = webSkyKnowledge(packageJson, generatedAt, webRuntimeCollections);
   const natalWebKnowledge = webNatalKnowledge(packageJson, generatedAt, webRuntimeCollections);

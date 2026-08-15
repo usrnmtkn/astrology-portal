@@ -66,6 +66,7 @@ await build({
         loadDeferredFallbackArchitectureV3Bundle
       } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
       export { friendDetailHasReaderFacingContent } from "./apps/web/src/features/friends/friendDetailAvailability.ts";
+      export { shouldLoadDeferredFallbackContent } from "./apps/web/src/features/friends/friendsContentLoading.ts";
     `
   }
 });
@@ -98,10 +99,13 @@ assert.equal(runtime.friendDetailHasReaderFacingContent({
   sections: [{ heading: "Placement", body: placement.body }]
 }), true);
 
-const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
-assert.match(
-  appSource,
-  /const friendDeferredFallbackRequested = friendNatalContentRequested\s*\|\|/u,
+assert.equal(
+  runtime.shouldLoadDeferredFallbackContent({
+    mode: "friends",
+    friendNatalContentRequested: true,
+    friendRelationshipContentRequests: new Set()
+  }),
+  true,
   "Opening the Friends Natal tab must request the deferred natal resolver rows."
 );
 

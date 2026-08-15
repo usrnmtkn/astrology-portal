@@ -6,7 +6,7 @@ import { createTransitSynastryRenderer } from "../apps/web/src/content/fallbackA
 import { renderSynastryAspect } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs";
 
 const source = JSON.parse(fs.readFileSync("apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", "utf8"));
-const bundled = JSON.parse(fs.readFileSync("apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json", "utf8"));
+const bundled = JSON.parse(fs.readFileSync("apps/web/src/content/fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json", "utf8"));
 const templates = JSON.parse(fs.readFileSync("apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json", "utf8"));
 const transitLib = JSON.parse(fs.readFileSync("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", "utf8"));
 const rows = new Map(source.hookRows.map((row) => [row.contentKey, row]));

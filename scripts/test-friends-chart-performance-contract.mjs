@@ -196,16 +196,6 @@ assert.equal(
 );
 assert.match(
   appSource,
-  /friendDeferredFallbackRequested = friendNatalContentRequested[\s\S]*friendRelationshipContentRequests\.has\("compatibility"\)[\s\S]*friendRelationshipContentRequests\.has\("transits"\)[\s\S]*friendRelationshipContentRequests\.has\("synastry"\)[\s\S]*friendRelationshipContentRequests\.has\("composite"\)[\s\S]*loadDeferredFallbackArchitectureV3Bundle\(\)/,
-  "Compatibility must load its deferred synastry rows while bare Friends and Natal-only views stay on the eager core."
-);
-assert.match(
-  appSource,
-  /friendCompatibilityFallbackRequested = friendRelationshipContentRequests\.has\("compatibility"\)[\s\S]*friendRelationshipContentRequests\.has\("transits"\)[\s\S]*loadRelationshipFallbackArchitectureV3Bundle\(\)/,
-  "Bare Friends and Natal-only views must not download the compatibility fallback bundle."
-);
-assert.match(
-  appSource,
   /const requestFriendProfileContent = useCallback\(\(tab: FriendProfileTab\) => \{\s*if \(tab === "natal"\) \{\s*setFriendNatalContentRequested\(true\);\s*return;\s*\}\s*setFriendRelationshipContentRequests/,
   "Friends must request natal and relationship interpretation payloads independently by active profile tab."
 );
@@ -332,7 +322,7 @@ assert.doesNotMatch(
 );
 assert.match(
   manualChartsPanelSource,
-  /function openFriendProfile\(chart: ManualChart\) \{[\s\S]*onFriendProfileContentRequest\(chart\.chartType === "event" \? "natal" : "compatibility"\);[\s\S]*setSelectedChartId\(chart\.id\);/,
+  /function openFriendProfile\(chart: ManualChart\) \{[\s\S]*requestFriendProfileTab\(chart\.chartType === "event" \? "natal" : "compatibility"\);[\s\S]*setSelectedChartId\(chart\.id\);/,
   "Selecting a chart must start its Compatibility content prefetch before publishing the selection."
 );
 assert.doesNotMatch(
@@ -342,7 +332,7 @@ assert.doesNotMatch(
 );
 assert.match(
   manualChartsPanelSource,
-  /onTabIntent=\{onFriendProfileContentRequest\}/,
+  /onTabIntent=\{requestFriendProfileTab\}/,
   "Friends tabs must forward deliberate hover and focus intent to the content loader."
 );
 assert.match(

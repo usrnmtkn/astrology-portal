@@ -23,6 +23,21 @@ const natalPlacements = readPackage("natal-placements-web");
 const relationshipSynastry = readPackage("relationships-synastry-web");
 const relationshipComposite = readPackage("relationships-composite-web");
 
+assert.ok(
+  shared.voiceContent.every((entry) => (
+    typeof entry.sourceId === "string"
+    && entry.sourceId.trim()
+    && typeof entry.voiceId === "string"
+    && entry.voiceId.trim()
+  )),
+  "Shared web voice content must contain only rows addressable by the runtime sourceId + voiceId index.",
+);
+assert.equal(
+  shared.voiceContent.some((entry) => Array.isArray(entry.entries)),
+  false,
+  "Authoring corpora must not ship in the reader runtime voice-content package.",
+);
+
 assert.deepEqual(
   { ...packagePayload(shared), ...packagePayload(skyRuntime) },
   packagePayload(readPackage("sky-web")),

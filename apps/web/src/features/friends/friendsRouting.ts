@@ -50,6 +50,12 @@ export function friendsRouteStateFromHref(href: string): FriendsRouteState | nul
   }
 }
 
+export function initialFriendProfileContentRequest(href: string): FriendProfileTab | null {
+  const routeState = friendsRouteStateFromHref(href);
+
+  return routeState?.chartId ? routeState.view : null;
+}
+
 export function friendsRouteStateFromUrl() {
   return friendsRouteStateFromHref(window.location.href);
 }

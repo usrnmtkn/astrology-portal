@@ -94,6 +94,7 @@ import {
 } from "./features/auth/signupModel";
 import {
   friendsHashParts,
+  initialFriendProfileContentRequest,
   initialFriendsTab,
   isFriendsUrl,
   parseFriendProfileTab,
@@ -104,12 +105,18 @@ import {
 } from "./features/friends/friendsRouting";
 import { resolveFriendChartLoadingState } from "./features/friends/friendChartLoading";
 import {
-  idleFriendCalculationReadiness,
+  initialFriendCalculationReadiness,
   shouldRunCurrentSkyCalculation,
   shouldRunProfileNatalCalculation,
   type FriendCalculationReadiness
 } from "./features/friends/friendCalculationReadiness";
 import { manualChartBigThree } from "./features/friends/friendChartModel";
+import {
+  shouldHydrateFallbackDashboardContent,
+  shouldLoadDeferredFallbackContent,
+  shouldLoadEmptyHouseFallbackContent,
+  shouldStartRelationshipFallbackEnhancement
+} from "./features/friends/friendsContentLoading";
 import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
 import { usePersonalTiming, type PersonalTimingStatus } from "./features/you/usePersonalTiming";
 import { settingsRouteChangeEvent } from "./features/settings/settingsRouting";
@@ -10178,7 +10185,15 @@ const loadManualChartsPanel = () => import("./features/friends/ManualChartsPanel
 const loadFriendsExperience = () => Promise.all([
   import("./routes/FriendsRoute"),
   loadManualChartsPanel()
-]);
+]).then(([routeModule, manualChartsModule]) => {
+  const initialProfileTab = initialFriendProfileContentRequest(window.location.href);
+
+  if (initialProfileTab) {
+    manualChartsModule.preloadFriendProfileComponents(initialProfileTab);
+  }
+
+  return [routeModule, manualChartsModule] as const;
+});
 const preloadFriendsExperience = () => {
   void loadFriendsExperience();
 };
@@ -10453,13 +10468,20 @@ export function App() {
   const calendarContentCacheRef = useRef(new Map<string, CalendarContentCacheEntry>());
   const [natalGeneratedContent, setNatalGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [relationshipGeneratedContent, setRelationshipGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
-  const [friendNatalContentRequested, setFriendNatalContentRequested] = useState(false);
+  const [initialFriendContentRequest] = useState<FriendProfileTab | null>(() => (
+    initialFriendProfileContentRequest(window.location.href)
+  ));
+  const [friendNatalContentRequested, setFriendNatalContentRequested] = useState(
+    () => initialFriendContentRequest === "natal"
+  );
   const [friendRelationshipContentRequests, setFriendRelationshipContentRequests] = useState<Set<FriendRelationshipContentTab>>(
-    () => new Set()
+    () => initialFriendContentRequest && initialFriendContentRequest !== "natal"
+      ? new Set([initialFriendContentRequest])
+      : new Set()
   );
-  const [friendCalculationNeeds, setFriendCalculationNeeds] = useState<FriendCalculationReadiness>(
-    idleFriendCalculationReadiness
-  );
+  const [friendCalculationNeeds, setFriendCalculationNeeds] = useState<FriendCalculationReadiness>(() => (
+    initialFriendCalculationReadiness(initialFriendContentRequest)
+  ));
   const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);
   const [skyPlacementFallbackStatus, setSkyPlacementFallbackStatus] = useState<SkyPlacementContentStatus>("idle");
   const [skyPlacementFallbackRetryKey, setSkyPlacementFallbackRetryKey] = useState(0);
@@ -10471,6 +10493,7 @@ export function App() {
   const [, setContentRegistryVersion] = useState(0);
   const selectedSkyDetailRefreshKeyRef = useRef("");
   const selectedSkyDetailRefreshContentRef = useRef<GeneratedContentMap | null>(null);
+  const fallbackDashboardHydrationRequestedRef = useRef(false);
   const selectedCalendarTransitEventRef = useRef<{
     event: LunarCalendarEvent;
     description?: string;
@@ -10901,7 +10924,7 @@ export function App() {
   useEffect(() => {
     let cancelled = false;
 
-    if (mode !== "profile" && mode !== "friends") {
+    if (!shouldLoadEmptyHouseFallbackContent({ mode, friendNatalContentRequested })) {
       return () => {
         cancelled = true;
       };
@@ -10920,21 +10943,15 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [mode]);
+  }, [friendNatalContentRequested, mode]);
 
   useEffect(() => {
     let cancelled = false;
-    const friendDeferredFallbackRequested = friendNatalContentRequested
-      || friendRelationshipContentRequests.has("compatibility")
-      || friendRelationshipContentRequests.has("transits")
-      || friendRelationshipContentRequests.has("synastry")
-      || friendRelationshipContentRequests.has("composite");
-
-    if (
-      mode === "guest"
-      || mode === "member"
-      || (mode === "friends" && !friendDeferredFallbackRequested)
-    ) {
+    if (!shouldLoadDeferredFallbackContent({
+      mode,
+      friendNatalContentRequested,
+      friendRelationshipContentRequests
+    })) {
       return () => {
         cancelled = true;
       };
@@ -10957,10 +10974,12 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
-    const friendCompatibilityFallbackRequested = friendRelationshipContentRequests.has("compatibility")
-      || friendRelationshipContentRequests.has("transits");
-
-    if (mode !== "friends" || !friendCompatibilityFallbackRequested) {
+    if (!shouldStartRelationshipFallbackEnhancement({
+      mode,
+      friendRelationshipContentRequests,
+      currentSkyReady: Boolean(sky),
+      profileNatalReady: Boolean(profileNatalSky)
+    })) {
       return () => {
         cancelled = true;
       };
@@ -10979,14 +10998,20 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [friendRelationshipContentRequests, mode]);
+  }, [friendRelationshipContentRequests, mode, profileNatalSky, sky]);
 
   useEffect(() => {
-    let cancelled = false;
+    if (
+      !shouldHydrateFallbackDashboardContent(mode)
+      || fallbackDashboardHydrationRequestedRef.current
+    ) {
+      return;
+    }
 
-    loadFallbackArchitectureV3DashboardBundle()
+    fallbackDashboardHydrationRequestedRef.current = true;
+    void loadFallbackArchitectureV3DashboardBundle()
       .then((bundle) => {
-        if (!bundle || cancelled) {
+        if (!bundle) {
           return;
         }
 
@@ -10996,11 +11021,7 @@ export function App() {
       .catch((error) => {
         console.warn("Fallback architecture V3 dashboard bundle failed to install; local JSON snapshot remains active.", error);
       });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  }, [mode]);
 
   useEffect(() => {
     let cancelled = false;

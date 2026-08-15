@@ -11,7 +11,9 @@ const outputRoots = [
 ];
 const sourceFiles = [
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json"),
-  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json")
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json"),
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-shared-placement-rows-v3.json"),
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json")
 ];
 const resolverEntry = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts"),
