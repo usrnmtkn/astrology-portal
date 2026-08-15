@@ -232,18 +232,9 @@ function pointToken(value: string) {
 
 const srOverlayEligibleTokens = new Set(SR_OVERLAY_ELIGIBLE_POINTS.map(pointToken));
 const slowTransitExcludedTargetTokens = new Set(SLOW_TRANSIT_EXCLUDED_TARGETS.map(pointToken));
-const CANONICAL_ANGLE_HOUSES = new Map<string, number>([
-  [pointToken("Midheaven"), 10],
-  [pointToken("Ascendant"), 1],
-  [pointToken("IC"), 4],
-  [pointToken("Descendant"), 7]
-]);
-
-function canonicalizeAngularFactorHouse(factor: ReportFactor): ReportFactor {
-  if (!factor.natalPoint) return factor;
-  const canonicalHouse = CANONICAL_ANGLE_HOUSES.get(pointToken(factor.natalPoint));
-  return canonicalHouse === undefined ? factor : { ...factor, house: canonicalHouse };
-}
+const ANGLE_POINT_TOKENS = new Set([
+  "Ascendant", "Midheaven", "IC", "Descendant"
+].map(pointToken));
 
 type FactorRuleMatch = {
   factorTypes?: ManifestationSetRecord["factorType"][];
@@ -970,7 +961,7 @@ export function reportFactors(facts: Record<string, unknown>) {
     ...solarReturnFactors(windowFacts),
     ...transitFactors(windowFacts),
     ...eclipseFactors(windowFacts)
-  ].map(canonicalizeAngularFactorHouse);
+  ];
   const seen = new Set<string>();
   return factors.filter((factor) => {
     const key = `${factor.id}:${factor.factorType}`;
@@ -983,9 +974,20 @@ export function reportFactors(facts: Record<string, unknown>) {
 function recordMatchScore(record: ManifestationSetRecord, factor: ReportFactor) {
   if (record.factorType !== factor.factorType) return -1;
   let score = 0;
+  const anglePointMatch = Boolean(
+    record.match.natalPoint
+    && factor.natalPoint
+    && pointToken(record.match.natalPoint) === pointToken(factor.natalPoint)
+    && ANGLE_POINT_TOKENS.has(pointToken(factor.natalPoint))
+  );
   for (const field of ["house", "natalPoint", "transitPlanet", "aspect", "overlayPoint"] as const) {
     const expected = record.match[field];
     if (expected === undefined) continue;
+    // Angle doctrine belongs to the exact point. Some legacy records carry a
+    // conventional angular house as an additional discriminator; ignore that
+    // discriminator after the point matches so the calculated whole-sign
+    // house remains intact on the factor.
+    if (field === "house" && anglePointMatch) continue;
     if (expected !== factor[field]) return -1;
     score += 1;
   }

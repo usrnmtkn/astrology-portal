@@ -35,6 +35,7 @@ const monthSeason = (date) => date.startsWith("FEB") && Number(date.split(" ")[1
 const stripLeadingRange = (body) => body.replace(/^(?:Feb|Mar|Jun|Sep|Dec) \d+ - (?:Mar|Jun|Sep|Dec|Feb) \d+\n/u, "").trim();
 const colophon = buildCustomerReportColophon({ facts, periodStart: "2026-02-18", periodEnd: "2027-02-17", displayName: "Marie Satori" });
 const lines = [
+  "> **STAGED STRUCTURAL MOCK - NOT REPRODUCTION EVIDENCE.** This artifact stages legacy Generation 3 prose inside the Package 2 shape. Its renderer hardcodes the category assignments, handle line, season ranges, and a month-routing heuristic. The production-path reproduction evidence is `scripts/test-report-package2-structure.mjs`, which exercises `buildGeneralYearReviewedReportDocument` and its validator.", "",
   "# YOUR YEAR AHEAD REPORT", `**${colophon.periodLine}**`, "",
   "# @mariesatori, protect your time for the work that needs quiet.", "", reportGlyphLine(facts), "", "---", ""
 ];

@@ -1,3 +1,5 @@
+> **STAGED STRUCTURAL MOCK - NOT REPRODUCTION EVIDENCE.** This artifact stages legacy Generation 3 prose inside the Package 2 shape. Its renderer hardcodes the category assignments, handle line, season ranges, and a month-routing heuristic. The production-path reproduction evidence is `scripts/test-report-package2-structure.mjs`, which exercises `buildGeneralYearReviewedReportDocument` and its validator.
+
 # YOUR YEAR AHEAD REPORT
 **Feb 18, 2026 - Feb 17, 2027**
 
@@ -153,6 +155,6 @@ Soon afterward, Saturn makes its final sextile to your Ascendant. This final pas
 *MANHATTAN, NEW YORK, NY, USA*
 
 *Solar Return: Sun at 29°25' Aquarius, Libra rising, February 17, 2026, 8:59 PM EST.*
-*Natal: Sun 29°25' Aquarius (9th) · Moon 12°47' Scorpio (6th) · Asc 11°09' Gemini · MC 16°36' Aquarius · Mercury 7°04' Pisces · Venus 14°57' Capricorn · Mars 22°46' Aquarius · Jupiter 0°57' Leo Rx · Saturn 11°25' Virgo Rx · Uranus 20°59' Scorpio · Neptune 20°12' Sagittarius · Pluto 19°00' Libra · houses whole-sign from Gemini.*
+*Natal: Sun 29°25' Aquarius (9th) · Moon 12°47' Scorpio (6th) · Asc 11°09' Gemini · MC 16°36' Aquarius · Mercury 7°04' Pisces · Venus 14°57' Capricorn · Mars 22°46' Aquarius · Jupiter 0°57' Leo Rx · Saturn 11°25' Virgo Rx · Uranus 20°59' Scorpio · Neptune 20°12' Sagittarius · Pluto 19°00' Libra Rx · houses whole-sign from Gemini.*
 
 <!-- INTERNAL REVIEW METADATA: Legacy facts engine tldrastro-api@0.1.0; facts hash 8796c1845f19e960f2800c1d8147ce7e61b3c310c76d82af9e04489a22e7f786. -->

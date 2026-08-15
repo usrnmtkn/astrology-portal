@@ -4,6 +4,7 @@ import { buildGeneralYearReviewedReportDocument, validateGeneralYearReviewedRepo
 import { chartEarnedDomainEvidence } from "../api/_lib/report-structure.ts";
 import { reportKeyDateEventManifest } from "../api/_lib/report-key-dates.ts";
 import { reportUnitIds } from "../api/_lib/report-unit-order.ts";
+import { REPORT_DRAFT_SCHEMA, REPORT_GENERAL_YEAR_DRAFT_SCHEMA, reportDraftSchemaForPayload } from "../api/_lib/report-writer-chain.ts";
 
 const facts = JSON.parse(fs.readFileSync(new URL("./fixtures/marie-report-frozen-facts.json", import.meta.url), "utf8"));
 const benchmark = fs.readFileSync(new URL("../artifacts/marie-satori-year-ahead-2026-FINAL.md", import.meta.url), "utf8");
@@ -17,6 +18,13 @@ const headingMap = new Map([
   ["2026 IN REVIEW", "review-current-year"],
   ["WINTER 2027: Career decisions become concrete", "winter-next"]
 ]);
+const generalCategorySchema = REPORT_GENERAL_YEAR_DRAFT_SCHEMA.properties.keyDates.items.properties.category;
+const deepDiveCategorySchema = REPORT_DRAFT_SCHEMA.properties.keyDates.items.properties.category;
+assert.deepEqual(generalCategorySchema, { type: "string", enum: ["SELF", "WORK", "FRIENDS & FAMILY", "SEX & LOVE"] });
+assert.ok(!generalCategorySchema.enum.includes(null), "General 12-month categories must be non-null at the provider schema boundary.");
+assert.ok(deepDiveCategorySchema.enum.includes(null), "Deep dives retain the category-free null contract.");
+assert.equal(reportDraftSchemaForPayload({ reportDomain: "general", reportHorizon: "12_months" }), REPORT_GENERAL_YEAR_DRAFT_SCHEMA);
+assert.equal(reportDraftSchemaForPayload({ reportDomain: "personal_health", reportHorizon: "12_months" }), REPORT_DRAFT_SCHEMA);
 const sections = [...benchmark.matchAll(/^## (.+)$/gmu)].map((match, index, matches) => ({
   heading: match[1],
   body: benchmark.slice((match.index ?? 0) + match[0].length, matches[index + 1]?.index ?? benchmark.length).trim()
@@ -84,7 +92,7 @@ assert.ok(seasonAttributions.every((line) => !/\bon (?:January|February|March|Ap
 assert.equal(document.chapters.find((chapter) => chapter.id === "winter-next")?.paragraphs[0], "Dec 21 - Feb 17");
 assert.ok(document.colophon.entries.includes("FOR MARIE SATORI, BORN FEB 18, 1979, 11:20 AM"));
 assert.ok(document.colophon.entries.includes("Solar Return: Sun at 29°25' Aquarius, Libra rising, February 17, 2026, 8:59 PM EST."));
-assert.ok(document.colophon.entries.some((line) => line.includes("Asc 11°09' Gemini · MC 16°36' Aquarius")));
+assert.ok(document.colophon.entries.includes("Natal: Sun 29°25' Aquarius (9th) · Moon 12°47' Scorpio (6th) · Asc 11°09' Gemini · MC 16°36' Aquarius · Mercury 7°04' Pisces · Venus 14°57' Capricorn · Mars 22°46' Aquarius · Jupiter 0°57' Leo Rx · Saturn 11°25' Virgo Rx · Uranus 20°59' Scorpio · Neptune 20°12' Sagittarius · Pluto 19°00' Libra Rx · houses whole-sign from Gemini."));
 assert.ok(!JSON.stringify(document.colophon).includes("fixture-hash"), "Facts engine/hash must remain internal review metadata.");
 assert.equal(document.reviewMetadata?.factsHash, "fixture-hash");
 

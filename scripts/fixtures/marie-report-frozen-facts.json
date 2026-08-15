@@ -5,7 +5,8 @@
     "houseSystem": "whole_sign",
     "verifiedOn": "2026-08-14",
     "coordinates": { "latitude": 40.7831, "longitude": -73.9712, "source": "Manhattan borough centroid; owner ruling 2026-08-14" },
-    "timeZone": "America/New_York"
+    "timeZone": "America/New_York",
+    "canonicalProvenancePlatform": "linux-x86_64 production/API CI Swiss profile"
   },
   "reportSubject": {
     "name": "Marie Satori",
@@ -26,7 +27,7 @@
   "natal": {
     "metadata": {
       "ephemeris": { "actualEngine": "swiss", "fallback": false },
-      "chartProvenance": { "schemaVersion": "canonical-natal-v1", "inputHash": "FIXTURE_ONLY_INPUT_HASH", "resultHash": "FIXTURE_ONLY_RESULT_HASH", "provenanceHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }
+      "chartProvenance": { "schemaVersion": "canonical-natal-v1", "inputHash": "fb05352ef71f1ef7f7e2dac411cb0a6c1cfaf111041006e5c74e00344be5f533", "resultHash": "010b50926e4b53c1e9a011e3a0fce994b6ff15ab372dc0d38a4983683e3ac51b", "provenanceHash": "0f32a2b01ba5688d0adff9b98da7a59105edd1e9b9d3b41ba266132aa0bfc5ed" }
     },
     "positions": [
       { "point": "Sun", "sign": "Aquarius", "degree": 29, "minute": 25, "house": 9, "retrograde": false },
@@ -38,11 +39,11 @@
       { "point": "Saturn", "sign": "Virgo", "degree": 11, "minute": 25, "house": 4, "retrograde": true },
       { "point": "Uranus", "sign": "Scorpio", "degree": 20, "minute": 59, "house": 6, "retrograde": false },
       { "point": "Neptune", "sign": "Sagittarius", "degree": 20, "minute": 12, "house": 7, "retrograde": false },
-      { "point": "Pluto", "sign": "Libra", "degree": 19, "minute": 0, "house": 5, "retrograde": false }
+      { "point": "Pluto", "sign": "Libra", "degree": 19, "minute": 0, "house": 5, "retrograde": true }
     ],
     "angles": {
       "Ascendant": { "point": "Ascendant", "sign": "Gemini", "degree": 11, "minute": 9, "house": 1 },
-      "Midheaven": { "point": "Midheaven", "sign": "Aquarius", "degree": 16, "minute": 36, "house": 10 }
+      "Midheaven": { "point": "Midheaven", "sign": "Aquarius", "degree": 16, "minute": 36, "house": 9 }
     }
   },
   "profections": {
@@ -60,7 +61,7 @@
         { "point": "Pluto", "house": 5 }
       ],
       "angles": {
-        "Ascendant": { "point": "Ascendant", "sign": "Libra", "degree": 11, "minute": 1, "house": 1 },
+        "Ascendant": { "point": "Ascendant", "sign": "Libra", "degree": 11, "minute": 0, "house": 1 },
         "Midheaven": { "point": "Midheaven", "sign": "Cancer", "degree": 12, "minute": 46, "house": 10 }
       }
     },
@@ -110,6 +111,6 @@
     { "id": "lunar-eclipse-2026-03-03", "kind": "lunar_eclipse", "subtype": "total", "occursAt": "2026-03-03T11:38:00Z", "natalHouse": 4, "natalContacts": [{ "natalPoint": "Saturn", "natalHouse": 4, "aspect": "conjunction" }] },
     { "id": "solar-eclipse-2026-08-12", "kind": "solar_eclipse", "subtype": "total", "occursAt": "2026-08-12T17:37:00Z", "natalHouse": 3, "natalContacts": [{ "natalPoint": "Uranus", "natalHouse": 6, "aspect": "square" }] },
     { "id": "lunar-eclipse-2026-08-28", "kind": "lunar_eclipse", "subtype": "partial", "occursAt": "2026-08-28T04:19:00Z", "natalHouse": 10, "natalContacts": [{ "natalPoint": "Mercury", "natalHouse": 10, "aspect": "conjunction" }] },
-    { "id": "solar-eclipse-2027-02-06", "kind": "solar_eclipse", "subtype": "annular", "occursAt": "2027-02-06T15:56:00Z", "natalHouse": 9, "natalContacts": [{ "natalPoint": "Midheaven", "natalHouse": 10, "aspect": "conjunction" }] }
+    { "id": "solar-eclipse-2027-02-06", "kind": "solar_eclipse", "subtype": "annular", "occursAt": "2027-02-06T15:56:00Z", "natalHouse": 9, "natalContacts": [{ "natalPoint": "Midheaven", "natalHouse": 9, "aspect": "conjunction" }] }
   ]
 }
