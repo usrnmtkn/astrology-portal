@@ -1,0 +1,26 @@
+{
+  "responseId": "resp_07506c4ca5aad3f4006a7f82fd2c9c81a287f254a6deb041b2",
+  "httpStatus": 200,
+  "status": "completed",
+  "incompleteDetails": null,
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 4426,
+    "input_tokens_details": {
+      "cache_write_tokens": 4423,
+      "cached_tokens": 0
+    },
+    "output_tokens": 6888,
+    "output_tokens_details": {
+      "reasoning_tokens": 6590
+    },
+    "total_tokens": 11314
+  },
+  "outputText": "{\"tagline\":\"The first move becomes easier before the whole plan is clear.\",\"hook\":\"An offer has sat unanswered while you check the details, then the sender asks for a decision before every question is resolved. Jupiter in Aries pairs a larger sense of possibility with the urge to move first. The possible gain suddenly carries more weight than the unanswered questions, especially after caution has already delayed the choice. You send the reply before certainty catches up.\",\"lived\":\"Your answer starts a real conversation, and the sender now has to respond to a clear expression of interest rather than silence. You ask for the scope and rate before anything is finalized; the reply shows whether the money matches the time the larger role will take. A call is scheduled, giving both sides a concrete commitment to discuss instead of letting assumptions fill the missing space. The first move produced evidence that more waiting could not supply.\",\"turn\":\"The useful impulse goes wrong when the first yes becomes the pattern for every later demand, even as the terms grow beyond what you first accepted. A larger role starts taking more hours than expected, and each new request gets another quick answer before its cost is measured. The calendar no longer holds the work, yet other people have already planned around the promise and expect the same speed. Leaving now costs trust while staying costs time that was never available. You have the opportunity, and it takes more time than the first reply accounted for.\"}"
+}

@@ -1,0 +1,44 @@
+{
+  "placementLint": {
+    "auditValid": true,
+    "contextErrors": [],
+    "context": {
+      "planet": "pluto",
+      "sign": "capricorn",
+      "factContextSupplied": true
+    },
+    "score": 1,
+    "fails": 2,
+    "warns": 0,
+    "findings": [
+      {
+        "severity": "fail",
+        "source": "compiled-editorial-decision",
+        "decisionId": "CF-014",
+        "slot": null,
+        "term": "regex_with_literal_exception",
+        "match": "on paper",
+        "reason": "Use on paper only for the ordinary looks-good-on-paper idiom or when a physical written document matters."
+      },
+      {
+        "severity": "fail",
+        "source": "compiled-editorial-decision",
+        "decisionId": "CF-006",
+        "slot": "tagline",
+        "term": "tagline_sentence",
+        "match": "The Rules Protect Power",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      }
+    ],
+    "notes": [
+      "lived is 5 sentences; spec says 2-4",
+      "closer is long; end on a shorter line with bite"
+    ]
+  },
+  "pilotShapeChecks": {
+    "wordCount": 244,
+    "targetWordCount": "roughly 250",
+    "failures": [],
+    "passed": true
+  }
+}
