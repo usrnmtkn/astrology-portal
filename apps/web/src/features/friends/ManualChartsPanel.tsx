@@ -322,7 +322,6 @@ export function ManualChartsPanel({
     signAtWholeSignHouse,
     stableTransitCopyVariant,
     synastryContactContentKeys,
-    synastryContactSummary,
     textPreview,
     transitAspectTechnicalVerb,
     transitBodyWithoutRepeatedWindow,
@@ -720,11 +719,6 @@ export function ManualChartsPanel({
   function synastryContacts(
     profileNatalSky: SkySnapshot | null,
     chart: ManualChart,
-    generatedContent?: GeneratedContentMap,
-    comparisonName = "You",
-    comparisonIsSelf = true,
-    comparisonPronouns?: PronounChoice | null,
-    romanticAllowed = false,
     relationshipType?: string | null
   ): SynastryContact[] {
     return calculatedSynastryContacts(profileNatalSky, chart).map((contact) => {
@@ -735,17 +729,10 @@ export function ManualChartsPanel({
 
       return {
         ...baseContact,
-        summary: synastryContactSummary(
-          chart.displayName,
-          comparisonName,
-          comparisonIsSelf,
-          baseContact,
-          generatedContent,
-          chart.pronouns,
-          comparisonPronouns,
-          romanticAllowed,
-          relationshipType
-        )
+        // Visible Synastry and Compatibility cards render the approved article
+        // directly below. Avoid resolving the same fallback package once here
+        // and then a second time for the card users actually see.
+        summary: ""
       };
     });
   }
@@ -1114,11 +1101,6 @@ export function ManualChartsPanel({
         synastryContacts(
           relationshipComparisonSky,
           selectedChart,
-          relationshipGeneratedContent,
-          relationshipComparisonName,
-          relationshipComparisonIsSelf,
-          relationshipComparisonPronouns,
-          selectedRelationshipRomantic,
           selectedRelationshipContextType
         ),
         lifeAreaFocus
@@ -1127,15 +1109,10 @@ export function ManualChartsPanel({
     fallbackArchitectureV3Version,
     friendProfileWork.synastryContacts,
     lifeAreaFocus,
-    relationshipComparisonIsSelf,
-    relationshipComparisonName,
-    relationshipComparisonPronouns,
     relationshipComparisonSky,
-    relationshipGeneratedContent,
     selectedChart,
     selectedChartIsEvent,
-    selectedRelationshipContextType,
-    selectedRelationshipRomantic
+    selectedRelationshipContextType
   ]);
   const selectedSynastryAspectGroups = useMemo(() => (
     friendProfileWork.synastry
