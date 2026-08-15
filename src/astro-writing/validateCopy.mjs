@@ -1,5 +1,9 @@
 import { WRITING_POLICY_DATA } from "./policyData.generated.mjs";
 import { evaluateSpineQuality } from "./spineQuality.mjs";
+import corpusGrammar from "./corpusGrammarChecks.cjs";
+import { assertValidationProfile } from "./validationProfiles.mjs";
+
+const { grammarFindings } = corpusGrammar;
 
 const DEFAULT_BANNED = [
   "whether",
@@ -203,6 +207,17 @@ function allowsSecondPerson({ family, surface }) {
   return surface === "sky-placement-page" || family === "house-horoscope-core";
 }
 
+function sentenceUnits(value) {
+  return String(value ?? "")
+    .match(/[^.!?]+(?:[.!?]+|$)/gu)
+    ?.map((sentence) => sentence.trim())
+    .filter(Boolean) ?? [];
+}
+
+function containsSecondPerson(value) {
+  return /\b(?:you|your|yours|yourself|yourselves)\b/iu.test(String(value ?? ""));
+}
+
 function hasBanned(text, phrase) {
   const value = String(phrase).toLowerCase();
   if (/^[a-z0-9'-]+$/u.test(value)) {
@@ -213,6 +228,7 @@ function hasBanned(text, phrase) {
 }
 
 export function validateCopy(copy, {
+  validationProfile = null,
   family = "sky-placement",
   register = "collective",
   surface = "card",
@@ -229,6 +245,9 @@ export function validateCopy(copy, {
   inheritedSpineElements = [],
   spineQualityConditionalLayers = {}
 } = {}) {
+  const profile = validationProfile == null
+    ? { id: "legacy", baseRules: [], surfaceRules: [] }
+    : assertValidationProfile(validationProfile);
   const text = copyText(copy);
   const normalized = text.toLowerCase();
   const unprotectedText = protectedOwnerLines.reduce(
@@ -238,10 +257,18 @@ export function validateCopy(copy, {
   const unprotectedNormalized = unprotectedText.toLowerCase();
   const violations = [];
   const advisories = [];
+  for (const finding of grammarFindings(text)) {
+    violations.push({
+      category: `grammar_${finding.check}`,
+      detail: `${finding.message}: ${finding.match}`
+    });
+  }
   for (const detail of internalGuardLeaks(text, plan)) {
     violations.push({ category: "shared_ban", detail });
   }
   if (text.includes("—")) violations.push({ category: "em_dash", detail: "Em dash is forbidden." });
+  if (text.includes("–")) violations.push({ category: "en_dash", detail: "En dash is forbidden." });
+  if (!/^[\x00-\x7F]*$/u.test(text)) violations.push({ category: "ascii_only", detail: "Generated copy must contain ASCII characters only." });
   for (const phrase of banned) {
     if (hasBanned(unprotectedNormalized, phrase)) violations.push({ category: "banned_language", detail: String(phrase) });
   }
@@ -261,6 +288,17 @@ export function validateCopy(copy, {
   }
   if (register === "collective" && !allowsSecondPerson({ family, surface }) && /\b(?:you|your|yours|yourself|yourselves)\b/iu.test(text)) {
     violations.push({ category: "register_consistency", detail: "Collective copy contains second person." });
+  }
+  if (register === "collective_with_second_person_close") {
+    const sentenceList = sentenceUnits(text);
+    const closeStartsAt = Math.max(0, sentenceList.length - 2);
+    const bodyViolation = sentenceList.slice(0, closeStartsAt).find(containsSecondPerson);
+    if (bodyViolation) {
+      violations.push({
+        category: "register_consistency",
+        detail: "Collective placement copy contains second person before the final truth-and-catch pair."
+      });
+    }
   }
   if (register === "second_person" && family === "house-horoscope-core" && !/\b(?:you|your|yours|yourself)\b/iu.test(text)) {
     violations.push({ category: "register_consistency", detail: "House-core copy requires second person." });
@@ -316,6 +354,42 @@ export function validateCopy(copy, {
   if (family.includes("placement") && /\b(?:will definitely|is guaranteed to)\b/iu.test(text)) {
     violations.push({ category: "astrology_integrity", detail: "Placement copy predicts an event instead of a recurring pattern." });
   }
+  if (profile.surfaceRules.includes("daily-engine-hidden")
+    && /\b(?:transit(?:ing)?|natal|conjunction|opposition|square|trine|sextile|quincunx|inconjunct|semi-?sextile|\d+(?:st|nd|rd|th) house)\b/iu.test(text)) {
+    violations.push({ category: "daily_engine_hidden", detail: "Daily copy exposed engine terminology." });
+  }
+  if (profile.surfaceRules.includes("daily-outcome-ceiling")
+    && /\b(?:will|is going to)\b[^.!?]{0,60}\b(?:work out|resolve|succeed|heal|improve|happen)\b/iu.test(text)) {
+    violations.push({ category: "daily_outcome_ceiling", detail: "Daily copy promised an unsupported outcome." });
+  }
+  if (profile.surfaceRules.includes("synastry-outcome-ceiling")
+    && /\bwill\b[^.!?]{0,60}\b(?:leave|stay|marry|separate|break up|end the (?:bond|friendship|relationship))\b/iu.test(text)) {
+    violations.push({ category: "synastry_outcome_ceiling", detail: "Synastry copy predicted a relationship outcome." });
+  }
+  if (profile.surfaceRules.includes("synastry-fate-ban")
+    && /\b(?:soulmates?|twin flames?|meant to be|destined (?:for|to be with))\b/iu.test(text)) {
+    violations.push({ category: "synastry_fate_ban", detail: "Synastry copy used deterministic fate language." });
+  }
+  if (profile.surfaceRules.includes("article-meta-scaffolding-ban")
+    && /\b(?:in this article|this article will|as an ai|here(?:'s| is) what (?:you need to know|we will cover))\b/iu.test(text)) {
+    violations.push({ category: "article_meta_scaffolding", detail: "Article copy exposed generic composition scaffolding." });
+  }
+  if (profile.surfaceRules.includes("temporary-transit-register")
+    && /\b(?:you tend to|you always|you usually|usually|generally|this is who you are)\b/iu.test(text)) {
+    violations.push({ category: "temporary_transit_register", detail: "Friends transit copy used standing-pattern language." });
+  }
+  if (profile.surfaceRules.includes("disconnected-stock-coaching")
+    && /\b(?:give yourself permission|you are allowed|let yourself|allow yourself|take the win|protect your energy|honor your needs)\b/iu.test(text)) {
+    violations.push({ category: "disconnected_stock_coaching", detail: "Friends transit copy used disconnected stock coaching." });
+  }
+  if (profile.surfaceRules.includes("friends-variant-direction") && typeof copy === "object" && copy) {
+    if (typeof copy.body_you === "string" && copy.body_you.includes("{{Name}}")) {
+      violations.push({ category: "friends_variant_direction", detail: "body_you must not contain {{Name}}." });
+    }
+    if (typeof copy.body_they === "string" && !copy.body_they.includes("{{Name}}")) {
+      violations.push({ category: "friends_variant_direction", detail: "body_they must contain {{Name}}." });
+    }
+  }
   const negationPivotOccurrencesDetected = negationPivotOccurrences(text);
   const normalizedReservedNegationPivots = Number.isInteger(reservedNegationPivots) && reservedNegationPivots >= 0
     ? reservedNegationPivots
@@ -363,6 +437,8 @@ export function validateCopy(copy, {
     violations,
     advisories,
     spineQuality,
+    validationProfile: profile.id,
+    rulesRun: [...profile.baseRules, ...profile.surfaceRules],
     counts: {
       negationPivots: negationPivotCount,
       negationPivotsDetected: negationPivotOccurrencesDetected.length,

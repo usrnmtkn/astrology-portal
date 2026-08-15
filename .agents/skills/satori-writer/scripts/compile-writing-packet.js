@@ -6,6 +6,7 @@ const fs = require("fs");
 const path = require("path");
 const { buildIndex, repoRoot } = require("./build-voice-index.js");
 const { readRegistry, resolveCandidateRelease } = require(path.join(repoRoot, "packages", "astro-knowledge", "scripts", "editorial-model-registry.js"));
+const knowledgeResolver = require(path.join(repoRoot, "packages", "astro-knowledge", "scripts", "knowledge-resolver.js"));
 
 const packageRoot = path.join(repoRoot, "packages", "astro-knowledge");
 const PACKET_VERSION = "sky-placement-writer-packet-v3:affinity-ov039-vocab-structural-v3:self-lint-v1:connection-domain-v1:owner-reference-v1:owner-benchmark-v1:engine-cycle-fact-v1:corpus-warmth-v2-none-found:node-axis-v1";
@@ -761,23 +762,111 @@ function astrologyEvidence(planet, sign, surface) {
   };
 }
 
-function buildPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, task, inputText = "", currentSky = true, engineFacts = {}, registry = readRegistry() }) {
+function governedPlacementEvidence(planet, sign, surface) {
+  const axis = nodeAxisDescriptor(planet, sign);
+  const nodePlacement = planet === "nodes" || planet === "north-node" || planet === "south-node";
+  const canonicalIds = axis
+    ? [`placement-sign/north_node/${axis.northSign}`, `placement-sign/south_node/${axis.southSign}`]
+    : [`placement-sign/${planet.replaceAll("-", "_")}/${sign}`];
+  const recordFilter = (record) => {
+    try {
+      assertPacketQuotablesPassOutputBans({
+        verifiedAstrology: { sourcePassages: [{ text: record.text }] },
+        structuralSlots: { active: [] },
+        surface
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  const resolverOptions = {
+    surface: "sky",
+    register: "collective",
+    recordFilter,
+    filterId: "sky-placement-output-ban-safe-evidence-v1"
+  };
+  const governedPacket = canonicalIds.length === 1
+    ? knowledgeResolver.buildPacket(canonicalIds[0], { ...resolverOptions, maxChars: 12000 })
+    : knowledgeResolver.buildMultiTargetPacket(canonicalIds, { ...resolverOptions, maxChars: 18000 });
+  const packets = governedPacket.schemaVersion === 3 ? governedPacket.packets : [governedPacket];
+  const evidence = packets.flatMap((packet) => packet.evidence.map((record) => ({ ...record, canonicalId: packet.canonicalId })));
+  const primary = evidence.filter((record) => !record.relation);
+  const primaryField = (field) => primary.find((record) => record.field === field && record.path.includes("/data/placements/sign/"))
+    ?? primary.find((record) => record.field === field);
+  const fieldTexts = (field) => evidence.filter((record) => record.field === field).map((record) => record.text);
+  const splitPipe = (values) => [...new Set(values.flatMap((value) => value.split("|").map((item) => item.trim()).filter(Boolean)))];
+  const supportedDomains = splitPipe(fieldTexts("supportedDomains"));
+  const unsupportedDomainWarnings = splitPipe(fieldTexts("unsupportedDomainWarnings"));
+  const bodyFunction = evidence.find((record) => record.relation === "body-function" && record.field === "overview")?.text
+    ?? evidence.find((record) => record.relation === "body-function")?.text
+    ?? primaryField("body")?.text
+    ?? null;
+  const signOperation = (nodePlacement ? primaryField("body")?.text : null)
+    ?? evidence.find((record) => record.relation === "sign-operation")?.text
+    ?? primaryField("body")?.text
+    ?? null;
+  const combinedMeaning = primaryField("body")?.text
+    ?? primary.find((record) => record.field === "copy")?.text
+    ?? primary[0]?.text
+    ?? null;
+  const failures = [
+    ...(!bodyFunction ? ["body function is missing from governed packet"] : []),
+    ...(!combinedMeaning ? ["combined placement meaning is missing from governed packet"] : [])
+  ];
+  return {
+    ...(axis ? {
+      axisMode: "combined-node-axis",
+      axisPair: {
+        axisId: axis.axisId,
+        pairLink: `${axis.north.id}<->${axis.south.id}`,
+        reciprocal: true,
+        northNode: { placementId: axis.north.id, sign: axis.northSign, role: "growth-direction" },
+        southNode: { placementId: axis.south.id, sign: axis.southSign, role: "release" }
+      }
+    } : {}),
+    canonicalIds,
+    packetSha256: governedPacket.packetSha256,
+    indexSha256: governedPacket.indexSha256,
+    planetFunction: bodyFunction,
+    signExpression: signOperation,
+    combinedMeaning,
+    collectiveGift: fieldTexts("collectiveGift").join(" ") || fieldTexts("tldr").join(" ") || null,
+    observableShadowBehaviors: splitPipe(fieldTexts("challenge")),
+    timing: fieldTexts("cycle")[0] ?? surface.pace.labels[axis ? "north-node" : planet] ?? null,
+    supportedDomains,
+    unsupportedDomainWarnings: unsupportedDomainWarnings.length
+      ? unsupportedDomainWarnings
+      : ["Do not introduce a domain or consequence that is absent from the governed packet."],
+    sourceRegisterBoundary: "The governed source passages may use natal or second-person register. Extract their astrology only. Never reproduce their person, address the reader, or treat natal wording as Current Sky voice evidence.",
+    scenarioPolicy: [
+      "The writer may create related lived moments only from the governed packet and approved surface permissions. The transit remains the subject, and no single invented scenario may carry the whole card. The moments may be invented; the astrology may not.",
+      ...fieldTexts("scenarioPolicy")
+    ].join(" "),
+    sourcePassages: primary.map((record) => ({
+      sourcePath: record.path,
+      sourceSha256: record.sourceSha256,
+      evidenceSha256: record.evidenceSha256,
+      authorityClass: record.authorityClass,
+      register: "governed-evidence",
+      personBoundary: "Do not reproduce second-person or natal address from this source; do not inherit temporality.",
+      text: record.text
+    })),
+    governedPacket,
+    validation: { complete: failures.length === 0, failures }
+  };
+}
+
+function compileSkyPlacementPacket({ planet, sign, requestedBeat, emphasisBeat = null, beat, task, inputText = "", currentSky = true, engineFacts = {}, registry = readRegistry() }) {
   const resolvedBeat = requestedBeat || beat;
   if (!planet || !sign || !resolvedBeat || !task) throw new Error("planet, sign, requestedBeat, and task are required.");
   const release = resolveCandidateRelease({ role: "writer", surface: "sky-placement", releaseId: RELEASE_ID, registry });
   const axis = nodeAxisDescriptor(planet, sign);
-  const factRows = axis ? [axis.north, axis.south] : (() => {
-    const factPath = path.join(packageRoot, "data", "placements", "sign", `${planet}-${sign}.json`);
-    if (!fs.existsSync(factPath)) throw new Error(`Missing placement fact boundary: ${planet}-${sign}.json`);
-    return [JSON.parse(fs.readFileSync(factPath, "utf8"))];
-  })();
-  const unverified = factRows.find((facts) => !["REVIEWED", "LIVE", "APPROVED"].includes(facts.status));
-  if (unverified) throw new Error(`Placement facts are not verified: ${unverified.status || "missing status"}.`);
   const selectionPlanet = axis ? "north-node" : planet;
   const selectionSign = axis ? axis.northSign : sign;
   const surface = JSON.parse(fs.readFileSync(path.join(packageRoot, "voice", "tldr-astro", "sky-placement.json"), "utf8"));
   const selectionBeat = resolvedBeat === "full_article" ? (emphasisBeat || "turn") : resolvedBeat;
-  const verifiedAstrology = astrologyEvidence(planet, sign, surface);
+  const verifiedAstrology = governedPlacementEvidence(planet, sign, surface);
   if (!verifiedAstrology.validation.complete) {
     throw new Error(`Verified astrology is incomplete: ${verifiedAstrology.validation.failures.join("; ")}.`);
   }
@@ -986,14 +1075,14 @@ function main() {
   const args = parseArgs(process.argv.slice(2));
   if (!args.out) throw new Error("--out is required.");
   const engineFacts = args["engine-facts"] ? JSON.parse(fs.readFileSync(path.resolve(args["engine-facts"]), "utf8")) : {};
-  const packet = buildPacket({ planet: args.planet, sign: args.sign, requestedBeat: args["requested-beat"] || args.beat, emphasisBeat: args["emphasis-beat"] || null, task: args.task, inputText: args.input || "", currentSky: args["current-sky"] !== "false", engineFacts });
+  const packet = compileSkyPlacementPacket({ planet: args.planet, sign: args.sign, requestedBeat: args["requested-beat"] || args.beat, emphasisBeat: args["emphasis-beat"] || null, task: args.task, inputText: args.input || "", currentSky: args["current-sky"] !== "false", engineFacts });
   fs.mkdirSync(args.out, { recursive: true });
   fs.writeFileSync(path.join(args.out, "packet.json"), `${JSON.stringify(packet, null, 2)}\n`);
   fs.writeFileSync(path.join(args.out, "model-input.md"), renderModelInput(packet));
   console.log(`Compiled four-to-six-passage affinity packet at ${args.out}. No model call was made.`);
 }
 
-module.exports = { ACTIVE_FACT_STATUSES, AFFINITY_POOL_ID, PACKET_VERSION, RELEASE_ID, SUPPORTED_DOMAIN_PATTERNS, UNSUPPORTED_DOMAIN_PATTERNS, assertPacketQuotablesPassOutputBans, astrologyEvidence, buildFactGatedStructure, buildPacket, collectPacketQuotables, eligibleEntries, factStatusAllowsWriting, matchesRequestedOperation, operationSignals, passageSupportsTargetDomain, passageUsesIncompatibleCurrentSkyEvidence, passageUsesUnsupportedDomain, renderModelInput, selectAffinitySix, selectOwnerCorpusWarmthEvidence, selectSix, selectVoiceDevices, structureFor };
+module.exports = { ACTIVE_FACT_STATUSES, AFFINITY_POOL_ID, PACKET_VERSION, RELEASE_ID, SUPPORTED_DOMAIN_PATTERNS, UNSUPPORTED_DOMAIN_PATTERNS, assertPacketQuotablesPassOutputBans, astrologyEvidence, buildFactGatedStructure, buildPacket: compileSkyPlacementPacket, compileSkyPlacementPacket, collectPacketQuotables, eligibleEntries, factStatusAllowsWriting, governedPlacementEvidence, matchesRequestedOperation, operationSignals, passageSupportsTargetDomain, passageUsesIncompatibleCurrentSkyEvidence, passageUsesUnsupportedDomain, renderModelInput, selectAffinitySix, selectOwnerCorpusWarmthEvidence, selectSix, selectVoiceDevices, structureFor };
 if (require.main === module) {
   try { main(); } catch (error) { console.error(error instanceof Error ? error.message : error); process.exitCode = 1; }
 }
