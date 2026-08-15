@@ -19,8 +19,10 @@ Generated 2026-08-15. This audit made no prose changes and used no billed calls.
 - The readiness audit now loads the actual owner-approved reader bundle; it no longer reports one continuous article when 57 exist.
 - Sky Placement direct address is governed by ED-028 and is not failed by the retired Current-Sky rule.
 - Generic “people” is advisory on this surface, not a deterministic failure.
+- ED-029 now rejects nonbreaking spaces and invisible Unicode formatting characters in new reader copy while leaving ordinary accented letters alone; recorded historical punctuation exemptions remain narrow and explicit.
 - Placement-aspect interpretation now fails closed independently: an aspect without approved prose does not restore generic pair-effect copy. Engine-factual aspect details remain available to the page.
 - Future four-slot recovery is gated on deterministic validation plus exact owner approval; stored legacy rows do not become reader copy by existence alone.
+- A proposed mechanical cleanup of 346 rows already marked approved was excluded. Those rows remain byte-identical because no exact owner approval covered the edits.
 
 ## Deterministic recovery audit
 
