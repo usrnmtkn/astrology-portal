@@ -1391,7 +1391,7 @@ export function createTransitSynastryRenderer(
     return value ? value.charAt(0).toUpperCase() + value.slice(1) : "";
   }
 
-  function skyPlacementAspectParagraph(placementPlanet: string, ev: SkyEvent): string {
+  function skyPlacementAspectParagraph(placementPlanet: string, ev: SkyEvent): string | null {
     if (!ev.a || !ev.b || !ev.aspect) throw new SourceGapError("SOURCE_GAP: sky placement aspect facts");
     const otherPlanet = ev.a === placementPlanet ? ev.b : ev.a;
     const isFullMoon = ev.aspect === "opposition" && new Set([ev.a, ev.b]).size === 2
@@ -1420,6 +1420,8 @@ export function createTransitSynastryRenderer(
       aSign: ev.aSign,
       bSign: ev.bSign
     })?.body_you;
+    const effect = reviewed ?? specific ?? null;
+    if (!effect) return null;
     const aRef = capitalizeSentence(transitRef(ev.a, ev.aSign));
     const bRef = transitRef(ev.b, ev.bSign);
     const frame = SKY_PLACEMENT_ASPECT_FRAME[ev.aspect];
@@ -1430,8 +1432,6 @@ export function createTransitSynastryRenderer(
         : null;
     if (!frame || !timing) throw new SourceGapError(`SOURCE_GAP: sky placement aspect frame ${ev.aspect}`);
     const fact = frame(aRef, bRef, timing);
-    const effect = reviewed ?? specific ?? pairEffectOf(ev);
-    if (!effect) throw new SourceGapError(`SOURCE_GAP: sky placement aspect effect ${ev.a}/${ev.b}/${ev.aspect}`);
     return `${fact} ${capitalizeSentence(effect)}`.trim();
   }
 
@@ -1450,6 +1450,24 @@ export function createTransitSynastryRenderer(
     "north-node",
     "south-node"
   ]);
+
+  // A four-slot candidate renders only after the build-time stamping script has
+  // recorded deterministic validation and exact owner approval for every body slot.
+  // Editorial rules stay in the policy compiler and linter; the resolver only reads
+  // the resulting eligibility stamp.
+  function skyPlacementRenderEligible(planet: string, sign: string): boolean {
+    const slots = ["hook", "lived", "turn"].map(
+      (slot) => hooks.get(`fallback-hook/sky-placement-${slot}/${planet}/${sign}`)
+    );
+    if (slots.some((row) => !row || typeof row.body_you !== "string" || !row.body_you.trim())) return false;
+    return slots.every((row) => (
+      (row as Record<string, unknown>).render_eligible === true
+      && (row as Record<string, unknown>).owner_prose_approved === true
+      && (row as Record<string, unknown>).deterministic_validation === "pass"
+      && typeof (row as Record<string, unknown>).source_hash === "string"
+      && String((row as Record<string, unknown>).source_hash).length > 0
+    ));
+  }
   const SKY_PLACEMENT_ERA_PLANETS = new Set([
     "saturn",
     "uranus",
@@ -1953,12 +1971,15 @@ export function createTransitSynastryRenderer(
           contentKey: standaloneHook.contentKey
         };
       }
-      throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
+      if (!skyPlacementRenderEligible(planet, sign)) {
+        throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
+      }
     }
 
     const aspectParas = events
       .filter((event) => SKY_PLACEMENT_MAJOR_ASPECTS.has(event.aspect))
-      .map((event) => skyPlacementAspectParagraph(planet, event));
+      .map((event) => skyPlacementAspectParagraph(planet, event))
+      .filter((paragraph): paragraph is string => Boolean(paragraph));
     const pairKey = `fallback-hook/sky-placement-hook/${planet}/${sign}`;
     const pairHook = hooks.get(pairKey)?.body_you;
     const pairLived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you;

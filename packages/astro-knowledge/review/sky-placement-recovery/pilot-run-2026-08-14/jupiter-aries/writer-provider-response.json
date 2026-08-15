@@ -1,0 +1,28 @@
+{
+  "responseId": "resp_0b5da691e690763a006a7f7b06aa40819f9fe65808c88b461e",
+  "httpStatus": 200,
+  "status": "incomplete",
+  "incompleteDetails": {
+    "reason": "max_output_tokens"
+  },
+  "model": "gpt-5.6-sol",
+  "reasoning": {
+    "context": "all_turns",
+    "effort": "xhigh",
+    "mode": "standard",
+    "summary": null
+  },
+  "usage": {
+    "input_tokens": 4292,
+    "input_tokens_details": {
+      "cache_write_tokens": 4289,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4000,
+    "output_tokens_details": {
+      "reasoning_tokens": 4000
+    },
+    "total_tokens": 8292
+  },
+  "outputText": ""
+}

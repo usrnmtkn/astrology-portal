@@ -1,0 +1,4716 @@
+[
+  {
+    "page_key": "jupiter/aries",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Act first, think second",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "jupiter/taurus",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Build your luck slow",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "jupiter/gemini",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Talk your way forward",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "jupiter/cancer",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Grow where you root",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "jupiter/leo",
+    "current_render_state": "owner_approved_continuous",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Make room for your roar",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "jupiter/virgo",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Build luck through work",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "jupiter/libra",
+    "current_render_state": "owner_approved_continuous",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Grow through give and take",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "jupiter/scorpio",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Go longer and deeper",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "jupiter/sagittarius",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Chase bigger questions",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "jupiter/capricorn",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Build luck slowly",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "jupiter/aquarius",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Grow the new story",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "jupiter/pisces",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Expand by letting go",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "uranus/aries",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Break the pause",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "uranus/taurus",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Break ground without rushing",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "uranus/gemini",
+    "current_render_state": "owner_approved_continuous",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Flip the script fast",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "uranus/cancer",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Protect your unexpected edges",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": [
+      "closer is long; end on a shorter line with bite"
+    ]
+  },
+  {
+    "page_key": "uranus/leo",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Break out with flair",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "uranus/virgo",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Break routine with intent",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "uranus/libra",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Shake up the balance",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "uranus/scorpio",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Break deep, hold tight",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "uranus/sagittarius",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Break free with boldness",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "uranus/capricorn",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Shake the system quietly",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "uranus/aquarius",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Break patterns without apology",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "uranus/pisces",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Break comfort with care",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": [
+      "closer is long; end on a shorter line with bite"
+    ]
+  },
+  {
+    "page_key": "neptune/aries",
+    "current_render_state": "owner_approved_continuous",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Act on your visions",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "neptune/taurus",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "a decade",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Hold your patience tight",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "neptune/gemini",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Talk your visions out",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "neptune/cancer",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Care gets blurry",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "neptune/leo",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "a decade",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-002",
+        "slot": null,
+        "match": "performances",
+        "reason": "Use the performance family only for literal acting, music, presentations, or measurable job performance."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Shine your unclear truth",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "neptune/virgo",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Make imagination useful",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "neptune/libra",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "a decade",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Balance without a blueprint",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": [
+      "closer is long; end on a shorter line with bite"
+    ]
+  },
+  {
+    "page_key": "neptune/scorpio",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "a decade",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Hold the dark tight",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "neptune/sagittarius",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Chase horizons wide",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "neptune/capricorn",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "a decade",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Make discipline dream",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "neptune/aquarius",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "a decade",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Think apart, dream together",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "neptune/pisces",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Blur the edges",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "pluto/aries",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Break it down fast",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "pluto/taurus",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Hold tight, change digs deep",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "pluto/gemini",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Talk your way through",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "pluto/cancer",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Protect by remaking",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "pluto/leo",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-002",
+        "slot": null,
+        "match": "performance",
+        "reason": "Use the performance family only for literal acting, music, presentations, or measurable job performance."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Show your fire loud",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "pluto/virgo",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Fix what’s broken now",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "pluto/libra",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Balance breaks open",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "pluto/scorpio",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Own the hidden currents",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "pluto/sagittarius",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Push limits or break them",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "pluto/capricorn",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Take power by quiet force",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "pluto/aquarius",
+    "current_render_state": "owner_approved_continuous",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Question who controls the system",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "pluto/pisces",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Feel power without borders",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "chiron/aries",
+    "current_render_state": "owner_approved_continuous",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Go first without apology",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "chiron/taurus",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Claim your quiet worth",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "chiron/gemini",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Speak to be heard",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "chiron/cancer",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Claim your safe space",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "“",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "”",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "chiron/leo",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-002",
+        "slot": null,
+        "match": "performance",
+        "reason": "Use the performance family only for literal acting, music, presentations, or measurable job performance."
+      },
+      {
+        "rule": "CF-002",
+        "slot": null,
+        "match": "performing",
+        "reason": "Use the performance family only for literal acting, music, presentations, or measurable job performance."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Stand without performing",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "chiron/virgo",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Stop fixing, start using",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "chiron/libra",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Demand fairness without flinching",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "chiron/scorpio",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Hold closeness on your terms",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": [
+      "closer is long; end on a shorter line with bite"
+    ]
+  },
+  {
+    "page_key": "chiron/sagittarius",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Question what you hold true",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "chiron/capricorn",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-002",
+        "slot": null,
+        "match": "perform",
+        "reason": "Use the performance family only for literal acting, music, presentations, or measurable job performance."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Prove your worth quietly",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "chiron/aquarius",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Stand apart, don’t shrink",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "chiron/pisces",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "a decade",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Claim your blurry edges",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "CF-018",
+        "slot": null,
+        "match": "leak",
+        "reason": "Leak language is an AI tell in Marie Satori copy; name what someone does and what happens because of it."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "north-node/aries",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Claim your own room",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "north-node/taurus",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "a year",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "two years",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Build calm security",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "north-node/gemini",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "a year",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Ask more, decide less",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "north-node/cancer",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Let others in",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "north-node/leo",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Take the spotlight now",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "north-node/virgo",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "two years",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Focus on what works",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": [
+      "lived is 5 sentences; spec says 2-4"
+    ]
+  },
+  {
+    "page_key": "north-node/libra",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Meet halfway or stall",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "north-node/scorpio",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "two years",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Share the hidden parts",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "north-node/sagittarius",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Look beyond your map",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "north-node/capricorn",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Build what lasts",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "north-node/aquarius",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Connect to something bigger",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "north-node/pisces",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "two years",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Let go to move forward",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "south-node/aries",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Stop fighting solo",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": [
+      "lived is 5 sentences; spec says 2-4"
+    ]
+  },
+  {
+    "page_key": "south-node/taurus",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Stop gripping what slips",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "south-node/gemini",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "two years",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Stop chasing every answer",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": [
+      "closer is long; end on a shorter line with bite"
+    ]
+  },
+  {
+    "page_key": "south-node/cancer",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Show up beyond the shell",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "south-node/leo",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-002",
+        "slot": null,
+        "match": "perform",
+        "reason": "Use the performance family only for literal acting, music, presentations, or measurable job performance."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Drop the spotlight habit",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "south-node/virgo",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "two years",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Let some cracks show",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "south-node/libra",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "two years",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Stop bending to fit",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "south-node/scorpio",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Cut the old cords",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "south-node/sagittarius",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Let go of old maps",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "south-node/capricorn",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "untraced-duration",
+        "slot": null,
+        "match": "two years",
+        "reason": "Every duration must trace to planet-cycle-facts.json or a supplied engine fact."
+      },
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Drop the hustle grip",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": [
+      "closer is long; end on a shorter line with bite"
+    ]
+  },
+  {
+    "page_key": "south-node/aquarius",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Step out of the background",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "‘",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  },
+  {
+    "page_key": "south-node/pisces",
+    "current_render_state": "source_gap",
+    "audit_context": "explicit planet/sign plus REVIEWED planet-cycle-facts",
+    "audit_valid": true,
+    "current_lint_state": "fails_current_policy",
+    "lint_failures": [
+      {
+        "rule": "CF-006",
+        "slot": "tagline",
+        "match": "Come back to ground",
+        "reason": "The tagline must be a clear full sentence rather than a compressed slogan."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-029",
+        "slot": null,
+        "match": "’",
+        "reason": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      },
+      {
+        "rule": "ED-030",
+        "slot": null,
+        "match": " - ",
+        "reason": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    ],
+    "lint_advisories": [],
+    "owner_status": "not_approved_by_this_audit",
+    "render_eligible": false,
+    "notes": []
+  }
+]

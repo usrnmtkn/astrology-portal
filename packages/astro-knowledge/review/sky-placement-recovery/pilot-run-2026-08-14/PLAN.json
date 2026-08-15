@@ -1,0 +1,26 @@
+{
+  "status": "live_run_started",
+  "targets": [
+    {
+      "planet": "jupiter",
+      "sign": "aries",
+      "tier": "A"
+    },
+    {
+      "planet": "uranus",
+      "sign": "taurus",
+      "tier": "B"
+    },
+    {
+      "planet": "pluto",
+      "sign": "capricorn",
+      "tier": "C"
+    }
+  ],
+  "plannedCalls": {
+    "writer": 3,
+    "readerJudge": 0,
+    "total": 3
+  },
+  "note": "Reader Judge is not run because it would require a second billed call per page, which is not authorized."
+}

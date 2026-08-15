@@ -1400,14 +1400,14 @@ ${passHook}`;
       aSign: ev.aSign,
       bSign: ev.bSign
     })?.body_you;
+    const effect = reviewed ?? specific ?? null;
+    if (!effect) return null;
     const aRef = capitalizeSentence(transitRef(ev.a, ev.aSign));
     const bRef = transitRef(ev.b, ev.bSign);
     const frame = SKY_PLACEMENT_ASPECT_FRAME[ev.aspect];
     const timing = ev.exactDate ? { exact: true, label: ev.exactDate } : ev.dateLine ? { exact: false, label: ev.dateLine.charAt(0).toLowerCase() + ev.dateLine.slice(1) } : null;
     if (!frame || !timing) throw new SourceGapError(`SOURCE_GAP: sky placement aspect frame ${ev.aspect}`);
     const fact = frame(aRef, bRef, timing);
-    const effect = reviewed ?? specific ?? pairEffectOf(ev);
-    if (!effect) throw new SourceGapError(`SOURCE_GAP: sky placement aspect effect ${ev.a}/${ev.b}/${ev.aspect}`);
     return `${fact} ${capitalizeSentence(effect)}`.trim();
   }
   const SKY_PLACEMENT_MAJOR_ASPECTS = /* @__PURE__ */ new Set(["conjunction", "square", "opposition", "trine", "sextile"]);
@@ -1425,6 +1425,13 @@ ${passHook}`;
     "north-node",
     "south-node"
   ]);
+  function skyPlacementRenderEligible(planet, sign) {
+    const slots = ["hook", "lived", "turn"].map(
+      (slot) => hooks.get(`fallback-hook/sky-placement-${slot}/${planet}/${sign}`)
+    );
+    if (slots.some((row) => !row || typeof row.body_you !== "string" || !row.body_you.trim())) return false;
+    return slots.every((row) => row.render_eligible === true && row.owner_prose_approved === true && row.deterministic_validation === "pass" && typeof row.source_hash === "string" && String(row.source_hash).length > 0);
+  }
   const SKY_PLACEMENT_ERA_PLANETS = /* @__PURE__ */ new Set([
     "saturn",
     "uranus",
@@ -1834,9 +1841,11 @@ ${passHook}`;
           contentKey: standaloneHook.contentKey
         };
       }
-      throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
+      if (!skyPlacementRenderEligible(planet, sign)) {
+        throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
+      }
     }
-    const aspectParas = events.filter((event) => SKY_PLACEMENT_MAJOR_ASPECTS.has(event.aspect)).map((event) => skyPlacementAspectParagraph(planet, event));
+    const aspectParas = events.filter((event) => SKY_PLACEMENT_MAJOR_ASPECTS.has(event.aspect)).map((event) => skyPlacementAspectParagraph(planet, event)).filter((paragraph) => Boolean(paragraph));
     const pairKey = `fallback-hook/sky-placement-hook/${planet}/${sign}`;
     const pairHook = hooks.get(pairKey)?.body_you;
     const pairLived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you;
@@ -2598,7 +2607,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-14f";
+var PACKAGE_VERSION = "v3-2026-08-15a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

@@ -297,10 +297,11 @@ function addCompiledFinding(findings, rule, match, slot = null) {
   });
 }
 
-function applyCompiledRules({ full, tagline, findings, allowLegacyTagline = false, allowLegacyGenericPeople = false, allowLegacySecondPerson = false, allowLegacyRepeatedGenericPerson = false, allowLegacyPerformanceFraming = false }) {
+function applyCompiledRules({ full, tagline, findings, allowLegacyTagline = false, allowLegacyGenericPeople = false, allowLegacySecondPerson = false, allowLegacyRepeatedGenericPerson = false, allowLegacyPerformanceFraming = false, allowLegacyPunctuation = false }) {
   for (const rule of compiledRules) {
     if (!compiledRuleApplies(rule) || !rule.mechanical) continue;
     if (allowLegacyGenericPeople && rule.id === "CF-001") continue;
+    if (allowLegacyPunctuation && (rule.id === "ED-029" || rule.id === "ED-030")) continue;
     if (allowLegacySecondPerson && rule.id === "ED-003") continue;
     if (allowLegacyRepeatedGenericPerson && rule.id === "CF-013") continue;
     if (allowLegacyPerformanceFraming && rule.id === "CF-002") continue;
@@ -361,11 +362,20 @@ function applyCompiledRules({ full, tagline, findings, allowLegacyTagline = fals
   }
 }
 
-// { hook, lived, turn, tagline?, moves?, planet?, sign?, allowLegacySecondPerson?, allowLegacyGenericPeople? }
-// -> { score, fails, warns, findings, notes }
-function lintArticle(article) {
+// Copy belongs in the first argument. Astrology/fact context may be embedded in
+// that object or supplied as the second argument. Older ad-hoc audits commonly
+// called lintArticle(article, { planet, sign }); silently ignoring that second
+// argument made valid cycle facts look invented and skipped sign-specific rules.
+// An incomplete or contradictory context now invalidates the audit instead of
+// manufacturing copy findings.
+//
+// { hook, lived, turn, tagline?, moves?, planet?, sign?, factContext? },
+// { planet?, sign?, factContext?, allowLegacyTagline?, ... }
+// -> { auditValid, contextErrors, score, fails, warns, findings, notes }
+function lintArticle(article, context = {}) {
   const findings = [];
   const notes = [];
+  const contextErrors = [];
   const slots = {};
   for (const slot of SLOTS) slots[slot] = String(article?.[slot] ?? "").trim();
   const tagline = article?.tagline != null ? String(article.tagline).trim() : null;
@@ -380,8 +390,34 @@ function lintArticle(article) {
     ...FACT_GATED_SLOTS.map((slot) => factGated[slot])
   ].filter(Boolean).join("\n\n");
   const centralScene = SLOTS.map((slot) => slots[slot]).filter(Boolean).join("\n\n");
-  const planet = article?.planet ? String(article.planet).toLowerCase() : null;
-  const sign = article?.sign ? String(article.sign).toLowerCase() : null;
+  const articlePlanet = article?.planet ? String(article.planet).toLowerCase() : null;
+  const contextPlanet = context?.planet ? String(context.planet).toLowerCase() : null;
+  const articleSign = article?.sign ? String(article.sign).toLowerCase() : null;
+  const contextSign = context?.sign ? String(context.sign).toLowerCase() : null;
+  if (articlePlanet && contextPlanet && articlePlanet !== contextPlanet) {
+    contextErrors.push({ field: "planet", article: articlePlanet, context: contextPlanet, reason: "Conflicting planet context." });
+  }
+  if (articleSign && contextSign && articleSign !== contextSign) {
+    contextErrors.push({ field: "sign", article: articleSign, context: contextSign, reason: "Conflicting sign context." });
+  }
+  const planet = articlePlanet || contextPlanet;
+  const sign = articleSign || contextSign;
+  if (!planet) contextErrors.push({ field: "planet", reason: "Sky placement lint requires a planet so duration facts can be traced." });
+  if (!sign) contextErrors.push({ field: "sign", reason: "Sky placement lint requires a sign so sign-conditional rules can run." });
+  const factContext = article?.factContext ?? context?.factContext ?? {};
+  const option = (name) => article?.[name] === true || context?.[name] === true;
+  const allowLegacyPunctuation = context?.allowLegacyPunctuation === true;
+
+  if (contextErrors.length > 0) {
+    findings.push({
+      severity: "fail",
+      source: "harness",
+      decisionId: "ED-031",
+      term: "MISSING_FACT_CONTEXT",
+      match: contextErrors.map((error) => error.field).join(", "),
+      reason: "HARNESS_ERROR: sky placement lint requires consistent planet and sign context. Fact-trace checks were skipped when planet was unavailable. This is a checker invocation error, not a copy failure."
+    });
+  }
 
   // -- missing slots are hard fails: the renderer needs all three.
   for (const slot of SLOTS) {
@@ -400,10 +436,10 @@ function lintArticle(article) {
     const m = full.match(check.pattern);
     if (m) findings.push({ severity: "fail", source: "reader-boundary", term: check.term, match: m[0], reason: check.reason });
   }
-  if (!article?.allowLegacyUntracedTiming) {
-    addTemporalTraceFindings({ full, planet, factContext: article?.factContext || {}, findings });
+  if (planet && !option("allowLegacyUntracedTiming")) {
+    addTemporalTraceFindings({ full, planet, factContext, findings });
   }
-  addConcurrentEventFindings({ concurrentEvents: factGated.concurrentEvents, factContext: article?.factContext || {}, findings });
+  addConcurrentEventFindings({ concurrentEvents: factGated.concurrentEvents, factContext, findings });
 
   const appositivePlanetDefinition = full.match(/\b(?:the )?(?:Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto|Chiron|North Node|South Node)\s*,\s*the planet of\b[^.!?]*/iu);
   if (appositivePlanetDefinition) findings.push({
@@ -439,11 +475,12 @@ function lintArticle(article) {
     full,
     tagline,
     findings,
-    allowLegacyTagline: article?.allowLegacyTagline === true,
-    allowLegacyGenericPeople: article?.allowLegacyGenericPeople === true,
-    allowLegacySecondPerson: article?.allowLegacySecondPerson === true,
-    allowLegacyRepeatedGenericPerson: article?.allowLegacyRepeatedGenericPerson === true,
-    allowLegacyPerformanceFraming: article?.allowLegacyPerformanceFraming === true
+    allowLegacyTagline: option("allowLegacyTagline"),
+    allowLegacyGenericPeople: option("allowLegacyGenericPeople"),
+    allowLegacySecondPerson: option("allowLegacySecondPerson"),
+    allowLegacyRepeatedGenericPerson: option("allowLegacyRepeatedGenericPerson"),
+    allowLegacyPerformanceFraming: option("allowLegacyPerformanceFraming"),
+    allowLegacyPunctuation
   });
 
   // OV-039: named sign memes are deterministic only when the matching sign is
@@ -513,8 +550,8 @@ function lintArticle(article) {
   // -- surface bans from sky-placement.json
   for (const b of spec.outputBans.fail) {
     if (compiledExistingTerms.has(b.term)) continue;
-    if (article?.allowLegacySecondPerson && b.term === "\\bperform(ance|ing|s|ed)?\\b") continue;
-    if (article?.allowLegacyGenericPeople && b.term === "\\bpeople\\b") continue;
+    if (option("allowLegacySecondPerson") && b.term === "\\bperform(ance|ing|s|ed)?\\b") continue;
+    if (option("allowLegacyGenericPeople") && b.term === "\\bpeople\\b") continue;
     const m = full.match(toRegex(b.term));
     if (m) findings.push({ severity: "fail", source: "sky-placement", term: b.term, match: m[0], reason: b.reason });
   }
@@ -609,7 +646,17 @@ function lintArticle(article) {
   let score = 3;
   if (warns >= 1) score = 2;
   if (fails >= 1) score = 1;
-  return { score, fails, warns, findings, notes };
+  const auditValid = contextErrors.length === 0;
+  return {
+    auditValid,
+    contextErrors,
+    context: { planet, sign, factContextSupplied: flattenFactStrings(factContext).length > 0 },
+    score: auditValid ? score : null,
+    fails,
+    warns,
+    findings,
+    notes
+  };
 }
 
 function articleTextForBatch(entry) {
@@ -668,7 +715,9 @@ if (require.main === module) {
   } else if (arg) {
     let article;
     try { article = JSON.parse(arg); } catch { console.error("pass a JSON article {hook, lived, turn} or --exemplars"); process.exit(1); }
-    console.log(JSON.stringify(lintArticle(article), null, 2));
+    const result = lintArticle(article);
+    console.log(JSON.stringify(result, null, 2));
+    if (!result.auditValid) process.exitCode = 2;
   } else {
     console.error('usage: lint-placement-voice.js \'{"hook":"...","lived":"...","turn":"..."}\' | --exemplars');
     process.exit(1);

@@ -1,11 +1,11 @@
 # Satori editorial propagation report
 
 Decision source: `voice/tldr-astro/satori-editorial-decisions.yaml`
-Source SHA-256: `d2a94f8656e00ca6372d46bbd55cf7592c7f3a0984433fff04e086786218e8a2`
-Approved active decisions: 44
+Source SHA-256: `c44c3a067d5dba734f3cd2789cfe9248d33e51f168fd271d85d0da1bb84b3e84`
+Approved active decisions: 47
 Unresolved decisions: 0
 Retired or superseded decisions: 3
-Active regression cases: 63
+Active regression cases: 69
 
 ## Generated artifacts
 
@@ -27,8 +27,8 @@ Active regression cases: 63
 
 ## Runtime traceability
 
-Runtime rules inspected: 117
-Traced to an approved authoritative decision: 8
+Runtime rules inspected: 116
+Traced to an approved authoritative decision: 7
 Not yet traced to an approved authoritative decision: 109
 
 - TRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `—` ← `ED-004`
@@ -63,7 +63,6 @@ Not yet traced to an approved authoritative decision: 109
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `you find yourself`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `embrace the`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `\bmanifest(s|ing|ation)?\b`
-- TRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `\bpeople\b` ← `CF-001`
 - TRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `\btilt(?:s|ed|ing)?\b` ← `CF-003`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `\bfair counteroffer\b`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `\bthoughtful compromise\b`

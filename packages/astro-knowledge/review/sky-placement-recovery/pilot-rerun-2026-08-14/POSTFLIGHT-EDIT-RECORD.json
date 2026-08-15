@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-15T04:55:56.262Z",
+  "billedCalls": 0,
+  "governanceResolution": {
+    "whether": "not_governed_not_enforced",
+    "note": "No decision, banned-word entry, or banned-construction governs whether. The draft remains unchanged."
+  },
+  "edits": {
+    "uranus-taurus": {
+      "slot": "hook",
+      "before": "The same paycheck reaches the end of the month sooner, but the household keeps using the budget that once made everything feel manageable. With Uranus in Taurus, abrupt change reaches material arrangements designed to stay dependable, exposing the gap between a stable routine and a workable one. Taurus holds on through repetition and tangible proof, so the disruption becomes undeniable when the total on the page no longer matches what daily life costs.",
+      "after": "The paycheck reaches the end of the month sooner, but the household keeps using the old budget. With Uranus in Taurus, abrupt change reaches material arrangements designed to stay dependable, exposing the gap between a stable routine and a workable one. Taurus holds on through repetition and tangible proof, so the disruption becomes undeniable when the total on the page no longer matches what daily life costs.",
+      "reason": "The 73-word hook exceeded the advisory threshold. The first sentence was shortened without removing the changed-cost mechanism."
+    },
+    "pluto-capricorn": {
+      "slot": "tagline",
+      "before": "A system can meet every formal standard while keeping decision-making power at ‌",
+      "after": "A system can meet every formal standard while keeping decision-making power at the top.",
+      "reason": "The generated tagline was truncated after 'at' and ended with U+00A0/U+200C. The sentence was completed in the meaning already stated by the hook."
+    }
+  },
+  "pages": [
+    {
+      "target": {
+        "planet": "jupiter",
+        "sign": "aries",
+        "tier": "A"
+      },
+      "mechanicalChecksPassed": true,
+      "lint": {
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [],
+        "auditValid": true,
+        "pilotShapeChecks": {
+          "wordCountBySlot": {
+            "hook": 64,
+            "lived": 78,
+            "tagline": 11,
+            "turn": 96
+          },
+          "wordCount": 249,
+          "finalSentenceWords": 15,
+          "shortEndingRun": 0,
+          "threeItemLists": {
+            "count": 0,
+            "matches": []
+          },
+          "asciiOnly": true,
+          "failures": [],
+          "passed": true
+        }
+      }
+    },
+    {
+      "target": {
+        "planet": "uranus",
+        "sign": "taurus",
+        "tier": "B"
+      },
+      "mechanicalChecksPassed": true,
+      "lint": {
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [],
+        "auditValid": true,
+        "pilotShapeChecks": {
+          "wordCountBySlot": {
+            "hook": 67,
+            "lived": 74,
+            "tagline": 11,
+            "turn": 72
+          },
+          "wordCount": 224,
+          "finalSentenceWords": 10,
+          "shortEndingRun": 1,
+          "threeItemLists": {
+            "count": 0,
+            "matches": []
+          },
+          "asciiOnly": true,
+          "failures": [],
+          "passed": true
+        }
+      }
+    },
+    {
+      "target": {
+        "planet": "pluto",
+        "sign": "capricorn",
+        "tier": "C"
+      },
+      "mechanicalChecksPassed": true,
+      "lint": {
+        "score": 3,
+        "fails": 0,
+        "warns": 0,
+        "findings": [],
+        "notes": [],
+        "auditValid": true,
+        "pilotShapeChecks": {
+          "wordCountBySlot": {
+            "hook": 70,
+            "lived": 82,
+            "tagline": 14,
+            "turn": 74
+          },
+          "wordCount": 240,
+          "finalSentenceWords": 13,
+          "shortEndingRun": 0,
+          "threeItemLists": {
+            "count": 0,
+            "matches": []
+          },
+          "asciiOnly": true,
+          "failures": [],
+          "passed": true
+        }
+      }
+    }
+  ]
+}

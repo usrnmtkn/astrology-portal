@@ -4,7 +4,7 @@
   "generatedBy": "scripts/compile-satori-editorial-decisions.js",
   "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
   "decisionSourceId": "satori-editorial-decisions-v1",
-  "decisionSourceSha256": "d2a94f8656e00ca6372d46bbd55cf7592c7f3a0984433fff04e086786218e8a2",
+  "decisionSourceSha256": "c44c3a067d5dba734f3cd2789cfe9248d33e51f168fd271d85d0da1bb84b3e84",
   "rules": [
     {
       "id": "ED-028",
@@ -54,37 +54,6 @@
         "flags": "",
         "severity": "fail",
         "message": "Em dashes are not used in reader copy."
-      }
-    },
-    {
-      "id": "CF-001",
-      "category": "subject",
-      "scope": {
-        "prohibited": [
-          "sky-placement"
-        ],
-        "conditional": [
-          "all-other-surfaces"
-        ]
-      },
-      "rule": "Do not use people in Sky Placement. On other surfaces, use it only when the collective itself is the real subject and a more exact subject would be less accurate.",
-      "rationale": "Generic people repeatedly conceals the actual subject in Sky Placement while remaining legitimate in some collective contexts.",
-      "effect": "prohibit",
-      "examplesAllowed": [
-        "A sibling stops hosting every holiday."
-      ],
-      "examplesRejected": [
-        "People can care deeply and still leave the rule untouched."
-      ],
-      "mechanical": {
-        "kind": "regex",
-        "pattern": "\\bpeople\\b",
-        "flags": "i",
-        "severity": "fail",
-        "message": "Name the group, role, action, message, or decision instead of generic people.",
-        "existing_terms": [
-          "\\bpeople\\b"
-        ]
       }
     },
     {
@@ -667,12 +636,84 @@
       "examplesAllowed": [],
       "examplesRejected": [],
       "mechanical": null
+    },
+    {
+      "id": "ED-029",
+      "category": "mechanical",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Reader copy uses ASCII punctuation and ordinary spaces. Do not use curly quotes, curly apostrophes, ellipsis characters, en dashes, nonbreaking spaces, or invisible Unicode formatting characters.",
+      "rationale": "Standing owner punctuation rule. ED-004 already prohibits the em dash; the same rule covers typographic substitutes and invisible spacing or formatting characters that can arrive through pasted or generated drafts. Ordinary non-ASCII letters are not punctuation and remain outside this mechanical rule.",
+      "effect": "prohibit",
+      "examplesAllowed": [
+        "The plan doesn't survive the first week."
+      ],
+      "examplesRejected": [
+        "The plan doesn’t survive the first week.",
+        "The plan changed.",
+        "The plan‌changed."
+      ],
+      "mechanical": {
+        "kind": "regex",
+        "pattern": "[ ​-‏‪-‮⁠-⁯﻿‘’“”…–]",
+        "flags": "",
+        "severity": "fail",
+        "message": "Reader copy uses ASCII punctuation and ordinary spaces; replace typographic punctuation, nonbreaking spaces, and invisible Unicode formatting characters."
+      }
+    },
+    {
+      "id": "ED-030",
+      "category": "mechanical",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ]
+      },
+      "rule": "Do not use a spaced hyphen in place of an em dash. Use a comma, a colon, or a second sentence.",
+      "rationale": "Removing em dashes per ED-004 pushed the same construction into a spaced hyphen, which reads as the same interruption.",
+      "effect": "prohibit",
+      "examplesAllowed": [
+        "The reward is another problem: the person who handles it becomes the default."
+      ],
+      "examplesRejected": [
+        "The reward is another problem - the person who handles it becomes the default."
+      ],
+      "mechanical": {
+        "kind": "regex",
+        "pattern": "\\s-\\s",
+        "flags": "",
+        "severity": "fail",
+        "message": "A spaced hyphen is an em dash in disguise; use a comma, a colon, or a second sentence."
+      }
+    },
+    {
+      "id": "ED-031",
+      "category": "surface",
+      "scope": {
+        "surfaces": [
+          "sky-placement"
+        ]
+      },
+      "rule": "A checker called without its required factual context reports a harness error, never a content failure.",
+      "rationale": "Linting sky placement without `planet` made every sourced cycle fact read as an invented duration and produced a 64-finding report that was entirely a harness artifact.",
+      "effect": "require",
+      "examplesAllowed": [
+        "lintArticle({ planet: \"uranus\", sign: \"scorpio\", ... })"
+      ],
+      "examplesRejected": [
+        "lintArticle({ hook, lived, turn })"
+      ],
+      "mechanical": null
     }
   ],
   "nonMechanicalDecisions": [
     "CF-012",
     "ED-010",
     "ED-011",
-    "ED-012"
+    "ED-012",
+    "ED-031"
   ]
 }

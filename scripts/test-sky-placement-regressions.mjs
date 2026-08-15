@@ -228,6 +228,23 @@ const lilithAriesQuincunxFacts = {
 };
 const lilithAriesQuincunx = renderer.renderSkyPlacement(lilithAriesQuincunxFacts);
 const lilithAriesQuincunxReference = renderSkyPlacementReference(lilithAriesQuincunxFacts);
+const lilithAriesUnsupportedSquareFacts = {
+  planet: "lilith",
+  sign: "aries",
+  entryDate: "August 25, 2026",
+  exitDate: "May 21, 2027",
+  events: [{
+    type: "aspect",
+    a: "lilith",
+    aSign: "aries",
+    b: "mercury",
+    bSign: "cancer",
+    aspect: "square",
+    exactDate: "September 2, 2026"
+  }]
+};
+const lilithAriesUnsupportedSquare = renderer.renderSkyPlacement(lilithAriesUnsupportedSquareFacts);
+const lilithAriesUnsupportedSquareReference = renderSkyPlacementReference(lilithAriesUnsupportedSquareFacts);
 const saturnPiscesDirect = renderer.renderSkyPlacement({
   planet: "saturn",
   sign: "pisces",
@@ -444,6 +461,15 @@ assert.doesNotMatch(adminDashboard, /skyWriting|localSkySnapshot|skyContentSnaps
 assert.doesNotMatch(writingSurfaceSourceMap, /sky-writing-v1|skyContentSnapshot/u, "Admin source map must not point at retired Sky writing sources.");
 
 assert.match(app, /transitSynastryFallbackRendererV3\.renderSkyPlacement\(\{/, "Sky placement rendering must call the V3 package renderer.");
+for (const [label, source] of [["Node", nodeTransitRenderer], ["browser", browserTransitRenderer]]) {
+  const pairSlotBranch = source.slice(source.indexOf("if (pairHook && pairLived && pairTurn)"), source.indexOf("throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`)"));
+  assert.doesNotMatch(
+    pairSlotBranch,
+    /fillKeep\(part, \{ entryDate, exitDate \}\)/u,
+    `${label} must not impose a universal date-token contract on fact-sourced four-slot durations.`
+  );
+  assert.match(pairSlotBranch, /if \(planet === "lilith"\)/u, `${label} must preserve Lilith's governed exitDate substitution.`);
+}
 assert.match(
   app,
   /hasRetrogradeGuidance = isDisplayRetrograde\(position\)[\s\S]*\["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"\][\s\S]*renderSkyPlacement\(\{[\s\S]*isRetrograde: hasRetrogradeGuidance/u,
@@ -656,6 +682,16 @@ assert.equal(
   lilithAriesQuincunxReference.body,
   lilithAries.body,
   "The Node reference resolver must match the browser resolver when an optional quincunx insert is unavailable."
+);
+assert.equal(
+  lilithAriesUnsupportedSquare.body,
+  lilithAries.body,
+  "A placement aspect without approved interpretive copy must not restore generic prose."
+);
+assert.equal(
+  lilithAriesUnsupportedSquareReference.body,
+  lilithAries.body,
+  "The Node reference resolver must also fail closed for unsupported placement-aspect interpretation."
 );
 assert.match(
   lilithAries.body,
