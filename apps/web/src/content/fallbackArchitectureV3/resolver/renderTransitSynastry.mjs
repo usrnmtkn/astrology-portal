@@ -1361,6 +1361,8 @@ function skyPlacementAspectParagraph(placementPlanet, ev) {
     aSign: ev.aSign,
     bSign: ev.bSign
   })?.body_you;
+  const effect = reviewed ?? specific ?? null;
+  if (!effect) return null;
   const aRef = capitalizeSentence(transitRef(ev.a, ev.aSign));
   const bRef = transitRef(ev.b, ev.bSign);
   const frame = SKY_PLACEMENT_ASPECT_FRAME[ev.aspect];
@@ -1371,8 +1373,6 @@ function skyPlacementAspectParagraph(placementPlanet, ev) {
       : null;
   if (!frame || !timing) throw new SourceGapError(`SOURCE_GAP: sky placement aspect frame ${ev.aspect}`);
   const fact = frame(aRef, bRef, timing);
-  const effect = reviewed ?? specific ?? pairEffect(ev);
-  if (!effect) throw new SourceGapError(`SOURCE_GAP: sky placement aspect effect ${ev.a}/${ev.b}/${ev.aspect}`);
   return `${fact} ${capitalizeSentence(effect)}`.trim();
 }
 
@@ -1906,7 +1906,8 @@ function renderSkyPlacementCopy({
 
   const aspectParas = events
     .filter((event) => SKY_PLACEMENT_MAJOR_ASPECTS.has(event.aspect))
-    .map((event) => skyPlacementAspectParagraph(planet, event));
+    .map((event) => skyPlacementAspectParagraph(planet, event))
+    .filter(Boolean);
   const pairKey = `fallback-hook/sky-placement-hook/${planet}/${sign}`;
   const pairHook = hooks.get(pairKey)?.body_you;
   const pairLived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you;

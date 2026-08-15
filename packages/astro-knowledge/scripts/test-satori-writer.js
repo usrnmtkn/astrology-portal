@@ -662,8 +662,8 @@ function main() {
     "chiron-aries", "north-node-aquarius", "south-node-leo"
   ]);
   assert.strictEqual(readiness.writer.blockedByReason.other, undefined);
-  assert.strictEqual(readiness.totals.runtimeRenderReady, 60);
-  assert.strictEqual(readiness.totals.continuousRowsReady, 1);
+  assert.strictEqual(readiness.totals.runtimeRenderReady, 90);
+  assert.strictEqual(readiness.totals.continuousRowsReady, 56);
   assert.strictEqual(readiness.totals.standaloneHookRowsReady, 36);
   assert.strictEqual(readiness.totals.retiredPairCoreAvailable, 168);
   assert.strictEqual(readiness.totals.retiredPairFullFiveAvailable, 0);
