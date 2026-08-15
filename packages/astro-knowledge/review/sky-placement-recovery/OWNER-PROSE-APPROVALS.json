@@ -1,0 +1,12 @@
+{
+  "note": "Owner prose approvals for sky placement four-slot pages. A page is stamped render-eligible only when it appears here AND its source_hash matches the current text AND it lints clean. Nothing is approved yet.",
+  "schema": {
+    "<planet>/<sign>": {
+      "source_hash": "sha256 of hook + lived + turn joined by single spaces",
+      "approved_by": "owner",
+      "approved_on": "YYYY-MM-DD",
+      "reference": "where the cold read was recorded"
+    }
+  },
+  "approved": {}
+}
