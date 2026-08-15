@@ -1,0 +1,645 @@
+{
+  "schema": "tldrastro-role-aware-person-migration-audit-v1",
+  "version": "2026-08-15",
+  "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+  "sourceFileSha256": "8e539c3b17235a4e71d8c4aaf52dc0d9dcbb1e975cd5bba0a212dedb3194b98f",
+  "method": {
+    "automaticRule": "Only rows with no personal pronoun, no legacy person slot, and no differing voice fields may receive an empty role tag automatically.",
+    "ambiguityRule": "Every other row requires family-level human verification; the compiler must not infer chartSubject, viewer, or otherPerson.",
+    "writesSourceRows": false
+  },
+  "totals": {
+    "rows": 5097,
+    "automaticNoPersonRole": 1473,
+    "cannotAutoTag": 3624,
+    "ambiguousPronounRows": 3609
+  },
+  "vocabulary": {
+    "total": 720,
+    "automaticNoPersonRole": 658,
+    "cannotAutoTag": 62,
+    "reasonCounts": {
+      "untyped_personal_pronoun": 62
+    },
+    "classificationDigestSha256": "2d7a39697a1f103b9afd6d407c64bd54fb2ffe86e4db4f359fa3ed9dd0c71f80",
+    "automaticContentKeysSha256": "3e7fc4d2ed0bc2c2b7b50e4e019ac115aec43adfcf56aa812448c0e429587ee6",
+    "manualReviewContentKeysSha256": "669145db60ba083f9db87a4d9cd722fe1e24de076d6c5e1631d0aa7606d60a8c",
+    "manualReviewSample": [
+      {
+        "contentKey": "fallback-vocab/angle-function/descendant",
+        "sourceMetadataSha256": "c1ce901881f4a56d3f978567a9ed84b3acbcf3e88ee99cf04311a295c5a2abee",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/house-jurisdiction/1",
+        "sourceMetadataSha256": "4421361a4c97681db0dc922b8351cb50da051a19b8108acf9362544f93063b87",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/house-jurisdiction/3",
+        "sourceMetadataSha256": "6739f39656e184a3a402a4a6129b272c036c7d2ba3abda00775519b59e5af6f7",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/house-jurisdiction/7",
+        "sourceMetadataSha256": "4326cc99af6e92de2865258f902a6f07bb23db3a3cc5575f7cf47dc9085001de",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/house-jurisdiction/11",
+        "sourceMetadataSha256": "e1cd68b94a7e4bf853ceefbbe95a4bc330158ee9451880bbe02f7ca1b9a16f5b",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/house-jurisdiction/12",
+        "sourceMetadataSha256": "3304b3fa3b641c91b7e557f32d7902d6891a21981f81e28c2a459d45d978b77c",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/planet-excess/sun",
+        "sourceMetadataSha256": "6177273200b2f704a538420bfb1c16760bf4ac03a60e41e1e375b9db0cd38c48",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/planet-productive/sun",
+        "sourceMetadataSha256": "dc74890777b2831985abb16ea90ab7d017101ca356edf0d6762f278be9eb579b",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/planet-function/sun",
+        "sourceMetadataSha256": "27372561e20762b7dc023cb4fb0473937570d4cb3f1055c252a04333b6dceb43",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/planet-function/moon",
+        "sourceMetadataSha256": "c794d5b9863f42958d545a0c307d319cb882c2ca25aa71b9ab9d7a851a95d589",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/planet-function/mercury",
+        "sourceMetadataSha256": "63d34fe1f61265a3960b8ddc0bcc38a7c59ea8b2e9791ebd67f63101e0a9591b",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/planet-function/venus",
+        "sourceMetadataSha256": "8273cb4bd2bf7be160bcb6c7c6da499d81dcfc3fe7f7d1bfa6f1a2eed009013b",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/planet-excess/jupiter",
+        "sourceMetadataSha256": "23d24e163145621816c54d92a95dbb4caa20eea7e9c5efafe4a35fec9a4725c3",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/planet-function/chiron",
+        "sourceMetadataSha256": "cd9d410ba4dfbfd1b12ebc09be1e58bf5d81a7e16ca5f994508b7d3d9808fb25",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/planet-productive/north-node",
+        "sourceMetadataSha256": "59969d4de651ac89b472379239ee86f44f7cddb31b0e835301b4f5facf870df7",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/planet-productive/south-node",
+        "sourceMetadataSha256": "cf804640b09b109ad53482bc52c495a2e6af3bb0e5584bba61254d1f8ebe30fc",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/house-pressure/1",
+        "sourceMetadataSha256": "031191df6395e47e9eb9b1eeccd9a0c6961618c5cad54eb3d3eb6d5e44f9993c",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/house-line/1",
+        "sourceMetadataSha256": "24b7311b654ef66fe9754d6362897ecbaf720a5c51f56d95c277dbc87c6d1c8c",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/placement-gerund/chiron/aries/0",
+        "sourceMetadataSha256": "d8d09fc44d4b0939faf1b5510f4797924b0b0f1c9983fe16ae418e09a6b9c29b",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/placement-gerund/pluto/gemini/0",
+        "sourceMetadataSha256": "18a6656c39aaa47291a96768404f2a0cf07a986af46aa9e9ff7d57a10657da60",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/placement-gerund/chiron/gemini/0",
+        "sourceMetadataSha256": "340fdda5cccfb57a3dc43d38780d8645519d4eb94db29093eceecaf02023b9fc",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/placement-gerund/chiron/leo/0",
+        "sourceMetadataSha256": "68067f27f64b92ba302e8916c19775ab1261b19ac31abf2614279a1cdb671f6d",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/placement-gerund/chiron/virgo/0",
+        "sourceMetadataSha256": "c2a78a380de51c21d020a09828220d13ac25a59058014bef413e84e39956f97f",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/placement-gerund/chiron/libra/0",
+        "sourceMetadataSha256": "1ee625b5bd36050438043781809187c1b7a56105bce10303f7ac18fc4434fc5d",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      },
+      {
+        "contentKey": "fallback-vocab/placement-gerund/chiron/scorpio/0",
+        "sourceMetadataSha256": "1d097a33ab26c9b43384c9b498a7ac98e5feb9572637886e3639907ce0e88320",
+        "proseFields": [
+          "body"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun"
+        ]
+      }
+    ]
+  },
+  "hooks": {
+    "total": 4377,
+    "automaticNoPersonRole": 815,
+    "cannotAutoTag": 3562,
+    "reasonCounts": {
+      "untyped_personal_pronoun": 3547,
+      "voice_variant_difference": 2216,
+      "legacy_person_slot": 307
+    },
+    "classificationDigestSha256": "e308400fbca171b0757dc911bd1042e4c6172df24f29f53c2e33b13e58d26419",
+    "automaticContentKeysSha256": "22d0d8be926cd93d56128c11ae8a11bca02af80b5e240b7c32ac7f1e4b67b40a",
+    "manualReviewContentKeysSha256": "82d2acc135b608036da18acd5125ffbdf22998742099c6edde55104102ea3f7f",
+    "manualReviewSample": [
+      {
+        "contentKey": "fallback-hook/planet-intro/sun",
+        "sourceMetadataSha256": "08b31762890dde2fc40a0d552945b32f8efcf7e3c363af03624cf91e379cadf4",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-intro/moon",
+        "sourceMetadataSha256": "98290a585da91ae14298c32cfe4b517461a5ef3f0005a312a2105b449f3261b3",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-intro/mercury",
+        "sourceMetadataSha256": "2116fcb6ca62aa3195d77669a6484bb8ffc24b8578d4b440580467bf986e36f5",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-intro/venus",
+        "sourceMetadataSha256": "49e5d7bf346df313703b44fd2ac99aab9e1ab0843455ebcf4094c3981f7ad54a",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-intro/mars",
+        "sourceMetadataSha256": "278be4c5635e6ea72082e70db9ae471ca0a90b1952fce375cc9af1f2013d4ee9",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-intro/jupiter",
+        "sourceMetadataSha256": "f325f4b2ebdfaba65a6811b87789f3bcfd6945b4f13fb22ac7dc096c80baaef8",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-intro/uranus",
+        "sourceMetadataSha256": "5cd263eea81d47809e82a27a5bb09a6afdc060fff337d40f7570830a6fd7b26f",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-intro/neptune",
+        "sourceMetadataSha256": "aee3ce7894d677675dbf59c6602856683f43a223be15a7a92e709ebd15fc7d18",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-intro/chiron",
+        "sourceMetadataSha256": "fe1cba85e2562ab9e706b2fe268ce87fd62995d2f4475054f0b7708ed1d668fc",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-intro/north-node",
+        "sourceMetadataSha256": "0daaddda07609c2d09c7e606d862da0de9fcbf0dcd91ec24d33038a461a17047",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-intro/south-node",
+        "sourceMetadataSha256": "b11323251bb8ab812ff19aef272a59d7ead420ab66b88e85ce384881e59d7590",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-best/sun",
+        "sourceMetadataSha256": "0c0f9d2934406625325791bdab3166844e97cc3e434af930dcdddf175b8e31cd",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-best/moon",
+        "sourceMetadataSha256": "dc1aac9a3eb5d5351f5ba734474b2f77cebaf48d3b671b342a254d1ffa8f7b4a",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-best/mercury",
+        "sourceMetadataSha256": "8c5670bac2b84a529ae24768436497f41dc9c269f5b476ebd5677b6184cc359f",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-best/venus",
+        "sourceMetadataSha256": "eebe8985c9a974491895683e83ad85e4d51977f03cc9a126c9794bac0e0ae513",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-best/mars",
+        "sourceMetadataSha256": "d0fcb23540c70bf349e163625a9d08de5b9c55135da2192e9cbab93718927767",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-best/jupiter",
+        "sourceMetadataSha256": "6fc209267fb6b7dd2fe9d0f49e5f3769e1c6a9e7b58b07e48e900c755420f291",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-best/saturn",
+        "sourceMetadataSha256": "3576b495f4c219dfeb0614719753061d1a756a28ae1d8e0b092fe7a8bdcb88a6",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-best/uranus",
+        "sourceMetadataSha256": "cf3516371737923a5b9bf647d5e20428256fab759e6005c2ef69ed840c304d68",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-best/neptune",
+        "sourceMetadataSha256": "00feeaf7f975d51120956d444f1200b7b2d042f0922769b81ad53ff025dfa49d",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-best/pluto",
+        "sourceMetadataSha256": "cd7740c3b50111ee862aa5968eed94f476b4cf4043e6f78ce7824abc9c6e2eb9",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-best/chiron",
+        "sourceMetadataSha256": "7582cde4b1956a120d87b536cea2b58a36c44a7c94e865a2200b0c9e39420b76",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-best/north-node",
+        "sourceMetadataSha256": "94df52170ff2cf6a2d1bce7b6ab3d3730a18702d58fec909707bd939fc9e11b7",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/planet-best/south-node",
+        "sourceMetadataSha256": "aacd617eda859f3c407a049eb1cbf0fe6e3bb639ab8bd6e65dbf2a5800c1321e",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      },
+      {
+        "contentKey": "fallback-hook/house-meaning/1",
+        "sourceMetadataSha256": "d2f410f1b9c5ebf9383c4a153a691022b48f6617bccce35cc97098afd1bf4cca",
+        "proseFields": [
+          "body_you",
+          "body_they"
+        ],
+        "classification": "manual_role_review",
+        "reasons": [
+          "untyped_personal_pronoun",
+          "voice_variant_difference"
+        ]
+      }
+    ]
+  }
+}
