@@ -76,3 +76,15 @@ All 174 units were rechecked. The evidence pointers, source hashes, coverage cla
 - Eight owner-authored replacements are pinned by an exact regression test.
 - The five latest owner samples removed analytical abstraction from 4 units, an assembled construction from 1, invented motive from 2, unsupported Taurus money vocabulary from 3, and unnecessary generic actors from 7.
 - The Taurus evidence audit removed `budget` and `material` from Sun, `food`, `money`, and `shelter` from Moon, and `price` from Mercury. Money language remains only where that unit's own evidence supports it.
+
+## Realization classification check, 2026-08-15
+
+The classification review changed no wording. It checked the 13 sign units that had been filed entirely as neutral and the 10 sign units that had been filed entirely as shadow against each unit's own governed evidence.
+
+- 44 existing realizations moved to a different typed pool.
+- 0 of the reviewed 13 remain all-neutral.
+- 1 of the reviewed 10 remains all-shadow: `sky-sign/neptune/libra`.
+- The prompt's 10-unit count refers to the all-shadow population. Across all shapes, 81 sign units originally had no supportive realization; 64 still have no supportive realization after this evidence-only reclassification.
+- The evidence pointers, hashes, coverage classes, fail-closed status, `PENDING OWNER` status, and eight exact owner-authored replacements remain unchanged.
+
+The current composer silently substitutes another pool when the preferred type is empty. For a trine or sextile it tries supportive, then neutral, then shadow. An all-shadow unit can therefore supply shadow material to a trine without raising an error. This classification task documents that behavior but does not change it. The complete unit-by-unit evidence record is in `REALIZATION-CLASSIFICATION-AUDIT.md` and the workbook's Classification Audit sheet.

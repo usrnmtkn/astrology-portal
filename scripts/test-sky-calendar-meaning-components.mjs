@@ -11,6 +11,7 @@ import {
 } from "./sky-calendar-realization-types.mjs";
 import {
   assertOwnerReplacements,
+  classificationReviewAudit,
   manifestationPlainnessViolations,
   sourceShadowAudit,
 } from "./sky-calendar-component-repass.mjs";
@@ -88,6 +89,19 @@ assert.equal(registry.systemicRepass.sourceShadowAudit.oneSidedAfterPass, 0);
 assert.equal(registry.systemicRepass.ownerAuthoredReplacementKeys.length, 8);
 assert.equal(registry.systemicRepass.realizationSchema.positionalTemplatePrevented, true);
 assert.equal(registry.systemicRepass.realizationSchema.countShapeDistribution.length >= 2, true);
+assert.deepEqual(
+  Object.fromEntries(Object.entries(registry.systemicRepass.classificationAudit).filter(([key]) => key !== "reviewed")),
+  {
+    reviewedUnits: 23,
+    allNeutralBefore: 13,
+    allNeutralAfter: 0,
+    allShadowBefore: 10,
+    allShadowAfter: 1,
+    emptySupportiveBefore: 81,
+    emptySupportiveAfter: 64,
+    changedRealizations: 44,
+  },
+);
 assert.deepEqual(registry.systemicRepass.faultAudit.remainingViolations, {
   analytical_abstraction: [],
   assembled_construction: [],
@@ -184,6 +198,7 @@ for (const row of registry.signUnits) {
 assertOwnerReplacements(registry.signUnits);
 assert.deepEqual(manifestationPlainnessViolations(registry.signUnits), []);
 assert.equal(sourceShadowAudit(registry.signUnits).oneSidedAfterPass, 0);
+assert.deepEqual(classificationReviewAudit(registry.signUnits), registry.systemicRepass.classificationAudit);
 
 for (const row of [...registry.aspectMechanisms, ...registry.modalityUnits, ...registry.elementUnits]) {
   for (const field of ["reader_effect", "conflict_behavior", "movement_bias"]) {
@@ -201,6 +216,20 @@ const typedFixture = {
 assert.equal(selectRealizationForAspect(typedFixture, "square").type, "shadow");
 assert.equal(selectRealizationForAspect(typedFixture, "opposition").type, "neutral");
 assert.equal(selectRealizationForAspect(typedFixture, "trine").type, "supportive");
+const noSupportiveFixture = {
+  key: "no-supportive-fixture",
+  supportive_realizations: [],
+  neutral_realizations: ["neutral condition"],
+  shadow_realizations: ["shadow cost"],
+};
+assert.equal(selectRealizationForAspect(noSupportiveFixture, "trine").type, "neutral");
+const allShadowFixture = {
+  key: "all-shadow-fixture",
+  supportive_realizations: [],
+  neutral_realizations: [],
+  shadow_realizations: ["shadow cost"],
+};
+assert.equal(selectRealizationForAspect(allShadowFixture, "trine").type, "shadow");
 
 const opposition = registry.aspectMechanisms.find((row) => row.key === "sky-aspect-mechanism/opposition");
 assert.equal(opposition.reader_effect, "people can see both positions at the same time");

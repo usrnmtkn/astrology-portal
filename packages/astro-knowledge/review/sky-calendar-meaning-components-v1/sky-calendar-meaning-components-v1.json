@@ -434,39 +434,35 @@
       "countShapeDistribution": [
         {
           "shape": "1/1/1",
-          "units": 53
+          "units": 64
         },
         {
           "shape": "0/2/1",
-          "units": 36
+          "units": 37
         },
         {
           "shape": "0/1/2",
-          "units": 22
+          "units": 26
         },
         {
           "shape": "1/2/0",
-          "units": 16
-        },
-        {
-          "shape": "0/3/0",
-          "units": 13
-        },
-        {
-          "shape": "0/0/3",
-          "units": 10
+          "units": 17
         },
         {
           "shape": "2/0/1",
-          "units": 9
+          "units": 10
         },
         {
           "shape": "2/1/0",
-          "units": 8
+          "units": 10
         },
         {
           "shape": "1/0/2",
-          "units": 6
+          "units": 8
+        },
+        {
+          "shape": "0/0/3",
+          "units": 1
         },
         {
           "shape": "3/0/0",
@@ -474,6 +470,756 @@
         }
       ],
       "positionalTemplatePrevented": true
+    },
+    "classificationAudit": {
+      "reviewedUnits": 23,
+      "allNeutralBefore": 13,
+      "allNeutralAfter": 0,
+      "allShadowBefore": 10,
+      "allShadowAfter": 1,
+      "emptySupportiveBefore": 81,
+      "emptySupportiveAfter": 64,
+      "changedRealizations": 44,
+      "reviewed": [
+        {
+          "key": "sky-sign/sun/cancer",
+          "population": "all_neutral",
+          "beforeShape": "0/3/0",
+          "afterShape": "1/1/1",
+          "finding": "Care work that others depend on is supportive; private loyalty deciding public recognition carries a source-supported cost.",
+          "supportiveFinding": null,
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/cancer",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!803"
+          ],
+          "realizations": [
+            {
+              "value": "someone doing the care work that everyone else depends on",
+              "beforeType": "neutral",
+              "afterType": "supportive",
+              "changed": true
+            },
+            {
+              "value": "family members using private loyalty to influence who gets acknowledged publicly",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            },
+            {
+              "value": "someone representing the group because they remember its history",
+              "beforeType": "neutral",
+              "afterType": "neutral",
+              "changed": false
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/sun/sagittarius",
+          "population": "all_neutral",
+          "beforeShape": "0/3/0",
+          "afterShape": "1/1/1",
+          "finding": "A larger purpose can support reach, while carrying work to an audience it was not made for carries the source warning about certainty outrunning facts.",
+          "supportiveFinding": null,
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/sagittarius",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!845"
+          ],
+          "realizations": [
+            {
+              "value": "a strong belief making one contribution stand for a larger cause",
+              "beforeType": "neutral",
+              "afterType": "supportive",
+              "changed": true
+            },
+            {
+              "value": "people carrying someone's work to an audience it was not made for",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            },
+            {
+              "value": "the person who names the wider purpose becoming identified with it",
+              "beforeType": "neutral",
+              "afterType": "neutral",
+              "changed": false
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/moon/capricorn",
+          "population": "all_neutral",
+          "beforeShape": "0/3/0",
+          "afterShape": "1/1/1",
+          "finding": "Postponing needs carries the source cost; dependable follow-through is the supportive form already present in the wording.",
+          "supportiveFinding": null,
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/moon/capricorn",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!522"
+          ],
+          "realizations": [
+            {
+              "value": "someone postponing their needs until the required work is done",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            },
+            {
+              "value": "someone showing care by taking responsibility while keeping their feelings private",
+              "beforeType": "neutral",
+              "afterType": "neutral",
+              "changed": false
+            },
+            {
+              "value": "someone relying on repeated follow-through instead of reassurance to know they belong",
+              "beforeType": "neutral",
+              "afterType": "supportive",
+              "changed": true
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/mercury/pisces",
+          "population": "all_neutral",
+          "beforeShape": "0/3/0",
+          "afterShape": "1/0/2",
+          "finding": "Reading tone can carry the source-supported intuitive strength; unverified implication and blurred decisions carry its translation and verification costs.",
+          "supportiveFinding": null,
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mercury/pisces",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!466",
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!95"
+          ],
+          "realizations": [
+            {
+              "value": "people reading the tone when the stated facts remain incomplete",
+              "beforeType": "neutral",
+              "afterType": "supportive",
+              "changed": true
+            },
+            {
+              "value": "an implication spreading faster than anyone can verify it",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            },
+            {
+              "value": "a decision blurred by sympathy for several incompatible accounts",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/mars/gemini",
+          "population": "all_neutral",
+          "beforeShape": "0/3/0",
+          "afterShape": "1/0/2",
+          "finding": "Scattered effort and a moving argument carry the concentration cost; a new comparison redirecting action carries the source-supported adaptive opening.",
+          "supportiveFinding": null,
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/gemini",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!147",
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!38"
+          ],
+          "realizations": [
+            {
+              "value": "someone dividing their effort among several messages, errands, or targets",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            },
+            {
+              "value": "people changing the argument each time the wording changes",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            },
+            {
+              "value": "a new comparison redirecting action already underway",
+              "beforeType": "neutral",
+              "afterType": "supportive",
+              "changed": true
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/saturn/aquarius",
+          "population": "all_neutral",
+          "beforeShape": "0/3/0",
+          "afterShape": "1/2/0",
+          "finding": "An equal standard is the supportive form. Policy and precedent remain neutral because their effect depends on the card's argument shape.",
+          "supportiveFinding": null,
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/aquarius",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!719"
+          ],
+          "realizations": [
+            {
+              "value": "policy applied across the group",
+              "beforeType": "neutral",
+              "afterType": "neutral",
+              "changed": false
+            },
+            {
+              "value": "precedent",
+              "beforeType": "neutral",
+              "afterType": "neutral",
+              "changed": false
+            },
+            {
+              "value": "a standard meant to apply equally",
+              "beforeType": "neutral",
+              "afterType": "supportive",
+              "changed": true
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/saturn/pisces",
+          "population": "all_neutral",
+          "beforeShape": "0/3/0",
+          "afterShape": "1/1/1",
+          "finding": "Difficulty assigning responsibility carries the cost; naming uncertainty so the plan can hold is the supported constructive form.",
+          "supportiveFinding": null,
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/pisces",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!733"
+          ],
+          "realizations": [
+            {
+              "value": "a formal boundary trying to contain a need that has no clean edge",
+              "beforeType": "neutral",
+              "afterType": "neutral",
+              "changed": false
+            },
+            {
+              "value": "people struggling to assign responsibility because everyone feels for the person involved",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            },
+            {
+              "value": "people keeping the plan intact by naming what remains uncertain",
+              "beforeType": "neutral",
+              "afterType": "supportive",
+              "changed": true
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/uranus/cancer",
+          "population": "all_neutral",
+          "beforeShape": "0/3/0",
+          "afterShape": "1/1/1",
+          "finding": "Making room through a changed household pattern is supportive; leaving a role that once guaranteed safety carries the source cost of disruption.",
+          "supportiveFinding": null,
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/uranus/cancer",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!939"
+          ],
+          "realizations": [
+            {
+              "value": "a household pattern changing because someone needs more room",
+              "beforeType": "neutral",
+              "afterType": "supportive",
+              "changed": true
+            },
+            {
+              "value": "people reorganizing who belongs after private care becomes a public concern",
+              "beforeType": "neutral",
+              "afterType": "neutral",
+              "changed": false
+            },
+            {
+              "value": "someone leaving the role that once guaranteed emotional safety",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/uranus/pisces",
+          "population": "all_neutral",
+          "beforeShape": "0/3/0",
+          "afterShape": "1/1/1",
+          "finding": "Stepping away after sympathy was mistaken for agreement is a supported boundary correction; changing course before a plan exists carries the disruption cost.",
+          "supportiveFinding": null,
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/uranus/pisces",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!955"
+          ],
+          "realizations": [
+            {
+              "value": "a sudden intuition disrupting a boundary that was already unclear",
+              "beforeType": "neutral",
+              "afterType": "neutral",
+              "changed": false
+            },
+            {
+              "value": "someone stepping away after others mistook sympathy for agreement",
+              "beforeType": "neutral",
+              "afterType": "supportive",
+              "changed": true
+            },
+            {
+              "value": "people changing course together before anyone can define the plan",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/neptune/cancer",
+          "population": "all_neutral",
+          "beforeShape": "0/3/0",
+          "afterShape": "0/1/2",
+          "finding": "Blurred care and projection and unseen emotional labor both carry the source's idealization cost; private longing shaping a group need remains neutral.",
+          "supportiveFinding": null,
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/cancer",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!537"
+          ],
+          "realizations": [
+            {
+              "value": "memory softening the difference between care and projection",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            },
+            {
+              "value": "a private longing shaping what the group believes it needs",
+              "beforeType": "neutral",
+              "afterType": "neutral",
+              "changed": false
+            },
+            {
+              "value": "people idealizing the family bond until they stop seeing who carries the emotional labor",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/neptune/scorpio",
+          "population": "all_neutral",
+          "beforeShape": "0/3/0",
+          "afterShape": "0/1/2",
+          "finding": "Unclear motive remains neutral; lost track of private power and an irreversible choice made with uncertain information carry the governed boundary and discernment costs.",
+          "supportiveFinding": null,
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/scorpio",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!545",
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!247"
+          ],
+          "realizations": [
+            {
+              "value": "trust deepening around a motive no one can fully name",
+              "beforeType": "neutral",
+              "afterType": "neutral",
+              "changed": false
+            },
+            {
+              "value": "people losing track of who holds private power as the boundaries soften",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            },
+            {
+              "value": "an irreversible choice shaped by information that remains uncertain",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/neptune/pisces",
+          "population": "all_neutral",
+          "beforeShape": "0/3/0",
+          "afterShape": "1/1/1",
+          "finding": "Treating one feeling as the same duty for everyone carries a cost; imagining beyond a firm factual boundary carries the creative opening supported by the source.",
+          "supportiveFinding": null,
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/pisces",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!555"
+          ],
+          "realizations": [
+            {
+              "value": "people treating a shared feeling as if it creates the same duty for everyone",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            },
+            {
+              "value": "people imagining more because the facts do not set a firm boundary",
+              "beforeType": "neutral",
+              "afterType": "supportive",
+              "changed": true
+            },
+            {
+              "value": "a collective longing becoming the atmosphere around the decision",
+              "beforeType": "neutral",
+              "afterType": "neutral",
+              "changed": false
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/chiron/gemini",
+          "population": "all_neutral",
+          "beforeShape": "0/3/0",
+          "afterShape": "0/2/1",
+          "finding": "Careful wording and a question shaped by prior disbelief remain neutral; reacting after repeated omission carries the source-supported cost.",
+          "supportiveFinding": null,
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/chiron/gemini",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!15"
+          ],
+          "realizations": [
+            {
+              "value": "careful wording shaped by the fear of being misunderstood again",
+              "beforeType": "neutral",
+              "afterType": "neutral",
+              "changed": false
+            },
+            {
+              "value": "a question carrying the memory of not being believed",
+              "beforeType": "neutral",
+              "afterType": "neutral",
+              "changed": false
+            },
+            {
+              "value": "someone reacting after every official explanation leaves out what they lived through",
+              "beforeType": "neutral",
+              "afterType": "shadow",
+              "changed": true
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/sun/scorpio",
+          "population": "all_shadow",
+          "beforeShape": "0/0/3",
+          "afterShape": "0/1/2",
+          "finding": "Private obligations that others cannot see are a neutral condition, not automatically a cost.",
+          "supportiveFinding": "The source carries a constructive truth-naming form, but no current realization expresses it; nothing was invented during this check.",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/scorpio",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!838"
+          ],
+          "realizations": [
+            {
+              "value": "someone withholding recognition until trust and access are settled",
+              "beforeType": "shadow",
+              "afterType": "shadow",
+              "changed": false
+            },
+            {
+              "value": "the public representative carrying private obligations others cannot see",
+              "beforeType": "shadow",
+              "afterType": "neutral",
+              "changed": true
+            },
+            {
+              "value": "someone using public credit as leverage in a decision with lasting consequences",
+              "beforeType": "shadow",
+              "afterType": "shadow",
+              "changed": false
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/mars/aries",
+          "population": "all_shadow",
+          "beforeShape": "0/0/3",
+          "afterShape": "1/1/1",
+          "finding": "The first move setting pace is neutral; acting before a process exists remains shadow.",
+          "supportiveFinding": "A supportive realization existed but was misclassified: direct pursuit of a visible result carries the source's initiative and renewed-momentum strength.",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/aries",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!128",
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!36"
+          ],
+          "realizations": [
+            {
+              "value": "the first move establishing who controls the pace",
+              "beforeType": "shadow",
+              "afterType": "neutral",
+              "changed": true
+            },
+            {
+              "value": "someone acting on the pressure before the group agrees on a process",
+              "beforeType": "shadow",
+              "afterType": "shadow",
+              "changed": false
+            },
+            {
+              "value": "a visible result pursued without waiting for broader support",
+              "beforeType": "shadow",
+              "afterType": "supportive",
+              "changed": true
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/mars/taurus",
+          "population": "all_shadow",
+          "beforeShape": "0/0/3",
+          "afterShape": "1/1/1",
+          "finding": "Resource conflict remains shadow; delaying until a result can be kept is neutral.",
+          "supportiveFinding": "A supportive realization existed but was misclassified: sustained work on one point carries the source's persistence and craftsmanship strength.",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/taurus",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!140",
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!37"
+          ],
+          "realizations": [
+            {
+              "value": "someone working the same point until a material limit gives way",
+              "beforeType": "shadow",
+              "afterType": "supportive",
+              "changed": true
+            },
+            {
+              "value": "people arguing over the resource no one wants to surrender",
+              "beforeType": "shadow",
+              "afterType": "shadow",
+              "changed": false
+            },
+            {
+              "value": "someone delaying action until they can keep the result",
+              "beforeType": "shadow",
+              "afterType": "neutral",
+              "changed": true
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/mars/scorpio",
+          "population": "all_shadow",
+          "beforeShape": "0/0/3",
+          "afterShape": "1/1/1",
+          "finding": "Waiting for control to become clear is neutral; pressure around trust and access remains shadow.",
+          "supportiveFinding": "A supportive realization existed but was misclassified: careful pursuit of an irreversible result carries the source's strategic use of information gained during delay.",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/scorpio",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!194"
+          ],
+          "realizations": [
+            {
+              "value": "someone withholding action until the source of control becomes clear",
+              "beforeType": "shadow",
+              "afterType": "neutral",
+              "changed": true
+            },
+            {
+              "value": "someone applying pressure where trust and private access are already at stake",
+              "beforeType": "shadow",
+              "afterType": "shadow",
+              "changed": false
+            },
+            {
+              "value": "a result pursued carefully because it cannot be undone",
+              "beforeType": "shadow",
+              "afterType": "supportive",
+              "changed": true
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/saturn/leo",
+          "population": "all_shadow",
+          "beforeShape": "0/0/3",
+          "afterShape": "0/1/2",
+          "finding": "Limiting how much pride directs a decision is neutral; withheld recognition and withheld contribution remain costs.",
+          "supportiveFinding": "The source carries earned confidence and recognition for completed work, but no current realization expresses it; nothing was invented during this check.",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/leo",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!671"
+          ],
+          "realizations": [
+            {
+              "value": "an authority withholding recognition until the visible contribution meets the standard",
+              "beforeType": "shadow",
+              "afterType": "shadow",
+              "changed": false
+            },
+            {
+              "value": "an authority limiting how much personal pride can direct the decision",
+              "beforeType": "shadow",
+              "afterType": "neutral",
+              "changed": true
+            },
+            {
+              "value": "someone withholding their contribution because uncertain recognition feels too risky",
+              "beforeType": "shadow",
+              "afterType": "shadow",
+              "changed": false
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/saturn/scorpio",
+          "population": "all_shadow",
+          "beforeShape": "0/0/3",
+          "afterShape": "1/1/1",
+          "finding": "Responsibility attached to access remains neutral; making a postponed consequence official remains shadow.",
+          "supportiveFinding": "A supportive realization existed but was misclassified: a limit that protects irreversible information carries the source's constructive boundary function.",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/scorpio",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!684"
+          ],
+          "realizations": [
+            {
+              "value": "a limit protecting access to information that cannot be taken back",
+              "beforeType": "shadow",
+              "afterType": "supportive",
+              "changed": true
+            },
+            {
+              "value": "someone carrying more responsibility because they also control the access",
+              "beforeType": "shadow",
+              "afterType": "neutral",
+              "changed": true
+            },
+            {
+              "value": "an authority making the consequence official after people tried to postpone it",
+              "beforeType": "shadow",
+              "afterType": "shadow",
+              "changed": false
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/neptune/libra",
+          "population": "all_shadow",
+          "beforeShape": "0/0/3",
+          "afterShape": "0/0/3",
+          "finding": "All three current realizations explicitly carry idealization, unequal cost, or lost reciprocity.",
+          "supportiveFinding": "The source carries an honest fairness check beyond the fantasy, but no current realization expresses it; the all-shadow classification is correct for the three realizations actually present.",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/libra",
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!543"
+          ],
+          "realizations": [
+            {
+              "value": "an image of fairness hiding which side keeps absorbing the cost",
+              "beforeType": "shadow",
+              "afterType": "shadow",
+              "changed": false
+            },
+            {
+              "value": "people keeping an agreement by avoiding the unequal term underneath it",
+              "beforeType": "shadow",
+              "afterType": "shadow",
+              "changed": false
+            },
+            {
+              "value": "people overlooking where reciprocity stopped because they still share the ideal",
+              "beforeType": "shadow",
+              "afterType": "shadow",
+              "changed": false
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/lilith/leo",
+          "population": "all_shadow",
+          "beforeShape": "0/0/3",
+          "afterShape": "2/0/1",
+          "finding": "Turning the whole conflict into a substitute for naming shame remains shadow.",
+          "supportiveFinding": "Two supportive realizations were misclassified: claiming visibility and rejecting recognition that requires self-erasure follow the owner-approved source directly.",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/leo"
+          ],
+          "realizations": [
+            {
+              "value": "someone claiming visibility without making the contribution more acceptable first",
+              "beforeType": "shadow",
+              "afterType": "supportive",
+              "changed": true
+            },
+            {
+              "value": "someone rejecting recognition that depends on shrinking the difficult part",
+              "beforeType": "shadow",
+              "afterType": "supportive",
+              "changed": true
+            },
+            {
+              "value": "someone making the whole conflict about them because shame is harder to name directly",
+              "beforeType": "shadow",
+              "afterType": "shadow",
+              "changed": false
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/lilith/virgo",
+          "population": "all_shadow",
+          "beforeShape": "0/0/3",
+          "afterShape": "2/1/0",
+          "finding": "The excluded need exposing a method's limit is a neutral diagnostic condition.",
+          "supportiveFinding": "Two supportive realizations were misclassified: refusing conditional worth and defending difference follow the owner-approved source directly.",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/virgo"
+          ],
+          "realizations": [
+            {
+              "value": "a standard refused because usefulness has become a condition of worth",
+              "beforeType": "shadow",
+              "afterType": "supportive",
+              "changed": true
+            },
+            {
+              "value": "someone defending their difference against correction meant to make it manageable",
+              "beforeType": "shadow",
+              "afterType": "supportive",
+              "changed": true
+            },
+            {
+              "value": "the excluded need exposing what the approved method cannot serve",
+              "beforeType": "shadow",
+              "afterType": "neutral",
+              "changed": true
+            }
+          ]
+        },
+        {
+          "key": "sky-sign/lilith/capricorn",
+          "population": "all_shadow",
+          "beforeShape": "0/0/3",
+          "afterShape": "2/1/0",
+          "finding": "Accepting a consequence rather than obeying remains neutral because the source does not promise benefit.",
+          "supportiveFinding": "Two supportive realizations were misclassified: confronting respectability used as control and refusing an erasing duty follow the owner-approved source directly.",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/capricorn"
+          ],
+          "realizations": [
+            {
+              "value": "someone confronting an authority that has used respectability as control",
+              "beforeType": "shadow",
+              "afterType": "supportive",
+              "changed": true
+            },
+            {
+              "value": "a duty refused because compliance would erase the person carrying it",
+              "beforeType": "shadow",
+              "afterType": "supportive",
+              "changed": true
+            },
+            {
+              "value": "someone accepting the consequence rather than obeying the demand",
+              "beforeType": "shadow",
+              "afterType": "neutral",
+              "changed": true
+            }
+          ]
+        }
+      ]
     },
     "rule": "Every unit was rechecked against its governed meaning and source cost. Realizations are typed by supportive, neutral, or shadow meaning; type is never encoded by array position."
   },
@@ -2914,13 +3660,15 @@
       "sign_expression": "people respond through care, memory, and private loyalties",
       "combined_position": "the care people provide in private starts deciding who represents the group",
       "details_language": "recognition tied to care and private loyalty",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone doing the care work that everyone else depends on"
+      ],
       "neutral_realizations": [
-        "someone doing the care work that everyone else depends on",
-        "family members using private loyalty to influence who gets acknowledged publicly",
         "someone representing the group because they remember its history"
       ],
-      "shadow_realizations": [],
+      "shadow_realizations": [
+        "family members using private loyalty to influence who gets acknowledged publicly"
+      ],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/cancer",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!803"
@@ -3039,10 +3787,11 @@
       "combined_position": "who gets named publicly depends on trust, privacy, and leverage behind the scenes",
       "details_language": "recognition and public contribution tied to privacy, trust, and leverage",
       "supportive_realizations": [],
-      "neutral_realizations": [],
+      "neutral_realizations": [
+        "the public representative carrying private obligations others cannot see"
+      ],
       "shadow_realizations": [
         "someone withholding recognition until trust and access are settled",
-        "the public representative carrying private obligations others cannot see",
         "someone using public credit as leverage in a decision with lasting consequences"
       ],
       "source_ids": [
@@ -3068,13 +3817,15 @@
       "sign_expression": "people follow a larger promise or belief beyond the issue's first limits",
       "combined_position": "whoever names the larger purpose can become the face of it",
       "details_language": "visible conviction and larger aims",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "a strong belief making one contribution stand for a larger cause"
+      ],
       "neutral_realizations": [
-        "a strong belief making one contribution stand for a larger cause",
-        "people carrying someone's work to an audience it was not made for",
         "the person who names the wider purpose becoming identified with it"
       ],
-      "shadow_realizations": [],
+      "shadow_realizations": [
+        "people carrying someone's work to an audience it was not made for"
+      ],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/sagittarius",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!845"
@@ -3516,13 +4267,15 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "people put the duty first and deal with the feeling after the work is done",
       "details_language": "emotional needs managed through duty and restraint",
-      "supportive_realizations": [],
-      "neutral_realizations": [
-        "someone postponing their needs until the required work is done",
-        "someone showing care by taking responsibility while keeping their feelings private",
+      "supportive_realizations": [
         "someone relying on repeated follow-through instead of reassurance to know they belong"
       ],
-      "shadow_realizations": [],
+      "neutral_realizations": [
+        "someone showing care by taking responsibility while keeping their feelings private"
+      ],
+      "shadow_realizations": [
+        "someone postponing their needs until the required work is done"
+      ],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/moon/capricorn",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!522"
@@ -4000,13 +4753,14 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "people understand the tone or image sooner than they agree on the facts",
       "details_language": "implied meaning and uncertain facts",
-      "supportive_realizations": [],
-      "neutral_realizations": [
-        "people reading the tone when the stated facts remain incomplete",
+      "supportive_realizations": [
+        "people reading the tone when the stated facts remain incomplete"
+      ],
+      "neutral_realizations": [],
+      "shadow_realizations": [
         "an implication spreading faster than anyone can verify it",
         "a decision blurred by sympathy for several incompatible accounts"
       ],
-      "shadow_realizations": [],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mercury/pisces",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!466",
@@ -4464,12 +5218,14 @@
       "sign_expression": "someone moves first and asks everyone else to catch up",
       "combined_position": "someone acts as soon as the problem appears and everyone else has to respond",
       "details_language": "direct action reinforcing its own urgency",
-      "supportive_realizations": [],
-      "neutral_realizations": [],
-      "shadow_realizations": [
-        "the first move establishing who controls the pace",
-        "someone acting on the pressure before the group agrees on a process",
+      "supportive_realizations": [
         "a visible result pursued without waiting for broader support"
+      ],
+      "neutral_realizations": [
+        "the first move establishing who controls the pace"
+      ],
+      "shadow_realizations": [
+        "someone acting on the pressure before the group agrees on a process"
       ],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/aries",
@@ -4500,12 +5256,14 @@
       "sign_expression": "people work with what can be afforded, maintained, and made to last",
       "combined_position": "people keep pushing the same point until a material limit finally moves",
       "details_language": "slow pressure around resources and fixed limits",
-      "supportive_realizations": [],
-      "neutral_realizations": [],
-      "shadow_realizations": [
-        "someone working the same point until a material limit gives way",
-        "people arguing over the resource no one wants to surrender",
+      "supportive_realizations": [
+        "someone working the same point until a material limit gives way"
+      ],
+      "neutral_realizations": [
         "someone delaying action until they can keep the result"
+      ],
+      "shadow_realizations": [
+        "people arguing over the resource no one wants to surrender"
       ],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/taurus",
@@ -4536,13 +5294,14 @@
       "sign_expression": "new facts and quick replies keep changing the choices",
       "combined_position": "people spread their effort across messages, errands, debates, and several moving targets",
       "details_language": "scattered action and changing targets",
-      "supportive_realizations": [],
-      "neutral_realizations": [
-        "someone dividing their effort among several messages, errands, or targets",
-        "people changing the argument each time the wording changes",
+      "supportive_realizations": [
         "a new comparison redirecting action already underway"
       ],
-      "shadow_realizations": [],
+      "neutral_realizations": [],
+      "shadow_realizations": [
+        "someone dividing their effort among several messages, errands, or targets",
+        "people changing the argument each time the wording changes"
+      ],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/gemini",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!147",
@@ -4721,12 +5480,14 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "someone acts carefully because trust, control, and lasting consequences are involved",
       "details_language": "strategic pursuit, trust, and control",
-      "supportive_realizations": [],
-      "neutral_realizations": [],
-      "shadow_realizations": [
-        "someone withholding action until the source of control becomes clear",
-        "someone applying pressure where trust and private access are already at stake",
+      "supportive_realizations": [
         "a result pursued carefully because it cannot be undone"
+      ],
+      "neutral_realizations": [
+        "someone withholding action until the source of control becomes clear"
+      ],
+      "shadow_realizations": [
+        "someone applying pressure where trust and private access are already at stake"
       ],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/scorpio",
@@ -5478,10 +6239,11 @@
       "combined_position": "anyone seeking recognition has to show they can carry the result",
       "details_language": "recognition tested by the ability to carry the result",
       "supportive_realizations": [],
-      "neutral_realizations": [],
+      "neutral_realizations": [
+        "an authority limiting how much personal pride can direct the decision"
+      ],
       "shadow_realizations": [
         "an authority withholding recognition until the visible contribution meets the standard",
-        "an authority limiting how much personal pride can direct the decision",
         "someone withholding their contribution because uncertain recognition feels too risky"
       ],
       "source_ids": [
@@ -5581,11 +6343,13 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "a hard limit reveals who controls access and who carries the lasting consequence",
       "details_language": "hard limits, controlled access, and lasting consequences",
-      "supportive_realizations": [],
-      "neutral_realizations": [],
+      "supportive_realizations": [
+        "a limit protecting access to information that cannot be taken back"
+      ],
+      "neutral_realizations": [
+        "someone carrying more responsibility because they also control the access"
+      ],
       "shadow_realizations": [
-        "a limit protecting access to information that cannot be taken back",
-        "someone carrying more responsibility because they also control the access",
         "an authority making the consequence official after people tried to postpone it"
       ],
       "source_ids": [
@@ -5687,11 +6451,12 @@
       "sign_expression": "the group asks whether the same rule applies to everyone",
       "combined_position": "the same rule is expected to apply across the group, even when one case resists it",
       "details_language": "one rule applied across the group",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "a standard meant to apply equally"
+      ],
       "neutral_realizations": [
         "policy applied across the group",
-        "precedent",
-        "a standard meant to apply equally"
+        "precedent"
       ],
       "shadow_realizations": [],
       "source_ids": [
@@ -5721,13 +6486,15 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "people try to set a firm boundary around a need that keeps changing shape",
       "details_language": "firm boundaries around a changing need",
-      "supportive_realizations": [],
-      "neutral_realizations": [
-        "a formal boundary trying to contain a need that has no clean edge",
-        "people struggling to assign responsibility because everyone feels for the person involved",
+      "supportive_realizations": [
         "people keeping the plan intact by naming what remains uncertain"
       ],
-      "shadow_realizations": [],
+      "neutral_realizations": [
+        "a formal boundary trying to contain a need that has no clean edge"
+      ],
+      "shadow_realizations": [
+        "people struggling to assign responsibility because everyone feels for the person involved"
+      ],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/pisces",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!733"
@@ -5864,13 +6631,15 @@
       "sign_expression": "people respond through care, memory, and private loyalties",
       "combined_position": "an unexpected need for distance changes how care and belonging are arranged",
       "details_language": "independence disrupting care and belonging",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "a household pattern changing because someone needs more room"
+      ],
       "neutral_realizations": [
-        "a household pattern changing because someone needs more room",
-        "people reorganizing who belongs after private care becomes a public concern",
+        "people reorganizing who belongs after private care becomes a public concern"
+      ],
+      "shadow_realizations": [
         "someone leaving the role that once guaranteed emotional safety"
       ],
-      "shadow_realizations": [],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/uranus/cancer",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!939"
@@ -6145,13 +6914,15 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "the change arrives through a hunch or mood before anyone can draw a clean boundary around it",
       "details_language": "intuitive disruption and uncertain boundaries",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone stepping away after others mistook sympathy for agreement"
+      ],
       "neutral_realizations": [
-        "a sudden intuition disrupting a boundary that was already unclear",
-        "someone stepping away after others mistook sympathy for agreement",
+        "a sudden intuition disrupting a boundary that was already unclear"
+      ],
+      "shadow_realizations": [
         "people changing course together before anyone can define the plan"
       ],
-      "shadow_realizations": [],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/uranus/pisces",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!955"
@@ -6292,11 +7063,12 @@
       "details_language": "memory, care, and projection",
       "supportive_realizations": [],
       "neutral_realizations": [
+        "a private longing shaping what the group believes it needs"
+      ],
+      "shadow_realizations": [
         "memory softening the difference between care and projection",
-        "a private longing shaping what the group believes it needs",
         "people idealizing the family bond until they stop seeing who carries the emotional labor"
       ],
-      "shadow_realizations": [],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/cancer",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!537"
@@ -6432,11 +7204,12 @@
       "details_language": "uncertain trust and hidden power",
       "supportive_realizations": [],
       "neutral_realizations": [
-        "trust deepening around a motive no one can fully name",
+        "trust deepening around a motive no one can fully name"
+      ],
+      "shadow_realizations": [
         "people losing track of who holds private power as the boundaries soften",
         "an irreversible choice shaped by information that remains uncertain"
       ],
-      "shadow_realizations": [],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/scorpio",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!545",
@@ -6572,13 +7345,15 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "people share a feeling or hope before anyone can tell where it began or what it asks",
       "details_language": "imagination and uncertainty dissolving the boundary between them",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "people imagining more because the facts do not set a firm boundary"
+      ],
       "neutral_realizations": [
-        "people treating a shared feeling as if it creates the same duty for everyone",
-        "people imagining more because the facts do not set a firm boundary",
         "a collective longing becoming the atmosphere around the decision"
       ],
-      "shadow_realizations": [],
+      "shadow_realizations": [
+        "people treating a shared feeling as if it creates the same duty for everyone"
+      ],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/pisces",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!555"
@@ -7099,10 +7874,11 @@
       "supportive_realizations": [],
       "neutral_realizations": [
         "careful wording shaped by the fear of being misunderstood again",
-        "a question carrying the memory of not being believed",
+        "a question carrying the memory of not being believed"
+      ],
+      "shadow_realizations": [
         "someone reacting after every official explanation leaves out what they lived through"
       ],
-      "shadow_realizations": [],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/chiron/gemini",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!15"
@@ -7521,11 +8297,12 @@
       "sign_expression": "the work becomes visible and someone wants the credit attached to it",
       "combined_position": "someone claims visibility without making the difficult part more acceptable first",
       "details_language": "visible refusal of conditional recognition",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone claiming visibility without making the contribution more acceptable first",
+        "someone rejecting recognition that depends on shrinking the difficult part"
+      ],
       "neutral_realizations": [],
       "shadow_realizations": [
-        "someone claiming visibility without making the contribution more acceptable first",
-        "someone rejecting recognition that depends on shrinking the difficult part",
         "someone making the whole conflict about them because shame is harder to name directly"
       ],
       "source_ids": [
@@ -7549,13 +8326,14 @@
       "sign_expression": "people check the method, find the error, and fix what is not working",
       "combined_position": "people reject a standard that treats usefulness or purity as the price of worth",
       "details_language": "refusal of purity and usefulness standards",
-      "supportive_realizations": [],
-      "neutral_realizations": [],
-      "shadow_realizations": [
+      "supportive_realizations": [
         "a standard refused because usefulness has become a condition of worth",
-        "someone defending their difference against correction meant to make it manageable",
+        "someone defending their difference against correction meant to make it manageable"
+      ],
+      "neutral_realizations": [
         "the excluded need exposing what the approved method cannot serve"
       ],
+      "shadow_realizations": [],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/virgo"
       ],
@@ -7665,13 +8443,14 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "people confront an authority that uses duty or respectability to demand compliance",
       "details_language": "autonomy against authority and respectability",
-      "supportive_realizations": [],
-      "neutral_realizations": [],
-      "shadow_realizations": [
+      "supportive_realizations": [
         "someone confronting an authority that has used respectability as control",
-        "a duty refused because compliance would erase the person carrying it",
+        "a duty refused because compliance would erase the person carrying it"
+      ],
+      "neutral_realizations": [
         "someone accepting the consequence rather than obeying the demand"
       ],
+      "shadow_realizations": [],
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/capricorn"
       ],
