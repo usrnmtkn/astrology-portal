@@ -307,18 +307,24 @@ function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWri
     throw new Error("Legacy local/source-grounded generated rows cannot be published LIVE. Use fallback-hook, slot-template, vocab, or newly authored rows instead.");
   }
 
-  if ((row.blockType ?? row.block_type) === "sky_aspect") {
+  const skyBlockType = row.blockType ?? row.block_type;
+  if (skyBlockType === "sky_aspect" || skyBlockType === "sky_placement") {
     const sourceSnapshot = (row.sourceSnapshot ?? row.source_snapshot) as Record<string, unknown> | null | undefined;
-    const lint = sourceSnapshot?.skyAspectVoiceLint as { score?: number; fails?: number } | undefined;
-    const judge = sourceSnapshot?.skyAspectJudge as { recommendation?: string; approvalSource?: string } | undefined;
+    const lint = (skyBlockType === "sky_placement"
+      ? sourceSnapshot?.skyPlacementVoiceLint ?? sourceSnapshot?.skyPlacementTopperVoiceLint
+      : sourceSnapshot?.skyAspectVoiceLint) as { score?: number; fails?: number } | undefined;
+    const judge = (skyBlockType === "sky_placement"
+      ? sourceSnapshot?.skyPlacementJudge ?? sourceSnapshot?.skyPlacementTopperJudge
+      : sourceSnapshot?.skyAspectJudge) as { recommendation?: string; approvalSource?: string } | undefined;
     const judgeScore = row.judgeScore ?? row.judge_score;
     const judgeGate = row.judgeGate ?? row.judge_gate;
     const humanApprovalEligible = judgeGate === "human-review"
       && judge?.recommendation === "approve"
       && judge.approvalSource === "llm-advisory";
+    const legacyAutoPublishEligible = skyBlockType === "sky_aspect" && judgeGate === "auto-publish";
 
-    if (lint?.score !== 3 || lint.fails !== 0 || judgeScore !== 3 || (judgeGate !== "auto-publish" && !humanApprovalEligible)) {
-      throw new Error("Sky-aspect cards can be published only after lint 3/0, judge score 3, and an approval recommendation.");
+    if (lint?.score !== 3 || lint.fails !== 0 || judgeScore !== 3 || (!legacyAutoPublishEligible && !humanApprovalEligible)) {
+      throw new Error("Sky cards can be published only after lint 3/0, judge score 3, and an explicit human-review recommendation.");
     }
   }
 }

@@ -6,10 +6,10 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const vercel = JSON.parse(fs.readFileSync(path.join(repoRoot, "vercel.json"), "utf8"));
 const functionConfig = vercel.functions?.["api/**/*.ts"];
-const expectedIncludeGlob = "{api/_lib/{content-generation.ts,report-*.ts,supabase-report-admin.ts},artifacts/*.md,config/*.json,packages/astro-knowledge/data/manifestation-sets/*.json,tldr-astro-phrasebank/*.md}";
+const expectedIncludeGlob = "{api/_lib/{content-generation.ts,report-*.ts,supabase-report-admin.ts},artifacts/*.md,config/*.json,src/astro-writing/**/*.{cjs,mjs,js},packages/astro-knowledge/{generated/{knowledge-index.json,phrase-index.json,tldr-astro/**/*.json},scripts/*.{cjs,js},data/**/*.json,config/*.json,reference/*.json,voice/**/*.{json,md},sources/authored/marie-satori-book/*.json},apps/web/{public/content/**/*.json,src/content/**/*.json},tldr-astro-phrasebank/{*.md,phrasebank/*.json,sources/*.json}}";
 
 assert.ok(functionConfig, "Every TypeScript API function must receive the report runtime include manifest.");
-assert.equal(functionConfig.includeFiles, expectedIncludeGlob, "Vercel report runtime includeFiles must remain the audited single-glob manifest.");
+assert.equal(functionConfig.includeFiles, expectedIncludeGlob, "Vercel report and writing-kernel runtime includeFiles must remain the audited single-glob manifest.");
 
 const exactRuntimeAssets = [
   "api/_lib/content-generation.ts",

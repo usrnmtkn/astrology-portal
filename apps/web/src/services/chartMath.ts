@@ -141,6 +141,86 @@ export type DailyGlanceChartContext =
       housesReliable: true;
     };
 
+export type FriendsTransitChartInstanceContext = {
+  surface: "friends-transit";
+  kind: "aspect";
+  calculationResolved: boolean;
+  transitPlanet: string;
+  transitSign: string;
+  transitHouse: number | null;
+  natalPoint: string;
+  natalSign: string;
+  natalHouse: number | null;
+  aspect: string;
+  housesReliable: boolean;
+  angleContext: {
+    ascendant: string;
+    midheaven: string | null;
+  } | null;
+  rulershipDiagnostics: Record<string, unknown> | null;
+};
+
+/**
+ * Resolves calculation-owned context for Friends transit drafting.
+ *
+ * Reliability is attested by the owning chart's known-time state. Numeric
+ * houses alone never make the context reliable. Rulership remains diagnostic
+ * and is removed with all other time-dependent context when time is unknown.
+ */
+export function resolveFriendsTransitChartInstanceContext({
+  transitPosition,
+  natalPosition,
+  aspect,
+  natalAscendant,
+  natalMidheaven = null,
+  birthTimeKnown,
+  rulershipDiagnostics = null
+}: {
+  transitPosition: Pick<PlanetPosition, "planet" | "sign">;
+  natalPosition: Pick<PlanetPosition, "planet" | "sign" | "house">;
+  aspect: string;
+  natalAscendant: string | null;
+  natalMidheaven?: string | null;
+  birthTimeKnown: boolean;
+  rulershipDiagnostics?: Record<string, unknown> | null;
+}): FriendsTransitChartInstanceContext {
+  const validTransitSign = zodiacSigns.includes(transitPosition.sign);
+  const validNatalSign = zodiacSigns.includes(natalPosition.sign);
+  const validAscendant = typeof natalAscendant === "string" && zodiacSigns.includes(natalAscendant);
+  const reliableAscendant = validAscendant ? natalAscendant : null;
+  const housesReliable = birthTimeKnown === true && validAscendant;
+  const transitHouse = housesReliable && reliableAscendant
+    ? wholeSignHouseForSign(transitPosition.sign, reliableAscendant)
+    : null;
+  const natalHouse = housesReliable && validDailyGlanceHouse(natalPosition.house)
+    ? natalPosition.house
+    : null;
+
+  return {
+    surface: "friends-transit",
+    kind: "aspect",
+    calculationResolved: Boolean(
+      transitPosition.planet.trim()
+      && natalPosition.planet.trim()
+      && aspect.trim()
+      && validTransitSign
+      && validNatalSign
+    ),
+    transitPlanet: transitPosition.planet,
+    transitSign: transitPosition.sign,
+    transitHouse,
+    natalPoint: natalPosition.planet,
+    natalSign: natalPosition.sign,
+    natalHouse,
+    aspect,
+    housesReliable,
+    angleContext: housesReliable && reliableAscendant
+      ? { ascendant: reliableAscendant, midheaven: natalMidheaven }
+      : null,
+    rulershipDiagnostics: housesReliable ? rulershipDiagnostics : null
+  };
+}
+
 const dailyGlanceAspectGroups: Record<DailyGlanceAspectType, DailyGlanceAspectGroup> = {
   conjunction: "conjunction",
   opposition: "opposition",

@@ -190,10 +190,12 @@ export type AngleFacts = {
   [key: string]: unknown;
 };
 
+export type NormalizedAspect = "conjunction" | "opposition" | "square" | "trine" | "sextile" | "quincunx" | "semisextile";
+export type AspectInput = NormalizedAspect | "nonagen";
 export type AspectFacts = {
   planetA: string;
   planetB: string;
-  aspect: "conjunction" | "opposition" | "square" | "trine" | "sextile" | "quincunx" | "semisextile" | "nonagen";
+  aspect: AspectInput;
   voice?: "you" | string;
   [key: string]: unknown;
 };

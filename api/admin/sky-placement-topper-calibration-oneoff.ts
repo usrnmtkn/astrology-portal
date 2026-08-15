@@ -158,7 +158,7 @@ async function livePlacementBase(planet: string, sign: string) {
 
   return row
     && row.judge_score === 3
-    && row.judge_gate === "auto-publish"
+    && row.judge_gate === "human-review"
     && lint?.score === 3
     && lint.fails === 0
     && row.body.split(/\n\s*\n/).filter(Boolean).length === 2

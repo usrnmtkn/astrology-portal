@@ -6,7 +6,7 @@
   "framework": "vite",
   "functions": {
     "api/**/*.ts": {
-      "includeFiles": "{api/_lib/{content-generation.ts,report-*.ts,supabase-report-admin.ts},artifacts/*.md,config/*.json,packages/astro-knowledge/data/manifestation-sets/*.json,tldr-astro-phrasebank/*.md}"
+      "includeFiles": "{api/_lib/{content-generation.ts,report-*.ts,supabase-report-admin.ts},artifacts/*.md,config/*.json,src/astro-writing/**/*.{cjs,mjs,js},packages/astro-knowledge/{generated/{knowledge-index.json,phrase-index.json,tldr-astro/**/*.json},scripts/*.{cjs,js},data/**/*.json,config/*.json,reference/*.json,voice/**/*.{json,md},sources/authored/marie-satori-book/*.json},apps/web/{public/content/**/*.json,src/content/**/*.json},tldr-astro-phrasebank/{*.md,phrasebank/*.json,sources/*.json}}"
     }
   },
   "rewrites": [

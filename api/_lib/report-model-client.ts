@@ -1,5 +1,6 @@
 import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
 import { assertOpenAiStrictResponseSchema, ReportProviderSchemaError } from "./report-provider-schema.js";
+import { assertReportProductionKernel, type ReportProductionKernel } from "./report-production-gate.js";
 
 export { assertOpenAiStrictResponseSchema, ReportProviderSchemaError } from "./report-provider-schema.js";
 
@@ -29,6 +30,7 @@ export type ReportModelCallInput<T> = {
   prompt: string;
   schemaName: string;
   schema: Record<string, unknown>;
+  productionKernel?: ReportProductionKernel;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
@@ -57,6 +59,7 @@ async function callOpenAi<T>(input: {
   prompt: string;
   schemaName: string;
   schema: Record<string, unknown>;
+  productionKernel?: ReportProductionKernel;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
@@ -124,6 +127,7 @@ async function callOpenAi<T>(input: {
 
 async function callClaude<T>(input: {
   provider: string; model: string; prompt: string; schemaName: string; schema: Record<string, unknown>;
+  productionKernel?: ReportProductionKernel;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
@@ -176,6 +180,7 @@ async function callClaude<T>(input: {
 
 async function directReportModelCall<T>(input: {
   provider: string; model: string; prompt: string; schemaName: string; schema: Record<string, unknown>;
+  productionKernel?: ReportProductionKernel;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
@@ -186,8 +191,9 @@ async function directReportModelCall<T>(input: {
   throw new Error(`Unsupported report fulfillment provider '${input.provider}'.`);
 }
 
-export const callReportModel: ReportModelCall = async <T>(input: {
+const callReportModel: ReportModelCall = async <T>(input: {
   provider: string; model: string; prompt: string; schemaName: string; schema: Record<string, unknown>;
+  productionKernel?: ReportProductionKernel;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
   afterProviderCall?: (attempt: ReportProviderAttempt, result: ReportModelResult<T>) => Promise<void>;
@@ -204,6 +210,18 @@ export const callReportModel: ReportModelCall = async <T>(input: {
       || (config.fallbackProvider === input.provider && config.fallbackModel === input.model)) throw error;
     return directReportModelCall<T>({ ...input, provider: config.fallbackProvider, model: config.fallbackModel });
   }
+};
+
+/** Offline calibration only. Production call sites must use the governed wrapper. */
+export const callReportCalibrationModel: ReportModelCall = callReportModel;
+
+/**
+ * Production report calls assert the governed evidence packet before lifecycle
+ * hooks can open a billed ledger row or send a provider request.
+ */
+export const callProductionReportModel: ReportModelCall = async <T>(input) => {
+  assertReportProductionKernel(input.productionKernel);
+  return callReportModel<T>(input);
 };
 
 function responseRetryPrompt(prompt: string, reason: string, retryNumber: number) {
