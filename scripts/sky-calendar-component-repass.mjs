@@ -143,6 +143,151 @@ const ownerAuthoredReplacements = {
   },
 };
 
+// Owner-requested classification review, 2026-08-15. These decisions move
+// existing realization text between typed pools only. They never rewrite a
+// realization or alter its evidence.
+export const CLASSIFICATION_REVIEW_DECISIONS = {
+  "sky-sign/sun/cancer": {
+    population: "all_neutral",
+    types: ["supportive", "shadow", "neutral"],
+    finding: "Care work that others depend on is supportive; private loyalty deciding public recognition carries a source-supported cost.",
+  },
+  "sky-sign/sun/sagittarius": {
+    population: "all_neutral",
+    types: ["supportive", "shadow", "neutral"],
+    finding: "A larger purpose can support reach, while carrying work to an audience it was not made for carries the source warning about certainty outrunning facts.",
+  },
+  "sky-sign/moon/capricorn": {
+    population: "all_neutral",
+    types: ["shadow", "neutral", "supportive"],
+    finding: "Postponing needs carries the source cost; dependable follow-through is the supportive form already present in the wording.",
+  },
+  "sky-sign/mercury/pisces": {
+    population: "all_neutral",
+    types: ["supportive", "shadow", "shadow"],
+    finding: "Reading tone can carry the source-supported intuitive strength; unverified implication and blurred decisions carry its translation and verification costs.",
+  },
+  "sky-sign/mars/gemini": {
+    population: "all_neutral",
+    types: ["shadow", "shadow", "supportive"],
+    finding: "Scattered effort and a moving argument carry the concentration cost; a new comparison redirecting action carries the source-supported adaptive opening.",
+  },
+  "sky-sign/saturn/aquarius": {
+    population: "all_neutral",
+    types: ["neutral", "neutral", "supportive"],
+    finding: "An equal standard is the supportive form. Policy and precedent remain neutral because their effect depends on the card's argument shape.",
+  },
+  "sky-sign/saturn/pisces": {
+    population: "all_neutral",
+    types: ["neutral", "shadow", "supportive"],
+    finding: "Difficulty assigning responsibility carries the cost; naming uncertainty so the plan can hold is the supported constructive form.",
+  },
+  "sky-sign/uranus/cancer": {
+    population: "all_neutral",
+    types: ["supportive", "neutral", "shadow"],
+    finding: "Making room through a changed household pattern is supportive; leaving a role that once guaranteed safety carries the source cost of disruption.",
+  },
+  "sky-sign/uranus/pisces": {
+    population: "all_neutral",
+    types: ["neutral", "supportive", "shadow"],
+    finding: "Stepping away after sympathy was mistaken for agreement is a supported boundary correction; changing course before a plan exists carries the disruption cost.",
+  },
+  "sky-sign/neptune/cancer": {
+    population: "all_neutral",
+    types: ["shadow", "neutral", "shadow"],
+    finding: "Blurred care and projection and unseen emotional labor both carry the source's idealization cost; private longing shaping a group need remains neutral.",
+  },
+  "sky-sign/neptune/scorpio": {
+    population: "all_neutral",
+    types: ["neutral", "shadow", "shadow"],
+    finding: "Unclear motive remains neutral; lost track of private power and an irreversible choice made with uncertain information carry the governed boundary and discernment costs.",
+  },
+  "sky-sign/neptune/pisces": {
+    population: "all_neutral",
+    types: ["shadow", "supportive", "neutral"],
+    finding: "Treating one feeling as the same duty for everyone carries a cost; imagining beyond a firm factual boundary carries the creative opening supported by the source.",
+  },
+  "sky-sign/chiron/gemini": {
+    population: "all_neutral",
+    types: ["neutral", "neutral", "shadow"],
+    finding: "Careful wording and a question shaped by prior disbelief remain neutral; reacting after repeated omission carries the source-supported cost.",
+  },
+  "sky-sign/sun/scorpio": {
+    population: "all_shadow",
+    types: ["shadow", "neutral", "shadow"],
+    supportiveFinding: "The source carries a constructive truth-naming form, but no current realization expresses it; nothing was invented during this check.",
+    finding: "Private obligations that others cannot see are a neutral condition, not automatically a cost.",
+  },
+  "sky-sign/mars/aries": {
+    population: "all_shadow",
+    types: ["neutral", "shadow", "supportive"],
+    supportiveFinding: "A supportive realization existed but was misclassified: direct pursuit of a visible result carries the source's initiative and renewed-momentum strength.",
+    finding: "The first move setting pace is neutral; acting before a process exists remains shadow.",
+  },
+  "sky-sign/mars/taurus": {
+    population: "all_shadow",
+    types: ["supportive", "shadow", "neutral"],
+    supportiveFinding: "A supportive realization existed but was misclassified: sustained work on one point carries the source's persistence and craftsmanship strength.",
+    finding: "Resource conflict remains shadow; delaying until a result can be kept is neutral.",
+  },
+  "sky-sign/mars/scorpio": {
+    population: "all_shadow",
+    types: ["neutral", "shadow", "supportive"],
+    supportiveFinding: "A supportive realization existed but was misclassified: careful pursuit of an irreversible result carries the source's strategic use of information gained during delay.",
+    finding: "Waiting for control to become clear is neutral; pressure around trust and access remains shadow.",
+  },
+  "sky-sign/saturn/leo": {
+    population: "all_shadow",
+    types: ["shadow", "neutral", "shadow"],
+    supportiveFinding: "The source carries earned confidence and recognition for completed work, but no current realization expresses it; nothing was invented during this check.",
+    finding: "Limiting how much pride directs a decision is neutral; withheld recognition and withheld contribution remain costs.",
+  },
+  "sky-sign/saturn/scorpio": {
+    population: "all_shadow",
+    types: ["supportive", "neutral", "shadow"],
+    supportiveFinding: "A supportive realization existed but was misclassified: a limit that protects irreversible information carries the source's constructive boundary function.",
+    finding: "Responsibility attached to access remains neutral; making a postponed consequence official remains shadow.",
+  },
+  "sky-sign/neptune/libra": {
+    population: "all_shadow",
+    types: ["shadow", "shadow", "shadow"],
+    supportiveFinding: "The source carries an honest fairness check beyond the fantasy, but no current realization expresses it; the all-shadow classification is correct for the three realizations actually present.",
+    finding: "All three current realizations explicitly carry idealization, unequal cost, or lost reciprocity.",
+  },
+  "sky-sign/lilith/leo": {
+    population: "all_shadow",
+    types: ["supportive", "supportive", "shadow"],
+    supportiveFinding: "Two supportive realizations were misclassified: claiming visibility and rejecting recognition that requires self-erasure follow the owner-approved source directly.",
+    finding: "Turning the whole conflict into a substitute for naming shame remains shadow.",
+  },
+  "sky-sign/lilith/virgo": {
+    population: "all_shadow",
+    types: ["supportive", "supportive", "neutral"],
+    supportiveFinding: "Two supportive realizations were misclassified: refusing conditional worth and defending difference follow the owner-approved source directly.",
+    finding: "The excluded need exposing a method's limit is a neutral diagnostic condition.",
+  },
+  "sky-sign/lilith/capricorn": {
+    population: "all_shadow",
+    types: ["supportive", "supportive", "neutral"],
+    supportiveFinding: "Two supportive realizations were misclassified: confronting respectability used as control and refusing an erasing duty follow the owner-approved source directly.",
+    finding: "Accepting a consequence rather than obeying remains neutral because the source does not promise benefit.",
+  },
+};
+
+function applyClassificationReview(key, typed) {
+  const decision = CLASSIFICATION_REVIEW_DECISIONS[key];
+  if (!decision) return typed;
+  const beforeField = decision.population === "all_neutral" ? "neutral_realizations" : "shadow_realizations";
+  const values = typed[beforeField];
+  if (values.length !== decision.types.length || REALIZATION_FIELDS.some((field) => field !== beforeField && typed[field].length > 0)) {
+    throw new Error(`${key}: classification review expected ${decision.population} input`);
+  }
+  return typeRealizations(
+    values,
+    Object.fromEntries(values.map((value, index) => [value, decision.types[index]])),
+  );
+}
+
 const shadowManifestationOverrides = {
   "sky-sign/moon/aries": "someone treating every strong feeling like an emergency that everyone must answer",
   "sky-sign/moon/gemini": "someone explaining the feeling repeatedly instead of admitting that they are hurt",
@@ -475,9 +620,59 @@ export function repassSignUnit(key, record) {
   const typeOverrides = shadowManifestationOverrides[key]
     ? { [shadowManifestationOverrides[key]]: "shadow" }
     : {};
+  const typedRealizations = ownerReplacement ?? typeRealizations(manifestations, typeOverrides);
   return {
     ...rest,
-    ...(ownerReplacement ?? typeRealizations(manifestations, typeOverrides)),
+    ...applyClassificationReview(key, typedRealizations),
+  };
+}
+
+export function classificationReviewAudit(rows) {
+  const reviewed = [];
+  for (const [key, decision] of Object.entries(CLASSIFICATION_REVIEW_DECISIONS)) {
+    const row = rows.find((candidate) => candidate.key === key);
+    if (!row) throw new Error(`Missing classification-review unit ${key}`);
+    const beforeType = decision.population === "all_neutral" ? "neutral" : "shadow";
+
+    // Reconstruct original order from the decision's typed output. This keeps
+    // the audit stable even though the workbook groups values by pool.
+    const orderedValues = decision.types.map((type, index) => {
+      const sameTypeBefore = decision.types.slice(0, index).filter((candidate) => candidate === type).length;
+      return row[`${type}_realizations`][sameTypeBefore];
+    });
+    reviewed.push({
+      key,
+      population: decision.population,
+      beforeShape: decision.population === "all_neutral" ? "0/3/0" : "0/0/3",
+      afterShape: REALIZATION_FIELDS.map((field) => row[field].length).join("/"),
+      finding: decision.finding,
+      supportiveFinding: decision.supportiveFinding ?? null,
+      source_ids: [...row.source_ids],
+      realizations: orderedValues.map((value, index) => ({
+        value,
+        beforeType,
+        afterType: decision.types[index],
+        changed: beforeType !== decision.types[index],
+      })),
+    });
+  }
+  const allNeutral = reviewed.filter((row) => row.population === "all_neutral");
+  const allShadow = reviewed.filter((row) => row.population === "all_shadow");
+  const reviewedKeys = new Set(reviewed.map((row) => row.key));
+  const emptySupportiveBefore = rows.filter((row) => (
+    reviewedKeys.has(row.key) || row.supportive_realizations.length === 0
+  )).length;
+  const emptySupportiveAfter = rows.filter((row) => row.supportive_realizations.length === 0).length;
+  return {
+    reviewedUnits: reviewed.length,
+    allNeutralBefore: allNeutral.length,
+    allNeutralAfter: allNeutral.filter((row) => row.afterShape === "0/3/0").length,
+    allShadowBefore: allShadow.length,
+    allShadowAfter: allShadow.filter((row) => row.afterShape === "0/0/3").length,
+    emptySupportiveBefore,
+    emptySupportiveAfter,
+    changedRealizations: reviewed.flatMap((row) => row.realizations).filter((item) => item.changed).length,
+    reviewed,
   };
 }
 

@@ -17,6 +17,7 @@ import { assertManifestationShapeCap } from "./sky-calendar-manifestation-shape.
 import {
   SYSTEMIC_REPASS_WORDING_KEYS,
   assertOwnerReplacements,
+  classificationReviewAudit,
   manifestationPlainnessViolations,
   sourceShadowAudit,
   systemicFaultAudit,
@@ -38,6 +39,7 @@ const outputDir = path.join(
 );
 const workbookPath = path.join(outputDir, "sky-calendar-meaning-components-owner-review.xlsx");
 const registryPath = path.join(reviewDir, "sky-calendar-meaning-components-v1.json");
+const classificationReportPath = path.join(reviewDir, "REALIZATION-CLASSIFICATION-AUDIT.md");
 
 const fallbackPath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
 const v9Path = "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-governance-labeled/knowledge-matrix-v9-owner-approved-rows.json";
@@ -286,6 +288,7 @@ const elements = elementComponents.map((record) => {
 });
 const allUnits = [...signUnits, ...aspects, ...modalities, ...elements];
 const realizationSchema = assertTypedRealizationSchema(allUnits);
+const classificationAudit = classificationReviewAudit(signUnits);
 const faultAudit = systemicFaultAudit([], signUnits);
 if (Object.values(faultAudit.remainingViolations).some((keys) => keys.length > 0)) {
   throw new Error(`Systemic wording fault remains: ${JSON.stringify(faultAudit.remainingViolations)}`);
@@ -507,6 +510,7 @@ const registry = {
     ],
     faultAudit,
     realizationSchema,
+    classificationAudit,
     rule: "Every unit was rechecked against its governed meaning and source cost. Realizations are typed by supportive, neutral, or shadow meaning; type is never encoded by array position.",
   },
   wordingQuality,
@@ -528,10 +532,62 @@ await fs.writeFile(
   `${JSON.stringify(registry, null, 2)}\n`,
 );
 
+function classificationAuditMarkdown() {
+  const lines = [
+    "# Sky Calendar realization classification audit",
+    "",
+    "Status: classification review only. No realization wording changed. All 174 units remain `PENDING OWNER` and fail closed.",
+    "",
+    "## Count correction",
+    "",
+    `The registry had ${classificationAudit.emptySupportiveBefore} sign units with an empty supportive pool. The 10-unit figure in the review prompt refers specifically to the all-shadow \`0/0/3\` population. After evidence-supported reclassification, ${classificationAudit.emptySupportiveAfter} units still have an empty supportive pool.`,
+    "",
+    "## Thirteen all-neutral units",
+    "",
+  ];
+  for (const row of classificationAudit.reviewed.filter((item) => item.population === "all_neutral")) {
+    lines.push(`### \`${row.key}\``, "", `${row.beforeShape} -> ${row.afterShape}. ${row.finding}`, "");
+    row.realizations.forEach((item) => lines.push(`- ${item.beforeType} -> ${item.afterType}: ${item.value}`));
+    lines.push("", `Evidence: ${row.source_ids.map((sourceId) => `\`${sourceId}\``).join("; ")}`, "");
+  }
+  lines.push("## Ten all-shadow units", "");
+  for (const row of classificationAudit.reviewed.filter((item) => item.population === "all_shadow")) {
+    lines.push(`### \`${row.key}\``, "", `${row.beforeShape} -> ${row.afterShape}. ${row.finding}`, "", `Supportive-pool finding: ${row.supportiveFinding}`, "");
+    row.realizations.forEach((item) => lines.push(`- ${item.beforeType} -> ${item.afterType}: ${item.value}`));
+    lines.push("", `Evidence: ${row.source_ids.map((sourceId) => `\`${sourceId}\``).join("; ")}`, "");
+  }
+  lines.push(
+    "## Composer behavior when a requested pool is empty",
+    "",
+    "The composer currently falls back silently. Trines and sextiles request supportive first, then neutral, then shadow. A trine built from an all-shadow unit therefore receives a shadow realization without an error. This can produce grammatically valid but semantically wrong copy.",
+    "",
+    "Conjunction requests neutral, then supportive, then shadow. Opposition requests neutral, then shadow, then supportive. Square requests shadow, then neutral, then supportive.",
+    "",
+    "No current unit has all three pools empty, so the composer always finds some text. That proves availability only; it does not prove that the selected type fits the aspect. Composer fallback behavior was reported, not changed, in this classification-only task.",
+    "",
+    "## Preservation checks",
+    "",
+    "- Realization wording changed: 0",
+    `- Realizations reclassified: ${classificationAudit.changedRealizations}`,
+    `- All-neutral units remaining from the reviewed 13: ${classificationAudit.allNeutralAfter}`,
+    `- All-shadow units remaining from the reviewed 10: ${classificationAudit.allShadowAfter}`,
+    "- Evidence pointers and hashes: unchanged",
+    "- Coverage classes: unchanged",
+    "- Owner-authored replacement wording: unchanged",
+    "- Approval status: `PENDING OWNER`",
+    "- Serving state: unchanged",
+    "",
+  );
+  return lines.join("\n");
+}
+
+await fs.writeFile(classificationReportPath, classificationAuditMarkdown());
+
 const workbook = Workbook.create();
 const overview = workbook.worksheets.add("Overview");
 const coverageSheet = workbook.worksheets.add("Owner Voice Coverage");
 const signSheet = workbook.worksheets.add("Sign Units");
+const classificationSheet = workbook.worksheets.add("Classification Audit");
 const aspectSheet = workbook.worksheets.add("Aspect Mechanisms");
 const modalitySheet = workbook.worksheets.add("Modality Units");
 const elementSheet = workbook.worksheets.add("Element Units");
@@ -597,7 +653,7 @@ function styleTable(sheet, headerRange, dataRange, widths) {
   });
 }
 
-for (const sheet of [overview, coverageSheet, signSheet, aspectSheet, modalitySheet, elementSheet, gateSheet, wordingQaSheet]) styleSheet(sheet);
+for (const sheet of [overview, coverageSheet, signSheet, classificationSheet, aspectSheet, modalitySheet, elementSheet, gateSheet, wordingQaSheet]) styleSheet(sheet);
 
 titleBand(
   overview,
@@ -605,7 +661,7 @@ titleBand(
   "Sky Calendar meaning components v2",
   "Owner review workbook. These 174 rows govern meaning only. No row is a finished sentence for verbatim emission.",
 );
-overview.getRange("A4:B13").values = [
+overview.getRange("A4:B15").values = [
   ["Measure", "Count"],
   ["Sign units", signUnits.length],
   ["Aspect mechanisms", aspects.length],
@@ -616,6 +672,8 @@ overview.getRange("A4:B13").values = [
   ["Units changed", registry.systemicRepass.changedUnits],
   ["One-sided before pass", registry.systemicRepass.sourceShadowAudit.oneSidedBeforePass],
   ["One-sided after pass", registry.systemicRepass.sourceShadowAudit.oneSidedAfterPass],
+  ["Realizations reclassified", registry.systemicRepass.classificationAudit.changedRealizations],
+  ["Empty supportive pools", registry.systemicRepass.classificationAudit.emptySupportiveAfter],
 ];
 overview.getRange("D4:F9").values = [
   ["Governance", "Value", "Meaning"],
@@ -627,7 +685,7 @@ overview.getRange("D4:F9").values = [
 ];
 overview.getRange("A4:B4").format = { fill: teal, font: { bold: true, color: white } };
 overview.getRange("D4:F4").format = { fill: teal, font: { bold: true, color: white } };
-overview.getRange("A5:B13").format = { fill: light, borders: { insideHorizontal: { style: "thin", color: line } } };
+overview.getRange("A5:B15").format = { fill: light, borders: { insideHorizontal: { style: "thin", color: line } } };
 overview.getRange("D5:F9").format = { fill: light, wrapText: true, borders: { insideHorizontal: { style: "thin", color: line } } };
 overview.getRange("A16:F16").merge();
 overview.getRange("A16:F16").values = [["Field definitions"]];
@@ -728,6 +786,39 @@ writeComponentSheet(
   [["A", 34], ["B", 38], ["C", 38], ["D", 46], ["E", 42], ["F", 42], ["G", 42], ["H", 38], ["I", 58], ["J", 42], ["K", 34], ["L", 58], ["M", 42], ["N", 20], ["O", 28]],
   "SignUnitsTable",
 );
+
+const classificationRows = classificationAudit.reviewed.flatMap((row) => row.realizations.map((realization) => [
+  row.key,
+  row.population,
+  row.beforeShape,
+  row.afterShape,
+  realization.value,
+  realization.beforeType,
+  realization.afterType,
+  realization.changed ? "YES" : "NO",
+  row.finding,
+  row.supportiveFinding ?? "not part of all-shadow review",
+  row.source_ids.join("\n"),
+]));
+titleBand(
+  classificationSheet,
+  "A1:K1",
+  "Realization classification audit",
+  "Classification only: wording and evidence are unchanged. The 10-unit prompt count refers to all-shadow units; 81 units originally had no supportive realization.",
+);
+classificationSheet.getRange("A3:K3").values = [[
+  "Key", "Reviewed population", "Before shape", "After shape", "Realization",
+  "Before type", "After type", "Changed?", "Evidence finding",
+  "Supportive-pool finding", "Evidence pointers",
+]];
+classificationSheet.getRange(`A4:K${classificationRows.length + 3}`).values = classificationRows;
+styleTable(
+  classificationSheet,
+  "A3:K3",
+  `A4:K${classificationRows.length + 3}`,
+  [["A", 34], ["B", 18], ["C", 14], ["D", 14], ["E", 52], ["F", 14], ["G", 14], ["H", 12], ["I", 62], ["J", 68], ["K", 72]],
+);
+classificationSheet.tables.add(`A3:K${classificationRows.length + 3}`, true, "ClassificationAuditTable");
 
 function writeMechanismSheet(sheet, title, subtitle, records, tableName) {
   writeComponentSheet(
@@ -884,6 +975,13 @@ await workbook.inspect({
   tableMaxRows: 24,
   tableMaxCols: 8,
 });
+await workbook.inspect({
+  kind: "table",
+  range: "Classification Audit!A1:K12",
+  include: "values,formulas",
+  tableMaxRows: 12,
+  tableMaxCols: 11,
+});
 const errors = await workbook.inspect({
   kind: "match",
   searchTerm: "#REF!|#DIV/0!|#VALUE!|#NAME\\?|#N/A",
@@ -896,6 +994,7 @@ for (const [sheetName, range] of [
   ["Overview", "A1:F27"],
   ["Owner Voice Coverage", "A1:F24"],
   ["Sign Units", "A1:O12"],
+  ["Classification Audit", "A1:K20"],
   ["Aspect Mechanisms", "A1:K8"],
   ["Modality Units", "A1:K12"],
   ["Element Units", "A1:K12"],
