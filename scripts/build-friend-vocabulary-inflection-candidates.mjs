@@ -18,6 +18,10 @@ const markdownPath = path.join(
   repoRoot,
   "packages/astro-knowledge/review/friend-vocabulary-person-inflection-candidates-2026-08-15.md"
 );
+const approvalPath = path.join(
+  repoRoot,
+  "packages/astro-knowledge/review/friend-vocabulary-person-inflection-owner-approval-2026-08-15.json"
+);
 
 const proposedBodyTheyByKey = new Map(Object.entries({
   "fallback-vocab/house-jurisdiction/1": "their body, their look, and how they come across",
@@ -75,6 +79,7 @@ const rulings = new Map([
 const secondPersonPattern = /\b(?:you|your|yours|yourself|yourselves|you(?:'re|'ve|'ll|'d))\b/iu;
 const actualPronounPattern = /(?:^|[\s,.;:!?()])(?:you|your|yours|yourself|yourselves|you(?:'re|'ve|'ll|'d))(?=$|[\s,.;:!?()])/iu;
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
+const write = process.argv.includes("--write");
 const source = JSON.parse(fs.readFileSync(sourcePath, "utf8"));
 const detectedRows = source.vocabularyRows.filter((row) => secondPersonPattern.test(row.body ?? ""));
 
@@ -83,6 +88,31 @@ if (source.vocabularyRows.length !== 720) {
 }
 if (detectedRows.length !== 41) {
   throw new Error(`Expected 41 second-person regex hits; found ${detectedRows.length}.`);
+}
+
+// Once the owner approves the hash-locked review packet, it becomes immutable
+// evidence. The canonical source will legitimately gain body_they fields, so a
+// whole-file source hash can no longer be regenerated without invalidating the
+// exact packet the owner reviewed. Validate its per-row source-body hashes instead.
+if (fs.existsSync(approvalPath)) {
+  if (write) {
+    throw new Error("The owner-approved candidate packet is frozen and cannot be regenerated.");
+  }
+  const approval = JSON.parse(fs.readFileSync(approvalPath, "utf8"));
+  const packetBytes = fs.readFileSync(jsonPath);
+  if (sha256(packetBytes) !== approval.candidateRecord.sha256) {
+    throw new Error("Owner-approved candidate packet hash drifted.");
+  }
+  const packet = JSON.parse(packetBytes);
+  const sourceByKey = new Map(source.vocabularyRows.map((row) => [row.contentKey, row]));
+  for (const candidate of packet.candidates) {
+    const row = sourceByKey.get(candidate.contentKey);
+    if (!row || sha256(row.body) !== candidate.sourceBodySha256) {
+      throw new Error(`${candidate.contentKey}: approved source body drifted.`);
+    }
+  }
+  console.log("Friend vocabulary inflection candidates: owner-approved packet is frozen; 41 source-body hashes remain exact.");
+  process.exit(0);
 }
 
 const candidates = detectedRows.map((row) => {
@@ -173,8 +203,6 @@ const markdown = [
 ].join("\n");
 
 const expectedJson = `${JSON.stringify(artifact, null, 2)}\n`;
-const write = process.argv.includes("--write");
-
 if (write) {
   fs.writeFileSync(jsonPath, expectedJson);
   fs.writeFileSync(markdownPath, markdown);

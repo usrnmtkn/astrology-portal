@@ -106,7 +106,7 @@ assert.equal(
 );
 assert.equal(
   sharedBankHash("fallback-vocab/planet-function/"),
-  "d996f251504578c5567889f8490241f0c76bf96f5a3a50e4d49d8b0e67f07bd6"
+  "06e31114ce19c9230b817f053581f731f6973b0a2c5c55f49bc0f8f8fa68a0b9"
 );
 
 const literalSkyRowDate = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?|\d{4})\b/u;
