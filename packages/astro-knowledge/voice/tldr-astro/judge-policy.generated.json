@@ -4,7 +4,7 @@
   "generatedBy": "scripts/compile-satori-editorial-decisions.js",
   "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
   "decisionSourceId": "satori-editorial-decisions-v1",
-  "decisionSourceSha256": "d2a94f8656e00ca6372d46bbd55cf7592c7f3a0984433fff04e086786218e8a2",
+  "decisionSourceSha256": "854476c68bcc62401ef8d2af7020b3ebc94ee5b2a1b45b82f0b34fcbfb4da139",
   "role": "Classify and explain final acceptability of the untouched draft. Never rewrite, approve, or promote it.",
   "compactRubric": [
     "Read-aloud rule: does every central sentence sound natural and literal when spoken?",
@@ -75,16 +75,14 @@
       "id": "CF-001",
       "category": "subject",
       "scope": {
-        "prohibited": [
-          "sky-placement"
-        ],
         "conditional": [
+          "sky-placement",
           "all-other-surfaces"
         ]
       },
-      "rule": "Do not use people in Sky Placement. On other surfaces, use it only when the collective itself is the real subject and a more exact subject would be less accurate.",
-      "rationale": "Generic people repeatedly conceals the actual subject in Sky Placement while remaining legitimate in some collective contexts.",
-      "effect": "prohibit",
+      "rule": "People is allowed in Sky Placement copy, used sparingly. Overuse is a semantic review signal, not a deterministic failure. On other surfaces, use it only when the collective itself is the real subject.",
+      "rationale": "Owner ruling 2026-08-11, applied to this branch 2026-08-14. Sky Placement is collective copy and people belongs there in moderation. Concealing an available specific subject remains a review matter, judged in the cold read rather than by regex.",
+      "effect": "conditional",
       "examplesAllowed": [
         "A sibling stops hosting every holiday."
       ],
