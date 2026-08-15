@@ -8,12 +8,21 @@ const { PLANETS, SIGNS, toHookRows } = require("./generate-sky-placement-article
 const root = path.join(__dirname, "..");
 const defaultBundle = path.join(root, "review", "sky-placement-rewrite-pilot-v2-candidates.json");
 const bundlePath = path.resolve(process.argv[2] || defaultBundle);
+const GRANDFATHERED_PUNCTUATION_BUNDLES = new Set([
+  "sky-placement-rewrite-pilot-v2-candidates.json",
+  "sky-placement-voice-pass-v3-candidates.json",
+  "sky-placement-voice-pass-v4-gpt-5.6-review-candidates.json",
+  "sky-placement-voice-pass-v6-targeted-candidates.json",
+  "sky-placement-voice-pass-v7-writer-candidates.json",
+  "sky-placement-voice-pass-v8-source-derived-candidates.json",
+  "sky-placement-voice-pass-v9-neptune-libra-owner-turn-candidate.json"
+]);
 
 function fail(message) {
   throw new Error(message);
 }
 
-function auditBundle(value) {
+function auditBundle(value, { sourcePath = bundlePath } = {}) {
   if (value?.schema !== "tldrastro-sky-placement-review-bundle-v1") fail("unexpected review-bundle schema");
   if (value.status !== "needs_review") fail("bundle status must remain needs_review");
   if (!["needs_voice_pass", "voice_pass_draft"].includes(value.editorialStatus)) {
@@ -32,6 +41,7 @@ function auditBundle(value) {
   const allowLegacyTagline = Number.parseInt(String(value.version || "0"), 10) < 10;
   const allowLegacyRepeatedGenericPerson = Number.parseInt(String(value.version || "0"), 10) < 11;
   const allowLegacyPerformanceFraming = Number.parseInt(String(value.version || "0"), 10) < 12;
+  const allowLegacyPunctuation = GRANDFATHERED_PUNCTUATION_BUNDLES.has(path.basename(sourcePath));
   for (const candidate of value.candidates) {
     const key = `${candidate.planet}/${candidate.sign}`;
     if (seen.has(key)) fail(`duplicate candidate ${key}`);
@@ -71,7 +81,7 @@ function auditBundle(value) {
       allowLegacyTagline,
       allowLegacyRepeatedGenericPerson,
       allowLegacyPerformanceFraming
-    });
+    }, { allowLegacyPunctuation });
     if (lint.score !== 3 || lint.fails !== 0 || lint.warns !== 0) {
       fail(`${key} does not lint 3: ${JSON.stringify(lint.findings)}`);
     }
