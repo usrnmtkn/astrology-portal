@@ -1,0 +1,22 @@
+{
+  "target": {
+    "planet": "uranus",
+    "sign": "taurus",
+    "tier": "B"
+  },
+  "status": "failed_no_retry",
+  "calls": {
+    "writer": 1,
+    "readerJudge": 0,
+    "total": 1
+  },
+  "usage": {
+    "input_tokens": 4418,
+    "output_tokens": 4000,
+    "reasoning_tokens": 4000,
+    "total_tokens": 8418
+  },
+  "startedAt": "2026-08-14T20:32:11.576Z",
+  "completedAt": "2026-08-14T20:33:29.669Z",
+  "error": "OpenAI response status was incomplete: max_output_tokens."
+}

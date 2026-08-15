@@ -1,0 +1,33 @@
+{
+  "placementLint": {
+    "auditValid": true,
+    "contextErrors": [],
+    "context": {
+      "planet": "uranus",
+      "sign": "taurus",
+      "factContextSupplied": true
+    },
+    "score": 3,
+    "fails": 0,
+    "warns": 0,
+    "findings": [],
+    "notes": []
+  },
+  "pilotShapeChecks": {
+    "wordCountBySlot": {
+      "hook": 67,
+      "lived": 74,
+      "tagline": 11,
+      "turn": 67
+    },
+    "wordCount": 219,
+    "finalSentenceWords": 12,
+    "threeItemLists": {
+      "count": 0,
+      "matches": []
+    },
+    "asciiOnly": true,
+    "nonAscii": [],
+    "passed": true
+  }
+}
