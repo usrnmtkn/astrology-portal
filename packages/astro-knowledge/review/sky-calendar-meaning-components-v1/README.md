@@ -62,3 +62,15 @@ The regenerated wording layer has:
 - zero verbatim matches of eight or more words against the owner-written personal-register sources.
 
 These checks run during workbook generation and are pinned by `scripts/test-sky-calendar-meaning-components.mjs`.
+
+## Owner systemic re-pass, 2026-08-15
+
+The owner sampled Jupiter in Aquarius, Pluto in Cancer, and Chiron in Aries and found four faults distributed through the wording layer: source shadows dropped from otherwise positive meanings, abstractions acting like people, authored descriptions in place of recognizable behavior, and cumbersome constructions. The three owner-authored replacements are exact fixtures.
+
+All 174 units were rechecked. The evidence pointers, source hashes, coverage classes, fail-closed policy, and `PENDING OWNER` status did not change.
+
+- 138 units changed; 36 were reviewed and retained.
+- 39 sign units were one-sided relative to their source challenge or shadow before the pass; 0 remain one-sided.
+- Manifestations now fail the build when an abstraction narrates itself, a known cumbersome construction returns, or a manifestation exceeds 22 words.
+- Every formerly one-sided unit carries a concrete source-backed cost, overreach, avoidance, rigidity, or consequence.
+- The three owner-authored replacements are pinned by an exact regression test.

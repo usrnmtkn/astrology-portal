@@ -274,6 +274,242 @@
     },
     "rule": "Exact owner-written planet-sign rows govern where present. Missing pairs keep governed doctrine for meaning and use the nearest owner-approved planet or sign rows for register. No personal or second-person wording is copied into collective Sky components."
   },
+  "systemicRepass": {
+    "reviewedUnits": 174,
+    "changedUnits": 138,
+    "changedSignUnitKeys": [
+      "sky-sign/sun/aries",
+      "sky-sign/sun/taurus",
+      "sky-sign/sun/gemini",
+      "sky-sign/sun/cancer",
+      "sky-sign/sun/virgo",
+      "sky-sign/sun/libra",
+      "sky-sign/sun/scorpio",
+      "sky-sign/sun/sagittarius",
+      "sky-sign/sun/capricorn",
+      "sky-sign/sun/aquarius",
+      "sky-sign/sun/pisces",
+      "sky-sign/moon/aries",
+      "sky-sign/moon/taurus",
+      "sky-sign/moon/gemini",
+      "sky-sign/moon/cancer",
+      "sky-sign/moon/leo",
+      "sky-sign/moon/virgo",
+      "sky-sign/moon/libra",
+      "sky-sign/moon/scorpio",
+      "sky-sign/moon/sagittarius",
+      "sky-sign/moon/capricorn",
+      "sky-sign/moon/aquarius",
+      "sky-sign/moon/pisces",
+      "sky-sign/mercury/aries",
+      "sky-sign/mercury/taurus",
+      "sky-sign/mercury/cancer",
+      "sky-sign/mercury/leo",
+      "sky-sign/mercury/libra",
+      "sky-sign/mercury/scorpio",
+      "sky-sign/mercury/capricorn",
+      "sky-sign/mercury/aquarius",
+      "sky-sign/mercury/pisces",
+      "sky-sign/venus/aries",
+      "sky-sign/venus/taurus",
+      "sky-sign/venus/gemini",
+      "sky-sign/venus/cancer",
+      "sky-sign/venus/leo",
+      "sky-sign/venus/virgo",
+      "sky-sign/venus/libra",
+      "sky-sign/venus/scorpio",
+      "sky-sign/venus/sagittarius",
+      "sky-sign/venus/capricorn",
+      "sky-sign/venus/aquarius",
+      "sky-sign/venus/pisces",
+      "sky-sign/mars/aries",
+      "sky-sign/mars/taurus",
+      "sky-sign/mars/gemini",
+      "sky-sign/mars/cancer",
+      "sky-sign/mars/leo",
+      "sky-sign/mars/virgo",
+      "sky-sign/mars/libra",
+      "sky-sign/mars/scorpio",
+      "sky-sign/mars/sagittarius",
+      "sky-sign/mars/capricorn",
+      "sky-sign/mars/aquarius",
+      "sky-sign/mars/pisces",
+      "sky-sign/jupiter/aries",
+      "sky-sign/jupiter/taurus",
+      "sky-sign/jupiter/gemini",
+      "sky-sign/jupiter/cancer",
+      "sky-sign/jupiter/leo",
+      "sky-sign/jupiter/virgo",
+      "sky-sign/jupiter/libra",
+      "sky-sign/jupiter/scorpio",
+      "sky-sign/jupiter/sagittarius",
+      "sky-sign/jupiter/capricorn",
+      "sky-sign/jupiter/aquarius",
+      "sky-sign/jupiter/pisces",
+      "sky-sign/saturn/aries",
+      "sky-sign/saturn/taurus",
+      "sky-sign/saturn/gemini",
+      "sky-sign/saturn/cancer",
+      "sky-sign/saturn/leo",
+      "sky-sign/saturn/virgo",
+      "sky-sign/saturn/libra",
+      "sky-sign/saturn/scorpio",
+      "sky-sign/saturn/sagittarius",
+      "sky-sign/saturn/capricorn",
+      "sky-sign/saturn/pisces",
+      "sky-sign/uranus/aries",
+      "sky-sign/uranus/taurus",
+      "sky-sign/uranus/gemini",
+      "sky-sign/uranus/cancer",
+      "sky-sign/uranus/leo",
+      "sky-sign/uranus/virgo",
+      "sky-sign/uranus/libra",
+      "sky-sign/uranus/scorpio",
+      "sky-sign/uranus/sagittarius",
+      "sky-sign/uranus/capricorn",
+      "sky-sign/uranus/aquarius",
+      "sky-sign/uranus/pisces",
+      "sky-sign/neptune/aries",
+      "sky-sign/neptune/taurus",
+      "sky-sign/neptune/gemini",
+      "sky-sign/neptune/cancer",
+      "sky-sign/neptune/leo",
+      "sky-sign/neptune/virgo",
+      "sky-sign/neptune/libra",
+      "sky-sign/neptune/scorpio",
+      "sky-sign/neptune/sagittarius",
+      "sky-sign/neptune/capricorn",
+      "sky-sign/neptune/aquarius",
+      "sky-sign/neptune/pisces",
+      "sky-sign/pluto/aries",
+      "sky-sign/pluto/taurus",
+      "sky-sign/pluto/gemini",
+      "sky-sign/pluto/cancer",
+      "sky-sign/pluto/leo",
+      "sky-sign/pluto/virgo",
+      "sky-sign/pluto/libra",
+      "sky-sign/pluto/scorpio",
+      "sky-sign/pluto/sagittarius",
+      "sky-sign/pluto/capricorn",
+      "sky-sign/pluto/aquarius",
+      "sky-sign/pluto/pisces",
+      "sky-sign/chiron/aries",
+      "sky-sign/chiron/gemini",
+      "sky-sign/chiron/cancer",
+      "sky-sign/chiron/leo",
+      "sky-sign/chiron/virgo",
+      "sky-sign/chiron/libra",
+      "sky-sign/chiron/scorpio",
+      "sky-sign/chiron/sagittarius",
+      "sky-sign/chiron/capricorn",
+      "sky-sign/chiron/aquarius",
+      "sky-sign/chiron/pisces",
+      "sky-sign/lilith/aries",
+      "sky-sign/lilith/taurus",
+      "sky-sign/lilith/gemini",
+      "sky-sign/lilith/cancer",
+      "sky-sign/lilith/leo",
+      "sky-sign/lilith/virgo",
+      "sky-sign/lilith/libra",
+      "sky-sign/lilith/scorpio",
+      "sky-sign/lilith/sagittarius",
+      "sky-sign/lilith/capricorn",
+      "sky-sign/lilith/aquarius",
+      "sky-sign/lilith/pisces"
+    ],
+    "reviewedUnchangedUnits": 36,
+    "reviewedUnchangedKeys": [
+      "sky-sign/sun/leo",
+      "sky-sign/mercury/gemini",
+      "sky-sign/mercury/virgo",
+      "sky-sign/mercury/sagittarius",
+      "sky-sign/saturn/aquarius",
+      "sky-sign/chiron/taurus",
+      "sky-aspect-mechanism/conjunction",
+      "sky-aspect-mechanism/opposition",
+      "sky-aspect-mechanism/square",
+      "sky-aspect-mechanism/trine",
+      "sky-aspect-mechanism/sextile",
+      "sky-how/modality/cardinal/cardinal",
+      "sky-how/modality/cardinal/fixed",
+      "sky-how/modality/cardinal/mutable",
+      "sky-how/modality/fixed/cardinal",
+      "sky-how/modality/fixed/fixed",
+      "sky-how/modality/fixed/mutable",
+      "sky-how/modality/mutable/cardinal",
+      "sky-how/modality/mutable/fixed",
+      "sky-how/modality/mutable/mutable",
+      "sky-how/element/fire/fire",
+      "sky-how/element/fire/earth",
+      "sky-how/element/fire/air",
+      "sky-how/element/fire/water",
+      "sky-how/element/earth/fire",
+      "sky-how/element/earth/earth",
+      "sky-how/element/earth/air",
+      "sky-how/element/earth/water",
+      "sky-how/element/air/fire",
+      "sky-how/element/air/earth",
+      "sky-how/element/air/air",
+      "sky-how/element/air/water",
+      "sky-how/element/water/fire",
+      "sky-how/element/water/earth",
+      "sky-how/element/water/air",
+      "sky-how/element/water/water"
+    ],
+    "sourceShadowAudit": {
+      "reviewedUnits": 144,
+      "oneSidedBeforePass": 39,
+      "oneSidedBeforePassKeys": [
+        "sky-sign/moon/aries",
+        "sky-sign/moon/gemini",
+        "sky-sign/moon/libra",
+        "sky-sign/moon/sagittarius",
+        "sky-sign/moon/aquarius",
+        "sky-sign/mercury/aries",
+        "sky-sign/mercury/taurus",
+        "sky-sign/mercury/leo",
+        "sky-sign/mercury/libra",
+        "sky-sign/mercury/capricorn",
+        "sky-sign/mercury/aquarius",
+        "sky-sign/venus/aries",
+        "sky-sign/venus/taurus",
+        "sky-sign/venus/gemini",
+        "sky-sign/venus/cancer",
+        "sky-sign/venus/leo",
+        "sky-sign/venus/sagittarius",
+        "sky-sign/venus/capricorn",
+        "sky-sign/venus/aquarius",
+        "sky-sign/mars/leo",
+        "sky-sign/jupiter/gemini",
+        "sky-sign/jupiter/leo",
+        "sky-sign/jupiter/virgo",
+        "sky-sign/jupiter/libra",
+        "sky-sign/jupiter/capricorn",
+        "sky-sign/jupiter/aquarius",
+        "sky-sign/saturn/gemini",
+        "sky-sign/saturn/leo",
+        "sky-sign/saturn/virgo",
+        "sky-sign/saturn/sagittarius",
+        "sky-sign/uranus/aquarius",
+        "sky-sign/neptune/leo",
+        "sky-sign/neptune/virgo",
+        "sky-sign/chiron/aquarius",
+        "sky-sign/lilith/aries",
+        "sky-sign/lilith/gemini",
+        "sky-sign/lilith/cancer",
+        "sky-sign/lilith/leo",
+        "sky-sign/lilith/aquarius"
+      ],
+      "oneSidedAfterPass": 0,
+      "remainingOneSided": []
+    },
+    "ownerAuthoredReplacementKeys": [
+      "sky-sign/jupiter/aquarius",
+      "sky-sign/pluto/cancer",
+      "sky-sign/chiron/aries"
+    ],
+    "rule": "Every unit was rechecked against its governed meaning and source cost. Manifestations require a person or concrete act; authored abstraction and cumbersome construction fail the build."
+  },
   "wordingQuality": {
     "caps": {
       "openingConstruction": 4,
@@ -285,15 +521,15 @@
     "openingConstructionDistribution": [
       {
         "occurrences": 1,
-        "distinctValues": 103
+        "distinctValues": 104
       },
       {
         "occurrences": 2,
-        "distinctValues": 11
+        "distinctValues": 12
       },
       {
         "occurrences": 3,
-        "distinctValues": 5
+        "distinctValues": 4
       },
       {
         "occurrences": 4,
@@ -318,10 +554,6 @@
         3
       ],
       [
-        "people give",
-        3
-      ],
-      [
         "people protect",
         3
       ],
@@ -331,6 +563,10 @@
       ],
       [
         "each side",
+        2
+      ],
+      [
+        "people give",
         2
       ],
       [
@@ -371,6 +607,10 @@
       ],
       [
         "a beautiful",
+        1
+      ],
+      [
+        "a bigger",
         1
       ],
       [
@@ -474,6 +714,10 @@
         1
       ],
       [
+        "family loyalty",
+        1
+      ],
+      [
         "messages multiply",
         1
       ],
@@ -507,10 +751,6 @@
       ],
       [
         "people ask",
-        1
-      ],
-      [
-        "people back",
         1
       ],
       [
@@ -650,7 +890,7 @@
         1
       ],
       [
-        "someone hesitates",
+        "someone hangs",
         1
       ],
       [
@@ -797,130 +1037,6 @@
     ],
     "manifestationShapes": [
       [
-        "{planet} aimed at changing the system rather than winning one exception",
-        1
-      ],
-      [
-        "{planet} altering who controls the most consequential information",
-        1
-      ],
-      [
-        "{planet} appearing as the task that keeps a routine from failing",
-        1
-      ],
-      [
-        "{planet} appearing in the {planet} to call something defective",
-        1
-      ],
-      [
-        "{planet} appearing in what becomes more secure or materially useful",
-        1
-      ],
-      [
-        "{planet} appearing when loyalty is used to override {planet}",
-        1
-      ],
-      [
-        "{planet} appearing when several explanations exclude the lived one",
-        1
-      ],
-      [
-        "{planet} appearing where agreement requires repeated self adjustment",
-        1
-      ],
-      [
-        "{planet} appearing where people had mistaken sympathy for agreement",
-        1
-      ],
-      [
-        "{planet} applied where trust and private access are already at stake",
-        1
-      ],
-      [
-        "{planet} arriving as quick {planet} rather than discussion",
-        1
-      ],
-      [
-        "{planet} arriving only after the result proves it can last",
-        1
-      ],
-      [
-        "{planet} assigned to the choice that shows immediate commitment",
-        1
-      ],
-      [
-        "{planet} attached to the option that expands independence",
-        1
-      ],
-      [
-        "{planet} attached to the person expected to answer for the result",
-        1
-      ],
-      [
-        "{planet} attached to the version that enters the record",
-        1
-      ],
-      [
-        "{planet} attaching to a shared ideal before its limits are clear",
-        1
-      ],
-      [
-        "{planet} attaching to an idealized image rather than the actual work",
-        1
-      ],
-      [
-        "{planet} becoming difficult to locate inside a shared emotional field",
-        1
-      ],
-      [
-        "{planet} becoming durable only after responsibility is reassigned",
-        1
-      ],
-      [
-        "{planet} becoming exact because the consequence cannot be reversed",
-        1
-      ],
-      [
-        "{planet} becoming final where trust has been used as leverage",
-        1
-      ],
-      [
-        "{planet} becoming firm when security requires surrender",
-        1
-      ],
-      [
-        "{planet} becoming guarded after something cannot be taken back",
-        1
-      ],
-      [
-        "{planet} becoming hard to assign when compassion is widely shared",
-        1
-      ],
-      [
-        "{planet} becoming impossible to separate from personal visibility",
-        1
-      ],
-      [
-        "{planet} becoming larger than anyone can yet define",
-        1
-      ],
-      [
-        "{planet} becoming leverage in a decision with lasting consequences",
-        1
-      ],
-      [
-        "{planet} becoming more {planet} when {planet} feels uncertain",
-        1
-      ],
-      [
-        "{planet} becoming part of the shared arrangement rather than outside it",
-        1
-      ],
-      [
-        "{planet} becoming public where approval had set the terms",
-        1
-      ],
-      [
         "{planet} becoming real when it is shown where others can see it",
         1
       ],
@@ -929,403 +1045,7 @@
         1
       ],
       [
-        "{planet} becoming undeniable when trust and {planet} meet",
-        1
-      ],
-      [
-        "{planet} becoming visible in the consequence someone chooses to accept",
-        1
-      ],
-      [
-        "{planet} becoming visible when security can no longer be assumed",
-        1
-      ],
-      [
-        "{planet} being postponed until the required work is done",
-        1
-      ],
-      [
-        "{planet} being trusted because it arrives through care",
-        1
-      ],
-      [
-        "{planet} building through action before certainty arrives",
-        1
-      ],
-      [
-        "{planet} carrying a private vulnerability into a public decision",
-        1
-      ],
-      [
-        "{planet} challenging a belief that once set the horizon",
-        1
-      ],
-      [
-        "{planet} changing hands when independence becomes structurally possible",
-        1
-      ],
-      [
-        "{planet} changing the terms of mutual obligation",
-        1
-      ],
-      [
-        "{planet} changing when hidden stakes become visible",
-        1
-      ],
-      [
-        "{planet} claimed before anyone agrees the work is finished",
-        1
-      ],
-      [
-        "{planet} claimed before the existing process can respond",
-        1
-      ],
-      [
-        "{planet} claimed through the act others call premature",
-        1
-      ],
-      [
-        "{planet} concentrating around the person identified with the outcome",
-        1
-      ],
-      [
-        "{planet} concentrating around what cannot be casually replaced",
-        1
-      ],
-      [
-        "{planet} concentrating in the detail no one else can ignore",
-        1
-      ],
-      [
-        "{planet} concentrating on the fault that can actually be repaired",
-        1
-      ],
-      [
-        "{planet} concentrating where consequences are formally enforced",
-        1
-      ],
-      [
-        "{planet} consolidating around the person who can carry the {planet}",
-        1
-      ],
-      [
-        "{planet} continuing at the same point until a material limit gives way",
-        1
-      ],
-      [
-        "{planet} continuing through small corrections rather than one large {planet}",
-        1
-      ],
-      [
-        "{planet} deepening after trust survives a private disclosure",
-        1
-      ],
-      [
-        "{planet} deepening where people share the risk of being known",
-        1
-      ],
-      [
-        "{planet} defended against correction aimed at making difference manageable",
-        1
-      ],
-      [
-        "{planet} delayed until the {planet} can be kept",
-        1
-      ],
-      [
-        "{planet} depending on access to what others cannot safely disclose",
-        1
-      ],
-      [
-        "{planet} depending on precision rather than display",
-        1
-      ],
-      [
-        "{planet} depending on whether difference is allowed without explanation",
-        1
-      ],
-      [
-        "{planet} dissolving the line between shared feeling and shared duty",
-        1
-      ],
-      [
-        "{planet} distance protecting room to remain part of the group",
-        1
-      ],
-      [
-        "{planet} distributed so one person is not carrying all of it",
-        1
-      ],
-      [
         "{planet} divided according to terms both sides must answer to",
-        1
-      ],
-      [
-        "{planet} divided according to the terms people agreed to",
-        1
-      ],
-      [
-        "{planet} divided among several messages errands or {planet}",
-        1
-      ],
-      [
-        "{planet} enlarging the horizon beyond the current limit",
-        1
-      ],
-      [
-        "{planet} entering negotiation before either side gets its preferred {planet}",
-        1
-      ],
-      [
-        "{planet} entering the negotiation where politeness had hidden the cost",
-        1
-      ],
-      [
-        "{planet} entering the question of who is free to imagine a different future",
-        1
-      ],
-      [
-        "{planet} exercised through the method everyone must use",
-        1
-      ],
-      [
-        "{planet} expanding faster than the decision can narrow",
-        1
-      ],
-      [
-        "{planet} expanding through duties that increase authority",
-        1
-      ],
-      [
-        "{planet} expanding where empathy loosens an old boundary",
-        1
-      ],
-      [
-        "{planet} expanding where facts cannot set a firm {planet}",
-        1
-      ],
-      [
-        "{planet} exposed when the method has to produce a usable result",
-        1
-      ],
-      [
-        "{planet} exposing who was allowed to name the larger truth",
-        1
-      ],
-      [
-        "{planet} expressed by making space for a larger possibility",
-        1
-      ],
-      [
-        "{planet} expressed by supporting a belief with visible reach",
-        1
-      ],
-      [
-        "{planet} expressed through inclusion in private life",
-        1
-      ],
-      [
-        "{planet} extending beyond the original audience",
-        1
-      ],
-      [
-        "{planet} extending beyond what either person has clearly promised",
-        1
-      ],
-      [
-        "{planet} extending past the point where responsibility is clear",
-        1
-      ],
-      [
-        "{planet} extending toward the larger {planet} before the near one is settled",
-        1
-      ],
-      [
-        "{planet} falling on the person who protects private continuity",
-        1
-      ],
-      [
-        "{planet} felt through empathy even when facts remain uncertain",
-        1
-      ],
-      [
-        "{planet} following an emotional current before the {planet} is defined",
-        1
-      ],
-      [
-        "{planet} following the choice that leaves more room to grow",
-        1
-      ],
-      [
-        "{planet} following the claim farther than confidence expected",
-        1
-      ],
-      [
-        "{planet} following the first {planet} move rather than the longest {planet}",
-        1
-      ],
-      [
-        "{planet} forced into a {planet} designed to resist quick {planet}",
-        1
-      ],
-      [
-        "{planet} gained through a more useful process",
-        1
-      ],
-      [
-        "{planet} gaining force from conviction rather than immediate proof",
-        1
-      ],
-      [
-        "{planet} gathering around a resource no one wants to surrender",
-        1
-      ],
-      [
-        "{planet} gathering around a rule that limits independence",
-        1
-      ],
-      [
-        "{planet} gathering around a system people believe can change",
-        1
-      ],
-      [
-        "{planet} gathering around being useful to the group but not known by it",
-        1
-      ],
-      [
-        "{planet} gathering around the detail that others call insignificant",
-        1
-      ],
-      [
-        "{planet} going to the {planet} that changes the system",
-        1
-      ],
-      [
-        "{planet} growing around who can define the larger truth",
-        1
-      ],
-      [
-        "{planet} growing through direct pursuit instead of careful {planet}",
-        1
-      ],
-      [
-        "{planet} growing through the conversation that keeps changing shape",
-        1
-      ],
-      [
-        "{planet} held where other people s ideals blur personal {planet}",
-        1
-      ],
-      [
-        "{planet} hidden by the urgency of beginning",
-        1
-      ],
-      [
-        "{planet} hidden inside the role that protects the household",
-        1
-      ],
-      [
-        "{planet} holding back what cannot be safely recovered once given",
-        1
-      ],
-      [
-        "{planet} holding once they are written in concrete {planet}",
-        1
-      ],
-      [
-        "{planet} holding only where uncertainty is named rather than denied",
-        1
-      ],
-      [
-        "{planet} increasing after the method produces a measurable result",
-        1
-      ],
-      [
-        "{planet} increasing the resources people can actually maintain",
-        1
-      ],
-      [
-        "{planet} increasing where boundaries and responsibility remain diffuse",
-        1
-      ],
-      [
-        "{planet} increasing where care has made risk feel survivable",
-        1
-      ],
-      [
-        "{planet} increasing where control and trust are intertwined",
-        1
-      ],
-      [
-        "{planet} intensifying when pride and recognition are on the line",
-        1
-      ],
-      [
-        "{planet} judged by whether it can support a lasting structure",
-        1
-      ],
-      [
-        "{planet} limited to what the details can support",
-        1
-      ],
-      [
-        "{planet} limiting how much pride can direct the decision",
-        1
-      ],
-      [
-        "{planet} losing clarity around what actually needs correction",
-        1
-      ],
-      [
-        "{planet} losing force when several needs merge into one another",
-        1
-      ],
-      [
-        "{planet} making room for a difference the old {planet} could not hold",
-        1
-      ],
-      [
-        "{planet} measured by what can be kept without apology",
-        1
-      ],
-      [
-        "{planet} measured by what can still stand after accountability arrives",
-        1
-      ],
-      [
-        "{planet} measured by whether attention makes daily life work better",
-        1
-      ],
-      [
-        "{planet} measured by whether food money or shelter remains dependable",
-        1
-      ],
-      [
-        "{planet} measured by whether it creates a durable outcome",
-        1
-      ],
-      [
-        "{planet} moving between versions that authority wanted reduced to one",
-        1
-      ],
-      [
-        "{planet} moving farther than the original plan was built to contain",
-        1
-      ],
-      [
-        "{planet} moving through a shared feeling before anyone can define the plan",
-        1
-      ],
-      [
-        "{planet} moving through the institution that grants wider reach",
-        1
-      ],
-      [
-        "{planet} moving when a new version of the story circulates",
-        1
-      ],
-      [
-        "{planet} moving with the wording instead of staying on one issue",
         1
       ],
       [
@@ -1333,255 +1053,11 @@
         1
       ],
       [
-        "{planet} narrowing into a dispute about method",
-        1
-      ],
-      [
-        "{planet} negotiated through several competing accounts of what happened",
-        1
-      ],
-      [
-        "{planet} operating through an ideal no single person appears to own",
-        1
-      ],
-      [
-        "{planet} organized around the {planet} an authority will accept",
-        1
-      ],
-      [
-        "{planet} organized through a shared system instead of personal closeness",
-        1
-      ],
-      [
-        "{planet} preserved even when a faster change is available",
-        1
-      ],
-      [
-        "{planet} preserved through naming what the official language leaves out",
-        1
-      ],
-      [
-        "{planet} protected from collective pressure to become easier to manage",
-        1
-      ],
-      [
-        "{planet} redirected toward terms that do not leave one party carrying the cost",
-        1
-      ],
-      [
-        "{planet} relief depending on whether practical help actually works",
-        1
-      ],
-      [
-        "{planet} remaining possible because independence is built into the terms",
-        1
-      ],
-      [
-        "{planet} requiring a new way to preserve what still matters",
-        1
-      ],
-      [
-        "{planet} requiring enough trust to share real leverage",
-        1
-      ],
-      [
-        "{planet} requiring proof before action receives backing",
-        1
-      ],
-      [
-        "{planet} requiring terms that do not depend on one side yielding",
-        1
-      ],
-      [
-        "{planet} resting on cooperation that remains reciprocal",
-        1
-      ],
-      [
-        "{planet} resurfacing at the moment someone has to claim the right to begin",
-        1
-      ],
-      [
-        "{planet} revealed by who can act without waiting for consent",
-        1
-      ],
-      [
-        "{planet} revealing who remains {planet} by a supposedly universal rule",
-        1
-      ],
-      [
         "{planet} revised to distribute responsibility more fairly",
         1
       ],
       [
-        "{planet} rising as people compare more than one route",
-        1
-      ],
-      [
-        "{planet} rising faster than practical constraints can answer",
-        1
-      ],
-      [
-        "{planet} rising when {planet} is acknowledged openly",
-        1
-      ],
-      [
-        "{planet} safety depending on who is trusted with private information",
-        1
-      ],
-      [
-        "{planet} secured through a structure that outlives the immediate dispute",
-        1
-      ],
-      [
-        "{planet} secured through reliability rather than reassurance",
-        1
-      ],
-      [
-        "{planet} settling a {planet} people had hoped to postpone",
-        1
-      ],
-      [
-        "{planet} settling around the resource people cannot afford to lose",
-        1
-      ],
-      [
-        "{planet} settling on the resource that must not run out",
-        1
-      ],
-      [
-        "{planet} shared widely enough to change who holds access",
-        1
-      ],
-      [
-        "{planet} shifting when information reaches a wider audience",
-        1
-      ],
-      [
-        "{planet} shifting when reciprocal terms become enforceable",
-        1
-      ],
-      [
-        "{planet} shown by preserving what people already share",
-        1
-      ],
-      [
-        "{planet} shown by taking responsibility when {planet} stay private",
-        1
-      ],
-      [
-        "{planet} shown through commitments that survive inconvenience",
-        1
-      ],
-      [
-        "{planet} spreading because the boundary of responsibility stays unclear",
-        1
-      ],
-      [
         "{planet} spreading because the exception reveals a wider problem",
-        1
-      ],
-      [
-        "{planet} spreading through access to a different explanation",
-        1
-      ],
-      [
-        "{planet} spreading through recognition that feels personally earned",
-        1
-      ],
-      [
-        "{planet} spreading where care has no agreed boundary",
-        1
-      ],
-      [
-        "{planet} strained by a compromise that looks fair but feels uneven",
-        1
-      ],
-      [
-        "{planet} surfacing when the person doing the work is not named",
-        1
-      ],
-      [
-        "{planet} sustained by terms neither person has to disappear inside",
-        1
-      ],
-      [
-        "{planet} sustained through duty after urgency has passed",
-        1
-      ],
-      [
-        "{planet} taken before anyone agrees it is in play",
-        1
-      ],
-      [
-        "{planet} taken to protect someone before the reason is explained",
-        1
-      ],
-      [
-        "{planet} taking the form of keeping people informed",
-        1
-      ],
-      [
-        "{planet} taking the form of wider protection or belonging",
-        1
-      ],
-      [
-        "{planet} tested by who responds when something happens",
-        1
-      ],
-      [
-        "{planet} tied to being chosen distinctly rather than generally included",
-        1
-      ],
-      [
-        "{planet} tied to having a recognizable place in the group",
-        1
-      ],
-      [
-        "{planet} turning directly into {planet} before a process is agreed",
-        1
-      ],
-      [
-        "{planet} unsettling the role that once guaranteed emotional safety",
-        1
-      ],
-      [
-        "{planet} used to defend personal credit as well as the point itself",
-        1
-      ],
-      [
-        "{planet} widening around a shared belief rather than a shared history",
-        1
-      ],
-      [
-        "{planet} widening beyond the story that defined acceptable desire",
-        1
-      ],
-      [
-        "{planet} widening the horizon while obscuring the practical distance",
-        1
-      ],
-      [
-        "{planet} widening through a reform meant to reach the whole group",
-        1
-      ],
-      [
-        "{planet} widening through a shared horizon rather than a fixed plan",
-        1
-      ],
-      [
-        "{planet} widening when freedom of movement is restricted",
-        1
-      ],
-      [
-        "{planet} widening when the terms distribute it more fairly",
-        1
-      ],
-      [
-        "{planet} withheld until the source of control becomes clear",
-        1
-      ],
-      [
-        "{planet} withheld until trust and access are settled",
         1
       ],
       [
@@ -1697,11 +1173,39 @@
         1
       ],
       [
+        "a group assuming everyone has access because the {planet} says they should",
+        1
+      ],
+      [
+        "a group changing the {planet} so quickly that people lose the support the old one provided",
+        1
+      ],
+      [
+        "a group getting confident enough to challenge a rule that only worked for a few",
+        1
+      ],
+      [
         "a group norm challenged for welcoming difference only in approved forms",
         1
       ],
       [
+        "a group pressing for a different arrangement",
+        1
+      ],
+      [
+        "a group pressing the issue until everyone can see who benefits from the current arrangement",
+        1
+      ],
+      [
         "a group redesigning the rule that once limited its own {planet}",
+        1
+      ],
+      [
+        "a group rewriting its rules and redistributing {planet} across the system",
+        1
+      ],
+      [
+        "a group supporting a system that does not yet exist because it answers a shared {planet}",
         1
       ],
       [
@@ -1757,15 +1261,15 @@
         1
       ],
       [
+        "a program policy or {planet} expanding because access is opened to more people",
+        1
+      ],
+      [
         "a public {planet} expected to represent rules that apply to everyone",
         1
       ],
       [
         "a public image carrying more {planet} than the contribution can support",
-        1
-      ],
-      [
-        "a public role carrying {planet} that personal confidence cannot erase",
         1
       ],
       [
@@ -1805,10 +1309,6 @@
         1
       ],
       [
-        "a shared {planet} represented through visible generosity",
-        1
-      ],
-      [
         "a small correction reopening the fear of never being useful enough",
         1
       ],
@@ -1818,10 +1318,6 @@
       ],
       [
         "a strong belief making one {planet} stand for a larger cause",
-        1
-      ],
-      [
-        "a strong reaction when independence is treated as selfishness",
         1
       ],
       [
@@ -1857,10 +1353,6 @@
         1
       ],
       [
-        "agreement sustained by avoiding the unequal term underneath it",
-        1
-      ],
-      [
         "an {planet} becoming credible when it fits a long structure",
         1
       ],
@@ -1877,10 +1369,6 @@
         1
       ],
       [
-        "an {planet} emerging from shared access rather than private advantage",
-        1
-      ],
-      [
         "an {planet} first move changing who has room to act",
         1
       ],
@@ -1890,6 +1378,14 @@
       ],
       [
         "an {planet} improved through one practical adjustment",
+        1
+      ],
+      [
+        "an {planet} limiting how much personal pride can direct the decision",
+        1
+      ],
+      [
+        "an {planet} making the {planet} official after people tried to postpone it",
         1
       ],
       [
@@ -1909,7 +1405,15 @@
         1
       ],
       [
+        "an {planet} requiring proof before backing the action",
+        1
+      ],
+      [
         "an {planet} valued because it protects belonging",
+        1
+      ],
+      [
+        "an {planet} withholding recognition until the visible contribution meets the {planet}",
         1
       ],
       [
@@ -1930,6 +1434,10 @@
       ],
       [
         "an agreement slowing until the price and practical {planet} are clear",
+        1
+      ],
+      [
+        "an authority making an {planet} sound settled before anyone has named its limits",
         1
       ],
       [
@@ -1965,6 +1473,10 @@
         1
       ],
       [
+        "an institution controlling who gets the wider reach",
+        1
+      ],
+      [
         "an irreversible choice shaped by information that remains {planet}",
         1
       ],
@@ -1985,67 +1497,11 @@
         1
       ],
       [
-        "authority confronted where respectability has been used as control",
-        1
-      ],
-      [
-        "authority granted after someone accepts responsibility for the outcome",
-        1
-      ],
-      [
-        "authority lending certainty to an {planet} that still lacks limits",
-        1
-      ],
-      [
         "balance becoming fragile when one side s need is treated as disruption",
         1
       ],
       [
-        "belief becoming {planet} when one story is declared universally true",
-        1
-      ],
-      [
-        "belief tested by the {planet} of an institution or law",
-        1
-      ],
-      [
-        "belonging {planet} until unequal emotional labor becomes hard to see",
-        1
-      ],
-      [
-        "belonging reorganized around a form of care no longer kept private",
-        1
-      ],
-      [
-        "belonging tested by {planet} that are not distributed equally",
-        1
-      ],
-      [
-        "care becoming protective where belonging once felt conditional",
-        1
-      ],
-      [
-        "care demonstrated by noticing the strain and reducing it",
-        1
-      ],
-      [
-        "care determining what people are willing to preserve together",
-        1
-      ],
-      [
-        "care narrowed by a {planet} on time money or capacity",
-        1
-      ],
-      [
-        "care turning into {planet} where belonging feels conditional",
-        1
-      ],
-      [
-        "care withheld from a role that expects feeling to be performed",
-        1
-      ],
-      [
-        "care work becoming the {planet} everyone depends on",
+        "both sides responding in ways that show whether the {planet} is fair",
         1
       ],
       [
@@ -2054,22 +1510,6 @@
       ],
       [
         "changing language held to a {planet} that must remain consistent",
-        1
-      ],
-      [
-        "collective {planet} exposing who benefits from the current arrangement",
-        1
-      ],
-      [
-        "collective {planet} gathering around a system that does not yet exist",
-        1
-      ],
-      [
-        "comfort becoming part of how {planet} is measured",
-        1
-      ],
-      [
-        "comfort carrying an {planet} value that obscures the real cost",
         1
       ],
       [
@@ -2089,35 +1529,15 @@
         1
       ],
       [
-        "desire protected from someone else s claim to private access",
-        1
-      ],
-      [
         "difficulty trusting comfort that could still be taken away",
         1
       ],
       [
-        "duty becoming the place where {planet} is least allowed",
+        "family loyalty influencing a decision that affects people outside the family",
         1
       ],
       [
-        "empathy reopening {planet} that has not been clearly separated from others",
-        1
-      ],
-      [
-        "exclusion remembered when a shared rule erases a particular need",
-        1
-      ],
-      [
-        "fairness language used to conceal unequal {planet}",
-        1
-      ],
-      [
-        "fairness tested by who carries the {planet} of compromise",
-        1
-      ],
-      [
-        "family loyalty giving private influence public consequence",
+        "family members using private loyalty to influence who gets acknowledged publicly",
         1
       ],
       [
@@ -2133,39 +1553,11 @@
         1
       ],
       [
-        "generosity making an individual contribution more visible",
-        1
-      ],
-      [
-        "group {planet} building behind a different arrangement",
-        1
-      ],
-      [
-        "group {planet} making {planet} access feel universally available",
-        1
-      ],
-      [
-        "group belonging tested by whether difference is tolerated in practice",
-        1
-      ],
-      [
-        "group rules redistributing {planet} across an entire system",
-        1
-      ],
-      [
-        "hesitation around acting first after initiative was once punished",
+        "hesitating to volunteer apply speak first or take the lead after being punished for it before",
         1
       ],
       [
         "hidden leverage exposed by a {planet} no one can reverse",
-        1
-      ],
-      [
-        "hurt becoming visible when appreciation is withheld",
-        1
-      ],
-      [
-        "independence tested by a {planet} that cannot be rushed",
         1
       ],
       [
@@ -2177,31 +1569,7 @@
         1
       ],
       [
-        "individual visibility becoming a screen for a collective {planet}",
-        1
-      ],
-      [
-        "information becoming more persuasive as its {planet} become less exact",
-        1
-      ],
-      [
-        "institutional {planet} becoming visible in who assigns lasting duty",
-        1
-      ],
-      [
-        "interest sustained by more than one possible arrangement",
-        1
-      ],
-      [
         "long {planet} deciding which ambition remains workable",
-        1
-      ],
-      [
-        "longing adding {planet} to an arrangement before its limits are visible",
-        1
-      ],
-      [
-        "longing making an old loss feel collectively meaningful",
         1
       ],
       [
@@ -2213,19 +1581,11 @@
         1
       ],
       [
-        "meaning carried by tone when the stated {planet} remain incomplete",
-        1
-      ],
-      [
         "memory softening the difference between care and {planet}",
         1
       ],
       [
-        "mutual response becoming the evidence that an {planet} is fair",
-        1
-      ],
-      [
-        "new {planet} treated as reasons to act now rather than wait",
+        "more people benefiting after the terms distribute the {planet} more fairly",
         1
       ],
       [
@@ -2269,6 +1629,394 @@
         1
       ],
       [
+        "people {planet} closer after each person risks being known honestly",
+        1
+      ],
+      [
+        "people {planet} connected through empathy even while the facts remain uncertain",
+        1
+      ],
+      [
+        "people accommodating every side until no one can tell what was actually agreed",
+        1
+      ],
+      [
+        "people acting more independently after a different explanation becomes available",
+        1
+      ],
+      [
+        "people acting to change the system instead of winning one exception",
+        1
+      ],
+      [
+        "people adding corrections until the larger {planet} becomes too small to matter",
+        1
+      ],
+      [
+        "people arguing over the resource no one wants to surrender",
+        1
+      ],
+      [
+        "people carrying a {planet} farther than the original plan was built to contain",
+        1
+      ],
+      [
+        "people carrying someone s work to an audience it was not made for",
+        1
+      ],
+      [
+        "people challenging the rule that limits how they can act",
+        1
+      ],
+      [
+        "people changing course together before anyone can define the plan",
+        1
+      ],
+      [
+        "people changing the argument each time the wording changes",
+        1
+      ],
+      [
+        "people changing the size of the risk when the hidden stakes become visible",
+        1
+      ],
+      [
+        "people changing who controls the system once independence becomes possible",
+        1
+      ],
+      [
+        "people changing who gets {planet} when a new version of the story circulates",
+        1
+      ],
+      [
+        "people changing who holds {planet} by making reciprocal terms enforceable",
+        1
+      ],
+      [
+        "people choosing each other because they can imagine a wider life together",
+        1
+      ],
+      [
+        "people choosing the option that gives them more room to act independently",
+        1
+      ],
+      [
+        "people choosing the option that leaves more room to grow",
+        1
+      ],
+      [
+        "people choosing the reassuring option while overlooking its real cost",
+        1
+      ],
+      [
+        "people correcting the plan repeatedly because no real version can match the {planet}",
+        1
+      ],
+      [
+        "people counting comfort as part of what makes the {planet} worthwhile",
+        1
+      ],
+      [
+        "people crediting the {planet} that changes the system",
+        1
+      ],
+      [
+        "people crediting the image they want to believe instead of the work that was done",
+        1
+      ],
+      [
+        "people crediting the story they want to believe instead of checking the work",
+        1
+      ],
+      [
+        "people deciding who belongs by whether difference can remain unexplained",
+        1
+      ],
+      [
+        "people dividing {planet} according to the terms they agreed to",
+        1
+      ],
+      [
+        "people dividing the {planet} so one person is not carrying all of it",
+        1
+      ],
+      [
+        "people drawing more people into the {planet} because no one knows who is responsible",
+        1
+      ],
+      [
+        "people enforcing an ideal while each person denies owning it",
+        1
+      ],
+      [
+        "people enlarging the {planet} faster than the practical limits can answer",
+        1
+      ],
+      [
+        "people feeling controlled without being able to name who is doing it",
+        1
+      ],
+      [
+        "people finding common {planet} in a group commitment instead of private closeness",
+        1
+      ],
+      [
+        "people gaining {planet} by using a more useful process",
+        1
+      ],
+      [
+        "people getting more confident as they compare more than one route",
+        1
+      ],
+      [
+        "people giving {planet} to the person expected to answer for the result",
+        1
+      ],
+      [
+        "people giving {planet} to the person who got the detail right instead of the best performer",
+        1
+      ],
+      [
+        "people giving an old loss shared meaning because they still long for what was lost",
+        1
+      ],
+      [
+        "people giving credit to the contribution that breaks precedent",
+        1
+      ],
+      [
+        "people giving more {planet} to the person identified with the outcome",
+        1
+      ],
+      [
+        "people giving more {planet} to the person who can carry the {planet}",
+        1
+      ],
+      [
+        "people hoping for more after empathy loosens an old boundary",
+        1
+      ],
+      [
+        "people idealizing the family bond until they stop seeing who carries the emotional labor",
+        1
+      ],
+      [
+        "people imagining more because the facts do not set a firm {planet}",
+        1
+      ],
+      [
+        "people judging fairness by who carries the {planet} of the compromise",
+        1
+      ],
+      [
+        "people judging progress by endurance instead of speed",
+        1
+      ],
+      [
+        "people judging the {planet} by whether it creates a durable outcome",
+        1
+      ],
+      [
+        "people judging the {planet} by whether that attention makes daily life work better",
+        1
+      ],
+      [
+        "people judging their {planet} by whether food money or shelter remains dependable",
+        1
+      ],
+      [
+        "people keeping {planet} alive through terms that do not erase either person",
+        1
+      ],
+      [
+        "people keeping an agreement by avoiding the unequal term underneath it",
+        1
+      ],
+      [
+        "people keeping the plan intact by naming what remains uncertain",
+        1
+      ],
+      [
+        "people limiting the larger plan to what the details can support",
+        1
+      ],
+      [
+        "people looking beyond the current limit because they believe a larger option exists",
+        1
+      ],
+      [
+        "people looking farther ahead while overlooking the practical distance",
+        1
+      ],
+      [
+        "people losing track of responsibility inside a structure built around appearances",
+        1
+      ],
+      [
+        "people losing track of who holds private power as the {planet} soften",
+        1
+      ],
+      [
+        "people making progress only after the work has {planet} and {planet}",
+        1
+      ],
+      [
+        "people making room for newcomers who share the belief but not the history",
+        1
+      ],
+      [
+        "people making the {planet} last by reassigning responsibility",
+        1
+      ],
+      [
+        "people measuring the improvement by what becomes safer or more useful",
+        1
+      ],
+      [
+        "people narrowing the {planet} to a dispute about method",
+        1
+      ],
+      [
+        "people negotiating the disagreement before either side gets its preferred {planet}",
+        1
+      ],
+      [
+        "people opening more routes than they have time or attention to follow",
+        1
+      ],
+      [
+        "people overlooking unequal terms because they share the same ideal",
+        1
+      ],
+      [
+        "people overlooking where reciprocity stopped because they still share the {planet}",
+        1
+      ],
+      [
+        "people promising broader access before the system is ready to deliver it",
+        1
+      ],
+      [
+        "people questioning whether they belong when the {planet} are not distributed equally",
+        1
+      ],
+      [
+        "people reading the tone when the stated {planet} remain incomplete",
+        1
+      ],
+      [
+        "people recognizing the first {planet} move instead of the person who carried the work longest",
+        1
+      ],
+      [
+        "people redirecting their {planet} toward terms that do not leave one party carrying the cost",
+        1
+      ],
+      [
+        "people reorganizing who belongs after private care becomes a public concern",
+        1
+      ],
+      [
+        "people seeing institutional {planet} in who gets to assign lasting duty",
+        1
+      ],
+      [
+        "people seeing the {planet} once the method has to produce a usable result",
+        1
+      ],
+      [
+        "people seeing who has {planet} after the expected security disappears",
+        1
+      ],
+      [
+        "people seeing who has {planet} by who can act without waiting for consent",
+        1
+      ],
+      [
+        "people seeing who has {planet} when trust and {planet} depend on the same decision",
+        1
+      ],
+      [
+        "people starting quickly so they do not have to admit the direction is {planet}",
+        1
+      ],
+      [
+        "people staying connected because the {planet} leaves room for independence",
+        1
+      ],
+      [
+        "people staying interested because more than one arrangement remains possible",
+        1
+      ],
+      [
+        "people staying interested because the conversation keeps changing shape",
+        1
+      ],
+      [
+        "people struggling to assign {planet} because everyone feels for the person involved",
+        1
+      ],
+      [
+        "people supporting a {planet} no one can define clearly yet",
+        1
+      ],
+      [
+        "people taking a larger risk after someone makes the consequences feel survivable",
+        1
+      ],
+      [
+        "people taking a larger step only after there is enough trust to share real leverage",
+        1
+      ],
+      [
+        "people treating a shared feeling as if it creates the same duty for everyone",
+        1
+      ],
+      [
+        "people treating one person s {planet} as legitimate because that person receives recognition",
+        1
+      ],
+      [
+        "people trusting a shared ideal before anyone names its limits",
+        1
+      ],
+      [
+        "people trusting an appealing explanation more as its {planet} become less exact",
+        1
+      ],
+      [
+        "people trusting the {planet} because someone they rely on delivers it carefully",
+        1
+      ],
+      [
+        "people trusting the impressive image after it has stopped matching the work behind it",
+        1
+      ],
+      [
+        "people using a new {planet} to increase the resources they can maintain",
+        1
+      ],
+      [
+        "people using new resources to protect or include more of the group",
+        1
+      ],
+      [
+        "people valuing different contributions when the overall exchange remains balanced",
+        1
+      ],
+      [
+        "people valuing the bond more once they understand what cannot be replaced",
+        1
+      ],
+      [
+        "people waiting to give {planet} until the result proves it can last",
+        1
+      ],
+      [
+        "people widening the fight when a rule limits where they can go",
+        1
+      ],
+      [
         "personal {planet} fading into a shared emotional response",
         1
       ],
@@ -2281,79 +2029,11 @@
         1
       ],
       [
-        "privacy guarded because some experiences cannot be made harmless afterward",
-        1
-      ],
-      [
-        "private {planet} intensifying because the consequence cannot be reversed",
-        1
-      ],
-      [
-        "private {planet} setting the terms before public plans can continue",
-        1
-      ],
-      [
-        "private access disrupted before trust can be renegotiated",
-        1
-      ],
-      [
-        "private belonging protected from demands for emotional access",
-        1
-      ],
-      [
-        "private consequences changing what can be said in public",
-        1
-      ],
-      [
-        "private loyalty shaping who receives public acknowledgment",
-        1
-      ],
-      [
-        "private power becoming harder to locate as {planet} soften",
-        1
-      ],
-      [
-        "progress becoming inseparable from {planet} and {planet}",
-        1
-      ],
-      [
-        "progress depending on correction that can be repeated reliably",
-        1
-      ],
-      [
-        "progress measured by endurance rather than speed",
-        1
-      ],
-      [
         "public {planet} tied to who protected the budget or the material",
         1
       ],
       [
-        "recognition {planet} when it depends on shrinking the difficult part",
-        1
-      ],
-      [
-        "recognition attaching to the story people want to believe",
-        1
-      ],
-      [
-        "recognition deciding whose {planet} appears legitimate",
-        1
-      ],
-      [
-        "recognition shifting toward the contribution that breaks precedent",
-        1
-      ],
-      [
-        "recognition touching the earlier fear that contribution would be dismissed",
-        1
-      ],
-      [
-        "recognition withheld until the visible contribution meets the {planet}",
-        1
-      ],
-      [
-        "responsibility blurred by a structure built around appearances",
+        "reacting strongly when independence is treated as selfishness",
         1
       ],
       [
@@ -2373,35 +2053,599 @@
         1
       ],
       [
-        "shared {planet} blurring the point where reciprocity stopped",
-        1
-      ],
-      [
-        "shared {planet} defined through balance rather than identical contribution",
-        1
-      ],
-      [
-        "shared {planet} forming around a group commitment rather than private closeness",
-        1
-      ],
-      [
-        "shared {planet} measured against consequence status and durability",
-        1
-      ],
-      [
-        "shared {planet} revised when people compare what each option offers",
-        1
-      ],
-      [
-        "shared ideals making unequal terms difficult to notice",
-        1
-      ],
-      [
         "someone {planet} included only after their {planet} enter the agreement",
         1
       ],
       [
+        "someone {planet} safer after the {planet} they provided is acknowledged openly",
+        1
+      ],
+      [
+        "someone {planet} they belong after the group gives them a recognizable place",
+        1
+      ],
+      [
+        "someone absorbing more {planet} because no one has agreed where care ends",
+        1
+      ],
+      [
+        "someone accepting more responsibility because it also increases their authority",
+        1
+      ],
+      [
+        "someone accepting the consequence rather than obeying the demand",
+        1
+      ],
+      [
+        "someone acting detached while still expecting the {planet} to remain available",
+        1
+      ],
+      [
+        "someone acting independently and changing who controls the most consequential information",
+        1
+      ],
+      [
+        "someone acting independently of the belief that once set the horizon",
+        1
+      ],
+      [
+        "someone acting more forcefully because conviction matters more than immediate proof",
+        1
+      ],
+      [
+        "someone acting on the {planet} before the group agrees on a process",
+        1
+      ],
+      [
+        "someone acting on the feeling before they can name the {planet}",
+        1
+      ],
+      [
+        "someone acting to protect another person before explaining why",
+        1
+      ],
+      [
+        "someone agreeing to keep the peace and swallowing the {planet} that would complicate it",
+        1
+      ],
+      [
+        "someone analyzing the group s {planet} while acting as if they have none",
+        1
+      ],
+      [
+        "someone applying {planet} where trust and private access are already at stake",
+        1
+      ],
+      [
+        "someone asking to {planet} what each side owes so there is more room to act alone",
+        1
+      ],
+      [
+        "someone becoming more confident by acting before certainty arrives",
+        1
+      ],
+      [
+        "someone becoming responsible for the detail no one else can ignore",
+        1
+      ],
+      [
+        "someone bringing a private {planet} into the room before the public plan can continue",
+        1
+      ],
+      [
+        "someone carrying more {planet} because they also control the access",
+        1
+      ],
+      [
+        "someone challenging a universal rule and showing who it still excludes",
+        1
+      ],
+      [
+        "someone changing the story whenever the last version begins to carry consequences",
+        1
+      ],
+      [
+        "someone changing what they say publicly because the private consequences are real",
+        1
+      ],
+      [
+        "someone choosing exact {planet} because the consequence cannot be reversed",
+        1
+      ],
+      [
+        "someone claiming {planet} before anyone agrees the work is finished",
+        1
+      ],
+      [
+        "someone claiming {planet} before the existing process can respond",
+        1
+      ],
+      [
+        "someone claiming the right to act even when others call the move premature",
+        1
+      ],
+      [
+        "someone claiming visibility without making the contribution more acceptable first",
+        1
+      ],
+      [
+        "someone confronting an authority that has used respectability as control",
+        1
+      ],
+      [
+        "someone continuing through small corrections instead of making one large {planet}",
+        1
+      ],
+      [
+        "someone continuing to help after no one can say who is responsible",
+        1
+      ],
+      [
+        "someone controlling the outcome through the method everyone must use",
+        1
+      ],
+      [
+        "someone correcting every small flaw until the work becomes punishing to finish",
+        1
+      ],
+      [
+        "someone creating drama because ordinary {planet} does not feel like enough proof",
+        1
+      ],
+      [
+        "someone deciding before listening and turning the reply into a verbal fight",
+        1
+      ],
+      [
+        "someone deciding how safe they feel by who can be trusted with private information",
+        1
+      ],
+      [
+        "someone defending a private vulnerability inside a public decision",
+        1
+      ],
+      [
+        "someone defending the clever idea while ignoring how it lands on the person hearing it",
+        1
+      ],
+      [
+        "someone defending their difference against correction meant to make it manageable",
+        1
+      ],
+      [
+        "someone delaying {planet} until they can keep the {planet}",
+        1
+      ],
+      [
+        "someone demanding terms that do not depend on one side yielding",
+        1
+      ],
+      [
+        "someone disrupting private access before trust can be renegotiated",
+        1
+      ],
+      [
+        "someone dividing their {planet} among several messages errands or {planet}",
+        1
+      ],
+      [
+        "someone doing the care work that everyone else depends on",
+        1
+      ],
+      [
+        "someone doing the overlooked task that keeps the routine from failing",
+        1
+      ],
+      [
+        "someone ending the agreement after trust is used as leverage",
+        1
+      ],
+      [
+        "someone exaggerating the point because being admired matters more than being understood",
+        1
+      ],
+      [
+        "someone explaining the {planet} repeatedly instead of admitting that they are hurt",
+        1
+      ],
+      [
+        "someone feeling an older {planet} each time the agreement asks them to adjust again",
+        1
+      ],
+      [
+        "someone feeling another person s {planet} and reopening their own",
+        1
+      ],
+      [
+        "someone finding a new way to preserve what matters without giving up {planet}",
+        1
+      ],
+      [
+        "someone focusing on the detail others dismiss because it once carried a real cost",
+        1
+      ],
+      [
+        "someone gaining {planet} because no one has named the boundary or responsibility",
+        1
+      ],
+      [
+        "someone gaining {planet} by deciding what counts as defective",
+        1
+      ],
+      [
+        "someone gaining {planet} by defining the larger truth",
+        1
+      ],
+      [
+        "someone gaining {planet} by holding the resource others cannot afford to lose",
+        1
+      ],
+      [
+        "someone gaining authority after accepting responsibility for the outcome",
+        1
+      ],
+      [
+        "someone gaining more private {planet} because the consequence cannot be reversed",
+        1
+      ],
+      [
+        "someone giving enough support to make another person s contribution more visible",
+        1
+      ],
+      [
+        "someone giving more {planet} than either person has actually promised",
+        1
+      ],
+      [
+        "someone guarding their privacy because disclosure cannot be made harmless afterward",
+        1
+      ],
+      [
+        "someone hiding {planet} whenever duty has to be performed",
+        1
+      ],
+      [
+        "someone holding a personal {planet} while other people treat their ideals as shared",
+        1
+      ],
+      [
+        "someone holding back a different future because hope once brought consequences",
+        1
+      ],
+      [
+        "someone holding the family closer when they are unsure who still belongs",
+        1
+      ],
+      [
+        "someone judging their freedom by what they can keep without apology",
+        1
+      ],
+      [
+        "someone keeping {planet} because others cannot safely disclose what they know",
+        1
+      ],
+      [
+        "someone keeping a comfortable arrangement after it has stopped helping either person grow",
+        1
+      ],
+      [
+        "someone keeping private what they could not safely recover once given",
+        1
+      ],
+      [
+        "someone keeping the familiar arrangement even when a faster change is available",
+        1
+      ],
+      [
+        "someone leaving or turning pain into a lesson before they have felt it",
+        1
+      ],
+      [
+        "someone leaving the group first because exclusion feels easier to control when it is chosen",
+        1
+      ],
+      [
+        "someone leaving the role that once guaranteed emotional safety",
+        1
+      ],
+      [
+        "someone leaving when accountability starts to feel like a limit on freedom",
+        1
+      ],
+      [
+        "someone letting an old family hurt color every present request for care",
+        1
+      ],
+      [
+        "someone losing {planet} after the information reaches a wider audience",
+        1
+      ],
+      [
+        "someone losing interest when the chase becomes an actual {planet}",
+        1
+      ],
+      [
+        "someone losing momentum when several needs merge into one another",
+        1
+      ],
+      [
+        "someone lowering the aim early because the first limit looks permanent",
+        1
+      ],
+      [
+        "someone making the whole conflict about them because shame is harder to name directly",
+        1
+      ],
+      [
+        "someone making their {planet} visible because the old role no longer fits",
+        1
+      ],
+      [
+        "someone naming the cost that polite negotiation kept hidden",
+        1
+      ],
+      [
+        "someone needing to be chosen distinctly instead of generally included",
+        1
+      ],
+      [
+        "someone offering care in a way that makes the other person feel obligated to stay",
+        1
+      ],
+      [
+        "someone offering less {planet} after a private disclosure changes the trust",
+        1
+      ],
+      [
+        "someone offering several versions after an authority demands one approved account",
+        1
+      ],
+      [
+        "someone organizing the work around the {planet} an authority will accept",
+        1
+      ],
+      [
+        "someone postponing their {planet} until the required work is done",
+        1
+      ],
+      [
+        "someone preaching freedom while refusing {planet} for where the claim leads",
+        1
+      ],
+      [
+        "someone promising more than the work can support because the applause feels convincing",
+        1
+      ],
+      [
+        "someone protecting desire from another person s claim to private access",
+        1
+      ],
+      [
+        "someone protecting private belonging from demands for emotional access",
+        1
+      ],
+      [
+        "someone protecting the person involved before asking what happened",
+        1
+      ],
+      [
+        "someone protecting the person whose belonging was once treated as conditional",
+        1
+      ],
+      [
+        "someone providing less care because time money or capacity has reached a {planet}",
+        1
+      ],
+      [
+        "someone proving they can act independently while carrying a {planet} that cannot be rushed",
+        1
+      ],
+      [
+        "someone pursuing the person they want before the terms are clear",
+        1
+      ],
+      [
+        "someone pushing harder when pride and recognition are on the line",
+        1
+      ],
+      [
+        "someone putting their {planet} into the fault that can actually be repaired",
+        1
+      ],
+      [
+        "someone reaching for the larger {planet} before finishing the nearer one",
+        1
+      ],
+      [
+        "someone reacting after every official explanation leaves out what they lived through",
+        1
+      ],
+      [
+        "someone reacting strongly when the person doing the work is not named",
+        1
+      ],
+      [
+        "someone reacting when one story is treated as the only truth",
+        1
+      ],
+      [
+        "someone rebelling against the group rule even when the rebellion leaves them more isolated",
+        1
+      ],
+      [
+        "someone receiving recognition and still expecting their contribution to be dismissed",
+        1
+      ],
+      [
+        "someone refusing the approved story and exposing who was allowed to define the truth",
+        1
+      ],
+      [
+        "someone refusing the security offered because it requires surrender",
+        1
+      ],
+      [
+        "someone rejecting a new {planet} because the older {planet} feels safer",
+        1
+      ],
+      [
+        "someone rejecting recognition that depends on shrinking the difficult part",
+        1
+      ],
+      [
+        "someone relaxing only after the practical help actually works",
+        1
+      ],
+      [
+        "someone relying on repeated follow through instead of reassurance to know they belong",
+        1
+      ],
+      [
+        "someone remembering an earlier exclusion when a shared rule erases their need",
+        1
+      ],
+      [
         "someone representing the group because they remember its history",
+        1
+      ],
+      [
+        "someone securing {planet} through a structure that outlives the immediate dispute",
+        1
+      ],
+      [
+        "someone sending mixed signals because every new option feels easier than choosing",
+        1
+      ],
+      [
+        "someone sharing {planet} widely enough to change who holds access",
+        1
+      ],
+      [
+        "someone showing {planet} by including another person in private life",
+        1
+      ],
+      [
+        "someone showing {planet} by keeping people informed",
+        1
+      ],
+      [
+        "someone showing {planet} by taking responsibility while keeping their {planet} private",
+        1
+      ],
+      [
+        "someone showing {planet} through commitments that survive inconvenience",
+        1
+      ],
+      [
+        "someone showing care by noticing the strain and reducing it",
+        1
+      ],
+      [
+        "someone showing their hurt when the expected appreciation never arrives",
+        1
+      ],
+      [
+        "someone softening the truth until the {planet} no longer says what it means",
+        1
+      ],
+      [
+        "someone starting a confrontation just to prove that no one can tell them what to do",
+        1
+      ],
+      [
+        "someone stepping away after others mistook sympathy for agreement",
+        1
+      ],
+      [
+        "someone stepping back {planet} so they can remain part of the group",
+        1
+      ],
+      [
+        "someone sustaining the {planet} through duty after the urgency has passed",
+        1
+      ],
+      [
+        "someone taking {planet} before anyone agrees it is in play",
+        1
+      ],
+      [
+        "someone taking {planet} for the resource that must not run out",
+        1
+      ],
+      [
+        "someone testing a belief against the {planet} of an institution or law",
+        1
+      ],
+      [
+        "someone testing whether the group actually tolerates their difference",
+        1
+      ],
+      [
+        "someone treating {planet} like a transaction because control feels safer than uncertainty",
+        1
+      ],
+      [
+        "someone treating every strong {planet} like an emergency that everyone must answer",
+        1
+      ],
+      [
+        "someone trying to act independently inside a {planet} designed to resist quick {planet}",
+        1
+      ],
+      [
+        "someone turning a disagreement into a contest over who gets respect and attention",
+        1
+      ],
+      [
+        "someone using care access or obligation to make it harder for another person to say no",
+        1
+      ],
+      [
+        "someone using public {planet} as leverage in a decision with lasting consequences",
+        1
+      ],
+      [
+        "someone using skepticism to close the discussion before a new idea can be tested",
+        1
+      ],
+      [
+        "someone using the language of fairness to conceal unequal {planet}",
+        1
+      ],
+      [
+        "someone valuing an arrangement more because they long for what it could become",
+        1
+      ],
+      [
+        "someone wanting more closeness after trust survives a private disclosure",
+        1
+      ],
+      [
+        "someone wanting more than the approved story allowed them to name",
+        1
+      ],
+      [
+        "someone withholding {planet} until the source of control becomes clear",
+        1
+      ],
+      [
+        "someone withholding {planet} until trust and access are settled",
+        1
+      ],
+      [
+        "someone withholding care from a role that expects feeling on command",
+        1
+      ],
+      [
+        "someone withholding the {planet} until the {planet} sounds colder than intended",
+        1
+      ],
+      [
+        "someone withholding their contribution because uncertain recognition feels too risky",
+        1
+      ],
+      [
+        "someone working the same point until a material limit gives way",
         1
       ],
       [
@@ -2417,19 +2661,7 @@
         1
       ],
       [
-        "the {planet} position forcing its way into the decision",
-        1
-      ],
-      [
-        "the {planet} pursued in a way that makes ownership unmistakable",
-        1
-      ],
-      [
         "the {planet} to act slowing long enough to measure the other response",
-        1
-      ],
-      [
-        "the agreement depending on whether each side can answer the same {planet}",
         1
       ],
       [
@@ -2453,11 +2685,11 @@
         1
       ],
       [
-        "the group adopting {planet} that makes a new rule possible",
+        "the larger claim traveling farther than its supporting detail",
         1
       ],
       [
-        "the larger claim traveling farther than its supporting detail",
+        "the person protecting private continuity also carrying the {planet}",
         1
       ],
       [
@@ -2465,7 +2697,15 @@
         1
       ],
       [
+        "the person who enforces the consequence gaining more {planet}",
+        1
+      ],
+      [
         "the person who names the wider purpose becoming identified with it",
+        1
+      ],
+      [
+        "the person who protects the household also deciding who belongs and what loyalty requires",
         1
       ],
       [
@@ -2497,10 +2737,6 @@
         1
       ],
       [
-        "visibility claimed without making the contribution more acceptable first",
-        1
-      ],
-      [
         "visible {planet} interrupting the expected public role",
         1
       ],
@@ -2521,6 +2757,10 @@
         1
       ],
       [
+        "wanting to act but checking for permission first because taking initiative used to come with consequences",
+        1
+      ],
+      [
         "worth becoming {planet} where material safety has been unreliable",
         1
       ]
@@ -2528,7 +2768,7 @@
     "connectiveNgramDistribution": [
       {
         "occurrences": 1,
-        "distinctValues": 514
+        "distinctValues": 526
       },
       {
         "occurrences": 2,
@@ -2609,6 +2849,7 @@
     "detailsCopiedFromCombinedPosition": [],
     "mechanicalJoinRows": [],
     "abstractSubjectViolations": [],
+    "manifestationPlainnessViolations": [],
     "ownerVoiceVerbatimMatches": []
   },
   "signUnits": [
@@ -2618,9 +2859,9 @@
       "sign_expression": "someone moves first and asks everyone else to catch up",
       "combined_position": "whoever moves first often becomes the face of the work",
       "reader_manifestations": [
-        "credit claimed before anyone agrees the work is finished",
+        "someone claiming credit before anyone agrees the work is finished",
         "the person who starts the project becoming its public face",
-        "recognition following the first visible move rather than the longest contribution"
+        "people recognizing the first visible move instead of the person who carried the work longest"
       ],
       "details_language": "first moves and claimed visibility",
       "source_ids": [
@@ -2647,7 +2888,7 @@
       "combined_position": "people give credit to the work that proves useful and lasts",
       "reader_manifestations": [
         "a contribution valued because it keeps producing something useful",
-        "recognition arriving only after the result proves it can last",
+        "people waiting to give credit until the result proves it can last",
         "public credit tied to who protected the budget or the material"
       ],
       "details_language": "recognition tied to material worth and durability",
@@ -2675,7 +2916,7 @@
       "combined_position": "the clearest explanation can decide who gets credit for the idea",
       "reader_manifestations": [
         "the clearest explanation deciding who is seen as responsible",
-        "credit moving when a new version of the story circulates",
+        "people changing who gets credit when a new version of the story circulates",
         "several people making a plausible claim to the same idea"
       ],
       "details_language": "credit shaped by language and comparison",
@@ -2702,8 +2943,8 @@
       "sign_expression": "people respond through care, memory, and private loyalties",
       "combined_position": "the care people provide in private starts deciding who represents the group",
       "reader_manifestations": [
-        "care work becoming the contribution everyone depends on",
-        "private loyalty shaping who receives public acknowledgment",
+        "someone doing the care work that everyone else depends on",
+        "family members using private loyalty to influence who gets acknowledged publicly",
         "someone representing the group because they remember its history"
       ],
       "details_language": "recognition tied to care and private loyalty",
@@ -2760,7 +3001,7 @@
       "reader_manifestations": [
         "the person who catches the error receiving the authority to fix it",
         "useful work being noticed after a small failure exposes its value",
-        "recognition depending on precision rather than display"
+        "people giving credit to the person who got the detail right instead of the best performer"
       ],
       "details_language": "useful contribution, precision, and correction",
       "source_ids": [
@@ -2786,7 +3027,7 @@
       "sign_expression": "each side compares the terms and asks whether the deal is fair",
       "combined_position": "people have to divide credit without erasing the shared work",
       "reader_manifestations": [
-        "credit divided according to the terms people agreed to",
+        "people dividing credit according to the terms they agreed to",
         "a public role changing hands to keep the arrangement fair",
         "individual visibility negotiated alongside shared ownership"
       ],
@@ -2814,9 +3055,9 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "who gets named publicly depends on trust, privacy, and leverage behind the scenes",
       "reader_manifestations": [
-        "recognition withheld until trust and access are settled",
+        "someone withholding recognition until trust and access are settled",
         "the public representative carrying private obligations others cannot see",
-        "credit becoming leverage in a decision with lasting consequences"
+        "someone using public credit as leverage in a decision with lasting consequences"
       ],
       "details_language": "recognition and public contribution tied to privacy, trust, and leverage",
       "source_ids": [
@@ -2843,7 +3084,7 @@
       "combined_position": "whoever names the larger purpose can become the face of it",
       "reader_manifestations": [
         "a strong belief making one contribution stand for a larger cause",
-        "recognition extending beyond the original audience",
+        "people carrying someone's work to an audience it was not made for",
         "the person who names the wider purpose becoming identified with it"
       ],
       "details_language": "visible conviction and larger aims",
@@ -2870,9 +3111,9 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "a title goes to the person expected to carry the result",
       "reader_manifestations": [
-        "authority granted after someone accepts responsibility for the outcome",
+        "someone gaining authority after accepting responsibility for the outcome",
         "a title reflecting work that has already survived scrutiny",
-        "recognition attached to the person expected to answer for the result"
+        "people giving credit to the person expected to answer for the result"
       ],
       "details_language": "recognition through authority and lasting results",
       "source_ids": [
@@ -2900,7 +3141,7 @@
       "reader_manifestations": [
         "individual credit weighed against what the group built together",
         "a public face expected to represent rules that apply to everyone",
-        "recognition going to the contribution that changes the system"
+        "people crediting the contribution that changes the system"
       ],
       "details_language": "individual contribution measured against group standards",
       "source_ids": [
@@ -2927,7 +3168,7 @@
       "combined_position": "the public image grows larger, and the actual contribution gets harder to separate",
       "reader_manifestations": [
         "authorship becoming unclear when many people shaped the same vision",
-        "recognition attaching to an idealized image rather than the actual work",
+        "people crediting the image they want to believe instead of the work that was done",
         "personal contribution fading into a shared emotional response"
       ],
       "details_language": "porous identity and idealized visibility",
@@ -2955,8 +3196,8 @@
       "combined_position": "a feeling reaches the room and people respond faster than they can explain it",
       "reader_manifestations": [
         "an immediate need becoming impossible to postpone",
-        "care arriving as quick protection rather than discussion",
-        "belonging tested by who responds when something happens"
+        "someone protecting the person involved before asking what happened",
+        "someone treating every strong feeling like an emergency that everyone must answer"
       ],
       "details_language": "urgent needs and immediate emotional action",
       "source_ids": [
@@ -2986,8 +3227,8 @@
       "sign_expression": "people work with what can be afforded, maintained, and made to last",
       "combined_position": "people reach for what they can keep, afford, and count on whenever the mood changes",
       "reader_manifestations": [
-        "security measured by whether food, money, or shelter remains dependable",
-        "comfort preserved even when a faster change is available",
+        "people judging their security by whether food, money, or shelter remains dependable",
+        "someone keeping the familiar arrangement even when a faster change is available",
         "a familiar routine carrying more emotional weight than the new option"
       ],
       "details_language": "security through material continuity",
@@ -3019,8 +3260,8 @@
       "combined_position": "a new fact or reply can change how the whole situation feels",
       "reader_manifestations": [
         "a mood changing when one more fact enters the conversation",
-        "care taking the form of keeping people informed",
-        "belonging negotiated through several competing accounts of what happened"
+        "someone showing care by keeping people informed",
+        "someone explaining the feeling repeatedly instead of admitting that they are hurt"
       ],
       "details_language": "changing information and changing feeling",
       "source_ids": [
@@ -3052,8 +3293,8 @@
       "sign_expression": "people respond through care, memory, and private loyalties",
       "combined_position": "the people who remember and provide care set the emotional terms",
       "reader_manifestations": [
-        "private needs setting the terms before public plans can continue",
-        "care becoming more protective when belonging feels uncertain",
+        "someone bringing a private need into the room before the public plan can continue",
+        "someone holding the family closer when they are unsure who still belongs",
         "family memory making a present response stronger than expected"
       ],
       "details_language": "emotional needs, protection, and belonging made more immediate",
@@ -3084,9 +3325,9 @@
       "sign_expression": "the work becomes visible and someone wants the credit attached to it",
       "combined_position": "someone needs their feeling acknowledged so the group can move on",
       "reader_manifestations": [
-        "emotional security rising when care is acknowledged openly",
-        "hurt becoming visible when appreciation is withheld",
-        "belonging tied to having a recognizable place in the group"
+        "someone feeling safer after the care they provided is acknowledged openly",
+        "someone showing their hurt when the expected appreciation never arrives",
+        "someone feeling they belong after the group gives them a recognizable place"
       ],
       "details_language": "emotional security through recognition",
       "source_ids": [
@@ -3116,9 +3357,9 @@
       "sign_expression": "people check the method, find the error, and fix what is not working",
       "combined_position": "people calm the mood by fixing a practical problem they can name",
       "reader_manifestations": [
-        "care appearing as the task that keeps a routine from failing",
+        "someone doing the overlooked task that keeps the routine from failing",
         "unease narrowing attention to the detail that can be corrected",
-        "emotional relief depending on whether practical help actually works"
+        "someone relaxing only after the practical help actually works"
       ],
       "details_language": "practical care and corrected routines",
       "source_ids": [
@@ -3151,8 +3392,8 @@
       "combined_position": "each person checks whether their needs received the same consideration",
       "reader_manifestations": [
         "someone feeling included only after their needs enter the agreement",
-        "care distributed so one person is not carrying all of it",
-        "belonging strained by a compromise that looks fair but feels uneven"
+        "people dividing the care so one person is not carrying all of it",
+        "someone agreeing to keep the peace and swallowing the need that would complicate it"
       ],
       "details_language": "belonging through fairness and reciprocity",
       "source_ids": [
@@ -3180,9 +3421,9 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "people hold back and wait to see who can be trusted with the full feeling",
       "reader_manifestations": [
-        "emotional safety depending on who is trusted with private information",
-        "care becoming guarded after something cannot be taken back",
-        "belonging deepening where people share the risk of being known"
+        "someone deciding how safe they feel by who can be trusted with private information",
+        "someone offering less care after a private disclosure changes the trust",
+        "people feeling closer after each person risks being known honestly"
       ],
       "details_language": "emotional safety, privacy, and trust",
       "source_ids": [
@@ -3215,8 +3456,8 @@
       "combined_position": "the mood improves when people can see a larger reason or a way forward",
       "reader_manifestations": [
         "a change of place restoring emotional room",
-        "belonging widening around a shared belief rather than a shared history",
-        "care expressed by making space for a larger possibility"
+        "people making room for newcomers who share the belief but not the history",
+        "someone leaving or turning pain into a lesson before they have felt it"
       ],
       "details_language": "emotional freedom and larger meaning",
       "source_ids": [
@@ -3248,9 +3489,9 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "people put the duty first and deal with the feeling after the work is done",
       "reader_manifestations": [
-        "needs being postponed until the required work is done",
-        "care shown by taking responsibility when feelings stay private",
-        "belonging secured through reliability rather than reassurance"
+        "someone postponing their needs until the required work is done",
+        "someone showing care by taking responsibility while keeping their feelings private",
+        "someone relying on repeated follow-through instead of reassurance to know they belong"
       ],
       "details_language": "emotional needs managed through duty and restraint",
       "source_ids": [
@@ -3280,9 +3521,9 @@
       "sign_expression": "the group asks whether the same rule applies to everyone",
       "combined_position": "the group makes room for feeling by stepping back and looking at the pattern",
       "reader_manifestations": [
-        "emotional distance protecting room to remain part of the group",
-        "belonging depending on whether difference is allowed without explanation",
-        "care organized through a shared system instead of personal closeness"
+        "someone stepping back emotionally so they can remain part of the group",
+        "people deciding who belongs by whether difference can remain unexplained",
+        "someone analyzing the group's needs while acting as if they have none"
       ],
       "details_language": "belonging with distance and independence",
       "source_ids": [
@@ -3313,8 +3554,8 @@
       "combined_position": "people can absorb the mood in the room before anyone knows whose feeling it is",
       "reader_manifestations": [
         "one person's mood spreading before anyone names it",
-        "care extending past the point where responsibility is clear",
-        "belonging felt through empathy even when facts remain uncertain"
+        "someone continuing to help after no one can say who is responsible",
+        "people feeling connected through empathy even while the facts remain uncertain"
       ],
       "details_language": "feeling, empathy, and porous boundaries",
       "source_ids": [
@@ -3348,7 +3589,7 @@
       "reader_manifestations": [
         "a decision announced before every objection has been heard",
         "the first explanation setting the terms of the debate",
-        "new facts treated as reasons to act now rather than wait"
+        "someone deciding before listening and turning the reply into a verbal fight"
       ],
       "details_language": "direct speech and immediate decisions",
       "source_ids": [
@@ -3382,7 +3623,7 @@
       "reader_manifestations": [
         "an agreement slowing until the price and practical terms are clear",
         "a repeated fact carrying more weight than a clever argument",
-        "decisions holding once they are written in concrete language"
+        "someone rejecting a new fact because the older explanation feels safer"
       ],
       "details_language": "concrete terms and durable decisions",
       "source_ids": [
@@ -3445,8 +3686,8 @@
       "combined_position": "a message carries the memory and private consequence behind the words",
       "reader_manifestations": [
         "a practical question carrying the memory of an earlier conversation",
-        "private consequences changing what can be said in public",
-        "information being trusted because it arrives through care"
+        "someone changing what they say publicly because the private consequences are real",
+        "people trusting the information because someone they rely on delivers it carefully"
       ],
       "details_language": "language carrying memory and private consequence",
       "source_ids": [
@@ -3476,7 +3717,7 @@
       "reader_manifestations": [
         "an opinion becoming inseparable from who said it",
         "the clearest speaker taking visible ownership of the decision",
-        "language used to defend personal credit as well as the point itself"
+        "someone exaggerating the point because being admired matters more than being understood"
       ],
       "details_language": "speech as visible personal claim",
       "source_ids": [
@@ -3540,7 +3781,7 @@
       "reader_manifestations": [
         "a decision moving only after both replies enter the record",
         "wording revised to distribute responsibility more fairly",
-        "the agreement depending on whether each side can answer the same terms"
+        "someone softening the truth until the decision no longer says what it means"
       ],
       "details_language": "negotiated decisions and shared terms",
       "source_ids": [
@@ -3570,7 +3811,7 @@
       "reader_manifestations": [
         "access to private information deciding who can act",
         "a withheld fact gaining power as the stakes rise",
-        "language becoming exact because the consequence cannot be reversed"
+        "someone choosing exact words because the consequence cannot be reversed"
       ],
       "details_language": "private information and trusted access",
       "source_ids": [
@@ -3630,7 +3871,7 @@
       "reader_manifestations": [
         "formal wording assigning responsibility that continues after the meeting",
         "a decision becoming real when an authority records it",
-        "communication judged by whether it can support a lasting structure"
+        "someone withholding the words until the message sounds colder than intended"
       ],
       "details_language": "formal language and accountable decisions",
       "source_ids": [
@@ -3659,8 +3900,8 @@
       "combined_position": "a new explanation can show how the rule affects the whole group",
       "reader_manifestations": [
         "an idea evaluated by the system it would alter",
-        "information shared widely enough to change who holds access",
-        "the group adopting language that makes a new rule possible"
+        "someone sharing information widely enough to change who holds access",
+        "someone defending the clever idea while ignoring how it lands on the person hearing it"
       ],
       "details_language": "system-changing ideas and group consequence",
       "source_ids": [
@@ -3688,7 +3929,7 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "people understand the tone or image sooner than they agree on the facts",
       "reader_manifestations": [
-        "meaning carried by tone when the stated facts remain incomplete",
+        "people reading the tone when the stated facts remain incomplete",
         "an implication spreading faster than anyone can verify it",
         "a decision blurred by sympathy for several incompatible accounts"
       ],
@@ -3723,8 +3964,8 @@
       "combined_position": "people state what they want quickly and find out whether the answer is yes or no",
       "reader_manifestations": [
         "a preference stated clearly enough to force a quick answer",
-        "attraction growing through direct pursuit instead of careful agreement",
-        "value assigned to the choice that shows immediate commitment"
+        "someone pursuing the person they want before the terms are clear",
+        "someone losing interest when the chase becomes an actual relationship"
       ],
       "details_language": "direct preference and quick agreement",
       "source_ids": [
@@ -3753,8 +3994,8 @@
       "combined_position": "a choice feels worthwhile when it is pleasant, affordable, and built to last",
       "reader_manifestations": [
         "an agreement holding because the exchange feels materially worthwhile",
-        "comfort becoming part of how value is measured",
-        "affection shown by preserving what people already share"
+        "people counting comfort as part of what makes the agreement worthwhile",
+        "someone keeping a comfortable arrangement after it has stopped helping either person grow"
       ],
       "details_language": "lasting value, comfort, and material worth",
       "source_ids": [
@@ -3786,9 +4027,9 @@
       "sign_expression": "new facts and quick replies keep changing the choices",
       "combined_position": "people stay connected through conversation even as the terms remain open",
       "reader_manifestations": [
-        "connection growing through the conversation that keeps changing shape",
-        "interest sustained by more than one possible arrangement",
-        "shared value revised when people compare what each option offers"
+        "people staying interested because the conversation keeps changing shape",
+        "people staying interested because more than one arrangement remains possible",
+        "someone sending mixed signals because every new option feels easier than choosing"
       ],
       "details_language": "connection through varied conversation",
       "source_ids": [
@@ -3820,9 +4061,9 @@
       "sign_expression": "people respond through care, memory, and private loyalties",
       "combined_position": "people judge the agreement by whether care and loyalty are returned",
       "reader_manifestations": [
-        "affection expressed through inclusion in private life",
+        "someone showing affection by including another person in private life",
         "an agreement valued because it protects belonging",
-        "care determining what people are willing to preserve together"
+        "someone offering care in a way that makes the other person feel obligated to stay"
       ],
       "details_language": "care, loyalty, and inclusive value",
       "source_ids": [
@@ -3851,8 +4092,8 @@
       "combined_position": "people show affection openly and notice who feels appreciated",
       "reader_manifestations": [
         "appreciation becoming real when it is shown where others can see it",
-        "affection tied to being chosen distinctly rather than generally included",
-        "a shared value represented through visible generosity"
+        "someone needing to be chosen distinctly instead of generally included",
+        "someone creating drama because ordinary affection does not feel like enough proof"
       ],
       "details_language": "visible affection and personal appreciation",
       "source_ids": [
@@ -3884,9 +4125,9 @@
       "sign_expression": "people check the method, find the error, and fix what is not working",
       "combined_position": "someone shows care by fixing the detail that makes life harder",
       "reader_manifestations": [
-        "care demonstrated by noticing the strain and reducing it",
+        "someone showing care by noticing the strain and reducing it",
         "an agreement improved through one practical adjustment",
-        "value measured by whether attention makes daily life work better"
+        "people judging the relationship by whether that attention makes daily life work better"
       ],
       "details_language": "care through practical attention",
       "source_ids": [
@@ -3918,9 +4159,9 @@
       "sign_expression": "each side compares the terms and asks whether the deal is fair",
       "combined_position": "each side keeps checking whether the exchange is fair and mutual",
       "reader_manifestations": [
-        "mutual response becoming the evidence that an agreement is fair",
-        "affection sustained by terms neither person has to disappear inside",
-        "shared value defined through balance rather than identical contribution"
+        "both sides responding in ways that show whether the agreement is fair",
+        "people keeping affection alive through terms that do not erase either person",
+        "people valuing different contributions when the overall exchange remains balanced"
       ],
       "details_language": "fairness and mutuality becoming the terms of connection",
       "source_ids": [
@@ -3952,9 +4193,9 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "people want closeness but guard the trust and leverage that come with it",
       "reader_manifestations": [
-        "desire deepening after trust survives a private disclosure",
+        "someone wanting more closeness after trust survives a private disclosure",
         "an agreement carrying the risk of giving someone real leverage",
-        "value concentrating around what cannot be casually replaced"
+        "people valuing the bond more once they understand what cannot be replaced"
       ],
       "details_language": "desire tied to privacy and trust",
       "source_ids": [
@@ -3982,9 +4223,9 @@
       "sign_expression": "people follow a larger promise or belief beyond the issue's first limits",
       "combined_position": "people choose the agreement that leaves more room to grow and explore",
       "reader_manifestations": [
-        "connection widening through a shared horizon rather than a fixed plan",
-        "value following the choice that leaves more room to grow",
-        "affection expressed by supporting a belief with visible reach"
+        "people choosing each other because they can imagine a wider life together",
+        "people choosing the option that leaves more room to grow",
+        "someone leaving when accountability starts to feel like a limit on freedom"
       ],
       "details_language": "open value and expansive desire",
       "source_ids": [
@@ -4017,8 +4258,8 @@
       "combined_position": "a promise matters when someone can carry the work and consequences over time",
       "reader_manifestations": [
         "an agreement earning value because it can carry responsibility over time",
-        "affection shown through commitments that survive inconvenience",
-        "shared worth measured against consequence, status, and durability"
+        "someone showing affection through commitments that survive inconvenience",
+        "someone treating affection like a transaction because control feels safer than uncertainty"
       ],
       "details_language": "durable agreement and social responsibility",
       "source_ids": [
@@ -4050,9 +4291,9 @@
       "sign_expression": "the group asks whether the same rule applies to everyone",
       "combined_position": "people stay connected by giving each other room inside the group",
       "reader_manifestations": [
-        "connection remaining possible because independence is built into the terms",
-        "shared value forming around a group commitment rather than private closeness",
-        "affection making room for a difference the old agreement could not hold"
+        "people staying connected because the agreement leaves room for independence",
+        "people finding common value in a group commitment instead of private closeness",
+        "someone acting detached while still expecting the connection to remain available"
       ],
       "details_language": "independent connection within group commitments",
       "source_ids": [
@@ -4080,9 +4321,9 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "people can fall for the hope of connection before its actual terms are clear",
       "reader_manifestations": [
-        "longing adding value to an arrangement before its limits are visible",
-        "affection extending beyond what either person has clearly promised",
-        "shared ideals making unequal terms difficult to notice"
+        "someone valuing an arrangement more because they long for what it could become",
+        "someone giving more affection than either person has actually promised",
+        "people overlooking unequal terms because they share the same ideal"
       ],
       "details_language": "idealized affection and porous longing",
       "source_ids": [
@@ -4111,7 +4352,7 @@
       "combined_position": "someone acts as soon as the problem appears and everyone else has to respond",
       "reader_manifestations": [
         "the first move establishing who controls the pace",
-        "pressure turning directly into action before a process is agreed",
+        "someone acting on the pressure before the group agrees on a process",
         "a visible result pursued without waiting for broader support"
       ],
       "details_language": "direct action reinforcing its own urgency",
@@ -4144,9 +4385,9 @@
       "sign_expression": "people work with what can be afforded, maintained, and made to last",
       "combined_position": "people keep pushing the same point until a material limit finally moves",
       "reader_manifestations": [
-        "effort continuing at the same point until a material limit gives way",
-        "conflict gathering around a resource no one wants to surrender",
-        "action delayed until the result can be kept"
+        "someone working the same point until a material limit gives way",
+        "people arguing over the resource no one wants to surrender",
+        "someone delaying action until they can keep the result"
       ],
       "details_language": "slow pressure around resources and fixed limits",
       "source_ids": [
@@ -4178,8 +4419,8 @@
       "sign_expression": "new facts and quick replies keep changing the choices",
       "combined_position": "people spread their effort across messages, errands, debates, and several moving targets",
       "reader_manifestations": [
-        "effort divided among several messages, errands, or targets",
-        "conflict moving with the wording instead of staying on one issue",
+        "someone dividing their effort among several messages, errands, or targets",
+        "people changing the argument each time the wording changes",
         "a new comparison redirecting action already underway"
       ],
       "details_language": "scattered action and changing targets",
@@ -4213,8 +4454,8 @@
       "combined_position": "someone protects the home or the people involved before explaining the anger",
       "reader_manifestations": [
         "defense beginning when home or belonging feels exposed",
-        "action taken to protect someone before the reason is explained",
-        "conflict carrying a private vulnerability into a public decision"
+        "someone acting to protect another person before explaining why",
+        "someone defending a private vulnerability inside a public decision"
       ],
       "details_language": "action and conflict organized around care and private belonging",
       "source_ids": [
@@ -4247,8 +4488,8 @@
       "combined_position": "people push harder once the result will be visible and carry their name",
       "reader_manifestations": [
         "a bold action tying the outcome to one visible person",
-        "effort intensifying when pride and recognition are on the line",
-        "the result pursued in a way that makes ownership unmistakable"
+        "someone pushing harder when pride and recognition are on the line",
+        "someone turning a disagreement into a contest over who gets respect and attention"
       ],
       "details_language": "visible action and ownership of the result",
       "source_ids": [
@@ -4280,9 +4521,9 @@
       "sign_expression": "people check the method, find the error, and fix what is not working",
       "combined_position": "someone reaches for the tool, finds the flaw, and keeps working until the method functions",
       "reader_manifestations": [
-        "energy concentrating on the fault that can actually be repaired",
-        "conflict narrowing into a dispute about method",
-        "action continuing through small corrections rather than one large move"
+        "someone putting their energy into the fault that can actually be repaired",
+        "people narrowing the conflict to a dispute about method",
+        "someone continuing through small corrections instead of making one large move"
       ],
       "details_language": "effort focused on repair and method",
       "source_ids": [
@@ -4315,8 +4556,8 @@
       "combined_position": "people delay the move while they measure fairness and the cost of open conflict",
       "reader_manifestations": [
         "the urge to act slowing long enough to measure the other response",
-        "conflict entering negotiation before either side gets its preferred result",
-        "effort redirected toward terms that do not leave one party carrying the cost"
+        "people negotiating the disagreement before either side gets its preferred result",
+        "people redirecting their effort toward terms that do not leave one party carrying the cost"
       ],
       "details_language": "action negotiated through fairness and response",
       "source_ids": [
@@ -4348,8 +4589,8 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "someone acts carefully because trust, control, and lasting consequences are involved",
       "reader_manifestations": [
-        "action withheld until the source of control becomes clear",
-        "pressure applied where trust and private access are already at stake",
+        "someone withholding action until the source of control becomes clear",
+        "someone applying pressure where trust and private access are already at stake",
         "a result pursued carefully because it cannot be undone"
       ],
       "details_language": "strategic pursuit, trust, and control",
@@ -4380,9 +4621,9 @@
       "sign_expression": "people follow a larger promise or belief beyond the issue's first limits",
       "combined_position": "people spend energy on the plan that reaches farther and supports a larger claim",
       "reader_manifestations": [
-        "effort extending toward the larger target before the near one is settled",
-        "action gaining force from conviction rather than immediate proof",
-        "conflict widening when freedom of movement is restricted"
+        "someone reaching for the larger target before finishing the nearer one",
+        "someone acting more forcefully because conviction matters more than immediate proof",
+        "people widening the fight when a rule limits where they can go"
       ],
       "details_language": "action driven by conviction and distance",
       "source_ids": [
@@ -4412,9 +4653,9 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "a long deadline rewards the person who can pace the work and carry the result",
       "reader_manifestations": [
-        "effort organized around the result an authority will accept",
-        "pressure sustained through duty after urgency has passed",
-        "action measured by whether it creates a durable outcome"
+        "someone organizing the work around the result an authority will accept",
+        "someone sustaining the pressure through duty after the urgency has passed",
+        "people judging the action by whether it creates a durable outcome"
       ],
       "details_language": "disciplined effort and durable results",
       "source_ids": [
@@ -4446,9 +4687,9 @@
       "sign_expression": "the group asks whether the same rule applies to everyone",
       "combined_position": "people challenge the rule when the old system blocks a different way of acting",
       "reader_manifestations": [
-        "conflict gathering around a rule that limits independence",
-        "action aimed at changing the system rather than winning one exception",
-        "group pressure building behind a different arrangement"
+        "people challenging the rule that limits how they can act",
+        "people acting to change the system instead of winning one exception",
+        "a group pressing for a different arrangement"
       ],
       "details_language": "pressure for independence and system change",
       "source_ids": [
@@ -4478,9 +4719,9 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "someone senses the need to act although the target or boundary is still unclear",
       "reader_manifestations": [
-        "effort following an emotional current before the target is defined",
-        "conflict spreading because the boundary of responsibility stays unclear",
-        "action losing force when several needs merge into one another"
+        "someone acting on the feeling before they can name the target",
+        "people drawing more people into the conflict because no one knows who is responsible",
+        "someone losing momentum when several needs merge into one another"
       ],
       "details_language": "instinctive action with an unclear target",
       "source_ids": [
@@ -4513,8 +4754,8 @@
       "combined_position": "one opening can become a much larger plan as the room keeps counting the cost",
       "reader_manifestations": [
         "a new opening becoming larger because someone risks moving first",
-        "confidence building through action before certainty arrives",
-        "growth attached to the option that expands independence"
+        "someone becoming more confident by acting before certainty arrives",
+        "people choosing the option that gives them more room to act independently"
       ],
       "details_language": "growth through risk and first moves",
       "source_ids": [
@@ -4546,9 +4787,9 @@
       "sign_expression": "people work with what can be afforded, maintained, and made to last",
       "combined_position": "people use extra room to build, buy, or preserve what can actually last",
       "reader_manifestations": [
-        "opportunity increasing the resources people can actually maintain",
+        "people using a new opportunity to increase the resources they can maintain",
         "a larger promise tested against cost before it is trusted",
-        "growth appearing in what becomes more secure or materially useful"
+        "people measuring the improvement by what becomes safer or more useful"
       ],
       "details_language": "sustainable opportunity and material value",
       "source_ids": [
@@ -4579,8 +4820,8 @@
       "combined_position": "one question can lead to more research, more talk, and several open routes",
       "reader_manifestations": [
         "several small openings becoming available through new information",
-        "confidence rising as people compare more than one route",
-        "possibility expanding faster than the decision can narrow"
+        "people getting more confident as they compare more than one route",
+        "people opening more routes than they have time or attention to follow"
       ],
       "details_language": "multiple possibilities through information",
       "source_ids": [
@@ -4612,9 +4853,9 @@
       "sign_expression": "people respond through care, memory, and private loyalties",
       "combined_position": "people make more room for care, protection, and a wider sense of belonging",
       "reader_manifestations": [
-        "growth taking the form of wider protection or belonging",
+        "people using new resources to protect or include more of the group",
         "an opportunity becoming meaningful because it includes people previously left out",
-        "confidence increasing where care has made risk feel survivable"
+        "people taking a larger risk after someone makes the consequences feel survivable"
       ],
       "details_language": "growth through care and belonging",
       "source_ids": [
@@ -4644,9 +4885,9 @@
       "sign_expression": "the work becomes visible and someone wants the credit attached to it",
       "combined_position": "people give more freely, and one visible contribution can seem larger",
       "reader_manifestations": [
-        "generosity making an individual contribution more visible",
+        "someone giving enough support to make another person's contribution more visible",
         "a larger role becoming possible after someone is publicly trusted",
-        "confidence spreading through recognition that feels personally earned"
+        "someone promising more than the work can support because the applause feels convincing"
       ],
       "details_language": "confidence through visible generosity",
       "source_ids": [
@@ -4677,8 +4918,8 @@
       "combined_position": "a larger plan has to prove that it fixes something useful in practice",
       "reader_manifestations": [
         "an opportunity proving itself through a useful improvement",
-        "growth limited to what the details can support",
-        "confidence increasing after the method produces a measurable result"
+        "people limiting the larger plan to what the details can support",
+        "people adding corrections until the larger opportunity becomes too small to matter"
       ],
       "details_language": "useful expansion tested by detail",
       "source_ids": [
@@ -4708,9 +4949,9 @@
       "sign_expression": "each side compares the terms and asks whether the deal is fair",
       "combined_position": "people find more room to move when the terms spread the benefit fairly",
       "reader_manifestations": [
-        "benefit widening when the terms distribute it more fairly",
+        "more people benefiting after the terms distribute the opportunity more fairly",
         "an agreement creating an opportunity neither side could reach alone",
-        "confidence resting on cooperation that remains reciprocal"
+        "people accommodating every side until no one can tell what was actually agreed"
       ],
       "details_language": "shared opportunity through fair terms",
       "source_ids": [
@@ -4742,9 +4983,9 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "people take a larger risk only after trust and leverage are clear",
       "reader_manifestations": [
-        "growth requiring enough trust to share real leverage",
+        "people taking a larger step only after there is enough trust to share real leverage",
         "a larger opportunity carrying consequences that cannot be easily reversed",
-        "confidence changing when hidden stakes become visible"
+        "people changing the size of the risk when the hidden stakes become visible"
       ],
       "details_language": "growth through trust and reversible stakes",
       "source_ids": [
@@ -4774,9 +5015,9 @@
       "sign_expression": "people follow a larger promise or belief beyond the issue's first limits",
       "combined_position": "people trust the promise enough to keep enlarging it until the limit is easy to miss",
       "reader_manifestations": [
-        "belief enlarging the horizon beyond the current limit",
+        "people looking beyond the current limit because they believe a larger option exists",
         "an opportunity reaching farther because its meaning is widely shared",
-        "confidence rising faster than practical constraints can answer"
+        "people enlarging the promise faster than the practical limits can answer"
       ],
       "details_language": "growth and belief expanding past visible limits",
       "source_ids": [
@@ -4806,9 +5047,9 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "a larger project succeeds only if the budget, timing, and duty can support it",
       "reader_manifestations": [
-        "ambition expanding through duties that increase authority",
+        "someone accepting more responsibility because it also increases their authority",
         "an opportunity becoming credible when it fits a long structure",
-        "growth measured by what can still stand after accountability arrives"
+        "someone lowering the aim early because the first limit looks permanent"
       ],
       "details_language": "ambition inside duty and hierarchy",
       "source_ids": [
@@ -4838,11 +5079,11 @@
       "key": "sky-sign/jupiter/aquarius",
       "planet_function": "people take up more room, trust a larger possibility, and sometimes promise too much",
       "sign_expression": "the group asks whether the same rule applies to everyone",
-      "combined_position": "people back the reform that promises to reach more of the group",
+      "combined_position": "a bigger opportunity gets support when more people can actually use it",
       "reader_manifestations": [
-        "possibility widening through a reform meant to reach the whole group",
-        "confidence gathering around a system people believe can change",
-        "an opportunity emerging from shared access rather than private advantage"
+        "a program, policy, or opportunity expanding because access is opened to more people",
+        "a group getting confident enough to challenge a rule that only worked for a few",
+        "people promising broader access before the system is ready to deliver it"
       ],
       "details_language": "collective reform and wider opportunity",
       "source_ids": [
@@ -4872,9 +5113,9 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "people make more room for compassion while the practical boundary becomes harder to see",
       "reader_manifestations": [
-        "hope expanding where empathy loosens an old boundary",
-        "possibility becoming larger than anyone can yet define",
-        "confidence attaching to a shared ideal before its limits are clear"
+        "people hoping for more after empathy loosens an old boundary",
+        "people supporting a possibility no one can define clearly yet",
+        "people trusting a shared ideal before anyone names its limits"
       ],
       "details_language": "expansive hope and porous boundaries",
       "source_ids": [
@@ -4905,8 +5146,8 @@
       "combined_position": "a deadline stops the first move and forces people to prove what can actually be done",
       "reader_manifestations": [
         "a limit stopping the first move until responsibility is assigned",
-        "independence tested by a consequence that cannot be rushed",
-        "authority requiring proof before action receives backing"
+        "someone proving they can act independently while carrying a consequence that cannot be rushed",
+        "an authority requiring proof before backing the action"
       ],
       "details_language": "a deadline against a rushed first move",
       "source_ids": [
@@ -4936,9 +5177,9 @@
       "sign_expression": "people work with what can be afforded, maintained, and made to last",
       "combined_position": "a smaller budget makes people decide what is worth maintaining",
       "reader_manifestations": [
-        "responsibility settling on the resource that must not run out",
+        "someone taking responsibility for the resource that must not run out",
         "a material limit forcing people to maintain what they already have",
-        "progress measured by endurance rather than speed"
+        "people judging progress by endurance instead of speed"
       ],
       "details_language": "a smaller budget and what must be maintained",
       "source_ids": [
@@ -4972,7 +5213,7 @@
       "reader_manifestations": [
         "changing language held to a standard that must remain consistent",
         "a decision delayed while conflicting facts are documented",
-        "responsibility attached to the version that enters the record"
+        "someone using skepticism to close the discussion before a new idea can be tested"
       ],
       "details_language": "rewritten words and decisions with consequences",
       "source_ids": [
@@ -5004,9 +5245,9 @@
       "sign_expression": "people respond through care, memory, and private loyalties",
       "combined_position": "a named responsibility leaves less room for private needs and care",
       "reader_manifestations": [
-        "duty falling on the person who protects private continuity",
-        "care narrowed by a limit on time, money, or capacity",
-        "belonging tested by obligations that are not distributed equally"
+        "the person protecting private continuity also carrying the duty",
+        "someone providing less care because time, money, or capacity has reached a limit",
+        "people questioning whether they belong when the obligations are not distributed equally"
       ],
       "details_language": "named duty and the private needs it leaves behind",
       "source_ids": [
@@ -5036,9 +5277,9 @@
       "sign_expression": "the work becomes visible and someone wants the credit attached to it",
       "combined_position": "anyone seeking recognition has to show they can carry the result",
       "reader_manifestations": [
-        "recognition withheld until the visible contribution meets the standard",
-        "authority limiting how much pride can direct the decision",
-        "a public role carrying consequences that personal confidence cannot erase"
+        "an authority withholding recognition until the visible contribution meets the standard",
+        "an authority limiting how much personal pride can direct the decision",
+        "someone withholding their contribution because uncertain recognition feels too risky"
       ],
       "details_language": "recognition tested by the ability to carry the result",
       "source_ids": [
@@ -5068,9 +5309,9 @@
       "sign_expression": "people check the method, find the error, and fix what is not working",
       "combined_position": "the work improves through repetition, correction, and attention to the small failure",
       "reader_manifestations": [
-        "responsibility concentrating in the detail no one else can ignore",
+        "someone becoming responsible for the detail no one else can ignore",
         "a routine becoming stricter after an avoidable error",
-        "progress depending on correction that can be repeated reliably"
+        "someone correcting every small flaw until the work becomes punishing to finish"
       ],
       "details_language": "repetition, correction, and work that has to be exact",
       "source_ids": [
@@ -5101,7 +5342,7 @@
       "combined_position": "each side has to answer for the same terms instead of leaving duty with one person",
       "reader_manifestations": [
         "obligation divided according to terms both sides must answer to",
-        "fairness tested by who carries the consequence of compromise",
+        "people judging fairness by who carries the consequence of the compromise",
         "an agreement becoming binding when accountability is shared"
       ],
       "details_language": "the same terms and duty shared by both sides",
@@ -5133,8 +5374,8 @@
       "combined_position": "a hard limit reveals who controls access and who carries the lasting consequence",
       "reader_manifestations": [
         "a limit protecting access to information that cannot be taken back",
-        "responsibility increasing where control and trust are intertwined",
-        "authority settling a consequence people had hoped to postpone"
+        "someone carrying more responsibility because they also control the access",
+        "an authority making the consequence official after people tried to postpone it"
       ],
       "details_language": "hard limits, controlled access, and lasting consequences",
       "source_ids": [
@@ -5165,8 +5406,8 @@
       "combined_position": "a large promise meets the test of what can be proved and delivered",
       "reader_manifestations": [
         "a large promise reduced to what can be proved and delivered",
-        "belief tested by the boundary of an institution or law",
-        "responsibility following the claim farther than confidence expected"
+        "someone testing a belief against the boundary of an institution or law",
+        "someone preaching freedom while refusing responsibility for where the claim leads"
       ],
       "details_language": "large promises tested by proof and delivery",
       "source_ids": [
@@ -5198,9 +5439,9 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "the deadline, the duty, and the long result decide whether the structure can hold",
       "reader_manifestations": [
-        "authority consolidating around the person who can carry the duty",
+        "people giving more authority to the person who can carry the duty",
         "long consequences deciding which ambition remains workable",
-        "progress becoming inseparable from structure and accountability"
+        "people making progress only after the work has structure and accountability"
       ],
       "details_language": "deadlines, duty, and results that take time",
       "source_ids": [
@@ -5263,8 +5504,8 @@
       "combined_position": "people try to set a firm boundary around a need that keeps changing shape",
       "reader_manifestations": [
         "a formal boundary trying to contain a need that has no clean edge",
-        "responsibility becoming hard to assign when compassion is widely shared",
-        "structure holding only where uncertainty is named rather than denied"
+        "people struggling to assign responsibility because everyone feels for the person involved",
+        "people keeping the plan intact by naming what remains uncertain"
       ],
       "details_language": "firm boundaries around a changing need",
       "source_ids": [
@@ -5295,7 +5536,7 @@
       "combined_position": "someone makes the unexpected first move and the old plan stops working",
       "reader_manifestations": [
         "an unexpected first move changing who has room to act",
-        "independence claimed before the existing process can respond",
+        "someone claiming independence before the existing process can respond",
         "a sudden break creating an opening that did not exist a moment earlier"
       ],
       "details_language": "unexpected initiative and sudden independence",
@@ -5330,7 +5571,7 @@
       "reader_manifestations": [
         "a secure resource becoming the site of an unexpected revision",
         "material routines changing after stability proves less fixed than assumed",
-        "independence requiring a new way to preserve what still matters"
+        "someone finding a new way to preserve what matters without giving up independence"
       ],
       "details_language": "disruption of material security",
       "source_ids": [
@@ -5362,7 +5603,7 @@
       "reader_manifestations": [
         "new information altering the available routes almost immediately",
         "a revised term changing who can participate",
-        "independence spreading through access to a different explanation"
+        "people acting more independently after a different explanation becomes available"
       ],
       "details_language": "rapidly revised information and terms",
       "source_ids": [
@@ -5395,8 +5636,8 @@
       "combined_position": "an unexpected need for distance changes how care and belonging are arranged",
       "reader_manifestations": [
         "a household pattern changing because someone needs more room",
-        "belonging reorganized around a form of care no longer kept private",
-        "independence unsettling the role that once guaranteed emotional safety"
+        "people reorganizing who belongs after private care becomes a public concern",
+        "someone leaving the role that once guaranteed emotional safety"
       ],
       "details_language": "independence disrupting care and belonging",
       "source_ids": [
@@ -5427,8 +5668,8 @@
       "combined_position": "someone breaks the expected role and changes who gets seen or credited",
       "reader_manifestations": [
         "visible difference interrupting the expected public role",
-        "recognition shifting toward the contribution that breaks precedent",
-        "independence becoming impossible to separate from personal visibility"
+        "people giving credit to the contribution that breaks precedent",
+        "someone making their independence visible because the old role no longer fits"
       ],
       "details_language": "visible difference and personal freedom",
       "source_ids": [
@@ -5460,7 +5701,7 @@
       "reader_manifestations": [
         "a routine revised when the old method stops solving the problem",
         "one technical change altering how the work is distributed",
-        "independence gained through a more useful process"
+        "people gaining independence by using a more useful process"
       ],
       "details_language": "revision of routines and methods",
       "source_ids": [
@@ -5491,7 +5732,7 @@
       "combined_position": "people revise the agreement because the old terms no longer leave enough room",
       "reader_manifestations": [
         "an agreement reopening because equal treatment no longer produces a fair result",
-        "independence changing the terms of mutual obligation",
+        "someone asking to change what each side owes so there is more room to act alone",
         "a different arrangement becoming possible once reciprocity is redefined"
       ],
       "details_language": "freedom changing fair agreements",
@@ -5523,8 +5764,8 @@
       "combined_position": "a sudden disclosure changes who holds leverage and what can be restored",
       "reader_manifestations": [
         "hidden leverage exposed by a change no one can reverse",
-        "private access disrupted before trust can be renegotiated",
-        "independence altering who controls the most consequential information"
+        "someone disrupting private access before trust can be renegotiated",
+        "someone acting independently and changing who controls the most consequential information"
       ],
       "details_language": "disruption exposing private leverage",
       "source_ids": [
@@ -5555,8 +5796,8 @@
       "combined_position": "one new experience makes the old belief or plan feel too small",
       "reader_manifestations": [
         "a sudden opening widening the distance people can imagine crossing",
-        "independence challenging a belief that once set the horizon",
-        "change moving farther than the original plan was built to contain"
+        "someone acting independently of the belief that once set the horizon",
+        "people carrying a change farther than the original plan was built to contain"
       ],
       "details_language": "independence widening belief and distance",
       "source_ids": [
@@ -5589,8 +5830,8 @@
       "combined_position": "an old structure has to change when the role or duty becomes impossible to continue",
       "reader_manifestations": [
         "a long-standing authority losing control of the structure it maintained",
-        "independence forced into a system designed to resist quick revision",
-        "change becoming durable only after responsibility is reassigned"
+        "someone trying to act independently inside a system designed to resist quick revision",
+        "people making the change last by reassigning responsibility"
       ],
       "details_language": "change confronting authority and structure",
       "source_ids": [
@@ -5622,7 +5863,7 @@
       "reader_manifestations": [
         "a group redesigning the rule that once limited its own independence",
         "system change spreading because the exception reveals a wider problem",
-        "difference becoming part of the shared arrangement rather than outside it"
+        "a group changing the system so quickly that people lose the support the old one provided"
       ],
       "details_language": "independence and system change reinforcing each other",
       "source_ids": [
@@ -5653,8 +5894,8 @@
       "combined_position": "the change arrives through a hunch or mood before anyone can draw a clean boundary around it",
       "reader_manifestations": [
         "a sudden intuition disrupting a boundary that was already unclear",
-        "independence appearing where people had mistaken sympathy for agreement",
-        "change moving through a shared feeling before anyone can define the plan"
+        "someone stepping away after others mistook sympathy for agreement",
+        "people changing course together before anyone can define the plan"
       ],
       "details_language": "intuitive disruption and uncertain boundaries",
       "source_ids": [
@@ -5686,7 +5927,7 @@
       "reader_manifestations": [
         "a collective hope rushing into action before its direction is understood",
         "an ideal making the first move feel clearer than the evidence does",
-        "uncertainty hidden by the urgency of beginning"
+        "people starting quickly so they do not have to admit the direction is uncertain"
       ],
       "details_language": "collective ideals rushing toward an uncertain beginning",
       "source_ids": [
@@ -5718,7 +5959,7 @@
       "sign_expression": "people work with what can be afforded, maintained, and made to last",
       "combined_position": "a beautiful or reassuring plan can hide what it will actually cost",
       "reader_manifestations": [
-        "comfort carrying an idealized value that obscures the real cost",
+        "people choosing the reassuring option while overlooking its real cost",
         "material security trusted because it feels familiar rather than verified",
         "a shared hope attaching to something people want to preserve"
       ],
@@ -5754,7 +5995,7 @@
       "reader_manifestations": [
         "several plausible explanations blurring which fact deserves trust",
         "an implied meaning circulating without a stable source",
-        "information becoming more persuasive as its boundaries become less exact"
+        "people trusting an appealing explanation more as its boundaries become less exact"
       ],
       "details_language": "uncertainty spreading through information",
       "source_ids": [
@@ -5788,7 +6029,7 @@
       "reader_manifestations": [
         "memory softening the difference between care and projection",
         "a private longing shaping what the group believes it needs",
-        "belonging idealized until unequal emotional labor becomes hard to see"
+        "people idealizing the family bond until they stop seeing who carries the emotional labor"
       ],
       "details_language": "memory, care, and projection",
       "source_ids": [
@@ -5819,8 +6060,8 @@
       "combined_position": "an image becomes larger than the private work or person behind it",
       "reader_manifestations": [
         "a public image carrying more hope than the contribution can support",
-        "recognition attaching to the story people want to believe",
-        "individual visibility becoming a screen for a collective ideal"
+        "people crediting the story they want to believe instead of checking the work",
+        "people trusting the impressive image after it has stopped matching the work behind it"
       ],
       "details_language": "idealized visibility and contribution",
       "source_ids": [
@@ -5853,8 +6094,8 @@
       "combined_position": "a hopeful plan has to survive the detail that shows whether it works",
       "reader_manifestations": [
         "an ideal meeting the practical detail it cannot explain away",
-        "uncertainty exposed when the method has to produce a usable result",
-        "compassion losing clarity around what actually needs correction"
+        "people seeing the uncertainty once the method has to produce a usable result",
+        "people correcting the plan repeatedly because no real version can match the ideal"
       ],
       "details_language": "ideals tested by practical proof",
       "source_ids": [
@@ -5885,8 +6126,8 @@
       "combined_position": "people agree with the ideal of fairness while unequal terms stay hard to see",
       "reader_manifestations": [
         "an image of fairness hiding which side keeps absorbing the cost",
-        "agreement sustained by avoiding the unequal term underneath it",
-        "shared ideals blurring the point where reciprocity stopped"
+        "people keeping an agreement by avoiding the unequal term underneath it",
+        "people overlooking where reciprocity stopped because they still share the ideal"
       ],
       "details_language": "ideal fairness and unequal terms",
       "source_ids": [
@@ -5917,7 +6158,7 @@
       "combined_position": "people have a harder time judging trust, privacy, and power when feeling runs high",
       "reader_manifestations": [
         "trust deepening around a motive no one can fully name",
-        "private power becoming harder to locate as boundaries soften",
+        "people losing track of who holds private power as the boundaries soften",
         "an irreversible choice shaped by information that remains uncertain"
       ],
       "details_language": "uncertain trust and hidden power",
@@ -5951,7 +6192,7 @@
       "combined_position": "the promise grows beyond the facts that were meant to support it",
       "reader_manifestations": [
         "a belief growing beyond what its supporting facts can carry",
-        "hope widening the horizon while obscuring the practical distance",
+        "people looking farther ahead while overlooking the practical distance",
         "a collective ideal becoming difficult to separate from certainty"
       ],
       "details_language": "belief outrunning supporting facts",
@@ -5983,8 +6224,8 @@
       "combined_position": "a dream meets the deadline, duty, and consequence that require clear limits",
       "reader_manifestations": [
         "an institution asked to formalize a need it cannot clearly define",
-        "authority lending certainty to an ideal that still lacks limits",
-        "responsibility blurred by a structure built around appearances"
+        "an authority making an ideal sound settled before anyone has named its limits",
+        "people losing track of responsibility inside a structure built around appearances"
       ],
       "details_language": "ideals pressed against duty and consequence",
       "source_ids": [
@@ -6014,9 +6255,9 @@
       "sign_expression": "the group asks whether the same rule applies to everyone",
       "combined_position": "a group gathers around the future it wants while the system still lacks a workable shape",
       "reader_manifestations": [
-        "collective hope gathering around a system that does not yet exist",
+        "a group supporting a system that does not yet exist because it answers a shared hope",
         "an imagined reform obscuring who would carry its actual cost",
-        "group ideals making uncertain access feel universally available"
+        "a group assuming everyone has access because the ideal says they should"
       ],
       "details_language": "collective hope and imagined reform",
       "source_ids": [
@@ -6046,8 +6287,8 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "people share a feeling or hope before anyone can tell where it began or what it asks",
       "reader_manifestations": [
-        "empathy dissolving the line between shared feeling and shared duty",
-        "imagination expanding where facts cannot set a firm boundary",
+        "people treating a shared feeling as if it creates the same duty for everyone",
+        "people imagining more because the facts do not set a firm boundary",
         "a collective longing becoming the atmosphere around the decision"
       ],
       "details_language": "imagination and uncertainty dissolving the boundary between them",
@@ -6078,9 +6319,9 @@
       "sign_expression": "someone moves first and asks everyone else to catch up",
       "combined_position": "whoever moves first can seize leverage before anyone agrees it is in play",
       "reader_manifestations": [
-        "leverage taken before anyone agrees it is in play",
+        "someone taking leverage before anyone agrees it is in play",
         "the first decisive move concentrating control around one actor",
-        "power revealed by who can act without waiting for consent"
+        "people seeing who has power by who can act without waiting for consent"
       ],
       "details_language": "power in the first move",
       "source_ids": [
@@ -6110,9 +6351,9 @@
       "sign_expression": "people work with what can be afforded, maintained, and made to last",
       "combined_position": "who controls the money or material people cannot lose can control the decision",
       "reader_manifestations": [
-        "control settling around the resource people cannot afford to lose",
+        "someone gaining control by holding the resource others cannot afford to lose",
         "a material dependency giving one side durable leverage",
-        "power becoming visible when security can no longer be assumed"
+        "people seeing who has power after the expected security disappears"
       ],
       "details_language": "control of resources and material security",
       "source_ids": [
@@ -6146,7 +6387,7 @@
       "reader_manifestations": [
         "access to the explanation deciding who can shape the outcome",
         "one version of the facts becoming leverage over the others",
-        "control shifting when information reaches a wider audience"
+        "someone losing control after the information reaches a wider audience"
       ],
       "details_language": "information as leverage",
       "source_ids": [
@@ -6174,11 +6415,11 @@
       "key": "sky-sign/pluto/cancer",
       "planet_function": "a power arrangement stops holding and people have to face who controls the outcome",
       "sign_expression": "people respond through care, memory, and private loyalties",
-      "combined_position": "people give private loyalty enough weight to shape a decision that reaches the whole group",
+      "combined_position": "family loyalty or private influence starts deciding what happens to everyone else",
       "reader_manifestations": [
-        "family loyalty giving private influence public consequence",
-        "care turning into leverage where belonging feels conditional",
-        "control hidden inside the role that protects the household"
+        "family loyalty influencing a decision that affects people outside the family",
+        "someone using care, access, or obligation to make it harder for another person to say no",
+        "the person who protects the household also deciding who belongs and what loyalty requires"
       ],
       "details_language": "power inside care and family loyalty",
       "source_ids": [
@@ -6209,8 +6450,8 @@
       "combined_position": "a public role gives one person control over recognition and who gets named",
       "reader_manifestations": [
         "ownership of the public role becoming a source of control",
-        "recognition deciding whose authority appears legitimate",
-        "power concentrating around the person identified with the outcome"
+        "people treating one person's authority as legitimate because that person receives recognition",
+        "people giving more power to the person identified with the outcome"
       ],
       "details_language": "visible authority and ownership",
       "source_ids": [
@@ -6240,9 +6481,9 @@
       "sign_expression": "people check the method, find the error, and fix what is not working",
       "combined_position": "whoever defines the flaw can also control the method used to fix it",
       "reader_manifestations": [
-        "control exercised through the method everyone must use",
+        "someone controlling the outcome through the method everyone must use",
         "one required correction exposing who defines acceptable work",
-        "leverage appearing in the power to call something defective"
+        "someone gaining leverage by deciding what counts as defective"
       ],
       "details_language": "control of methods and correction",
       "source_ids": [
@@ -6275,8 +6516,8 @@
       "combined_position": "one side keeps yielding while the agreement continues to call itself fair",
       "reader_manifestations": [
         "compromise revealing which side has been yielding to preserve the agreement",
-        "fairness language used to conceal unequal control",
-        "power shifting when reciprocal terms become enforceable"
+        "someone using the language of fairness to conceal unequal control",
+        "people changing who holds power by making reciprocal terms enforceable"
       ],
       "details_language": "power hidden inside compromise",
       "source_ids": [
@@ -6306,9 +6547,9 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "people protect private information because giving it up would change the balance of power",
       "reader_manifestations": [
-        "private leverage intensifying because the consequence cannot be reversed",
-        "control depending on access to what others cannot safely disclose",
-        "power becoming undeniable when trust and survival meet"
+        "someone gaining more private leverage because the consequence cannot be reversed",
+        "someone keeping control because others cannot safely disclose what they know",
+        "people seeing who has power when trust and survival depend on the same decision"
       ],
       "details_language": "privacy and leverage carrying irreversible stakes",
       "source_ids": [
@@ -6340,9 +6581,9 @@
       "sign_expression": "people follow a larger promise or belief beyond the issue's first limits",
       "combined_position": "whoever defines the larger truth can extend their reach over the decision",
       "reader_manifestations": [
-        "authority growing around who can define the larger truth",
+        "someone gaining authority by defining the larger truth",
         "a belief extending power beyond its original boundary",
-        "control moving through the institution that grants wider reach"
+        "an institution controlling who gets the wider reach"
       ],
       "details_language": "conviction defining truth and reach",
       "source_ids": [
@@ -6372,9 +6613,9 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "an institution assigns duty in ways that reveal who can make the lasting rule",
       "reader_manifestations": [
-        "institutional power becoming visible in who assigns lasting duty",
-        "control secured through a structure that outlives the immediate dispute",
-        "authority concentrating where consequences are formally enforced"
+        "people seeing institutional power in who gets to assign lasting duty",
+        "someone securing control through a structure that outlives the immediate dispute",
+        "the person who enforces the consequence gaining more authority"
       ],
       "details_language": "institutional control and lasting consequence",
       "source_ids": [
@@ -6404,9 +6645,9 @@
       "sign_expression": "the group asks whether the same rule applies to everyone",
       "combined_position": "a group changes the rules when the current system keeps power in the same hands",
       "reader_manifestations": [
-        "group rules redistributing power across an entire system",
-        "collective pressure exposing who benefits from the current arrangement",
-        "control changing hands when independence becomes structurally possible"
+        "a group rewriting its rules and redistributing power across the system",
+        "a group pressing the issue until everyone can see who benefits from the current arrangement",
+        "people changing who controls the system once independence becomes possible"
       ],
       "details_language": "power shifting through groups and systems",
       "source_ids": [
@@ -6436,9 +6677,9 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "people can feel the pressure without being able to name who controls it",
       "reader_manifestations": [
-        "power becoming difficult to locate inside a shared emotional field",
-        "control operating through an ideal no single person appears to own",
-        "leverage increasing where boundaries and responsibility remain diffuse"
+        "people feeling controlled without being able to name who is doing it",
+        "people enforcing an ideal while each person denies owning it",
+        "someone gaining leverage because no one has named the boundary or responsibility"
       ],
       "details_language": "diffuse control inside collective feeling",
       "source_ids": [
@@ -6466,11 +6707,11 @@
       "key": "sky-sign/chiron/aries",
       "planet_function": "people protect themselves differently when an old hurt enters the situation",
       "sign_expression": "someone moves first and asks everyone else to catch up",
-      "combined_position": "someone hesitates to begin because taking the lead once carried a painful cost",
+      "combined_position": "someone hangs back on the first move because going first has gone badly before",
       "reader_manifestations": [
-        "hesitation around acting first after initiative was once punished",
-        "a strong reaction when independence is treated as selfishness",
-        "pain resurfacing at the moment someone has to claim the right to begin"
+        "hesitating to volunteer, apply, speak first, or take the lead after being punished for it before",
+        "reacting strongly when independence is treated as selfishness",
+        "wanting to act but checking for permission first because taking initiative used to come with consequences"
       ],
       "details_language": "sensitivity around action and independence",
       "source_ids": [
@@ -6526,7 +6767,7 @@
       "reader_manifestations": [
         "careful wording shaped by the fear of being misunderstood again",
         "a question carrying the memory of not being believed",
-        "sensitivity appearing when several explanations exclude the lived one"
+        "someone reacting after every official explanation leaves out what they lived through"
       ],
       "details_language": "sensitivity around language and being understood",
       "source_ids": [
@@ -6552,7 +6793,7 @@
       "sign_expression": "people respond through care, memory, and private loyalties",
       "combined_position": "people ask for care differently when an old family hurt enters the room",
       "reader_manifestations": [
-        "care becoming protective where belonging once felt conditional",
+        "someone protecting the person whose belonging was once treated as conditional",
         "family memory sharpening a present need for safety",
         "old pain returning when private loyalty is asked to prove itself"
       ],
@@ -6580,9 +6821,9 @@
       "sign_expression": "the work becomes visible and someone wants the credit attached to it",
       "combined_position": "someone wants the work recognized without having the old hurt exposed with it",
       "reader_manifestations": [
-        "recognition touching the earlier fear that contribution would be dismissed",
+        "someone receiving recognition and still expecting their contribution to be dismissed",
         "visible pride covering uncertainty about whether appreciation will last",
-        "hurt surfacing when the person doing the work is not named"
+        "someone reacting strongly when the person doing the work is not named"
       ],
       "details_language": "visible hurt around recognition",
       "source_ids": [
@@ -6610,7 +6851,7 @@
       "reader_manifestations": [
         "a small correction reopening the fear of never being useful enough",
         "competence becoming a defense against being judged as a burden",
-        "sensitivity gathering around the detail that others call insignificant"
+        "someone focusing on the detail others dismiss because it once carried a real cost"
       ],
       "details_language": "sensitivity around usefulness and correction",
       "source_ids": [
@@ -6637,7 +6878,7 @@
       "combined_position": "someone keeps the peace until the unfair term starts touching an older hurt",
       "reader_manifestations": [
         "an unfair term touching an older habit of preserving peace at personal cost",
-        "pain appearing where agreement requires repeated self-adjustment",
+        "someone feeling an older hurt each time the agreement asks them to adjust again",
         "balance becoming fragile when one side's need is treated as disruption"
       ],
       "details_language": "pain inside fairness and agreement",
@@ -6665,7 +6906,7 @@
       "combined_position": "people guard private facts because trust once carried consequences they cannot undo",
       "reader_manifestations": [
         "trust activating the memory of a disclosure that carried consequences",
-        "privacy guarded because some experiences cannot be made harmless afterward",
+        "someone guarding their privacy because disclosure cannot be made harmless afterward",
         "old pain shaping how much leverage anyone is allowed to hold"
       ],
       "details_language": "old pain, privacy, and irreversible experience",
@@ -6693,8 +6934,8 @@
       "combined_position": "a larger promise can wake the fear that hope will be punished again",
       "reader_manifestations": [
         "a larger promise touching the fear that hope will be punished again",
-        "belief becoming sensitive when one story is declared universally true",
-        "pain entering the question of who is free to imagine a different future"
+        "someone reacting when one story is treated as the only truth",
+        "someone holding back a different future because hope once brought consequences"
       ],
       "details_language": "sensitivity around belief and meaning",
       "source_ids": [
@@ -6722,7 +6963,7 @@
       "reader_manifestations": [
         "competence used to hide the cost of carrying too much responsibility",
         "an old hurt returning when need is treated as failure",
-        "duty becoming the place where vulnerability is least allowed"
+        "someone hiding vulnerability whenever duty has to be performed"
       ],
       "details_language": "pain managed through duty and competence",
       "source_ids": [
@@ -6748,9 +6989,9 @@
       "sign_expression": "the group asks whether the same rule applies to everyone",
       "combined_position": "a shared rule can reopen the memory of being useful to the group but never fully included",
       "reader_manifestations": [
-        "group belonging tested by whether difference is tolerated in practice",
-        "exclusion remembered when a shared rule erases a particular need",
-        "sensitivity gathering around being useful to the group but not known by it"
+        "someone testing whether the group actually tolerates their difference",
+        "someone remembering an earlier exclusion when a shared rule erases their need",
+        "someone leaving the group first because exclusion feels easier to control when it is chosen"
       ],
       "details_language": "sensitivity around exclusion and group belonging",
       "source_ids": [
@@ -6776,9 +7017,9 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "people can absorb an old pain from the room without knowing what belongs to whom",
       "reader_manifestations": [
-        "empathy reopening pain that has not been clearly separated from others",
-        "longing making an old loss feel collectively meaningful",
-        "sensitivity spreading where care has no agreed boundary"
+        "someone feeling another person's pain and reopening their own",
+        "people giving an old loss shared meaning because they still long for what was lost",
+        "someone absorbing more pain because no one has agreed where care ends"
       ],
       "details_language": "pain diffused through empathy and longing",
       "source_ids": [
@@ -6805,8 +7046,8 @@
       "combined_position": "someone refuses to wait for approval before acting on the objection",
       "reader_manifestations": [
         "a refusal stated before anyone grants the right to object",
-        "autonomy claimed through the act others call premature",
-        "the excluded position forcing its way into the decision"
+        "someone claiming the right to act even when others call the move premature",
+        "someone starting a confrontation just to prove that no one can tell them what to do"
       ],
       "details_language": "direct refusal and autonomous action",
       "source_ids": [
@@ -6831,8 +7072,8 @@
       "combined_position": "people draw a hard line around the body, money, or resource others expect to use",
       "reader_manifestations": [
         "a boundary forming around the body or resource others expect to use",
-        "refusal becoming firm when security requires surrender",
-        "autonomy measured by what can be kept without apology"
+        "someone refusing the security offered because it requires surrender",
+        "someone judging their freedom by what they can keep without apology"
       ],
       "details_language": "bodily autonomy and protected resources",
       "source_ids": [
@@ -6857,8 +7098,8 @@
       "combined_position": "someone names the contradiction after the official explanation stops holding",
       "reader_manifestations": [
         "a contradiction spoken after the approved explanation stops holding",
-        "refusal moving between versions that authority wanted reduced to one",
-        "autonomy preserved through naming what the official language leaves out"
+        "someone offering several versions after an authority demands one approved account",
+        "someone changing the story whenever the last version begins to carry consequences"
       ],
       "details_language": "refusal through contradiction and alternate versions",
       "source_ids": [
@@ -6882,9 +7123,9 @@
       "sign_expression": "people respond through care, memory, and private loyalties",
       "combined_position": "people refuse a role that demands care or feeling on command",
       "reader_manifestations": [
-        "care withheld from a role that expects feeling to be performed",
-        "private belonging protected from demands for emotional access",
-        "refusal appearing when loyalty is used to override autonomy"
+        "someone withholding care from a role that expects feeling on command",
+        "someone protecting private belonging from demands for emotional access",
+        "someone letting an old family hurt color every present request for care"
       ],
       "details_language": "private autonomy and nonperformed care",
       "source_ids": [
@@ -6908,9 +7149,9 @@
       "sign_expression": "the work becomes visible and someone wants the credit attached to it",
       "combined_position": "someone claims visibility without making the difficult part more acceptable first",
       "reader_manifestations": [
-        "visibility claimed without making the contribution more acceptable first",
-        "recognition rejected when it depends on shrinking the difficult part",
-        "autonomy becoming public where approval had set the terms"
+        "someone claiming visibility without making the contribution more acceptable first",
+        "someone rejecting recognition that depends on shrinking the difficult part",
+        "someone making the whole conflict about them because shame is harder to name directly"
       ],
       "details_language": "visible refusal of conditional recognition",
       "source_ids": [
@@ -6935,7 +7176,7 @@
       "combined_position": "people reject a standard that treats usefulness or purity as the price of worth",
       "reader_manifestations": [
         "a standard refused because usefulness has become a condition of worth",
-        "autonomy defended against correction aimed at making difference manageable",
+        "someone defending their difference against correction meant to make it manageable",
         "the excluded need exposing what the approved method cannot serve"
       ],
       "details_language": "refusal of purity and usefulness standards",
@@ -6961,8 +7202,8 @@
       "combined_position": "someone challenges an agreement that calls repeated self-erasure fair",
       "reader_manifestations": [
         "an agreement challenged after fairness becomes repeated self-erasure",
-        "refusal entering the negotiation where politeness had hidden the cost",
-        "autonomy requiring terms that do not depend on one side yielding"
+        "someone naming the cost that polite negotiation kept hidden",
+        "someone demanding terms that do not depend on one side yielding"
       ],
       "details_language": "autonomy exposing unfair agreement",
       "source_ids": [
@@ -6986,9 +7227,9 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "people protect desire and private access from someone trying to take control",
       "reader_manifestations": [
-        "desire protected from someone else's claim to private access",
-        "refusal becoming final where trust has been used as leverage",
-        "autonomy holding back what cannot be safely recovered once given"
+        "someone protecting desire from another person's claim to private access",
+        "someone ending the agreement after trust is used as leverage",
+        "someone keeping private what they could not safely recover once given"
       ],
       "details_language": "protected desire, privacy, and power",
       "source_ids": [
@@ -7013,8 +7254,8 @@
       "combined_position": "someone rejects the rule that makes freedom depend on the approved belief",
       "reader_manifestations": [
         "a rule rejected when belief is used to make freedom conditional",
-        "autonomy widening beyond the story that defined acceptable desire",
-        "refusal exposing who was allowed to name the larger truth"
+        "someone wanting more than the approved story allowed them to name",
+        "someone refusing the approved story and exposing who was allowed to define the truth"
       ],
       "details_language": "freedom refusing conditional belief",
       "source_ids": [
@@ -7038,9 +7279,9 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "people confront an authority that uses duty or respectability to demand compliance",
       "reader_manifestations": [
-        "authority confronted where respectability has been used as control",
+        "someone confronting an authority that has used respectability as control",
         "a duty refused because compliance would erase the person carrying it",
-        "autonomy becoming visible in the consequence someone chooses to accept"
+        "someone accepting the consequence rather than obeying the demand"
       ],
       "details_language": "autonomy against authority and respectability",
       "source_ids": [
@@ -7065,8 +7306,8 @@
       "combined_position": "someone tests a group rule that welcomes difference only when it stays manageable",
       "reader_manifestations": [
         "a group norm challenged for welcoming difference only in approved forms",
-        "refusal revealing who remains excluded by a supposedly universal rule",
-        "autonomy protected from collective pressure to become easier to manage"
+        "someone challenging a universal rule and showing who it still excludes",
+        "someone rebelling against the group rule even when the rebellion leaves them more isolated"
       ],
       "details_language": "refusal inside conditional group belonging",
       "source_ids": [
@@ -7091,7 +7332,7 @@
       "combined_position": "people refuse to let empathy turn into carrying someone else's whole emotional demand",
       "reader_manifestations": [
         "an emotional demand refused before empathy becomes absorption",
-        "autonomy held where other people's ideals blur personal boundaries",
+        "someone holding a personal boundary while other people treat their ideals as shared",
         "the excluded feeling named without turning it into a request for rescue"
       ],
       "details_language": "autonomy against emotional absorption",

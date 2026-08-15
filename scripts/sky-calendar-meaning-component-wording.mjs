@@ -1,3 +1,5 @@
+import { repassSignUnit } from "./sky-calendar-component-repass.mjs";
+
 export const planets = [
   "sun", "moon", "mercury", "venus", "mars", "jupiter",
   "saturn", "uranus", "neptune", "pluto", "chiron", "lilith",
@@ -1293,17 +1295,20 @@ const ownerRegisterDetailsOverrides = {
   ],
 };
 
-export function wordingForSignUnit(planet, sign) {
+export function baseWordingForSignUnit(planet, sign) {
   const planetIndex = planets.indexOf(planet);
   const signIndex = signs.indexOf(sign);
   if (planetIndex < 0 || signIndex < 0) throw new Error(`Unknown sign unit ${planet}/${sign}`);
   const combinedPosition = plainPositionRows[planet][signIndex];
-  const record = {
+  return {
     combined_position: combinedPosition,
     reader_manifestations: manifestationRows[planet][sign],
     details_language: ownerRegisterDetailsOverrides[planet]?.[signIndex] ?? detailsRows[planet][signIndex],
   };
-  return record;
+}
+
+export function wordingForSignUnit(planet, sign) {
+  return repassSignUnit(`sky-sign/${planet}/${sign}`, baseWordingForSignUnit(planet, sign));
 }
 
 export const aspectComponents = [

@@ -385,8 +385,8 @@
           "how": "sky-how/element/water/water"
         },
         "componentSha256": {
-          "placementA": "434b06b9c7cc828e17cecc1e23e073e3e28aa0be53baec74cd7f18f2045313b2",
-          "placementB": "f76950abe5d6f649229e3192fd9931e74122a55a81cad639c7b94316fd50293e",
+          "placementA": "9cfa9b04fecab16c0ed3a7912d94b618932e29b0ba7bb6177a9c5f5b0505eed6",
+          "placementB": "c6961c2f0418a1181bdb6de423302d266270d07fbc6dd297dbfab1c896d021e2",
           "aspect": "ab2e53c8cfa15eac388d1fae71848b630bb7f2e6bd0ff0a342fea032c81a1271",
           "how": "06b2af6c6908a43d15bfd2d89b8dd590948a1d9fcf84cbc5dbcf59d7328fc18a"
         },
@@ -573,7 +573,7 @@
         },
         "componentSha256": {
           "placementA": "fd6cfd2ae54823897c51e4ec7d394e95a0a8ae100a8e024a8ce523a061bd8dbb",
-          "placementB": "af50e8b519eb4842404fc4e17ac39caac67608a622541f494bb0c0b5b82c1daa",
+          "placementB": "d708e2655ca5264929740c7874e70d5b87c6cd37a77edddf04e34528b52dcb87",
           "aspect": "95077d6cdbdff4a872b83844854b129f230c0eb217c6f1b0925d2de80eafca62",
           "how": "36b7ff622b9389c5d914d6c9a120731da7d90b0cfde6fe78fcccabe2fe0bf069"
         },
@@ -768,8 +768,8 @@
           "how": "sky-how/element/earth/earth"
         },
         "componentSha256": {
-          "placementA": "475f77e1c5287307bae94fe5cae9e374a702ec41f062d09e344cdd222bd8f44e",
-          "placementB": "77b480d91b6a513eb8018eedfccfd77fdd818518dd79d51640c48a72ab37de2e",
+          "placementA": "70148759dce4d7edf8a68150d7a1125ced1a11bc71c82dbf6e9ea2a84e7f2471",
+          "placementB": "5bb7b618d22aaecc84f1f39d3466fde7af6d7ec1972aeb4e1a6c731203833512",
           "aspect": "bd7f39756c270e836c41b954bfe1b027a942ad16b3b200794aeafd6d309f02ac",
           "how": "c4dcfc4eae9320518457f9475c8d30c566855d8d0471d62dafbe88c56b049887"
         },
@@ -964,8 +964,8 @@
           "how": "sky-how/modality/cardinal/mutable"
         },
         "componentSha256": {
-          "placementA": "a1b5704acedd698b4032f6a970910ba83cbd6699674ebeb65e6b1ba2d9ed6575",
-          "placementB": "4533ce245f0f3142894f47dcb93fab823f959a4d38a967c9b3c1e7e5e13c0cb1",
+          "placementA": "de8dcc62d11b95e5ca044951a800dbb88f40b113667ad5e8c0ac9a84fd32cba1",
+          "placementB": "c08514118c5c6c993a39681511e4fcd1a36eb2399a11b8a5b450460fb4cc825c",
           "aspect": "9af310ccedcf181ca0192b282c8101b4de4520d9496d7eb07a202bb4a89a8223",
           "how": "c629a1a922c155e5c97707a62d074b472a3d1f4d7b84ccdef46e06210e8764a7"
         },
@@ -1149,8 +1149,8 @@
           "how": "sky-how/modality/fixed/fixed"
         },
         "componentSha256": {
-          "placementA": "0985fda44f1f42257ac2232a3b8f2e5906375f24d8900f4f51c7bdf5db24950e",
-          "placementB": "32b8f84c49f359ad6b64a82d3f81d2f41352a491533c588bb9c5488293799ebc",
+          "placementA": "e16bf7b1b53e920e3975fd3cd277d55b8ae49660fb09fab58679bdaeac1c51af",
+          "placementB": "54eac46a5dc5c0be3f19b03b5ef19b5f62b6e8bd93f0f676ce8d319a193d38b8",
           "aspect": "31c90afbb6741e768a8be737b7c5ba65108b7dd192587dd5cb05040f63503efa",
           "how": "a064581e7d7e68f00ace469f48c4b12d60b8eb245c453a8b9c9e3cafe10a9812"
         },
