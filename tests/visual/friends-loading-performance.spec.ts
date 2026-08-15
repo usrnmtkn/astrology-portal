@@ -315,8 +315,12 @@ test.describe("Friends loading performance matrix", () => {
             url("/#friends?tab=charts&chart=friend-nikki&view=synastry"),
             { waitUntil: "domcontentloaded" }
           );
-          await expect(page.getByRole("region", { name: `${fixtureFriendName} chart profile` })).toBeVisible();
-          await expect(page.locator(".friend-aspect-row").first()).toBeVisible();
+          await expect(
+            page
+              .getByRole("region", { name: `${fixtureFriendName} chart profile` })
+              .locator(".friend-aspect-row")
+              .first()
+          ).toBeVisible();
         });
       }));
     }
