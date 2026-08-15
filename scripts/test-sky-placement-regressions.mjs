@@ -228,6 +228,23 @@ const lilithAriesQuincunxFacts = {
 };
 const lilithAriesQuincunx = renderer.renderSkyPlacement(lilithAriesQuincunxFacts);
 const lilithAriesQuincunxReference = renderSkyPlacementReference(lilithAriesQuincunxFacts);
+const lilithAriesUnsupportedSquareFacts = {
+  planet: "lilith",
+  sign: "aries",
+  entryDate: "August 25, 2026",
+  exitDate: "May 21, 2027",
+  events: [{
+    type: "aspect",
+    a: "lilith",
+    aSign: "aries",
+    b: "mercury",
+    bSign: "cancer",
+    aspect: "square",
+    exactDate: "September 2, 2026"
+  }]
+};
+const lilithAriesUnsupportedSquare = renderer.renderSkyPlacement(lilithAriesUnsupportedSquareFacts);
+const lilithAriesUnsupportedSquareReference = renderSkyPlacementReference(lilithAriesUnsupportedSquareFacts);
 const saturnPiscesDirect = renderer.renderSkyPlacement({
   planet: "saturn",
   sign: "pisces",
@@ -665,6 +682,16 @@ assert.equal(
   lilithAriesQuincunxReference.body,
   lilithAries.body,
   "The Node reference resolver must match the browser resolver when an optional quincunx insert is unavailable."
+);
+assert.equal(
+  lilithAriesUnsupportedSquare.body,
+  lilithAries.body,
+  "A placement aspect without approved interpretive copy must not restore generic prose."
+);
+assert.equal(
+  lilithAriesUnsupportedSquareReference.body,
+  lilithAries.body,
+  "The Node reference resolver must also fail closed for unsupported placement-aspect interpretation."
 );
 assert.match(
   lilithAries.body,

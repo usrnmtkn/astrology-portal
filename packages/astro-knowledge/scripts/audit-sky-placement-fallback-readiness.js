@@ -19,10 +19,13 @@ function buildReadinessReport() {
   const sunContinuous = JSON.parse(fs.readFileSync(sunContinuousPath, "utf8"));
   const phrasebookPath = path.join(repoRoot, "apps", "web", "src", "content", "fallbackArchitectureV3", "source-rows", "sky-aspect-phrasebook-v1.json");
   const phrasebook = JSON.parse(fs.readFileSync(phrasebookPath, "utf8"));
+  const ownerApprovedReaderPath = path.join(repoRoot, "apps", "web", "src", "content", "fallbackArchitectureV3", "bundled-sky-placement-owner-approved-reader-v1.json");
+  const ownerApprovedReader = JSON.parse(fs.readFileSync(ownerApprovedReaderPath, "utf8"));
   const hooks = new Map([
     ...(sourceRows.hookRows || []),
     ...(phrasebook.hookRows || []),
-    ...(sunContinuous.rows || [])
+    ...(sunContinuous.rows || []),
+    ...(ownerApprovedReader.rows || [])
   ].map((row) => [row.contentKey, row]));
   const writerReady = [];
   const writerBlocked = [];
