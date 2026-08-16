@@ -213,7 +213,7 @@ These are not synonyms. The editor and judge must identify the correct mechanism
 - Permission is a move, not a phrase. Give the reader one permission they think is forbidden, but never use the literal words "permission slip."
 - Conditional reveals are powerful but overused. "If you've been..." is fine sparingly. The banned contrast constructions below are not.
 - The smartest friend in the room, not a guru. Street-smart and direct, never mystical for its own sake.
-- Spelling and terms: write magick, not magic. Name self-sabotage as self-harm rather than softening it to self-punishment or self-abandonment. No cursing.
+- Spelling and terms: write magick, not magic. Name the specific behavior when a broad label would blur the mechanism. No cursing.
 
 ### Structural moves (use, do not stack all at once)
 - The shadow callout: name the specific coping behavior, then what it costs. "You keep rewriting the message instead of sending it, and calling that being careful."
@@ -359,11 +359,16 @@ Avoid title patterns like:
 - Moralizing closers: "this placement asks you to," "this aspect teaches you," "the lesson is."
 - Vague placeholders: "the thing," "the tender thing," "the careful thing." Name the actual subject.
 - `leak`, `leaks`, `leaked`, or `leaking`. Name the action and consequence instead.
-- Soft or mystical filler words: profound, whisper, tapestry, reckoning, dance, weave, woven, shrink, self-erasure, journey, sacred, alignment, vessel, container, hold space, transmute, alchemize, integrate (unless literally about moon phases).
-- Banned phrases: truth bomb, cosmic permission slip, permission slip, editing your truth, voice shakes, performing normalcy.
+- Global word policy uses five distinct classes. `HARD_BAN` fails deterministically; `AI_TELL_PREVENTIVE` fails only when its contextual predicate matches; `EDITORIAL_REVIEW` and `REPLACEMENT_SUGGESTION` warn without blocking; `WAIVED` produces no finding and never excludes retrieval.
+- Hard bans: reckoning, truth bomb, permission slip, performing normalcy, running tally, dynamic interplay.
+- Preventive AI-tell watchlist: whisper, tapestry, weave, woven. Literal fabric and physical weaving uses of weave/woven pass.
+- Editorial review: self-erasure.
+- Replacement suggestion: profound, only when it functions as generic spiritual emphasis. Prefer a more specific word such as significant, deep, lasting, major, strong, or important.
+- Waived: voice shakes, self-punishment, death, die, dying. These produce no lexical finding; repeated dramatic cadence is reviewed as cadence, not by literal string ban.
+- Other surface-specific banned phrases remain governed by their surface policy, including cosmic permission slip and editing your truth.
 - No cursing. Not fuck, shit, or fucking, ever.
 - Spiritual platitudes ("everything happens for a reason"). Soft-focus healing ("gentle reminder").
-- Spelling: write magick, not magic. Name self-sabotage as self-harm, not self-punishment or self-abandonment.
+- Spelling: write magick, not magic. Prefer specific behavior over a softened abstraction; `self-punishment` itself is not lexically banned.
 - Inviting or universe constructions: "this is inviting you to...", "the universe is asking you to...", "this is an opportunity to...", "what if this challenge is actually...", "consider that perhaps...", "notice how you might be..."
 - The contrast-reveal constructions, which are overused: "this isn't about X, it's about Y," "it's not about X, it's about Y," "not as punishment but as foundation," "this challenge is actually preparing you for...," "what feels like limitation is really liberation." State the certainty plainly, then the real choice, without the reversal scaffold.
 - Word replacements to reach for instead: for "performing," use borrowing, overcompensating with, going through the motions of, showcasing for proof. For "cage," name the actual source of limitation (someone else's timeline, your own perfectionism, a standard that was never yours). Pick the specific behavior over the abstract label.

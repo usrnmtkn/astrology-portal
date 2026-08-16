@@ -18,6 +18,7 @@ const voiceRoot = path.join(__dirname, "..", "voice");
 const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 
 const bannedWords = readJson(path.join(voiceRoot, "banned-words.json")).bannedWords || [];
+const { findPolicyFindings } = require("./banned-word-policy.js");
 const bannedConstructions = readJson(path.join(voiceRoot, "banned-constructions.json")).bannedConstructions || [];
 const sky = readJson(path.join(voiceRoot, "tldr-astro", "sky-aspect.json"));
 const { findBannedConstructions } = require("./banned-construction-matcher.js");
@@ -134,13 +135,7 @@ function lintCard(text, { mode = "collective-aspect-card" } = {}) {
     });
   }
 
-  // meaning-level banned words are also fails in output
-  for (const b of bannedWords) {
-    const term = typeof b === "string" ? b : b.term;
-    if (!term) continue;
-    const m = text.match(toRegex(term));
-    if (m) findings.push({ severity: "fail", source: "banned-words", term, match: m[0] });
-  }
+  findings.push(...findPolicyFindings(text, bannedWords));
   findings.push(...findBannedConstructions(text, bannedConstructions));
   // output-level fail + warn from the sky surface config
   for (const b of sky.outputBans.fail) {

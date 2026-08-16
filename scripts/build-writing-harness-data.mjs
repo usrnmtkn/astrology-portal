@@ -200,8 +200,13 @@ const literalConstructions = bannedConstructionsSource.bannedConstructions
   .map((entry) => entry.pattern)
   .filter((pattern) => !/[\[\]\/]/u.test(pattern));
 const generatedPolicy = {
+  wordPolicies: [...bannedWordsSource.bannedWords, ...(bannedWordsSource.waivedTerms ?? [])]
+    .map((entry) => typeof entry === "string" ? { term: entry, policyClass: "HARD_BAN" } : entry)
+    .sort((a, b) => a.term.localeCompare(b.term)),
   bannedWords: [...new Set([
-    ...bannedWordsSource.bannedWords.map((entry) => entry.term),
+    ...bannedWordsSource.bannedWords
+      .filter((entry) => (typeof entry === "string" ? "HARD_BAN" : entry.policyClass || "HARD_BAN") === "HARD_BAN")
+      .map((entry) => typeof entry === "string" ? entry : entry.term),
     ...Object.values(bannedWordsSource.surfaceBannedWords).flat().map((entry) => entry.term)
   ])].sort(),
   bannedPhrases: [...new Set([...bannedPhrasesSource, ...literalConstructions])].sort()
