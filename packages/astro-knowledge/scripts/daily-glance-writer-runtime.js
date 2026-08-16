@@ -14,6 +14,7 @@ const voiceIndexPath = path.join(packageRoot, "voice", "tldr-astro", "satori-wri
 const bannedWordsPath = path.join(packageRoot, "voice", "banned-words.json");
 const placementVoicePath = path.join(packageRoot, "voice", "tldr-astro", "sky-placement.json");
 const servingLintPolicyPath = path.join(packageRoot, "config", "daily-glance-writer-lint-policy-v3.json");
+const { POLICY_CLASSES, findingForEntry, normalizePolicyEntry } = require("./banned-word-policy.js");
 
 function readJson(filePath) {
   const parsed = JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -99,12 +100,16 @@ function compilePattern(term, { prefix = false } = {}) {
 }
 
 function outputBanRules(config = readJson(configPath)) {
-  const global = readJson(bannedWordsPath).bannedWords.map((entry) => ({
-    id: "global",
-    term: typeof entry === "string" ? entry : entry.term,
-    reason: typeof entry === "string" ? "global output ban" : entry.reason,
-    pattern: compilePattern(typeof entry === "string" ? entry : entry.term)
-  }));
+  const global = readJson(bannedWordsPath).bannedWords
+    .map(normalizePolicyEntry)
+    .filter((entry) => [POLICY_CLASSES.HARD_BAN, POLICY_CLASSES.AI_TELL_PREVENTIVE].includes(entry.policyClass))
+    .map((entry) => ({
+      id: "global",
+      term: entry.term,
+      reason: entry.reason,
+      pattern: compilePattern(entry.term),
+      policyEntry: entry
+    }));
   const vc016 = readJson(placementVoicePath).outputBans.fail.map((entry) => ({
     id: "VC-016-minus-pronouns",
     term: entry.term,
@@ -136,8 +141,10 @@ function outputBanRules(config = readJson(configPath)) {
 function lintTextAgainstBans(text, config) {
   const findings = [];
   for (const rule of outputBanRules(config)) {
-    const match = String(text).match(rule.pattern);
-    if (match) findings.push({ id: rule.id, term: rule.term, reason: rule.reason, match: match[0] });
+    const policyFinding = rule.policyEntry ? findingForEntry(text, rule.policyEntry) : null;
+    const match = rule.policyEntry ? null : String(text).match(rule.pattern);
+    if (policyFinding) findings.push({ id: rule.id, term: rule.term, reason: rule.reason, match: policyFinding.match, policyClass: policyFinding.policyClass });
+    else if (match) findings.push({ id: rule.id, term: rule.term, reason: rule.reason, match: match[0] });
   }
   return findings;
 }

@@ -11,6 +11,7 @@ const bankPath = path.join(
 const voiceRoot = path.join(__dirname, "../voice/tldr-astro");
 const generalVoiceRoot = path.join(__dirname, "../voice");
 const { runJudgeSamples } = require("./editorial-judge-runtime.js");
+const { findPolicyFindings } = require("./banned-word-policy.js");
 const {
   buildReferenceFactContext,
   buildAcKnowledgeContext,
@@ -85,9 +86,8 @@ function lintEntry(entry) {
   const phraseNotes = bannedPhrases
     .filter((phrase) => phrase !== "em dashes" && phraseMatches(body, phrase))
     .map((phrase) => `matches house-style phrase flag: "${phrase}"`);
-  const wordNotes = bannedWords
-    .filter(({ term }) => wordMatches(body, term))
-    .map(({ term }) => `matches house-style word flag: "${term}"`);
+  const wordNotes = findPolicyFindings(body, bannedWords)
+    .map((finding) => `matches ${finding.policyClass} word policy: "${finding.term}"${finding.preferredAlternatives?.length ? `; prefer ${finding.preferredAlternatives.join(", ")}` : ""}`);
 
   notes.push(...phraseNotes, ...wordNotes);
 

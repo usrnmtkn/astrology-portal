@@ -1,0 +1,478 @@
+{
+  "schema": "tldrastro-style-flag-policy-impact-v1",
+  "generatedAt": "2026-08-16",
+  "policySource": "packages/astro-knowledge/voice/banned-words.json",
+  "persistedRowStatusChanges": 0,
+  "note": "This policy-only change does not mutate review_status, approval, staging, promotion, or serving. Reclassified rows below describe deterministic lint outcomes only.",
+  "servingReaderCopy": {
+    "recordsScanned": 6834,
+    "rowsWithAnyFinding": 4,
+    "rowsWithFailure": 2,
+    "rowsWithAdvisoryOnly": 2,
+    "findingCountByPolicyClass": {
+      "EDITORIAL_REVIEW": 2,
+      "HARD_BAN": 2
+    },
+    "rowCountByPolicyClass": {
+      "EDITORIAL_REVIEW": 2,
+      "HARD_BAN": 2
+    },
+    "previousFlatFailureRows": 21,
+    "reclassifiedFromFailure": [
+      {
+        "id": "authored/compat-pair/mercury/gemini/gemini",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "authored/transit-house-intro/jupiter/9",
+        "previousTerms": [
+          "profound"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "authored/transit-house-intro/mars/8",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "authored/transit-house-sign/mars/5/taurus",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "authored/transit-house/north-node/4",
+        "previousTerms": [
+          "die"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "fallback-hook/placement-house-lived/neptune/8",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "fallback-hook/placement-house-lived/neptune/9",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "fallback-hook/placement-house-sentence/lilith/5",
+        "previousTerms": [
+          "die"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "fallback-hook/placement-house-sentence/neptune/9",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "fallback-hook/placement-house-sentence/uranus/8",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "fallback-hook/planet-lived/neptune",
+        "previousTerms": [
+          "profound"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "fallback-hook/sky-newmoon-sign/scorpio",
+        "previousTerms": [
+          "dying"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "fallback-hook/sky-placement-lived/lilith/pisces",
+        "previousTerms": [
+          "self-erasure"
+        ],
+        "currentFindings": [
+          {
+            "term": "self-erasure",
+            "policyClass": "EDITORIAL_REVIEW",
+            "severity": "warn"
+          }
+        ]
+      },
+      {
+        "id": "fallback-hook/sky-season-ritual/scorpio",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "fallback-hook/sky-season-shadow/libra",
+        "previousTerms": [
+          "self-erasure"
+        ],
+        "currentFindings": [
+          {
+            "term": "self-erasure",
+            "policyClass": "EDITORIAL_REVIEW",
+            "severity": "warn"
+          }
+        ]
+      },
+      {
+        "id": "fallback-hook/transit-effect-hard/mercury/venus",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "fallback-hook/transit-effect-hard/pluto/north-node",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "fallback-hook/transit-effect-soft/saturn/neptune",
+        "previousTerms": [
+          "dying"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "fallback-hook/transit-retro-article/pluto",
+        "previousTerms": [
+          "dying"
+        ],
+        "currentFindings": []
+      }
+    ]
+  },
+  "ownerCorpusAndEvidence": {
+    "recordsScanned": 7274,
+    "rowsWithAnyFinding": 19,
+    "rowsWithFailure": 12,
+    "rowsWithAdvisoryOnly": 7,
+    "findingCountByPolicyClass": {
+      "AI_TELL_PREVENTIVE": 3,
+      "EDITORIAL_REVIEW": 5,
+      "HARD_BAN": 9,
+      "REPLACEMENT_SUGGESTION": 2
+    },
+    "rowCountByPolicyClass": {
+      "AI_TELL_PREVENTIVE": 3,
+      "EDITORIAL_REVIEW": 5,
+      "HARD_BAN": 9,
+      "REPLACEMENT_SUGGESTION": 2
+    },
+    "previousFlatFailureRows": 47,
+    "reclassifiedFromFailure": [
+      {
+        "id": "owner-active:TLDR-Article-Edition-Saturn-Aries-2025-OWNER:e048",
+        "previousTerms": [
+          "self-erasure"
+        ],
+        "currentFindings": [
+          {
+            "term": "self-erasure",
+            "policyClass": "EDITORIAL_REVIEW",
+            "severity": "warn"
+          }
+        ]
+      },
+      {
+        "id": "owner-active:TLDR-Article-Edition-Saturn-Aries-2025-OWNER:e081",
+        "previousTerms": [
+          "self-erasure"
+        ],
+        "currentFindings": [
+          {
+            "term": "self-erasure",
+            "policyClass": "EDITORIAL_REVIEW",
+            "severity": "warn"
+          }
+        ]
+      },
+      {
+        "id": "owner-article:mercury-in-taurus-2025:p022",
+        "previousTerms": [
+          "voice shakes"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:mercury-in-taurus-2025:p071",
+        "previousTerms": [
+          "profound"
+        ],
+        "currentFindings": [
+          {
+            "term": "profound",
+            "policyClass": "REPLACEMENT_SUGGESTION",
+            "severity": "warn"
+          }
+        ]
+      },
+      {
+        "id": "owner-article:venus-in-virgo-2025:p042",
+        "previousTerms": [
+          "profound"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:2025-2026-lunar-nodes-in-pisces-and-virgo-overview-eclipses-and-your-rising-sign-horoscopes:p101",
+        "previousTerms": [
+          "profound"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:pisces-total-lunar-eclipse:p060",
+        "previousTerms": [
+          "profound"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:2025-new-and-full-moons:p053",
+        "previousTerms": [
+          "profound"
+        ],
+        "currentFindings": [
+          {
+            "term": "profound",
+            "policyClass": "REPLACEMENT_SUGGESTION",
+            "severity": "warn"
+          }
+        ]
+      },
+      {
+        "id": "owner-article:2025-new-and-full-moons:p123",
+        "previousTerms": [
+          "profound"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:2025-new-and-full-moons:p143",
+        "previousTerms": [
+          "profound"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:2025-new-and-full-moons:p157",
+        "previousTerms": [
+          "profound",
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:aquarius-season-2025:p043",
+        "previousTerms": [
+          "profound"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:cancer-full-moon-horoscopes-january-2025:p026",
+        "previousTerms": [
+          "voice shakes"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:cancer-new-moon-2025:p048",
+        "previousTerms": [
+          "die"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:first-new-moon-of-2025-aquarius-new-moon:p004",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:first-new-moon-of-2025-aquarius-new-moon:p006",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:full-moon-eclipse-in-pisces-2025:p026",
+        "previousTerms": [
+          "profound"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:full-moon-in-taurus:p004",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:leo-full-moon-2025:p085",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:leo-new-moon-2025:p028",
+        "previousTerms": [
+          "self-erasure"
+        ],
+        "currentFindings": [
+          {
+            "term": "self-erasure",
+            "policyClass": "EDITORIAL_REVIEW",
+            "severity": "warn"
+          }
+        ]
+      },
+      {
+        "id": "owner-article:new-moon-solar-eclipse-in-virgo:p070",
+        "previousTerms": [
+          "self-punishment"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:pisces-new-moon-2025:p029",
+        "previousTerms": [
+          "die"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:pisces-new-moon-2025:p046",
+        "previousTerms": [
+          "die"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:pisces-new-moon-2025:p077",
+        "previousTerms": [
+          "self-erasure"
+        ],
+        "currentFindings": [
+          {
+            "term": "self-erasure",
+            "policyClass": "EDITORIAL_REVIEW",
+            "severity": "warn"
+          }
+        ]
+      },
+      {
+        "id": "owner-article:pisces-season-2025:p100",
+        "previousTerms": [
+          "self-erasure"
+        ],
+        "currentFindings": [
+          {
+            "term": "self-erasure",
+            "policyClass": "EDITORIAL_REVIEW",
+            "severity": "warn"
+          }
+        ]
+      },
+      {
+        "id": "owner-article:this-weeks-astrology-august-30-september-7-2025:p014",
+        "previousTerms": [
+          "self-punishment"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:total-lunar-eclipse-in-virgo:p032",
+        "previousTerms": [
+          "die"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:virgo-new-moon-august-23rd-2025:p015",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:virgo-season-2025:p014",
+        "previousTerms": [
+          "self-punishment"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:virgo-season-2025:p034",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "owner-article:virgo-season-2025:p038",
+        "previousTerms": [
+          "dying"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "kmv9-transit-row-562",
+        "previousTerms": [
+          "profound"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "ll-v13:placementmeanings:23:neptune",
+        "previousTerms": [
+          "profound"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "ll-v13:placementmeanings:259:neptune-8th-house",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      },
+      {
+        "id": "ll-v13:placementmeanings:260:neptune-9th-house",
+        "previousTerms": [
+          "death"
+        ],
+        "currentFindings": []
+      }
+    ]
+  }
+}

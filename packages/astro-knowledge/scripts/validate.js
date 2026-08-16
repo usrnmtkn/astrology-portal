@@ -582,8 +582,11 @@ function validateVoicePolicy(errors) {
   if (!fs.existsSync(bannedWordsPath)) return;
 
   let bannedWords;
+  let waivedTerms;
   try {
-    bannedWords = readJson(bannedWordsPath).bannedWords || [];
+    const wordPolicy = readJson(bannedWordsPath);
+    bannedWords = wordPolicy.bannedWords || [];
+    waivedTerms = wordPolicy.waivedTerms || [];
   } catch (error) {
     errors.push(error.message);
     return;
@@ -593,18 +596,36 @@ function validateVoicePolicy(errors) {
     errors.push("voice/banned-words.json: bannedWords must be an array");
     return;
   }
+  if (!Array.isArray(waivedTerms)) {
+    errors.push("voice/banned-words.json: waivedTerms must be an array");
+    return;
+  }
 
+  const { VALID_POLICY_CLASSES, normalizePolicyEntry, isRetrievalExclusion } = require("./banned-word-policy.js");
   const checks = [];
   for (const [index, entry] of bannedWords.entries()) {
     if (typeof entry === "string") {
-      checks.push({ term: entry, pattern: new RegExp(`\\b${escapeRegExp(entry)}\\b`, "i") });
+      checks.push({ term: entry, entry: normalizePolicyEntry(entry) });
       continue;
     }
     if (!entry || typeof entry !== "object" || typeof entry.term !== "string") {
       errors.push(`voice/banned-words.json: bannedWords[${index}] must be a string or object with term`);
       continue;
     }
-    checks.push({ term: entry.term, pattern: new RegExp(`\\b${escapeRegExp(entry.term)}\\b`, "i") });
+    const normalized = normalizePolicyEntry(entry);
+    if (!VALID_POLICY_CLASSES.has(normalized.policyClass)) {
+      errors.push(`voice/banned-words.json: bannedWords[${index}] has invalid policyClass '${normalized.policyClass}'`);
+      continue;
+    }
+    if (normalized.policyClass === "REPLACEMENT_SUGGESTION" && !Array.isArray(normalized.useInstead)) {
+      errors.push(`voice/banned-words.json: bannedWords[${index}] replacement suggestion requires useInstead alternatives`);
+    }
+    checks.push({ entry: normalized, term: normalized.term });
+  }
+  for (const [index, entry] of waivedTerms.entries()) {
+    if (!entry || typeof entry !== "object" || typeof entry.term !== "string" || entry.policyClass !== "WAIVED") {
+      errors.push(`voice/banned-words.json: waivedTerms[${index}] must be an object with term and policyClass WAIVED`);
+    }
   }
 
   if (checks.length === 0) return;
@@ -616,7 +637,7 @@ function validateVoicePolicy(errors) {
     if (isNonServingSourceLedger(json) || isNonServingManifestationSet(json)) continue;
     const text = flattenText(json);
     for (const check of checks) {
-      if (check.pattern.test(text)) {
+      if (isRetrievalExclusion(text, check.entry)) {
         errors.push(`${rel(filePath)}: contains banned voice term "${check.term}"`);
       }
     }
