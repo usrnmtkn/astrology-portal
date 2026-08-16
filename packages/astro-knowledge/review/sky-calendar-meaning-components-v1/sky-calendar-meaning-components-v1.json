@@ -437,11 +437,11 @@
           "units": 64
         },
         {
-          "shape": "0/2/1",
+          "shape": "1/2/1",
           "units": 37
         },
         {
-          "shape": "0/1/2",
+          "shape": "1/1/2",
           "units": 26
         },
         {
@@ -461,7 +461,7 @@
           "units": 8
         },
         {
-          "shape": "0/0/3",
+          "shape": "1/0/3",
           "units": 1
         },
         {
@@ -1221,6 +1221,81 @@
         }
       ]
     },
+    "supportiveExtractionAudit": {
+      "authorizationDate": "2026-08-16",
+      "extractionOnly": true,
+      "units": 64,
+      "realizations": 64,
+      "emptySupportivePoolsAfter": 0,
+      "unsupportedUnits": [],
+      "keys": [
+        "sky-sign/chiron/aquarius",
+        "sky-sign/chiron/aries",
+        "sky-sign/chiron/capricorn",
+        "sky-sign/chiron/gemini",
+        "sky-sign/chiron/leo",
+        "sky-sign/chiron/libra",
+        "sky-sign/chiron/pisces",
+        "sky-sign/chiron/sagittarius",
+        "sky-sign/chiron/scorpio",
+        "sky-sign/chiron/taurus",
+        "sky-sign/jupiter/aries",
+        "sky-sign/jupiter/scorpio",
+        "sky-sign/lilith/aquarius",
+        "sky-sign/lilith/aries",
+        "sky-sign/lilith/gemini",
+        "sky-sign/lilith/pisces",
+        "sky-sign/lilith/sagittarius",
+        "sky-sign/lilith/taurus",
+        "sky-sign/mars/aquarius",
+        "sky-sign/mars/leo",
+        "sky-sign/mars/libra",
+        "sky-sign/mars/pisces",
+        "sky-sign/mars/sagittarius",
+        "sky-sign/mercury/aquarius",
+        "sky-sign/mercury/aries",
+        "sky-sign/mercury/capricorn",
+        "sky-sign/mercury/scorpio",
+        "sky-sign/moon/aquarius",
+        "sky-sign/moon/gemini",
+        "sky-sign/moon/sagittarius",
+        "sky-sign/moon/scorpio",
+        "sky-sign/neptune/cancer",
+        "sky-sign/neptune/capricorn",
+        "sky-sign/neptune/gemini",
+        "sky-sign/neptune/libra",
+        "sky-sign/neptune/scorpio",
+        "sky-sign/neptune/taurus",
+        "sky-sign/neptune/virgo",
+        "sky-sign/pluto/aries",
+        "sky-sign/pluto/cancer",
+        "sky-sign/pluto/capricorn",
+        "sky-sign/pluto/gemini",
+        "sky-sign/pluto/leo",
+        "sky-sign/pluto/libra",
+        "sky-sign/pluto/pisces",
+        "sky-sign/pluto/sagittarius",
+        "sky-sign/pluto/scorpio",
+        "sky-sign/pluto/taurus",
+        "sky-sign/saturn/aries",
+        "sky-sign/saturn/capricorn",
+        "sky-sign/saturn/leo",
+        "sky-sign/saturn/libra",
+        "sky-sign/saturn/taurus",
+        "sky-sign/saturn/virgo",
+        "sky-sign/sun/scorpio",
+        "sky-sign/uranus/aquarius",
+        "sky-sign/uranus/capricorn",
+        "sky-sign/uranus/scorpio",
+        "sky-sign/uranus/taurus",
+        "sky-sign/venus/capricorn",
+        "sky-sign/venus/gemini",
+        "sky-sign/venus/pisces",
+        "sky-sign/venus/sagittarius",
+        "sky-sign/venus/taurus"
+      ],
+      "rule": "Every added supportive realization is extracted from that unit's own governed sign evidence. Existing realizations and classifications remain unchanged."
+    },
     "rule": "Every unit was rechecked against its governed meaning and source cost. Realizations are typed by supportive, neutral, or shadow meaning; type is never encoded by array position."
   },
   "wordingQuality": {
@@ -1738,14 +1813,14 @@
     "manifestationRepeatDistribution": [
       {
         "occurrences": 1,
-        "distinctValues": 432
+        "distinctValues": 496
       }
     ],
     "repeatedManifestations": [],
     "manifestationShapeDistribution": [
       {
         "occurrences": 1,
-        "distinctValues": 432
+        "distinctValues": 496
       }
     ],
     "manifestationShapes": [
@@ -2834,6 +2909,10 @@
         1
       ],
       [
+        "someone acting once the {planet} and {planet} are no longer hypothetical",
+        1
+      ],
+      [
         "someone acting to protect another person before explaining why",
         1
       ],
@@ -2847,6 +2926,10 @@
       ],
       [
         "someone applying {planet} where trust and private access are already at stake",
+        1
+      ],
+      [
+        "someone asking the missing question that gets the conversation moving again",
         1
       ],
       [
@@ -2866,7 +2949,15 @@
         1
       ],
       [
+        "someone building real competence by repeating the unglamorous work until it holds",
+        1
+      ],
+      [
         "someone carrying more {planet} because they also control the access",
+        1
+      ],
+      [
+        "someone challenging a rule that treats disagreement as ignorance or disloyalty",
         1
       ],
       [
@@ -2874,7 +2965,23 @@
         1
       ],
       [
+        "someone changing a practical commitment so it matches what they actually believe",
+        1
+      ],
+      [
+        "someone changing a routine after the old version stops protecting what matters",
+        1
+      ],
+      [
+        "someone changing an old family arrangement after naming what the household actually needs",
+        1
+      ],
+      [
         "someone changing the story once the last version starts carrying consequences",
+        1
+      ],
+      [
+        "someone changing the structure once the old plan no longer supports the result",
         1
       ],
       [
@@ -2882,7 +2989,23 @@
         1
       ],
       [
+        "someone checking the agreement against what fairness looks like beyond the fantasy",
+        1
+      ],
+      [
+        "someone choosing a {planet} that leaves both people room to keep growing",
+        1
+      ],
+      [
+        "someone choosing a workable change after comfort alone stops protecting the old setup",
+        1
+      ],
+      [
         "someone choosing exact {planet} because the consequence cannot be reversed",
+        1
+      ],
+      [
+        "someone choosing the arrangement that feels good and can still hold up over time",
         1
       ],
       [
@@ -2899,6 +3022,10 @@
       ],
       [
         "someone claiming visibility without making the contribution more acceptable first",
+        1
+      ],
+      [
+        "someone claiming visible space for work that was previously easy to overlook",
         1
       ],
       [
@@ -2919,6 +3046,10 @@
       ],
       [
         "someone correcting every small flaw until the work becomes punishing to finish",
+        1
+      ],
+      [
+        "someone correcting the official story with the fact everyone learned to leave out",
         1
       ],
       [
@@ -2946,6 +3077,10 @@
         1
       ],
       [
+        "someone defining the hope clearly enough for both people to act on it",
+        1
+      ],
+      [
         "someone delaying {planet} until they can keep the {planet}",
         1
       ],
@@ -2966,6 +3101,14 @@
         1
       ],
       [
+        "someone earning recognition by finishing the work even when no applause arrives",
+        1
+      ],
+      [
+        "someone ending an arrangement that depends on their needs disappearing",
+        1
+      ],
+      [
         "someone ending the agreement after trust is used as leverage",
         1
       ],
@@ -2978,6 +3121,10 @@
         1
       ],
       [
+        "someone facing the difficult truth that makes grief or change feel less stuck",
+        1
+      ],
+      [
         "someone feeling an older {planet} each time the agreement asks them to adjust again",
         1
       ],
@@ -2987,6 +3134,10 @@
       ],
       [
         "someone finding a new way to preserve what matters without giving up {planet}",
+        1
+      ],
+      [
+        "someone finding enough perspective to admit the {planet} and still see a way forward",
         1
       ],
       [
@@ -3018,11 +3169,19 @@
         1
       ],
       [
+        "someone giving an imaginative idea words that other people can understand and use",
+        1
+      ],
+      [
         "someone giving enough support to make another person s contribution more visible",
         1
       ],
       [
         "someone giving more {planet} than either person has actually promised",
+        1
+      ],
+      [
+        "someone giving the clear answer that gets a stalled {planet} moving again",
         1
       ],
       [
@@ -3066,6 +3225,10 @@
         1
       ],
       [
+        "someone leaving a group that only includes them while they remain useful or agreeable",
+        1
+      ],
+      [
         "someone leaving or turning pain into a lesson before they have felt it",
         1
       ],
@@ -3086,6 +3249,10 @@
         1
       ],
       [
+        "someone letting another person closer without demanding proof before trust can begin",
+        1
+      ],
+      [
         "someone losing {planet} after the information reaches a wider audience",
         1
       ],
@@ -3102,6 +3269,14 @@
         1
       ],
       [
+        "someone making an {planet} practical enough to protect what people actually depend on",
+        1
+      ],
+      [
+        "someone making commitment credible by carrying the ordinary work it requires",
+        1
+      ],
+      [
         "someone making the whole conflict about them because shame is harder to name directly",
         1
       ],
@@ -3110,7 +3285,31 @@
         1
       ],
       [
+        "someone moving a decision once responsibility and {planet} are named directly",
+        1
+      ],
+      [
+        "someone moving the larger plan once the facts can carry the confidence",
+        1
+      ],
+      [
         "someone naming the cost that polite negotiation kept hidden",
+        1
+      ],
+      [
+        "someone naming the hidden fact before it keeps shaping the decision",
+        1
+      ],
+      [
+        "someone naming the motive clearly enough for trust to deepen without hiding the power involved",
+        1
+      ],
+      [
+        "someone naming the private {planet} that lets a stalled {planet} move",
+        1
+      ],
+      [
+        "someone naming what their work body or time is worth without defending the need",
         1
       ],
       [
@@ -3122,7 +3321,15 @@
         1
       ],
       [
+        "someone offering care without assuming they know what another person needs",
+        1
+      ],
+      [
         "someone offering less {planet} after a private disclosure changes the trust",
+        1
+      ],
+      [
+        "someone opening the hidden material and changing the arrangement that kept it buried",
         1
       ],
       [
@@ -3162,6 +3369,14 @@
         1
       ],
       [
+        "someone proving a different {planet} can give the group more room to act",
+        1
+      ],
+      [
+        "someone proving another method works before asking the group to change the rule",
+        1
+      ],
+      [
         "someone proving they can act independently while carrying a {planet} that cannot be rushed",
         1
       ],
@@ -3174,7 +3389,23 @@
         1
       ],
       [
+        "someone putting the deadline and responsibility in writing so the {planet} can proceed",
+        1
+      ],
+      [
         "someone putting their {planet} into the fault that can actually be repaired",
+        1
+      ],
+      [
+        "someone putting their name on an {planet} and carrying it through where everyone can see",
+        1
+      ],
+      [
+        "someone questioning an inherited belief until a larger and more honest view becomes possible",
+        1
+      ],
+      [
+        "someone questioning an old belief after one conversation makes its limits impossible to ignore",
         1
       ],
       [
@@ -3198,6 +3429,18 @@
         1
       ],
       [
+        "someone rebuilding a plan around what still matters after the old blueprint stops working",
+        1
+      ],
+      [
+        "someone rebuilding security after an honest look at what the old arrangement costs",
+        1
+      ],
+      [
+        "someone rebuilding trust through work that can be repeated and maintained",
+        1
+      ],
+      [
         "someone receiving recognition and still expecting their contribution to be dismissed",
         1
       ],
@@ -3218,6 +3461,10 @@
         1
       ],
       [
+        "someone releasing a belief or coping habit that no longer provides real comfort",
+        1
+      ],
+      [
         "someone relying on repeated follow through instead of reassurance to know they belong",
         1
       ],
@@ -3226,7 +3473,23 @@
         1
       ],
       [
+        "someone renegotiating an agreement after repeated compromise reveals who keeps yielding",
+        1
+      ],
+      [
+        "someone repairing trust by renegotiating access after a private disclosure",
+        1
+      ],
+      [
         "someone representing the group because they remember its history",
+        1
+      ],
+      [
+        "someone saying no before another repeated demand becomes an obligation",
+        1
+      ],
+      [
+        "someone saying what they want and taking the first step after an old hesitation breaks",
         1
       ],
       [
@@ -3238,7 +3501,27 @@
         1
       ],
       [
+        "someone sending the message after checking that their own meaning is still there",
+        1
+      ],
+      [
+        "someone setting a {planet} that keeps the first move from outrunning what can be maintained",
+        1
+      ],
+      [
+        "someone setting down extra work that was only meant to prove they were capable",
+        1
+      ],
+      [
         "someone sharing {planet} widely enough to change who holds access",
+        1
+      ],
+      [
+        "someone sharing a different opinion without editing it into what the group will accept",
+        1
+      ],
+      [
+        "someone sharing the work without making it impressive enough to hide behind",
         1
       ],
       [
@@ -3266,6 +3549,10 @@
         1
       ],
       [
+        "someone showing where a new rule can work in practice",
+        1
+      ],
+      [
         "someone softening the truth until the {planet} no longer says what it means",
         1
       ],
@@ -3274,11 +3561,23 @@
         1
       ],
       [
+        "someone stating a conviction without softening it before anyone has disagreed",
+        1
+      ],
+      [
+        "someone stating a real preference without making agreement the price of staying close",
+        1
+      ],
+      [
         "someone stepping away after others mistook sympathy for agreement",
         1
       ],
       [
         "someone stepping back {planet} so they can remain part of the group",
+        1
+      ],
+      [
+        "someone stepping back from a reaction long enough to see the pattern clearly",
         1
       ],
       [
@@ -3294,6 +3593,14 @@
         1
       ],
       [
+        "someone taking the first practical step while {planet} is high enough to act",
+        1
+      ],
+      [
+        "someone talking through a worry until the simple {planet} underneath becomes clear",
+        1
+      ],
+      [
         "someone testing a belief against the {planet} of an institution or law",
         1
       ],
@@ -3306,6 +3613,14 @@
         1
       ],
       [
+        "someone trusting a private {planet} enough to say how much it still matters",
+        1
+      ],
+      [
+        "someone trying the first move again after an old setback stopped deciding the outcome",
+        1
+      ],
+      [
         "someone trying to act independently inside a {planet} designed to resist quick {planet}",
         1
       ],
@@ -3314,11 +3629,23 @@
         1
       ],
       [
+        "someone turning a strong feeling into useful work that addresses the problem indirectly",
+        1
+      ],
+      [
+        "someone turning an imagined possibility into a method that can actually be followed",
+        1
+      ],
+      [
         "someone using care access or obligation to make it harder for another person to say no",
         1
       ],
       [
         "someone using public {planet} as leverage in a decision with lasting consequences",
+        1
+      ],
+      [
+        "someone using tact to state the real disagreement without abandoning the shared plan",
         1
       ],
       [
@@ -3355,6 +3682,10 @@
       ],
       [
         "someone working the same point until a material limit gives way",
+        1
+      ],
+      [
+        "someone writing fair terms that still work when the agreement becomes difficult",
         1
       ],
       [
@@ -3591,7 +3922,8 @@
       "owner_voice_source_hashes": [
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/sun/taurus",
@@ -3621,7 +3953,8 @@
       "owner_voice_source_hashes": [
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/sun/gemini",
@@ -3652,7 +3985,8 @@
       "owner_voice_source_hashes": [
         "e5a5c3ddd4f70863638ddb523cb1344dbdc74cf43900b2a6a4e9c6112e995a73"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/sun/cancer",
@@ -3684,7 +4018,8 @@
       "owner_voice_source_hashes": [
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/sun/leo",
@@ -3715,7 +4050,8 @@
       "owner_voice_source_hashes": [
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/sun/virgo",
@@ -3747,7 +4083,8 @@
       "owner_voice_source_hashes": [
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/sun/libra",
@@ -3778,7 +4115,8 @@
       "owner_voice_source_hashes": [
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/sun/scorpio",
@@ -3786,7 +4124,9 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "who gets named publicly depends on trust, privacy, and leverage behind the scenes",
       "details_language": "recognition and public contribution tied to privacy, trust, and leverage",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone naming the hidden fact before it keeps shaping the decision"
+      ],
       "neutral_realizations": [
         "the public representative carrying private obligations others cannot see"
       ],
@@ -3809,7 +4149,18 @@
       "owner_voice_source_hashes": [
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone naming the hidden fact before it keeps shaping the decision",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!838"
+          ],
+          "source_hashes": [
+            "e58c141239bac2092c59cafde00a9758984ca8b477f2fb194c49e8e77ff3ffb3"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/sun/sagittarius",
@@ -3841,7 +4192,8 @@
       "owner_voice_source_hashes": [
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/sun/capricorn",
@@ -3872,7 +4224,8 @@
       "owner_voice_source_hashes": [
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/sun/aquarius",
@@ -3904,7 +4257,8 @@
       "owner_voice_source_hashes": [
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/sun/pisces",
@@ -3935,7 +4289,8 @@
       "owner_voice_source_hashes": [
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/moon/aries",
@@ -3971,7 +4326,8 @@
         "e1628fe5260f72fa02a61cb521104a5e206409048d232ec541ad2c9cc96b3412",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/moon/taurus",
@@ -4006,7 +4362,8 @@
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e",
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/moon/gemini",
@@ -4014,7 +4371,9 @@
       "sign_expression": "new facts and quick replies keep changing the choices",
       "combined_position": "a new fact or reply can change how the whole situation feels",
       "details_language": "changing information and changing feeling",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone talking through a worry until the simple feeling underneath becomes clear"
+      ],
       "neutral_realizations": [
         "a mood changing when one more fact enters the conversation",
         "someone showing care by keeping people informed"
@@ -4043,7 +4402,18 @@
         "94fea140f19241daebca8ead4e1e3d084594e6132fdf3d19d9563cf9f66e6370",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone talking through a worry until the simple feeling underneath becomes clear",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!110"
+          ],
+          "source_hashes": [
+            "d6d255fc952ee42f9df13243dcbc4978f9c6d77cab6be9cb87682c20e32dfba7"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/moon/cancer",
@@ -4078,7 +4448,8 @@
         "09c59de1342f4ae2d556f14461f1dd5c36cb2db3e045a51d5739f188524c0e0c",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/moon/leo",
@@ -4113,7 +4484,8 @@
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e",
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/moon/virgo",
@@ -4151,7 +4523,8 @@
         "9a22d877bc6e93e77344d9b7e36962f007ee7a2e50e525046456484b63dccf79",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/moon/libra",
@@ -4185,7 +4558,8 @@
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e",
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/moon/scorpio",
@@ -4193,7 +4567,9 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "people hold back and wait to see who can be trusted with the full feeling",
       "details_language": "emotional safety, privacy, and trust",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone trusting a private feeling enough to say how much it still matters"
+      ],
       "neutral_realizations": [
         "someone deciding how safe they feel by who can be trusted with private information",
         "someone offering less care after a private disclosure changes the trust"
@@ -4222,7 +4598,18 @@
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone trusting a private feeling enough to say how much it still matters",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!115"
+          ],
+          "source_hashes": [
+            "82e6549f5dec0b5e5556c379ec8272cee99e4f2f75a1156feb70e6493579c1c2"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/moon/sagittarius",
@@ -4230,7 +4617,9 @@
       "sign_expression": "people follow a larger promise or belief beyond the issue's first limits",
       "combined_position": "the mood improves when people can see a larger reason or a way forward",
       "details_language": "emotional freedom and larger meaning",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone finding enough perspective to admit the feeling and still see a way forward"
+      ],
       "neutral_realizations": [
         "a change of place restoring emotional room",
         "people making room for newcomers who share the belief but not the history"
@@ -4259,7 +4648,18 @@
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone finding enough perspective to admit the feeling and still see a way forward",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!116"
+          ],
+          "source_hashes": [
+            "858215fcaf279b3dbdb342f792258f45167acc358c4b149161c152a9b35147e5"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/moon/capricorn",
@@ -4295,7 +4695,8 @@
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/moon/aquarius",
@@ -4303,7 +4704,9 @@
       "sign_expression": "the group asks whether the same rule applies to everyone",
       "combined_position": "the group makes room for feeling by stepping back and looking at the pattern",
       "details_language": "belonging with distance and independence",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone stepping back from a reaction long enough to see the pattern clearly"
+      ],
       "neutral_realizations": [
         "someone stepping back emotionally so they can remain part of the group",
         "people deciding who belongs by whether difference can remain unexplained"
@@ -4330,7 +4733,18 @@
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e",
         "e1628fe5260f72fa02a61cb521104a5e206409048d232ec541ad2c9cc96b3412"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone stepping back from a reaction long enough to see the pattern clearly",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!118"
+          ],
+          "source_hashes": [
+            "035462284848f4e94886e4211ff7ce8d9ad1f63c411335eb55168821643c59b6"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/moon/pisces",
@@ -4367,7 +4781,8 @@
         "c8979d870ff57c3af33e2dbc83cdd5ae48f932c4aa97aee1294e5daaa21a4fe5",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/mercury/aries",
@@ -4375,7 +4790,9 @@
       "sign_expression": "someone moves first and asks everyone else to catch up",
       "combined_position": "the first clear answer can move a decision before everyone has finished thinking",
       "details_language": "direct speech and immediate decisions",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone giving the clear answer that gets a stalled decision moving again"
+      ],
       "neutral_realizations": [
         "a decision announced before every objection has been heard",
         "the first explanation setting the terms of the debate"
@@ -4404,7 +4821,18 @@
         "d3c91e98afca692d2c012eb99dbbdc4102724551d2cd1d6163ceab91dc1ed093",
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone giving the clear answer that gets a stalled decision moving again",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!251"
+          ],
+          "source_hashes": [
+            "0ab8c1ff29ab1bc9658e67fd43c08ca864ff6dd2ef0bcf1dc070557091127af2"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/mercury/taurus",
@@ -4437,7 +4865,8 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/mercury/gemini",
@@ -4474,7 +4903,8 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "e5a5c3ddd4f70863638ddb523cb1344dbdc74cf43900b2a6a4e9c6112e995a73"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/mercury/cancer",
@@ -4508,7 +4938,8 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/mercury/leo",
@@ -4546,7 +4977,8 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/mercury/virgo",
@@ -4579,7 +5011,8 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/mercury/libra",
@@ -4613,7 +5046,8 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/mercury/scorpio",
@@ -4621,7 +5055,9 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "who knows the private fact can decide who has room to act",
       "details_language": "private information and trusted access",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone naming the private fact that lets a stalled decision move"
+      ],
       "neutral_realizations": [
         "access to private information deciding who can act",
         "a withheld fact gaining power as the stakes rise"
@@ -4646,7 +5082,18 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone naming the private fact that lets a stalled decision move",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!392"
+          ],
+          "source_hashes": [
+            "379a1b9b2940ae97fb0fc26750e590d9c11e000a5717690ba726b32757af5416"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/mercury/sagittarius",
@@ -4679,7 +5126,8 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/mercury/capricorn",
@@ -4687,7 +5135,9 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "a written decision assigns responsibility and stays on the record",
       "details_language": "formal language and accountable decisions",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone putting the deadline and responsibility in writing so the decision can proceed"
+      ],
       "neutral_realizations": [
         "formal wording assigning responsibility that continues after the meeting",
         "a decision becoming real when an authority records it"
@@ -4712,7 +5162,18 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone putting the deadline and responsibility in writing so the decision can proceed",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!429"
+          ],
+          "source_hashes": [
+            "9b257f1e586392f5ebfa62fbd86d2873079360610fd9d8188c4241c0d4a3aca9"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/mercury/aquarius",
@@ -4720,7 +5181,9 @@
       "sign_expression": "the group asks whether the same rule applies to everyone",
       "combined_position": "a new explanation can show how the rule affects the whole group",
       "details_language": "system-changing ideas and group consequence",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone showing where a new rule can work in practice"
+      ],
       "neutral_realizations": [
         "an idea evaluated by the system it would alter",
         "someone sharing information widely enough to change who holds access"
@@ -4745,7 +5208,18 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone showing where a new rule can work in practice",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!445"
+          ],
+          "source_hashes": [
+            "8267f0d54861a0712e03dcc4472bce8e50de6220e09877ee51ca4e84a145a16d"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/mercury/pisces",
@@ -4782,7 +5256,8 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/venus/aries",
@@ -4815,7 +5290,8 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/venus/taurus",
@@ -4823,7 +5299,9 @@
       "sign_expression": "people work with what can be afforded, maintained, and made to last",
       "combined_position": "a choice feels worthwhile when it is pleasant, affordable, and built to last",
       "details_language": "lasting value, comfort, and material worth",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone choosing the arrangement that feels good and can still hold up over time"
+      ],
       "neutral_realizations": [
         "an agreement holding because the exchange feels materially worthwhile",
         "people counting comfort as part of what makes the agreement worthwhile"
@@ -4852,7 +5330,18 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone choosing the arrangement that feels good and can still hold up over time",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!61"
+          ],
+          "source_hashes": [
+            "6dee87d21887dc5751848bda35e5cc92a8cca58c619062652f4e78d06305df61"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/venus/gemini",
@@ -4860,7 +5349,9 @@
       "sign_expression": "new facts and quick replies keep changing the choices",
       "combined_position": "people stay connected through conversation even as the terms remain open",
       "details_language": "connection through varied conversation",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone asking the missing question that gets the conversation moving again"
+      ],
       "neutral_realizations": [
         "people staying interested because the conversation keeps changing shape",
         "people staying interested because more than one arrangement remains possible"
@@ -4889,7 +5380,18 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "e5a5c3ddd4f70863638ddb523cb1344dbdc74cf43900b2a6a4e9c6112e995a73"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone asking the missing question that gets the conversation moving again",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!62"
+          ],
+          "source_hashes": [
+            "d5e6f6b96b9b5279475b0c30df270a0ef4c8809e2c50c4d8169f131338c7427b"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/venus/cancer",
@@ -4923,7 +5425,8 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/venus/leo",
@@ -4961,7 +5464,8 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/venus/virgo",
@@ -4998,7 +5502,8 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/venus/libra",
@@ -5036,7 +5541,8 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/venus/scorpio",
@@ -5069,7 +5575,8 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/venus/sagittarius",
@@ -5077,7 +5584,9 @@
       "sign_expression": "people follow a larger promise or belief beyond the issue's first limits",
       "combined_position": "people choose the agreement that leaves more room to grow and explore",
       "details_language": "open value and expansive desire",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone choosing a connection that leaves both people room to keep growing"
+      ],
       "neutral_realizations": [
         "people choosing each other because they can imagine a wider life together",
         "people choosing the option that leaves more room to grow"
@@ -5106,7 +5615,18 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone choosing a connection that leaves both people room to keep growing",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!68"
+          ],
+          "source_hashes": [
+            "8536df484d62507cd74941fb64d98a411d15c0878e56e1d3db660a9656426bae"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/venus/capricorn",
@@ -5114,7 +5634,9 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "a promise matters when someone can carry the work and consequences over time",
       "details_language": "durable agreement and social responsibility",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone making commitment credible by carrying the ordinary work it requires"
+      ],
       "neutral_realizations": [
         "an agreement earning value because it can carry responsibility over time",
         "someone showing affection through commitments that survive inconvenience"
@@ -5143,7 +5665,18 @@
         "176e6d64edd1e1ccf2dd6e4da470e7120a3fcb30dfc333b236bf57c9192d6a5c",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone making commitment credible by carrying the ordinary work it requires",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!69"
+          ],
+          "source_hashes": [
+            "8b125bf88f1aee6436760a54e01cd7005a62722d39fa6bb71a50c7715c57f107"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/venus/aquarius",
@@ -5177,7 +5710,8 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/venus/pisces",
@@ -5185,7 +5719,9 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "people can fall for the hope of connection before its actual terms are clear",
       "details_language": "idealized affection and porous longing",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone defining the hope clearly enough for both people to act on it"
+      ],
       "neutral_realizations": [
         "someone valuing an arrangement more because they long for what it could become",
         "someone giving more affection than either person has actually promised"
@@ -5210,7 +5746,18 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone defining the hope clearly enough for both people to act on it",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!1093"
+          ],
+          "source_hashes": [
+            "015929baf8822626da459cf3d1f3ae4ce64c685829f5d0149220131eb0c834ec"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/mars/aries",
@@ -5248,7 +5795,8 @@
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/mars/taurus",
@@ -5286,7 +5834,8 @@
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/mars/gemini",
@@ -5323,7 +5872,8 @@
         "0be04b090c7fcce3670de327a1f2d6a95ccdbbe042681852d42413dc8f9f2187",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/mars/cancer",
@@ -5360,7 +5910,8 @@
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/mars/leo",
@@ -5368,7 +5919,9 @@
       "sign_expression": "the work becomes visible and someone wants the credit attached to it",
       "combined_position": "people push harder once the result will be visible and carry their name",
       "details_language": "visible action and ownership of the result",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone putting their name on an effort and carrying it through where everyone can see"
+      ],
       "neutral_realizations": [
         "a bold action tying the outcome to one visible person"
       ],
@@ -5397,7 +5950,18 @@
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone putting their name on an effort and carrying it through where everyone can see",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!40"
+          ],
+          "source_hashes": [
+            "a8d85d92ff58a5c46e06ca6dba908db966488e38599ec572c9a5fc3574a1c286"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/mars/virgo",
@@ -5435,7 +5999,8 @@
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/mars/libra",
@@ -5443,7 +6008,9 @@
       "sign_expression": "each side compares the terms and asks whether the deal is fair",
       "combined_position": "people delay the move while they measure fairness and the cost of open conflict",
       "details_language": "action negotiated through fairness and response",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone using tact to state the real disagreement without abandoning the shared plan"
+      ],
       "neutral_realizations": [
         "the urge to act slowing long enough to measure the other response",
         "people negotiating the disagreement before either side gets its preferred result"
@@ -5472,7 +6039,18 @@
         "382a3770451272b03f8fb084cd8b0aa3dae8d2c4da37e7cc43d7ebd1cec2958c",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone using tact to state the real disagreement without abandoning the shared plan",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!42"
+          ],
+          "source_hashes": [
+            "492b1f314d8a6df9b534e659ea4f3313edc71b437c6d1d7dd7d054ddb5576768"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/mars/scorpio",
@@ -5508,7 +6086,8 @@
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f",
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/mars/sagittarius",
@@ -5516,7 +6095,9 @@
       "sign_expression": "people follow a larger promise or belief beyond the issue's first limits",
       "combined_position": "people spend energy on the plan that reaches farther and supports a larger claim",
       "details_language": "action driven by conviction and distance",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone moving the larger plan once the facts can carry the confidence"
+      ],
       "neutral_realizations": [
         "someone reaching for the larger target before finishing the nearer one",
         "someone acting more forcefully because conviction matters more than immediate proof"
@@ -5543,7 +6124,18 @@
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f",
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone moving the larger plan once the facts can carry the confidence",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!203"
+          ],
+          "source_hashes": [
+            "c51a9dab166de602ddf124b7a1f08aadc4f0639534c467e83e2d185ff101f9a0"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/mars/capricorn",
@@ -5581,7 +6173,8 @@
         "bfcf38b2a4649dfab75b46e1540455e34106f6e1448421f273c8754f14625845",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/mars/aquarius",
@@ -5589,7 +6182,9 @@
       "sign_expression": "the group asks whether the same rule applies to everyone",
       "combined_position": "people challenge the rule when the old system blocks a different way of acting",
       "details_language": "pressure for independence and system change",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone proving another method works before asking the group to change the rule"
+      ],
       "neutral_realizations": [
         "people acting to change the system instead of winning one exception",
         "a group pressing for a different arrangement"
@@ -5616,7 +6211,18 @@
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone proving another method works before asking the group to change the rule",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!223"
+          ],
+          "source_hashes": [
+            "5f8ce9b7212e3b7cc14497b412a8162cbea650eba30c66985269448c79b0e229"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/mars/pisces",
@@ -5624,7 +6230,9 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "someone senses the need to act although the target or boundary is still unclear",
       "details_language": "instinctive action with an unclear target",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone turning a strong feeling into useful work that addresses the problem indirectly"
+      ],
       "neutral_realizations": [
         "someone acting on the feeling before they can name the target",
         "someone losing momentum when several needs merge into one another"
@@ -5653,7 +6261,18 @@
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone turning a strong feeling into useful work that addresses the problem indirectly",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!47"
+          ],
+          "source_hashes": [
+            "ce39b9484f05ee4b4de00ed7f559d9ec63c9799e6d15afed33154562b15b086e"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/jupiter/aries",
@@ -5661,7 +6280,9 @@
       "sign_expression": "someone moves first and asks everyone else to catch up",
       "combined_position": "one opening can become a much larger plan as the room keeps counting the cost",
       "details_language": "growth through risk and first moves",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone taking the first practical step while confidence is high enough to act"
+      ],
       "neutral_realizations": [
         "someone becoming more confident by acting before certainty arrives",
         "people choosing the option that gives them more room to act independently"
@@ -5690,7 +6311,18 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone taking the first practical step while confidence is high enough to act",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!168"
+          ],
+          "source_hashes": [
+            "e4f01e9514f9a57aed31a2fa97438e6aa6577e788da968121d2255064f671d06"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/jupiter/taurus",
@@ -5725,7 +6357,8 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/jupiter/gemini",
@@ -5763,7 +6396,8 @@
         "e5a5c3ddd4f70863638ddb523cb1344dbdc74cf43900b2a6a4e9c6112e995a73",
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/jupiter/cancer",
@@ -5798,7 +6432,8 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/jupiter/leo",
@@ -5834,7 +6469,8 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/jupiter/virgo",
@@ -5869,7 +6505,8 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/jupiter/libra",
@@ -5906,7 +6543,8 @@
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e",
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/jupiter/scorpio",
@@ -5914,7 +6552,9 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "people take a larger risk only after trust and leverage are clear",
       "details_language": "growth through trust and reversible stakes",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone facing the difficult truth that makes grief or change feel less stuck"
+      ],
       "neutral_realizations": [
         "people taking a larger step only after there is enough trust to share real leverage"
       ],
@@ -5941,7 +6581,18 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone facing the difficult truth that makes grief or change feel less stuck",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!89"
+          ],
+          "source_hashes": [
+            "4f25fcfbf9248a585d7b669cb800935266a6eaabc0120128ad34bf78efb3c72a"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/jupiter/sagittarius",
@@ -5976,7 +6627,8 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/jupiter/capricorn",
@@ -6013,7 +6665,8 @@
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d",
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/jupiter/aquarius",
@@ -6048,7 +6701,8 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/jupiter/pisces",
@@ -6084,7 +6738,8 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/saturn/aries",
@@ -6092,7 +6747,9 @@
       "sign_expression": "someone moves first and asks everyone else to catch up",
       "combined_position": "a deadline stops the first move and forces people to prove what can actually be done",
       "details_language": "a deadline against a rushed first move",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone setting a limit that keeps the first move from outrunning what can be maintained"
+      ],
       "neutral_realizations": [
         "an authority requiring proof before backing the action"
       ],
@@ -6119,7 +6776,18 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone setting a limit that keeps the first move from outrunning what can be maintained",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!654"
+          ],
+          "source_hashes": [
+            "7e5fb724918b17ca3725051fbd9c0295cf672fe75c1d97e8c30c8b46df8dfc55"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/saturn/taurus",
@@ -6127,7 +6795,9 @@
       "sign_expression": "people work with what can be afforded, maintained, and made to last",
       "combined_position": "a smaller budget makes people decide what is worth maintaining",
       "details_language": "a smaller budget and what must be maintained",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone rebuilding trust through work that can be repeated and maintained"
+      ],
       "neutral_realizations": [
         "someone taking responsibility for the resource that must not run out",
         "people judging progress by endurance instead of speed"
@@ -6156,7 +6826,18 @@
         "e62714c27f3ae326c39891724c3fdf96868b923777fe0255d6311a3f66167b67",
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone rebuilding trust through work that can be repeated and maintained",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!193"
+          ],
+          "source_hashes": [
+            "3b0435cddd077f55c6ff8fd51efecf026f841287d6594bb384362db6d84aad16"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/saturn/gemini",
@@ -6194,7 +6875,8 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "c24a0129e78e1b2ef600fcbf1e95a95da630f19c792093382a1897a4b5e57836"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/saturn/cancer",
@@ -6230,7 +6912,8 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/saturn/leo",
@@ -6238,7 +6921,9 @@
       "sign_expression": "the work becomes visible and someone wants the credit attached to it",
       "combined_position": "anyone seeking recognition has to show they can carry the result",
       "details_language": "recognition tested by the ability to carry the result",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone earning recognition by finishing the work even when no applause arrives"
+      ],
       "neutral_realizations": [
         "an authority limiting how much personal pride can direct the decision"
       ],
@@ -6265,7 +6950,18 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone earning recognition by finishing the work even when no applause arrives",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!671"
+          ],
+          "source_hashes": [
+            "73c4292b0b670c63064e19f4b8e0c8b029cf29910c4438116ef878683f905dae"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/saturn/virgo",
@@ -6273,7 +6969,9 @@
       "sign_expression": "people check the method, find the error, and fix what is not working",
       "combined_position": "the work improves through repetition, correction, and attention to the small failure",
       "details_language": "repetition, correction, and work that has to be exact",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone building real competence by repeating the unglamorous work until it holds"
+      ],
       "neutral_realizations": [
         "a routine becoming stricter after an avoidable error"
       ],
@@ -6300,7 +6998,18 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone building real competence by repeating the unglamorous work until it holds",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!673"
+          ],
+          "source_hashes": [
+            "24fd7d31306750ccba043b18fe9c8f60523e5246ee4fb31b744b1413ef81d26c"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/saturn/libra",
@@ -6308,7 +7017,9 @@
       "sign_expression": "each side compares the terms and asks whether the deal is fair",
       "combined_position": "each side has to answer for the same terms instead of leaving duty with one person",
       "details_language": "the same terms and duty shared by both sides",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone writing fair terms that still work when the agreement becomes difficult"
+      ],
       "neutral_realizations": [
         "obligation divided according to terms both sides must answer to",
         "an agreement becoming binding when accountability is shared"
@@ -6335,7 +7046,18 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone writing fair terms that still work when the agreement becomes difficult",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!676"
+          ],
+          "source_hashes": [
+            "368bb13fb490aa824d76054f2495eefc059a67927e26ce94eef551955ae46f33"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/saturn/scorpio",
@@ -6371,7 +7093,8 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/saturn/sagittarius",
@@ -6408,7 +7131,8 @@
         "c24a0129e78e1b2ef600fcbf1e95a95da630f19c792093382a1897a4b5e57836",
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/saturn/capricorn",
@@ -6416,7 +7140,9 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "the deadline, the duty, and the long result decide whether the structure can hold",
       "details_language": "deadlines, duty, and results that take time",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone acting once the responsibility and limit are no longer hypothetical"
+      ],
       "neutral_realizations": [
         "people giving more authority to the person who can carry the duty",
         "people making progress only after the work has structure and accountability"
@@ -6443,7 +7169,18 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone acting once the responsibility and limit are no longer hypothetical",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!705"
+          ],
+          "source_hashes": [
+            "51e474631540a435c287607a99ec26dbfab40e3c6d6ef5365a577a9a5cab4a92"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/saturn/aquarius",
@@ -6478,7 +7215,8 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/saturn/pisces",
@@ -6514,7 +7252,8 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/uranus/aries",
@@ -6551,7 +7290,8 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "291b086de9d78c55682911be838f729ecaf736e75884cad3852cd16ef7153503"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/uranus/taurus",
@@ -6559,7 +7299,9 @@
       "sign_expression": "people work with what can be afforded, maintained, and made to last",
       "combined_position": "a sudden change reaches the money, materials, or routine people thought was secure",
       "details_language": "disruption of material security",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone changing a routine after the old version stops protecting what matters"
+      ],
       "neutral_realizations": [
         "a secure resource becoming the site of an unexpected revision",
         "material routines changing after stability proves less fixed than assumed"
@@ -6586,7 +7328,18 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone changing a routine after the old version stops protecting what matters",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!911"
+          ],
+          "source_hashes": [
+            "447e068caf4b7ff17812902ea09095706df1053ccd80bd3161a07947288149eb"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/uranus/gemini",
@@ -6623,7 +7376,8 @@
         "291b086de9d78c55682911be838f729ecaf736e75884cad3852cd16ef7153503",
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/uranus/cancer",
@@ -6659,7 +7413,8 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/uranus/leo",
@@ -6694,7 +7449,8 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/uranus/virgo",
@@ -6729,7 +7485,8 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/uranus/libra",
@@ -6764,7 +7521,8 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/uranus/scorpio",
@@ -6772,7 +7530,9 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "A sudden disclosure changes who has access, who has leverage, and what trust can still be repaired.",
       "details_language": "disruption exposing private leverage",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone repairing trust by renegotiating access after a private disclosure"
+      ],
       "neutral_realizations": [
         "hidden leverage exposed by a change that cannot simply be undone",
         "an independent move changing who controls the information with the biggest consequences"
@@ -6799,7 +7559,18 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone repairing trust by renegotiating access after a private disclosure",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!947"
+          ],
+          "source_hashes": [
+            "a2d3ac8ff4c43961ef8985b236f50e5251c858f480b2d91596f0dd23933a6074"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/uranus/sagittarius",
@@ -6836,7 +7607,8 @@
         "ee2d2aa8cee6ff4fadf947f69e08ac6806ea2e14d279e442b3e4d39d861ffbde",
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/uranus/capricorn",
@@ -6844,7 +7616,9 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "an old structure has to change when the role or duty becomes impossible to continue",
       "details_language": "change confronting authority and structure",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone changing the structure once the old plan no longer supports the result"
+      ],
       "neutral_realizations": [
         "someone trying to act independently inside a system designed to resist quick revision",
         "people making the change last by reassigning responsibility"
@@ -6871,7 +7645,18 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone changing the structure once the old plan no longer supports the result",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!951"
+          ],
+          "source_hashes": [
+            "7cc3fa6004b46427a26906c749a0ca0bd2125f28957eb5992c9cd116e286354c"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/uranus/aquarius",
@@ -6879,7 +7664,9 @@
       "sign_expression": "the group asks whether the same rule applies to everyone",
       "combined_position": "a group changes the system because the exception exposes a wider problem",
       "details_language": "independence and system change reinforcing each other",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone proving a different system can give the group more room to act"
+      ],
       "neutral_realizations": [
         "system change spreading because the exception reveals a wider problem"
       ],
@@ -6906,7 +7693,18 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone proving a different system can give the group more room to act",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!953"
+          ],
+          "source_hashes": [
+            "0b25fb329bb37dcb8844ef406f5c268075a7608a5de3a8a5a8ec47f5a53677b6"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/uranus/pisces",
@@ -6942,7 +7740,8 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/neptune/aries",
@@ -6979,7 +7778,8 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "e2a017f1917a1f4162da46cbab3604b2fb029b7f60f6a7151b061c04117c4cb2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/neptune/taurus",
@@ -6987,7 +7787,9 @@
       "sign_expression": "people work with what can be afforded, maintained, and made to last",
       "combined_position": "a beautiful or reassuring plan can hide what it will actually cost",
       "details_language": "idealized security and uncertain value",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone making an ideal practical enough to protect what people actually depend on"
+      ],
       "neutral_realizations": [
         "material security trusted because it feels familiar rather than verified",
         "a shared hope attaching to something people want to preserve"
@@ -7016,7 +7818,18 @@
         "cdbfd6b52e7240725b80691e9ce2cba4d14b2814f3c3cbfb895aeeb66e9d2905",
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone making an ideal practical enough to protect what people actually depend on",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!241"
+          ],
+          "source_hashes": [
+            "a2347094d9321f6a196c01f6200e7986f65a2e463e2966c3a8ec4e785f785ac0"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/neptune/gemini",
@@ -7024,7 +7837,9 @@
       "sign_expression": "new facts and quick replies keep changing the choices",
       "combined_position": "messages multiply until the preferred story is hard to separate from the facts",
       "details_language": "uncertainty spreading through information",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone giving an imaginative idea words that other people can understand and use"
+      ],
       "neutral_realizations": [
         "several plausible explanations blurring which fact deserves trust",
         "people trusting an appealing explanation more as its boundaries become less exact"
@@ -7053,7 +7868,18 @@
         "e2a017f1917a1f4162da46cbab3604b2fb029b7f60f6a7151b061c04117c4cb2",
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone giving an imaginative idea words that other people can understand and use",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!242"
+          ],
+          "source_hashes": [
+            "c0f8836c5c1a1172338e5acdf3cd097f45693271d06149b0a26c139d31098dfe"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/neptune/cancer",
@@ -7061,7 +7887,9 @@
       "sign_expression": "people respond through care, memory, and private loyalties",
       "combined_position": "people let memory and loyalty blur the line between care and projection",
       "details_language": "memory, care, and projection",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone offering care without assuming they know what another person needs"
+      ],
       "neutral_realizations": [
         "a private longing shaping what the group believes it needs"
       ],
@@ -7088,7 +7916,18 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone offering care without assuming they know what another person needs",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!537"
+          ],
+          "source_hashes": [
+            "070f3cfc10da7ac3099e6eca89f82f3855914fd86896986d6d030dbe0ffc73f9"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/neptune/leo",
@@ -7125,7 +7964,8 @@
         "2e865f02ac87bd39d0532a7c6ac1bc8afd4eb4b467fdacae0d507ccaa58491ce",
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/neptune/virgo",
@@ -7133,7 +7973,9 @@
       "sign_expression": "people check the method, find the error, and fix what is not working",
       "combined_position": "a hopeful plan has to survive the detail that shows whether it works",
       "details_language": "ideals tested by practical proof",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone turning an imagined possibility into a method that can actually be followed"
+      ],
       "neutral_realizations": [
         "people seeing the uncertainty once the method has to produce a usable result"
       ],
@@ -7160,7 +8002,18 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone turning an imagined possibility into a method that can actually be followed",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!541"
+          ],
+          "source_hashes": [
+            "d7bd95bf8533bc3079c5d81ae46eac40d254d5b2d6b578b42ea990f7a9294e39"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/neptune/libra",
@@ -7168,7 +8021,9 @@
       "sign_expression": "each side compares the terms and asks whether the deal is fair",
       "combined_position": "people agree with the ideal of fairness while unequal terms stay hard to see",
       "details_language": "ideal fairness and unequal terms",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone checking the agreement against what fairness looks like beyond the fantasy"
+      ],
       "neutral_realizations": [],
       "shadow_realizations": [
         "an image of fairness hiding which side keeps absorbing the cost",
@@ -7194,7 +8049,18 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone checking the agreement against what fairness looks like beyond the fantasy",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!543"
+          ],
+          "source_hashes": [
+            "ac71ce5dc69cda4540b6e94a12649ad377ea80775509fb3977b920ae326dd228"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/neptune/scorpio",
@@ -7202,7 +8068,9 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "people have a harder time judging trust, privacy, and power when feeling runs high",
       "details_language": "uncertain trust and hidden power",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone naming the motive clearly enough for trust to deepen without hiding the power involved"
+      ],
       "neutral_realizations": [
         "trust deepening around a motive no one can fully name"
       ],
@@ -7231,7 +8099,18 @@
         "a94a3431c25f7bb48dee0dcbc354dcc62f02451481788b1f7f18609f024a7e3f",
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone naming the motive clearly enough for trust to deepen without hiding the power involved",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!247"
+          ],
+          "source_hashes": [
+            "784d57f41ce8fb7f246e05203c322f24ab8f3dd71aa0211b950b1b35919d8c05"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/neptune/sagittarius",
@@ -7266,7 +8145,8 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/neptune/capricorn",
@@ -7274,7 +8154,9 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "a dream meets the deadline, duty, and consequence that require clear limits",
       "details_language": "ideals pressed against duty and consequence",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone rebuilding a plan around what still matters after the old blueprint stops working"
+      ],
       "neutral_realizations": [
         "people losing track of responsibility inside a structure built around appearances"
       ],
@@ -7301,7 +8183,18 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone rebuilding a plan around what still matters after the old blueprint stops working",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!549"
+          ],
+          "source_hashes": [
+            "f0b963c36f04d533c99c313b29b5f145acda559523d2441dce5c7c90f77ecc26"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/neptune/aquarius",
@@ -7337,7 +8230,8 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/neptune/pisces",
@@ -7373,7 +8267,8 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/pluto/aries",
@@ -7381,7 +8276,9 @@
       "sign_expression": "someone moves first and asks everyone else to catch up",
       "combined_position": "whoever moves first can seize leverage before anyone agrees it is in play",
       "details_language": "power in the first move",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone saying what they want and taking the first step after an old hesitation breaks"
+      ],
       "neutral_realizations": [
         "someone taking leverage before anyone agrees it is in play"
       ],
@@ -7408,7 +8305,18 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone saying what they want and taking the first step after an old hesitation breaks",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!599"
+          ],
+          "source_hashes": [
+            "38151f49bf83f9963c6fd871a5a68b9804aed3ae6d498a67b2e215b076ec98c2"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/pluto/taurus",
@@ -7416,7 +8324,9 @@
       "sign_expression": "people work with what can be afforded, maintained, and made to last",
       "combined_position": "who controls the money or material people cannot lose can control the decision",
       "details_language": "control of resources and material security",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone rebuilding security after an honest look at what the old arrangement costs"
+      ],
       "neutral_realizations": [
         "a material dependency giving one side durable leverage"
       ],
@@ -7445,7 +8355,18 @@
         "9faea77b36867dc3f3adafa7344436577a3b353caab8177f6cf222f14aa102bc",
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone rebuilding security after an honest look at what the old arrangement costs",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!601"
+          ],
+          "source_hashes": [
+            "210776fa92bc87f5045ba0d2f237581eb42335ea7a8ea06b3f0b9b065eb07e0a"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/pluto/gemini",
@@ -7453,7 +8374,9 @@
       "sign_expression": "new facts and quick replies keep changing the choices",
       "combined_position": "whoever has access to the explanation can shape what everyone else is allowed to know",
       "details_language": "information as leverage",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone questioning an old belief after one conversation makes its limits impossible to ignore"
+      ],
       "neutral_realizations": [
         "access to the explanation deciding who can shape the outcome",
         "one version of the facts becoming leverage over the others"
@@ -7480,7 +8403,18 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "e5a5c3ddd4f70863638ddb523cb1344dbdc74cf43900b2a6a4e9c6112e995a73"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone questioning an old belief after one conversation makes its limits impossible to ignore",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!603"
+          ],
+          "source_hashes": [
+            "a9518abaec842c1f0de30f34c0888d93c846bc5de4c7bf2e266eb0d737cfbe6e"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/pluto/cancer",
@@ -7488,7 +8422,9 @@
       "sign_expression": "people respond through care, memory, and private loyalties",
       "combined_position": "family loyalty or private influence starts deciding what happens to everyone else",
       "details_language": "power inside care and family loyalty",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone changing an old family arrangement after naming what the household actually needs"
+      ],
       "neutral_realizations": [
         "family loyalty influencing a decision that affects people outside the family"
       ],
@@ -7515,7 +8451,18 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone changing an old family arrangement after naming what the household actually needs",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!605"
+          ],
+          "source_hashes": [
+            "20f1ef6fbf6b19bc2fd56e2b91c2f2347a4cb63c433fc84493349182ee15d0df"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/pluto/leo",
@@ -7523,7 +8470,9 @@
       "sign_expression": "the work becomes visible and someone wants the credit attached to it",
       "combined_position": "a public role gives one person control over recognition and who gets named",
       "details_language": "visible authority and ownership",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone claiming visible space for work that was previously easy to overlook"
+      ],
       "neutral_realizations": [
         "people treating one person's authority as legitimate because that person receives recognition",
         "people giving more power to the person identified with the outcome"
@@ -7550,7 +8499,18 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone claiming visible space for work that was previously easy to overlook",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!607"
+          ],
+          "source_hashes": [
+            "9adcd6ba13260b466db67a799b750d360f8a09ad42313c7df9a052c893263b27"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/pluto/virgo",
@@ -7588,7 +8548,8 @@
         "f8ffad517ffe6102610b065deb560255528c2ca1081bc3cdbfd677fb276a02bc",
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/pluto/libra",
@@ -7596,7 +8557,9 @@
       "sign_expression": "each side compares the terms and asks whether the deal is fair",
       "combined_position": "one side keeps yielding while the agreement continues to call itself fair",
       "details_language": "power hidden inside compromise",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone renegotiating an agreement after repeated compromise reveals who keeps yielding"
+      ],
       "neutral_realizations": [
         "compromise revealing which side has been yielding to preserve the agreement",
         "people changing who holds power by making reciprocal terms enforceable"
@@ -7623,7 +8586,18 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone renegotiating an agreement after repeated compromise reveals who keeps yielding",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!611"
+          ],
+          "source_hashes": [
+            "5a504ba7155cd45d03b0d4627458bb9d8198536da8024a5e248ccc99f96770fd"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/pluto/scorpio",
@@ -7631,7 +8605,9 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "people protect private information because giving it up would change the balance of power",
       "details_language": "privacy and leverage carrying irreversible stakes",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone opening the hidden material and changing the arrangement that kept it buried"
+      ],
       "neutral_realizations": [
         "people seeing who has power when trust and survival depend on the same decision"
       ],
@@ -7660,7 +8636,18 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "9faea77b36867dc3f3adafa7344436577a3b353caab8177f6cf222f14aa102bc"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone opening the hidden material and changing the arrangement that kept it buried",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!151"
+          ],
+          "source_hashes": [
+            "b3f845992e2a982a389e5d0292dc27dbc0635a259e98d115d8ae7540a4badaf0"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/pluto/sagittarius",
@@ -7668,7 +8655,9 @@
       "sign_expression": "people follow a larger promise or belief beyond the issue's first limits",
       "combined_position": "whoever defines the larger truth can extend their reach over the decision",
       "details_language": "conviction defining truth and reach",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone questioning an inherited belief until a larger and more honest view becomes possible"
+      ],
       "neutral_realizations": [
         "someone gaining authority by defining the larger truth",
         "a belief extending power beyond its original boundary"
@@ -7695,7 +8684,18 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone questioning an inherited belief until a larger and more honest view becomes possible",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!615"
+          ],
+          "source_hashes": [
+            "1ca242e50bf0e6785b30a34640ffca4cca814829c2ee54ed18b28db52ebf0e9a"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/pluto/capricorn",
@@ -7703,7 +8703,9 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "an institution assigns duty in ways that reveal who can make the lasting rule",
       "details_language": "institutional control and lasting consequence",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone moving a decision once responsibility and control are named directly"
+      ],
       "neutral_realizations": [
         "people seeing institutional power in who gets to assign lasting duty"
       ],
@@ -7730,7 +8732,18 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone moving a decision once responsibility and control are named directly",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!617"
+          ],
+          "source_hashes": [
+            "561ab8da2a85c422ac3be616352c3b5b5b514c39865886c11c6cf6fc94b141a3"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/pluto/aquarius",
@@ -7766,7 +8779,8 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/pluto/pisces",
@@ -7774,7 +8788,9 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "people can feel the pressure without being able to name who controls it",
       "details_language": "diffuse control inside collective feeling",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone releasing a belief or coping habit that no longer provides real comfort"
+      ],
       "neutral_realizations": [
         "people enforcing an ideal while each person denies owning it",
         "someone gaining leverage because no one has named the boundary or responsibility"
@@ -7801,7 +8817,18 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone releasing a belief or coping habit that no longer provides real comfort",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!647"
+          ],
+          "source_hashes": [
+            "c37156cad7ff9a237bf0785b39b83107bd40d8f64297ac16e61bcefa3fab773d"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/chiron/aries",
@@ -7809,7 +8836,9 @@
       "sign_expression": "someone moves first and asks everyone else to catch up",
       "combined_position": "someone hangs back on the first move because going first has gone badly before",
       "details_language": "sensitivity around action and independence",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone trying the first move again after an old setback stopped deciding the outcome"
+      ],
       "neutral_realizations": [
         "hesitating to volunteer, apply, speak first, or take the lead after being punished for it before"
       ],
@@ -7832,7 +8861,18 @@
       "owner_voice_source_hashes": [
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone trying the first move again after an old setback stopped deciding the outcome",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!4"
+          ],
+          "source_hashes": [
+            "b2cabb3951c0a2b65c79395a2f0e42f03e2f17d6fc7126ada780b5ccb20569cc"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/chiron/taurus",
@@ -7840,7 +8880,9 @@
       "sign_expression": "people work with what can be afforded, maintained, and made to last",
       "combined_position": "people protect money or security more tightly after learning how easily it can disappear",
       "details_language": "pain tied to worth and material security",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone choosing a workable change after comfort alone stops protecting the old setup"
+      ],
       "neutral_realizations": [
         "worth becoming sensitive where material safety has been unreliable",
         "an old defense returning when resources determine who gets to stay secure"
@@ -7863,7 +8905,18 @@
       "owner_voice_source_hashes": [
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone choosing a workable change after comfort alone stops protecting the old setup",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!10"
+          ],
+          "source_hashes": [
+            "dba3adff229b8043a48f7604a778f8fc29393b5dc7910bb21fe50f4cebc684d8"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/chiron/gemini",
@@ -7871,7 +8924,9 @@
       "sign_expression": "new facts and quick replies keep changing the choices",
       "combined_position": "someone chooses words carefully because being misunderstood still feels costly",
       "details_language": "sensitivity around language and being understood",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone sending the message after checking that their own meaning is still there"
+      ],
       "neutral_realizations": [
         "careful wording shaped by the fear of being misunderstood again",
         "a question carrying the memory of not being believed"
@@ -7894,7 +8949,18 @@
       "owner_voice_source_hashes": [
         "e5a5c3ddd4f70863638ddb523cb1344dbdc74cf43900b2a6a4e9c6112e995a73"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone sending the message after checking that their own meaning is still there",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!15"
+          ],
+          "source_hashes": [
+            "78edaff067639521b44181d003467ca5cccaa5b8d381f08a95e8bbca9011e4c1"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/chiron/cancer",
@@ -7925,7 +8991,8 @@
       "owner_voice_source_hashes": [
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/chiron/leo",
@@ -7933,7 +9000,9 @@
       "sign_expression": "the work becomes visible and someone wants the credit attached to it",
       "combined_position": "someone wants the work recognized without having the old hurt exposed with it",
       "details_language": "visible hurt around recognition",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone sharing the work without making it impressive enough to hide behind"
+      ],
       "neutral_realizations": [
         "visible pride covering uncertainty about whether appreciation will last",
         "someone reacting strongly when the person doing the work is not named"
@@ -7956,7 +9025,18 @@
       "owner_voice_source_hashes": [
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone sharing the work without making it impressive enough to hide behind",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!19"
+          ],
+          "source_hashes": [
+            "009b737f732c579020195c6b992dac19f826715af6227895d676973202a80207"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/chiron/virgo",
@@ -7987,7 +9067,8 @@
       "owner_voice_source_hashes": [
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/chiron/libra",
@@ -7995,7 +9076,9 @@
       "sign_expression": "each side compares the terms and asks whether the deal is fair",
       "combined_position": "someone keeps the peace until the unfair term starts touching an older hurt",
       "details_language": "pain inside fairness and agreement",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone stating a real preference without making agreement the price of staying close"
+      ],
       "neutral_realizations": [
         "someone feeling an older hurt each time the agreement asks them to adjust again",
         "balance becoming fragile when one side's need is treated as disruption"
@@ -8018,7 +9101,18 @@
       "owner_voice_source_hashes": [
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone stating a real preference without making agreement the price of staying close",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!23"
+          ],
+          "source_hashes": [
+            "95c29facac24c9ec132ba8092cb83bf1a2b20941e1c37193c39a208f1eaedce7"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/chiron/scorpio",
@@ -8026,7 +9120,9 @@
       "sign_expression": "people guard what is private and notice who holds leverage",
       "combined_position": "people guard private facts because trust once carried consequences they cannot undo",
       "details_language": "old pain, privacy, and irreversible experience",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone letting another person closer without demanding proof before trust can begin"
+      ],
       "neutral_realizations": [
         "old pain shaping how much leverage anyone is allowed to hold"
       ],
@@ -8049,7 +9145,18 @@
       "owner_voice_source_hashes": [
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone letting another person closer without demanding proof before trust can begin",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!25"
+          ],
+          "source_hashes": [
+            "f82bbd6e0681e6c94ba555224695abe258d9faa2ffb78329d2f0750fbbf6cbb5"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/chiron/sagittarius",
@@ -8057,7 +9164,9 @@
       "sign_expression": "people follow a larger promise or belief beyond the issue's first limits",
       "combined_position": "a larger promise can wake the fear that hope will be punished again",
       "details_language": "sensitivity around belief and meaning",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone stating a conviction without softening it before anyone has disagreed"
+      ],
       "neutral_realizations": [
         "someone reacting when one story is treated as the only truth"
       ],
@@ -8080,7 +9189,18 @@
       "owner_voice_source_hashes": [
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone stating a conviction without softening it before anyone has disagreed",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!27"
+          ],
+          "source_hashes": [
+            "96edddc9530f9f16866239920c92e516223b6d6ba683b90afef8667d6709addb"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/chiron/capricorn",
@@ -8088,7 +9208,9 @@
       "sign_expression": "deadlines, duties, and long-term results decide what can proceed",
       "combined_position": "someone carries the duty alone because needing help once felt unsafe",
       "details_language": "pain managed through duty and competence",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone setting down extra work that was only meant to prove they were capable"
+      ],
       "neutral_realizations": [
         "someone hiding vulnerability whenever duty has to be performed"
       ],
@@ -8111,7 +9233,18 @@
       "owner_voice_source_hashes": [
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone setting down extra work that was only meant to prove they were capable",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!29"
+          ],
+          "source_hashes": [
+            "e9a1fde6aaf473bf5e407f5ef9ade3769bcea4d9ebdb56134d53195f50a91b68"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/chiron/aquarius",
@@ -8119,7 +9252,9 @@
       "sign_expression": "the group asks whether the same rule applies to everyone",
       "combined_position": "a shared rule can reopen the memory of being useful to the group but never fully included",
       "details_language": "sensitivity around exclusion and group belonging",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone sharing a different opinion without editing it into what the group will accept"
+      ],
       "neutral_realizations": [
         "someone testing whether the group actually tolerates their difference"
       ],
@@ -8142,7 +9277,18 @@
       "owner_voice_source_hashes": [
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone sharing a different opinion without editing it into what the group will accept",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!31"
+          ],
+          "source_hashes": [
+            "e90ad5413bd8cfc6a1adf1ad804faa1d46479f77ed63fc1959307297736d0325"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/chiron/pisces",
@@ -8150,7 +9296,9 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "people can absorb an old pain from the room without knowing what belongs to whom",
       "details_language": "pain diffused through empathy and longing",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone changing a practical commitment so it matches what they actually believe"
+      ],
       "neutral_realizations": [
         "someone feeling another person's pain and reopening their own",
         "someone absorbing more pain because no one has agreed where care ends"
@@ -8173,7 +9321,18 @@
       "owner_voice_source_hashes": [
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone changing a practical commitment so it matches what they actually believe",
+          "source_ids": [
+            "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!33"
+          ],
+          "source_hashes": [
+            "8978b0b7d8ad7dd7076fc2927c2ad508edc7887e3668de982bd0207149dfa945"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/lilith/aries",
@@ -8181,7 +9340,9 @@
       "sign_expression": "someone moves first and asks everyone else to catch up",
       "combined_position": "someone refuses to wait for approval before acting on the objection",
       "details_language": "direct refusal and autonomous action",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone saying no before another repeated demand becomes an obligation"
+      ],
       "neutral_realizations": [
         "someone claiming the right to act even when others call the move premature"
       ],
@@ -8202,7 +9363,18 @@
       "owner_voice_source_hashes": [
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone saying no before another repeated demand becomes an obligation",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/aries"
+          ],
+          "source_hashes": [
+            "60f3943efd141a5fc1b4c2b73952ff8780970099c425d27ed59d7b4f1799fe28"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/lilith/taurus",
@@ -8210,7 +9382,9 @@
       "sign_expression": "people work with what can be afforded, maintained, and made to last",
       "combined_position": "people draw a hard line around the body, money, or resource others expect to use",
       "details_language": "bodily autonomy and protected resources",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone naming what their work, body, or time is worth without defending the need"
+      ],
       "neutral_realizations": [
         "a boundary forming around the body or resource others expect to use"
       ],
@@ -8231,7 +9405,18 @@
       "owner_voice_source_hashes": [
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone naming what their work, body, or time is worth without defending the need",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/taurus"
+          ],
+          "source_hashes": [
+            "30b02d3985023529701ee6367165fc038f6729a2b4587ac8e6dd595d94353c48"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/lilith/gemini",
@@ -8239,7 +9424,9 @@
       "sign_expression": "new facts and quick replies keep changing the choices",
       "combined_position": "The contradiction gets named once the official explanation no longer matches what is happening.",
       "details_language": "refusal through contradiction and alternate versions",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone correcting the official story with the fact everyone learned to leave out"
+      ],
       "neutral_realizations": [
         "a contradiction spoken after the approved explanation no longer matches the facts",
         "several versions offered after an authority demands one official account"
@@ -8260,7 +9447,18 @@
       "owner_voice_source_hashes": [
         "e5a5c3ddd4f70863638ddb523cb1344dbdc74cf43900b2a6a4e9c6112e995a73"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone correcting the official story with the fact everyone learned to leave out",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/gemini"
+          ],
+          "source_hashes": [
+            "5092d02d000e5a5fe5efcc5932adef0127e0778ed515dc5d66e718710bc0060a"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/lilith/cancer",
@@ -8289,7 +9487,8 @@
       "owner_voice_source_hashes": [
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/lilith/leo",
@@ -8318,7 +9517,8 @@
       "owner_voice_source_hashes": [
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/lilith/virgo",
@@ -8347,7 +9547,8 @@
       "owner_voice_source_hashes": [
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/lilith/libra",
@@ -8377,7 +9578,8 @@
       "owner_voice_source_hashes": [
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/lilith/scorpio",
@@ -8406,7 +9608,8 @@
       "owner_voice_source_hashes": [
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/lilith/sagittarius",
@@ -8414,7 +9617,9 @@
       "sign_expression": "people follow a larger promise or belief beyond the issue's first limits",
       "combined_position": "someone rejects the rule that makes freedom depend on the approved belief",
       "details_language": "freedom refusing conditional belief",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone challenging a rule that treats disagreement as ignorance or disloyalty"
+      ],
       "neutral_realizations": [
         "someone wanting more than the approved story allowed them to name"
       ],
@@ -8435,7 +9640,18 @@
       "owner_voice_source_hashes": [
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone challenging a rule that treats disagreement as ignorance or disloyalty",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/sagittarius"
+          ],
+          "source_hashes": [
+            "7c20900feca4cf403950a92fda1855e5be2db9221b6c0b0896d8e2599f55eb9d"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/lilith/capricorn",
@@ -8464,7 +9680,8 @@
       "owner_voice_source_hashes": [
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": []
     },
     {
       "key": "sky-sign/lilith/aquarius",
@@ -8472,7 +9689,9 @@
       "sign_expression": "the group asks whether the same rule applies to everyone",
       "combined_position": "someone tests a group rule that welcomes difference only when it stays manageable",
       "details_language": "refusal inside conditional group belonging",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone leaving a group that only includes them while they remain useful or agreeable"
+      ],
       "neutral_realizations": [
         "a group norm challenged for welcoming difference only in approved forms"
       ],
@@ -8493,7 +9712,18 @@
       "owner_voice_source_hashes": [
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone leaving a group that only includes them while they remain useful or agreeable",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/aquarius"
+          ],
+          "source_hashes": [
+            "8b2278b5d06f8f109b87da66ab89d8c16520207aab9459c71ab45d8b44c6f1ba"
+          ]
+        }
+      ]
     },
     {
       "key": "sky-sign/lilith/pisces",
@@ -8501,7 +9731,9 @@
       "sign_expression": "people can lose track of where the facts end and the wish begins",
       "combined_position": "people refuse to let empathy turn into carrying someone else's whole emotional demand",
       "details_language": "autonomy against emotional absorption",
-      "supportive_realizations": [],
+      "supportive_realizations": [
+        "someone ending an arrangement that depends on their needs disappearing"
+      ],
       "neutral_realizations": [
         "someone holding a personal boundary while other people treat their ideals as shared"
       ],
@@ -8522,7 +9754,18 @@
       "owner_voice_source_hashes": [
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER"
+      "owner_review_status": "PENDING OWNER",
+      "supportive_realization_evidence": [
+        {
+          "realization": "someone ending an arrangement that depends on their needs disappearing",
+          "source_ids": [
+            "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/pisces"
+          ],
+          "source_hashes": [
+            "2804160df9db69f9b14b6a20c6c11fbcc9985d1243ff62673ffd1fd97f948a07"
+          ]
+        }
+      ]
     }
   ],
   "aspectMechanisms": [

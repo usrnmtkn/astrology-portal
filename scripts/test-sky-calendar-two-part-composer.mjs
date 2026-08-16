@@ -73,11 +73,14 @@ const planResolution = plans.cards.map((plan) => {
     return { contentKey: plan.contentKey, card: null, gaps: error.gaps };
   }
 });
-assert.equal(planResolution.filter((result) => result.card).length, 2);
-assert.equal(planResolution.filter((result) => result.gaps.length > 0).length, 4);
+assert.equal(planResolution.filter((result) => result.card).length, 4);
+assert.equal(planResolution.filter((result) => result.gaps.length > 0).length, 2);
 assert.equal(
   planResolution.filter((result) => result.gaps.length > 0).every((result) => (
-    result.gaps.every((gap) => gap.id === "sky-calendar-missing-required-realization")
+    result.gaps.every((gap) => (
+      gap.id === "sky-calendar-missing-required-realization"
+      && gap.requiredType !== "supportive"
+    ))
   )),
   true,
 );
