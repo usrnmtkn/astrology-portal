@@ -1,0 +1,807 @@
+{
+  "movedRealizationsReviewed": 44,
+  "movedClassificationsHeld": 42,
+  "movedClassificationsCorrected": 2,
+  "additionalOwnerReportedCorrections": 1,
+  "totalClassificationCorrections": 3,
+  "emptySupportivePoolsAfterVerification": 3,
+  "supportiveCombinedPositionParaphraseFlags": 27,
+  "reviewed44": [
+    {
+      "key": "sky-sign/sun/cancer",
+      "value": "someone doing the care work that everyone else depends on",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/cancer",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!803"
+      ]
+    },
+    {
+      "key": "sky-sign/sun/cancer",
+      "value": "family members using private loyalty to influence who gets acknowledged publicly",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/cancer",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!803"
+      ]
+    },
+    {
+      "key": "sky-sign/sun/sagittarius",
+      "value": "a strong belief making one contribution stand for a larger cause",
+      "classificationAuditType": "supportive",
+      "verifiedType": "neutral",
+      "classificationHolds": false,
+      "finding": "The realization describes amplification, but neither governed source says that it helps or eases the situation. The matrix source instead warns that certainty can outrun the facts.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/sagittarius",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!845"
+      ]
+    },
+    {
+      "key": "sky-sign/sun/sagittarius",
+      "value": "people carrying someone's work to an audience it was not made for",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/sagittarius",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!845"
+      ]
+    },
+    {
+      "key": "sky-sign/moon/capricorn",
+      "value": "someone postponing their needs until the required work is done",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/moon/capricorn",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!522"
+      ]
+    },
+    {
+      "key": "sky-sign/moon/capricorn",
+      "value": "someone relying on repeated follow-through instead of reassurance to know they belong",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/moon/capricorn",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!522"
+      ]
+    },
+    {
+      "key": "sky-sign/mercury/pisces",
+      "value": "people reading the tone when the stated facts remain incomplete",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mercury/pisces",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!466",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!95"
+      ]
+    },
+    {
+      "key": "sky-sign/mercury/pisces",
+      "value": "an implication spreading faster than anyone can verify it",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mercury/pisces",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!466",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!95"
+      ]
+    },
+    {
+      "key": "sky-sign/mercury/pisces",
+      "value": "a decision blurred by sympathy for several incompatible accounts",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mercury/pisces",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!466",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!95"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/gemini",
+      "value": "someone dividing their effort among several messages, errands, or targets",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/gemini",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!147",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!38"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/gemini",
+      "value": "people changing the argument each time the wording changes",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/gemini",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!147",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!38"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/gemini",
+      "value": "a new comparison redirecting action already underway",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/gemini",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!147",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!38"
+      ]
+    },
+    {
+      "key": "sky-sign/saturn/aquarius",
+      "value": "a standard meant to apply equally",
+      "classificationAuditType": "supportive",
+      "verifiedType": "neutral",
+      "classificationHolds": false,
+      "finding": "The realization states the standard's intended scope. It does not show the placement helping or easing anything, and the governed source explicitly allows the rule to prove arbitrary.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/aquarius",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!719"
+      ]
+    },
+    {
+      "key": "sky-sign/saturn/pisces",
+      "value": "people struggling to assign responsibility because everyone feels for the person involved",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/pisces",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!733"
+      ]
+    },
+    {
+      "key": "sky-sign/saturn/pisces",
+      "value": "people keeping the plan intact by naming what remains uncertain",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/pisces",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!733"
+      ]
+    },
+    {
+      "key": "sky-sign/uranus/cancer",
+      "value": "a household pattern changing because someone needs more room",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/uranus/cancer",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!939"
+      ]
+    },
+    {
+      "key": "sky-sign/uranus/cancer",
+      "value": "someone leaving the role that once guaranteed emotional safety",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/uranus/cancer",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!939"
+      ]
+    },
+    {
+      "key": "sky-sign/uranus/pisces",
+      "value": "someone stepping away after others mistook sympathy for agreement",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/uranus/pisces",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!955"
+      ]
+    },
+    {
+      "key": "sky-sign/uranus/pisces",
+      "value": "people changing course together before anyone can define the plan",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/uranus/pisces",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!955"
+      ]
+    },
+    {
+      "key": "sky-sign/neptune/cancer",
+      "value": "memory softening the difference between care and projection",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/cancer",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!537"
+      ]
+    },
+    {
+      "key": "sky-sign/neptune/cancer",
+      "value": "people idealizing the family bond until they stop seeing who carries the emotional labor",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/cancer",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!537"
+      ]
+    },
+    {
+      "key": "sky-sign/neptune/scorpio",
+      "value": "people losing track of who holds private power as the boundaries soften",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/scorpio",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!545",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!247"
+      ]
+    },
+    {
+      "key": "sky-sign/neptune/scorpio",
+      "value": "an irreversible choice shaped by information that remains uncertain",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/scorpio",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!545",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!247"
+      ]
+    },
+    {
+      "key": "sky-sign/neptune/pisces",
+      "value": "people treating a shared feeling as if it creates the same duty for everyone",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/pisces",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!555"
+      ]
+    },
+    {
+      "key": "sky-sign/neptune/pisces",
+      "value": "people imagining more because the facts do not set a firm boundary",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/pisces",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!555"
+      ]
+    },
+    {
+      "key": "sky-sign/chiron/gemini",
+      "value": "someone reacting after every official explanation leaves out what they lived through",
+      "classificationAuditType": "shadow",
+      "verifiedType": "shadow",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/chiron/gemini",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!15"
+      ]
+    },
+    {
+      "key": "sky-sign/sun/scorpio",
+      "value": "the public representative carrying private obligations others cannot see",
+      "classificationAuditType": "neutral",
+      "verifiedType": "neutral",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/scorpio",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!838"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/aries",
+      "value": "the first move establishing who controls the pace",
+      "classificationAuditType": "neutral",
+      "verifiedType": "neutral",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/aries",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!128",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!36"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/aries",
+      "value": "a visible result pursued without waiting for broader support",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/aries",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!128",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!36"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/taurus",
+      "value": "someone working the same point until a material limit gives way",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/taurus",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!140",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!37"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/taurus",
+      "value": "someone delaying action until they can keep the result",
+      "classificationAuditType": "neutral",
+      "verifiedType": "neutral",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/taurus",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!140",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!37"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/scorpio",
+      "value": "someone withholding action until the source of control becomes clear",
+      "classificationAuditType": "neutral",
+      "verifiedType": "neutral",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/scorpio",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!194"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/scorpio",
+      "value": "a result pursued carefully because it cannot be undone",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/scorpio",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!194"
+      ]
+    },
+    {
+      "key": "sky-sign/saturn/leo",
+      "value": "an authority limiting how much personal pride can direct the decision",
+      "classificationAuditType": "neutral",
+      "verifiedType": "neutral",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/leo",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!671"
+      ]
+    },
+    {
+      "key": "sky-sign/saturn/scorpio",
+      "value": "a limit protecting access to information that cannot be taken back",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/scorpio",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!684"
+      ]
+    },
+    {
+      "key": "sky-sign/saturn/scorpio",
+      "value": "someone carrying more responsibility because they also control the access",
+      "classificationAuditType": "neutral",
+      "verifiedType": "neutral",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/scorpio",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!684"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/leo",
+      "value": "someone claiming visibility without making the contribution more acceptable first",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/leo"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/leo",
+      "value": "someone rejecting recognition that depends on shrinking the difficult part",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/leo"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/virgo",
+      "value": "a standard refused because usefulness has become a condition of worth",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/virgo"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/virgo",
+      "value": "someone defending their difference against correction meant to make it manageable",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/virgo"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/virgo",
+      "value": "the excluded need exposing what the approved method cannot serve",
+      "classificationAuditType": "neutral",
+      "verifiedType": "neutral",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/virgo"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/capricorn",
+      "value": "someone confronting an authority that has used respectability as control",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/capricorn"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/capricorn",
+      "value": "a duty refused because compliance would erase the person carrying it",
+      "classificationAuditType": "supportive",
+      "verifiedType": "supportive",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/capricorn"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/capricorn",
+      "value": "someone accepting the consequence rather than obeying the demand",
+      "classificationAuditType": "neutral",
+      "verifiedType": "neutral",
+      "classificationHolds": true,
+      "finding": "The moved classification matches the realization's meaning and the governed evidence.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/capricorn"
+      ]
+    }
+  ],
+  "additionalCorrections": [
+    {
+      "key": "sky-sign/neptune/sagittarius",
+      "value": "a belief growing beyond what its supporting facts can carry",
+      "priorType": "supportive",
+      "verifiedType": "shadow",
+      "finding": "Growing beyond supporting facts is overreach. The governed sources describe a blank map, a leap without a parachute, and a promise that claims it can explain everything.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/sagittarius",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!547"
+      ]
+    }
+  ],
+  "supportiveCombinedPositionParaphrases": [
+    {
+      "key": "sky-sign/sun/taurus",
+      "value": "a contribution valued because it keeps producing something useful",
+      "combined_position": "people give credit to the work that proves useful and lasts",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/taurus",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!782"
+      ]
+    },
+    {
+      "key": "sky-sign/sun/taurus",
+      "value": "people waiting to give credit until the result proves it can last",
+      "combined_position": "people give credit to the work that proves useful and lasts",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/taurus",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!782"
+      ]
+    },
+    {
+      "key": "sky-sign/sun/taurus",
+      "value": "credit going to the work that protected what needed to last",
+      "combined_position": "people give credit to the work that proves useful and lasts",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/taurus",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!782"
+      ]
+    },
+    {
+      "key": "sky-sign/sun/gemini",
+      "value": "the clearest explanation deciding who is seen as responsible",
+      "combined_position": "the clearest explanation can decide who gets credit for the idea",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/gemini",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!792"
+      ]
+    },
+    {
+      "key": "sky-sign/sun/leo",
+      "value": "wanting credit attached to the person who did the work",
+      "combined_position": "whoever did the work wants their name kept with it",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/leo",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!813"
+      ]
+    },
+    {
+      "key": "sky-sign/sun/capricorn",
+      "value": "people giving credit to the person expected to answer for the result",
+      "combined_position": "a title goes to the person expected to carry the result",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/capricorn",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!852"
+      ]
+    },
+    {
+      "key": "sky-sign/moon/aquarius",
+      "value": "someone stepping back from a reaction long enough to see the pattern clearly",
+      "combined_position": "the group makes room for feeling by stepping back and looking at the pattern",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/moon/aquarius",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!118"
+      ]
+    },
+    {
+      "key": "sky-sign/mercury/aries",
+      "value": "someone giving the clear answer that gets a stalled decision moving again",
+      "combined_position": "the first clear answer can move a decision before everyone has finished thinking",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mercury/aries",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!251",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!84"
+      ]
+    },
+    {
+      "key": "sky-sign/mercury/taurus",
+      "value": "an agreement slowing until the practical terms are clear",
+      "combined_position": "The wording gets slower and more specific until everyone knows what the terms actually mean.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mercury/taurus",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!275"
+      ]
+    },
+    {
+      "key": "sky-sign/mercury/pisces",
+      "value": "people reading the tone when the stated facts remain incomplete",
+      "combined_position": "people understand the tone or image sooner than they agree on the facts",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mercury/pisces",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!466",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!95"
+      ]
+    },
+    {
+      "key": "sky-sign/venus/taurus",
+      "value": "someone choosing the arrangement that feels good and can still hold up over time",
+      "combined_position": "a choice feels worthwhile when it is pleasant, affordable, and built to last",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/venus/taurus",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!978",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!61"
+      ]
+    },
+    {
+      "key": "sky-sign/venus/sagittarius",
+      "value": "someone choosing a connection that leaves both people room to keep growing",
+      "combined_position": "people choose the agreement that leaves more room to grow and explore",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/venus/sagittarius",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!1061",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!68"
+      ]
+    },
+    {
+      "key": "sky-sign/venus/aquarius",
+      "value": "people staying connected because the agreement leaves room for independence",
+      "combined_position": "people stay connected by giving each other room inside the group",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/venus/aquarius",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!1083"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/cancer",
+      "value": "someone acting to protect another person before explaining why",
+      "combined_position": "someone protects the home or the people involved before explaining the anger",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/cancer",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!159",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!39"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/taurus",
+      "value": "someone working the same point until a material limit gives way",
+      "combined_position": "people keep pushing the same point until a material limit finally moves",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/taurus",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!140",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!37"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/scorpio",
+      "value": "a result pursued carefully because it cannot be undone",
+      "combined_position": "someone acts carefully because trust, control, and lasting consequences are involved",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/scorpio",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!194"
+      ]
+    },
+    {
+      "key": "sky-sign/jupiter/libra",
+      "value": "more people benefiting after the terms distribute the opportunity more fairly",
+      "combined_position": "people find more room to move when the terms spread the benefit fairly",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/jupiter/libra",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!80",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!174"
+      ]
+    },
+    {
+      "key": "sky-sign/saturn/gemini",
+      "value": "revised language that still has to match the record",
+      "combined_position": "The wording gets tighter once the decision has consequences and the record has to stay consistent.",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/gemini",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!667",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!194"
+      ]
+    },
+    {
+      "key": "sky-sign/saturn/sagittarius",
+      "value": "a large promise reduced to what can be proved and delivered",
+      "combined_position": "a large promise meets the test of what can be proved and delivered",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/sagittarius",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!690",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!200"
+      ]
+    },
+    {
+      "key": "sky-sign/uranus/gemini",
+      "value": "new information altering the available routes almost immediately",
+      "combined_position": "new information rewrites the route before the standard method can catch up",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/uranus/gemini",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!930",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!218"
+      ]
+    },
+    {
+      "key": "sky-sign/neptune/leo",
+      "value": "a public image carrying more hope than the contribution can support",
+      "combined_position": "an image becomes larger than the private work or person behind it",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/leo",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!539",
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!244"
+      ]
+    },
+    {
+      "key": "sky-sign/chiron/virgo",
+      "value": "a small correction reopening the fear of never being useful enough",
+      "combined_position": "a small mistake can reopen the fear that usefulness is the price of belonging",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/chiron/virgo",
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!21"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/leo",
+      "value": "someone claiming visibility without making the contribution more acceptable first",
+      "combined_position": "someone claims visibility without making the difficult part more acceptable first",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/leo"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/virgo",
+      "value": "a standard refused because usefulness has become a condition of worth",
+      "combined_position": "people reject a standard that treats usefulness or purity as the price of worth",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/virgo"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/libra",
+      "value": "an agreement challenged after fairness becomes repeated self-erasure",
+      "combined_position": "someone challenges an agreement that calls repeated self-erasure fair",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/libra"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/scorpio",
+      "value": "someone protecting desire from another person's claim to private access",
+      "combined_position": "people protect desire and private access from someone trying to take control",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/scorpio"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/capricorn",
+      "value": "someone confronting an authority that has used respectability as control",
+      "combined_position": "people confront an authority that uses duty or respectability to demand compliance",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/capricorn"
+      ]
+    }
+  ]
+}
