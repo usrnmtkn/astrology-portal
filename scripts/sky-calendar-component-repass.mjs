@@ -316,6 +316,18 @@ export const CLASSIFICATION_VERIFICATION_CORRECTIONS = {
   }],
 };
 
+// Closing coverage review, 2026-08-16. This preserves the Chiron/Virgo
+// realization verbatim while moving it to the pool its governed evidence
+// supports. A distinct supportive realization is supplied separately.
+export const SUPPORTIVE_COVERAGE_RECLASSIFICATIONS = {
+  "sky-sign/chiron/virgo": [{
+    value: "a small correction reopening the fear of never being useful enough",
+    from: "supportive",
+    to: "shadow",
+    finding: "The realization names insecurity and cost, not help or ease. Its governed evidence describes redoing an already-finished task from fear of not being useful enough.",
+  }],
+};
+
 function moveRealization(record, correction, direction = "forward") {
   const from = direction === "forward" ? correction.from : correction.to;
   const to = direction === "forward" ? correction.to : correction.from;
@@ -343,6 +355,18 @@ export function applyClassificationVerification(key, typed) {
 
 function undoClassificationVerification(record) {
   return (CLASSIFICATION_VERIFICATION_CORRECTIONS[record.key] ?? [])
+    .reduceRight((current, correction) => moveRealization(current, correction, "reverse"), record);
+}
+
+function applySupportiveCoverageReclassification(key, typed) {
+  const corrected = (SUPPORTIVE_COVERAGE_RECLASSIFICATIONS[key] ?? [])
+    .reduce((record, correction) => moveRealization({ key, ...record }, correction), typed);
+  const { key: _key, ...pools } = corrected;
+  return pools;
+}
+
+function undoSupportiveCoverageReclassification(record) {
+  return (SUPPORTIVE_COVERAGE_RECLASSIFICATIONS[record.key] ?? [])
     .reduceRight((current, correction) => moveRealization(current, correction, "reverse"), record);
 }
 
@@ -711,32 +735,40 @@ export function repassSignUnit(key, record) {
   const typedRealizations = ownerReplacement ?? typeRealizations(manifestations, typeOverrides);
   return {
     ...rest,
-    ...applyClassificationVerification(
+    ...applySupportiveCoverageReclassification(
       key,
-      applyClassificationReview(key, typedRealizations),
+      applyClassificationVerification(
+        key,
+        applyClassificationReview(key, typedRealizations),
+      ),
     ),
   };
 }
 
 export function applySupportiveExtraction(record) {
-  const extraction = supportiveExtractionFor(record.key);
-  if (!extraction) return { ...record, supportive_realization_evidence: [] };
-  if (record.supportive_realizations.length > 0) {
-    throw new Error(`${record.key}: supportive extraction may only fill an empty pool`);
-  }
-  if (extraction.source_ids.some((sourceId) => !record.source_ids.includes(sourceId))) {
-    throw new Error(`${record.key}: supportive extraction cites evidence outside its own governed source set`);
+  const extractions = supportiveExtractionsFor(record.key);
+  if (extractions.length === 0) return { ...record, supportive_realization_evidence: [] };
+  for (const extraction of extractions) {
+    if (extraction.source_ids.some((sourceId) => !record.source_ids.includes(sourceId))) {
+      throw new Error(`${record.key}: supportive extraction cites evidence outside its own governed source set`);
+    }
+    if (record.supportive_realizations.includes(extraction.realization)) {
+      throw new Error(`${record.key}: supportive extraction duplicates an existing realization`);
+    }
   }
   return {
     ...record,
-    supportive_realizations: [...record.supportive_realizations, extraction.realization],
-    supportive_realization_evidence: [{
+    supportive_realizations: [
+      ...record.supportive_realizations,
+      ...extractions.map((extraction) => extraction.realization),
+    ],
+    supportive_realization_evidence: extractions.map((extraction) => ({
       realization: extraction.realization,
       source_ids: [...extraction.source_ids],
       source_hashes: extraction.source_ids.map((sourceId) => (
         record.source_hashes[record.source_ids.indexOf(sourceId)]
       )),
-    }],
+    })),
   };
 }
 
@@ -746,10 +778,12 @@ export function classificationReviewAudit(rows) {
     const row = rows.find((candidate) => candidate.key === key);
     if (!row) throw new Error(`Missing classification-review unit ${key}`);
     const extractedRealizations = new Set((row.supportive_realization_evidence ?? []).map((item) => item.realization));
-    const classificationRow = undoClassificationVerification({
-      ...row,
-      supportive_realizations: row.supportive_realizations.filter((value) => !extractedRealizations.has(value)),
-    });
+    const classificationRow = undoClassificationVerification(
+      undoSupportiveCoverageReclassification({
+        ...row,
+        supportive_realizations: row.supportive_realizations.filter((value) => !extractedRealizations.has(value)),
+      }),
+    );
     const beforeType = decision.population === "all_neutral" ? "neutral" : "shadow";
 
     // Reconstruct original order from the decision's typed output. This keeps
@@ -779,10 +813,12 @@ export function classificationReviewAudit(rows) {
   const reviewedKeys = new Set(reviewed.map((row) => row.key));
   const historicalRows = rows.map((row) => {
     const extractedRealizations = new Set((row.supportive_realization_evidence ?? []).map((item) => item.realization));
-    return undoClassificationVerification({
-      ...row,
-      supportive_realizations: row.supportive_realizations.filter((value) => !extractedRealizations.has(value)),
-    });
+    return undoClassificationVerification(
+      undoSupportiveCoverageReclassification({
+        ...row,
+        supportive_realizations: row.supportive_realizations.filter((value) => !extractedRealizations.has(value)),
+      }),
+    );
   });
   const emptySupportiveBefore = historicalRows.filter((row) => (
     reviewedKeys.has(row.key)
@@ -846,26 +882,103 @@ export function classificationVerificationAudit(rows) {
     .map((flag) => {
       const row = rows.find((candidate) => candidate.key === flag.key);
       if (!row) throw new Error(`Missing supportive-paraphrase unit ${flag.key}`);
-      if (!row.supportive_realizations.includes(flag.value)) {
+      const closingRealization = SUPPORTIVE_CLOSING_EXTRACTIONS[row.key]?.realization;
+      const beforeClosing = undoSupportiveCoverageReclassification({
+        ...row,
+        supportive_realizations: row.supportive_realizations.filter((value) => value !== closingRealization),
+      });
+      if (!beforeClosing.supportive_realizations.includes(flag.value)) {
         throw new Error(`${flag.key}: supportive-paraphrase flag does not match the final supportive pool: ${flag.value}`);
       }
       return {
         ...flag,
         combined_position: row.combined_position,
+        supportiveCountBeforeClosing: beforeClosing.supportive_realizations.length,
         source_ids: [...row.source_ids],
       };
     });
+  const beforeClosingRows = rows.map((row) => {
+    const closingRealization = SUPPORTIVE_CLOSING_EXTRACTIONS[row.key]?.realization;
+    return undoSupportiveCoverageReclassification({
+      ...row,
+      supportive_realizations: row.supportive_realizations.filter((value) => value !== closingRealization),
+    });
+  });
   return {
     movedRealizationsReviewed: reviewed44.length,
     movedClassificationsHeld: reviewed44.filter((item) => item.classificationHolds).length,
     movedClassificationsCorrected: reviewed44.filter((item) => !item.classificationHolds).length,
     additionalOwnerReportedCorrections: additionalCorrections.length,
     totalClassificationCorrections: reviewed44.filter((item) => !item.classificationHolds).length + additionalCorrections.length,
-    emptySupportivePoolsAfterVerification: rows.filter((row) => row.supportive_realizations.length === 0).length,
+    emptySupportivePoolsAfterVerification: beforeClosingRows.filter((row) => row.supportive_realizations.length === 0).length,
     supportiveCombinedPositionParaphraseFlags: supportiveCombinedPositionParaphrases.length,
     reviewed44,
     additionalCorrections,
     supportiveCombinedPositionParaphrases,
+  };
+}
+
+export function supportiveCoverageClosingAudit(rows) {
+  const rowIndex = new Map(rows.map((row) => [row.key, row]));
+  const flagRows = SUPPORTIVE_COMBINED_POSITION_PARAPHRASE_FLAGS.map((flag) => {
+    const row = rowIndex.get(flag.key);
+    if (!row) throw new Error(`Missing supportive coverage unit ${flag.key}`);
+    const closingExtraction = SUPPORTIVE_CLOSING_EXTRACTIONS[flag.key] ?? null;
+    const beforeClosing = undoSupportiveCoverageReclassification({
+      ...row,
+      supportive_realizations: row.supportive_realizations.filter((value) => value !== closingExtraction?.realization),
+    });
+    const onlySupportiveBefore = beforeClosing.supportive_realizations.length === 1;
+    const reclassification = (SUPPORTIVE_COVERAGE_RECLASSIFICATIONS[flag.key] ?? [])
+      .find((item) => item.value === flag.value) ?? null;
+    return {
+      key: flag.key,
+      value: flag.value,
+      onlySupportiveBefore,
+      supportiveCountBefore: beforeClosing.supportive_realizations.length,
+      disposition: onlySupportiveBefore
+        ? (reclassification ? "reclassified_to_shadow_and_distinct_supportive_extracted" : "kept_and_distinct_supportive_extracted")
+        : "left_unchanged_other_supportive_available",
+      distinctSupportiveRealization: onlySupportiveBefore ? closingExtraction?.realization ?? null : null,
+      extractionSourceIds: onlySupportiveBefore ? [...(closingExtraction?.source_ids ?? [])] : [],
+      reclassificationFinding: reclassification?.finding ?? null,
+      source_ids: [...row.source_ids],
+    };
+  });
+  const closingExtractions = Object.entries(SUPPORTIVE_CLOSING_EXTRACTIONS).map(([key, extraction]) => {
+    const row = rowIndex.get(key);
+    if (!row) throw new Error(`Missing closing extraction unit ${key}`);
+    const evidence = row.supportive_realization_evidence.find((item) => item.realization === extraction.realization);
+    if (!evidence) throw new Error(`${key}: closing extraction has no provenance record`);
+    return {
+      key,
+      realization: extraction.realization,
+      source_ids: [...extraction.source_ids],
+      source_hashes: [...evidence.source_hashes],
+    };
+  });
+  const beforeClosingRows = rows.map((row) => {
+    const closingRealization = SUPPORTIVE_CLOSING_EXTRACTIONS[row.key]?.realization;
+    return undoSupportiveCoverageReclassification({
+      ...row,
+      supportive_realizations: row.supportive_realizations.filter((value) => value !== closingRealization),
+    });
+  });
+  return {
+    paraphraseFlagsReviewed: flagRows.length,
+    uniqueFlaggedUnits: new Set(flagRows.map((row) => row.key)).size,
+    soleSupportiveFlags: flagRows.filter((row) => row.onlySupportiveBefore).length,
+    flagsWithOtherSupportiveMaterial: flagRows.filter((row) => !row.onlySupportiveBefore).length,
+    paraphrasesKept: flagRows.filter((row) => !row.reclassificationFinding).length,
+    paraphrasesReclassified: flagRows.filter((row) => row.reclassificationFinding).length,
+    extractedUnits: closingExtractions.length,
+    extractedRealizations: closingExtractions.length,
+    emptySupportivePoolsBefore: beforeClosingRows.filter((row) => row.supportive_realizations.length === 0).length,
+    emptySupportivePoolsAfter: rows.filter((row) => row.supportive_realizations.length === 0).length,
+    emptySupportivePoolKeysBefore: beforeClosingRows.filter((row) => row.supportive_realizations.length === 0).map((row) => row.key),
+    emptySupportivePoolKeysAfter: rows.filter((row) => row.supportive_realizations.length === 0).map((row) => row.key),
+    flags: flagRows,
+    extractions: closingExtractions,
   };
 }
 
@@ -875,10 +988,8 @@ export function assertOwnerReplacements(rows) {
     if (!row) throw new Error(`Missing owner-authored replacement ${key}`);
     if (row.combined_position !== expected.combined_position) throw new Error(`${key} combined_position changed`);
     for (const field of REALIZATION_FIELDS) {
-      const extraction = field === "supportive_realizations" ? supportiveExtractionFor(key) : null;
-      const expectedWithAuthorizedAddition = extraction
-        ? [...expected[field], extraction.realization]
-        : expected[field];
+      const extractions = field === "supportive_realizations" ? supportiveExtractionsFor(key) : [];
+      const expectedWithAuthorizedAddition = [...expected[field], ...extractions.map((item) => item.realization)];
       if (JSON.stringify(row[field]) !== JSON.stringify(expectedWithAuthorizedAddition)) {
         throw new Error(`${key} ${field} changed`);
       }
@@ -981,5 +1092,6 @@ import {
   typeRealizations,
 } from "./sky-calendar-realization-types.mjs";
 import {
-  supportiveExtractionFor,
+  SUPPORTIVE_CLOSING_EXTRACTIONS,
+  supportiveExtractionsFor,
 } from "./sky-calendar-supportive-extractions.mjs";

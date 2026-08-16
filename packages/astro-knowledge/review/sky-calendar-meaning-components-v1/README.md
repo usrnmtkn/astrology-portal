@@ -103,7 +103,7 @@ The owner authorized an additive editorial extraction for the 64 supportive pool
 
 All units remain `PENDING OWNER` and fail closed until owner review. The eight owner-authored replacements preserve every previously locked string; four receive one authorized additive supportive realization because their supportive pool was empty. The complete extraction ledger is in `SUPPORTIVE-POOL-EXTRACTION-REPORT.md` and the workbook's Sign Units sheet.
 
-The counts above record the completed extraction pass at that checkpoint. The later targeted classification verification below correctly moved three items out of the supportive pool, so the current registry has three empty supportive pools and fails closed for routes that require them.
+The counts above record the completed extraction pass at that checkpoint. The later targeted classification verification below correctly moved three items out of the supportive pool, creating three temporary gaps that were resolved in the closing coverage pass.
 
 ## Targeted classification verification, 2026-08-16
 
@@ -117,3 +117,19 @@ All 44 realizations moved during the earlier classification audit were checked a
 - Supportive realizations flagged as near-restatements of their unit's combined position: 27. These are flags only; they were not rewritten or reclassified in this pass.
 
 The full evidence-backed result is in `TARGETED-CLASSIFICATION-VERIFICATION.md`, `targeted-classification-verification.json`, and the workbook's Targeted Verification sheet.
+
+## Supportive coverage closing pass, 2026-08-16
+
+The three pools emptied by targeted verification were checked against their own governed evidence. Sun in Sagittarius, Saturn in Aquarius, and Neptune in Sagittarius each had a constructive act available without borrowing doctrine. Adding those three realizations reduces the current trine/sextile blocked-route count from 98 to 0.
+
+The 27 supportive near-restatement flags were also checked as a coverage question:
+
+- 15 were the unit's only supportive realization and received one distinct, evidence-backed supportive realization.
+- 12 belonged to units that already carried other supportive material and were left unchanged.
+- 26 flagged realizations remain supportive.
+- `sky-sign/chiron/virgo` keeps its exact wording but moves from supportive to shadow because it describes insecurity and repeated correction rather than help or ease.
+- Existing wording rewritten: 0.
+- Empty supportive pools now: 0.
+- All 174 units remain `PENDING OWNER` and fail closed.
+
+The complete evidence ledger is in `SUPPORTIVE-COVERAGE-CLOSING-REPORT.md`, `supportive-coverage-closing-report.json`, and the workbook's Coverage Closing sheet.

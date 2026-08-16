@@ -39,7 +39,7 @@ Status: classification-only verification. No realization wording changed. All 17
 
 ## Supportive realization near-restatement flags
 
-These items remain in their existing supportive pool. They are flagged for owner review because they repeat the unit's combined position instead of adding a distinct realization. This pass does not rewrite or reclassify them.
+These items were in the supportive pool after targeted verification and were flagged because they repeat the unit's combined position instead of adding a distinct realization. Their later coverage dispositions are recorded in `SUPPORTIVE-COVERAGE-CLOSING-REPORT.md`; this table preserves the verification checkpoint.
 
 | Unit | Combined position | Supportive realization | Evidence |
 | --- | --- | --- | --- |
