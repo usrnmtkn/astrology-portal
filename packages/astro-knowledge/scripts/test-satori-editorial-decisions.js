@@ -234,7 +234,14 @@ function main() {
   // on retrieved owner passages. CF-018 leak stays prohibited.
   assert(packet.ownerPassages.every((entry) => !/\b(?:leak|leaks|leaked|leaking)\b/iu.test(entry.text)));
 
-  const legacyGlobalBans = JSON.parse(fs.readFileSync(path.join(packageRoot, "voice", "banned-words.json"), "utf8")).bannedWords;
+  const globalWordPolicy = JSON.parse(fs.readFileSync(path.join(packageRoot, "voice", "banned-words.json"), "utf8"));
+  const legacyGlobalBans = globalWordPolicy.bannedWords;
+  const policyByTerm = new Map([...legacyGlobalBans, ...(globalWordPolicy.waivedTerms || [])].map((entry) => [entry.term, entry.policyClass]));
+  for (const term of ["death", "die", "dying", "self-punishment", "voice shakes"]) assert(!legacyGlobalBans.some((entry) => entry.term === term), `${term} must be absent from the active banned-word list`);
+  assert.strictEqual(policyByTerm.get("reckoning"), "HARD_BAN");
+  assert.strictEqual(policyByTerm.get("profound"), "REPLACEMENT_SUGGESTION");
+  assert.strictEqual(policyByTerm.get("self-erasure"), "EDITORIAL_REVIEW");
+  for (const term of ["death", "die", "dying", "self-punishment", "voice shakes"]) assert.strictEqual(policyByTerm.get(term), "WAIVED");
   assert(!legacyGlobalBans.some((entry) => /^(?:leak|leaks|leaked|leaking)$/iu.test(typeof entry === "string" ? entry : entry.term)), "CF-018 must not retroactively invalidate historical data through the legacy global validator");
   const cf018 = result.compiled.artifacts.linter.rules.find((entry) => entry.id === "CF-018");
   assert(cf018, "CF-018 must remain active in the generated editorial linter policy");

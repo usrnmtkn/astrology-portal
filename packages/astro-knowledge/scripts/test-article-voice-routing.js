@@ -63,6 +63,11 @@ async function main() {
     const lint = lintLongformArticle(`You can see the ${term} in the paperwork.`);
     assert.ok(lint.findings.some((finding) => finding.term === term && finding.severity === "fail"));
   }
+  const advisory = lintLongformArticle("You notice a profound shift in the plan.");
+  assert.strictEqual(advisory.fails, 0, "replacement suggestions must not hard-fail article routing");
+  assert.ok(advisory.findings.some((finding) => finding.policyClass === "REPLACEMENT_SUGGESTION"));
+  const waived = lintLongformArticle("You can discuss death without hiding the literal subject.");
+  assert.ok(!waived.findings.some((finding) => finding.term === "death"), "waived terms must not reach the article gate");
   assert.strictEqual(lintLongformArticle("You can ask a real question here?").score, 3, "second person and questions are licensed on articles");
   console.log("OK  article-only trade vocabulary fails without changing the card/global ban list");
 

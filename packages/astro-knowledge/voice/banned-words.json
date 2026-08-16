@@ -22,6 +22,7 @@
   "bannedWords": [
     {
       "term": "reckoning",
+      "policyClass": "HARD_BAN",
       "reason": "Overused dramatic reveal language.",
       "useInstead": [
         "accounting",
@@ -32,16 +33,23 @@
     },
     {
       "term": "profound",
-      "reason": "Overused spiritual emphasis.",
+      "policyClass": "REPLACEMENT_SUGGESTION",
+      "reason": "Prefer a more specific word such as significant, deep, lasting, major, strong, or important. Do not hard-ban; flag only when it is functioning as generic spiritual emphasis.",
+      "contextPatterns": [
+        "\\bprofound\\s+(?:change|effect|insight|connection|loss|influence|realization|shift)\\b"
+      ],
       "useInstead": [
-        "deep",
         "significant",
-        "meaningful",
-        "far-reaching"
+        "deep",
+        "lasting",
+        "major",
+        "strong",
+        "important"
       ]
     },
     {
       "term": "whisper",
+      "policyClass": "AI_TELL_PREVENTIVE",
       "reason": "Overused mystical softness.",
       "useInstead": [
         "signal",
@@ -51,6 +59,7 @@
     },
     {
       "term": "tapestry",
+      "policyClass": "AI_TELL_PREVENTIVE",
       "reason": "Overused metaphor.",
       "useInstead": [
         "pattern",
@@ -60,6 +69,11 @@
     },
     {
       "term": "weave",
+      "policyClass": "AI_TELL_PREVENTIVE",
+      "literalContextPatterns": [
+        "\\bweav(?:e|es|ed|ing)\\s+(?:the\\s+|a\\s+|an\\s+)?(?:fabric|cloth|textile|threads?|yarn|fibers?|basket|rug|carpet|garment)\\b",
+        "\\b(?:loom|weaver|weavers)\\b[^.!?]{0,80}\\bweav(?:e|es|ed|ing)\\b"
+      ],
       "reason": "Overused metaphor.",
       "useInstead": [
         "connect",
@@ -69,6 +83,11 @@
     },
     {
       "term": "woven",
+      "policyClass": "AI_TELL_PREVENTIVE",
+      "literalContextPatterns": [
+        "\\bwoven\\s+(?:fabric|cloth|textile|basket|rug|carpet|garment)\\b",
+        "\\b(?:fabric|cloth|textile|basket|rug|carpet|garment)\\b[^.!?]{0,40}\\b(?:is|was|has been|had been)?\\s*woven\\b"
+      ],
       "reason": "Overused metaphor.",
       "useInstead": [
         "connected",
@@ -78,7 +97,8 @@
     },
     {
       "term": "self-erasure",
-      "reason": "Banned phrasing.",
+      "policyClass": "EDITORIAL_REVIEW",
+      "reason": "Editorial style flag; owner-approved exact sentences may use it.",
       "useInstead": [
         "self-abandonment",
         "betraying your needs",
@@ -87,6 +107,7 @@
     },
     {
       "term": "truth bomb",
+      "policyClass": "HARD_BAN",
       "reason": "Banned phrasing.",
       "useInstead": [
         "hard truth",
@@ -96,6 +117,7 @@
     },
     {
       "term": "permission slip",
+      "policyClass": "HARD_BAN",
       "reason": "Banned phrasing.",
       "useInstead": [
         "permission",
@@ -105,6 +127,7 @@
     },
     {
       "term": "performing normalcy",
+      "policyClass": "HARD_BAN",
       "reason": "Banned phrasing.",
       "useInstead": [
         "pretending to be normal",
@@ -112,51 +135,8 @@
       ]
     },
     {
-      "term": "voice shakes",
-      "reason": "Banned phrasing.",
-      "useInstead": [
-        "even when it feels uncomfortable",
-        "even when it costs you comfort"
-      ]
-    },
-    {
-      "term": "self-punishment",
-      "reason": "Banned phrasing.",
-      "useInstead": [
-        "name the exact behavior or consequence",
-        "punishing yourself"
-      ]
-    },
-    {
-      "term": "death",
-      "reason": "Avoid for endings unless literally required; use rebirth language carefully.",
-      "useInstead": [
-        "ending",
-        "completion",
-        "release",
-        "rebirth"
-      ]
-    },
-    {
-      "term": "die",
-      "reason": "Avoid for endings unless literally required.",
-      "useInstead": [
-        "end",
-        "complete",
-        "release"
-      ]
-    },
-    {
-      "term": "dying",
-      "reason": "Avoid for endings unless literally required.",
-      "useInstead": [
-        "ending",
-        "completing",
-        "being released"
-      ]
-    },
-    {
       "term": "running tally",
+      "policyClass": "HARD_BAN",
       "reason": "Tired, old phrasing (owner flag, 2026-07-25).",
       "useInstead": [
         "keeps track of",
@@ -166,12 +146,40 @@
     },
     {
       "term": "dynamic interplay",
+      "policyClass": "HARD_BAN",
       "reason": "Generative-AI tell.",
       "useInstead": [
         "back and forth",
         "push and pull",
         "how they interact"
       ]
+    }
+  ],
+  "waivedTerms": [
+    {
+      "term": "voice shakes",
+      "policyClass": "WAIVED",
+      "reason": "Literal speech description is allowed; repeated dramatic use belongs to cadence review."
+    },
+    {
+      "term": "self-punishment",
+      "policyClass": "WAIVED",
+      "reason": "Fully waived by owner ruling; no finding and no retrieval exclusion."
+    },
+    {
+      "term": "death",
+      "policyClass": "WAIVED",
+      "reason": "Fully waived by owner ruling; no finding and no retrieval exclusion."
+    },
+    {
+      "term": "die",
+      "policyClass": "WAIVED",
+      "reason": "Fully waived by owner ruling; no finding and no retrieval exclusion."
+    },
+    {
+      "term": "dying",
+      "policyClass": "WAIVED",
+      "reason": "Fully waived by owner ruling; no finding and no retrieval exclusion."
     }
   ]
 }

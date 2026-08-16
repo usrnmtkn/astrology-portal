@@ -90,7 +90,7 @@
     "test:lunation-horoscope-template": "node ../../scripts/test-lunation-horoscope-template-v1.mjs",
     "build:satori-editorial-policy": "node scripts/compile-satori-editorial-decisions.js",
     "check:satori-editorial-policy": "node scripts/compile-satori-editorial-decisions.js --check",
-    "test:satori-editorial-policy": "node scripts/test-satori-editorial-decisions.js",
+    "test:satori-editorial-policy": "node scripts/test-satori-editorial-decisions.js && node scripts/test-banned-word-policy.js",
     "packet:satori-writer": "node ../../.agents/skills/satori-writer/scripts/compile-writing-packet.js",
     "plan:sky-placement-writer": "node scripts/run-sky-placement-writer-sample.js --plan",
     "write:sky-placement:live": "node scripts/run-sky-placement-writer-sample.js --authorize-live",
