@@ -16,6 +16,7 @@ import {
 import { assertManifestationShapeCap } from "./sky-calendar-manifestation-shape.mjs";
 import {
   SYSTEMIC_REPASS_WORDING_KEYS,
+  applySupportiveExtraction,
   assertOwnerReplacements,
   classificationReviewAudit,
   manifestationPlainnessViolations,
@@ -27,6 +28,7 @@ import {
   addTypedRealizations,
   assertTypedRealizationSchema,
 } from "./sky-calendar-realization-types.mjs";
+import { SUPPORTIVE_EXTRACTIONS } from "./sky-calendar-supportive-extractions.mjs";
 
 const repoRoot = process.cwd();
 const reviewDir = path.join(
@@ -218,7 +220,7 @@ const signUnits = planets.flatMap((planet) => signs.map((sign) => {
     owner_review_status: "PENDING OWNER",
   };
 
-  return record;
+  return applySupportiveExtraction(record);
 }));
 assertOwnerReplacements(signUnits);
 const shadowAudit = sourceShadowAudit(signUnits);
@@ -459,6 +461,20 @@ if (evidenceLayerSha256 !== EVIDENCE_LAYER_SHA256) {
   throw new Error(`Evidence layer changed: expected ${EVIDENCE_LAYER_SHA256}, got ${evidenceLayerSha256}`);
 }
 
+const supportiveExtractionAudit = {
+  authorizationDate: "2026-08-16",
+  extractionOnly: true,
+  units: Object.keys(SUPPORTIVE_EXTRACTIONS).length,
+  realizations: signUnits.reduce((total, row) => total + row.supportive_realization_evidence.length, 0),
+  emptySupportivePoolsAfter: signUnits.filter((row) => row.supportive_realizations.length === 0).length,
+  unsupportedUnits: signUnits
+    .filter((row) => SUPPORTIVE_EXTRACTIONS[row.key])
+    .filter((row) => row.supportive_realization_evidence.length !== 1)
+    .map((row) => row.key),
+  keys: Object.keys(SUPPORTIVE_EXTRACTIONS).sort(),
+  rule: "Every added supportive realization is extracted from that unit's own governed sign evidence. Existing realizations and classifications remain unchanged.",
+};
+
 const registry = {
   schema: "tldrastro.sky-calendar-meaning-components.v2",
   status: "PENDING OWNER",
@@ -511,6 +527,7 @@ const registry = {
     faultAudit,
     realizationSchema,
     classificationAudit,
+    supportiveExtractionAudit,
     rule: "Every unit was rechecked against its governed meaning and source cost. Realizations are typed by supportive, neutral, or shadow meaning; type is never encoded by array position.",
   },
   wordingQuality,
@@ -764,7 +781,7 @@ writeComponentSheet(
   signSheet,
   "Sign units (144)",
   "Meaning components only. Realizations are typed by meaning; array order never carries useful/neutral/shadow semantics.",
-  ["Key", "Planet function", "Sign expression", "Combined position", "Supportive realizations", "Neutral realizations", "Shadow realizations", "Details language", "Meaning source IDs", "Meaning source hashes", "Owner-voice coverage", "Owner-voice source IDs", "Owner-voice source hashes", "Owner review status", "Owner notes"],
+  ["Key", "Planet function", "Sign expression", "Combined position", "Supportive realizations", "Supportive extraction evidence", "Neutral realizations", "Shadow realizations", "Details language", "Meaning source IDs", "Meaning source hashes", "Owner-voice coverage", "Owner-voice source IDs", "Owner-voice source hashes", "Owner review status", "Owner notes"],
   signUnits,
   (row) => [
     row.key,
@@ -772,6 +789,9 @@ writeComponentSheet(
     row.sign_expression,
     row.combined_position,
     row.supportive_realizations.join("\n• ").replace(/^/u, row.supportive_realizations.length ? "• " : ""),
+    row.supportive_realization_evidence.map((item) => (
+      `${item.realization}\n${item.source_ids.join("\n")}`
+    )).join("\n\n"),
     row.neutral_realizations.join("\n• ").replace(/^/u, row.neutral_realizations.length ? "• " : ""),
     row.shadow_realizations.join("\n• ").replace(/^/u, row.shadow_realizations.length ? "• " : ""),
     row.details_language,
@@ -783,7 +803,7 @@ writeComponentSheet(
     row.owner_review_status,
     "",
   ],
-  [["A", 34], ["B", 38], ["C", 38], ["D", 46], ["E", 42], ["F", 42], ["G", 42], ["H", 38], ["I", 58], ["J", 42], ["K", 34], ["L", 58], ["M", 42], ["N", 20], ["O", 28]],
+  [["A", 34], ["B", 38], ["C", 38], ["D", 46], ["E", 42], ["F", 66], ["G", 42], ["H", 42], ["I", 38], ["J", 58], ["K", 42], ["L", 34], ["M", 58], ["N", 42], ["O", 20], ["P", 28]],
   "SignUnitsTable",
 );
 
@@ -993,7 +1013,7 @@ if (/"matchCount":\s*[1-9]/u.test(errors.ndjson)) throw new Error(errors.ndjson)
 for (const [sheetName, range] of [
   ["Overview", "A1:F27"],
   ["Owner Voice Coverage", "A1:F24"],
-  ["Sign Units", "A1:O12"],
+  ["Sign Units", "A1:P12"],
   ["Classification Audit", "A1:K20"],
   ["Aspect Mechanisms", "A1:K8"],
   ["Modality Units", "A1:K12"],

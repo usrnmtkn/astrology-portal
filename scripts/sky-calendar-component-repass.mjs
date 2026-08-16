@@ -627,24 +627,51 @@ export function repassSignUnit(key, record) {
   };
 }
 
+export function applySupportiveExtraction(record) {
+  const extraction = supportiveExtractionFor(record.key);
+  if (!extraction) return { ...record, supportive_realization_evidence: [] };
+  if (record.supportive_realizations.length > 0) {
+    throw new Error(`${record.key}: supportive extraction may only fill an empty pool`);
+  }
+  if (extraction.source_ids.some((sourceId) => !record.source_ids.includes(sourceId))) {
+    throw new Error(`${record.key}: supportive extraction cites evidence outside its own governed source set`);
+  }
+  return {
+    ...record,
+    supportive_realizations: [...record.supportive_realizations, extraction.realization],
+    supportive_realization_evidence: [{
+      realization: extraction.realization,
+      source_ids: [...extraction.source_ids],
+      source_hashes: extraction.source_ids.map((sourceId) => (
+        record.source_hashes[record.source_ids.indexOf(sourceId)]
+      )),
+    }],
+  };
+}
+
 export function classificationReviewAudit(rows) {
   const reviewed = [];
   for (const [key, decision] of Object.entries(CLASSIFICATION_REVIEW_DECISIONS)) {
     const row = rows.find((candidate) => candidate.key === key);
     if (!row) throw new Error(`Missing classification-review unit ${key}`);
+    const extractedRealizations = new Set((row.supportive_realization_evidence ?? []).map((item) => item.realization));
+    const classificationRow = {
+      ...row,
+      supportive_realizations: row.supportive_realizations.filter((value) => !extractedRealizations.has(value)),
+    };
     const beforeType = decision.population === "all_neutral" ? "neutral" : "shadow";
 
     // Reconstruct original order from the decision's typed output. This keeps
     // the audit stable even though the workbook groups values by pool.
     const orderedValues = decision.types.map((type, index) => {
       const sameTypeBefore = decision.types.slice(0, index).filter((candidate) => candidate === type).length;
-      return row[`${type}_realizations`][sameTypeBefore];
+      return classificationRow[`${type}_realizations`][sameTypeBefore];
     });
     reviewed.push({
       key,
       population: decision.population,
       beforeShape: decision.population === "all_neutral" ? "0/3/0" : "0/0/3",
-      afterShape: REALIZATION_FIELDS.map((field) => row[field].length).join("/"),
+      afterShape: REALIZATION_FIELDS.map((field) => classificationRow[field].length).join("/"),
       finding: decision.finding,
       supportiveFinding: decision.supportiveFinding ?? null,
       source_ids: [...row.source_ids],
@@ -660,9 +687,12 @@ export function classificationReviewAudit(rows) {
   const allShadow = reviewed.filter((row) => row.population === "all_shadow");
   const reviewedKeys = new Set(reviewed.map((row) => row.key));
   const emptySupportiveBefore = rows.filter((row) => (
-    reviewedKeys.has(row.key) || row.supportive_realizations.length === 0
+    reviewedKeys.has(row.key)
+    || row.supportive_realizations.length === (row.supportive_realization_evidence?.length ?? 0)
   )).length;
-  const emptySupportiveAfter = rows.filter((row) => row.supportive_realizations.length === 0).length;
+  const emptySupportiveAfter = rows.filter((row) => (
+    row.supportive_realizations.length === (row.supportive_realization_evidence?.length ?? 0)
+  )).length;
   return {
     reviewedUnits: reviewed.length,
     allNeutralBefore: allNeutral.length,
@@ -682,7 +712,11 @@ export function assertOwnerReplacements(rows) {
     if (!row) throw new Error(`Missing owner-authored replacement ${key}`);
     if (row.combined_position !== expected.combined_position) throw new Error(`${key} combined_position changed`);
     for (const field of REALIZATION_FIELDS) {
-      if (JSON.stringify(row[field]) !== JSON.stringify(expected[field])) {
+      const extraction = field === "supportive_realizations" ? supportiveExtractionFor(key) : null;
+      const expectedWithAuthorizedAddition = extraction
+        ? [...expected[field], extraction.realization]
+        : expected[field];
+      if (JSON.stringify(row[field]) !== JSON.stringify(expectedWithAuthorizedAddition)) {
         throw new Error(`${key} ${field} changed`);
       }
     }
@@ -783,3 +817,6 @@ import {
   REALIZATION_FIELDS,
   typeRealizations,
 } from "./sky-calendar-realization-types.mjs";
+import {
+  supportiveExtractionFor,
+} from "./sky-calendar-supportive-extractions.mjs";
