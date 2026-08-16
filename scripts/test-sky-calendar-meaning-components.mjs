@@ -15,6 +15,7 @@ import {
   classificationVerificationAudit,
   manifestationPlainnessViolations,
   sourceShadowAudit,
+  supportiveCoverageClosingAudit,
 } from "./sky-calendar-component-repass.mjs";
 
 const registryPath = "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/sky-calendar-meaning-components-v1.json";
@@ -72,7 +73,7 @@ assert.equal(registry.wordingQuality.maximumManifestationShapeUse <= registry.wo
 assert.ok(Array.isArray(registry.wordingQuality.manifestationShapeDistribution));
 assert.equal(
   registry.wordingQuality.manifestationShapeDistribution.reduce((total, row) => total + (row.occurrences * row.distinctValues), 0),
-  496,
+  514,
 );
 assert.equal(registry.wordingQuality.maximumDetailsLanguageUse <= registry.wordingQuality.caps.repeatedDetailsLanguage, true);
 assert.equal(registry.wordingQuality.maximumConnectiveNgramUse <= registry.wordingQuality.caps.connectiveNgram, true);
@@ -128,6 +129,37 @@ assert.deepEqual(
     supportiveCombinedPositionParaphraseFlags: 27,
   },
 );
+assert.deepEqual(
+  Object.fromEntries(Object.entries(registry.systemicRepass.supportiveCoverageClosing).filter(([key]) => (
+    !["flags", "extractions", "emptySupportivePoolKeysBefore", "emptySupportivePoolKeysAfter"].includes(key)
+  ))),
+  {
+    paraphraseFlagsReviewed: 27,
+    uniqueFlaggedUnits: 25,
+    soleSupportiveFlags: 15,
+    flagsWithOtherSupportiveMaterial: 12,
+    paraphrasesKept: 26,
+    paraphrasesReclassified: 1,
+    extractedUnits: 18,
+    extractedRealizations: 18,
+    emptySupportivePoolsBefore: 3,
+    emptySupportivePoolsAfter: 0,
+    blockedRoutesBefore: {
+      byAspect: { trine: { possible: 1008, blocked: 50 }, sextile: { possible: 1032, blocked: 48 } },
+      total: 98,
+    },
+    blockedRoutesAfter: {
+      byAspect: { trine: { possible: 1008, blocked: 0 }, sextile: { possible: 1032, blocked: 0 } },
+      total: 0,
+    },
+  },
+);
+assert.deepEqual([...registry.systemicRepass.supportiveCoverageClosing.emptySupportivePoolKeysBefore].sort(), [
+  "sky-sign/neptune/sagittarius",
+  "sky-sign/saturn/aquarius",
+  "sky-sign/sun/sagittarius",
+]);
+assert.deepEqual(registry.systemicRepass.supportiveCoverageClosing.emptySupportivePoolKeysAfter, []);
 assert.deepEqual(registry.systemicRepass.faultAudit.remainingViolations, {
   analytical_abstraction: [],
   assembled_construction: [],
@@ -239,6 +271,13 @@ assert.deepEqual(manifestationPlainnessViolations(registry.signUnits), []);
 assert.equal(sourceShadowAudit(registry.signUnits).oneSidedAfterPass, 0);
 assert.deepEqual(classificationReviewAudit(registry.signUnits), registry.systemicRepass.classificationAudit);
 assert.deepEqual(classificationVerificationAudit(registry.signUnits), registry.systemicRepass.classificationVerification);
+const closingAuditWithoutRoutes = supportiveCoverageClosingAudit(registry.signUnits);
+assert.deepEqual(
+  closingAuditWithoutRoutes,
+  Object.fromEntries(Object.entries(registry.systemicRepass.supportiveCoverageClosing).filter(([key]) => (
+    !["blockedRoutesBefore", "blockedRoutesAfter"].includes(key)
+  ))),
+);
 
 const sunSagittarius = registry.signUnits.find((row) => row.key === "sky-sign/sun/sagittarius");
 assert.ok(sunSagittarius.neutral_realizations.includes("a strong belief making one contribution stand for a larger cause"));
@@ -249,6 +288,13 @@ assert.equal(saturnAquarius.supportive_realizations.includes("a standard meant t
 const neptuneSagittarius = registry.signUnits.find((row) => row.key === "sky-sign/neptune/sagittarius");
 assert.ok(neptuneSagittarius.shadow_realizations.includes("a belief growing beyond what its supporting facts can carry"));
 assert.equal(neptuneSagittarius.supportive_realizations.includes("a belief growing beyond what its supporting facts can carry"), false);
+assert.ok(sunSagittarius.supportive_realizations.includes("someone asking why until the larger purpose behind a decision becomes clear"));
+assert.ok(saturnAquarius.supportive_realizations.includes("someone proving a different method works before the old rule is treated as permanent"));
+assert.ok(neptuneSagittarius.supportive_realizations.includes("someone checking whether a belief is their own before making a decision around it"));
+const chironVirgo = registry.signUnits.find((row) => row.key === "sky-sign/chiron/virgo");
+assert.ok(chironVirgo.shadow_realizations.includes("a small correction reopening the fear of never being useful enough"));
+assert.equal(chironVirgo.supportive_realizations.includes("a small correction reopening the fear of never being useful enough"), false);
+assert.ok(chironVirgo.supportive_realizations.includes("someone letting a finished task stand before every small flaw has been fixed"));
 
 for (const row of [...registry.aspectMechanisms, ...registry.modalityUnits, ...registry.elementUnits]) {
   for (const field of ["reader_effect", "conflict_behavior", "movement_bias"]) {

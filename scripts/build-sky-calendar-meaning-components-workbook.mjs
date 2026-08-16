@@ -22,6 +22,7 @@ import {
   classificationVerificationAudit,
   manifestationPlainnessViolations,
   sourceShadowAudit,
+  supportiveCoverageClosingAudit,
   systemicFaultAudit,
 } from "./sky-calendar-component-repass.mjs";
 import {
@@ -29,7 +30,10 @@ import {
   addTypedRealizations,
   assertTypedRealizationSchema,
 } from "./sky-calendar-realization-types.mjs";
-import { SUPPORTIVE_EXTRACTIONS } from "./sky-calendar-supportive-extractions.mjs";
+import {
+  SUPPORTIVE_CLOSING_EXTRACTIONS,
+  SUPPORTIVE_EXTRACTIONS,
+} from "./sky-calendar-supportive-extractions.mjs";
 
 const repoRoot = process.cwd();
 const reviewDir = path.join(
@@ -45,6 +49,8 @@ const registryPath = path.join(reviewDir, "sky-calendar-meaning-components-v1.js
 const classificationReportPath = path.join(reviewDir, "REALIZATION-CLASSIFICATION-AUDIT.md");
 const classificationVerificationJsonPath = path.join(reviewDir, "targeted-classification-verification.json");
 const classificationVerificationReportPath = path.join(reviewDir, "TARGETED-CLASSIFICATION-VERIFICATION.md");
+const supportiveCoverageClosingJsonPath = path.join(reviewDir, "supportive-coverage-closing-report.json");
+const supportiveCoverageClosingReportPath = path.join(reviewDir, "SUPPORTIVE-COVERAGE-CLOSING-REPORT.md");
 
 const fallbackPath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
 const v9Path = "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-governance-labeled/knowledge-matrix-v9-owner-approved-rows.json";
@@ -295,6 +301,49 @@ const allUnits = [...signUnits, ...aspects, ...modalities, ...elements];
 const realizationSchema = assertTypedRealizationSchema(allUnits);
 const classificationAudit = classificationReviewAudit(signUnits);
 const classificationVerification = classificationVerificationAudit(signUnits);
+const supportiveCoverageClosing = supportiveCoverageClosingAudit(signUnits);
+
+function exactSignRoutes(aspect) {
+  const distance = aspect === "trine" ? 4 : 2;
+  return signs.flatMap((signA, index) => [distance, -distance].map((offset) => ({
+    signA,
+    signB: signs[(index + offset + signs.length) % signs.length],
+  })));
+}
+
+const transitDirectory = path.join(repoRoot, "packages/astro-knowledge/data/transits");
+const liveSoftRecords = (await fs.readdir(transitDirectory))
+  .filter((name) => name.endsWith(".json"))
+  .map(async (name) => JSON.parse(await fs.readFile(path.join(transitDirectory, name), "utf8")));
+const resolvedLiveSoftRecords = (await Promise.all(liveSoftRecords)).filter((record) => (
+  record.status === "LIVE"
+  && typeof record.readerCopy?.body === "string"
+  && ["trine", "sextile"].includes(record.aspect)
+));
+
+function blockedSoftRoutes(emptyKeys) {
+  const empty = new Set(emptyKeys);
+  const byAspect = { trine: { possible: 0, blocked: 0 }, sextile: { possible: 0, blocked: 0 } };
+  for (const record of resolvedLiveSoftRecords) {
+    for (const route of exactSignRoutes(record.aspect)) {
+      byAspect[record.aspect].possible += 1;
+      const placementA = `sky-sign/${record.transiting}/${route.signA}`;
+      const placementB = `sky-sign/${record.other}/${route.signB}`;
+      if (empty.has(placementA) || empty.has(placementB)) byAspect[record.aspect].blocked += 1;
+    }
+  }
+  return {
+    byAspect,
+    total: byAspect.trine.blocked + byAspect.sextile.blocked,
+  };
+}
+
+supportiveCoverageClosing.blockedRoutesBefore = blockedSoftRoutes(
+  supportiveCoverageClosing.emptySupportivePoolKeysBefore,
+);
+supportiveCoverageClosing.blockedRoutesAfter = blockedSoftRoutes(
+  supportiveCoverageClosing.emptySupportivePoolKeysAfter,
+);
 const faultAudit = systemicFaultAudit([], signUnits);
 if (Object.values(faultAudit.remainingViolations).some((keys) => keys.length > 0)) {
   throw new Error(`Systemic wording fault remains: ${JSON.stringify(faultAudit.remainingViolations)}`);
@@ -469,11 +518,17 @@ const supportiveExtractionAudit = {
   authorizationDate: "2026-08-16",
   extractionOnly: true,
   units: Object.keys(SUPPORTIVE_EXTRACTIONS).length,
-  realizations: signUnits.reduce((total, row) => total + row.supportive_realization_evidence.length, 0),
-  emptySupportivePoolsAfter: signUnits.filter((row) => row.supportive_realizations.length === 0).length,
+  realizations: signUnits.reduce((total, row) => (
+    total + row.supportive_realization_evidence.filter((item) => (
+      item.realization === SUPPORTIVE_EXTRACTIONS[row.key]?.realization
+    )).length
+  ), 0),
+  emptySupportivePoolsAfter: classificationVerification.emptySupportivePoolsAfterVerification,
   unsupportedUnits: signUnits
     .filter((row) => SUPPORTIVE_EXTRACTIONS[row.key])
-    .filter((row) => row.supportive_realization_evidence.length !== 1)
+    .filter((row) => !row.supportive_realization_evidence.some((item) => (
+      item.realization === SUPPORTIVE_EXTRACTIONS[row.key].realization
+    )))
     .map((row) => row.key),
   keys: Object.keys(SUPPORTIVE_EXTRACTIONS).sort(),
   rule: "Every added supportive realization is extracted from that unit's own governed sign evidence. Existing realizations and classifications remain unchanged.",
@@ -532,6 +587,7 @@ const registry = {
     realizationSchema,
     classificationAudit,
     classificationVerification,
+    supportiveCoverageClosing,
     supportiveExtractionAudit,
     rule: "Every unit was rechecked against its governed meaning and source cost. Realizations are typed by supportive, neutral, or shadow meaning; type is never encoded by array position.",
   },
@@ -651,7 +707,7 @@ function classificationVerificationMarkdown() {
   lines.push(
     "## Supportive realization near-restatement flags",
     "",
-    "These items remain in their existing supportive pool. They are flagged for owner review because they repeat the unit's combined position instead of adding a distinct realization. This pass does not rewrite or reclassify them.",
+    "These items were in the supportive pool after targeted verification and were flagged because they repeat the unit's combined position instead of adding a distinct realization. Their later coverage dispositions are recorded in `SUPPORTIVE-COVERAGE-CLOSING-REPORT.md`; this table preserves the verification checkpoint.",
     "",
     "| Unit | Combined position | Supportive realization | Evidence |",
     "| --- | --- | --- | --- |",
@@ -680,12 +736,78 @@ await fs.writeFile(
 );
 await fs.writeFile(classificationVerificationReportPath, classificationVerificationMarkdown());
 
+function supportiveCoverageClosingMarkdown() {
+  const lines = [
+    "# Sky Calendar supportive coverage closing report",
+    "",
+    "Status: evidence-backed extraction and classification only. All 174 units remain `PENDING OWNER` and fail closed.",
+    "",
+    "## Plain result",
+    "",
+    `- Paraphrase flags reviewed: **${supportiveCoverageClosing.paraphraseFlagsReviewed}** across **${supportiveCoverageClosing.uniqueFlaggedUnits}** units`,
+    `- Flags that were the unit's only supportive realization: **${supportiveCoverageClosing.soleSupportiveFlags}**`,
+    `- Flags whose unit already had other supportive material: **${supportiveCoverageClosing.flagsWithOtherSupportiveMaterial}**`,
+    `- Distinct supportive realizations extracted: **${supportiveCoverageClosing.extractedRealizations}**`,
+    `- Paraphrases kept in supportive: **${supportiveCoverageClosing.paraphrasesKept}**`,
+    `- Paraphrases reclassified from supportive: **${supportiveCoverageClosing.paraphrasesReclassified}**`,
+    `- Empty supportive pools before closing: **${supportiveCoverageClosing.emptySupportivePoolsBefore}**`,
+    `- Empty supportive pools after closing: **${supportiveCoverageClosing.emptySupportivePoolsAfter}**`,
+    `- Trine/sextile routes blocked before closing: **${supportiveCoverageClosing.blockedRoutesBefore.total}**`,
+    `- Trine/sextile routes blocked after closing: **${supportiveCoverageClosing.blockedRoutesAfter.total}**`,
+    "",
+    "## Three pools emptied by targeted verification",
+    "",
+    "| Unit | Extracted supportive realization | Governed evidence |",
+    "| --- | --- | --- |",
+  ];
+  for (const key of supportiveCoverageClosing.emptySupportivePoolKeysBefore) {
+    const extraction = supportiveCoverageClosing.extractions.find((item) => item.key === key);
+    lines.push(`| \`${key}\` | ${extraction.realization} | ${extraction.source_ids.map((sourceId) => `\`${sourceId}\``).join("<br>")} |`);
+  }
+  lines.push(
+    "",
+    "All three units had a constructive act in their own governed evidence. None required borrowed doctrine. Neptune in Sagittarius uses the source's explicit check for whether a meaning is personally held or borrowed.",
+    "",
+    "## Twenty-seven paraphrase flags",
+    "",
+    "| Unit | Flagged supportive realization | Only supportive before closing? | Disposition | Distinct extraction | Evidence |",
+    "| --- | --- | --- | --- | --- | --- |",
+  );
+  for (const item of supportiveCoverageClosing.flags) {
+    lines.push(`| \`${item.key}\` | ${item.value} | ${item.onlySupportiveBefore ? "Yes" : "No"} | ${item.disposition} | ${item.distinctSupportiveRealization ?? "Not needed"} | ${(item.extractionSourceIds.length > 0 ? item.extractionSourceIds : item.source_ids).map((sourceId) => `\`${sourceId}\``).join("<br>")} |`);
+  }
+  lines.push(
+    "",
+    "## Classification correction",
+    "",
+    "`sky-sign/chiron/virgo` keeps the wording `a small correction reopening the fear of never being useful enough`, but it now sits in `shadow_realizations`. The source describes insecurity and repeated correction, so it cannot serve a trine or sextile as help or ease.",
+    "",
+    "## Preservation checks",
+    "",
+    "- Existing wording rewritten: 0",
+    "- Evidence pointers and hashes: unchanged",
+    "- Coverage classes: unchanged",
+    "- Eight owner-authored replacement strings: unchanged",
+    "- Approval status: `PENDING OWNER`",
+    "- Serving state: unchanged",
+    "",
+  );
+  return lines.join("\n");
+}
+
+await fs.writeFile(
+  supportiveCoverageClosingJsonPath,
+  `${JSON.stringify(supportiveCoverageClosing, null, 2)}\n`,
+);
+await fs.writeFile(supportiveCoverageClosingReportPath, supportiveCoverageClosingMarkdown());
+
 const workbook = Workbook.create();
 const overview = workbook.worksheets.add("Overview");
 const coverageSheet = workbook.worksheets.add("Owner Voice Coverage");
 const signSheet = workbook.worksheets.add("Sign Units");
 const classificationSheet = workbook.worksheets.add("Classification Audit");
 const targetedVerificationSheet = workbook.worksheets.add("Targeted Verification");
+const coverageClosingSheet = workbook.worksheets.add("Coverage Closing");
 const aspectSheet = workbook.worksheets.add("Aspect Mechanisms");
 const modalitySheet = workbook.worksheets.add("Modality Units");
 const elementSheet = workbook.worksheets.add("Element Units");
@@ -751,7 +873,7 @@ function styleTable(sheet, headerRange, dataRange, widths) {
   });
 }
 
-for (const sheet of [overview, coverageSheet, signSheet, classificationSheet, aspectSheet, modalitySheet, elementSheet, gateSheet, wordingQaSheet]) styleSheet(sheet);
+for (const sheet of [overview, coverageSheet, signSheet, classificationSheet, targetedVerificationSheet, coverageClosingSheet, aspectSheet, modalitySheet, elementSheet, gateSheet, wordingQaSheet]) styleSheet(sheet);
 
 titleBand(
   overview,
@@ -771,7 +893,7 @@ overview.getRange("A4:B15").values = [
   ["One-sided before pass", registry.systemicRepass.sourceShadowAudit.oneSidedBeforePass],
   ["One-sided after pass", registry.systemicRepass.sourceShadowAudit.oneSidedAfterPass],
   ["Realizations reclassified", registry.systemicRepass.classificationAudit.changedRealizations],
-  ["Empty supportive pools", registry.systemicRepass.classificationAudit.emptySupportiveAfter],
+  ["Current empty supportive pools", registry.systemicRepass.supportiveCoverageClosing.emptySupportivePoolsAfter],
 ];
 overview.getRange("D4:F9").values = [
   ["Governance", "Value", "Meaning"],
@@ -985,6 +1107,34 @@ targetedVerificationSheet.tables.add(
 );
 targetedVerificationSheet.freezePanes.freezeRows(3);
 
+const coverageClosingRows = supportiveCoverageClosing.flags.map((item) => [
+  item.key,
+  item.value,
+  item.onlySupportiveBefore ? "YES" : "NO",
+  item.supportiveCountBefore,
+  item.disposition.replaceAll("_", " "),
+  item.distinctSupportiveRealization ?? "",
+  (item.extractionSourceIds.length > 0 ? item.extractionSourceIds : item.source_ids).join("\n"),
+]);
+titleBand(
+  coverageClosingSheet,
+  "A1:G1",
+  "Supportive coverage closing review",
+  `${supportiveCoverageClosing.paraphraseFlagsReviewed} flags checked; ${supportiveCoverageClosing.soleSupportiveFlags} were sole-support items. ${supportiveCoverageClosing.extractedRealizations} evidence-backed supportive realizations added; blocked soft routes ${supportiveCoverageClosing.blockedRoutesBefore.total} -> ${supportiveCoverageClosing.blockedRoutesAfter.total}.`,
+);
+coverageClosingSheet.getRange("A3:G3").values = [[
+  "Key", "Flagged realization", "Only supportive?", "Supportive count before",
+  "Disposition", "Distinct supportive extraction", "Evidence pointers",
+]];
+coverageClosingSheet.getRange(`A4:G${coverageClosingRows.length + 3}`).values = coverageClosingRows;
+styleTable(
+  coverageClosingSheet,
+  "A3:G3",
+  `A4:G${coverageClosingRows.length + 3}`,
+  [["A", 34], ["B", 58], ["C", 16], ["D", 18], ["E", 42], ["F", 64], ["G", 72]],
+);
+coverageClosingSheet.tables.add(`A3:G${coverageClosingRows.length + 3}`, true, "SupportiveCoverageClosingTable");
+
 function writeMechanismSheet(sheet, title, subtitle, records, tableName) {
   writeComponentSheet(
     sheet,
@@ -1147,6 +1297,13 @@ await workbook.inspect({
   tableMaxRows: 12,
   tableMaxCols: 11,
 });
+await workbook.inspect({
+  kind: "table",
+  range: "Coverage Closing!A1:G15",
+  include: "values,formulas",
+  tableMaxRows: 15,
+  tableMaxCols: 7,
+});
 const errors = await workbook.inspect({
   kind: "match",
   searchTerm: "#REF!|#DIV/0!|#VALUE!|#NAME\\?|#N/A",
@@ -1161,6 +1318,7 @@ for (const [sheetName, range] of [
   ["Sign Units", "A1:P12"],
   ["Classification Audit", "A1:K20"],
   ["Targeted Verification", `A1:G${Math.min(paraphraseStart + paraphraseRows.length, 42)}`],
+  ["Coverage Closing", `A1:G${coverageClosingRows.length + 3}`],
   ["Aspect Mechanisms", "A1:K8"],
   ["Modality Units", "A1:K12"],
   ["Element Units", "A1:K12"],

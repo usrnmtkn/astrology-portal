@@ -257,6 +257,89 @@ export const SUPPORTIVE_EXTRACTIONS = {
   },
 };
 
+// Owner-authorized closing extraction, 2026-08-16. These additions repair
+// three pools emptied by targeted classification verification and give the
+// fifteen sole-support paraphrase units a distinct supportive realization.
+// Each extraction stays inside the unit's existing governed evidence.
+export const SUPPORTIVE_CLOSING_EXTRACTIONS = {
+  "sky-sign/sun/leo": {
+    realization: "someone showing work they are proud of instead of leaving it hidden",
+    source_ids: ["tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!813"],
+  },
+  "sky-sign/sun/sagittarius": {
+    realization: "someone asking why until the larger purpose behind a decision becomes clear",
+    source_ids: ["apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/sagittarius"],
+  },
+  "sky-sign/moon/aquarius": {
+    realization: "someone keeping track of what the whole group needs during a crisis",
+    source_ids: ["tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!118"],
+  },
+  "sky-sign/mercury/aries": {
+    realization: "someone stating the main point before the discussion gets lost in explanation",
+    source_ids: ["tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!84"],
+  },
+  "sky-sign/mercury/pisces": {
+    realization: "someone finding words for an image or hunch so other people can follow the reasoning",
+    source_ids: ["tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!95"],
+  },
+  "sky-sign/venus/taurus": {
+    realization: "someone remembering the favorite snack and bringing it without being asked",
+    source_ids: ["tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!61"],
+  },
+  "sky-sign/venus/sagittarius": {
+    realization: "someone taking interest in an independent plan instead of treating it as a threat",
+    source_ids: ["tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!68"],
+  },
+  "sky-sign/venus/aquarius": {
+    realization: "someone making room for an offbeat idea without asking the person behind it to explain themselves",
+    source_ids: ["apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/venus/aquarius"],
+  },
+  "sky-sign/mars/taurus": {
+    realization: "someone finishing a careful repair instead of changing tactics halfway through",
+    source_ids: ["tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!37"],
+  },
+  "sky-sign/mars/cancer": {
+    realization: "someone separating the practical need from the feeling before choosing the next step",
+    source_ids: ["tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!159"],
+  },
+  "sky-sign/mars/scorpio": {
+    realization: "someone using what the delay revealed instead of starting the work over",
+    source_ids: ["tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!194"],
+  },
+  "sky-sign/saturn/gemini": {
+    realization: "someone finishing the course or project they kept setting down",
+    source_ids: ["tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!667"],
+  },
+  "sky-sign/saturn/sagittarius": {
+    realization: "someone turning a vague obligation into a deadline that can be met",
+    source_ids: ["tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!690"],
+  },
+  "sky-sign/saturn/aquarius": {
+    realization: "someone proving a different method works before the old rule is treated as permanent",
+    source_ids: ["tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!719"],
+  },
+  "sky-sign/neptune/sagittarius": {
+    realization: "someone checking whether a belief is their own before making a decision around it",
+    source_ids: ["tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!547"],
+  },
+  "sky-sign/chiron/virgo": {
+    realization: "someone letting a finished task stand before every small flaw has been fixed",
+    source_ids: ["tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!21"],
+  },
+  "sky-sign/lilith/libra": {
+    realization: "someone saying plainly that an arrangement does not work for them",
+    source_ids: ["apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/libra"],
+  },
+  "sky-sign/lilith/scorpio": {
+    realization: "someone naming the private agreement everybody has been organizing around",
+    source_ids: ["apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/scorpio"],
+  },
+};
+
 export function supportiveExtractionFor(key) {
   return SUPPORTIVE_EXTRACTIONS[key] ?? null;
+}
+
+export function supportiveExtractionsFor(key) {
+  return [SUPPORTIVE_EXTRACTIONS[key], SUPPORTIVE_CLOSING_EXTRACTIONS[key]].filter(Boolean);
 }
