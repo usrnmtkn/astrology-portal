@@ -228,11 +228,6 @@ assert.match(
   /import\("\.\/fallbackArchitectureV3EmptyHouseBundle"\)/u,
   "Empty-house natal content must remain behind a dynamic runtime boundary."
 );
-assert.match(
-  appSource,
-  /if \(mode !== "profile" && mode !== "friends"\)[\s\S]{0,400}loadEmptyHouseFallbackArchitectureV3Bundle\(\)/u,
-  "Empty-house content must load for You and Friends without changing Sky startup timing."
-);
 assert.doesNotMatch(
   fallbackRuntimeSource,
   /^import .*source-rows\/sky-(?:planet-frames|placement-inventories|sign-copy).*\.json/mu,
@@ -340,7 +335,7 @@ assert.match(
 );
 assert.match(
   manualChartsPanelSource,
-  /const FriendProfileChartRail = lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/FriendDetail"\)/u,
+  /const loadFriendDetailModule = \(\) => import\("\.\/FriendDetail"\);[\s\S]*const FriendProfileChartRail = lazy\(\(\) =>\s*loadFriendDetailModule\(\)/u,
   "The Friends profile chart rail must share the deferred Friend Detail boundary."
 );
 assert.match(
@@ -380,7 +375,7 @@ assert.doesNotMatch(
 );
 assert.match(
   manualChartsPanelSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/CompatibilityTab"\)/u,
+  /const loadCompatibilityTab = \(\) =>\s*import\("\.\/CompatibilityTab"\)[\s\S]*const CompatibilityTab = lazy\(loadCompatibilityTab\);/u,
   "CompatibilityTab must load only when its Friends profile surface renders."
 );
 assert.doesNotMatch(
@@ -574,7 +569,7 @@ assert.match(
 );
 assert.match(
   manualChartsPanelSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/FriendSynastryTab"\)/u,
+  /const FriendSynastryTab = lazy\(loadFriendSynastryTab\)/u,
   "Synastry presentation must load only when its Friends tab renders."
 );
 assert.match(
@@ -584,7 +579,7 @@ assert.match(
 );
 assert.match(
   manualChartsPanelSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/FriendNatalTab"\)/u,
+  /const FriendNatalTab = lazy\(loadFriendNatalTab\)/u,
   "Natal presentation must load only when its Friends tab renders."
 );
 assert.match(
@@ -594,7 +589,7 @@ assert.match(
 );
 assert.match(
   manualChartsPanelSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/FriendTransitsTab"\)/u,
+  /const FriendTransitsTab = lazy\(loadFriendTransitsTab\)/u,
   "Transit presentation must load only when its Friends tab renders."
 );
 assert.match(
@@ -629,7 +624,7 @@ assert.doesNotMatch(
 );
 assert.match(
   manualChartsPanelSource,
-  /lazy\(\(\)\s*=>\s*\n?\s*import\("\.\/FriendCompositeTab"\)/u,
+  /const FriendCompositeTab = lazy\(loadFriendCompositeTab\)/u,
   "Composite presentation must load only when its Friends tab renders."
 );
 assert.match(

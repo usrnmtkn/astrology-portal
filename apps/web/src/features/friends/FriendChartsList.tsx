@@ -16,6 +16,7 @@ export type FriendChartsListProps = {
   onAddBirthTime: (chart: ManualChart) => void;
   onDeleteChart: (chart: ManualChart) => void;
   onEditChart: (chart: ManualChart) => void;
+  onChartIntent: (chart: ManualChart) => void;
   onOpenChart: (chart: ManualChart) => void;
   onToggleChartMenu: (chartId: string) => void;
   embedded?: boolean;
@@ -37,6 +38,7 @@ export function FriendChartsList({
   onAddBirthTime,
   onDeleteChart,
   onEditChart,
+  onChartIntent,
   onOpenChart,
   onToggleChartMenu,
   embedded = false
@@ -150,6 +152,9 @@ export function FriendChartsList({
                     type="button"
                     className={`manual-chart-select ${active ? "active" : ""}`}
                     onClick={() => onOpenChart(chart)}
+                    onFocus={() => onChartIntent(chart)}
+                    onPointerDown={() => onChartIntent(chart)}
+                    onPointerEnter={() => onChartIntent(chart)}
                     aria-label={`Open ${chart.displayName}`}
                   >
                     <span className="manual-chart-avatar" aria-hidden="true">

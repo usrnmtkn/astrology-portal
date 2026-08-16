@@ -146,6 +146,7 @@ import type { SkyDetail } from "../sky/SkyDetailArticle";
 import { wholeDegreeOrb } from "../sky/skyHelpers";
 import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
 import { friendDetailHasReaderFacingContent } from "./friendDetailAvailability";
+import { scheduleFriendChartRepair } from "./friendChartLoading";
 
 const FriendsWorkspaceShell = lazy(() =>
   import("./FriendsWorkspaceShell").then((module) => ({
@@ -153,11 +154,11 @@ const FriendsWorkspaceShell = lazy(() =>
   }))
 );
 
-const FriendCompositeTab = lazy(() =>
+const loadFriendCompositeTab = () =>
   import("./FriendCompositeTab").then((module) => ({
     default: module.FriendCompositeTab
-  }))
-);
+  }));
+const FriendCompositeTab = lazy(loadFriendCompositeTab);
 
 const FriendChartModal = lazy(() =>
   import("./FriendChartModal").then((module) => ({
@@ -165,41 +166,52 @@ const FriendChartModal = lazy(() =>
   }))
 );
 
-const FriendDetail = lazy(() =>
-  import("./FriendDetail").then((module) => ({
+const loadFriendDetailModule = () => import("./FriendDetail");
+const loadFriendDetail = () =>
+  loadFriendDetailModule().then((module) => ({
     default: module.FriendDetail
-  }))
-);
+  }));
+const FriendDetail = lazy(loadFriendDetail);
 
-const FriendNatalTab = lazy(() =>
+const loadFriendNatalTab = () =>
   import("./FriendNatalTab").then((module) => ({
     default: module.FriendNatalTab
-  }))
-);
+  }));
+const FriendNatalTab = lazy(loadFriendNatalTab);
 
-const FriendTransitsTab = lazy(() =>
+const loadFriendTransitsTab = () =>
   import("./FriendTransitsTab").then((module) => ({
     default: module.FriendTransitsTab
-  }))
-);
+  }));
+const FriendTransitsTab = lazy(loadFriendTransitsTab);
 
 const FriendProfileChartRail = lazy(() =>
-  import("./FriendDetail").then((module) => ({
+  loadFriendDetailModule().then((module) => ({
     default: module.FriendProfileChartRail
   }))
 );
 
-const FriendSynastryTab = lazy(() =>
+const loadFriendSynastryTab = () =>
   import("./FriendSynastryTab").then((module) => ({
     default: module.FriendSynastryTab
-  }))
-);
+  }));
+const FriendSynastryTab = lazy(loadFriendSynastryTab);
 
-const CompatibilityTab = lazy(() =>
+const loadCompatibilityTab = () =>
   import("./CompatibilityTab").then((module) => ({
     default: module.CompatibilityTab
-  }))
-);
+  }));
+const CompatibilityTab = lazy(loadCompatibilityTab);
+
+export function preloadFriendProfileComponents(tab: FriendProfileTab) {
+  void loadFriendDetail();
+
+  if (tab === "compatibility") void loadCompatibilityTab();
+  if (tab === "transits") void loadFriendTransitsTab();
+  if (tab === "natal") void loadFriendNatalTab();
+  if (tab === "synastry") void loadFriendSynastryTab();
+  if (tab === "composite") void loadFriendCompositeTab();
+}
 
 const FriendProfileChartFullscreen = lazy(() =>
   import("./RelationshipChartFullscreen").then((module) => ({
@@ -310,7 +322,6 @@ export function ManualChartsPanel({
     signAtWholeSignHouse,
     stableTransitCopyVariant,
     synastryContactContentKeys,
-    synastryContactSummary,
     textPreview,
     transitAspectTechnicalVerb,
     transitBodyWithoutRepeatedWindow,
@@ -709,11 +720,6 @@ export function ManualChartsPanel({
   function synastryContacts(
     profileNatalSky: SkySnapshot | null,
     chart: ManualChart,
-    generatedContent?: GeneratedContentMap,
-    comparisonName = "You",
-    comparisonIsSelf = true,
-    comparisonPronouns?: PronounChoice | null,
-    romanticAllowed = false,
     relationshipType?: string | null
   ): SynastryContact[] {
     return calculatedSynastryContacts(profileNatalSky, chart).map((contact) => {
@@ -724,17 +730,10 @@ export function ManualChartsPanel({
 
       return {
         ...baseContact,
-        summary: synastryContactSummary(
-          chart.displayName,
-          comparisonName,
-          comparisonIsSelf,
-          baseContact,
-          generatedContent,
-          chart.pronouns,
-          comparisonPronouns,
-          romanticAllowed,
-          relationshipType
-        )
+        // Visible Synastry and Compatibility cards render the approved article
+        // directly below. Avoid resolving the same fallback package once here
+        // and then a second time for the card users actually see.
+        summary: ""
       };
     });
   }
@@ -1017,6 +1016,29 @@ export function ManualChartsPanel({
     selectedChart?.id,
     selectedChartIsEvent
   ]);
+
+  useEffect(() => {
+    const profileActive = resolvedFriendsMainView === "profile" && Boolean(selectedChart);
+
+    if (profileActive || !chartsReady || allFriendCharts.length === 0) {
+      return undefined;
+    }
+    if (profileNatalSky) {
+      onCalculationReadinessChange(idleFriendCalculationReadiness);
+      return undefined;
+    }
+
+    return scheduleFriendChartRepair(() => {
+      onCalculationReadinessChange({ currentSky: false, profileNatal: true });
+    });
+  }, [
+    allFriendCharts.length,
+    chartsReady,
+    onCalculationReadinessChange,
+    profileNatalSky,
+    resolvedFriendsMainView,
+    selectedChart?.id
+  ]);
   const chartSettings = useMemo(() => normalizeChartSettings(profile.settings), [profile.settings]);
   const lifeAreaFocus = chartSettings.lifeAreaFocus;
   const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
@@ -1080,11 +1102,6 @@ export function ManualChartsPanel({
         synastryContacts(
           relationshipComparisonSky,
           selectedChart,
-          relationshipGeneratedContent,
-          relationshipComparisonName,
-          relationshipComparisonIsSelf,
-          relationshipComparisonPronouns,
-          selectedRelationshipRomantic,
           selectedRelationshipContextType
         ),
         lifeAreaFocus
@@ -1093,15 +1110,10 @@ export function ManualChartsPanel({
     fallbackArchitectureV3Version,
     friendProfileWork.synastryContacts,
     lifeAreaFocus,
-    relationshipComparisonIsSelf,
-    relationshipComparisonName,
-    relationshipComparisonPronouns,
     relationshipComparisonSky,
-    relationshipGeneratedContent,
     selectedChart,
     selectedChartIsEvent,
-    selectedRelationshipContextType,
-    selectedRelationshipRomantic
+    selectedRelationshipContextType
   ]);
   const selectedSynastryAspectGroups = useMemo(() => (
     friendProfileWork.synastry
@@ -1246,6 +1258,31 @@ export function ManualChartsPanel({
       : friendProfileTab === "synastry"
       ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
       : Boolean(selectedCompositeSky);
+  const friendChartRailRenderKey = selectedFriendHasChartRail && selectedChart
+    ? [selectedChart.id, friendProfileTab, selectedRelationshipComparison?.id ?? "self"].join(":")
+    : null;
+  const [renderedFriendChartRailKey, setRenderedFriendChartRailKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!friendChartRailRenderKey) {
+      setRenderedFriendChartRailKey(null);
+      return undefined;
+    }
+
+    let paintFrameId = 0;
+    const contentFrameId = window.requestAnimationFrame(() => {
+      paintFrameId = window.requestAnimationFrame(() => {
+        setRenderedFriendChartRailKey(friendChartRailRenderKey);
+      });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(contentFrameId);
+      window.cancelAnimationFrame(paintFrameId);
+    };
+  }, [friendChartRailRenderKey]);
+
+  const renderFriendChartRail = renderedFriendChartRailKey === friendChartRailRenderKey;
   const selectedFriendTransits = useMemo(() => (
     (friendProfileWork.transits || friendProfileWork.compatibility) && currentSky && selectedChart && !selectedChartIsEvent
       ? dedupeSameBeatPersonalTransits(
@@ -2330,7 +2367,7 @@ export function ManualChartsPanel({
 
   function openFriendProfile(chart: ManualChart) {
     setOpenChartMenuId(null);
-    onFriendProfileContentRequest(chart.chartType === "event" ? "natal" : "compatibility");
+    requestFriendProfileTab(chart.chartType === "event" ? "natal" : "compatibility");
     setSelectedChartId(chart.id);
     setFriendProfileTab(chart.chartType === "event" ? "natal" : "compatibility");
     setRelationshipComparisonChartId("self");
@@ -2340,11 +2377,20 @@ export function ManualChartsPanel({
   }
 
   function changeFriendProfileTab(tab: FriendProfileTab) {
-    onFriendProfileContentRequest(tab);
+    requestFriendProfileTab(tab);
     setFriendProfileTab(tab);
     if (selectedChart) {
       updateFriendProfileUrl(selectedChart.id, tab);
     }
+  }
+
+  function requestFriendProfileTab(tab: FriendProfileTab) {
+    preloadFriendProfileComponents(tab);
+    onFriendProfileContentRequest(tab);
+  }
+
+  function prefetchFriendProfile(chart: ManualChart) {
+    requestFriendProfileTab(chart.chartType === "event" ? "natal" : "compatibility");
   }
 
   async function saveManualChart(event: FormEvent<HTMLFormElement>) {
@@ -2355,7 +2401,7 @@ export function ManualChartsPanel({
     }
 
     const { chart: savedChart, wasEditing } = result;
-    onFriendProfileContentRequest(savedChart.chartType === "event" ? "natal" : "compatibility");
+    requestFriendProfileTab(savedChart.chartType === "event" ? "natal" : "compatibility");
     setFriendsMainView("profile");
     setFriendProfileTab(savedChart.chartType === "event" ? "natal" : "compatibility");
     setRelationshipComparisonChartId("self");
@@ -2397,6 +2443,7 @@ export function ManualChartsPanel({
           onAddChart: openAddChartModal,
           onDeleteChart: requestDeleteChart,
           onEditChart: editChart,
+          onChartIntent: prefetchFriendProfile,
           onOpenChart: openFriendProfile,
           onToggleChartMenu: (chartId) => setOpenChartMenuId((currentId) => currentId === chartId ? null : chartId)
         }}
@@ -2520,7 +2567,7 @@ export function ManualChartsPanel({
           activeTab={friendProfileTab}
           ariaLabel={`${selectedChart.displayName} chart profile`}
           avatarUrl={selectedSocialFriend?.avatarUrl}
-          chartRail={(
+          chartRail={renderFriendChartRail ? (
             <FriendProfileChartRail
               activeTab={friendProfileTab}
               chartIsEvent={selectedChartIsEvent}
@@ -2547,7 +2594,7 @@ export function ManualChartsPanel({
               synastryAspects={selectedSynastryAspectLines}
               transitAspects={selectedFriendTransitAspectLines}
             />
-          )}
+          ) : null}
           className={`friend-profile-panel friend-focus-panel friend-profile-view friend-chart-page friend-chart-page--${friendProfileTab} chart-layout friend-detail-layout relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`}
           initials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
           isEventChart={selectedChartIsEvent}
@@ -2555,7 +2602,7 @@ export function ManualChartsPanel({
           name={selectedChart.displayName}
           onEdit={isSocialFriendChart(selectedChart) ? undefined : () => editChart(selectedChart)}
           onTabChange={changeFriendProfileTab}
-          onTabIntent={onFriendProfileContentRequest}
+          onTabIntent={requestFriendProfileTab}
           rising={selectedFriendBigThree?.rising ?? "Rising pending"}
           subtitle={selectedSocialFriend ? `@${selectedSocialFriend.handle}` : undefined}
           sun={selectedFriendBigThree?.sun ?? "Pending"}
