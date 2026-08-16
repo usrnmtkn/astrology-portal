@@ -242,7 +242,12 @@ function runtimeRuleInventory() {
     rules.push({ source: "voice/tldr-astro/sky-placement.json", selector: "conditionalBans", term: entry.term });
   }
   const bannedWords = readJson(path.join(voiceRoot, "banned-words.json")).bannedWords || [];
-  for (const entry of bannedWords) rules.push({ source: "voice/banned-words.json", selector: "bannedWords", term: typeof entry === "string" ? entry : entry.term });
+  for (const entry of bannedWords) rules.push({
+    source: "voice/banned-words.json",
+    selector: "bannedWords",
+    term: typeof entry === "string" ? entry : entry.term,
+    policyClass: typeof entry === "string" ? "HARD_BAN" : entry.policyClass || "HARD_BAN"
+  });
   const constructions = readJson(path.join(voiceRoot, "banned-constructions.json")).bannedConstructions || [];
   for (const entry of constructions) rules.push({ source: "voice/banned-constructions.json", selector: "bannedConstructions", term: entry.pattern || entry.term || entry.family || "[unnamed construction]" });
   return rules;
@@ -293,7 +298,7 @@ function renderReport(source, sourceSha256, compiled) {
     `Traced to an approved authoritative decision: ${runtime.length - untraced.length}`,
     `Not yet traced to an approved authoritative decision: ${untraced.length}`,
     "",
-    ...runtime.map((entry) => `- ${entry.tracedBy.length ? "TRACED" : "UNTRACED"} \`${entry.source}#${entry.selector}\` \`${entry.term}\`${entry.tracedBy.length ? ` ← ${entry.tracedBy.map((id) => `\`${id}\``).join(", ")}` : ""}`),
+    ...runtime.map((entry) => `- ${entry.tracedBy.length ? "TRACED" : "UNTRACED"} \`${entry.source}#${entry.selector}\` \`${entry.term}\`${entry.policyClass ? ` [${entry.policyClass}]` : ""}${entry.tracedBy.length ? ` ← ${entry.tracedBy.map((id) => `\`${id}\``).join(", ")}` : ""}`),
     "",
     "## Propagation invariants",
     "",

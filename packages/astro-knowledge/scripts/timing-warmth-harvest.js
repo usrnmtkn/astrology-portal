@@ -11,6 +11,7 @@ const voiceIndexPath = path.join(packageRoot, "voice", "tldr-astro", "satori-wri
 const vocabularyPath = path.join(packageRoot, "voice", "tldr-astro", "owner-vocabulary-bank.json");
 const bannedWordsPath = path.join(packageRoot, "voice", "banned-words.json");
 const bannedPhrasesPath = path.join(packageRoot, "voice", "tldr-astro", "banned-phrases.json");
+const { passageHasRetrievalExclusion } = require("./banned-word-policy.js");
 
 class TimingWarmthSourceGapError extends Error {
   constructor(code, detail) {
@@ -108,15 +109,14 @@ function sourceMatchesFamily(entry, request, familyPatterns) {
 }
 
 function bannedLexicon() {
-  const bannedWords = readJson(bannedWordsPath).bannedWords.map((entry) => entry.term.toLowerCase());
+  const bannedWords = readJson(bannedWordsPath).bannedWords;
   const bannedPhrases = readJson(bannedPhrasesPath).map((entry) => String(entry).toLowerCase());
   return { bannedWords, bannedPhrases };
 }
 
 function survivesBanList(line, lexicon) {
   const normalized = line.toLowerCase();
-  const lineWords = new Set(words(line));
-  if (lexicon.bannedWords.some((term) => lineWords.has(term))) return false;
+  if (passageHasRetrievalExclusion(line, lexicon.bannedWords)) return false;
   if (lexicon.bannedPhrases.some((phrase) => phrase !== "em dashes" && normalized.includes(phrase))) return false;
   return !line.includes("—") && !/\bpeople\b/iu.test(line);
 }
@@ -347,8 +347,10 @@ function timingJudgeInstructions() {
 
 module.exports = {
   TimingWarmthSourceGapError,
+  bannedLexicon,
   buildTimingWarmthPacket,
   minimallyCollectivize,
   nameEmotionalCore,
+  survivesBanList,
   timingJudgeInstructions
 };

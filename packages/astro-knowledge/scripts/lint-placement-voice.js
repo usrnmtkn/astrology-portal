@@ -22,6 +22,7 @@ const voiceRoot = path.join(__dirname, "..", "voice");
 const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 
 const bannedWords = readJson(path.join(voiceRoot, "banned-words.json")).bannedWords || [];
+const { findPolicyFindings } = require("./banned-word-policy.js");
 const bannedConstructions = readJson(path.join(voiceRoot, "banned-constructions.json")).bannedConstructions || [];
 const spec = readJson(path.join(voiceRoot, "tldr-astro", "sky-placement.json"));
 const planetCycleFacts = readJson(path.join(voiceRoot, "..", "data", "modifiers", "planet-cycle-facts.json"));
@@ -461,13 +462,7 @@ function lintArticle(article, context = {}) {
     });
   }
 
-  // -- meaning-level banned words are fails in output too
-  for (const b of bannedWords) {
-    const term = typeof b === "string" ? b : b.term;
-    if (!term) continue;
-    const m = full.match(toRegex(term));
-    if (m) findings.push({ severity: "fail", source: "banned-words", term, match: m[0] });
-  }
+  findings.push(...findPolicyFindings(full, bannedWords));
 
   findings.push(...findBannedConstructions(full, bannedConstructions));
 

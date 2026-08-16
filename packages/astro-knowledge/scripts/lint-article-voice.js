@@ -17,6 +17,7 @@ const bannedConfig = readJson(path.join(voiceRoot, "banned-words.json"));
 const bannedConstructions = readJson(path.join(voiceRoot, "banned-constructions.json")).bannedConstructions || [];
 const skyVoice = readJson(path.join(voiceRoot, "tldr-astro", "sky-aspect.json"));
 const { findBannedConstructions } = require("./banned-construction-matcher.js");
+const { findPolicyFindings } = require("./banned-word-policy.js");
 const { checkReferenceClaim } = require("./reference-fact-bank.js");
 
 const SURFACE = "sky-article-longform";
@@ -47,9 +48,7 @@ function lintLongformArticle(articleText, { ownerVerbatim = false } = {}) {
   const text = String(articleText || "");
   const findings = [];
 
-  for (const entry of bannedConfig.bannedWords || []) {
-    addTermFinding(findings, text, entry, "fail", "banned-words");
-  }
+  findings.push(...findPolicyFindings(text, bannedConfig.bannedWords || []));
 
   for (const entry of bannedConfig.surfaceBannedWords?.[SURFACE] || []) {
     addTermFinding(findings, text, entry, "fail", `${SURFACE}-trade-vocabulary`);
