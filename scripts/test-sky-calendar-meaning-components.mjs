@@ -71,7 +71,7 @@ assert.equal(registry.wordingQuality.maximumManifestationShapeUse <= registry.wo
 assert.ok(Array.isArray(registry.wordingQuality.manifestationShapeDistribution));
 assert.equal(
   registry.wordingQuality.manifestationShapeDistribution.reduce((total, row) => total + (row.occurrences * row.distinctValues), 0),
-  432,
+  496,
 );
 assert.equal(registry.wordingQuality.maximumDetailsLanguageUse <= registry.wordingQuality.caps.repeatedDetailsLanguage, true);
 assert.equal(registry.wordingQuality.maximumConnectiveNgramUse <= registry.wordingQuality.caps.connectiveNgram, true);
@@ -100,6 +100,17 @@ assert.deepEqual(
     emptySupportiveBefore: 81,
     emptySupportiveAfter: 64,
     changedRealizations: 44,
+  },
+);
+assert.deepEqual(
+  Object.fromEntries(Object.entries(registry.systemicRepass.supportiveExtractionAudit).filter(([key]) => key !== "keys" && key !== "rule")),
+  {
+    authorizationDate: "2026-08-16",
+    extractionOnly: true,
+    units: 64,
+    realizations: 64,
+    emptySupportivePoolsAfter: 0,
+    unsupportedUnits: [],
   },
 );
 assert.deepEqual(registry.systemicRepass.faultAudit.remainingViolations, {
@@ -174,6 +185,16 @@ for (const row of all) {
 }
 
 for (const row of registry.signUnits) {
+  assert.ok(Array.isArray(row.supportive_realization_evidence), `${row.key} supportive realization evidence`);
+  for (const evidence of row.supportive_realization_evidence) {
+    assert.ok(row.supportive_realizations.includes(evidence.realization), `${row.key} extracted supportive realization`);
+    assert.equal(evidence.source_ids.length, evidence.source_hashes.length, `${row.key} extraction source/hash parity`);
+    evidence.source_ids.forEach((sourceId, index) => {
+      const sourceIndex = row.source_ids.indexOf(sourceId);
+      assert.notEqual(sourceIndex, -1, `${row.key} extraction evidence must be local to the unit`);
+      assert.equal(evidence.source_hashes[index], row.source_hashes[sourceIndex], `${row.key} extraction evidence hash`);
+    });
+  }
   for (const field of ["planet_function", "sign_expression", "combined_position", "details_language"]) {
     assert.ok(typeof row[field] === "string" && row[field].trim(), `${row.key} ${field}`);
     if (field !== "combined_position") {
@@ -182,7 +203,10 @@ for (const row of registry.signUnits) {
   }
   assert.notEqual(row.details_language, row.combined_position, `${row.key} details language must be independently phrased`);
   assert.doesNotMatch(row.combined_position, /;\s*expressed through|\bexpressed through\b/iu, `${row.key} mechanical join`);
-  assert.equal(REALIZATION_FIELDS.reduce((total, field) => total + row[field].length, 0), 3);
+  assert.equal(
+    REALIZATION_FIELDS.reduce((total, field) => total + row[field].length, 0),
+    3 + row.supportive_realization_evidence.length,
+  );
   assert.ok(typeof row.owner_voice_coverage === "string" && row.owner_voice_coverage.length > 0);
   assert.ok(Array.isArray(row.owner_voice_source_ids) && row.owner_voice_source_ids.length > 0);
   assert.equal(row.owner_voice_source_ids.length, row.owner_voice_source_hashes.length);

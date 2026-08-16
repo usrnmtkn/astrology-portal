@@ -54,8 +54,8 @@ The regenerated wording layer has:
 - zero `details_language` values copied from `combined_position`;
 - an opening-construction cap of 4, with an observed maximum of 4;
 - 120 distinct two-word openings across 144 sign units: 103 used once, 11 used twice, 5 used three times, and 1 used four times;
-- a reader-manifestation reuse cap of 2, with all 432 bullets unique and an observed maximum of 1;
-- a reader-manifestation structural-skeleton cap of 3 after planet-specific noun stripping, with 432 distinct skeletons and an observed maximum of 1;
+- a reader-manifestation reuse cap of 2, with all 496 realizations unique and an observed maximum of 1;
+- a reader-manifestation structural-skeleton cap of 3 after planet-specific noun stripping, with 496 distinct skeletons and an observed maximum of 1;
 - a details-language reuse cap of 2, with all 144 phrases unique and an observed maximum of 1;
 - a connective n-gram cap of 4, with an observed maximum of 4.
 - zero abstract-subject violations in the planet, sign, combined-position, aspect, modality, and element meaning fields;
@@ -87,4 +87,18 @@ The classification review changed no wording. It checked the 13 sign units that 
 - The prompt's 10-unit count refers to the all-shadow population. Across all shapes, 81 sign units originally had no supportive realization; 64 still have no supportive realization after this evidence-only reclassification.
 - The evidence pointers, hashes, coverage classes, fail-closed status, `PENDING OWNER` status, and eight exact owner-authored replacements remain unchanged.
 
-The current composer silently substitutes another pool when the preferred type is empty. For a trine or sextile it tries supportive, then neutral, then shadow. An all-shadow unit can therefore supply shadow material to a trine without raising an error. This classification task documents that behavior but does not change it. The complete unit-by-unit evidence record is in `REALIZATION-CLASSIFICATION-AUDIT.md` and the workbook's Classification Audit sheet.
+The composer now fails closed when the aspect's required realization type is empty. It records the named gap `sky-calendar-missing-required-realization`; it never substitutes neutral or shadow material into a trine or sextile. The complete unit-by-unit classification record is in `REALIZATION-CLASSIFICATION-AUDIT.md` and the workbook's Classification Audit sheet.
+
+## Supportive-pool extraction, 2026-08-16
+
+The owner authorized an additive editorial extraction for the 64 supportive pools left empty after classification review. Exactly one supportive realization was extracted for each unit from that unit's own governed sign evidence. Every addition records its realization, source ID, and source hash in `supportive_realization_evidence`.
+
+- Supportive realizations added: 64
+- Existing realizations rewritten, removed, or reclassified: 0
+- Empty supportive pools remaining: 0
+- Previously blocked trine/sextile sign routes: 1,345 of 2,040
+- Routes unblocked by the extraction: 1,345
+- Routes still blocked for missing supportive material: 0
+- Units whose evidence could not support an extraction: 0
+
+All units remain `PENDING OWNER` and fail closed until owner review. The eight owner-authored replacements preserve every previously locked string; four receive one authorized additive supportive realization because their supportive pool was empty. The complete extraction ledger is in `SUPPORTIVE-POOL-EXTRACTION-REPORT.md` and the workbook's Sign Units sheet.
