@@ -24,6 +24,7 @@ const voiceRoot = path.join(__dirname, "..", "voice");
 const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 
 const bannedWords = readJson(path.join(voiceRoot, "banned-words.json")).bannedWords || [];
+const { findPolicyFindings } = require("./banned-word-policy.js");
 const bannedConstructions = readJson(path.join(voiceRoot, "banned-constructions.json")).bannedConstructions || [];
 const pat = readJson(path.join(voiceRoot, "tldr-astro", "pattern-aspect.json"));
 const { findBannedConstructions } = require("./banned-construction-matcher.js");
@@ -85,13 +86,7 @@ function lintPatternCard(card) {
     findings.push({ severity: "fail", source: "reader-boundary", term: "second person", match: "", reason: "The natal pattern reader must address the reader in the second person (you/your)." });
   }
 
-  // ---- meaning-level banned words (shared) are fails in output ----
-  for (const b of bannedWords) {
-    const term = typeof b === "string" ? b : b.term;
-    if (!term) continue;
-    const m = text.match(toRegex(term));
-    if (m) findings.push({ severity: "fail", source: "banned-words", term, match: m[0] });
-  }
+  findings.push(...findPolicyFindings(text, bannedWords));
   findings.push(...findBannedConstructions(text, bannedConstructions));
   // ---- surface fail + warn from pattern-aspect.json ----
   for (const b of pat.outputBans.fail) {

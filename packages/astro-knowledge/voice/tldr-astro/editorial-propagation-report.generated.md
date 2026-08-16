@@ -27,9 +27,9 @@ Active regression cases: 69
 
 ## Runtime traceability
 
-Runtime rules inspected: 116
+Runtime rules inspected: 111
 Traced to an approved authoritative decision: 7
-Not yet traced to an approved authoritative decision: 109
+Not yet traced to an approved authoritative decision: 104
 
 - TRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `—` ← `ED-004`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.fail` `for everyone at once`
@@ -99,23 +99,18 @@ Not yet traced to an approved authoritative decision: 109
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\bfull accounting\b`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\brescue reflex\b`
 - UNTRACED `voice/tldr-astro/sky-placement.json#outputBans.warn` `\bsecure love\b`
-- UNTRACED `voice/banned-words.json#bannedWords` `reckoning`
-- UNTRACED `voice/banned-words.json#bannedWords` `profound`
-- UNTRACED `voice/banned-words.json#bannedWords` `whisper`
-- UNTRACED `voice/banned-words.json#bannedWords` `tapestry`
-- UNTRACED `voice/banned-words.json#bannedWords` `weave`
-- UNTRACED `voice/banned-words.json#bannedWords` `woven`
-- UNTRACED `voice/banned-words.json#bannedWords` `self-erasure`
-- UNTRACED `voice/banned-words.json#bannedWords` `truth bomb`
-- UNTRACED `voice/banned-words.json#bannedWords` `permission slip`
-- UNTRACED `voice/banned-words.json#bannedWords` `performing normalcy`
-- UNTRACED `voice/banned-words.json#bannedWords` `voice shakes`
-- UNTRACED `voice/banned-words.json#bannedWords` `self-punishment`
-- UNTRACED `voice/banned-words.json#bannedWords` `death`
-- UNTRACED `voice/banned-words.json#bannedWords` `die`
-- UNTRACED `voice/banned-words.json#bannedWords` `dying`
-- UNTRACED `voice/banned-words.json#bannedWords` `running tally`
-- UNTRACED `voice/banned-words.json#bannedWords` `dynamic interplay`
+- UNTRACED `voice/banned-words.json#bannedWords` `reckoning` [HARD_BAN]
+- UNTRACED `voice/banned-words.json#bannedWords` `profound` [REPLACEMENT_SUGGESTION]
+- UNTRACED `voice/banned-words.json#bannedWords` `whisper` [AI_TELL_PREVENTIVE]
+- UNTRACED `voice/banned-words.json#bannedWords` `tapestry` [AI_TELL_PREVENTIVE]
+- UNTRACED `voice/banned-words.json#bannedWords` `weave` [AI_TELL_PREVENTIVE]
+- UNTRACED `voice/banned-words.json#bannedWords` `woven` [AI_TELL_PREVENTIVE]
+- UNTRACED `voice/banned-words.json#bannedWords` `self-erasure` [EDITORIAL_REVIEW]
+- UNTRACED `voice/banned-words.json#bannedWords` `truth bomb` [HARD_BAN]
+- UNTRACED `voice/banned-words.json#bannedWords` `permission slip` [HARD_BAN]
+- UNTRACED `voice/banned-words.json#bannedWords` `performing normalcy` [HARD_BAN]
+- UNTRACED `voice/banned-words.json#bannedWords` `running tally` [HARD_BAN]
+- UNTRACED `voice/banned-words.json#bannedWords` `dynamic interplay` [HARD_BAN]
 - UNTRACED `voice/banned-constructions.json#bannedConstructions` `This isn't about [surface], it's about [deeper meaning]`
 - UNTRACED `voice/banned-constructions.json#bannedConstructions` `not as punishment, but as foundation`
 - UNTRACED `voice/banned-constructions.json#bannedConstructions` `This challenge is actually preparing you for`

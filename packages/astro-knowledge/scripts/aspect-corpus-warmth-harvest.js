@@ -10,6 +10,7 @@ const referenceRoot = path.join(corpusRoot, "owner-corpus", "reference-surfaces"
 const vocabularyPath = path.join(packageRoot, "voice", "tldr-astro", "owner-vocabulary-bank.json");
 const bannedWordsPath = path.join(packageRoot, "voice", "banned-words.json");
 const bannedPhrasesPath = path.join(packageRoot, "voice", "tldr-astro", "banned-phrases.json");
+const { passageHasRetrievalExclusion } = require("./banned-word-policy.js");
 
 const FULL_CARD_INSTRUCTION = "Adapt one of these into the card where it lands naturally, keeping its meaning and register. Verbatim is preferred when it fits. Use at most one.";
 const WARMTH_PLACEMENT_INSTRUCTION = "Use one warmth sentence after the shadow or cost is named. It must be the final sentence or the sentence before it. Do not add a second conclusion.";
@@ -161,8 +162,8 @@ function policyTerms() {
   const bannedWords = readJson(bannedWordsPath);
   const vocabulary = readJson(vocabularyPath);
   policyCache = {
+    globalEntries: bannedWords.bannedWords || [],
     banned: [
-      ...(bannedWords.bannedWords || []).map((entry) => entry.term),
       ...Object.values(bannedWords.surfaceBannedWords || {}).flat().map((entry) => entry.term),
       ...readJson(bannedPhrasesPath)
     ].map((term) => String(term || "").toLowerCase()).filter(Boolean),
@@ -174,6 +175,7 @@ function policyTerms() {
 function passesBanList(line) {
   const lower = String(line || "").toLowerCase();
   if (lower.includes("—")) return false;
+  if (passageHasRetrievalExclusion(line, policyTerms().globalEntries)) return false;
   return !policyTerms().banned.some((term) => {
     if (!term || term === "em dashes") return false;
     return new RegExp(`(?:^|[^a-z0-9])${term.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")}(?:$|[^a-z0-9])`, "iu").test(lower);

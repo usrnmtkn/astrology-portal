@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "build:approved-collocations": "node scripts/build-approved-collocations.mjs",
+    "audit:style-flag-policy": "node scripts/report-style-flag-policy-impact.mjs",
     "dev": "npm run dev:web",
     "dev:admin": "npm run dev -w @tldr/admin",
     "dev:vercel": "npx vercel dev --listen 3000 --local --yes",
