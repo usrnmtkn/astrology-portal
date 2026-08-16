@@ -93,6 +93,24 @@ function globToRegExp(glob) {
   return new RegExp(`^${source}$`, "u");
 }
 
+// Vercel rejects the deployment during configuration validation if this
+// pattern exceeds 256 characters. The build never starts, so nothing at
+// runtime can observe it: the bundle contract can be perfectly correct, pass
+// locally, and still never deploy. Observed on deployment
+// dpl_4rhpJ1HFfv1NQ8QC5oQWu1LvwF92 as
+// "Invalid vercel.json - functions['api/**/*.ts'].includeFiles should NOT be
+// longer than 256 characters", with no build log beyond "status Error".
+const INCLUDE_FILES_MAX_LENGTH = 256;
+
+function assertIncludeFilesDeployable(pattern) {
+  if (pattern.length > INCLUDE_FILES_MAX_LENGTH) {
+    throw new Error(
+      `includeFiles is ${pattern.length} characters; Vercel rejects anything over ${INCLUDE_FILES_MAX_LENGTH} `
+      + "at configuration validation, before the build begins."
+    );
+  }
+}
+
 function compileIncludeFiles(pattern) {
   assertBalancedBraces(pattern);
   const globs = expandBraces(pattern);
@@ -129,6 +147,8 @@ const RESOLVER_ENTRY_POINTS = [
 
 const includeFiles = readJson("vercel.json").functions?.["api/**/*.ts"]?.includeFiles ?? "";
 assert.ok(includeFiles, "vercel.json defines no includeFiles for api/**/*.ts.");
+
+assertIncludeFilesDeployable(includeFiles);
 
 const covered = compileIncludeFiles(includeFiles);
 const runtimeSources = runtimeSourcePaths();
@@ -178,7 +198,17 @@ assert.equal(
 );
 assert.equal(covered(nestedDataSource), true, "Current pattern must still cover nested evidence.");
 
-// 4. Brace expansion must actually expand rather than match the literal text.
+// 4. A pattern Vercel will reject at configuration validation must be refused
+//    here, even when it covers every runtime source. Coverage and
+//    deployability are independent failures and this guard owes both.
+assert.throws(
+  () => assertIncludeFilesDeployable("x".repeat(INCLUDE_FILES_MAX_LENGTH + 1)),
+  /257 characters/u,
+  "Guard must refuse an includeFiles pattern longer than Vercel accepts."
+);
+assert.doesNotThrow(() => assertIncludeFilesDeployable("x".repeat(INCLUDE_FILES_MAX_LENGTH)));
+
+// 5. Brace expansion must actually expand rather than match the literal text.
 const expanded = expandBraces("a/{b,c}/{d,e}.json");
 assert.deepEqual(expanded.sort(), ["a/b/d.json", "a/b/e.json", "a/c/d.json", "a/c/e.json"]);
 assert.equal(compileIncludeFiles("a/{b,c}/*.json")("a/b/x.json"), true);
@@ -196,5 +226,5 @@ assert.match(smoke, /assertIndexCurrent\(\)/u);
 assert.doesNotMatch(smoke, /generate|provider|model|OPENAI|ANTHROPIC|GEMINI/u, "Deployment smoke must not make a model call.");
 
 console.log(
-  `Writing-kernel runtime asset contract passed: ${runtimeSources.length} resolver sources matched against ${expandBraces(includeFiles).length} expanded bundle patterns; brace-mangling, narrowing, and unbundled-path fixtures all failed closed.`
+  `Writing-kernel runtime asset contract passed: ${runtimeSources.length} resolver sources matched against ${expandBraces(includeFiles).length} expanded bundle patterns; includeFiles is ${includeFiles.length}/${INCLUDE_FILES_MAX_LENGTH} characters; over-length, brace-mangling, narrowing, and unbundled-path fixtures all failed closed.`
 );
