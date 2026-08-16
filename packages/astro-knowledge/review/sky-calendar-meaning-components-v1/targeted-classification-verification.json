@@ -558,6 +558,7 @@
       "key": "sky-sign/sun/taurus",
       "value": "a contribution valued because it keeps producing something useful",
       "combined_position": "people give credit to the work that proves useful and lasts",
+      "supportiveCountBeforeClosing": 3,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/taurus",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!782"
@@ -567,6 +568,7 @@
       "key": "sky-sign/sun/taurus",
       "value": "people waiting to give credit until the result proves it can last",
       "combined_position": "people give credit to the work that proves useful and lasts",
+      "supportiveCountBeforeClosing": 3,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/taurus",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!782"
@@ -576,6 +578,7 @@
       "key": "sky-sign/sun/taurus",
       "value": "credit going to the work that protected what needed to last",
       "combined_position": "people give credit to the work that proves useful and lasts",
+      "supportiveCountBeforeClosing": 3,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/taurus",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!782"
@@ -585,6 +588,7 @@
       "key": "sky-sign/sun/gemini",
       "value": "the clearest explanation deciding who is seen as responsible",
       "combined_position": "the clearest explanation can decide who gets credit for the idea",
+      "supportiveCountBeforeClosing": 2,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/gemini",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!792"
@@ -594,6 +598,7 @@
       "key": "sky-sign/sun/leo",
       "value": "wanting credit attached to the person who did the work",
       "combined_position": "whoever did the work wants their name kept with it",
+      "supportiveCountBeforeClosing": 1,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/leo",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!813"
@@ -603,6 +608,7 @@
       "key": "sky-sign/sun/capricorn",
       "value": "people giving credit to the person expected to answer for the result",
       "combined_position": "a title goes to the person expected to carry the result",
+      "supportiveCountBeforeClosing": 2,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/capricorn",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!852"
@@ -612,6 +618,7 @@
       "key": "sky-sign/moon/aquarius",
       "value": "someone stepping back from a reaction long enough to see the pattern clearly",
       "combined_position": "the group makes room for feeling by stepping back and looking at the pattern",
+      "supportiveCountBeforeClosing": 1,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/moon/aquarius",
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!118"
@@ -621,6 +628,7 @@
       "key": "sky-sign/mercury/aries",
       "value": "someone giving the clear answer that gets a stalled decision moving again",
       "combined_position": "the first clear answer can move a decision before everyone has finished thinking",
+      "supportiveCountBeforeClosing": 1,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mercury/aries",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!251",
@@ -631,6 +639,7 @@
       "key": "sky-sign/mercury/taurus",
       "value": "an agreement slowing until the practical terms are clear",
       "combined_position": "The wording gets slower and more specific until everyone knows what the terms actually mean.",
+      "supportiveCountBeforeClosing": 2,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mercury/taurus",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!275"
@@ -640,6 +649,7 @@
       "key": "sky-sign/mercury/pisces",
       "value": "people reading the tone when the stated facts remain incomplete",
       "combined_position": "people understand the tone or image sooner than they agree on the facts",
+      "supportiveCountBeforeClosing": 1,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mercury/pisces",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!466",
@@ -650,6 +660,7 @@
       "key": "sky-sign/venus/taurus",
       "value": "someone choosing the arrangement that feels good and can still hold up over time",
       "combined_position": "a choice feels worthwhile when it is pleasant, affordable, and built to last",
+      "supportiveCountBeforeClosing": 1,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/venus/taurus",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!978",
@@ -660,6 +671,7 @@
       "key": "sky-sign/venus/sagittarius",
       "value": "someone choosing a connection that leaves both people room to keep growing",
       "combined_position": "people choose the agreement that leaves more room to grow and explore",
+      "supportiveCountBeforeClosing": 1,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/venus/sagittarius",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!1061",
@@ -670,6 +682,7 @@
       "key": "sky-sign/venus/aquarius",
       "value": "people staying connected because the agreement leaves room for independence",
       "combined_position": "people stay connected by giving each other room inside the group",
+      "supportiveCountBeforeClosing": 1,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/venus/aquarius",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!1083"
@@ -679,6 +692,7 @@
       "key": "sky-sign/mars/cancer",
       "value": "someone acting to protect another person before explaining why",
       "combined_position": "someone protects the home or the people involved before explaining the anger",
+      "supportiveCountBeforeClosing": 1,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/cancer",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!159",
@@ -689,6 +703,7 @@
       "key": "sky-sign/mars/taurus",
       "value": "someone working the same point until a material limit gives way",
       "combined_position": "people keep pushing the same point until a material limit finally moves",
+      "supportiveCountBeforeClosing": 1,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/taurus",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!140",
@@ -699,6 +714,7 @@
       "key": "sky-sign/mars/scorpio",
       "value": "a result pursued carefully because it cannot be undone",
       "combined_position": "someone acts carefully because trust, control, and lasting consequences are involved",
+      "supportiveCountBeforeClosing": 1,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/scorpio",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!194"
@@ -708,6 +724,7 @@
       "key": "sky-sign/jupiter/libra",
       "value": "more people benefiting after the terms distribute the opportunity more fairly",
       "combined_position": "people find more room to move when the terms spread the benefit fairly",
+      "supportiveCountBeforeClosing": 2,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/jupiter/libra",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!80",
@@ -718,6 +735,7 @@
       "key": "sky-sign/saturn/gemini",
       "value": "revised language that still has to match the record",
       "combined_position": "The wording gets tighter once the decision has consequences and the record has to stay consistent.",
+      "supportiveCountBeforeClosing": 1,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/gemini",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!667",
@@ -728,6 +746,7 @@
       "key": "sky-sign/saturn/sagittarius",
       "value": "a large promise reduced to what can be proved and delivered",
       "combined_position": "a large promise meets the test of what can be proved and delivered",
+      "supportiveCountBeforeClosing": 1,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/sagittarius",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!690",
@@ -738,6 +757,7 @@
       "key": "sky-sign/uranus/gemini",
       "value": "new information altering the available routes almost immediately",
       "combined_position": "new information rewrites the route before the standard method can catch up",
+      "supportiveCountBeforeClosing": 2,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/uranus/gemini",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!930",
@@ -748,6 +768,7 @@
       "key": "sky-sign/neptune/leo",
       "value": "a public image carrying more hope than the contribution can support",
       "combined_position": "an image becomes larger than the private work or person behind it",
+      "supportiveCountBeforeClosing": 2,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/leo",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!539",
@@ -758,6 +779,7 @@
       "key": "sky-sign/chiron/virgo",
       "value": "a small correction reopening the fear of never being useful enough",
       "combined_position": "a small mistake can reopen the fear that usefulness is the price of belonging",
+      "supportiveCountBeforeClosing": 1,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/chiron/virgo",
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!21"
@@ -767,6 +789,7 @@
       "key": "sky-sign/lilith/leo",
       "value": "someone claiming visibility without making the contribution more acceptable first",
       "combined_position": "someone claims visibility without making the difficult part more acceptable first",
+      "supportiveCountBeforeClosing": 2,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/leo"
       ]
@@ -775,6 +798,7 @@
       "key": "sky-sign/lilith/virgo",
       "value": "a standard refused because usefulness has become a condition of worth",
       "combined_position": "people reject a standard that treats usefulness or purity as the price of worth",
+      "supportiveCountBeforeClosing": 2,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/virgo"
       ]
@@ -783,6 +807,7 @@
       "key": "sky-sign/lilith/libra",
       "value": "an agreement challenged after fairness becomes repeated self-erasure",
       "combined_position": "someone challenges an agreement that calls repeated self-erasure fair",
+      "supportiveCountBeforeClosing": 1,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/libra"
       ]
@@ -791,6 +816,7 @@
       "key": "sky-sign/lilith/scorpio",
       "value": "someone protecting desire from another person's claim to private access",
       "combined_position": "people protect desire and private access from someone trying to take control",
+      "supportiveCountBeforeClosing": 1,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/scorpio"
       ]
@@ -799,6 +825,7 @@
       "key": "sky-sign/lilith/capricorn",
       "value": "someone confronting an authority that has used respectability as control",
       "combined_position": "people confront an authority that uses duty or respectability to demand compliance",
+      "supportiveCountBeforeClosing": 2,
       "source_ids": [
         "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/capricorn"
       ]
