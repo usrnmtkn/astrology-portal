@@ -19,6 +19,7 @@ import {
   applySupportiveExtraction,
   assertOwnerReplacements,
   classificationReviewAudit,
+  classificationVerificationAudit,
   manifestationPlainnessViolations,
   sourceShadowAudit,
   systemicFaultAudit,
@@ -42,6 +43,8 @@ const outputDir = path.join(
 const workbookPath = path.join(outputDir, "sky-calendar-meaning-components-owner-review.xlsx");
 const registryPath = path.join(reviewDir, "sky-calendar-meaning-components-v1.json");
 const classificationReportPath = path.join(reviewDir, "REALIZATION-CLASSIFICATION-AUDIT.md");
+const classificationVerificationJsonPath = path.join(reviewDir, "targeted-classification-verification.json");
+const classificationVerificationReportPath = path.join(reviewDir, "TARGETED-CLASSIFICATION-VERIFICATION.md");
 
 const fallbackPath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
 const v9Path = "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-governance-labeled/knowledge-matrix-v9-owner-approved-rows.json";
@@ -291,6 +294,7 @@ const elements = elementComponents.map((record) => {
 const allUnits = [...signUnits, ...aspects, ...modalities, ...elements];
 const realizationSchema = assertTypedRealizationSchema(allUnits);
 const classificationAudit = classificationReviewAudit(signUnits);
+const classificationVerification = classificationVerificationAudit(signUnits);
 const faultAudit = systemicFaultAudit([], signUnits);
 if (Object.values(faultAudit.remainingViolations).some((keys) => keys.length > 0)) {
   throw new Error(`Systemic wording fault remains: ${JSON.stringify(faultAudit.remainingViolations)}`);
@@ -527,6 +531,7 @@ const registry = {
     faultAudit,
     realizationSchema,
     classificationAudit,
+    classificationVerification,
     supportiveExtractionAudit,
     rule: "Every unit was rechecked against its governed meaning and source cost. Realizations are typed by supportive, neutral, or shadow meaning; type is never encoded by array position.",
   },
@@ -600,11 +605,87 @@ function classificationAuditMarkdown() {
 
 await fs.writeFile(classificationReportPath, classificationAuditMarkdown());
 
+function classificationVerificationMarkdown() {
+  const movedCorrections = classificationVerification.reviewed44.filter((item) => !item.classificationHolds);
+  const lines = [
+    "# Sky Calendar targeted realization-classification verification",
+    "",
+    "Status: classification-only verification. No realization wording changed. All 174 units remain `PENDING OWNER` and fail closed.",
+    "",
+    "## Plain result",
+    "",
+    `- Reclassified realizations checked: **${classificationVerification.movedRealizationsReviewed}**`,
+    `- Prior classifications that hold: **${classificationVerification.movedClassificationsHeld}**`,
+    `- Prior classifications corrected: **${classificationVerification.movedClassificationsCorrected}**`,
+    `- Additional owner-reported misfiles corrected: **${classificationVerification.additionalOwnerReportedCorrections}**`,
+    `- Total pool moves in this pass: **${classificationVerification.totalClassificationCorrections}**`,
+    `- Empty supportive pools after verification: **${classificationVerification.emptySupportivePoolsAfterVerification}**`,
+    `- Supportive realizations flagged as near-restatements of their unit's combined position: **${classificationVerification.supportiveCombinedPositionParaphraseFlags}**`,
+    "",
+    "## Classification corrections from the 44-item audit",
+    "",
+  ];
+  for (const item of movedCorrections) {
+    lines.push(
+      `### \`${item.key}\``,
+      "",
+      `- Realization: ${item.value}`,
+      `- Corrected: \`${item.classificationAuditType}\` -> \`${item.verifiedType}\``,
+      `- Finding: ${item.finding}`,
+      `- Evidence: ${item.source_ids.map((sourceId) => `\`${sourceId}\``).join("; ")}`,
+      "",
+    );
+  }
+  lines.push("## Additional owner-reported correction", "");
+  for (const item of classificationVerification.additionalCorrections) {
+    lines.push(
+      `### \`${item.key}\``,
+      "",
+      `- Realization: ${item.value}`,
+      `- Corrected: \`${item.priorType}\` -> \`${item.verifiedType}\``,
+      `- Finding: ${item.finding}`,
+      `- Evidence: ${item.source_ids.map((sourceId) => `\`${sourceId}\``).join("; ")}`,
+      "",
+    );
+  }
+  lines.push(
+    "## Supportive realization near-restatement flags",
+    "",
+    "These items remain in their existing supportive pool. They are flagged for owner review because they repeat the unit's combined position instead of adding a distinct realization. This pass does not rewrite or reclassify them.",
+    "",
+    "| Unit | Combined position | Supportive realization | Evidence |",
+    "| --- | --- | --- | --- |",
+  );
+  for (const item of classificationVerification.supportiveCombinedPositionParaphrases) {
+    lines.push(`| \`${item.key}\` | ${item.combined_position} | ${item.value} | ${item.source_ids.map((sourceId) => `\`${sourceId}\``).join("<br>")} |`);
+  }
+  lines.push(
+    "",
+    "## Preservation checks",
+    "",
+    "- Realization wording changed: 0",
+    "- Evidence pointers and hashes: unchanged",
+    "- Coverage classes: unchanged",
+    "- Eight owner-authored replacement strings: unchanged",
+    "- Approval status: `PENDING OWNER`",
+    "- Serving state: unchanged",
+    "",
+  );
+  return lines.join("\n");
+}
+
+await fs.writeFile(
+  classificationVerificationJsonPath,
+  `${JSON.stringify(classificationVerification, null, 2)}\n`,
+);
+await fs.writeFile(classificationVerificationReportPath, classificationVerificationMarkdown());
+
 const workbook = Workbook.create();
 const overview = workbook.worksheets.add("Overview");
 const coverageSheet = workbook.worksheets.add("Owner Voice Coverage");
 const signSheet = workbook.worksheets.add("Sign Units");
 const classificationSheet = workbook.worksheets.add("Classification Audit");
+const targetedVerificationSheet = workbook.worksheets.add("Targeted Verification");
 const aspectSheet = workbook.worksheets.add("Aspect Mechanisms");
 const modalitySheet = workbook.worksheets.add("Modality Units");
 const elementSheet = workbook.worksheets.add("Element Units");
@@ -840,6 +921,70 @@ styleTable(
 );
 classificationSheet.tables.add(`A3:K${classificationRows.length + 3}`, true, "ClassificationAuditTable");
 
+const verificationRows = [
+  ...classificationVerification.reviewed44
+    .filter((item) => !item.classificationHolds)
+    .map((item) => [
+      item.key,
+      item.value,
+      item.classificationAuditType,
+      item.verifiedType,
+      "CORRECTED",
+      item.finding,
+      item.source_ids.join("\n"),
+    ]),
+  ...classificationVerification.additionalCorrections.map((item) => [
+    item.key,
+    item.value,
+    item.priorType,
+    item.verifiedType,
+    "CORRECTED (OWNER-REPORTED)",
+    item.finding,
+    item.source_ids.join("\n"),
+  ]),
+];
+titleBand(
+  targetedVerificationSheet,
+  "A1:G1",
+  "Targeted classification verification",
+  `${classificationVerification.movedRealizationsReviewed} moved realizations checked: ${classificationVerification.movedClassificationsHeld} hold, ${classificationVerification.movedClassificationsCorrected} corrected. Wording and evidence are unchanged.`,
+);
+targetedVerificationSheet.getRange("A3:G3").values = [[
+  "Key", "Realization", "Prior type", "Verified type", "Result", "Evidence finding", "Evidence pointers",
+]];
+targetedVerificationSheet.getRange(`A4:G${verificationRows.length + 3}`).values = verificationRows;
+styleTable(
+  targetedVerificationSheet,
+  "A3:G3",
+  `A4:G${verificationRows.length + 3}`,
+  [["A", 34], ["B", 58], ["C", 14], ["D", 14], ["E", 28], ["F", 72], ["G", 72]],
+);
+targetedVerificationSheet.tables.add(`A3:G${verificationRows.length + 3}`, true, "TargetedVerificationTable");
+
+const paraphraseStart = verificationRows.length + 7;
+targetedVerificationSheet.getRange(`A${paraphraseStart}:D${paraphraseStart}`).values = [[
+  "Supportive paraphrase flag", "Combined position", "Supportive realization", "Evidence pointers",
+]];
+const paraphraseRows = classificationVerification.supportiveCombinedPositionParaphrases.map((item) => [
+  item.key,
+  item.combined_position,
+  item.value,
+  item.source_ids.join("\n"),
+]);
+targetedVerificationSheet.getRange(`A${paraphraseStart + 1}:D${paraphraseStart + paraphraseRows.length}`).values = paraphraseRows;
+styleTable(
+  targetedVerificationSheet,
+  `A${paraphraseStart}:D${paraphraseStart}`,
+  `A${paraphraseStart + 1}:D${paraphraseStart + paraphraseRows.length}`,
+  [["A", 34], ["B", 58], ["C", 58], ["D", 72]],
+);
+targetedVerificationSheet.tables.add(
+  `A${paraphraseStart}:D${paraphraseStart + paraphraseRows.length}`,
+  true,
+  "SupportiveParaphraseFlagsTable",
+);
+targetedVerificationSheet.freezePanes.freezeRows(3);
+
 function writeMechanismSheet(sheet, title, subtitle, records, tableName) {
   writeComponentSheet(
     sheet,
@@ -1015,6 +1160,7 @@ for (const [sheetName, range] of [
   ["Owner Voice Coverage", "A1:F24"],
   ["Sign Units", "A1:P12"],
   ["Classification Audit", "A1:K20"],
+  ["Targeted Verification", `A1:G${Math.min(paraphraseStart + paraphraseRows.length, 42)}`],
   ["Aspect Mechanisms", "A1:K8"],
   ["Modality Units", "A1:K12"],
   ["Element Units", "A1:K12"],
