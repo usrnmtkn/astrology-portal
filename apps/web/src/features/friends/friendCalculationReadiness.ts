@@ -10,6 +10,25 @@ export const idleFriendCalculationReadiness: FriendCalculationReadiness = {
   profileNatal: false
 };
 
+export function initialFriendCalculationReadiness(
+  activeTab: FriendProfileTab | null
+): FriendCalculationReadiness {
+  if (!activeTab) {
+    return idleFriendCalculationReadiness;
+  }
+
+  return {
+    currentSky: activeTab === "transits",
+    profileNatal: activeTab !== "natal"
+  };
+}
+
+export function shouldPreloadInitialFriendCalculationRuntime(
+  activeTab: FriendProfileTab | null
+) {
+  return Boolean(activeTab && activeTab !== "natal");
+}
+
 export function activeFriendProfileContentRequest({
   activeTab,
   profileActive

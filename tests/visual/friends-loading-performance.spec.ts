@@ -18,9 +18,11 @@ type FixtureOptions = {
 };
 
 type PreparedPage = {
+  dashboardMirrorRequests: () => number;
   delayedCalculationRequests: () => number;
   delayedDeferredFallbackRequests: () => number;
   delayedRelationshipRequests: () => number;
+  emptyHouseFallbackRequests: () => number;
 };
 
 type TimedSample = {
@@ -40,6 +42,28 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
   let delayedCalculationRequests = 0;
   let delayedDeferredFallbackRequests = 0;
   let delayedRelationshipRequests = 0;
+  let dashboardMirrorRequests = 0;
+  let emptyHouseFallbackRequests = 0;
+
+  page.on("request", (request) => {
+    const requestUrl = decodeURIComponent(request.url());
+
+    if (
+      requestUrl.includes("/rest/v1/generated_interpretations")
+      && requestUrl.includes("provider=eq.tldrastro-fallback-architecture-v3")
+    ) {
+      dashboardMirrorRequests += 1;
+    }
+    if (/\/assets\/fallback-content-empty-house[^/]*\.js$/.test(requestUrl)) {
+      emptyHouseFallbackRequests += 1;
+    }
+    if (/\/assets\/(?:fallback-content-relationships|fallback-content-shared-placement|astro-knowledge-relationships)[^/]*\.js$/.test(requestUrl)) {
+      delayedRelationshipRequests += 1;
+    }
+    if (/\/assets\/(?:fallback-content-transit|fallback-content-deferred-core)[^/]*\.js$/.test(requestUrl)) {
+      delayedDeferredFallbackRequests += 1;
+    }
+  });
 
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
     await route.fulfill({
@@ -49,23 +73,15 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
     });
   });
   await page.route("**/rest/v1/generated_interpretations*", async (route) => {
+    if (options.slowRelationshipContent) {
+      await delay(FRIENDS_SLOW_NETWORK_LATENCY_MS);
+    }
     await route.fulfill({
-      status: 503,
+      status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ message: "Friends performance QA uses deterministic fallback content." })
+      body: JSON.stringify([])
     });
   });
-
-  if (options.slowRelationshipContent) {
-    page.on("request", (request) => {
-      if (/\/assets\/(?:fallback-content-relationships|astro-knowledge-relationships)[^/]*\.js$/.test(request.url())) {
-        delayedRelationshipRequests += 1;
-      }
-      if (/\/assets\/(?:fallback-content-transit|fallback-content-deferred-core)[^/]*\.js$/.test(request.url())) {
-        delayedDeferredFallbackRequests += 1;
-      }
-    });
-  }
 
   if (options.slowCalculation) {
     await page.route(/\/assets\/swisseph-[^/]*\.(?:js|wasm)$/, async (route) => {
@@ -187,9 +203,11 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
   });
 
   return {
+    dashboardMirrorRequests: () => dashboardMirrorRequests,
     delayedCalculationRequests: () => delayedCalculationRequests,
     delayedDeferredFallbackRequests: () => delayedDeferredFallbackRequests,
-    delayedRelationshipRequests: () => delayedRelationshipRequests
+    delayedRelationshipRequests: () => delayedRelationshipRequests,
+    emptyHouseFallbackRequests: () => emptyHouseFallbackRequests
   };
 }
 
@@ -237,11 +255,17 @@ test.describe("Friends loading performance matrix", () => {
 
     for (let sample = 0; sample < FRIENDS_LOADING_SAMPLE_COUNT; sample += 1) {
       samples.push(await withContext(browser, {}, async (_context, page) => {
-        await preparePage(page);
-        return timed("cold Friends list", async () => {
+        const prepared = await preparePage(page);
+        const result = await timed("cold Friends list", async () => {
           await page.goto(url("/#friends?tab=charts"), { waitUntil: "domcontentloaded" });
           await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}` })).toBeVisible();
         });
+        await page.waitForTimeout(250);
+        expect(prepared.dashboardMirrorRequests(), "A bare Friends list must not hydrate the complete dashboard mirror.").toBe(0);
+        expect(prepared.emptyHouseFallbackRequests(), "A bare Friends list must not download empty-house content.").toBe(0);
+        expect(prepared.delayedRelationshipRequests(), "A bare Friends list must not download relationship packages.").toBe(0);
+        expect(prepared.delayedDeferredFallbackRequests(), "A bare Friends list must not download Natal/Transit packages.").toBe(0);
+        return result;
       }));
     }
 
@@ -253,9 +277,19 @@ test.describe("Friends loading performance matrix", () => {
 
     for (let sample = 0; sample < FRIENDS_LOADING_SAMPLE_COUNT; sample += 1) {
       samples.push(await withContext(browser, {}, async (_context, page) => {
-        await preparePage(page);
+        const prepared = await preparePage(page);
         await page.goto(url("/#friends?tab=charts"));
-        await page.getByRole("button", { name: `Open ${fixtureFriendName}` }).click();
+        const chartButton = page.getByRole("button", { name: `Open ${fixtureFriendName}` });
+        await chartButton.hover();
+        await expect.poll(
+          prepared.delayedRelationshipRequests,
+          { message: "Chart intent must start the relationship package before selection." }
+        ).toBeGreaterThan(0);
+        expect(
+          prepared.delayedDeferredFallbackRequests(),
+          "Compatibility intent must not download the unrelated Natal/Transit package."
+        ).toBe(0);
+        await chartButton.click();
         await expect(page.locator(".compatibility-card").first()).toBeVisible();
         await page.locator(".friends-back-button").click();
         await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}` })).toBeVisible();
@@ -281,8 +315,12 @@ test.describe("Friends loading performance matrix", () => {
             url("/#friends?tab=charts&chart=friend-nikki&view=synastry"),
             { waitUntil: "domcontentloaded" }
           );
-          await expect(page.getByRole("region", { name: `${fixtureFriendName} chart profile` })).toBeVisible();
-          await expect(page.locator(".friend-aspect-row").first()).toBeVisible();
+          await expect(
+            page
+              .getByRole("region", { name: `${fixtureFriendName} chart profile` })
+              .locator(".friend-aspect-row")
+              .first()
+          ).toBeVisible();
         });
       }));
     }
@@ -389,8 +427,8 @@ test.describe("Friends loading performance matrix", () => {
         expect(prepared.delayedRelationshipRequests()).toBeGreaterThan(0);
         expect(
           prepared.delayedDeferredFallbackRequests(),
-          "Compatibility aspect descriptions must request their deferred synastry rows."
-        ).toBeGreaterThan(0);
+          "Compatibility must not download the unrelated Natal/Transit fallback package."
+        ).toBe(0);
         await expect(page.locator(".compatibility-card")).toHaveCount(7, {
           timeout: friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs + 5_000
         });
