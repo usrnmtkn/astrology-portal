@@ -193,16 +193,15 @@ assert.match(
   "Friend placement prose must become available after its domain bundle loads."
 );
 assert.equal(transitAfter.contentKey, "authored/transit-aspect/pluto/chiron/square");
-const compatibilityBefore = runtime.transitSynastryFallbackRendererV3.renderCompat({
-  planet: "moon",
-  signA: "aries",
-  signB: "taurus",
-  otherName: "Alex"
-});
-assert.equal(
-  compatibilityBefore.templateKey,
-  "fallback-template/compat.cross-sign",
-  "The core bundle may compose the approved compatibility floor without downloading authored compatibility cards."
+assert.throws(
+  () => runtime.transitSynastryFallbackRendererV3.renderCompat({
+    planet: "moon",
+    signA: "aries",
+    signB: "taurus",
+    otherName: "Alex"
+  }),
+  /SOURCE_GAP/u,
+  "Compatibility hooks must remain unavailable until the relationship package loads."
 );
 assert.equal(await runtime.loadDeferredFallbackArchitectureV3Bundle(), false);
 

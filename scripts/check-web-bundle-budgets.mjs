@@ -98,7 +98,9 @@ const readerBootItems = [...new Set([...bootFiles, ...readerStyleFiles])]
   .filter(Boolean);
 const appItem = filesByName.get(manifest[appKey].file);
 const deferredTransitFallbackItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-transit-"));
-const deferredRelationshipFallbackItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-relationships-"));
+const deferredRelationshipFallbackItems = javaScriptFiles.filter((item) => item.file.includes("fallback-content-relationships-"));
+const deferredRelationshipFallbackItem = [...deferredRelationshipFallbackItems]
+  .sort((first, second) => second.gzipBytes - first.gzipBytes)[0];
 const deferredManifestItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-manifest-"));
 const deferredCoreItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-deferred-core-"));
 const deferredSkyPlacementItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-sky-placement-"));
@@ -137,9 +139,9 @@ if (!deferredTransitFallbackItem) {
 } else if (bootFiles.has(deferredTransitFallbackItem.file)) {
   failures.push("The transit fallback chunk re-entered the static App boot graph.");
 }
-if (!deferredRelationshipFallbackItem) {
+if (deferredRelationshipFallbackItems.length === 0) {
   failures.push("The on-demand relationship fallback chunk is missing.");
-} else if (bootFiles.has(deferredRelationshipFallbackItem.file)) {
+} else if (deferredRelationshipFallbackItems.some((item) => bootFiles.has(item.file))) {
   failures.push("The relationship fallback chunk re-entered the static App boot graph.");
 }
 if (deferredManifestItem && bootFiles.has(deferredManifestItem.file)) {
@@ -181,7 +183,7 @@ console.log(`Deferred Sky detail article: ${formatBytes(measurements.skyDetailCh
 console.log(`Deferred purchased-report route: ${formatBytes(measurements.reportRouteChunkGzipBytes)} gzip`);
 console.log(`On-demand Sky Placement fallback: ${formatBytes(measurements.skyPlacementFallbackChunkGzipBytes)} gzip`);
 console.log(`On-demand transit fallback: ${formatBytes(measurements.transitFallbackChunkGzipBytes)} gzip`);
-console.log(`On-demand relationship fallback: ${formatBytes(measurements.relationshipFallbackChunkGzipBytes)} gzip`);
+console.log(`Largest on-demand relationship fallback chunk: ${formatBytes(measurements.relationshipFallbackChunkGzipBytes)} gzip across ${deferredRelationshipFallbackItems.length} files`);
 console.log(`Deferred signup chunk: ${formatBytes(measurements.signupChunkGzipBytes)} gzip`);
 console.log(`Largest JavaScript: ${largestJavaScript?.file ?? "none"} (${formatBytes(measurements.largestJavaScriptGzipBytes)} gzip)`);
 console.log(`All JavaScript: ${formatBytes(measurements.totalJavaScriptGzipBytes)} gzip across ${javaScriptFiles.length} files`);
