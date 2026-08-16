@@ -3,16 +3,38 @@ import { evaluateSpineQuality } from "./spineQuality.mjs";
 
 const DEFAULT_BANNED = [
   "whether",
-  "profound",
   "medicine",
   "inner weather",
   "landscape",
-  "tapestry",
   "not a passing mood",
   "a chapter, not a",
   ...WRITING_POLICY_DATA.bannedWords,
   ...WRITING_POLICY_DATA.bannedPhrases
 ];
+
+const WORD_POLICIES = WRITING_POLICY_DATA.wordPolicies ?? [];
+function globalWordPolicyFindings(text) {
+  const violations = [];
+  const advisories = [];
+  for (const entry of WORD_POLICIES) {
+    if (["HARD_BAN", "WAIVED"].includes(entry.policyClass)) continue;
+    const escaped = String(entry.term).replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+    const match = String(text).match(new RegExp(`\\b${escaped}\\b`, "iu"));
+    if (!match) continue;
+    if (entry.contextPatterns?.length && !entry.contextPatterns.some((pattern) => new RegExp(pattern, "iu").test(text))) continue;
+    if (entry.policyClass === "AI_TELL_PREVENTIVE"
+      && entry.literalContextPatterns?.some((pattern) => new RegExp(pattern, "iu").test(text))) continue;
+    const finding = {
+      category: entry.policyClass === "AI_TELL_PREVENTIVE" ? "banned_language" : "editorial_word_policy",
+      detail: entry.term,
+      policyClass: entry.policyClass,
+      preferredAlternatives: entry.policyClass === "REPLACEMENT_SUGGESTION" ? entry.useInstead ?? [] : undefined
+    };
+    if (entry.policyClass === "AI_TELL_PREVENTIVE") violations.push(finding);
+    else advisories.push(finding);
+  }
+  return { violations, advisories };
+}
 
 const STOCK_TROPES = [
   "the dishes",
@@ -223,6 +245,9 @@ export function validateCopy(copy, {
   for (const phrase of banned) {
     if (hasBanned(unprotectedNormalized, phrase)) violations.push({ category: "banned_language", detail: String(phrase) });
   }
+  const wordPolicy = globalWordPolicyFindings(unprotectedText);
+  violations.push(...wordPolicy.violations);
+  advisories.push(...wordPolicy.advisories);
   for (const trope of STOCK_TROPES) {
     if (normalized.includes(trope)) violations.push({ category: "stock_trope", detail: trope });
   }

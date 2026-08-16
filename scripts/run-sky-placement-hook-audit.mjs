@@ -12,6 +12,7 @@ import openAIResponses from "../src/astro-writing/openAIResponses.cjs";
 
 const require = createRequire(import.meta.url);
 const { normalizeArgs } = require("../packages/astro-knowledge/scripts/generate-sky-placement-articles.js");
+const { findPolicyFindings } = require("../packages/astro-knowledge/scripts/banned-word-policy.js");
 const { loadLocalEnv } = require("../packages/astro-knowledge/scripts/daily-glance-writer-runtime.js");
 const { callOpenAIResponses } = openAIResponses;
 
@@ -61,12 +62,23 @@ function deterministicIssues(text, sourceRow, bundledRow, failBans, bannedWords)
   if (text.includes("—")) issues.push({ category: "em_dash", term: "—" });
   if (/\bwhether\b/iu.test(text)) issues.push({ category: "banned_word", term: "whether" });
   if (/\b(?:you|your|yours|yourself|yourselves)\b/iu.test(text)) issues.push({ category: "register_violation", term: text.match(/\b(?:you|your|yours|yourself|yourselves)\b/iu)?.[0] });
-  for (const item of [...failBans, ...bannedWords]) {
+  for (const item of failBans) {
     if (item.term === "—" || item.term === "whether") continue;
     const pattern = compileTerm(item.term);
     if (!pattern) continue;
     const match = text.match(pattern);
     if (match) issues.push({ category: "banned_word", term: item.term, match: match[0], reason: item.reason ?? null });
+  }
+  for (const finding of findPolicyFindings(text, bannedWords)) {
+    issues.push({
+      category: finding.severity === "fail" ? "banned_word" : "editorial_word_policy",
+      severity: finding.severity,
+      policyClass: finding.policyClass,
+      term: finding.term,
+      match: finding.match,
+      reason: finding.reason ?? null,
+      preferredAlternatives: finding.preferredAlternatives ?? []
+    });
   }
   if (!bundledRow) issues.push({ category: "protected_line_drift", reason: "Serving bundle row is missing." });
   else {

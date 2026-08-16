@@ -519,7 +519,12 @@ for (const [sign, nouns] of Object.entries(HOUSE_BLEED_NOUNS)) {
 
 const protectedOwnerLine = "Compassion that was really self-erasure starts coming with limits attached.";
 assert.equal(validateCopy(protectedOwnerLine, { protectedOwnerLines: [protectedOwnerLine] }).passed, true);
-assert.ok(validateCopy(protectedOwnerLine).violations.some((entry) => entry.category === "banned_language"), "Protected owner vocabulary must remain banned outside its exact approved line.");
+const unprotectedEditorialReview = validateCopy(protectedOwnerLine);
+assert.equal(unprotectedEditorialReview.passed, true, "Editorial-review vocabulary must not hard-fail copy.");
+assert.ok(
+  unprotectedEditorialReview.advisories.some((entry) => entry.category === "editorial_word_policy" && entry.detail === "self-erasure"),
+  "Editorial-review vocabulary must remain visible as a non-blocking advisory."
+);
 
 const meaningInput = {
   object: "lilith",
