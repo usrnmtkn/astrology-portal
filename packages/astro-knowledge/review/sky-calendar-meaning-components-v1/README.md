@@ -102,3 +102,18 @@ The owner authorized an additive editorial extraction for the 64 supportive pool
 - Units whose evidence could not support an extraction: 0
 
 All units remain `PENDING OWNER` and fail closed until owner review. The eight owner-authored replacements preserve every previously locked string; four receive one authorized additive supportive realization because their supportive pool was empty. The complete extraction ledger is in `SUPPORTIVE-POOL-EXTRACTION-REPORT.md` and the workbook's Sign Units sheet.
+
+The counts above record the completed extraction pass at that checkpoint. The later targeted classification verification below correctly moved three items out of the supportive pool, so the current registry has three empty supportive pools and fails closed for routes that require them.
+
+## Targeted classification verification, 2026-08-16
+
+All 44 realizations moved during the earlier classification audit were checked again against their own governed evidence and the meaning required by each pool.
+
+- 42 classifications hold.
+- 2 classifications were corrected: Sun in Sagittarius and Saturn in Aquarius moved from supportive to neutral.
+- 1 separately reported error was corrected: Neptune in Sagittarius moved from supportive to shadow.
+- Realization wording changed: 0.
+- Empty supportive pools after the corrections: 3.
+- Supportive realizations flagged as near-restatements of their unit's combined position: 27. These are flags only; they were not rewritten or reclassified in this pass.
+
+The full evidence-backed result is in `TARGETED-CLASSIFICATION-VERIFICATION.md`, `targeted-classification-verification.json`, and the workbook's Targeted Verification sheet.

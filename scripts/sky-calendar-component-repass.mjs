@@ -288,6 +288,94 @@ function applyClassificationReview(key, typed) {
   );
 }
 
+// Targeted owner-requested verification, 2026-08-16. These corrections move
+// existing wording between pools only. The first two repair classifications
+// made by CLASSIFICATION_REVIEW_DECISIONS; the third records the separately
+// identified Neptune-in-Sagittarius misfile.
+export const CLASSIFICATION_VERIFICATION_CORRECTIONS = {
+  "sky-sign/sun/sagittarius": [{
+    value: "a strong belief making one contribution stand for a larger cause",
+    from: "supportive",
+    to: "neutral",
+    scope: "classification_audit_44",
+    finding: "The realization describes amplification, but neither governed source says that it helps or eases the situation. The matrix source instead warns that certainty can outrun the facts.",
+  }],
+  "sky-sign/saturn/aquarius": [{
+    value: "a standard meant to apply equally",
+    from: "supportive",
+    to: "neutral",
+    scope: "classification_audit_44",
+    finding: "The realization states the standard's intended scope. It does not show the placement helping or easing anything, and the governed source explicitly allows the rule to prove arbitrary.",
+  }],
+  "sky-sign/neptune/sagittarius": [{
+    value: "a belief growing beyond what its supporting facts can carry",
+    from: "supportive",
+    to: "shadow",
+    scope: "owner_reported_outside_44",
+    finding: "Growing beyond supporting facts is overreach. The governed sources describe a blank map, a leap without a parachute, and a promise that claims it can explain everything.",
+  }],
+};
+
+function moveRealization(record, correction, direction = "forward") {
+  const from = direction === "forward" ? correction.from : correction.to;
+  const to = direction === "forward" ? correction.to : correction.from;
+  const fromField = `${from}_realizations`;
+  const toField = `${to}_realizations`;
+  if (!record[fromField].includes(correction.value)) {
+    throw new Error(`${record.key}: expected ${from} realization for classification verification: ${correction.value}`);
+  }
+  if (record[toField].includes(correction.value)) {
+    throw new Error(`${record.key}: duplicate ${to} realization during classification verification: ${correction.value}`);
+  }
+  return {
+    ...record,
+    [fromField]: record[fromField].filter((value) => value !== correction.value),
+    [toField]: [...record[toField], correction.value],
+  };
+}
+
+export function applyClassificationVerification(key, typed) {
+  const corrected = (CLASSIFICATION_VERIFICATION_CORRECTIONS[key] ?? [])
+    .reduce((record, correction) => moveRealization({ key, ...record }, correction), typed);
+  const { key: _key, ...pools } = corrected;
+  return pools;
+}
+
+function undoClassificationVerification(record) {
+  return (CLASSIFICATION_VERIFICATION_CORRECTIONS[record.key] ?? [])
+    .reduceRight((current, correction) => moveRealization(current, correction, "reverse"), record);
+}
+
+export const SUPPORTIVE_COMBINED_POSITION_PARAPHRASE_FLAGS = [
+  ["sky-sign/sun/taurus", "a contribution valued because it keeps producing something useful"],
+  ["sky-sign/sun/taurus", "people waiting to give credit until the result proves it can last"],
+  ["sky-sign/sun/taurus", "credit going to the work that protected what needed to last"],
+  ["sky-sign/sun/gemini", "the clearest explanation deciding who is seen as responsible"],
+  ["sky-sign/sun/leo", "wanting credit attached to the person who did the work"],
+  ["sky-sign/sun/capricorn", "people giving credit to the person expected to answer for the result"],
+  ["sky-sign/moon/aquarius", "someone stepping back from a reaction long enough to see the pattern clearly"],
+  ["sky-sign/mercury/aries", "someone giving the clear answer that gets a stalled decision moving again"],
+  ["sky-sign/mercury/taurus", "an agreement slowing until the practical terms are clear"],
+  ["sky-sign/mercury/pisces", "people reading the tone when the stated facts remain incomplete"],
+  ["sky-sign/venus/taurus", "someone choosing the arrangement that feels good and can still hold up over time"],
+  ["sky-sign/venus/sagittarius", "someone choosing a connection that leaves both people room to keep growing"],
+  ["sky-sign/venus/aquarius", "people staying connected because the agreement leaves room for independence"],
+  ["sky-sign/mars/cancer", "someone acting to protect another person before explaining why"],
+  ["sky-sign/mars/taurus", "someone working the same point until a material limit gives way"],
+  ["sky-sign/mars/scorpio", "a result pursued carefully because it cannot be undone"],
+  ["sky-sign/jupiter/libra", "more people benefiting after the terms distribute the opportunity more fairly"],
+  ["sky-sign/saturn/gemini", "revised language that still has to match the record"],
+  ["sky-sign/saturn/sagittarius", "a large promise reduced to what can be proved and delivered"],
+  ["sky-sign/uranus/gemini", "new information altering the available routes almost immediately"],
+  ["sky-sign/neptune/leo", "a public image carrying more hope than the contribution can support"],
+  ["sky-sign/chiron/virgo", "a small correction reopening the fear of never being useful enough"],
+  ["sky-sign/lilith/leo", "someone claiming visibility without making the contribution more acceptable first"],
+  ["sky-sign/lilith/virgo", "a standard refused because usefulness has become a condition of worth"],
+  ["sky-sign/lilith/libra", "an agreement challenged after fairness becomes repeated self-erasure"],
+  ["sky-sign/lilith/scorpio", "someone protecting desire from another person's claim to private access"],
+  ["sky-sign/lilith/capricorn", "someone confronting an authority that has used respectability as control"],
+].map(([key, value]) => ({ key, value }));
+
 const shadowManifestationOverrides = {
   "sky-sign/moon/aries": "someone treating every strong feeling like an emergency that everyone must answer",
   "sky-sign/moon/gemini": "someone explaining the feeling repeatedly instead of admitting that they are hurt",
@@ -623,7 +711,10 @@ export function repassSignUnit(key, record) {
   const typedRealizations = ownerReplacement ?? typeRealizations(manifestations, typeOverrides);
   return {
     ...rest,
-    ...applyClassificationReview(key, typedRealizations),
+    ...applyClassificationVerification(
+      key,
+      applyClassificationReview(key, typedRealizations),
+    ),
   };
 }
 
@@ -655,10 +746,10 @@ export function classificationReviewAudit(rows) {
     const row = rows.find((candidate) => candidate.key === key);
     if (!row) throw new Error(`Missing classification-review unit ${key}`);
     const extractedRealizations = new Set((row.supportive_realization_evidence ?? []).map((item) => item.realization));
-    const classificationRow = {
+    const classificationRow = undoClassificationVerification({
       ...row,
       supportive_realizations: row.supportive_realizations.filter((value) => !extractedRealizations.has(value)),
-    };
+    });
     const beforeType = decision.population === "all_neutral" ? "neutral" : "shadow";
 
     // Reconstruct original order from the decision's typed output. This keeps
@@ -686,13 +777,18 @@ export function classificationReviewAudit(rows) {
   const allNeutral = reviewed.filter((row) => row.population === "all_neutral");
   const allShadow = reviewed.filter((row) => row.population === "all_shadow");
   const reviewedKeys = new Set(reviewed.map((row) => row.key));
-  const emptySupportiveBefore = rows.filter((row) => (
+  const historicalRows = rows.map((row) => {
+    const extractedRealizations = new Set((row.supportive_realization_evidence ?? []).map((item) => item.realization));
+    return undoClassificationVerification({
+      ...row,
+      supportive_realizations: row.supportive_realizations.filter((value) => !extractedRealizations.has(value)),
+    });
+  });
+  const emptySupportiveBefore = historicalRows.filter((row) => (
     reviewedKeys.has(row.key)
-    || row.supportive_realizations.length === (row.supportive_realization_evidence?.length ?? 0)
+    || row.supportive_realizations.length === 0
   )).length;
-  const emptySupportiveAfter = rows.filter((row) => (
-    row.supportive_realizations.length === (row.supportive_realization_evidence?.length ?? 0)
-  )).length;
+  const emptySupportiveAfter = historicalRows.filter((row) => row.supportive_realizations.length === 0).length;
   return {
     reviewedUnits: reviewed.length,
     allNeutralBefore: allNeutral.length,
@@ -703,6 +799,73 @@ export function classificationReviewAudit(rows) {
     emptySupportiveAfter,
     changedRealizations: reviewed.flatMap((row) => row.realizations).filter((item) => item.changed).length,
     reviewed,
+  };
+}
+
+export function classificationVerificationAudit(rows) {
+  const originalAudit = classificationReviewAudit(rows);
+  const correctionIndex = new Map(
+    Object.entries(CLASSIFICATION_VERIFICATION_CORRECTIONS)
+      .flatMap(([key, corrections]) => corrections.map((correction) => [
+        `${key}\u0000${correction.value}`,
+        { key, ...correction },
+      ])),
+  );
+  const reviewed44 = originalAudit.reviewed.flatMap((reviewedUnit) => (
+    reviewedUnit.realizations
+      .filter((realization) => realization.changed)
+      .map((realization) => {
+        const correction = correctionIndex.get(`${reviewedUnit.key}\u0000${realization.value}`) ?? null;
+        return {
+          key: reviewedUnit.key,
+          value: realization.value,
+          classificationAuditType: realization.afterType,
+          verifiedType: correction?.to ?? realization.afterType,
+          classificationHolds: correction === null,
+          finding: correction?.finding ?? "The moved classification matches the realization's meaning and the governed evidence.",
+          source_ids: [...reviewedUnit.source_ids],
+        };
+      })
+  ));
+  const additionalCorrections = Object.entries(CLASSIFICATION_VERIFICATION_CORRECTIONS)
+    .flatMap(([key, corrections]) => corrections
+      .filter((correction) => correction.scope !== "classification_audit_44")
+      .map((correction) => {
+        const row = rows.find((candidate) => candidate.key === key);
+        if (!row) throw new Error(`Missing classification-verification unit ${key}`);
+        return {
+          key,
+          value: correction.value,
+          priorType: correction.from,
+          verifiedType: correction.to,
+          finding: correction.finding,
+          source_ids: [...row.source_ids],
+        };
+      }));
+  const supportiveCombinedPositionParaphrases = SUPPORTIVE_COMBINED_POSITION_PARAPHRASE_FLAGS
+    .map((flag) => {
+      const row = rows.find((candidate) => candidate.key === flag.key);
+      if (!row) throw new Error(`Missing supportive-paraphrase unit ${flag.key}`);
+      if (!row.supportive_realizations.includes(flag.value)) {
+        throw new Error(`${flag.key}: supportive-paraphrase flag does not match the final supportive pool: ${flag.value}`);
+      }
+      return {
+        ...flag,
+        combined_position: row.combined_position,
+        source_ids: [...row.source_ids],
+      };
+    });
+  return {
+    movedRealizationsReviewed: reviewed44.length,
+    movedClassificationsHeld: reviewed44.filter((item) => item.classificationHolds).length,
+    movedClassificationsCorrected: reviewed44.filter((item) => !item.classificationHolds).length,
+    additionalOwnerReportedCorrections: additionalCorrections.length,
+    totalClassificationCorrections: reviewed44.filter((item) => !item.classificationHolds).length + additionalCorrections.length,
+    emptySupportivePoolsAfterVerification: rows.filter((row) => row.supportive_realizations.length === 0).length,
+    supportiveCombinedPositionParaphraseFlags: supportiveCombinedPositionParaphrases.length,
+    reviewed44,
+    additionalCorrections,
+    supportiveCombinedPositionParaphrases,
   };
 }
 

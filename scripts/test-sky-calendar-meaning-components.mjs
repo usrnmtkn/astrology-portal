@@ -12,6 +12,7 @@ import {
 import {
   assertOwnerReplacements,
   classificationReviewAudit,
+  classificationVerificationAudit,
   manifestationPlainnessViolations,
   sourceShadowAudit,
 } from "./sky-calendar-component-repass.mjs";
@@ -109,8 +110,22 @@ assert.deepEqual(
     extractionOnly: true,
     units: 64,
     realizations: 64,
-    emptySupportivePoolsAfter: 0,
+    emptySupportivePoolsAfter: 3,
     unsupportedUnits: [],
+  },
+);
+assert.deepEqual(
+  Object.fromEntries(Object.entries(registry.systemicRepass.classificationVerification).filter(([key]) => (
+    !["reviewed44", "additionalCorrections", "supportiveCombinedPositionParaphrases"].includes(key)
+  ))),
+  {
+    movedRealizationsReviewed: 44,
+    movedClassificationsHeld: 42,
+    movedClassificationsCorrected: 2,
+    additionalOwnerReportedCorrections: 1,
+    totalClassificationCorrections: 3,
+    emptySupportivePoolsAfterVerification: 3,
+    supportiveCombinedPositionParaphraseFlags: 27,
   },
 );
 assert.deepEqual(registry.systemicRepass.faultAudit.remainingViolations, {
@@ -223,6 +238,17 @@ assertOwnerReplacements(registry.signUnits);
 assert.deepEqual(manifestationPlainnessViolations(registry.signUnits), []);
 assert.equal(sourceShadowAudit(registry.signUnits).oneSidedAfterPass, 0);
 assert.deepEqual(classificationReviewAudit(registry.signUnits), registry.systemicRepass.classificationAudit);
+assert.deepEqual(classificationVerificationAudit(registry.signUnits), registry.systemicRepass.classificationVerification);
+
+const sunSagittarius = registry.signUnits.find((row) => row.key === "sky-sign/sun/sagittarius");
+assert.ok(sunSagittarius.neutral_realizations.includes("a strong belief making one contribution stand for a larger cause"));
+assert.equal(sunSagittarius.supportive_realizations.includes("a strong belief making one contribution stand for a larger cause"), false);
+const saturnAquarius = registry.signUnits.find((row) => row.key === "sky-sign/saturn/aquarius");
+assert.ok(saturnAquarius.neutral_realizations.includes("a standard meant to apply equally"));
+assert.equal(saturnAquarius.supportive_realizations.includes("a standard meant to apply equally"), false);
+const neptuneSagittarius = registry.signUnits.find((row) => row.key === "sky-sign/neptune/sagittarius");
+assert.ok(neptuneSagittarius.shadow_realizations.includes("a belief growing beyond what its supporting facts can carry"));
+assert.equal(neptuneSagittarius.supportive_realizations.includes("a belief growing beyond what its supporting facts can carry"), false);
 
 for (const row of [...registry.aspectMechanisms, ...registry.modalityUnits, ...registry.elementUnits]) {
   for (const field of ["reader_effect", "conflict_behavior", "movement_bias"]) {
