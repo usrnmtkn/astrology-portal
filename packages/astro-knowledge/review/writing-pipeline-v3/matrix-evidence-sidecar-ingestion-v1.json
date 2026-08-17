@@ -20,13 +20,13 @@
     "argument_candidate": 788
   },
   "deduplicatedSharedIndexCounts": {
-    "entries": 4861,
-    "meaning": 1876,
+    "entries": 5828,
+    "meaning": 2177,
     "register": 1710,
-    "scene": 419,
-    "argument": 510,
+    "scene": 413,
+    "argument": 1182,
     "phrase": 346,
-    "planetSignKeys": 190
+    "planetSignKeys": 247
   },
   "roleCountsBySource": {
     "owner-approved-knowledge-matrix-meaning": {
@@ -57,6 +57,13 @@
       "argument": 454,
       "phrase": 0
     },
+    "owner-approved-ll-matrix-v13": {
+      "meaning": 301,
+      "register": 0,
+      "scene": 0,
+      "argument": 0,
+      "phrase": 0
+    },
     "owner-corpus-passage": {
       "meaning": 0,
       "register": 482,
@@ -81,7 +88,7 @@
     "approved_serving_row": {
       "meaning": 0,
       "register": 0,
-      "scene": 226,
+      "scene": 220,
       "argument": 0,
       "phrase": 0
     },
@@ -90,6 +97,13 @@
       "register": 0,
       "scene": 3,
       "argument": 0,
+      "phrase": 0
+    },
+    "current-owner-approved-placement-card": {
+      "meaning": 0,
+      "register": 0,
+      "scene": 0,
+      "argument": 672,
       "phrase": 0
     },
     "current-owner-approved-placement-article": {
@@ -115,11 +129,65 @@
     }
   },
   "coverageCounts": {
-    "placements": 179,
+    "placements": 415,
     "matrixZeroScene": 114,
-    "extendedZeroScene": 98,
-    "extendedZeroMeaning": 2,
-    "extendedZeroArgument": 53
+    "extendedZeroScene": 252,
+    "extendedZeroSceneWithinMatrixPlacements": 98,
+    "extendedZeroMeaning": 16,
+    "extendedZeroArgument": 71
+  },
+  "beforeCounts": {
+    "entries": 4861,
+    "meaning": 1876,
+    "register": 1710,
+    "scene": 419,
+    "argument": 510,
+    "phrase": 346,
+    "planetSignKeys": 190
+  },
+  "afterCounts": {
+    "entries": 5828,
+    "meaning": 2177,
+    "register": 1710,
+    "scene": 413,
+    "argument": 1182,
+    "phrase": 346,
+    "planetSignKeys": 247
+  },
+  "llMatrixV13": {
+    "approvedSourceRows": 301,
+    "manifestRows": 301,
+    "indexedRows": 301
+  },
+  "aliasNormalization": {
+    "blackMoonLilith": 2,
+    "northNode": 60,
+    "southNode": 60,
+    "lunarNodes": 1,
+    "affectedLilithAndNodeRows": 123,
+    "anyOrUnspecifiedSignRows": 62
+  },
+  "genericEducation": {
+    "moonParagraphsRemovedFromSceneText": 145,
+    "planetIntroRowsExcludedFromSceneRole": 14
+  },
+  "requiredEvidence": {
+    "moonCancerMeaning": 1,
+    "moonAquariusMeaning": 1,
+    "lilithBySign": {
+      "aries": 4,
+      "taurus": 4,
+      "gemini": 4,
+      "cancer": 4,
+      "leo": 4,
+      "virgo": 4,
+      "libra": 4,
+      "scorpio": 5,
+      "sagittarius": 4,
+      "capricorn": 4,
+      "aquarius": 4,
+      "pisces": 4
+    }
   },
   "deduplication": "within role + exact planet + exact sign + event by copy_sha; governance precedence wins",
   "matrixRegisterPolicy": "indexed and reported, but not used as the owner-register lane; corpus passages and register gold remain the writer's register authority"
