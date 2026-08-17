@@ -1457,7 +1457,7 @@ export function createTransitSynastryRenderer(
   // Editorial rules stay in the policy compiler and linter; the resolver only reads
   // the resulting eligibility stamp.
   function skyPlacementRenderEligible(planet: string, sign: string): boolean {
-    const slots = ["hook", "lived", "turn"].map(
+    const slots = ["tagline", "hook", "lived", "turn"].map(
       (slot) => hooks.get(`fallback-hook/sky-placement-${slot}/${planet}/${sign}`)
     );
     if (slots.some((row) => !row || typeof row.body_you !== "string" || !row.body_you.trim())) return false;
@@ -1957,7 +1957,7 @@ export function createTransitSynastryRenderer(
     }
     if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet)) {
       const standaloneHook = hooks.get(`fallback-hook/sky-placement-sign/${planet}/${sign}`);
-      if (standaloneHook?.body_you) {
+      if (!skyPlacementRenderEligible(planet, sign) && standaloneHook?.body_you) {
         const body = standaloneHook.body_you.trim();
         if (!body || /\{\{/u.test(body)) {
           throw new SourceGapError(`SOURCE_GAP: standalone sky placement hook ${planet}/${sign}`);

@@ -41,8 +41,8 @@
    "contentKey": "fallback-hook/bond-effect-conjunction/mercury",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "You may finish each other’s sentences and settle a plan in ten minutes. Use that ease for the talk you keep postponing. Just make sure quick agreement did not skip the detail one of you assumed the other already understood.",
-   "body_they": "You may finish each other’s sentences and settle a plan in ten minutes. Use that ease for the talk you keep postponing. Just make sure quick agreement did not skip the detail one of you assumed the other already understood.",
+   "body_you": "You may finish each other's sentences and settle a plan in ten minutes. Use that ease for the talk you keep postponing. Just make sure quick agreement did not skip the detail one of you assumed the other already understood.",
+   "body_they": "You may finish each other's sentences and settle a plan in ten minutes. Use that ease for the talk you keep postponing. Just make sure quick agreement did not skip the detail one of you assumed the other already understood.",
    "review_status": "reviewed",
    "source_keys": [
     "owner/bond-language-pass-2"
@@ -641,8 +641,8 @@
    "contentKey": "fallback-hook/bond-effect-opposition/chiron",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Each of you may touch the other’s oldest sore spot without meaning to. The harder one person defends their intention, the less heard the other may feel. Name the upset before arguing about who started it.",
-   "body_they": "Each of you may touch the other’s oldest sore spot without meaning to. The harder one person defends their intention, the less heard the other may feel. Name the upset before arguing about who started it.",
+   "body_you": "Each of you may touch the other's oldest sore spot without meaning to. The harder one person defends their intention, the less heard the other may feel. Name the upset before arguing about who started it.",
+   "body_they": "Each of you may touch the other's oldest sore spot without meaning to. The harder one person defends their intention, the less heard the other may feel. Name the upset before arguing about who started it.",
    "review_status": "reviewed",
    "source_keys": [
     "owner/bond-language-pass-2"
@@ -1097,8 +1097,8 @@
    "contentKey": "fallback-hook/bond-effect-soft/moon/variant-2",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "You may read each other’s moods with less effort. Quiet company can feel supportive without either person explaining every feeling.",
-   "body_they": "You may read each other’s moods with less effort. Quiet company can feel supportive without either person explaining every feeling.",
+   "body_you": "You may read each other's moods with less effort. Quiet company can feel supportive without either person explaining every feeling.",
+   "body_they": "You may read each other's moods with less effort. Quiet company can feel supportive without either person explaining every feeling.",
    "review_status": "reviewed",
    "source_keys": [
     "owner/bond-language-pass-2"
@@ -1157,8 +1157,8 @@
    "contentKey": "fallback-hook/bond-effect-soft/north-node",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "A new direction may feel easier to begin in each other’s company. Take the first practical step together instead of making the connection responsible for the whole future.",
-   "body_they": "A new direction may feel easier to begin in each other’s company. Take the first practical step together instead of making the connection responsible for the whole future.",
+   "body_you": "A new direction may feel easier to begin in each other's company. Take the first practical step together instead of making the connection responsible for the whole future.",
+   "body_they": "A new direction may feel easier to begin in each other's company. Take the first practical step together instead of making the connection responsible for the whole future.",
    "review_status": "reviewed",
    "source_keys": [
     "owner/bond-language-pass-2"
@@ -1601,8 +1601,8 @@
    "contentKey": "fallback-hook/bond-effect-trine/neptune",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Empathy is high, and both of you may be more patient with each other’s mess. Enjoy the understanding. Just do not take responsibility for a feeling that belongs to the other person.",
-   "body_they": "Empathy is high, and both of you may be more patient with each other’s mess. Enjoy the understanding. Just do not take responsibility for a feeling that belongs to the other person.",
+   "body_you": "Empathy is high, and both of you may be more patient with each other's mess. Enjoy the understanding. Just do not take responsibility for a feeling that belongs to the other person.",
+   "body_they": "Empathy is high, and both of you may be more patient with each other's mess. Enjoy the understanding. Just do not take responsibility for a feeling that belongs to the other person.",
    "review_status": "reviewed",
    "source_keys": [
     "owner/bond-language-pass-2"

@@ -8693,7 +8693,7 @@
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
       "body_you": "You finish the task, close the tab, then reopen the option you saved. Your routine may be comfortable, but it has not erased the part of you that wants something else. Wanting more does not make your current life a failure. Write down what you want before you start talking yourself out of it.",
-      "body_they": "You finish the task, close the tab, then reopen the option you saved. Your routine may be comfortable, but it has not erased the part of you that wants something else. Wanting more does not make your current life a failure. Finish the sentence \"What I want is…\" and stop before the justification.",
+      "body_they": "You finish the task, close the tab, then reopen the option you saved. Your routine may be comfortable, but it has not erased the part of you that wants something else. Wanting more does not make your current life a failure. Finish the sentence \"What I want is...\" and stop before the justification.",
       "review_status": "approved",
       "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
     },

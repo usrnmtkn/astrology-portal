@@ -1,12 +1,589 @@
 {
-  "note": "Owner prose approvals for sky placement four-slot pages. A page is stamped render-eligible only when it appears here AND its source_hash matches the current text AND it lints clean. Nothing is approved yet.",
+  "note": "Owner prose approvals for the historical Sky Placement four-slot recovery bundle. Eligibility requires a matching source_hash and a clean governed lint.",
   "schema": {
     "<planet>/<sign>": {
-      "source_hash": "sha256 of hook + lived + turn joined by single spaces",
+      "source_hash": "sha256 of tagline + hook + lived + turn joined by two newlines",
       "approved_by": "owner",
       "approved_on": "YYYY-MM-DD",
-      "reference": "where the cold read was recorded"
+      "reference": "owner ruling"
     }
   },
-  "approved": {}
+  "approved": {
+    "jupiter/aries": {
+      "source_hash": "74416ff71e523889d519cf454fe6a5e86e1c852b1d700b7a872a3748f35b8331",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "jupiter/taurus": {
+      "source_hash": "f9011de95ed2998ba6a1e43cba805542e7ef16cb6b254add28cd4fac7b6c0650",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "jupiter/gemini": {
+      "source_hash": "a99415f4f7837de7c13d01d109edefb5c24659c00f27385216231eb0752fb092",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "jupiter/cancer": {
+      "source_hash": "889a2ed06495eb36f9863573bea275f87d8b2581b453419737f556f23e936259",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "jupiter/leo": {
+      "source_hash": "89eb30944a9f14442b30b0035e099d09b98a0ed393b6fb7d861666c9ff75c5b0",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "jupiter/virgo": {
+      "source_hash": "eb8537a164e8062e1a0dbe37fbcd1bb05a1a84cccf763599e639011c8e927b67",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "jupiter/libra": {
+      "source_hash": "db10b1760aae0ae636efb86e79963ed40f70ec7450170b9b3d3544a31e9be610",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "jupiter/scorpio": {
+      "source_hash": "e7cf47da1d9e181577ef96b97bfee5507bb34e93fc4c9f905b52ffadcfe47ae9",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "jupiter/sagittarius": {
+      "source_hash": "b96321d3f9a9d1bf506d2dab3820e88d644098da7346d7f555cc87df587f1ea3",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "jupiter/capricorn": {
+      "source_hash": "e0078377ffbd471ed8f184742c3021cf60e953220a00f3d1c7f8eba398bb2736",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "jupiter/aquarius": {
+      "source_hash": "1abe7a2ffef6c67a33f69668f4afc8382e4f75190677a6b4e37d44e58174a81a",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "jupiter/pisces": {
+      "source_hash": "1469a78b47bb6df327811202c12622a5401b747c212da86328882952f082a9fa",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "saturn/aries": {
+      "source_hash": "e4d1e19e7f3d3ae0f4c72c3b3498692ae833721232538aff9f9850e0a3e1cbe1",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "saturn/taurus": {
+      "source_hash": "792463e10de46b1e0369ab887835e4ffd4727bab87ee31ca5d0c3d09ec7cf48b",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "saturn/gemini": {
+      "source_hash": "571e33fe1e787013166872581414b9d1e6018bb696e9190ae9ee34376dbf53e1",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "saturn/cancer": {
+      "source_hash": "446c09526a4638cbca8c0271af7a30c58b54b4d947d7eee2c405dd9e4377a914",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "saturn/leo": {
+      "source_hash": "aa8e92594dec188828512f4ca25418233c4b0e8b09032448a29a7a672d597425",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "saturn/virgo": {
+      "source_hash": "ba8fbfc63b7fec4c5c4036965c297b02dd5fd0e1b7822cbf845500a0f75b9bda",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "saturn/libra": {
+      "source_hash": "01326aca9e4e8b28b5f73793fecc367c405faf452046248abba12c797087f1b9",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "saturn/scorpio": {
+      "source_hash": "f2cfc14bb3ef3a64d2919cfd489d37ddfe894320e894ccf98de5b6225068dee9",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "saturn/sagittarius": {
+      "source_hash": "69b20ee7fd22263a48ae8e5c239e013ed1e0d169328be90106170e71ffa53785",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "saturn/capricorn": {
+      "source_hash": "31a3367fbba381bc0c059cc19606bceffd82a74cf14530b899c76a36810bfc36",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "saturn/aquarius": {
+      "source_hash": "df95126eb39c6662af49a0a6efa2e42358f91a2d4c8d606aed789617eb611f0b",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "saturn/pisces": {
+      "source_hash": "ba4a488af2d29275f2262d0cffcfec8c7873b3abe36279a99af3d151e4d77ae8",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "uranus/aries": {
+      "source_hash": "8d170a28fb3191d57810e4f7a5a4557d3b17d5b60672459e84e6f726c337fbd2",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "uranus/taurus": {
+      "source_hash": "4787bf71eedc8ddacd01c1d8bb84122a09bd477adc09fd161c4bbd448199628d",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "uranus/gemini": {
+      "source_hash": "c84425db2f150e9ca3ab919001bb882d1359d7ef253f6129fe48015972d27a9f",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "uranus/cancer": {
+      "source_hash": "e136288e420949523952c491ebd82e2f8f454cc78a7e64c1eb7aa8a34f3351db",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "uranus/leo": {
+      "source_hash": "a89d0eef1cd96f44c66a11d3da940f6e90f5fa6f1180643593fbc8339c222d78",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "uranus/virgo": {
+      "source_hash": "fe7d6226fa2bab84999c6b5ebce01dc4bdca99271e3c19a58498c6e23a097b11",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "uranus/libra": {
+      "source_hash": "6ddc96156bf1c1d3f26c84ac71b1ef888628e682fdacf14adbadafabc163224a",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "uranus/scorpio": {
+      "source_hash": "294cdfba20758d31a8d82d88272bac496c6ebf6153aa2d284358aef21951e04f",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "uranus/sagittarius": {
+      "source_hash": "58f00ec1dc24fb70e362bb328aab292621fbcdc9b644278ce7498da7ec189b2d",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "uranus/capricorn": {
+      "source_hash": "3699f177b470d5fbb8643b76b0f482b15b1daf3387ccc5a6b32b490146979fec",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "uranus/aquarius": {
+      "source_hash": "58f0353f8e27b334705f08f49c58496024af5aa71637ea344b43c3d209b6a5dc",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "uranus/pisces": {
+      "source_hash": "a815025b812cc95f67a9eeee44a98d9d52f5ac7e9a2772e25b5774007fea2145",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "neptune/aries": {
+      "source_hash": "44b41401fb2862325a9601b854b513aee5be6cf8fc41bd7d07d8bdafd27f62ab",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "neptune/taurus": {
+      "source_hash": "64a7e23e057b31abd8a5807d3e287dfe5e38cebcd8522f3065ab245b56594923",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "neptune/gemini": {
+      "source_hash": "6d23a5d6ccd9c36f2b2170bf820b60ff105b26b1eed74003c8fbe8fdaaa83785",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "neptune/cancer": {
+      "source_hash": "86dfc3e379761cea9bb3357e03443b9eedba535fe85bb4d9f594abe5d3831189",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "neptune/leo": {
+      "source_hash": "3501ecd7c3a6f3068eeff77f06974b12eaafdfbe00e9c00e64635698b540b7d9",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "neptune/virgo": {
+      "source_hash": "6613bb63342c4976fb7a3735493ac93c327fa477344277ff1862cd38dc1dbb05",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "neptune/libra": {
+      "source_hash": "66d0b2ef199a87ff10f556e8fb6b1b9d527e91ecbd659ee0319796b16083bc02",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "neptune/scorpio": {
+      "source_hash": "fdc5c726398902b6867ef38b39a3e8da946df0f0ea226dac58d1e62bbd7898ae",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "neptune/sagittarius": {
+      "source_hash": "512cb20e46a58f9caed05f861d3679fc3189ad50ae6c331bd1b9785c6c82d3f9",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "neptune/capricorn": {
+      "source_hash": "1c9f44da388f6eae5c5948a80768dba55c395e2a61a3c5c6d5fb775d0091608a",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "neptune/aquarius": {
+      "source_hash": "e80f67f31631363d01f5643411864b1688dfd01f94b70078efa63d24cc5d6aa8",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "neptune/pisces": {
+      "source_hash": "7da4db9b70bb64507d57a1491824e40a3553b2d7f78108aa9880ec911658c1df",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "pluto/aries": {
+      "source_hash": "918296cb12d8d1c6ce57188025c93df1512f56d744b75509728e2a3f1b6335ba",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "pluto/taurus": {
+      "source_hash": "d38d86a22280d05957ec0fa21bd93f2a7f772f0b1af1b15fa7695ee520fa0056",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "pluto/gemini": {
+      "source_hash": "32917faa76e4fba859d4405d6a44f4dbc3ef7d82421744c5ca6290f7d138e849",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "pluto/cancer": {
+      "source_hash": "32b64ba2918597f3d98d827793714e2b2815405cf9b045e4381aad6aaf928d30",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "pluto/leo": {
+      "source_hash": "d89906555fe56f358c84c1d7b15b972d5b318886a0d47912b815051f54582c0f",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "pluto/virgo": {
+      "source_hash": "aa2d75969d3ebb636de27130be6a175ca969b6aafd59572ce573c6ed82946c4a",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "pluto/libra": {
+      "source_hash": "c76c4f8252365cb346dd6e60e9c0d22140ffb72354b107d20d921fa60bfda5e4",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "pluto/scorpio": {
+      "source_hash": "2705157b6a968bd9bf7baf419a8a00445fcf3922f16d7d872041cb0dac098fd0",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "pluto/sagittarius": {
+      "source_hash": "320aae625e359c08c4ddedc561e698ddf161fdfbd22778efcf612fbf4e2945c9",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "pluto/capricorn": {
+      "source_hash": "4ee5150eeedfdf107b373111d5520bcdd646d5e6fdd427a891bcd5c165fe4ca4",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "pluto/aquarius": {
+      "source_hash": "9ccd94cebe2035cb59e15de4d7ac5c3278bf63be6f86377feb2a7728d7420a57",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "pluto/pisces": {
+      "source_hash": "2c7839e88db2aee3abbbceeeb15ae61ffd5558dc0099a45b429a37f2a2a97375",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "chiron/aries": {
+      "source_hash": "b2f62983b8466fed1e5685c8d9fcac9e138c0b63edc4dafab0d866d6e9b81d72",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "chiron/taurus": {
+      "source_hash": "7f3b6bae0e5ba0e39a5a2e3b918c240e6e40aa1cc5289bfbe58662941e61efa6",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "chiron/gemini": {
+      "source_hash": "1fb5fb0de257798b3700a8aff2f2967ca5560266bbbbc9a51384d2fe18bffc63",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "chiron/cancer": {
+      "source_hash": "2ef5359605071b5304c9d8c9e2b6b8b8c9f539fae9245b3a7f87a13f7470ae78",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "chiron/leo": {
+      "source_hash": "2250a98d827e930deb8371052f67b4180ca91ff6cc236e15ac821cb1889453e0",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "chiron/virgo": {
+      "source_hash": "9196f6dafd96db4a8b2a5e935dc5081fb00760d58ac9b4d8a97db04b50f4a071",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "chiron/libra": {
+      "source_hash": "672ce0ccb4141eebe1ef29565bd3c8bf2333bbcda116e2c97a388b4f43fe6814",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "chiron/scorpio": {
+      "source_hash": "c65c52e8f4d01ce3f87f186cdff122bc5c36983b43fd8593043a0209d4d0bae5",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "chiron/sagittarius": {
+      "source_hash": "03a07c3c66a6e897127eb5f14d319d518f37c7d74589fdb2dd36a9f955936cc0",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "chiron/capricorn": {
+      "source_hash": "a7277e0e4407d0cdb15383602226d771cfc62e9ed6dbb59956ab94b2cd64f5fe",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "chiron/aquarius": {
+      "source_hash": "fb999fc37ce5ed386368b1dbd954247108299346fc288321e57c8cbaa2d33792",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "chiron/pisces": {
+      "source_hash": "19ac266aa554a1aaaafd948bf101b27dda58dfe270f4faf2d24f3414ca1b9b53",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "north-node/aries": {
+      "source_hash": "9a4f5afadfd76d274479eeeb1b74a1dc22f6dd5c5cf2824b53c353c886240ac1",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "north-node/taurus": {
+      "source_hash": "0da6051cec85d663d71e96a54731e1ce20554a8244dce61c3c28d08c754cc768",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "north-node/gemini": {
+      "source_hash": "b88e3d388e08c6db5e2b011ea658a74e7070209f3b1277be97c83729c8234dde",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "north-node/cancer": {
+      "source_hash": "f85d65437bbc4ff6646098370a997d5d005dc46c3770b8adb85b3234ffe66fa7",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "north-node/leo": {
+      "source_hash": "69cfc309c844a5d3f20a241bac1dec1f116fd3fc2115fd97178c2ec0aa6e7fae",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "north-node/virgo": {
+      "source_hash": "37fee9d68e3d687a3e14e76d532244dbc7a109fa44472106e0ba486c1c4cdb3d",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "north-node/libra": {
+      "source_hash": "9817ecdc065abc557d37252bcd4c4bcaa233346dbb5eb142ab4ffb019554d1a8",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "north-node/scorpio": {
+      "source_hash": "11009a776201a7a95f1ad76158925d5a4969b252994f0b886b0bb01430f28fca",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "north-node/sagittarius": {
+      "source_hash": "a39a18cdcedd6d527cab275a080fc9a5563208f261bfff0d8c88c5ac69e080ac",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "north-node/capricorn": {
+      "source_hash": "9d34bfc2c016e85c7b037d2b6fcc406142fa1bb6e1d419daaddd1cb46236cccd",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "north-node/aquarius": {
+      "source_hash": "e525126a45351cdc6bd8eca1588e23c84b3db8867c788c7ab432cda637aab14c",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "north-node/pisces": {
+      "source_hash": "bf86b60459669ddb6db04063e5747f6fde2d0a4307f75ca1359924614c14467e",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "south-node/aries": {
+      "source_hash": "f95d2d0c0a8d1c8557dbb6a93e2fb4bcdca57304dde55d8ef4314d2becf6bb14",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "south-node/taurus": {
+      "source_hash": "cbc7458e946d96cae379bb7466e544bfde484fc2f545d95b17d6a6ba9719f2f2",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "south-node/gemini": {
+      "source_hash": "619ebdbea7f2806c93fbfa56663f39af1ab19edda7192f44c5c11fc300f7e1e7",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "south-node/cancer": {
+      "source_hash": "556e03b5604e7fb2640caf62e45fe6bf1a40407c27f90e85fcce91f910059ecb",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "south-node/leo": {
+      "source_hash": "749f401a32f1ef9c5043a81129ed9c4b0486330a7d8fea3483d2b3028c5f1973",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "south-node/virgo": {
+      "source_hash": "8648550d873c3d1729369d58ad8acb49f04150edabad780d9f567efd3e1133b0",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "south-node/libra": {
+      "source_hash": "275fedee2b94663673f7d5bc658045a88c19ce78d5e2c97a05e7e3887101c3d6",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "south-node/scorpio": {
+      "source_hash": "af469924b9e527f9673742399c9e2539adc424c4cfe21b94b4f03d403a56c348",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "south-node/sagittarius": {
+      "source_hash": "75cc320ced1bc9e0dcf0119065eb2bae3bca8df1858da1ebb691c10f41cb8aa5",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "south-node/capricorn": {
+      "source_hash": "11fec513e5515f50cbf41ba97f9b75bdec17006951fbea4f5b56941637b4cb34",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "south-node/aquarius": {
+      "source_hash": "3c2e6138fd6c2b5ee93ce2655706fe4fa8e4259ad4f1e3834fbb638d37c50bef",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    },
+    "south-node/pisces": {
+      "source_hash": "78b56d21da3be9f2927a6accdcd84694230c378c7a1ffa14e590a1724b0af77c",
+      "approved_by": "owner",
+      "approved_on": "2026-08-15",
+      "reference": "owner ruling: These are good enough, wire them and serve them"
+    }
+  }
 }
