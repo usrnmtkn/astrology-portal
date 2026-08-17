@@ -159,13 +159,20 @@ for (const planet of planets) {
 assert.equal(renderCount, 168);
 
 let skyRenderCount = 0;
+const recoveredFourSlotPlanets = new Set([
+  "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "north-node", "south-node"
+]);
 for (const planet of [
   "sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn",
   "uranus", "neptune", "pluto", "chiron", "north-node", "south-node"
 ]) {
   for (const sign of baseRows.coverage.signs) {
-    const governedContinuousFallback = planet !== "moon";
-    if (governedContinuousFallback && !(planet === "sun" && sign === "leo")) {
+    const hasGovernedSkyPlacement = (
+      planet === "moon"
+      || (planet === "sun" && sign === "leo")
+      || recoveredFourSlotPlanets.has(planet)
+    );
+    if (!hasGovernedSkyPlacement) {
       assert.throws(
         () => sky.renderSkyPlacement({ planet, sign, entryDate: "March 20", exitDate: "April 20" }),
         /SOURCE_GAP: continuous sky placement sign copy/u
@@ -185,6 +192,6 @@ for (const planet of [
     skyRenderCount++;
   }
 }
-assert.equal(skyRenderCount, 13);
+assert.equal(skyRenderCount, 109);
 
-console.log("placement interim checks passed: 7 gated vocab edits, 168 natal frames, 13 in-scope sky renders, and canonical gaps for unapproved planet-in-sign units");
+console.log("placement interim checks passed: 7 gated vocab edits, 168 natal frames, 109 governed sky renders, and canonical gaps for unapproved planet-in-sign units");

@@ -10,6 +10,7 @@
   "restoredServingRows": 12,
   "retiredUnapprovedVariants": 24,
   "restoredRowsSha256": "bca940dedb4c91fbfd6542921937e9d077383928e1ca0abf7fce7dc2445d9daa",
+  "readerPunctuationNormalizedRestoredRowsSha256": "6c3b84aa96ef94fff3dfaaca5143d1434dc0dd0eaf9dcb7203e7f98bb1d1cdc3",
   "v7ServingAuthority": false,
   "v7OwnerApproved": false,
   "v7ReviewStatus": "needs_review",

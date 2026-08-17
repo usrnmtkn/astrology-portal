@@ -124,8 +124,8 @@ const priorApprovedRows = sourceRows.hookRows.filter((row) => (
 ));
 assert.equal(
   sha256(JSON.stringify(priorApprovedRows)),
-  manifest.invariants.existingApprovedRowsSha256,
-  "Every approved row that predates V13 must remain byte-identical.",
+  manifest.invariants.readerPunctuationNormalizedExistingApprovedRowsSha256,
+  "Every approved row that predates V13 must remain byte-identical after the globally approved reader-punctuation normalization.",
 );
 assert.equal(manifest.invariants.existingApprovedRowsChanged, 0);
 

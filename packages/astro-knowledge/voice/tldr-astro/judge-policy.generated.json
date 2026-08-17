@@ -4,7 +4,7 @@
   "generatedBy": "scripts/compile-satori-editorial-decisions.js",
   "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
   "decisionSourceId": "satori-editorial-decisions-v1",
-  "decisionSourceSha256": "c44c3a067d5dba734f3cd2789cfe9248d33e51f168fd271d85d0da1bb84b3e84",
+  "decisionSourceSha256": "c15f6146d4825cdf990a86e937ae208025d0fbf41ccc87feff63c418ab025d80",
   "role": "Classify and explain final acceptability of the untouched draft. Never rewrite, approve, or promote it.",
   "compactRubric": [
     "Read-aloud rule: does every central sentence sound natural and literal when spoken?",
@@ -288,7 +288,8 @@
           "all-reader-copy"
         ],
         "literal_exceptions": [
-          "physical mail is part of the source or scene"
+          "physical mail is part of the source or scene",
+          "the idiom 'the letter of the law'"
         ]
       },
       "rule": "Use message, reply, response, or what they were told instead of letter or formal technical delivery terms unless physical mail matters.",
@@ -296,7 +297,8 @@
       "effect": "prefer",
       "examplesAllowed": [
         "Three families compare the messages they received.",
-        "A handwritten letter arrives in the mail."
+        "A handwritten letter arrives in the mail.",
+        "They follow the letter of the law."
       ],
       "examplesRejected": [
         "Three families compare letters.",

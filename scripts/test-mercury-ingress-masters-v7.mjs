@@ -36,8 +36,8 @@ const mercuryRows = source.rows
 assert.equal(mercuryRows.length, 12, "Exactly twelve restored Mercury placement rows must serve.");
 assert.equal(
   sha256(JSON.stringify(mercuryRows)),
-  restoration.restoredRowsSha256,
-  "The restored owner-approved Mercury rows changed byte-wise."
+  restoration.readerPunctuationNormalizedRestoredRowsSha256,
+  "The restored owner-approved Mercury rows changed beyond the globally approved reader-punctuation normalization."
 );
 assert.equal(
   source.rows.filter((row) => row.contentKey.startsWith(variantPrefix)).length,

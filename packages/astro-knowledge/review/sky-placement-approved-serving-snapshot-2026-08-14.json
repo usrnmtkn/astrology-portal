@@ -4,6 +4,7 @@
   "recordType": "derived_validation_snapshot",
   "articleCount": 58,
   "articlesSha256": "6d501ec1d2f6ccd914ab69c1ba61233c1d28d37e14c9befc937c15b6fd2f9069",
+  "readerPunctuationNormalizedArticlesSha256": "bb7fb5456407ac17a37df24f11612d74bf0a5551f083c6178f2913b3bb82fb95",
   "approvalRecords": [
     "packages/astro-knowledge/review/sun-leo-fallback-v3/approval-record.json",
     "packages/astro-knowledge/review/saturn-capricorn-article-v3/OWNER-APPROVAL-2026-08-13.md",
