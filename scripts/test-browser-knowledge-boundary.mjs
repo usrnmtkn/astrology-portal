@@ -36,38 +36,75 @@ for (const relativePath of serverOnlyPaths) {
   );
 }
 
-const generatedPaths = listJsonFiles(generatedRoot).map((absolutePath) =>
-  path.relative(knowledgeRoot, absolutePath)
-);
-const expectedVoicePaths = generatedPaths.filter((relativePath) =>
-  !serverOnlyPaths.has(relativePath)
-  && !relativePath.startsWith("generated/tldr-astro/rewrite-corpora/")
+const generatedVoiceEntries = listJsonFiles(generatedRoot)
+  .map((absolutePath) => ({
+    ...readJson(absolutePath),
+    path: path.relative(knowledgeRoot, absolutePath)
+  }))
+  .filter((entry) => (
+    !serverOnlyPaths.has(entry.path)
+    && !entry.path.startsWith("generated/tldr-astro/rewrite-corpora/")
+  ));
+const expectedFullVoicePaths = generatedVoiceEntries.map((entry) => entry.path).sort();
+const expectedRuntimeVoicePaths = generatedVoiceEntries
+  .filter((entry) => (
+    typeof entry.sourceId === "string"
+    && entry.sourceId.trim()
+    && typeof entry.voiceId === "string"
+    && entry.voiceId.trim()
+  ))
+  .map((entry) => entry.path)
+  .sort();
+const authoringOnlyVoicePaths = expectedFullVoicePaths.filter(
+  (relativePath) => !expectedRuntimeVoicePaths.includes(relativePath)
 );
 
-const bundlesWithVoiceContent = [
+const fullBundlesWithVoiceContent = [
   "knowledge.json",
   "sky.json",
   "natal.json",
   "relationships.json",
   "synastry.json",
   "composite.json",
-  "web.json",
+  "web.json"
+];
+
+const runtimeBundlesWithVoiceContent = [
   "sky-web.json",
   "natal-web.json",
   "relationships-web.json",
   "shared-web.json"
 ];
 
-for (const bundleName of bundlesWithVoiceContent) {
+for (const bundleName of fullBundlesWithVoiceContent) {
   const bundlePath = path.join(distRoot, bundleName);
   assert.ok(fs.existsSync(bundlePath), `${bundleName} must be built before checking the browser boundary.`);
   const bundle = readJson(bundlePath);
   const actualPaths = (bundle.voiceContent ?? []).map((entry) => entry.path).sort();
   assert.deepEqual(
     actualPaths,
-    expectedVoicePaths,
-    `${bundleName} must contain only browser-eligible generated voice content.`
+    expectedFullVoicePaths,
+    `${bundleName} must preserve all non-rewrite, non-index generated voice content.`
   );
+}
+
+for (const bundleName of runtimeBundlesWithVoiceContent) {
+  const bundlePath = path.join(distRoot, bundleName);
+  assert.ok(fs.existsSync(bundlePath), `${bundleName} must be built before checking the browser boundary.`);
+  const bundle = readJson(bundlePath);
+  const actualPaths = (bundle.voiceContent ?? []).map((entry) => entry.path).sort();
+  assert.deepEqual(
+    actualPaths,
+    expectedRuntimeVoicePaths,
+    `${bundleName} must contain only runtime-addressable generated voice content.`
+  );
+  for (const authoringOnlyPath of authoringOnlyVoicePaths) {
+    assert.equal(
+      actualPaths.includes(authoringOnlyPath),
+      false,
+      `${bundleName} must not expose authoring-only ${authoringOnlyPath}.`
+    );
+  }
 }
 
 for (const bundlePath of listJsonFiles(distRoot)) {
@@ -82,5 +119,5 @@ for (const bundlePath of listJsonFiles(distRoot)) {
 }
 
 console.log(
-  `Browser knowledge boundary passed: ${serverOnlyPaths.size} governed indexes remain server-side and ${expectedVoicePaths.length} eligible generated artifacts remain in voice content.`
+  `Browser knowledge boundary passed: ${serverOnlyPaths.size} governed indexes remain server-side, ${expectedFullVoicePaths.length} generated artifacts remain in full packages, and ${expectedRuntimeVoicePaths.length} runtime-addressable artifact remains in web packages.`
 );
