@@ -39,7 +39,7 @@
     "elementUnits": 16,
     "total": 174
   },
-  "evidenceLayerSha256": "0ceb85f5897fb42238dfdd69e7b02271f87befe202f009da8659add9b9337c23",
+  "evidenceLayerSha256": "4072572c3ba27afda4bdd27bddc70d892f53bd861bec9f4e52971ff279de8cd2",
   "ownerVoiceCoverage": {
     "sourceFamilies": [
       "fallback-hook/planet-lived/*",
@@ -2542,7 +2542,7 @@
             "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/sagittarius"
           ],
           "source_hashes": [
-            "ed83780b31908b7f8f73c92696bcf917542995f87449837b8a9b8ac82927b94b"
+            "d75139cbc5eb4eaebc18c01626b2cb4a0c9a3b3cb6df9dfa2cbde6487b4d75d7"
           ]
         },
         {
@@ -2602,7 +2602,7 @@
             "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/venus/aquarius"
           ],
           "source_hashes": [
-            "cb1c7e3fd7b93583d6051822f082ba1babfe845d6aac761de0ab20eed276560a"
+            "dd11f1b7f6f88f2affc279e870df078411bf2a5636f2544e74a7fa7f72aa14fd"
           ]
         },
         {
@@ -5496,7 +5496,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!770"
       ],
       "source_hashes": [
-        "b6232d9ff6b4bbf7745f7b2dcb6cb699eb804f90bbd24ae1a73f9a1d87ae0ebb",
+        "72d5c14d8211a2ca2070f49f8b92516a9c1000fb66fa75c95a6125144955a028",
         "c60d047e15b9838a147ce7c505a86de4c94490b3365ae42e2f0bc5c12e6e2724"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -5533,7 +5533,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!782"
       ],
       "source_hashes": [
-        "553a41030a43bdfdc8224a6f9e5bf830cf5b469939ba56fb10373861eb525748",
+        "994355ada37f9004dc6d76eeaf7977bf97d84606f3031d2ffe3ecb48a4f51e7b",
         "b3e7ea4414f2a38f9a858223ebc978f2111167fd9f52b3cab9aa14397104fb0c"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -5571,7 +5571,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!792"
       ],
       "source_hashes": [
-        "068670bda0c06889be61a6bb00ebeab5b0d5324f7b6c306bc410f990cc1e99af",
+        "e5198d60bf28e1fba2dc33ac6bd11e860ee8836107d442dca360607b9a91bd26",
         "4f6ff1b1398f8366db74be688c6fa5370a54505eff49824ab86f451ecbd0ede2"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -5698,7 +5698,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!822"
       ],
       "source_hashes": [
-        "a0792cdd2170c55212c6b071c49f8c19e9d02cd07675da471a6962567c4c5896",
+        "d3c01ba605171012f790040a6cc663cc495ab1b5d16d95a76dfdd562e97d18cb",
         "6c441c45502b3eeebed5a6cda170d74281ce1c13ab7a8f4b5eb22d219a9aa5eb"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -5736,7 +5736,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!830"
       ],
       "source_hashes": [
-        "9ddd5ab097f70084442c50cdb5f5099e990fccd53b45ce8acde980b95f249f90",
+        "316e12c40ae2ab2081998a56be8f5ab502d84d3e302b01e5422cd2d5130210c0",
         "0e4c8c7929b3d06445e7042c5315a83e3a96d787f9d38546a1f4e1226e351ecd"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -5776,7 +5776,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!838"
       ],
       "source_hashes": [
-        "b7f49ad5fec325bbe9b9a99a3883baaea32470f203979d8f69f56c8ceebb3e31",
+        "81ae06f78c3562d9b6c029824c0301136aee280d389b034b88947997893dcdd9",
         "e58c141239bac2092c59cafde00a9758984ca8b477f2fb194c49e8e77ff3ffb3"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -5826,7 +5826,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!845"
       ],
       "source_hashes": [
-        "ed83780b31908b7f8f73c92696bcf917542995f87449837b8a9b8ac82927b94b",
+        "d75139cbc5eb4eaebc18c01626b2cb4a0c9a3b3cb6df9dfa2cbde6487b4d75d7",
         "9ab87f2efd1446de205628bb1124cc57309ec35d3937972afc1cc95655c1f3bc"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -5844,7 +5844,7 @@
             "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/sagittarius"
           ],
           "source_hashes": [
-            "ed83780b31908b7f8f73c92696bcf917542995f87449837b8a9b8ac82927b94b"
+            "d75139cbc5eb4eaebc18c01626b2cb4a0c9a3b3cb6df9dfa2cbde6487b4d75d7"
           ]
         }
       ],
@@ -5874,7 +5874,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!852"
       ],
       "source_hashes": [
-        "2b7dcf125f2aed466ec0c2688edfc7a27b149e8ca31e3a3a71bd7299b08b74c9",
+        "7f037fef1d72d96bebb1fc7ca60e348b308dbb91ea3586e710102bfd80d463f8",
         "19070167ec0dbb73cbdf52d47a0903992d464bfb93f4c8cc12f1c243aeb1bd8a"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -5913,7 +5913,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!863"
       ],
       "source_hashes": [
-        "5edc0968f3ec70c427bb81a71a0783cae06e06f94e89eb88fd1b0af6153e29fe",
+        "323093a171da7ba042f3ed46fa05813fd0af894a7bdd4eccd047fa22d7aad4b0",
         "52191403a1fa0ec5a4201498cddfffc7e59eae479ed265e25563c268a81fcc51"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -5951,7 +5951,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!872"
       ],
       "source_hashes": [
-        "d0456b2d1906bfb3aca99ceb69f599a9382e2496d4c2802ca4be0c1a2201c16e",
+        "a5af76ed9bc23a46e927282ae13ba60b05a9ce6a670add8a663acf9dbee6ab09",
         "5b692620db4bebd4b3973d1e3b111603af3f994deccc48d8e3287c932d546ab5"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -6567,7 +6567,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!84"
       ],
       "source_hashes": [
-        "289a7cc6aa3899bf42c5df7bd43ea005e04111d5a6d455b9f0131c9af8fcd063",
+        "e80eb19f823a69cb81735a7a9559024cdaa7746a523d20a0a178c65a60d3db34",
         "0ab8c1ff29ab1bc9658e67fd43c08ca864ff6dd2ef0bcf1dc070557091127af2",
         "50c5676f41167ea227c5ba13c29caebde9f3cfcf23ca7a482d9c1a4ad78858b3"
       ],
@@ -6670,7 +6670,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!86"
       ],
       "source_hashes": [
-        "489bc7bd576cec0d98ac8f7e8d2b41a5d8ddb8489e2786be6eb5bf99ec4a9fbd",
+        "eb16de0a1a53fb59a8bbfd75e6b00c6ac59084a39c3bc21bd5adf5b17d518e78",
         "2b78f98753e33c107bf6cac264cd8ecc994e12c661ddb8bafdbbbf907957edcc",
         "d188f1325ee54c49afbf5b184d3e1963252d64d22e1b021ff57754371f0c537c"
       ],
@@ -6756,7 +6756,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!88"
       ],
       "source_hashes": [
-        "937e23a8c9ba648e1a9290e8ebaa235edd40917c6bc9b82aa6a792eeaf571cb6",
+        "e187255ab7f1e2f5cb95a840c1cda714cdd7bcdbeef19c80e66ebbb644cddb50",
         "67004c39cec49a0595b6663d0b4578c9d3091665e98936da5e3c4350e198ebdb",
         "e1eabcbd2a676fc92b22f0727b2be8da6522f5bcb1988664bb2e21ce3685d668"
       ],
@@ -6799,7 +6799,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!356"
       ],
       "source_hashes": [
-        "0cd51c8d151814d45abe7468de574441b8a26b71a78e893a4ee268cc7c838c14",
+        "b73cef931ded7416f3bc1c48c68b271beda59c0263c0ef9625a68a73bec11db7",
         "3a2e89fb2229ce8c2d5a335b77842ed183cab3e9aa8700788cf2946496746532"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_same_planet_and_sign",
@@ -6840,7 +6840,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!378"
       ],
       "source_hashes": [
-        "d4b219c684feb9d19dc5b96eade0cc1c24a965af991d687cddc1650c8ab32bf7",
+        "c29b2d83961d743f81447ea0bf41989ef179bec607baba7f48318ce693f2f723",
         "04269dbd62799d5409048836a61a9f73064941204e048aa5f7e890267b7e74e2"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_same_planet_and_sign",
@@ -6882,7 +6882,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!392"
       ],
       "source_hashes": [
-        "e94711013efedf38abfdf67cf233133fb1e14be23fdb5dd87e5776e27ae43119",
+        "df9c0c2814a7e924ec344937e5e32a8f14ed4b2166f8f41e5d929a84fe75c87d",
         "379a1b9b2940ae97fb0fc26750e590d9c11e000a5717690ba726b32757af5416"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_same_planet_and_sign",
@@ -7078,7 +7078,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!95"
       ],
       "source_hashes": [
-        "916bb88d5657c0e00252a6bebbfa64a7f3bb14847a9e68dbb409ac19b463b13f",
+        "ec66175968dd9709ee5cc8fdd47936a6c28634f3037fbb61b4449ebdec12d372",
         "28addf7e51a760c9506814d3da705c669326f3aae025a529f5156c152c52a3ee",
         "9350e839fe167dc84002c28847495d2c0f29ed14f588f8bc666560cecaed54ed"
       ],
@@ -7131,7 +7131,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!963"
       ],
       "source_hashes": [
-        "2ce4fbb0f2e46fd671ab4b5fb41213943f420ef83c5669995a7e6fb30bddbec1",
+        "db38a311aa838353fc52a6aeb5bdf54063eb0e2f1432c13bba331291de184862",
         "fbcdef2e2fc920ac0125b9daec59c68963ec32c764a9ea77c3a3ffd1a8bdc423"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_same_planet_and_sign",
@@ -7294,7 +7294,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!1006"
       ],
       "source_hashes": [
-        "598d6a053da1ee284db883d882b68103cd67a4b32d278b192bec1e16d430b3ea",
+        "198544e12f0b5b4f5415e9733d583f343e211121de8c0fc3ee3c1fd7aa13a015",
         "79e029e05fef406e802fda91cf0ebbb6b0477538034a095cc64d0f5639d33026"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_same_planet_and_sign",
@@ -7336,7 +7336,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!64"
       ],
       "source_hashes": [
-        "a489df6bc53303970522c4b87ed5a5f8ee7040f67460c4a9d10020e07b166cc5",
+        "13fbf54f774e71f88c3d6154be010c08f4844ca3a4e5bc2fbddddb3f67e1e0ab",
         "24bbe05a3593f9aebb7c7466bf9cec88d34094be8687b24c4119f63958ffb72f",
         "174fc05f9e43115ec7942c5a3388998483fcec1e0682e9e5a55f9f66a3389ba4"
       ],
@@ -7512,7 +7512,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!68"
       ],
       "source_hashes": [
-        "cef7130a73e47e34fafaa3ad09e2b45cf6002bf2e1894da977693bab197255c6",
+        "67ca60040e138c12c71a1f10166908b989c1c3206c818e4711127dad31f4cb33",
         "4a6d1bb3a44c756ddd5a8ea6526f23b9c433e8516dcd9710f7e1a78daa5e76d1",
         "8536df484d62507cd74941fb64d98a411d15c0878e56e1d3db660a9656426bae"
       ],
@@ -7577,7 +7577,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!69"
       ],
       "source_hashes": [
-        "01dc72b3919b47bf93452f88dfa77ac86532745a5a85aac3bc1e44b888122e65",
+        "9c82ffc87a83714229f1190d8f7d03e325ae3f129c306e92c4dda0ed0d75fc29",
         "4f89ed4ae84bb1152ca8958fa119e9d6d44cf597aea024909589240bd5480ffd",
         "8b125bf88f1aee6436760a54e01cd7005a62722d39fa6bb71a50c7715c57f107"
       ],
@@ -7632,7 +7632,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!1083"
       ],
       "source_hashes": [
-        "cb1c7e3fd7b93583d6051822f082ba1babfe845d6aac761de0ab20eed276560a",
+        "dd11f1b7f6f88f2affc279e870df078411bf2a5636f2544e74a7fa7f72aa14fd",
         "466bd6a866c2bc637a5b7239c315a8e57b480fd210552c20ea26dc78899941c3"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_same_planet_and_sign",
@@ -7652,7 +7652,7 @@
             "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/venus/aquarius"
           ],
           "source_hashes": [
-            "cb1c7e3fd7b93583d6051822f082ba1babfe845d6aac761de0ab20eed276560a"
+            "dd11f1b7f6f88f2affc279e870df078411bf2a5636f2544e74a7fa7f72aa14fd"
           ]
         }
       ],
@@ -7684,7 +7684,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!1093"
       ],
       "source_hashes": [
-        "968c0e379bb064511c55a75b600c611031e6102809e504b263ba67e7cd10280d",
+        "3f07dd5b18f4c59c02fe116fbbafb089f5c01aef206e0e34a805aeb3b0de38a4",
         "015929baf8822626da459cf3d1f3ae4ce64c685829f5d0149220131eb0c834ec"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_same_planet_and_sign",
@@ -7736,7 +7736,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!36"
       ],
       "source_hashes": [
-        "0ea369b65869f5b4f1ecb4750bac3e3ead379873da9720ae9c9fbd0b54418b5c",
+        "49c049221e0d3b7a8e1fd36ba83888f424c24438b6cf66908d7041b228c24d83",
         "4997e05239b7bd200d99db9cc421ace94178b091988877da512f1e4f79b92e3d",
         "3ca4a4e07b787aa13e54168fda88000c6e63e18d04732c1226ba27f5f88af089"
       ],
@@ -7782,7 +7782,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!37"
       ],
       "source_hashes": [
-        "ca33eb1746e7401defcc681220c5d0ef60755a1aed7365133ed1e7b40d7af68f",
+        "bf97a72f7ed674efb35e0b0beafd2124a2b5c99f60ad0ba53d103988bbd92c8a",
         "ebbcbf7973f49ab721216ad240dad6d6d7f7d91952eacbdefd7209dea61a1a53",
         "eeae0d838c1ad19bfbc96d004795b6662cd50802af29f83072e4e90d10f7243b"
       ],
@@ -7836,7 +7836,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!38"
       ],
       "source_hashes": [
-        "7cd7318205ce886660fdb11df01ffc66d92e3c2700c9a8548e485709afbbb077",
+        "976b1d7c665a0eadd4694962720fb18374892c0bcb7efa2dadf50912dc212e01",
         "9eb24ef8b9e20ce56ae146bb8f056b2ac60def6c21d417fe3907c15aab20f322",
         "f0e89aa57c294d30065c6839b325ef4e37c1085868641c662503ce286f02a04b"
       ],
@@ -7881,7 +7881,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!39"
       ],
       "source_hashes": [
-        "1aecaf23c0e38b83a9c55a6dd853900e92a669adfb1bac71ec5ba832ed0039c0",
+        "7a5f11d98f8a05bd9aad89e1684ce28e39e2c8243c50e0cb3b2bd8794b66d99b",
         "af3858af454d9e5b5dcc6c54bf51f2791304f3c6f8a929023d7662fb9c16190e",
         "f9b8c94f27cf0bfdc575ea9a697b69285b3a2f6f7d842b88498d310bc854b25b"
       ],
@@ -7992,7 +7992,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!41"
       ],
       "source_hashes": [
-        "f2fa7ac04c56ee24926cec000efbd4ebb374a8a42ebfa7b1a374ae289771293c",
+        "455514125624dd41bda4237ebeb94b4699e7993ea96cad89482062d6c951f109",
         "b40ceca33a7a95ab4d4ac8065754fb60c790f61d0e9dde2bdcc4a4692aff138e",
         "450012d516db7ab086fe6777e27a2745c446b4eb86ca6fe8e090fbfa6bd1ed67"
       ],
@@ -8038,7 +8038,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!42"
       ],
       "source_hashes": [
-        "9ff19d3cb104e5c919c7b64b523226c47d448ca7d97604feb371315f5ad0f06a",
+        "414c655399a8aacccb8b9a0554093c2d941db203722b0c1d0bfcdba7e9b3812a",
         "c2b34fb98325e393268f9486ab423fccf5eb13678495cd9b3730eaa87e219233",
         "492b1f314d8a6df9b534e659ea4f3313edc71b437c6d1d7dd7d054ddb5576768"
       ],
@@ -8093,7 +8093,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!194"
       ],
       "source_hashes": [
-        "e8bd257b9897adc676da748e3179db1bfced535618eece35baa96171abab7a2c",
+        "9c400e385be8c586752b358f0164a98be7374f2839decacef9ff28212ffb5338",
         "cee20b568b72a43b2df40e3a0dfe84b6e42c81c96912d5010a5a5947c0029fab"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -8147,7 +8147,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!203"
       ],
       "source_hashes": [
-        "c8312d3d1902a2d5ef1c47ca009062e20609672393a35b20b2d5ab72cfe7c3ba",
+        "780cf7541ee4f622cd0c7095a5f1dbb4ff235dac7b830d489585fba009fe2230",
         "c51a9dab166de602ddf124b7a1f08aadc4f0639534c467e83e2d185ff101f9a0"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -8201,7 +8201,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!45"
       ],
       "source_hashes": [
-        "11ba43a16e43e3c7922b93f753e14d9b0ad95d9e7f6b78e1ecddb3f0f16ae25e",
+        "2696d17cb7fa13c59e7d163e01b63f66d67f415cf82c2058c605c23b48349b38",
         "8918ed2d4cbebd12f931e80ef6caada70a3e904436de36add9bd1a1d7db27536",
         "0f67b52d7020e236bac6cd2387e66d3c476dc0d4eeb3c3b963f68dadabe13e17"
       ],
@@ -8246,7 +8246,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!223"
       ],
       "source_hashes": [
-        "5d559edeb0e33e0c586d8f504071982d1210824e456dc4b19075951b5bfaa177",
+        "5a9c3c1284994788a81097b62d7d7209c6bf99da2a96a3ee3ee253f6cc7a88e4",
         "5f8ce9b7212e3b7cc14497b412a8162cbea650eba30c66985269448c79b0e229"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -8301,7 +8301,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!47"
       ],
       "source_hashes": [
-        "e19f246c7f7b55e783872832ce679ee8b10407c35c73286bb3d284c139ae3fa3",
+        "0589af9cee928ad361657b2bf33be24803c821fe1338b39f179fc4a95a88eb80",
         "bf69e5dd76e542280955500ef6a7dc370745ec7d867e90b811213ae02d08fb1c",
         "ce39b9484f05ee4b4de00ed7f559d9ec63c9799e6d15afed33154562b15b086e"
       ],
@@ -8357,7 +8357,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!168"
       ],
       "source_hashes": [
-        "e1633e4fdc4773ddac329b619dd0e30f9a377d622a910796806136d678691032",
+        "78c0943e9e028d2dbf4ef1d1bd09197bcccc8c3a83fb1fc901a5f8a0c213bfee",
         "31d7a4e11a2d261067bfc2441a9c6cc18d34661a91b1b54a3fe42cefe8314106",
         "e4f01e9514f9a57aed31a2fa97438e6aa6577e788da968121d2255064f671d06"
       ],
@@ -8410,7 +8410,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!40"
       ],
       "source_hashes": [
-        "84eafbdcc3030e3f9f65f32a004510030346010f35dee5929a6a65323a310546",
+        "07fcd85de9cdd483e9ad88aefe291f2b3657bb61b9ab261dd8cbb3d31be6ad3f",
         "2086de4eafed38fe396fdba2c4528e11061c495a7f711d96702ddad0d688dd65"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -8454,7 +8454,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!170"
       ],
       "source_hashes": [
-        "17ad430f69d29d0ea3076f92d4e6b292f46c171353aea077dd58061bde73ee08",
+        "6bf29641dd5ae58188a3729026780657f992245b061f526c5e4fc0f7e1ea694f",
         "ae1b8f04a0c6ab5eec68950935fa7da7a57c03000b03684c3c70dced1e33e330",
         "556f6465359353f692e1956a21329f2ea02a676cd1730f5ac0b11f9c46545c13"
       ],
@@ -8497,7 +8497,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!58"
       ],
       "source_hashes": [
-        "4c0d47dc264d9269eaafcbf499d65d260f3040fcdf40be8981fa49ba1403a350",
+        "f88609671b88e1d307fa2bec38502613b87adea2e895cb0112d5440b863437f6",
         "2e51b1ae2e9b898dac43d1971924f829c26bf17756805ca1b9b4c912d1cee2ee"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -8540,7 +8540,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!68"
       ],
       "source_hashes": [
-        "2cc652baf7a93f906bf412496eeac4322fb1186bb7170378829cd7672794619f",
+        "c7a721bd8714bae49ff994e7274bbc9394db763b09e7333eb3d2dd26ba2b5d53",
         "131842b5f88b8185e1a39ed479cf8e2dcec813aa384b28a98d2e52ad168c575f"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -8582,7 +8582,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!74"
       ],
       "source_hashes": [
-        "c8c19ee447751865afa8421698f4a83d834acb363594c5da7e658efdfaf10865",
+        "5fc448d807ea1a063e3738d5e5f4ba7baa9f155d919088f5edbf3b34897726be",
         "95686ec3c9fbb4e36392c04053039a68653116b41bbf5cd537cf431e76eb05cb"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -8625,7 +8625,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!174"
       ],
       "source_hashes": [
-        "02af03797b130c48a565d0a4c048b0aedadda86b6b8838d21822cc08c9f3ff2e",
+        "7fece516324cab686ccc5e85f7c36b40d399367023ec56575b4fe6c1a8e58534",
         "8d01bdbc30560a74f47b8ef60785711f011041cd9c393eb3b31e1892405d09fc",
         "7fef144a23fe2414ead57274a100c2ee44c18d2cdd76ed6d6a7e1c41d21ffa46"
       ],
@@ -8670,7 +8670,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!89"
       ],
       "source_hashes": [
-        "5b6b1b28279631383476d50da072bd1b7e9aa6a136d2eb34f2599ba5c1dceb07",
+        "a84f0a4fd85391bdc6bc5c85d914c674236d54c72a8baf129173b37d5d6169b7",
         "4f25fcfbf9248a585d7b669cb800935266a6eaabc0120128ad34bf78efb3c72a"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -8722,7 +8722,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!95"
       ],
       "source_hashes": [
-        "823ca6d549e9b0c707184218a4884ee6f7872a0b72ab2584d3d1193ac889661b",
+        "33e9ed73a3f6c747e692762d8b9f573bc1ece8e92b5e2d4fc3b163e099143833",
         "b96debd2f6c90354e63da57beb5831bc893ef2fe8a9ef1338bf197040ce2ebed"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -8765,7 +8765,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!177"
       ],
       "source_hashes": [
-        "84878732c2158325a98f8914e7199c01d8b6f3cfa719554ec640f510f4bcf399",
+        "31f8b30244274ea1b92029a3db4e71f56bc751e78040bee6719e29d9b6c87269",
         "5a6ed3ff832ffe11fcb6f6a676adbc4028dadce087bd59df02d469817c59c502",
         "a88f6ea5b6eb38dac954d8aa304c57970825b8f8bc184837b4a3f51d5c92a704"
       ],
@@ -8808,7 +8808,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!109"
       ],
       "source_hashes": [
-        "d05e9ad71cb62ac7005fc1454284765e7188a0b31ac4adb9f3bd9f7de625b801",
+        "d325825221cc592920f42f8f729e553471df73905681e7a7adf09f73ca9ed878",
         "103f3d87783939b0baa1a240d707b73a4f502d6c7e5b7a4a1d05d35e6032557a"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -8851,7 +8851,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!116"
       ],
       "source_hashes": [
-        "c7c5bf507d8e41f98493a32f9fa409d766c85a62545fc4bd87395016e7c6b70e",
+        "5dc7bee61e18f9800f58504fb66dd5232845f59008f6c842c422670ac6809333",
         "a3fdbac6ad21d9ed7034635f794a215a0d9499937924860f50ce7ae266c66008"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -8895,7 +8895,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!654"
       ],
       "source_hashes": [
-        "0cbbca9571d4479ea00d4def0930f33607fe774ce6f5154b5d1246d6ce6ce2f0",
+        "fcc05307f9ee30696783ffacf362eafeeb5e5b3d4a5315305675b7df2dd5c56d",
         "7e5fb724918b17ca3725051fbd9c0295cf672fe75c1d97e8c30c8b46df8dfc55"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -8950,7 +8950,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!193"
       ],
       "source_hashes": [
-        "84b74e1c38d2eaf56a5aab53e0980e9d84fed0ab203745ee646fff7aaf0c23e3",
+        "f5026e41cb1a3fe36df7e455ba21544eb61bcc667a293dd2bad952d43610d668",
         "cf9d28d34bc61fbf23cd7d388a18d982df243cbf888ff48ebbaef7dc1c087364",
         "3b0435cddd077f55c6ff8fd51efecf026f841287d6594bb384362db6d84aad16"
       ],
@@ -9006,7 +9006,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!194"
       ],
       "source_hashes": [
-        "679137a6dd1dbfe617b5395d3fc3c0e5100db26b9261dcbc2964d6adf16aaeeb",
+        "c526f5733c623e659f57e10e3f6377700e45f6d85da5655355b1302fe32f805f",
         "d867e451c4e3aad4e2c9cec4b15f972f1f2c0a2d64b91d8717944500f914f374",
         "450f7177700af840cac6531f6874331d6a879bf2e1cd70861c2c823704ea1534"
       ],
@@ -9060,7 +9060,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!669"
       ],
       "source_hashes": [
-        "66f52a0e9eea5df4a5cc4e5aefdb8c3f78f04ddfa0fe6d56fe71e829c9a77f69",
+        "3f5b7f4981d24e2fdfc7ea13402853af0e780ebc297ce11fada32293d74957a9",
         "c62b507ca44ae23b178b6dee971ff6e0a8c34cd3ff480b0b62187d7d9393212b"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -9104,7 +9104,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!671"
       ],
       "source_hashes": [
-        "b978b4111efb041f0a6272971d443557d79b0817a436d195779c345dd015d651",
+        "56548b8d22e8a5bc7e1aa91271618231934157613c8293a0c4e5be6b74ca541f",
         "73c4292b0b670c63064e19f4b8e0c8b029cf29910c4438116ef878683f905dae"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -9158,7 +9158,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!673"
       ],
       "source_hashes": [
-        "99dcb7740497f0a18d769d9ba5fc793459fdd526a6ba8f04126939f0d1b4f380",
+        "429add497d5f95f394b79117f333ec1f259ed4b72c7f72691e795ba1f3a8c691",
         "24fd7d31306750ccba043b18fe9c8f60523e5246ee4fb31b744b1413ef81d26c"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -9212,7 +9212,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!676"
       ],
       "source_hashes": [
-        "84541e284a54a3f68ebaef81d279971b2f262df4a53c110a5aee39952b3075d3",
+        "2fb6fd9f37cffb4ef4613935d753e6714e22124d11a329fc20ce88149a8ec8fc",
         "368bb13fb490aa824d76054f2495eefc059a67927e26ce94eef551955ae46f33"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -9265,7 +9265,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!684"
       ],
       "source_hashes": [
-        "8a72f403cde754a9d771d7fa845d886305eb5e87d319caba0778ec1390000f6b",
+        "031413ca105dbf56e96f96d45600afc4cfdd324c93085386b55578012ac05ae3",
         "a38fccfa21bc91e88f8c85eecc690812cb98c1f36dd274ddc3e3f0995265b2a3"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -9309,7 +9309,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!200"
       ],
       "source_hashes": [
-        "f680e56d59eb99a38f7876a79652b7c786dd6ce7a7d8d8ebc17cc3cdb094b1e5",
+        "8ed3c837cb244c624322d298650dc288bbbf14f6b2873049b0371556d5768107",
         "bf9303bb03e278d3e0fb235c8cd4a9dedfb1e7a4880c5d9f6f95355e48818e25",
         "45e592772b02bb544d31edd4197e85b74afef70793cf64d4f8a0482181b162a3"
       ],
@@ -9364,7 +9364,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!705"
       ],
       "source_hashes": [
-        "2234e4f00d332cc3ea366f23b0e8c1305155161d3e471ffcdfc090c6523659ae",
+        "a76e69808daac28276a1b1f7e7da78de93f5cba76de11ccb23ea883aefceb9e4",
         "51e474631540a435c287607a99ec26dbfab40e3c6d6ef5365a577a9a5cab4a92"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -9417,7 +9417,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!719"
       ],
       "source_hashes": [
-        "fb7f855d3acc0efeeef9812657f11a9cd037276ee115ad8e28a8eb61baf43f6d",
+        "8ed232d60b74485b0eec48b1f5d0b40c9eb956b296833e260cf88740db59959d",
         "ee211e5057deb529b7154fcf93a1bffadcae23ebd35ddb729eb76695eee4f753"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -9470,7 +9470,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!733"
       ],
       "source_hashes": [
-        "13dba6d688a586c891b4fec795602ac3708328f7f12a28f4cc2c380c842afd03",
+        "fbf5c17a4c1118a3f0576fe0ca76b4a84355c7ed3c34e5588416222de187c5fb",
         "6293712b2312e3ff52aa703d0e222ab22b75319fb79fbe592082adfb65b80ec9"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -9513,7 +9513,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!216"
       ],
       "source_hashes": [
-        "9c16fafa7441d9fb654d1753d4d224c02ca88182b4f904e496696b34ada5bee0",
+        "08270588c1c7db6f4fb66a0b2b30e989560fe665b16404d0a8a82d450fdfad1c",
         "6680d4966ab688befdb6aad74e208624a28bf1c8a6b6d5dd0d9b2b47a9287572",
         "4af33623a95a0ef2e145d311bb273368101fb28c403726088677af9274a0d2dc"
       ],
@@ -9558,7 +9558,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!911"
       ],
       "source_hashes": [
-        "322266933455907d24063cd287620b9f45f006c2311c09aa012db0818b3ed1cc",
+        "7045c70bca7deef91348d9a5217c6460379ba04f9a31164991d925ef03fd9e00",
         "447e068caf4b7ff17812902ea09095706df1053ccd80bd3161a07947288149eb"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -9611,7 +9611,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!218"
       ],
       "source_hashes": [
-        "30fe088adad6e601a42100c23c007a337f5a4b6fdd62aba7ae0b1cb57bfbc591",
+        "4ae1db63e0e76d0b74c60329921b72d49be0f0e0f4a9ccbc0b3c323eb906bc62",
         "9aef8201daf3e48d54a2b32bb5e3c279c92274f8e043db16a4c6ba7538484a45",
         "d7bc674bbc05b97ef2e6f8c0dec2eac0f69b35b585de1e8918c11eda772ef36b"
       ],
@@ -9655,7 +9655,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!939"
       ],
       "source_hashes": [
-        "48d1a473c02c7e9deab09aa371b520554dc7dd8bcff5c85f43627ac303f82615",
+        "559cbc380624bbba16848fe0ef163a91aad00c2b5d3e2185ed43c19fc268dded",
         "7ec94173da203fcdf642afae7e52c14607377a5f663e24fcde4905b5d67d6630"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -9697,7 +9697,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!941"
       ],
       "source_hashes": [
-        "19232b34a4986f3653c7c07c58615a12a9532abc809ddfc93d0e34f3ab91ba43",
+        "0d05197b09e358226504bc2daed90b7024f6fca37ccdf3087e747c7a1301ff2a",
         "547e4e741404de72f02abf1ed487b8f14767894f7737ef5dc26c2a5469a9b41b"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -9739,7 +9739,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!943"
       ],
       "source_hashes": [
-        "04cde10745561cfd9ba26e384e75a47068c47544fd77506cb9d3653c36a23359",
+        "d63dbd64a642e9a238c01907ada8d1a563edf63e8d4c5f88c160df9a4eba9046",
         "5b27aac9d232c1ed3c36be39c159f65241fc3f2892c1a828c1eb96f4dc2f68f1"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -9781,7 +9781,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!945"
       ],
       "source_hashes": [
-        "e7013a98473a7a1ad1a548189a14e74d2bd6a65384842f69d7a09d95df7b4def",
+        "c7a826b1d8270dee52a0721490b54e3ab60d58b89e39efa531f835f56028e42c",
         "3099753af1a94c4ac7e31c0d83e9b8c466707439a39d6e75875b6b9563fec488"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -9825,7 +9825,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!947"
       ],
       "source_hashes": [
-        "aa152106f1e5b14fa091b7a0e33bc22b17ab6cb59f039b22010a0fbc1b636406",
+        "81aed1eb666f48f2bb97789150cf3690245a8459a40901a458b68731a196f8eb",
         "a2d3ac8ff4c43961ef8985b236f50e5251c858f480b2d91596f0dd23933a6074"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -9878,7 +9878,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!224"
       ],
       "source_hashes": [
-        "46ca873689700027117c082b950a61dfe5b123c77ff9559cbed7bc3551d5a867",
+        "fe52599a065bf01c4a95cddac335a5621abd25c57b39950b0989fc27a87c1ad9",
         "798329d1aff3565ba920574245dcc0b3606582570d56b11345fa5b61cda78e8e",
         "99fbe75073bb695e32490ef58811a584de4c79a1c450a64700682f803615b074"
       ],
@@ -9923,7 +9923,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!951"
       ],
       "source_hashes": [
-        "106d6b6f9c2421cb4ec3abf85792aae78ffc81fe058c73e3a160651639e52715",
+        "ff23dce0d0048121bfd4799fce4a5bf3278e6685486b254d14402d5392081a1a",
         "7cc3fa6004b46427a26906c749a0ca0bd2125f28957eb5992c9cd116e286354c"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -9977,7 +9977,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!953"
       ],
       "source_hashes": [
-        "d080be5f08b03a50156c015caca2d4a6e44c008dde341fe56edfa2714f0069d2",
+        "882a51f49dbbcff11f530c3247b835bfcceb590fd7ea5de7b692a88d7a65ef65",
         "0b25fb329bb37dcb8844ef406f5c268075a7608a5de3a8a5a8ec47f5a53677b6"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -10030,7 +10030,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!955"
       ],
       "source_hashes": [
-        "0b8b39acd10c828da4b79acf593a3adf919bc5b216c984ff348732059d2b2f9b",
+        "154bd4fa3a89340dc8fcc0136ea77b278941231819746164a9b6093b749438d6",
         "d054b96cdd579838dae8808b49239a9351cd60833842a62e7af2b2bbb5508488"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -10073,7 +10073,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!240"
       ],
       "source_hashes": [
-        "52d1a82bd9416e4324421def493c5a99cf88024b7552dece808502825cdc8c5b",
+        "9f8b0b9c062632bfd559733c6daaab9b8e7e33c1319fe0dca2f9dc3a6e19a798",
         "736ef7deaaa6397e51ba3da95802e890431f793eea2df4566edf1333837fee55",
         "0aef56387e1e46a5d1156fd5dee71cb6962a3af58c458f91bb55f744a0e4f9b3"
       ],
@@ -10119,7 +10119,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!241"
       ],
       "source_hashes": [
-        "8a3d22ff23a817382aa3fe46940d945910b50b010d63cc046509d142836f2f6a",
+        "f1edb79238ac681ab9bcac5978ed39224011271b5f758e43ca59acf5263b5d2f",
         "8e1d1862f7db429b2e86969ed690df77f44b2920e338d42cb7f200bc570174d2",
         "a2347094d9321f6a196c01f6200e7986f65a2e463e2966c3a8ec4e785f785ac0"
       ],
@@ -10175,7 +10175,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!242"
       ],
       "source_hashes": [
-        "094ebaa3361df2417cc88a80fafe21ebde98fb1b9033780d70b4c68a19b5f4a4",
+        "ddb5434ca55e692841e0c63340215b6fc926ae4bfb7e67190a52ebf5764c4344",
         "e2e37cf7930ac87e8c00053a2657030d6333382f457d64e34feb684481aa50e1",
         "c0f8836c5c1a1172338e5acdf3cd097f45693271d06149b0a26c139d31098dfe"
       ],
@@ -10230,7 +10230,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!537"
       ],
       "source_hashes": [
-        "338681432c422198625999859e6f7b56efac4d6c217ada4d5236f32ea9ddb79c",
+        "3f5ceb27e54c58374f675398df59a8b2842747367668fba57287805dea28cfc9",
         "070f3cfc10da7ac3099e6eca89f82f3855914fd86896986d6d030dbe0ffc73f9"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -10283,7 +10283,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!244"
       ],
       "source_hashes": [
-        "cc2d65484c7c13fdcdad59a3e74a785565619810f7b67f6dad351bb0d580683f",
+        "21f7913cc18ddba9ee681ae7008bbd63f87007eaf69e655627d2b070c000279c",
         "59ba9db8b4a193860544c7a69a33999fd1f1c52c4919e1c60d3b286049f66023",
         "7f262b198bc95210d99058dd00039dca0a5d017fb59010569429bae2a6b802e1"
       ],
@@ -10328,7 +10328,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!541"
       ],
       "source_hashes": [
-        "9c3b08ebc5c347e74e9a1281077c1355d153a395256763f6dc3e4f02508f62b3",
+        "5af7c2f54821ad28ea15505a08e189fd688ce9bb9ba65631ad3b56ea3e082006",
         "d7bd95bf8533bc3079c5d81ae46eac40d254d5b2d6b578b42ea990f7a9294e39"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -10381,7 +10381,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!543"
       ],
       "source_hashes": [
-        "fe4c8f516b973f81cfb65ab71f4279110a553a4f058cd349a3864b159ead719d",
+        "328ee59ee5962f32312b6138284aa7c1612c8fd1a5b846e78f884ad509da1f3f",
         "ac71ce5dc69cda4540b6e94a12649ad377ea80775509fb3977b920ae326dd228"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -10436,7 +10436,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!247"
       ],
       "source_hashes": [
-        "defbc7e710a5910b29a807f7e2014fbdfbe1f541e95dfa17f2834e3963293cfd",
+        "e6225aeab2b352522ed4cf16182838636d019b3657d2b1d804b5e1612df3565b",
         "de3787a6c1595d6d5a6bf20872d2afc13ee9c0b383ed232b5206e0caa6be0ad1",
         "784d57f41ce8fb7f246e05203c322f24ab8f3dd71aa0211b950b1b35919d8c05"
       ],
@@ -10490,7 +10490,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!547"
       ],
       "source_hashes": [
-        "6e46c62a0dccb569962c321e37821e54d1120cd922a89c1b49e3734486b4903d",
+        "11429cc6fb958b4824ccd2d6d9a030c88128ad208922972ef2666f30b1b8d01a",
         "f32d1712124abc70f2b60d2ed0e2af485b346fe87854056a5a8fda31790ea7d9"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -10544,7 +10544,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!549"
       ],
       "source_hashes": [
-        "a994b86ab7b43db2d36a15ece5dbf31569b3d485b1d2bbe11e37ee9db7bd5c89",
+        "48310983a8ff62115128ced56353bacafb1e9dccc014788f17a8b878ef804160",
         "f0b963c36f04d533c99c313b29b5f145acda559523d2441dce5c7c90f77ecc26"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -10597,7 +10597,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!551"
       ],
       "source_hashes": [
-        "13e248904965490eff67d7ada868f89854540374351cebdb3e9e2d3ddc512ef4",
+        "20adac8936c3e0b52b4bdbfa13d30fc1f9c72de71a476f52f8277f3bf3935fb8",
         "c3a13cfc33422f94d250ceaca0e369283789df6172873964320491d28614bc2a"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -10640,7 +10640,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!555"
       ],
       "source_hashes": [
-        "f600e536b24d68844e28d3688050fa0ed7c8e6106056440246da1af10ba28c3f",
+        "78d7291041e0cd85e0cb3cbf6cbbeecb84e19f2d8ba2460b4225d923894707d2",
         "75b9e5741dfa3c949f4369f2ad8ca26fcf3604ac43625993390dff737112f609"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -10684,7 +10684,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!599"
       ],
       "source_hashes": [
-        "4942cf6d921dc4e5d87b00708201e9ad20cc311c097a73ea29f0f43a0ef59934",
+        "8099fe3729d15eec6cf37d5d67cabd502576a25660075c8fa4ef6461d3e4d635",
         "38151f49bf83f9963c6fd871a5a68b9804aed3ae6d498a67b2e215b076ec98c2"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -10739,7 +10739,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!145"
       ],
       "source_hashes": [
-        "9740afd6b3304ff35c1106af36ff10639b89699afce23b7a01a23ea411153373",
+        "a977b10b568f0d68b9f6f8cd36ac055c67c2ecc2908d2f620567632a6ce7e4e8",
         "210776fa92bc87f5045ba0d2f237581eb42335ea7a8ea06b3f0b9b065eb07e0a",
         "64165ec2596f36b2fa3cd46763ada25d4681c982b53f9581d11fc5de839aaeae"
       ],
@@ -10794,7 +10794,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!603"
       ],
       "source_hashes": [
-        "dff07c5f573df4531b38378decb6cbeba250b97f8b95ea616e21e766ea237e8e",
+        "1eadc6b5592a5e9f0ad37fb2bf7e52f415c29c998071a28621bfd94a68c4354c",
         "a9518abaec842c1f0de30f34c0888d93c846bc5de4c7bf2e266eb0d737cfbe6e"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -10848,7 +10848,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!605"
       ],
       "source_hashes": [
-        "fdf95450b69e9bc8a0201e6f29fffe11c4d259bfb3e5798096fca010ca84c3f1",
+        "83c5b097d0c10a16e565b01a61c703dcf2168fdab1f6f1c8dbd344676cb40f06",
         "20f1ef6fbf6b19bc2fd56e2b91c2f2347a4cb63c433fc84493349182ee15d0df"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -10902,7 +10902,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!607"
       ],
       "source_hashes": [
-        "8ad2e3746b981472724799d6bdfa425e0f8d405b78b27ff07a1a0581ada24976",
+        "4f3136156448c72b65ee36f5d1ccd9f94f07b0d66ef55427f7cbb54486f65f3b",
         "9adcd6ba13260b466db67a799b750d360f8a09ad42313c7df9a052c893263b27"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -10956,7 +10956,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!149"
       ],
       "source_hashes": [
-        "c3bb4187f0af3a761a3c50a4d055f02e750db60b4bf5546d3d5fe658f378ee32",
+        "1e16dcbc80e5697681fb3e015e9f36d93ac07f4019a0bbeb30f8df15b87475c8",
         "1af907bb8637e571e5c7d23856ad894851cf1090a3bc594c2ea2905d6eced2ed",
         "11f49398eb8446f1e6eae222e74818ae7f4dd226457e28a06676dcc05947354c"
       ],
@@ -11001,7 +11001,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!611"
       ],
       "source_hashes": [
-        "059758551d4c21bc42094b33fea532380314c65ab0a6b1f2f912357ea49c9853",
+        "b1b121bf131e0ec51f869e96ecca536edcffb061a3c854b0f9477d294b23fa41",
         "5a504ba7155cd45d03b0d4627458bb9d8198536da8024a5e248ccc99f96770fd"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -11056,7 +11056,7 @@
         "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!151"
       ],
       "source_hashes": [
-        "e2b37463fd16dd8ca5da635b685980e764d4ccaaa38a59591537cb1804b78652",
+        "acc51a9b9217881690d7106664693aeb17e5af366d6d5b97e078ec66db369620",
         "72b6e0bd25f8dc3a7806170a2ebf0beeb7d6a7446e654b938ad6514a6e7e2db4",
         "b3f845992e2a982a389e5d0292dc27dbc0635a259e98d115d8ae7540a4badaf0"
       ],
@@ -11111,7 +11111,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!615"
       ],
       "source_hashes": [
-        "70e6b984495ffcfa380529cc12c41759ad86cf1fd12b9492b2782aa9a06d9675",
+        "9994937af9d3db7b9a59cc927f27e76733f0465870dddabd8f90d9593428d2e8",
         "1ca242e50bf0e6785b30a34640ffca4cca814829c2ee54ed18b28db52ebf0e9a"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -11165,7 +11165,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!617"
       ],
       "source_hashes": [
-        "67c9f93bc880c7e2e83c58a20d2d018c6c9b23fcd2047096ac1fd16aebb893f4",
+        "1d8727c0ef52bd62cef50deaba7859538e590a04109bdffdfd569ef2ec035c84",
         "561ab8da2a85c422ac3be616352c3b5b5b514c39865886c11c6cf6fc94b141a3"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -11218,7 +11218,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!635"
       ],
       "source_hashes": [
-        "4119ee519613e573061d2c66eb0349d8cd67390a01c0f9937ca193956a21b413",
+        "13cb43dabab4c4ce944c302d0d6bec4e00853f42f6c22c99952f9d046233247c",
         "f65d42ab4532aa04b93bc1f5daf9d8f45f678de1d2f3096212e3c8eb3a3e7f30"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -11262,7 +11262,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!647"
       ],
       "source_hashes": [
-        "53af71952c53f93907409379e17b80db93f3a6f82c6f23e88fb8a9f260d5006a",
+        "fbfbee839d50061b5bf105e5676f3d5bd0821554aad111e0e99c88a57af57efd",
         "c37156cad7ff9a237bf0785b39b83107bd40d8f64297ac16e61bcefa3fab773d"
       ],
       "owner_voice_coverage": "owner_voice_inferred_from_planet_and_sign",
@@ -11316,7 +11316,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!4"
       ],
       "source_hashes": [
-        "9452114e243543efef2d1054d379d575d4478b4adaf7fee23b61c0703ab2b1e5",
+        "665d19fb89ed1dfc711a6af7074a45747882286ca77b00351904eac8af3973a6",
         "b2cabb3951c0a2b65c79395a2f0e42f03e2f17d6fc7126ada780b5ccb20569cc"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -11366,7 +11366,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!10"
       ],
       "source_hashes": [
-        "886ade5ac1be70e949b9b143fee510144367948b379fc2d666514f5c47eebc20",
+        "bdac47354dc9d32683d9b8d7e9374dabedc65c87a2b2c8d01ed86c0dd14b905a",
         "dba3adff229b8043a48f7604a778f8fc29393b5dc7910bb21fe50f4cebc684d8"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -11416,7 +11416,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!15"
       ],
       "source_hashes": [
-        "3ba7919f6a2d6f38ef96dfcbf8a6f0a118ab8d88d7571008d3002078456f716d",
+        "b8d8a42e196812146d75d888099f473ec4c329d4779dde0ff5f8696a3ca4cd92",
         "78edaff067639521b44181d003467ca5cccaa5b8d381f08a95e8bbca9011e4c1"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -11464,7 +11464,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!17"
       ],
       "source_hashes": [
-        "10f31581a59e13ccaeabf3c4246ff3991128a8e76e9bfa950dfde8c80a1bf108",
+        "ebe46b2a6497d90a6ea3a4898674b099a201f7a7039c235f6475c8d0532d8cb7",
         "a3edc1497398fa1623f21973a0ebf6e9e9021fdf2f170f3ffa6789aaf6ed0e49"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -11504,7 +11504,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!19"
       ],
       "source_hashes": [
-        "f400f333a592c4b9fa3babaf903f198028df36ed8521f100214f8dfdee1056d7",
+        "c0c29f3f3de460f69dfb291ef91de9eb7f3e6330beb7c43cd199946d13883b2d",
         "009b737f732c579020195c6b992dac19f826715af6227895d676973202a80207"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -11553,7 +11553,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!21"
       ],
       "source_hashes": [
-        "acd1b6bc3000385facef278464b3c82e242f54e0a6fbf57f2971817a94c8468f",
+        "c86812319493dd6972e5595725997e2e4517e54ce329ddcebef76eca640ec44a",
         "e24b7e1d96a7ba688793694b4d58a2383c697e652d2e0edc984be800e00b32be"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -11603,7 +11603,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!23"
       ],
       "source_hashes": [
-        "895e4bcaf9fcb47fcb0b56c90fc2eccfb8537a1d0728812ef5b693604e4880b2",
+        "35874f6916cb8cda37a9ac1d93620ee12cd5fe69e9a50e1810933512801fc04d",
         "95c29facac24c9ec132ba8092cb83bf1a2b20941e1c37193c39a208f1eaedce7"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -11653,7 +11653,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!25"
       ],
       "source_hashes": [
-        "25e28e9fd4bed6227f283498363a9addb5f0b9511773b581e8006116359550e6",
+        "05131fbd09dbd56cd8f92d5b5bac7f19b68bd88ae066710ed6e8850c7d140ce9",
         "f82bbd6e0681e6c94ba555224695abe258d9faa2ffb78329d2f0750fbbf6cbb5"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -11703,7 +11703,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!27"
       ],
       "source_hashes": [
-        "91c7fb716f1539c253df4ab0f5a4ee656e7b5a4b6baa138f0010f7173aa64f2c",
+        "ec3fd6d004301d67a6c027ffc380bb087ced6ea9aa2c30c6e3e65866df88fe94",
         "96edddc9530f9f16866239920c92e516223b6d6ba683b90afef8667d6709addb"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -11753,7 +11753,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!29"
       ],
       "source_hashes": [
-        "f15c68d6266ed25e740b7b2e70e1181cec598927d651c833a7f3ba36d06e1a6d",
+        "0e710ad8ba4713a417c4f5d8f1e56e4f4ed42bf32522b7dd28d9d135794edc59",
         "e9a1fde6aaf473bf5e407f5ef9ade3769bcea4d9ebdb56134d53195f50a91b68"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -11803,7 +11803,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!31"
       ],
       "source_hashes": [
-        "46b6aa5df58cdf932a787d7ab5192354bfe0128d9287e755b4cad0ab72c33d1c",
+        "c4562228f9486b4bc73671d53ee20968c6d25de8cf8423a28a27d2c79425296b",
         "e90ad5413bd8cfc6a1adf1ad804faa1d46479f77ed63fc1959307297736d0325"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
@@ -11853,7 +11853,7 @@
         "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!33"
       ],
       "source_hashes": [
-        "3a48920d2af12e327e680b314e976b4dc914715b87d7ac3d073dd97933023802",
+        "b2a1e864424d7350f4bf6a03f3b26e8fe4ac6f2cef8c0bf44e7be21fa0bbcb5e",
         "8978b0b7d8ad7dd7076fc2927c2ad508edc7887e3668de982bd0207149dfa945"
       ],
       "owner_voice_coverage": "doctrine_meaning_owner_register_inferred",
