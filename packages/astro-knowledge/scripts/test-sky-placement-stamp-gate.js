@@ -11,9 +11,10 @@ const crypto = require("crypto");
 const { evaluate, pageHash } = require("./stamp-sky-placement-eligibility.js");
 const { lintArticle } = require("./lint-placement-voice.js");
 
-const SLOTS = ["hook", "lived", "turn"];
+const SLOTS = ["tagline", "hook", "lived", "turn"];
 // The hook needs at least two sentences (shape rule: meaning must follow the opening).
 const CLEAN = {
+  tagline: "The deadline changes the whole arrangement.",
   hook: "The deadline arrives before the plan is ready. The gap shows up in someone's evening.",
   lived: "A rota gets rewritten, a shift changes hands, and the cost lands on whoever answers last. Nobody records who absorbed it.",
   turn: "What holds is the arrangement nobody has to defend twice."
@@ -31,6 +32,30 @@ function doc(slots, extra = {}) {
 
 let passed = 0;
 const ok = (label) => { passed += 1; console.log(`  ok  ${label}`); };
+
+{
+  const advisory = { ...CLEAN, lived: `${CLEAN.lived} The standard is exacting.` };
+  const lint = lintArticle({ planet: "saturn", sign: "capricorn", ...advisory });
+  assert.strictEqual(lint.fails, 0);
+  assert.ok(lint.warns > 0, "fixture must carry an advisory style finding");
+  const result = evaluate(doc(advisory)).find((entry) => entry.page === "saturn/capricorn");
+  assert.strictEqual(result.lintPass, true, "advisory findings must not become serving blockers");
+  ok("advisory style findings remain visible without blocking eligibility");
+}
+
+// CF-006: existing four-word taglines may use the explicit historical idiom, while
+// the six-to-eighteen-word rule remains fully enforced for new copy.
+{
+  const shortTagline = "Act first, think second";
+  const current = lintArticle({ planet: "jupiter", sign: "aries", ...CLEAN, tagline: shortTagline });
+  const historical = lintArticle({
+    planet: "jupiter", sign: "aries", ...CLEAN, tagline: shortTagline,
+    allowLegacyTagline: true
+  });
+  assert.ok(current.findings.some((f) => f.decisionId === "CF-006"));
+  assert.ok(!historical.findings.some((f) => f.decisionId === "CF-006"));
+  ok("CF-006 remains enforced for new rows while recorded legacy taglines pass");
+}
 
 // 1. clean copy with no owner approval is NOT eligible
 {

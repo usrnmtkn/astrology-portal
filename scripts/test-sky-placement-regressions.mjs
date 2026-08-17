@@ -81,6 +81,7 @@ const renderer = createTransitSynastryRenderer(
     ...fallbackSourceRows,
     hookRows: [
       ...fallbackSourceRows.hookRows,
+      ...skyArticleV1.hookRows,
       ...skySignCopySunV1.rows,
       ...skyPlacementOwnerApprovedFallbacksV1.rows
     ],
@@ -391,11 +392,24 @@ for (const [family, rows] of Object.entries(approvedSkyPlacementRowsByFamily)) {
 }
 for (const planet of retrogradePlacementPlanets) {
   for (const sign of zodiacSigns) {
-    assert.throws(
-      () => renderer.renderSkyPlacement({ planet, sign, isRetrograde: true }),
-      /SOURCE_GAP: continuous sky placement (?:sign copy|dates)/u,
-      `${planet} retrograde in ${sign} must not revive the retired module stack.`
+    const rendered = renderer.renderSkyPlacement({
+      planet,
+      sign,
+      isRetrograde: true,
+      entryDate: "April 4, 2030",
+      exitDate: "May 5, 2030",
+      priorSign: "pisces",
+      priorSignEntryDate: "February 2, 2029",
+      priorSignExitDate: "March 3, 2029",
+      previousResidencyEntryDate: "June 6, 2000",
+      previousResidencyExitDate: "July 7, 2000"
+    });
+    assert.ok(
+      ["sky-placement-continuous-v2", "sky-placement-frame-v3"].includes(rendered.templateKey),
+      `${planet} retrograde in ${sign} must use approved article or stamped four-slot copy.`
     );
+    assert.notEqual(rendered.templateKey, "sky-placement-standalone-hook-v1");
+    assert.doesNotMatch(rendered.body, /\{\{/u);
   }
 }
 for (const row of approvedSkyPlacementRows) {
@@ -849,16 +863,18 @@ for (const row of skyPlacementOwnerApprovedFallbacksV1.rows.filter((candidate) =
   assert.doesNotMatch(rendered.body, /\{\{/u);
 }
 
-assert.throws(
-  () => renderer.renderSkyPlacement({
-    planet: "jupiter",
-    sign: "scorpio",
-    entryDate: "October 25, 2029",
-    exitDate: "November 15, 2030"
-  }),
-  /SOURCE_GAP: continuous sky placement sign copy jupiter\/scorpio/u,
-  "An unapproved placement must remain unavailable."
+const recoveredJupiterScorpio = renderer.renderSkyPlacement({
+  planet: "jupiter",
+  sign: "scorpio",
+  entryDate: "October 25, 2029",
+  exitDate: "November 15, 2030"
+});
+assert.equal(
+  recoveredJupiterScorpio.templateKey,
+  "sky-placement-frame-v3",
+  "The stamped, owner-approved four-slot placement must render through the governed V3 frame."
 );
+assert.doesNotMatch(recoveredJupiterScorpio.body, /\{\{/u);
 
 console.log(JSON.stringify({
   packageVersion: PACKAGE_VERSION,

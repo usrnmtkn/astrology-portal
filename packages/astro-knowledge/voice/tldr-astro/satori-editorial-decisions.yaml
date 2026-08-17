@@ -323,22 +323,23 @@
       "id": "ED-007",
       "status": "approved",
       "category": "communication",
-      "scope": {"surfaces": ["all-reader-copy"], "literal_exceptions": ["physical mail is part of the source or scene"]},
+      "scope": {"surfaces": ["all-reader-copy"], "literal_exceptions": ["physical mail is part of the source or scene", "the idiom 'the letter of the law'"]},
       "normalized_rule": "Use message, reply, response, or what they were told instead of letter or formal technical delivery terms unless physical mail matters.",
       "rationale": "Letter sounded dated, while portal notification and electronic correspondence sounded technical rather than current.",
       "owner_source": {"type": "owner_feedback", "reference": "OV-009 and CE-008 through CE-011", "date": "2026-08-03"},
       "effective_date": "2026-08-03",
       "supersedes": [],
-      "examples_allowed": ["Three families compare the messages they received.", "A handwritten letter arrives in the mail."],
+      "examples_allowed": ["Three families compare the messages they received.", "A handwritten letter arrives in the mail.", "They follow the letter of the law."],
       "examples_rejected": ["Three families compare letters.", "Three families receive the same portal notification."],
       "effect": "prefer",
       "vocabulary_exclusions": ["letter", "letters", "correspondence"],
       "writer_prompt_exposure": "first_call",
-      "mechanical": {"kind": "dated_communication", "terms": ["letter", "letters", "correspondence", "portal notification", "electronic correspondence", "automated communication"], "literal_context_pattern": "\\b(?:paper|physical|mailed|handwritten)\\s+letters?\\b|\\bletters?\\s+(?:arriv(?:e|es|ed)|(?:come|comes|came))\\s+(?:by|in)\\s+(?:the\\s+)?(?:mail|post)\\b", "severity": "fail", "message": "Default to message, reply, or response unless physical mail matters."},
-      "enforcement": {"writer": true, "judge": true, "linter": true, "vocabulary_retrieval": true, "regression_tests": ["dated-communication-language", "literal-physical-letter"]},
+      "mechanical": {"kind": "dated_communication", "terms": ["letter", "letters", "correspondence", "portal notification", "electronic correspondence", "automated communication"], "literal_context_pattern": "\\b(?:paper|physical|mailed|handwritten)\\s+letters?\\b|\\bletters?\\s+(?:arriv(?:e|es|ed)|(?:come|comes|came))\\s+(?:by|in)\\s+(?:the\\s+)?(?:mail|post)\\b|\\bthe\\s+letter\\s+of\\s+the\\s+law\\b", "severity": "fail", "message": "Default to message, reply, or response unless physical mail matters."},
+      "enforcement": {"writer": true, "judge": true, "linter": true, "vocabulary_retrieval": true, "regression_tests": ["dated-communication-language", "literal-physical-letter", "idiomatic-letter-of-law"]},
       "regression_cases": [
         {"id": "dated-communication-language", "surface": "sky-placement", "kind": "linter", "text": "Three families compare letters and electronic correspondence.", "expected": "fail"},
-        {"id": "literal-physical-letter", "surface": "sky-placement", "kind": "linter", "text": "A handwritten letter arrives in the mail.", "expected": "pass"}
+        {"id": "literal-physical-letter", "surface": "sky-placement", "kind": "linter", "text": "A handwritten letter arrives in the mail.", "expected": "pass"},
+        {"id": "idiomatic-letter-of-law", "surface": "sky-placement", "kind": "linter", "text": "They follow the letter of the law.", "expected": "pass"}
       ]
     },
     {

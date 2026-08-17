@@ -7,8 +7,8 @@
 // the rules live here and in the linter, never in the renderer.
 //
 // A page is stamped only when ALL of the following hold:
-//   1. all three body slots exist and are non-empty
-//   2. lint-placement-voice.js returns score 3 with zero fails, called WITH planet
+//   1. all four reader slots exist and are non-empty
+//   2. lint-placement-voice.js returns zero blocking failures, called WITH planet
 //      (ED-031: a checker without its fact context reports a harness error, and a
 //      harness error is never treated as a pass)
 //   3. the owner has recorded prose approval for that page, against the same bytes
@@ -31,7 +31,8 @@ const { lintArticle } = require("./lint-placement-voice.js");
 const repoRoot = path.resolve(__dirname, "..", "..", "..");
 const ROWS = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json");
 const APPROVALS = path.join(__dirname, "..", "review", "sky-placement-recovery", "OWNER-PROSE-APPROVALS.json");
-const SLOTS = ["hook", "lived", "turn"];
+const HISTORICAL_BUNDLE = path.join(__dirname, "..", "review", "sky-placement-recovery", "HISTORICAL-FOUR-SLOT-BUNDLE.json");
+const SLOTS = ["tagline", "hook", "lived", "turn"];
 const STAMP = ["render_eligible", "owner_prose_approved", "deterministic_validation", "source_hash"];
 const KEY = /^fallback-hook\/sky-placement-(tagline|hook|lived|turn)\/([\w-]+)\/(\w+)$/u;
 
@@ -53,7 +54,7 @@ function collect(doc) {
 }
 
 function pageHash(slots) {
-  return crypto.createHash("sha256").update(SLOTS.map((s) => slots[s]).join(" ")).digest("hex");
+  return crypto.createHash("sha256").update(SLOTS.map((s) => slots[s]).join("\n\n")).digest("hex");
 }
 
 function evaluate(doc) {
@@ -68,21 +69,38 @@ function evaluate(doc) {
     pages.get(page).rows[slot] = row;
   }
   const approvals = readJson(APPROVALS, { approved: {} }).approved ?? {};
+  const historicalPages = readJson(HISTORICAL_BUNDLE, { pages: {} }).pages ?? {};
   const report = [];
   for (const [page, info] of pages) {
     const complete = SLOTS.every((s) => info.slots[s] && info.slots[s].trim());
+    const hash = complete ? pageHash(info.slots) : null;
+    const historical = historicalPages[page] ?? null;
+    const historicalHashMatches = Boolean(historical) && historical.source_hash === hash;
+    const allowances = new Set(historicalHashMatches ? historical.legacy_allowances ?? [] : []);
     let lint = null;
     let harnessError = false;
     if (complete) {
-      lint = lintArticle({ planet: info.planet, sign: info.sign, ...info.slots });
+      lint = lintArticle({
+        planet: info.planet,
+        sign: info.sign,
+        ...info.slots,
+        allowLegacyTagline: allowances.has("allowLegacyTagline"),
+        allowLegacyUntracedTiming: allowances.has("allowLegacyUntracedTiming"),
+        allowLegacyPerformanceFraming: allowances.has("allowLegacyPerformanceFraming")
+      }, {
+        // ED-029/ED-030 intentionally read this option from lintArticle's context.
+        // The allowance applies only while this page's recorded hash matches.
+        allowLegacyPunctuation: allowances.has("allowLegacyPunctuation")
+      });
       harnessError = lint.findings.some((f) => f.source === "harness");
     }
-    const lintPass = Boolean(lint) && lint.score === 3 && lint.fails === 0 && !harnessError;
-    const hash = complete ? pageHash(info.slots) : null;
+    // Advisory findings are intentionally non-blocking under the classified style
+    // policy. Only blocking failures and harness errors can prevent a stamp.
+    const lintPass = Boolean(lint) && lint.fails === 0 && !harnessError;
     const approval = approvals[page] ?? null;
     const approvalMatches = Boolean(approval) && approval.source_hash === hash;
     report.push({
-      page, ...info, complete, lintPass, harnessError,
+      page, ...info, complete, lintPass, harnessError, historicalHashMatches,
       fails: lint ? lint.fails : null,
       reasons: lint ? [...new Set(lint.findings.filter((f) => f.severity === "fail").map((f) => f.decisionId || f.term))] : [],
       hash, approval, approvalMatches,
@@ -103,6 +121,7 @@ function main() {
   if (mode === "--check" || mode === "--verify") {
     const drifted = report.filter((r) => r.approval && !r.approvalMatches);
     console.log(`pages evaluated        : ${report.length}`);
+    console.log(`historical hash matches: ${report.filter((r) => r.historicalHashMatches).length}`);
     console.log(`lint pass              : ${report.filter((r) => r.lintPass).length}`);
     console.log(`owner approved         : ${report.filter((r) => r.approval).length}`);
     console.log(`ELIGIBLE TO STAMP      : ${report.filter((r) => r.eligible).length}`);
@@ -133,7 +152,7 @@ function main() {
         n += 1;
       }
     }
-    fs.writeFileSync(ROWS, `${JSON.stringify(doc, null, 2)}\n`);
+    fs.writeFileSync(ROWS, `${JSON.stringify(doc, null, 1)}\n`);
     console.log(`unstamped ${n} rows`);
     return;
   }
@@ -149,7 +168,7 @@ function main() {
         row.source_hash = r.hash;
       }
     }
-    fs.writeFileSync(ROWS, `${JSON.stringify(doc, null, 2)}\n`);
+    fs.writeFileSync(ROWS, `${JSON.stringify(doc, null, 1)}\n`);
     console.log(`stamped ${eligible.length} pages (${eligible.length * SLOTS.length} rows)`);
     if (!eligible.length) console.log("nothing eligible: no page has both a clean lint and a matching owner approval");
     return;
