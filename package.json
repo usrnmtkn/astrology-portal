@@ -27,7 +27,7 @@
     "test:sky-calendar-meaning-components": "node scripts/test-sky-calendar-meaning-components.mjs",
     "test:sky-calendar-serving-authorization": "node scripts/test-sky-calendar-serving-authorization.mjs",
     "test:github-protection-baseline": "node scripts/test-github-branch-protection-baseline.mjs",
-    "pretest:content": "node scripts/build-friend-vocabulary-inflection-candidates.mjs && node scripts/apply-friend-vocabulary-person-inflections.mjs && node scripts/test-friend-vocabulary-inflection-candidates.mjs && node scripts/test-friends-natal-fallback-runtime.mjs && node scripts/test-calendar-exact-sky-aspect-routing.mjs && npm run test:report-generation && npm run test:report-fulfillment",
+    "pretest:content": "node scripts/build-friend-vocabulary-inflection-candidates.mjs && node scripts/apply-friend-vocabulary-person-inflections.mjs && node scripts/test-friend-vocabulary-inflection-candidates.mjs && node scripts/test-friends-natal-fallback-runtime.mjs && node scripts/test-calendar-exact-sky-aspect-routing.mjs && node scripts/test-sky-calendar-composed-card-routing.mjs && npm run test:report-generation && npm run test:report-fulfillment",
     "build:writing-harness": "node scripts/build-reviewer-gold-exemplars.mjs && node scripts/build-writing-harness-instructions.mjs && node scripts/build-writing-harness-data.mjs && node scripts/build-cold-rendered-prose-fixtures.mjs && node scripts/build-cold-rendered-prose-round-2-fixtures.mjs",
     "test:astro-writing": "npm run check:shared-evidence-index && node scripts/audit-writing-surface-register-contract.mjs && node tests/astro-writing/harness.test.mjs && node tests/astro-writing/gemini-interactions.test.mjs && node tests/astro-writing/card-judge-v3.test.mjs && node tests/astro-writing/card-judge-v3-1-draft.test.mjs",
     "audit:writing-pipeline-v3": "node scripts/audit-writing-pipeline-v3-deterministic.mjs",
@@ -141,7 +141,8 @@
     "test:daily-glance-contextual-overrides": "node scripts/test-daily-glance-contextual-overrides.mjs",
     "build:fallback-manifest": "node scripts/generate-fallback-package-manifest.mjs",
     "build:knowledge": "npm run build -w @tldr/astro-knowledge",
-    "build:web": "npm run build -w @tldr/web"
+    "build:web": "npm run build -w @tldr/web",
+    "test:sky-calendar-composed-routing": "node scripts/test-sky-calendar-composed-card-routing.mjs"
   },
   "optionalDependencies": {
     "@esbuild/linux-x64": "^0.27.7",

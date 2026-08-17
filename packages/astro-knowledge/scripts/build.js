@@ -41,6 +41,13 @@ function loadDirectEntries(dir) {
   return listDirectJsonFiles(path.join(dataRoot, dir)).map((filePath) => readJson(filePath));
 }
 
+function loadSkyCalendarComposedCards() {
+  const filePath = path.join(dataRoot, "sky-calendar", "composed-cards-v1.json");
+  if (!fs.existsSync(filePath)) return [];
+  const collection = readJson(filePath);
+  return Array.isArray(collection.cards) ? collection.cards : [];
+}
+
 function loadJsonTree(relativeDir) {
   const absoluteDir = path.join(root, relativeDir);
   if (!fs.existsSync(absoluteDir)) return [];
@@ -153,9 +160,32 @@ function runtimeEligiblePlacements(placements) {
   return placements.filter((entry) => entry.runtimeEligible !== false);
 }
 
+function servingEligibleComposedCards(cards) {
+  // Only owner-approved, serving-authorized cards reach the runtime bundle.
+  // Anything else stays invisible to the Calendar and the existing exact body
+  // continues to serve that planet pair and aspect.
+  return (cards ?? []).filter((card) => (
+    card?.ownerApproved === true
+    && card?.servingAuthorized === true
+    && typeof card.forecast === "string"
+    && card.forecast.trim()
+  ));
+}
+
 function webSkyKnowledge(packageJson, generatedAt, collections) {
   return withBundleMetadata(packageJson, generatedAt, {
     primitives: collections.primitives,
+    skyCalendarComposedCards: servingEligibleComposedCards(collections.skyCalendarComposedCards).map((entry) => pick(entry, [
+      "id",
+      "planetA",
+      "signA",
+      "aspect",
+      "planetB",
+      "signB",
+      "forecast",
+      "details",
+      "approvedVia"
+    ])),
     transits: collections.transits.map((entry) => pick(entry, [
       "id",
       "transiting",
@@ -325,6 +355,7 @@ function build() {
   const primitives = loadPrimitiveCollections();
   const pairs = loadEntries("pairs");
   const transits = loadDirectEntries("transits");
+  const skyCalendarComposedCards = loadSkyCalendarComposedCards();
   const transitNatal = loadEntries(path.join("transits", "natal"));
   const transitHouses = loadEntries(path.join("transits", "house"));
   const planetary = loadEntries("planetary");
@@ -358,6 +389,7 @@ function build() {
     primitives,
     pairs,
     transits,
+    skyCalendarComposedCards,
     transitNatal,
     transitHouses,
     planetary,
@@ -513,6 +545,7 @@ function build() {
   const webRuntimeCollections = {
     primitives,
     transits,
+    skyCalendarComposedCards,
     transitNatal,
     placements,
     pointPlacements,
@@ -533,6 +566,7 @@ function build() {
   });
   const skyRuntimeWebKnowledge = withBundleMetadata(packageJson, generatedAt, {
     transits: skyWebKnowledge.transits,
+    skyCalendarComposedCards: skyWebKnowledge.skyCalendarComposedCards,
     placements: skyWebKnowledge.placements,
     pointPlacements: skyWebKnowledge.pointPlacements,
     modifiers: skyWebKnowledge.modifiers

@@ -1,5 +1,50 @@
 # TLDR Astro Claude instructions
 
+## MANDATORY PRE-FLIGHT before any reader copy (owner directive, 2026-08-17)
+
+Do not draft, rewrite, judge, or dispatch an agent to produce reader-facing
+prose until these files have been read **in this session**. Reading them is not
+optional context-gathering; it is the specification. A spec assembled from
+conversation instead of from these files has produced four failed passes and is
+the single largest source of wasted owner review time on this project.
+
+1. `tldr-astro-phrasebank/WRITING-STANDARD.md` — the stated authority for all
+   authored and generated copy across compatibility, synastry, natal, transit,
+   email, and social. Contains the voice habits, the construction rules, the
+   seven sentence mechanics, the do-not-use list, and the gold-standard
+   reference passages. **Its do-not-use list is binding**, including "the
+   challenge" rather than "the catch" or any invented substitute, the ban on
+   `real` and `true` as intensifiers, the ban on `settle`, `steady`, `comfort`,
+   and `warmth` as standalone abstractions, and the ban on the `room` metaphor.
+2. The owner rulings in `tldr-astro-phrasebank/` that postdate it, including the
+   lived-prose standard and its amendments, the natal placement delineation
+   standard, and any ruling dated later than the work in hand.
+3. The owner's own approved copy for the exact keys being written. Check
+   `ll-matrix-v13.json` and the serving rows before assuming a key has no
+   owner-authored version. On the natal placement surface, all 111 keys had
+   owner-approved copy that an entire pass was written without.
+
+### Agent dispatch rule
+
+When work is delegated to subagents, the relevant rules must be **quoted into
+the subagent prompt**, not referenced. A subagent cannot inherit a file it was
+never given. Before dispatching, verify the prompt contains: the do-not-use
+list, the sentence mechanics, the register, and the owner evidence for each row.
+
+### Post-generation scan, before the owner sees anything
+
+Scan every generated passage for the do-not-use list mechanically. Report the
+counts. Do not deliver a batch to the owner with known violations in it; a
+finished artifact that fails a documented rule costs more owner time than a
+delayed one.
+
+### Invented substitutes are the recurring failure
+
+When a phrase feels wrong, the fix is the owner's documented replacement, never
+an invented alternative. "The harder side" was invented to avoid a banned
+phrase and shipped in 35 passages while the correct wording, "the challenge",
+was already written down.
+
 ## Writing registers (owner-stated; read before drafting any reader copy)
 
 The project has three reader-facing registers. They are not

@@ -1,4 +1,7 @@
-import type { ApprovedExactSkyAspectCopy } from "../content/domainRegistry";
+import type {
+  ApprovedExactSkyAspectCopy,
+  ResolvedSkyCalendarComposedCard
+} from "../content/domainRegistry";
 import { isReaderFacingCopy } from "../content/readerSafety";
 import {
   interpolateTemplateString,
@@ -51,7 +54,81 @@ function calendarExactLeadIn(
   return `${dateLine}, ${planetA} in ${signA} ${aspectVerb} ${planetB} in ${signB}, and on a collective level, ${lowerSentenceStart(body)}`;
 }
 
+export type SkyCalendarComposedCardLookup = (
+  planetA: string,
+  signA: string,
+  aspect: string,
+  planetB: string,
+  signB: string
+) => ResolvedSkyCalendarComposedCard | null;
+
+export type ResolvedComposedSkyCalendarCard = {
+  body: string;
+  details: string;
+  heading: string;
+  layer: "authored";
+  sourceKeys: string[];
+  tier: "composed-sky-calendar-card-v1";
+};
+
+export function resolveComposedSkyCalendarCard({
+  aspect,
+  first,
+  heading,
+  lookup,
+  second,
+  slots
+}: {
+  aspect: string;
+  first: string;
+  heading: string;
+  lookup?: SkyCalendarComposedCardLookup | null;
+  second: string;
+  slots: TemplateSlotValues;
+}): ResolvedComposedSkyCalendarCard | null {
+  const signA = String(slots.signA ?? "").trim();
+  const signB = String(slots.signB ?? "").trim();
+
+  if (!signA || !signB) {
+    return null;
+  }
+
+  const card = lookup?.(first, signA, aspect, second, signB);
+
+  if (!card) {
+    return null;
+  }
+
+  // The stored forecast begins lowercase and the Calendar composes the date
+  // lead-in. Without a date line there is nothing to lead with, so the card
+  // stays unserved rather than rendering a fragment.
+  const dateLine = String(slots.dateLine ?? "").trim();
+
+  if (!dateLine) {
+    return null;
+  }
+
+  const body = `${dateLine}, ${lowerSentenceStart(card.forecast)}`;
+
+  if (!isReaderFacingCopy(body) || !isReaderFacingCopy(card.details)) {
+    return null;
+  }
+
+  return {
+    body,
+    details: card.details,
+    heading,
+    layer: "authored",
+    sourceKeys: [
+      card.contentId,
+      "packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json"
+    ],
+    tier: "composed-sky-calendar-card-v1"
+  };
+}
+
 type SkyAspectPrecedenceCandidates<T> = {
+  composed?: T | null;
   signSpecific?: T | null;
   exact?: T | null;
   phrasebook?: T | null;
@@ -60,13 +137,14 @@ type SkyAspectPrecedenceCandidates<T> = {
 };
 
 export function selectSkyAspectCopyByPrecedence<T>({
+  composed,
   signSpecific,
   exact,
   phrasebook,
   generated,
   fallback
 }: SkyAspectPrecedenceCandidates<T>): T | null {
-  return signSpecific ?? exact ?? phrasebook ?? generated ?? fallback ?? null;
+  return composed ?? signSpecific ?? exact ?? phrasebook ?? generated ?? fallback ?? null;
 }
 
 export function resolveApprovedExactSkyAspectCopy({

@@ -1,0 +1,7 @@
+{
+  "schema": "tldr.sky-calendar.composed-cards.v1",
+  "purpose": "Sign-specific two-part Calendar cards composed from the owner-approved meaning components. Each card carries a forecast the reader can use and a Details explanation underneath.",
+  "servingRule": "Both ownerApproved and servingAuthorized must be true. Anything else is invisible to the runtime and the Calendar falls through to the existing exact body for that planet pair and aspect.",
+  "storedBodyConvention": "forecast begins lowercase; the Calendar composes the date lead-in. details begins with the transit label, for example 'Sun in Leo opposite Saturn in Aquarius.'",
+  "cards": []
+}

@@ -58,6 +58,25 @@ type TransitEntry = {
   status?: string;
 };
 
+export type SkyCalendarComposedCard = {
+  id?: string;
+  planetA?: string;
+  signA?: string;
+  aspect?: string;
+  planetB?: string;
+  signB?: string;
+  forecast?: string;
+  details?: string;
+  approvedVia?: string;
+};
+
+export type ResolvedSkyCalendarComposedCard = {
+  contentId: string;
+  details: string;
+  forecast: string;
+  sourceId: string;
+};
+
 export type ApprovedExactSkyAspectCopy = {
   body: string;
   calendarLeadIn?: "date-placements-collective-level";
@@ -171,6 +190,7 @@ type KnowledgeBundle = {
   primitives?: Record<string, PrimitiveEntry[]>;
   insightCards?: InsightCard[];
   transits?: TransitEntry[];
+  skyCalendarComposedCards?: SkyCalendarComposedCard[];
   transitNatal?: TransitNatalEntry[];
   placements?: PlacementEntry[];
   pointPlacements?: PlacementEntry[];
@@ -290,6 +310,16 @@ export function natalAspectContentId(planetA: string, aspect: string, planetB: s
 
 export function currentSkyAspectContentId(planetA: string, aspect: string, planetB: string) {
   return `sky-${aspectContentId(planetA, aspect, planetB)}`;
+}
+
+export function skyCalendarComposedCardContentId(
+  planetA: string,
+  signA: string,
+  aspect: string,
+  planetB: string,
+  signB: string
+) {
+  return `sky-card-${normalizeIdPart(planetA)}-${normalizeIdPart(signA)}-${normalizeIdPart(aspect)}-${normalizeIdPart(planetB)}-${normalizeIdPart(signB)}`;
 }
 
 export function transitNatalContentId(transiting: string, aspect: string, natal: string) {
@@ -445,6 +475,7 @@ export function createDomainRegistry(bundleInput: unknown) {
   const signMap = normalizePrimitiveMap(bundle.primitives?.sign);
   const voiceBySourceAndVoice = new Map((bundle.voiceContent ?? []).map((item) => [`${item.sourceId}:${item.voiceId}`, item]));
   const approvedExactSkyAspectCopyById = new Map<string, ApprovedExactSkyAspectCopy>();
+  const skyCalendarComposedCardById = new Map<string, ResolvedSkyCalendarComposedCard>();
   const knowledgeById = new Map<string, KnowledgeItem>();
   const legacyIdByAlias = new Map<string, string>();
   const retrogradeMeaningByPlanet = new Map<string, string>();
@@ -521,6 +552,42 @@ export function createDomainRegistry(bundleInput: unknown) {
     if (card.kind === "natal-aspect" && factor.planetA && factor.aspect && factor.planetB) {
       addKnowledgeAlias(knowledgeItem, natalAspectContentId(factor.planetA, factor.aspect, factor.planetB));
     }
+  }
+
+  for (const card of bundle.skyCalendarComposedCards ?? []) {
+    const forecast = cleanText(card.forecast);
+    const details = cleanText(card.details);
+
+    if (!card.planetA || !card.signA || !card.aspect || !card.planetB || !card.signB) {
+      continue;
+    }
+
+    // The build only bundles owner-approved, serving-authorized cards. A card
+    // missing either half of the two-part shape stays out of the runtime so the
+    // Calendar falls through to the existing exact body.
+    if (!forecast || !details) {
+      continue;
+    }
+
+    const contentId = skyCalendarComposedCardContentId(
+      card.planetA,
+      card.signA,
+      card.aspect,
+      card.planetB,
+      card.signB
+    );
+    const resolved: ResolvedSkyCalendarComposedCard = {
+      contentId,
+      details,
+      forecast,
+      sourceId: card.id ?? contentId
+    };
+
+    skyCalendarComposedCardById.set(contentId, resolved);
+    skyCalendarComposedCardById.set(
+      skyCalendarComposedCardContentId(card.planetB, card.signB, card.aspect, card.planetA, card.signA),
+      resolved
+    );
   }
 
   for (const transit of bundle.transits ?? []) {
@@ -940,8 +1007,21 @@ export function createDomainRegistry(bundleInput: unknown) {
     return approvedExactSkyAspectCopyById.get(currentSkyAspectContentId(planetA, aspect, planetB)) ?? null;
   }
 
+  function skyCalendarComposedCard(
+    planetA: string,
+    signA: string,
+    aspect: string,
+    planetB: string,
+    signB: string
+  ) {
+    return skyCalendarComposedCardById.get(
+      skyCalendarComposedCardContentId(planetA, signA, aspect, planetB, signB)
+    ) ?? null;
+  }
+
   return {
     approvedExactSkyAspectCopy,
+    skyCalendarComposedCard,
     approvedVoiceOrKnowledgeFallback,
     retrogradePlanetMeaning,
     aspectContentId,
