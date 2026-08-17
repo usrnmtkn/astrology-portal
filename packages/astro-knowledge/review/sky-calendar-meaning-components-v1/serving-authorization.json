@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "recordType": "sky_calendar_versioned_composer_serving_authorization",
+  "authorizationId": "sky-calendar-two-part-composer-v2.1.0-component-set-aee970d7-pending-pilot",
+  "authorizationDecisionDate": "2026-08-16",
+  "authorizationDecisionSource": {
+    "tool": "Codex Desktop",
+    "threadId": "019fc997-4b31-79f2-9a53-b363197a6ee2",
+    "threadTitle": "WIP: Aspects",
+    "turnId": "01a00dbc-c939-7211-9ce2-517f77901469",
+    "date": "2026-08-16",
+    "statement": "The owner authorizes composed cards to serve without per-card approval only when the composer version and component hash match and after owner confirmation of the eight-card unscripted pilot."
+  },
+  "authorizationModel": "versioned_composer_and_component_set",
+  "composerVersion": "sky-calendar-two-part-composer-v2.1.0",
+  "composerSourceSha256": "e723b58e5046c671f1a2ec6d244d1b64a20361e107c29970d5840bfc1002abc3",
+  "composerSourceFiles": [
+    "scripts/sky-calendar-component-approval.mjs",
+    "scripts/sky-calendar-frame-uniqueness.mjs",
+    "scripts/sky-calendar-realization-types.mjs",
+    "scripts/sky-calendar-serving-authorization.mjs",
+    "scripts/sky-calendar-two-part-composer.mjs"
+  ],
+  "componentSetSha256": "aee970d7c40d1331eaf981886ec5007ea5e99eb3e18c18ed1889cbe470e8a443",
+  "servingAuthorization": false,
+  "pilot": {
+    "required": true,
+    "cardCount": 8,
+    "ownerConfirmed": false,
+    "ownerConfirmationStatementSource": null
+  },
+  "invalidationRule": "Any change to the composer, its deterministic gates, or any approved component invalidates serving authorization until the owner re-approves the new hashes.",
+  "approvalRecordGovernance": {
+    "agentsPrepareUnsignedRecords": true,
+    "onlyOwnerMayMarkApprovedOrActivateServing": true,
+    "crossSessionOwnerDecisionsRequireToolThreadAndDate": true
+  },
+  "standingAudit": {
+    "command": "node scripts/sample-live-sky-composed-cards.mjs --input <live-cards.json> --count <N> --out <owner-audit-sample.json>",
+    "cadence": "Sample 12 cards weekly for the first 8 weeks after activation, then 20 cards monthly; also sample immediately after every owner-authorized composer or component version change.",
+    "requiredEvidence": [
+      "forecast",
+      "details",
+      "component inputs",
+      "realization selections",
+      "composer version and hash",
+      "component-set hash"
+    ]
+  }
+}

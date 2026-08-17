@@ -1,0 +1,2098 @@
+{
+  "schema": "tldr.sky-calendar.supportive-pool-blocking-audit.v1",
+  "status": "AUDIT ONLY",
+  "generatedAt": "2026-08-15",
+  "basis": {
+    "liveRecordsAreSignNeutral": true,
+    "exactSignRoutesPerSoftRecord": 24,
+    "routeRule": "For each ordered LIVE record, enumerate both exact zodiac directions: +/-120 degrees for trines and +/-60 degrees for sextiles.",
+    "runtimeCaveat": "A LIVE source record does not carry signs. A real Calendar occurrence blocks only when its runtime sign pair selects one of these missing placement pools."
+  },
+  "totals": {
+    "liveExactRecords": 215,
+    "trineAndSextileRecords": 85,
+    "possibleExactSignCards": 2040,
+    "blockedCards": 1345,
+    "placementAOnly": 323,
+    "placementBOnly": 701,
+    "bothPlacements": 321,
+    "affectedRecordTemplates": 85,
+    "emptySupportiveUnits": 64,
+    "fillableFromGovernedSignEvidence": 64,
+    "genuinelyOneSided": 0
+  },
+  "byAspect": {
+    "trine": {
+      "records": 42,
+      "possibleExactSignCards": 1008,
+      "blockedCards": 670,
+      "placementAOnly": 164,
+      "placementBOnly": 352,
+      "bothPlacements": 154
+    },
+    "sextile": {
+      "records": 43,
+      "possibleExactSignCards": 1032,
+      "blockedCards": 675,
+      "placementAOnly": 159,
+      "placementBOnly": 349,
+      "bothPlacements": 167
+    }
+  },
+  "placementBlockCounts": [
+    {
+      "key": "sky-sign/jupiter/aries",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/jupiter/scorpio",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/mars/aquarius",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/mars/leo",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/mars/libra",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/mars/pisces",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/mars/sagittarius",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/moon/aquarius",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/moon/gemini",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/moon/sagittarius",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/moon/scorpio",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/neptune/cancer",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/neptune/capricorn",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/neptune/gemini",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/neptune/libra",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/neptune/scorpio",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/neptune/taurus",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/neptune/virgo",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/pluto/aries",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/pluto/cancer",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/pluto/capricorn",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/pluto/gemini",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/pluto/leo",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/pluto/libra",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/pluto/pisces",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/pluto/sagittarius",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/pluto/scorpio",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/pluto/taurus",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/saturn/aries",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/saturn/capricorn",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/saturn/leo",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/saturn/libra",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/saturn/taurus",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/saturn/virgo",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/uranus/aquarius",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/uranus/capricorn",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/uranus/scorpio",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/uranus/taurus",
+      "blockedRoutes": 36
+    },
+    {
+      "key": "sky-sign/mercury/aquarius",
+      "blockedRoutes": 30
+    },
+    {
+      "key": "sky-sign/mercury/aries",
+      "blockedRoutes": 30
+    },
+    {
+      "key": "sky-sign/mercury/capricorn",
+      "blockedRoutes": 30
+    },
+    {
+      "key": "sky-sign/mercury/scorpio",
+      "blockedRoutes": 30
+    },
+    {
+      "key": "sky-sign/venus/capricorn",
+      "blockedRoutes": 30
+    },
+    {
+      "key": "sky-sign/venus/gemini",
+      "blockedRoutes": 30
+    },
+    {
+      "key": "sky-sign/venus/pisces",
+      "blockedRoutes": 30
+    },
+    {
+      "key": "sky-sign/venus/sagittarius",
+      "blockedRoutes": 30
+    },
+    {
+      "key": "sky-sign/venus/taurus",
+      "blockedRoutes": 30
+    },
+    {
+      "key": "sky-sign/sun/scorpio",
+      "blockedRoutes": 28
+    }
+  ],
+  "sourceLayerAudit": {
+    "scopeNote": "modern, business, cyclic, and arcApplying belong to the pair-aspect records, not to sky-sign units. They prove that the soft aspect has support, but cannot by themselves supply a sign-specific realization.",
+    "recordsReviewed": 85,
+    "recordsWithSupportInAllFourNamedLayers": 85,
+    "records": [
+      {
+        "recordId": "jupiter-sextile-neptune",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/jupiter-sextile-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "jupiter-sextile-pluto",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/jupiter-sextile-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "jupiter-sextile-saturn",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/jupiter-sextile-saturn.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "jupiter-sextile-uranus",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/jupiter-sextile-uranus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "jupiter-trine-neptune",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/jupiter-trine-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "jupiter-trine-pluto",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/jupiter-trine-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "jupiter-trine-saturn",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/jupiter-trine-saturn.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "jupiter-trine-uranus",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/jupiter-trine-uranus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mars-sextile-jupiter",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/mars-sextile-jupiter.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mars-sextile-neptune",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/mars-sextile-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mars-sextile-pluto",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/mars-sextile-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mars-sextile-saturn",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/mars-sextile-saturn.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mars-sextile-uranus",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/mars-sextile-uranus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mars-trine-jupiter",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/mars-trine-jupiter.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mars-trine-neptune",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/mars-trine-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mars-trine-pluto",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/mars-trine-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mars-trine-saturn",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/mars-trine-saturn.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mars-trine-uranus",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/mars-trine-uranus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mercury-sextile-jupiter",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/mercury-sextile-jupiter.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mercury-sextile-mars",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/mercury-sextile-mars.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mercury-sextile-neptune",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/mercury-sextile-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mercury-sextile-pluto",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/mercury-sextile-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mercury-sextile-saturn",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/mercury-sextile-saturn.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mercury-sextile-uranus",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/mercury-sextile-uranus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mercury-sextile-venus",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/mercury-sextile-venus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mercury-trine-jupiter",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/mercury-trine-jupiter.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mercury-trine-mars",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/mercury-trine-mars.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mercury-trine-neptune",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/mercury-trine-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mercury-trine-pluto",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/mercury-trine-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mercury-trine-saturn",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/mercury-trine-saturn.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "mercury-trine-uranus",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/mercury-trine-uranus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-sextile-jupiter",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-sextile-jupiter.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-sextile-mars",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-sextile-mars.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-sextile-mercury",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-sextile-mercury.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-sextile-neptune",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-sextile-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-sextile-pluto",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-sextile-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-sextile-saturn",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-sextile-saturn.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-sextile-uranus",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-sextile-uranus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-sextile-venus",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-sextile-venus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-trine-jupiter",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-trine-jupiter.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-trine-mars",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-trine-mars.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-trine-mercury",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-trine-mercury.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-trine-neptune",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-trine-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-trine-pluto",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-trine-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-trine-saturn",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-trine-saturn.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-trine-uranus",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-trine-uranus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "moon-trine-venus",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/moon-trine-venus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "neptune-sextile-pluto",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/neptune-sextile-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "neptune-trine-pluto",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/neptune-trine-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "saturn-sextile-neptune",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/saturn-sextile-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "saturn-sextile-pluto",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/saturn-sextile-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "saturn-sextile-uranus",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/saturn-sextile-uranus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "saturn-trine-neptune",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/saturn-trine-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "saturn-trine-pluto",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/saturn-trine-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "saturn-trine-uranus",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/saturn-trine-uranus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "sun-sextile-jupiter",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/sun-sextile-jupiter.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "sun-sextile-mars",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/sun-sextile-mars.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "sun-sextile-moon",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/sun-sextile-moon.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "sun-sextile-neptune",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/sun-sextile-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "sun-sextile-pluto",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/sun-sextile-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "sun-sextile-saturn",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/sun-sextile-saturn.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "sun-sextile-uranus",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/sun-sextile-uranus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "sun-trine-jupiter",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/sun-trine-jupiter.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "sun-trine-mars",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/sun-trine-mars.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "sun-trine-moon",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/sun-trine-moon.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "sun-trine-neptune",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/sun-trine-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "sun-trine-pluto",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/sun-trine-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "sun-trine-saturn",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/sun-trine-saturn.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "sun-trine-uranus",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/sun-trine-uranus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "uranus-sextile-neptune",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/uranus-sextile-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "uranus-sextile-pluto",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/uranus-sextile-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "uranus-trine-neptune",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/uranus-trine-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "uranus-trine-pluto",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/uranus-trine-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "venus-sextile-jupiter",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/venus-sextile-jupiter.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "venus-sextile-mars",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/venus-sextile-mars.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "venus-sextile-neptune",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/venus-sextile-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "venus-sextile-pluto",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/venus-sextile-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "venus-sextile-saturn",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/venus-sextile-saturn.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "venus-sextile-uranus",
+        "aspect": "sextile",
+        "sourcePath": "packages/astro-knowledge/data/transits/venus-sextile-uranus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "venus-trine-jupiter",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/venus-trine-jupiter.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "venus-trine-mars",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/venus-trine-mars.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "venus-trine-neptune",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/venus-trine-neptune.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "venus-trine-pluto",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/venus-trine-pluto.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "venus-trine-saturn",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/venus-trine-saturn.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      },
+      {
+        "recordId": "venus-trine-uranus",
+        "aspect": "trine",
+        "sourcePath": "packages/astro-knowledge/data/transits/venus-trine-uranus.json",
+        "supportiveLayers": {
+          "modern": true,
+          "business": true,
+          "cyclic": true,
+          "arcApplying": true
+        }
+      }
+    ]
+  },
+  "emptySupportiveUnitAudit": {
+    "scopeNote": "Fillability was decided from each sky-sign unit's own governed source_ids. No realization was drafted or inserted.",
+    "fillableFromGovernedSignEvidence": [
+      {
+        "key": "sky-sign/chiron/aquarius",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/chiron/aquarius",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!31"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/chiron/aries",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/chiron/aries",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!4"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/chiron/capricorn",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/chiron/capricorn",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!29"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/chiron/gemini",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/chiron/gemini",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!15"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/chiron/leo",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/chiron/leo",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!19"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/chiron/libra",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/chiron/libra",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!23"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/chiron/pisces",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/chiron/pisces",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!33"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/chiron/sagittarius",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/chiron/sagittarius",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!27"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/chiron/scorpio",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/chiron/scorpio",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!25"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/chiron/taurus",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/chiron/taurus",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!10"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/jupiter/aries",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/jupiter/aries",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!36",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!168"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/jupiter/scorpio",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/jupiter/scorpio",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!89"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/lilith/aquarius",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/aquarius"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/lilith/aries",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/aries"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/lilith/gemini",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/gemini"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/lilith/pisces",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/pisces"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/lilith/sagittarius",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/sagittarius"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/lilith/taurus",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/taurus"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 0
+      },
+      {
+        "key": "sky-sign/mars/aquarius",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/aquarius",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!223"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/mars/leo",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/leo",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!168",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!40"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/mars/libra",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/libra",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!187",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!42"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/mars/pisces",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/pisces",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!236",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!47"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/mars/sagittarius",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mars/sagittarius",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!203"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/mercury/aquarius",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mercury/aquarius",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!445"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 30
+      },
+      {
+        "key": "sky-sign/mercury/aries",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mercury/aries",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!251",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!84"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 30
+      },
+      {
+        "key": "sky-sign/mercury/capricorn",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mercury/capricorn",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!429"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 30
+      },
+      {
+        "key": "sky-sign/mercury/scorpio",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/mercury/scorpio",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!392"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 30
+      },
+      {
+        "key": "sky-sign/moon/aquarius",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/moon/aquarius",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!118"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/moon/gemini",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/moon/gemini",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!511",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!110"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/moon/sagittarius",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/moon/sagittarius",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!521",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!116"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/moon/scorpio",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/moon/scorpio",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!515",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!115"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/neptune/cancer",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/cancer",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!537"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/neptune/capricorn",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/capricorn",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!549"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/neptune/gemini",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/gemini",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!535",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!242"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/neptune/libra",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/libra",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!543"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 0,
+          "shadow": 3
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/neptune/scorpio",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/scorpio",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!545",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!247"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/neptune/taurus",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/taurus",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!533",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!241"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/neptune/virgo",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/neptune/virgo",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!541"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/pluto/aries",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/pluto/aries",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!599"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/pluto/cancer",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/pluto/cancer",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!605"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/pluto/capricorn",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/pluto/capricorn",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!617"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/pluto/gemini",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/pluto/gemini",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!603"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/pluto/leo",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/pluto/leo",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!607"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/pluto/libra",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/pluto/libra",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!611"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/pluto/pisces",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/pluto/pisces",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!647"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/pluto/sagittarius",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/pluto/sagittarius",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!615"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/pluto/scorpio",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/pluto/scorpio",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!613",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!151"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/pluto/taurus",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/pluto/taurus",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!601",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!145"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/saturn/aries",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/aries",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!654"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/saturn/capricorn",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/capricorn",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!705"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/saturn/leo",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/leo",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!671"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/saturn/libra",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/libra",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!676"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/saturn/taurus",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/taurus",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!665",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!193"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/saturn/virgo",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/saturn/virgo",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!673"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/sun/scorpio",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/sun/scorpio",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!838"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 28
+      },
+      {
+        "key": "sky-sign/uranus/aquarius",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/uranus/aquarius",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!953"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 1,
+          "shadow": 2
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/uranus/capricorn",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/uranus/capricorn",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!951"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/uranus/scorpio",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/uranus/scorpio",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!947"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/uranus/taurus",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/uranus/taurus",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!911"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 36
+      },
+      {
+        "key": "sky-sign/venus/capricorn",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/venus/capricorn",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!1069",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!69"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 30
+      },
+      {
+        "key": "sky-sign/venus/gemini",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/venus/gemini",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!986",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!62"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 30
+      },
+      {
+        "key": "sky-sign/venus/pisces",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/venus/pisces",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!1093"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 30
+      },
+      {
+        "key": "sky-sign/venus/sagittarius",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/venus/sagittarius",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!1061",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!68"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 30
+      },
+      {
+        "key": "sky-sign/venus/taurus",
+        "classification": "supportive_material_exists_but_was_not_extracted",
+        "sourceIds": [
+          "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/venus/taurus",
+          "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!978",
+          "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!61"
+        ],
+        "currentPoolCounts": {
+          "supportive": 0,
+          "neutral": 2,
+          "shadow": 1
+        },
+        "blockedRouteCount": 30
+      }
+    ],
+    "genuinelyOneSided": []
+  },
+  "preservation": {
+    "realizationWordingChanged": 0,
+    "realizationsReclassified": 0,
+    "componentApprovalStatusChanged": 0,
+    "servingRowsChanged": 0
+  }
+}
