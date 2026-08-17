@@ -1,0 +1,715 @@
+{
+  "schemaVersion": 1,
+  "recordType": "sky_calendar_meaning_component_set_exact_approval",
+  "approvalId": "sky-calendar-meaning-components-v2-owner-approved-2026-08-16",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-16",
+  "ownerApprovalStatementSource": "owner_chat_2026-08-16_approves_174_sky_calendar_meaning_components",
+  "approvalScope": "exact_component_wording_and_typed_realization_pools_only",
+  "servingAuthorization": false,
+  "componentCount": 174,
+  "payloadHashAlgorithm": "sha256(JSON.stringify(canonicalJson(componentPayload)))",
+  "setHashAlgorithm": "sha256(JSON.stringify(sorted([{key,payloadSha256}])))",
+  "componentSetSha256": "aee970d7c40d1331eaf981886ec5007ea5e99eb3e18c18ed1889cbe470e8a443",
+  "evidenceLayerSha256": "0ceb85f5897fb42238dfdd69e7b02271f87befe202f009da8659add9b9337c23",
+  "sourceRegistryPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/sky-calendar-meaning-components-v1.json",
+  "sourceWorkbookPath": "outputs/sky-calendar-meaning-components-2026-08-14/sky-calendar-meaning-components-owner-review.xlsx",
+  "components": [
+    {
+      "key": "sky-aspect-mechanism/conjunction",
+      "payloadSha256": "9b9add40b6713735e70a45863c5b75a6f8d8273918327fee74107ac92d86fea1"
+    },
+    {
+      "key": "sky-aspect-mechanism/opposition",
+      "payloadSha256": "a05232a0f5712362adb512da6e59b160e3878cfcabc10c7486f425447201f361"
+    },
+    {
+      "key": "sky-aspect-mechanism/sextile",
+      "payloadSha256": "8b2692da3b8c420cb5443ca64fcc57a1e8b7924869d123c44bc56385fddfc399"
+    },
+    {
+      "key": "sky-aspect-mechanism/square",
+      "payloadSha256": "a67d11e3e3a99454c72b29393eaff76e1f214f7eb04adff2efe93001edb3d91b"
+    },
+    {
+      "key": "sky-aspect-mechanism/trine",
+      "payloadSha256": "f4bbaba7d174ae2f5bbda931baa59df7be3999d9a06b7a471cb14f44215db496"
+    },
+    {
+      "key": "sky-how/element/air/air",
+      "payloadSha256": "529e9a0c2574f8eceba200413aa953719dfcb3feed22ae5bf984f67757395ead"
+    },
+    {
+      "key": "sky-how/element/air/earth",
+      "payloadSha256": "a317e77784476c3dd138bbf33789e3d74db8cdb623599ca6685414865454fcc2"
+    },
+    {
+      "key": "sky-how/element/air/fire",
+      "payloadSha256": "642e51330b99923fe6fe7d3c16f8d85fb6f9d1ffc58cfa7bbc682ad84a0e296b"
+    },
+    {
+      "key": "sky-how/element/air/water",
+      "payloadSha256": "829382402a84f61c465a6bb8afa4727039efa1a1ca3b9ffb6e98479fd4352307"
+    },
+    {
+      "key": "sky-how/element/earth/air",
+      "payloadSha256": "bc52c3dd277985488a2a6ef60a7c4a7376fbd54bb4554c944f44dc2ed11babec"
+    },
+    {
+      "key": "sky-how/element/earth/earth",
+      "payloadSha256": "665e8c9625f05caad65baa68a49b4f5239e44d59d96faba105c94f74ec857a72"
+    },
+    {
+      "key": "sky-how/element/earth/fire",
+      "payloadSha256": "beaa48fcfaf8e630560f00c3b5d6f26e62517c41962c7b034856f65070887005"
+    },
+    {
+      "key": "sky-how/element/earth/water",
+      "payloadSha256": "5a6c3a8a4c1620015d93fca7f86f1b8cb4ae2f6f7158ef337575decba8a044f2"
+    },
+    {
+      "key": "sky-how/element/fire/air",
+      "payloadSha256": "402dc418b4732a2983088922a9841a5fe4801785470070058ad76d02bb90b078"
+    },
+    {
+      "key": "sky-how/element/fire/earth",
+      "payloadSha256": "03c62bff53113925ab31de4f103998598f2d0471f60e1af7561ae16f9439f9b1"
+    },
+    {
+      "key": "sky-how/element/fire/fire",
+      "payloadSha256": "f157d99cb48e37cf0fb1b3ccaeef86d28df09ecf382371fc03c1f4fa70f1091c"
+    },
+    {
+      "key": "sky-how/element/fire/water",
+      "payloadSha256": "0854c576282458501a79019dc6004545d3ea4f741a8debf8d8161548684a60cb"
+    },
+    {
+      "key": "sky-how/element/water/air",
+      "payloadSha256": "59819b8f3fab28f883ca0047c6fb97ad249e4c1d8ad9ce2e95978a6a5871e2be"
+    },
+    {
+      "key": "sky-how/element/water/earth",
+      "payloadSha256": "04ffb3319e027489173a172cd69703f5c580b80b463d988f58d4aa86b19be5ee"
+    },
+    {
+      "key": "sky-how/element/water/fire",
+      "payloadSha256": "fc5c0dd8366b2ba9c51aa2ccfa21cf7f476db2e3737541cb7aff44f90caa423b"
+    },
+    {
+      "key": "sky-how/element/water/water",
+      "payloadSha256": "091a3b7db7a2b4e56973ea3052c544650d401556bdf77e5ac68ad8da5e918a19"
+    },
+    {
+      "key": "sky-how/modality/cardinal/cardinal",
+      "payloadSha256": "b72085f4829f67bc6afe1f680509d04f2d5fee6e8543cb12997bc7481d39c6b6"
+    },
+    {
+      "key": "sky-how/modality/cardinal/fixed",
+      "payloadSha256": "5fd8682d3e6dcd2fc6e42063ce1721606962955b231339829947490f41767b90"
+    },
+    {
+      "key": "sky-how/modality/cardinal/mutable",
+      "payloadSha256": "be751aebddd438e080e949b2693ea0b5b89844bbfc79864747683d39d3b7fefd"
+    },
+    {
+      "key": "sky-how/modality/fixed/cardinal",
+      "payloadSha256": "bd4f190fa58e04c0d345ffeef92da9f388defa8b97364676a893b3b489a9556f"
+    },
+    {
+      "key": "sky-how/modality/fixed/fixed",
+      "payloadSha256": "48a8949913431f9c9c2933965de641df8fe6cb1bd38ff75e34ea79ab41381da6"
+    },
+    {
+      "key": "sky-how/modality/fixed/mutable",
+      "payloadSha256": "8c5a88c1a642d44c85ec2502ef9ceca6da8e8292868de2a107f84b02374ca04c"
+    },
+    {
+      "key": "sky-how/modality/mutable/cardinal",
+      "payloadSha256": "1b055f21e309129c4e2796e7efb637d1875391c00460089ac39c457527d65b4d"
+    },
+    {
+      "key": "sky-how/modality/mutable/fixed",
+      "payloadSha256": "240132a8dde5b5e7d38515ddebe9cf55f3919c4c9c809e5b9150cb1ed8c060f9"
+    },
+    {
+      "key": "sky-how/modality/mutable/mutable",
+      "payloadSha256": "4a936df6c6f0d71217a1cadfb46c17194e3d5453de92487f11d0143cc8363730"
+    },
+    {
+      "key": "sky-sign/chiron/aquarius",
+      "payloadSha256": "84893f91ae05d27e3a609a91590a08769e51b685db5795ea2d7c4b6d3ca40d51"
+    },
+    {
+      "key": "sky-sign/chiron/aries",
+      "payloadSha256": "7b39885c04ed22af727d2d9b59f7434f69f6c61e72d6ded605e4e092ad4dcbc0"
+    },
+    {
+      "key": "sky-sign/chiron/cancer",
+      "payloadSha256": "c7a3a2f4808adbe489a9ccff340089e5d4dc198c2930242c3deb08ed7fb8cdb9"
+    },
+    {
+      "key": "sky-sign/chiron/capricorn",
+      "payloadSha256": "38adca41c29a137d80a8d283be8b53a489a7ebaa9a103e4691c012c3c6077c59"
+    },
+    {
+      "key": "sky-sign/chiron/gemini",
+      "payloadSha256": "6192f7d792be8df2604000be738eb1e87a1d5a2702252492a4ec3c3623c323df"
+    },
+    {
+      "key": "sky-sign/chiron/leo",
+      "payloadSha256": "0af4544e5e730b11a3cf7a4e97e4a2e9f606f873949690421c3629ad446e3a1b"
+    },
+    {
+      "key": "sky-sign/chiron/libra",
+      "payloadSha256": "4cc05953884246671636ab0aefe3f41f1d5ff143821e991b40151073567faed1"
+    },
+    {
+      "key": "sky-sign/chiron/pisces",
+      "payloadSha256": "31c08b4a494e9751736cc1506e43202243b9f594d4a288ce88b1d24ac0e673ad"
+    },
+    {
+      "key": "sky-sign/chiron/sagittarius",
+      "payloadSha256": "c706402d771d6a35526a075c2da8de3be32d0ac75ed04aeae7d640cf0f4ce310"
+    },
+    {
+      "key": "sky-sign/chiron/scorpio",
+      "payloadSha256": "6ee182762b15b150c044ed79697bd00e86ffcb4ddc968c83d4c0e5f89dbd424d"
+    },
+    {
+      "key": "sky-sign/chiron/taurus",
+      "payloadSha256": "d125a9d9c7f748f83b4340c1adfb59e9591e0f9fa56faa7c34b00b11bd8ae548"
+    },
+    {
+      "key": "sky-sign/chiron/virgo",
+      "payloadSha256": "0f17d84b2408103321f82bfed4f89b83a1cc62e20a1526f67b0fcecb98f8de7e"
+    },
+    {
+      "key": "sky-sign/jupiter/aquarius",
+      "payloadSha256": "37247e46320a8c8545da9d3f2077fd8b8390e18cc2a3511462466169e19602d7"
+    },
+    {
+      "key": "sky-sign/jupiter/aries",
+      "payloadSha256": "4b3580223315f2a4d649b2219c5648fc9ac6b2d7812ac5e97e24cbf5386ff576"
+    },
+    {
+      "key": "sky-sign/jupiter/cancer",
+      "payloadSha256": "4bdcf86821f4f070131fdff7c4a1f5768a38e434b7c95f12b3227044ead10917"
+    },
+    {
+      "key": "sky-sign/jupiter/capricorn",
+      "payloadSha256": "1f95b1193d452cfaf5d8d30b98ccc68b8ccb98ee39cf5e8c9e78698a4ad159db"
+    },
+    {
+      "key": "sky-sign/jupiter/gemini",
+      "payloadSha256": "e268e130a3965b97c00302a35a97d8a844561a011a6896f2532fb975ad7a6183"
+    },
+    {
+      "key": "sky-sign/jupiter/leo",
+      "payloadSha256": "cd62fb54741b97cfd7a0fbd94fdf838854de5ab619a04f86d269d639334487fd"
+    },
+    {
+      "key": "sky-sign/jupiter/libra",
+      "payloadSha256": "cc7ad0c89ffb9faac5684a82e20e6ccdd583bd3442bb18e4f17380a0aa24d8bd"
+    },
+    {
+      "key": "sky-sign/jupiter/pisces",
+      "payloadSha256": "cec599f4dca7e68ff4833151cccced2a76bc2c759d90c43d28bbb9fc4ebe7cc4"
+    },
+    {
+      "key": "sky-sign/jupiter/sagittarius",
+      "payloadSha256": "0e26e3ebf4944b020cfb0cf4a08d816596c4a40f47c05b42f0eb8d06aacd00ad"
+    },
+    {
+      "key": "sky-sign/jupiter/scorpio",
+      "payloadSha256": "3dd80f368d1a43b7a94e9ce80b3bfc7dd2df66bb363debb97ebdc39b176c513a"
+    },
+    {
+      "key": "sky-sign/jupiter/taurus",
+      "payloadSha256": "647ff1d3da3f6d2f09aecede7798f28fb66b647a7791a92225027c3d33f3c288"
+    },
+    {
+      "key": "sky-sign/jupiter/virgo",
+      "payloadSha256": "2ee6b23b9eb36f092341ce94777de33c4836b4ae2e04aa9e59a0d0a69f83141b"
+    },
+    {
+      "key": "sky-sign/lilith/aquarius",
+      "payloadSha256": "a49e608c73e7b2b95dc014aee25a941f4fba37f58d67470fb54568b6e7799892"
+    },
+    {
+      "key": "sky-sign/lilith/aries",
+      "payloadSha256": "d2a956911f2a9ac3c94d0ec0c42a7e0fa5de3b4b20afcf19fe7c9fb3e62d3681"
+    },
+    {
+      "key": "sky-sign/lilith/cancer",
+      "payloadSha256": "f39b7ac19fef40a442c4811cba45fa4d660b75e02155e0fcbbb17820ba68dbd9"
+    },
+    {
+      "key": "sky-sign/lilith/capricorn",
+      "payloadSha256": "e8018157b454d008fa2d3327aa66197e94464209489911ca87f3cd1eb13569d2"
+    },
+    {
+      "key": "sky-sign/lilith/gemini",
+      "payloadSha256": "defc0a0a6ac76faef04ede33da3736806e677e820bd00cd92d2337360908aa73"
+    },
+    {
+      "key": "sky-sign/lilith/leo",
+      "payloadSha256": "a8915d38ae36d4b0d8082fd9877d2b98361167346d41c9e8ae777135dc6e589d"
+    },
+    {
+      "key": "sky-sign/lilith/libra",
+      "payloadSha256": "8fd8d6101a90d7ae15a39fe1dcf73fae0128210fbda828bf6ef81640e84a9705"
+    },
+    {
+      "key": "sky-sign/lilith/pisces",
+      "payloadSha256": "9ca09c91e965eef1cdc8d0ce7dc7444d8071a96ea2255d4df5a5f85d1a1d3a82"
+    },
+    {
+      "key": "sky-sign/lilith/sagittarius",
+      "payloadSha256": "c913fa51f4abcae09a214758513e557f63d9712ad8d6fa99c14d39efc296e32e"
+    },
+    {
+      "key": "sky-sign/lilith/scorpio",
+      "payloadSha256": "c022f290ccc0c2d69e3d0ebab9601290d208b81591db115925443a8db4db5431"
+    },
+    {
+      "key": "sky-sign/lilith/taurus",
+      "payloadSha256": "2f4aea83624aa448aaaf8e68e0d1b4dae6f8b89d639d3ec8209be9735bd91d34"
+    },
+    {
+      "key": "sky-sign/lilith/virgo",
+      "payloadSha256": "b1aac0c3641b43acf7ff8d4b081cad4fb9c92ead92040e3c6699dd035d699256"
+    },
+    {
+      "key": "sky-sign/mars/aquarius",
+      "payloadSha256": "95e15aaa6a9d0733a9855809f603cf153b7a23ece94b4c925532752685c6ce80"
+    },
+    {
+      "key": "sky-sign/mars/aries",
+      "payloadSha256": "d7cab5670a0c7f9c9dfa1cbfbcb060cdec4d595b4856980d0341038331e295ce"
+    },
+    {
+      "key": "sky-sign/mars/cancer",
+      "payloadSha256": "feaedf878df1b2eca9f6f19dd79e88f7a4b33001e9817bdf65d8460116f1a3ed"
+    },
+    {
+      "key": "sky-sign/mars/capricorn",
+      "payloadSha256": "890c9d7d63eff860c6c916af3ea920ac60dd10f0069855314d0023d4b65061f0"
+    },
+    {
+      "key": "sky-sign/mars/gemini",
+      "payloadSha256": "29278033c0c4db0f7fd581ccc28650eedd0fa981505704d27c50779ee753b74f"
+    },
+    {
+      "key": "sky-sign/mars/leo",
+      "payloadSha256": "2fcf2c034ad56bbaa6362b3a41bd219028b469eefa184f04719216e73f1e982c"
+    },
+    {
+      "key": "sky-sign/mars/libra",
+      "payloadSha256": "92a0184aefca5f846e8726b7ff88cbd23eb3582390dd0021cfcb64b18485a9f7"
+    },
+    {
+      "key": "sky-sign/mars/pisces",
+      "payloadSha256": "48ec1e5c8be5a35919256256ee9db2dec22982882bf04776fadc035f85921520"
+    },
+    {
+      "key": "sky-sign/mars/sagittarius",
+      "payloadSha256": "f3c4423a17c11b3cb8e994f0e71612bda1b2b6707ba57f2b94fa54fba896cbe6"
+    },
+    {
+      "key": "sky-sign/mars/scorpio",
+      "payloadSha256": "0bdbc2c338f190171b8588a2a0b875ecd34fc37f7f3391010dfccc69140f0533"
+    },
+    {
+      "key": "sky-sign/mars/taurus",
+      "payloadSha256": "dae270e651d0935f6cc598bbf6be7ef9d4f886735c8e7d8d6bd7890f0ae3cf0e"
+    },
+    {
+      "key": "sky-sign/mars/virgo",
+      "payloadSha256": "9d04ded2e37e9a8540583d49dcd4b40079592f497135eab9ae09eb26866e8de3"
+    },
+    {
+      "key": "sky-sign/mercury/aquarius",
+      "payloadSha256": "a233ccc43f80010bf5b565c4c63f99cfe8a86e5bc51f76f57d9b4f8d1fb6306f"
+    },
+    {
+      "key": "sky-sign/mercury/aries",
+      "payloadSha256": "0e0ec7cfb3a45cf7668ff868266992a92137b49c6f05513c29d54257c4e311a8"
+    },
+    {
+      "key": "sky-sign/mercury/cancer",
+      "payloadSha256": "27a10e691a3e9d94f24a7f49c4bbb62be595cce3654dc6094c214ca01c9d11c8"
+    },
+    {
+      "key": "sky-sign/mercury/capricorn",
+      "payloadSha256": "3c8a018120d3474da647c93aa657bf2a7bb23fcb9d3e83dbcd0d35b2aed3073f"
+    },
+    {
+      "key": "sky-sign/mercury/gemini",
+      "payloadSha256": "b154d6acf6e81f18cee1e388e45cd93c573d7bb7396d230a5bdf49a3f97c3f56"
+    },
+    {
+      "key": "sky-sign/mercury/leo",
+      "payloadSha256": "aa82d6c9260b2002bfc77427df6d1d1106973f12d90efadab839735b232fa860"
+    },
+    {
+      "key": "sky-sign/mercury/libra",
+      "payloadSha256": "8ccde0a19e06b3046b3b287f6f83643ebd151c488271b36503233e1585fd17a6"
+    },
+    {
+      "key": "sky-sign/mercury/pisces",
+      "payloadSha256": "3c5ec589f688868786f1be0ae46b02a5e62b8b42e7f4f4829d2516e6cda46af4"
+    },
+    {
+      "key": "sky-sign/mercury/sagittarius",
+      "payloadSha256": "933de85b251c0724430898c4c44585c30e43b6b1109ba0fb48758ff3f4f82ac4"
+    },
+    {
+      "key": "sky-sign/mercury/scorpio",
+      "payloadSha256": "2fdee4909c7b29b5aa91b8e5dd228ddb5dee3284d3a18af9cde05936f15c89b7"
+    },
+    {
+      "key": "sky-sign/mercury/taurus",
+      "payloadSha256": "56ef0e94d91fe7a5f030ea6fd019065030df894c5fcac2b9d37b71da080466c6"
+    },
+    {
+      "key": "sky-sign/mercury/virgo",
+      "payloadSha256": "7b6afbd044b1b3820e8f5156ec813b8da5957d612155cd0c84bb0a5f6de42bc3"
+    },
+    {
+      "key": "sky-sign/moon/aquarius",
+      "payloadSha256": "28ed094384735d5a0026f01f3304547669339aa22b5be973866f3b6b68e2841f"
+    },
+    {
+      "key": "sky-sign/moon/aries",
+      "payloadSha256": "bbf2a467a17d7d0906269d20376b391af825a913f074e5ccd554e85d83d87b0f"
+    },
+    {
+      "key": "sky-sign/moon/cancer",
+      "payloadSha256": "f02b07bf72107fbc1bce2aa176b18f04ce039b0fc5d5a59bf268ca93e63c22ab"
+    },
+    {
+      "key": "sky-sign/moon/capricorn",
+      "payloadSha256": "e615fc79947de054b86176e8852d381bc3420dd9be542982ca5e4e4c6e1e9284"
+    },
+    {
+      "key": "sky-sign/moon/gemini",
+      "payloadSha256": "48220436578be26a9c81ba764ff0efec0201805816a0bdc497db36484e2127e6"
+    },
+    {
+      "key": "sky-sign/moon/leo",
+      "payloadSha256": "a31e49603a525a46b4c40dbe23a2a36dcc4db0189ac4e6405a3902f8729e44dc"
+    },
+    {
+      "key": "sky-sign/moon/libra",
+      "payloadSha256": "968f843608c8e44df3770c82797a026ca5a1e668c885e1ce75e9be63cf80dbb5"
+    },
+    {
+      "key": "sky-sign/moon/pisces",
+      "payloadSha256": "611471431df412516bc6c3b21c087ef2fba2775c3a8804c938c49f06dce11e14"
+    },
+    {
+      "key": "sky-sign/moon/sagittarius",
+      "payloadSha256": "e3e633a27f31dd0d9f00f2ec2e7ee20768a7ad58bfeca129df52fbc0c6a6d53f"
+    },
+    {
+      "key": "sky-sign/moon/scorpio",
+      "payloadSha256": "0e87e2c6d7d420b865af219df87cc2a8c323aaa76c81532d2890ce4f6ebc9d0c"
+    },
+    {
+      "key": "sky-sign/moon/taurus",
+      "payloadSha256": "fa03ce71096944c25305e590a106c297a17a6b6aec1d623e181a56f82f6e68dc"
+    },
+    {
+      "key": "sky-sign/moon/virgo",
+      "payloadSha256": "9135b7e0bc661be2c83568d6003089956725fdd5f6622c738141390c4fd66865"
+    },
+    {
+      "key": "sky-sign/neptune/aquarius",
+      "payloadSha256": "f72a54567b20eeaf22c904cd7805922a0c299dd4fc035a49d2df1a964b1db820"
+    },
+    {
+      "key": "sky-sign/neptune/aries",
+      "payloadSha256": "29be5036c1e6f0f6df1a61dcbbd534a261f7d1225404b24ffa5b56b3cb16b492"
+    },
+    {
+      "key": "sky-sign/neptune/cancer",
+      "payloadSha256": "3cd8b68cee7dbf24f03502334dc4f47240386af4daf668477538471c1bc3e02b"
+    },
+    {
+      "key": "sky-sign/neptune/capricorn",
+      "payloadSha256": "5fdf1598cd5e955e7a8dc68e5c791699a4ede3fa7890beb602ad282874efd716"
+    },
+    {
+      "key": "sky-sign/neptune/gemini",
+      "payloadSha256": "2f0fc941303e757306a049d44e7969549bdb0ec1d2f9f5992d319d33177cfd14"
+    },
+    {
+      "key": "sky-sign/neptune/leo",
+      "payloadSha256": "c833b5ab305a9ae2e3308c053bcf133a0b4b39b73cf7ac21007f2b949dffeceb"
+    },
+    {
+      "key": "sky-sign/neptune/libra",
+      "payloadSha256": "c040836db8774fb7431848c637d90428fd22c3027226c2a3155c9fbdf7fd7142"
+    },
+    {
+      "key": "sky-sign/neptune/pisces",
+      "payloadSha256": "ad9919a0bafd93fb3949046ef2aabb2ce5759b9542ace68b8e39b4d699904262"
+    },
+    {
+      "key": "sky-sign/neptune/sagittarius",
+      "payloadSha256": "1e082aecbe3dd781e07ac12f64193b8f689ad08cf7334cef1e0a833e07d4f1b5"
+    },
+    {
+      "key": "sky-sign/neptune/scorpio",
+      "payloadSha256": "86dcfd9bd4d90d21385e51e3a52b393b4c54d347f1cf972c824d737b6d7a6f9d"
+    },
+    {
+      "key": "sky-sign/neptune/taurus",
+      "payloadSha256": "de6cdd9a52403c7e217b6b97bcc4dec0ed9efd1edef1a3b19a42b5d250c4efcf"
+    },
+    {
+      "key": "sky-sign/neptune/virgo",
+      "payloadSha256": "4a0c75c43648a7f8a3022468afa83da8574fbbd36dd13e3487091ae2d9b942f5"
+    },
+    {
+      "key": "sky-sign/pluto/aquarius",
+      "payloadSha256": "e9db96fa68d639bcd71a52b32de4421c4203e2f03808855015a07de51a016a27"
+    },
+    {
+      "key": "sky-sign/pluto/aries",
+      "payloadSha256": "9f2df75dd60dd43dbfe2309e904506ff105ebd2dab77b1c1c334b724a69a940e"
+    },
+    {
+      "key": "sky-sign/pluto/cancer",
+      "payloadSha256": "bcfaa847124b464163ca91a905d305c2c37d8ead7ca799f5a1546432352faa19"
+    },
+    {
+      "key": "sky-sign/pluto/capricorn",
+      "payloadSha256": "1b2d4497b69741548b4a94fe1af6ec29e962ff8fd3d57a05197878bff7ab4b3a"
+    },
+    {
+      "key": "sky-sign/pluto/gemini",
+      "payloadSha256": "80fe11fe1d30c517ea4250122a86c4d979e38574660438f9577145e0bced790e"
+    },
+    {
+      "key": "sky-sign/pluto/leo",
+      "payloadSha256": "f2a1bacda932944bade2e15325477484e294ee801523e90f620258fe1651903b"
+    },
+    {
+      "key": "sky-sign/pluto/libra",
+      "payloadSha256": "6b6d8e811f8d6cd9463fb260f4d1fee49c6fdc273d6d1ee91e77a38e76978926"
+    },
+    {
+      "key": "sky-sign/pluto/pisces",
+      "payloadSha256": "df0ddb96aef5018e79529a9b2508e322aca97cacd3059d45b433bb35a0c4879c"
+    },
+    {
+      "key": "sky-sign/pluto/sagittarius",
+      "payloadSha256": "4cd588b531199618ca49995095fadd83e7b23cf7fb4274a842ebc6b9dc4a040e"
+    },
+    {
+      "key": "sky-sign/pluto/scorpio",
+      "payloadSha256": "159358e682550060b3c071a5870e8b32b07cb0fb136030aa271ba66f8bb066d0"
+    },
+    {
+      "key": "sky-sign/pluto/taurus",
+      "payloadSha256": "2329d1b1f0d289c628d98ade0a91a8ff53925037f4eccddeaa5459ec2988b2c9"
+    },
+    {
+      "key": "sky-sign/pluto/virgo",
+      "payloadSha256": "8531d44a7e6ba56c67aee9ced4ed80bf4546d5f92f005e9d23c7c27672ee8a71"
+    },
+    {
+      "key": "sky-sign/saturn/aquarius",
+      "payloadSha256": "451ad5261f894ef42c0afd52153659e8e0b44286515c60e80af6246a508eef50"
+    },
+    {
+      "key": "sky-sign/saturn/aries",
+      "payloadSha256": "10f92d115f5418940b8e8c7eb6e9810d5606ad4c9b33ab4cde84f6b81415bcf8"
+    },
+    {
+      "key": "sky-sign/saturn/cancer",
+      "payloadSha256": "df15862d4f01a8b47f9bbab089ccc096621378a1ba5a9e5c8e67776129960a1c"
+    },
+    {
+      "key": "sky-sign/saturn/capricorn",
+      "payloadSha256": "9b1d34e5d5522468d95f0e925b7a3b13208973150f331561595cde6deaf75206"
+    },
+    {
+      "key": "sky-sign/saturn/gemini",
+      "payloadSha256": "fe1278b7c36a6715bab354bd017a70860f8b08db15be6bc2aa66e7de7a6c72c3"
+    },
+    {
+      "key": "sky-sign/saturn/leo",
+      "payloadSha256": "59df3cefc9672403668db1b74c9d5b70e96d3dd5744e3f3c072fb2bc24616b55"
+    },
+    {
+      "key": "sky-sign/saturn/libra",
+      "payloadSha256": "91bd4bb3d9d079d6d8406c744520bd2dd3d099e6f2c891f072943d2d5295cf6c"
+    },
+    {
+      "key": "sky-sign/saturn/pisces",
+      "payloadSha256": "379ec63d73b0e2f8a57ff66642458eafea5060507444d554c439c3f88244730e"
+    },
+    {
+      "key": "sky-sign/saturn/sagittarius",
+      "payloadSha256": "eaee9ea8226201a1e39004034c0abfec099f7c715b85e8fb93311c845873ea5b"
+    },
+    {
+      "key": "sky-sign/saturn/scorpio",
+      "payloadSha256": "0621ece10a1dd9a35dba8b7264c4951bea9af62b2453f747f6b6c5f42147ba40"
+    },
+    {
+      "key": "sky-sign/saturn/taurus",
+      "payloadSha256": "d1a187415351b74aa36fc5bf02e1569b20d1c24fcec44847ef98253e4b768f7f"
+    },
+    {
+      "key": "sky-sign/saturn/virgo",
+      "payloadSha256": "82cf740ff893b6b801d93b61b49f56bbaa878110374600e36a83147eda753243"
+    },
+    {
+      "key": "sky-sign/sun/aquarius",
+      "payloadSha256": "92a4037f5122b10913bd70df596178eff1f5478acc416454be0f069deec0fa0d"
+    },
+    {
+      "key": "sky-sign/sun/aries",
+      "payloadSha256": "d93234eaa35f46d494227fbcefb1703c9b28757a135b247e6ce4da69b97564bc"
+    },
+    {
+      "key": "sky-sign/sun/cancer",
+      "payloadSha256": "7aecc0dd0630501d043a0ccc26c0547e16e58bed4752506a0be5f2f412929740"
+    },
+    {
+      "key": "sky-sign/sun/capricorn",
+      "payloadSha256": "40b7b3aa40204b3aaa62bf1418741a28f1e8fb8491a427ba95d92dfeccd4ea8a"
+    },
+    {
+      "key": "sky-sign/sun/gemini",
+      "payloadSha256": "8dbdd3a23b289214698d10472ded86f358c550f70d96fa795cae6171eb5870c4"
+    },
+    {
+      "key": "sky-sign/sun/leo",
+      "payloadSha256": "255d6b8df01c18a9c55f996d27d04aef2ea7d3dba1b6ba4d1551179d133a5c52"
+    },
+    {
+      "key": "sky-sign/sun/libra",
+      "payloadSha256": "13369efd99d989b8715edcc6b6f2492f261e13f515bafbc3a562c1e18b0ddc33"
+    },
+    {
+      "key": "sky-sign/sun/pisces",
+      "payloadSha256": "809ad8f4f327640be5d15b117667ccafe62a2305052aa67b2cae6be8faf550f6"
+    },
+    {
+      "key": "sky-sign/sun/sagittarius",
+      "payloadSha256": "0c8a015501fd372f31f9e05d8a6139ccef62b4a3b544b8c7adcdf9b422d23240"
+    },
+    {
+      "key": "sky-sign/sun/scorpio",
+      "payloadSha256": "1d83e2561244910e28cf3b3716a31817793399aa4aa8cefc379c89013985edc1"
+    },
+    {
+      "key": "sky-sign/sun/taurus",
+      "payloadSha256": "a070d99aa69ec1cc1528b6275ef924e33675d15a157062544d8561c1f8ff60e9"
+    },
+    {
+      "key": "sky-sign/sun/virgo",
+      "payloadSha256": "d64af29f70dcb0504bc87a609a22c3163e4359ed319fdc26d5943ad4fae774a1"
+    },
+    {
+      "key": "sky-sign/uranus/aquarius",
+      "payloadSha256": "1583707e9163a817899c1329c17663c3259ed7f9e7dccf1b7eda67c63b99cd38"
+    },
+    {
+      "key": "sky-sign/uranus/aries",
+      "payloadSha256": "8673eb2db1753955362b8c12b11de460816235dfb5833a40a699a8f175624a40"
+    },
+    {
+      "key": "sky-sign/uranus/cancer",
+      "payloadSha256": "3eda1670e64922cacbb89f8a1813a5594dc6ce5bd5d3db86ed5b5f88d0231fa1"
+    },
+    {
+      "key": "sky-sign/uranus/capricorn",
+      "payloadSha256": "55a9a4975de5db718f5d9a3f82c81b2c6cbdbd1272d04a812f0b6136bc04fbe1"
+    },
+    {
+      "key": "sky-sign/uranus/gemini",
+      "payloadSha256": "cd71b2bc35c954d79df5ff21f7fb4813e712014f0e8f44f3cc54c2778c677dc6"
+    },
+    {
+      "key": "sky-sign/uranus/leo",
+      "payloadSha256": "69626b367d28570253f27e5d96456248d7fc9d6b705cd7af25124c441a409862"
+    },
+    {
+      "key": "sky-sign/uranus/libra",
+      "payloadSha256": "3ebae69916009fe618f42197a788256c812252edaaa139bfa5679f4816fbdf5b"
+    },
+    {
+      "key": "sky-sign/uranus/pisces",
+      "payloadSha256": "8ca671f0a8a0b243ca4ed3ed63c347bf906b0ad7fb8a2fa7b20bfe8779929298"
+    },
+    {
+      "key": "sky-sign/uranus/sagittarius",
+      "payloadSha256": "f0a9aec94055ae8c3000ddd5cf5ad37a1a95caeb1e33c5751b8eb156fa0ad62f"
+    },
+    {
+      "key": "sky-sign/uranus/scorpio",
+      "payloadSha256": "63a77b242e25002ebb41ce85dc73209f844fd22294a9d0c1b9c0449e03ff6062"
+    },
+    {
+      "key": "sky-sign/uranus/taurus",
+      "payloadSha256": "c48b6bed39e0678d11a0d2f52b580588fcc6dfa29759d4eb0693c3af70a468e1"
+    },
+    {
+      "key": "sky-sign/uranus/virgo",
+      "payloadSha256": "25d4185524a0a5aa72580fdbd2b5430a8e4c4c97d8014f58606fb96a820dc251"
+    },
+    {
+      "key": "sky-sign/venus/aquarius",
+      "payloadSha256": "420ac6e4eaa9fc642987cb3bc15a4541cd763b2eaeec50c38b999021647338f5"
+    },
+    {
+      "key": "sky-sign/venus/aries",
+      "payloadSha256": "f59180645cbd04fb1114dfb1fcb55bdb871c9f3ecc264cf4211d54c53ffc5d23"
+    },
+    {
+      "key": "sky-sign/venus/cancer",
+      "payloadSha256": "30a0337ae749acc536a0137707dc438d9a84ef72053f0a6ca9dfc328365bf1d0"
+    },
+    {
+      "key": "sky-sign/venus/capricorn",
+      "payloadSha256": "62db30586c136fc8269d6c00b6f81597340cfc78a95017bfce40e592344dbf64"
+    },
+    {
+      "key": "sky-sign/venus/gemini",
+      "payloadSha256": "b2c543bb12e16aa0057c6e7e98488d0c82d2e43c86fdb44d4237faa5e1fff874"
+    },
+    {
+      "key": "sky-sign/venus/leo",
+      "payloadSha256": "7b05ea364dc5a7f7971e3083d1b221ba18bb086dce800fdf79108fb66f3ea713"
+    },
+    {
+      "key": "sky-sign/venus/libra",
+      "payloadSha256": "31908515be8ec1f52b2fbaecd0f9fb3d6f6b679c001d9efc3b8b14354f5c3fe4"
+    },
+    {
+      "key": "sky-sign/venus/pisces",
+      "payloadSha256": "02a7f71d0e765837df9918a1efda9c874c78f891972506fa3d2d68d815216de1"
+    },
+    {
+      "key": "sky-sign/venus/sagittarius",
+      "payloadSha256": "d73371dfffe5f38e77a8e728aabbea9d35f9507b210d8e2270aff92bb60f145e"
+    },
+    {
+      "key": "sky-sign/venus/scorpio",
+      "payloadSha256": "111471a3de8d3cbb039359826b7ab3975e3ab4b666e9c0679900198315148934"
+    },
+    {
+      "key": "sky-sign/venus/taurus",
+      "payloadSha256": "d1b60a14411e83cdda69529064ab2e7ef56381d0f4b48ffc3a7b03c2326fc9d2"
+    },
+    {
+      "key": "sky-sign/venus/virgo",
+      "payloadSha256": "47ca034001a7b9ff166431202cf37408a736c546cbba6c8b07a6307576130e93"
+    }
+  ]
+}
