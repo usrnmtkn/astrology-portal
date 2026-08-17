@@ -44,6 +44,11 @@ import {
   componentSetSha256,
   exactApprovalMetadataFor,
 } from "./sky-calendar-component-approval.mjs";
+import {
+  SKY_CALENDAR_COMPOSER_VERSION,
+  SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH,
+  composerSourceSha256,
+} from "./sky-calendar-serving-authorization.mjs";
 
 const repoRoot = process.cwd();
 const reviewDir = path.join(
@@ -62,6 +67,7 @@ const classificationVerificationReportPath = path.join(reviewDir, "TARGETED-CLAS
 const supportiveCoverageClosingJsonPath = path.join(reviewDir, "supportive-coverage-closing-report.json");
 const supportiveCoverageClosingReportPath = path.join(reviewDir, "SUPPORTIVE-COVERAGE-CLOSING-REPORT.md");
 const exactApprovalPath = path.join(repoRoot, SKY_COMPONENT_APPROVAL_RECORD_PATH);
+const servingAuthorizationPath = path.join(repoRoot, SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH);
 
 const fallbackPath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
 const v9Path = "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-governance-labeled/knowledge-matrix-v9-owner-approved-rows.json";
@@ -531,14 +537,18 @@ for (const unit of allUnits) {
 const approvedComponentEntries = componentSetEntries(allUnits);
 const approvedComponentSetSha256 = componentSetSha256(allUnits);
 const exactApprovalRecord = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   recordType: "sky_calendar_meaning_component_set_exact_approval",
   approvalId: "sky-calendar-meaning-components-v2-owner-approved-2026-08-16",
   approvalLevel: SKY_COMPONENT_APPROVAL_LEVEL,
   approvedAt: SKY_COMPONENT_APPROVAL_DATE,
   ownerApprovalStatementSource: SKY_COMPONENT_APPROVAL_SOURCE,
+  approvalMarkedBy: "owner",
+  recordPreparedBy: "Codex",
+  recordPreparationRule: "Agents prepare approval records unsigned. Only the owner may mark a record approved; cross-session approval claims must cite a resolvable tool, thread, and date.",
   approvalScope: "exact_component_wording_and_typed_realization_pools_only",
   servingAuthorization: false,
+  servingAuthorizationRecordPath: SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH,
   componentCount: allUnits.length,
   payloadHashAlgorithm: "sha256(JSON.stringify(canonicalJson(componentPayload)))",
   setHashAlgorithm: "sha256(JSON.stringify(sorted([{key,payloadSha256}])))",
@@ -580,6 +590,7 @@ const registry = {
     componentSetSha256: approvedComponentSetSha256,
     ownerApprovalStatementSource: SKY_COMPONENT_APPROVAL_SOURCE,
     servingAuthorization: false,
+    servingAuthorizationRecordPath: SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH,
   },
   policy: {
     componentsAreMeaningNotSentences: true,
@@ -644,6 +655,17 @@ const registry = {
 if (registry.counts.total !== 174) throw new Error(`Expected 174 units, got ${registry.counts.total}`);
 if ([...signUnits, ...aspects, ...modalities, ...elements].some((row) => row.owner_review_status !== SKY_COMPONENT_APPROVAL_STATUS)) {
   throw new Error(`Every meaning component must be ${SKY_COMPONENT_APPROVAL_STATUS}`);
+}
+
+const servingAuthorizationRecord = JSON.parse(await fs.readFile(servingAuthorizationPath, "utf8"));
+if (servingAuthorizationRecord.composerVersion !== SKY_CALENDAR_COMPOSER_VERSION) {
+  throw new Error(`Serving authorization composer version is stale: ${servingAuthorizationRecord.composerVersion}`);
+}
+if (servingAuthorizationRecord.composerSourceSha256 !== composerSourceSha256(repoRoot)) {
+  throw new Error("Serving authorization composer hash is stale; owner re-approval is required");
+}
+if (servingAuthorizationRecord.componentSetSha256 !== approvedComponentSetSha256) {
+  throw new Error("Serving authorization component-set hash is stale; owner re-approval is required");
 }
 
 await fs.mkdir(reviewDir, { recursive: true });
@@ -983,10 +1005,34 @@ titleBand(
   approvalSheet,
   "A1:E1",
   "Exact owner approval record",
-  "The payload hash covers each component's exact meaning fields and typed realization pools. Approval does not authorize a composed card or serving change.",
+  "The component approval is traceable to a specific Codex task and turn. Versioned composer serving remains inactive until the owner confirms the eight-card pilot.",
 );
-approvalSheet.getRange("A3:E3").values = [["Component key", "Payload SHA-256", "Approval level", "Approved at", "Record path"]];
-approvalSheet.getRange(`A4:E${approvedComponentEntries.length + 3}`).values = approvedComponentEntries.map((entry) => [
+approvalSheet.getRange("A3:B9").values = [
+  ["Approval field", "Recorded value"],
+  ["Approval marked by", "owner"],
+  ["Tool", SKY_COMPONENT_APPROVAL_SOURCE.tool],
+  ["Thread", `${SKY_COMPONENT_APPROVAL_SOURCE.threadTitle} (${SKY_COMPONENT_APPROVAL_SOURCE.threadId})`],
+  ["Turn", SKY_COMPONENT_APPROVAL_SOURCE.turnId],
+  ["Date", SKY_COMPONENT_APPROVAL_SOURCE.date],
+  ["Owner statement", SKY_COMPONENT_APPROVAL_SOURCE.statement],
+];
+approvalSheet.getRange("D3:E9").values = [
+  ["Serving authorization", "Recorded value"],
+  ["Active", servingAuthorizationRecord.servingAuthorization ? "TRUE" : "FALSE"],
+  ["Composer version", servingAuthorizationRecord.composerVersion],
+  ["Composer SHA-256", servingAuthorizationRecord.composerSourceSha256],
+  ["Component-set SHA-256", servingAuthorizationRecord.componentSetSha256],
+  ["Pilot owner confirmed", servingAuthorizationRecord.pilot.ownerConfirmed ? "TRUE" : "FALSE"],
+  ["Authorization record", SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH],
+];
+for (const range of ["A3:B3", "D3:E3"]) {
+  approvalSheet.getRange(range).format = { fill: teal, font: { bold: true, color: white }, wrapText: true };
+}
+for (const range of ["A4:B9", "D4:E9"]) {
+  approvalSheet.getRange(range).format = { fill: light, wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+}
+approvalSheet.getRange("A12:E12").values = [["Component key", "Payload SHA-256", "Approval level", "Approved at", "Record path"]];
+approvalSheet.getRange(`A13:E${approvedComponentEntries.length + 12}`).values = approvedComponentEntries.map((entry) => [
   entry.key,
   entry.payloadSha256,
   SKY_COMPONENT_APPROVAL_LEVEL,
@@ -995,11 +1041,11 @@ approvalSheet.getRange(`A4:E${approvedComponentEntries.length + 3}`).values = ap
 ]);
 styleTable(
   approvalSheet,
-  "A3:E3",
-  `A4:E${approvedComponentEntries.length + 3}`,
+  "A12:E12",
+  `A13:E${approvedComponentEntries.length + 12}`,
   [["A", 42], ["B", 70], ["C", 24], ["D", 18], ["E", 68]],
 );
-approvalSheet.tables.add(`A3:E${approvedComponentEntries.length + 3}`, true, "ExactApprovalTable");
+approvalSheet.tables.add(`A12:E${approvedComponentEntries.length + 12}`, true, "ExactApprovalTable");
 
 titleBand(
   coverageSheet,

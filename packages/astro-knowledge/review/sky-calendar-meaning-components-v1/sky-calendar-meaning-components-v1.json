@@ -7,8 +7,16 @@
     "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
     "approvedAt": "2026-08-16",
     "componentSetSha256": "aee970d7c40d1331eaf981886ec5007ea5e99eb3e18c18ed1889cbe470e8a443",
-    "ownerApprovalStatementSource": "owner_chat_2026-08-16_approves_174_sky_calendar_meaning_components",
-    "servingAuthorization": false
+    "ownerApprovalStatementSource": {
+      "tool": "Codex Desktop",
+      "threadId": "019fc997-4b31-79f2-9a53-b363197a6ee2",
+      "threadTitle": "WIP: Aspects",
+      "turnId": "01a00da7-a458-7c12-ae4b-76e0675afb0b",
+      "date": "2026-08-16",
+      "statement": "I approve the 174 Sky Calendar meaning components in PR #249. Hash-pin the approved set and stand by for merge."
+    },
+    "servingAuthorization": false,
+    "servingAuthorizationRecordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/serving-authorization.json"
   },
   "policy": {
     "componentsAreMeaningNotSentences": true,

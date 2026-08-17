@@ -4,7 +4,14 @@ export const SKY_COMPONENT_APPROVAL_STATUS = "OWNER APPROVED";
 export const SKY_COMPONENT_APPROVAL_DATE = "2026-08-16";
 export const SKY_COMPONENT_APPROVAL_LEVEL = "exact_owner_approved";
 export const SKY_COMPONENT_APPROVAL_RECORD_PATH = "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json";
-export const SKY_COMPONENT_APPROVAL_SOURCE = "owner_chat_2026-08-16_approves_174_sky_calendar_meaning_components";
+export const SKY_COMPONENT_APPROVAL_SOURCE = Object.freeze({
+  tool: "Codex Desktop",
+  threadId: "019fc997-4b31-79f2-9a53-b363197a6ee2",
+  threadTitle: "WIP: Aspects",
+  turnId: "01a00da7-a458-7c12-ae4b-76e0675afb0b",
+  date: "2026-08-16",
+  statement: "I approve the 174 Sky Calendar meaning components in PR #249. Hash-pin the approved set and stand by for merge.",
+});
 
 function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");

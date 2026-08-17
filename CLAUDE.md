@@ -200,6 +200,13 @@ A pattern in the birth chart. Person first, "you tend to".
 - Voice exemplars must themselves pass every rule above. An exemplar that
   violates a rule is a counter-example and must be removed from the packet.
 
+## Approval provenance
+
+Agents prepare approval records unsigned. Only the owner may mark wording,
+components, a composer, or serving state approved. When an approval comes from
+another task or tool, its record must cite a resolvable tool, thread or task ID,
+and date; a generic `owner_chat` label is not valid provenance.
+
 ## Serving-content merge model (v2, 2026-08-08 — replaces the flight rule)
 
 Scope: `apps/web/src/content/fallbackArchitectureV3/**` and
