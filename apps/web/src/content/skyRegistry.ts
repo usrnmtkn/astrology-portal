@@ -6,6 +6,7 @@ const skyKnowledge = { ...sharedKnowledge, ...skyRuntimeKnowledge };
 
 export const {
   approvedExactSkyAspectCopy,
+  skyCalendarComposedCard,
   approvedVoiceOrKnowledgeFallback,
   retrogradePlanetMeaning,
   aspectContentId,

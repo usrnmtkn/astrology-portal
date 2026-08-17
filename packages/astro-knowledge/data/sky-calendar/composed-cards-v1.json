@@ -1,0 +1,96 @@
+{
+  "schema": "tldr.sky-calendar.composed-cards.v1",
+  "purpose": "Sign-specific two-part Calendar cards composed from the owner-approved meaning components. Each card carries a forecast the reader can use and a Details explanation underneath.",
+  "servingRule": "Both ownerApproved and servingAuthorized must be true. Anything else is invisible to the runtime and the Calendar falls through to the existing exact body for that planet pair and aspect.",
+  "storedBodyConvention": "forecast begins lowercase; the Calendar composes the date lead-in. details begins with the transit label, for example 'Sun in Leo opposite Saturn in Aquarius.'",
+  "cards": [
+    {
+      "id": "sky-card/neptune/aries/sextile/pluto/aquarius",
+      "planetA": "neptune",
+      "signA": "aries",
+      "aspect": "sextile",
+      "planetB": "pluto",
+      "signB": "aquarius",
+      "forecast": "a cause people believe in finds an opening with the group that has been asking who the current setup actually serves. Belief travels faster than proof here, so an argument can gather support before anyone has shown the numbers behind it. Nobody is required to take the opening, and it closes quietly if no one does. One concrete step, taken where people can see it, is what turns sympathy into a change in the rules.",
+      "details": "Neptune in Aries sextile Pluto in Aquarius. A cause people believe in meets a group already asking who the current arrangement serves. Neptune in Aries supplies an ideal worth starting now, and Pluto in Aquarius supplies the pressure that exposes who holds power inside a system. Because this is a sextile the opening is offered rather than automatic, and an urgent push meeting a structure built to hold means the workable move is the one that fits what the system will not give up.",
+      "ownerApproved": true,
+      "servingAuthorized": true,
+      "approvedVia": "owner approval in chat, 2026-08-17; drafted from the owner-approved meaning component set aee970d7c40d1331eaf981886ec5007ea5e99eb3e18c18ed1889cbe470e8a443",
+      "approvedAt": "2026-08-17",
+      "payloadSha256": "8ed606c37517c18104abafee4ac54560b560b325e7b4444b891e44d3e4dd9d9b",
+      "componentKeys": [
+        "sky-sign/neptune/aries",
+        "sky-sign/pluto/aquarius",
+        "sky-aspect-mechanism/sextile",
+        "sky-how/modality/cardinal/fixed",
+        "sky-how/element/fire/air"
+      ]
+    },
+    {
+      "id": "sky-card/uranus/gemini/sextile/neptune/aries",
+      "planetA": "uranus",
+      "signA": "gemini",
+      "aspect": "sextile",
+      "planetB": "neptune",
+      "signB": "aries",
+      "forecast": "one piece of information changes what looks possible, and a plan people already wanted starts to look reachable. Enthusiasm arrives ahead of the details, so the version being repeated may be further along than the version anyone can check. Nobody has to act on it, and the opening closes quietly if no one does. What moves it is a decision with a date attached for checking whether the new information held.",
+      "details": "Uranus in Gemini sextile Neptune in Aries. New information lands and a hoped-for plan suddenly looks reachable. Uranus in Gemini keeps rewriting the available routes as the facts change, while Neptune in Aries supplies the belief that makes starting feel clearer than the evidence warrants. A sextile offers the connection without forcing it, and since the facts are still moving while the appetite to begin is not, a decision holds only if it names the day it gets checked again.",
+      "ownerApproved": true,
+      "servingAuthorized": true,
+      "approvedVia": "owner approval in chat, 2026-08-17; drafted from the owner-approved meaning component set aee970d7c40d1331eaf981886ec5007ea5e99eb3e18c18ed1889cbe470e8a443",
+      "approvedAt": "2026-08-17",
+      "payloadSha256": "c18e5f4feef51b524dade1feb25398cd0cbfe8225658ab63715374c111511ac8",
+      "componentKeys": [
+        "sky-sign/uranus/gemini",
+        "sky-sign/neptune/aries",
+        "sky-aspect-mechanism/sextile",
+        "sky-how/modality/mutable/cardinal",
+        "sky-how/element/air/fire"
+      ]
+    },
+    {
+      "id": "sky-card/uranus/gemini/trine/pluto/aquarius",
+      "planetA": "uranus",
+      "signA": "gemini",
+      "aspect": "trine",
+      "planetB": "pluto",
+      "signB": "aquarius",
+      "forecast": "a different explanation lines up with a long push to change who the rules favor, so an argument that used to stall starts travelling. Agreement comes easily enough that a weak assumption can ride along unexamined. The wording keeps getting revised while the requirement underneath it stays unnamed. Progress depends on somebody stating that requirement plainly, so the revisions have something to answer to.",
+      "details": "Uranus in Gemini trine Pluto in Aquarius. A newer explanation lines up with a longer push to change who the rules favor. Uranus in Gemini changes the terms as information lands; Pluto in Aquarius concentrates on the power a system keeps distributing. Trines meet little resistance, and because the language can be rewritten while the underlying requirement cannot, the requirement has to be said out loud before the rewrites amount to anything.",
+      "ownerApproved": true,
+      "servingAuthorized": true,
+      "approvedVia": "owner approval in chat, 2026-08-17; drafted from the owner-approved meaning component set aee970d7c40d1331eaf981886ec5007ea5e99eb3e18c18ed1889cbe470e8a443",
+      "approvedAt": "2026-08-17",
+      "payloadSha256": "93d260af68725e674be4880400bdcebe165d691a04a48d0bf48d9f27527c10d7",
+      "componentKeys": [
+        "sky-sign/uranus/gemini",
+        "sky-sign/pluto/aquarius",
+        "sky-aspect-mechanism/trine",
+        "sky-how/modality/mutable/fixed",
+        "sky-how/element/air/air"
+      ]
+    },
+    {
+      "id": "sky-card/jupiter/leo/trine/saturn/aries",
+      "planetA": "jupiter",
+      "signA": "leo",
+      "aspect": "trine",
+      "planetB": "saturn",
+      "signB": "aries",
+      "forecast": "public backing and a hard deadline turn up in the same week, which makes an ambitious plan look more credible than it did a month ago. Support and limits agree for once, so what gets promised has a decent chance of being delivered. The ease is the risk: applause makes it tempting to promise a size the schedule cannot carry. What holds is a commitment scoped to what the deadline allows.",
+      "details": "Jupiter in Leo trine Saturn in Aries. Visible support and a firm deadline arrive together. Jupiter in Leo enlarges what generous backing can do for somebody's contribution, and Saturn in Aries supplies the deadline that decides how much of it can actually be built. The trine lets both work toward the same result, though fire on both sides can make speed feel like proof, so the scope has to fit the schedule rather than the enthusiasm.",
+      "ownerApproved": true,
+      "servingAuthorized": true,
+      "approvedVia": "owner approval in chat, 2026-08-17; drafted from the owner-approved meaning component set aee970d7c40d1331eaf981886ec5007ea5e99eb3e18c18ed1889cbe470e8a443",
+      "approvedAt": "2026-08-17",
+      "payloadSha256": "d38cd845df6e1d7af875c0928bf1f55c2c6a9b3db41a945579500aa12f856b96",
+      "componentKeys": [
+        "sky-sign/jupiter/leo",
+        "sky-sign/saturn/aries",
+        "sky-aspect-mechanism/trine",
+        "sky-how/modality/fixed/cardinal",
+        "sky-how/element/fire/fire"
+      ]
+    }
+  ]
+}
