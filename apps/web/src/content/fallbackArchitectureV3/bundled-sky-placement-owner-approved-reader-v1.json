@@ -55,13 +55,13 @@
       "render_policy": "sky-placement-continuous-v2",
       "fact_line": "{{entryDate}} to {{exitDate}}",
       "aspect_insert": "{{aspectInsert}}",
-      "opening": "Mercury enters Pisces on {{entryDate}}, and ordinary conversations may carry more in the pauses than in the sentences. Mercury governs the mind: language, curiosity, and how we make sense of things. Pisces is the sign of imagination, compassion, and the edges that blur. Someone reads a reply twice and says the tone does not match the words; after sitting with that feeling, we finally ask the useful question: “Did the answer change?” That sensitivity can catch a mixed signal before we act on it. Mercury moves through all twelve signs in about 1 year because it stays near the Sun. It usually spends roughly 2 weeks to 2 months in each sign, and a retrograde in that sign can extend the stay.",
+      "opening": "Mercury enters Pisces on {{entryDate}}, and ordinary conversations may carry more in the pauses than in the sentences. Mercury governs the mind: language, curiosity, and how we make sense of things. Pisces is the sign of imagination, compassion, and the edges that blur. Someone reads a reply twice and says the tone does not match the words; after sitting with that feeling, we finally ask the useful question: \"Did the answer change?\" That sensitivity can catch a mixed signal before we act on it. Mercury moves through all twelve signs in about 1 year because it stays near the Sun. It usually spends roughly 2 weeks to 2 months in each sign, and a retrograde in that sign can extend the stay.",
       "tension": "The trouble begins when the feeling itself gets treated as the answer. A pause sounds like refusal to one of us and uncertainty to another, but nobody checks. We soften a reply to avoid pressing, the next response stays just as vague, and we act on a decision that was never made. Everyone can explain what the exchange felt like, while the facts remain unsettled.",
-      "development": "Clarity now needs a small amount of structure, not a demand that every thought arrive fully formed. We can return to the exact words, say what we think we heard, and ask one plain question: “Was that a no, or is this still undecided?” Then a short message can state what we understood and what remains open. If the answer changes the story, we revise the decision. If no clear answer arrives, we leave it undecided instead of filling the silence ourselves.",
+      "development": "Clarity now needs a small amount of structure, not a demand that every thought arrive fully formed. We can return to the exact words, say what we think we heard, and ask one plain question: \"Was that a no, or is this still undecided?\" Then a short message can state what we understood and what remains open. If the answer changes the story, we revise the decision. If no clear answer arrives, we leave it undecided instead of filling the silence ourselves.",
       "close": "Before {{exitDate}}, we can reopen one unsettled exchange and ask for the answer we have been trying to infer.",
       "try_this": [
         "We can reread one confusing message and copy the exact sentence that is shaping our interpretation.",
-        "We can send “Still deciding” instead of another maybe that could be read as yes or no."
+        "We can send \"Still deciding\" instead of another maybe that could be read as yes or no."
       ],
       "review_status": "approved"
     },
@@ -77,7 +77,7 @@
       "development": "At the next rehearsal, we stop making new edits and play the existing endings aloud. We each say which version we prefer and why. One concern exposes a weak transition, so we fix it; the other is simply disappointment that a favorite version will not win. We choose the stronger ending, and the remaining rehearsal goes toward timing and delivery instead of reopening the decision.",
       "close": "Before {{exitDate}}, we can leave one shared choice settled even if someone involved is still disappointed by it.",
       "try_this": [
-        "We can replace one automatic “either is fine” with the option we actually prefer.",
+        "We can replace one automatic \"either is fine\" with the option we actually prefer.",
         "We can send one reply we have been softening, using a clear sentence without adding an apology.",
         "We can make one visual or musical choice this week without collecting extra opinions."
       ],
@@ -426,7 +426,7 @@
       "render_policy": "sky-placement-continuous-v2",
       "fact_line": "{{entryDate}} to {{exitDate}}",
       "aspect_insert": "{{aspectInsert}}",
-      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mars enters Cancer on {{entryDate}}, and protecting what matters starts to outrank moving fast. Mars governs drive: how we act, assert ourselves, and fight for what matters. Cancer is the sign of care, memory, and what feels like home. We notice the strain in someone’s voice and step in. We wait until a choice feels safe before acting. Once we commit, we put deep emotional energy behind the choice.",
+      "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, Mars enters Cancer on {{entryDate}}, and protecting what matters starts to outrank moving fast. Mars governs drive: how we act, assert ourselves, and fight for what matters. Cancer is the sign of care, memory, and what feels like home. We notice the strain in someone's voice and step in. We wait until a choice feels safe before acting. Once we commit, we put deep emotional energy behind the choice.",
       "tension": "The trouble starts when protection moves faster than honesty. We feel hurt, decide something is unsafe, and act before admitting why. A simple question gets a defensive answer. We help without being asked, then treat the lack of thanks as proof that care is not returned. The anger moves sideways, so everyone reacts to the tone while the original hurt remains unnamed.",
       "development": "Mars last moved through Cancer from {{previousResidencyEntryDate}} to {{previousResidencyExitDate}}. The same pattern can return in small moments that seem unrelated. We handle what someone forgot and grow cold because the effort went unnoticed. We change the subject to hide how much something hurt, then hear the next harmless comment as another threat. Directness feels risky because naming the hurt would show how much it mattered. Indirect action feels safer, but it gives everyone the reaction and withholds the reason. Care then gets mixed with control: checking in becomes checking up, helping becomes taking over, and silence becomes a way to make displeasure felt. By then, the original need is buried under a conflict that cannot be solved clearly.",
       "close": "Before {{exitDate}}, the conflict keeps growing when everyone can see the defense and no one knows what it is defending.",
