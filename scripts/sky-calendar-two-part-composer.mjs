@@ -526,11 +526,62 @@ function auditDetails(card, defects) {
   }
 }
 
+function wordList(value) {
+  const stop = new Set(["a", "an", "and", "are", "as", "at", "be", "because", "both", "but", "by", "can", "for", "from", "has", "in", "is", "it", "its", "may", "of", "on", "or", "that", "the", "their", "them", "this", "to", "while", "with"]);
+  return normalizeWhitespace(value).toLowerCase().replace(/[^a-z0-9' ]/gu, " ").split(/\s+/u).filter((word) => word.length > 2 && !stop.has(word));
+}
+
+function containment(componentText, sentence) {
+  const component = new Set(wordList(componentText));
+  if (component.size === 0) return 0;
+  const produced = new Set(wordList(sentence));
+  const shared = [...component].filter((word) => produced.has(word)).length;
+  return shared / component.size;
+}
+
+function longestSharedRun(componentText, sentence) {
+  const left = wordList(componentText);
+  const right = wordList(sentence);
+  let best = 0;
+  for (let i = 0; i < left.length; i += 1) {
+    for (let j = 0; j < right.length; j += 1) {
+      let run = 0;
+      while (i + run < left.length && j + run < right.length && left[i + run] === right[j + run]) run += 1;
+      if (run > best) best = run;
+    }
+  }
+  return best;
+}
+
+export const NEAR_VERBATIM_CONTAINMENT_THRESHOLD = 0.5;
+export const NEAR_VERBATIM_RUN_THRESHOLD = 5;
+export const NEAR_VERBATIM_MIN_COMPONENT_WORDS = 6;
+export const NEAR_VERBATIM_SUPPORTING_RUN = 0;
+
 function auditComponentEmission(card, defects) {
   const components = new Set(card.componentProseForGate.map(normalizeSentence).filter((value) => value.length >= 12));
+  const componentTexts = card.componentProseForGate.filter((value) => wordList(value).length >= 4);
   for (const [surface, text] of [["forecast", card.forecast], ["details", card.details]]) {
     for (const sentence of splitSentences(text)) {
       if (components.has(normalizeSentence(sentence))) addDefect(defects, "verbatim_component_sentence", { surface, sentence });
+      for (const componentText of componentTexts) {
+        const share = containment(componentText, sentence);
+        const run = longestSharedRun(componentText, sentence);
+        const componentWords = wordList(componentText).length;
+        const pastedRun = run >= NEAR_VERBATIM_RUN_THRESHOLD;
+        const reassembled = share >= NEAR_VERBATIM_CONTAINMENT_THRESHOLD
+          && componentWords >= NEAR_VERBATIM_MIN_COMPONENT_WORDS
+          && run >= NEAR_VERBATIM_SUPPORTING_RUN;
+        if (pastedRun || reassembled) {
+          addDefect(defects, "near_verbatim_component_sentence", {
+            surface,
+            sentence,
+            component: componentText,
+            containment: Number(share.toFixed(3)),
+            longestSharedRun: run,
+          });
+        }
+      }
     }
   }
 }
