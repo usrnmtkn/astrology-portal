@@ -1,0 +1,1464 @@
+#!/usr/bin/env node
+
+import crypto from "node:crypto";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { SpreadsheetFile, Workbook } from "@oai/artifact-tool";
+import {
+  aspectComponents,
+  baseWordingForSignUnit,
+  elementComponents,
+  modalityComponents,
+  planets,
+  signs,
+  wordingForSignUnit,
+} from "./sky-calendar-meaning-component-wording.mjs";
+import { assertManifestationShapeCap } from "./sky-calendar-manifestation-shape.mjs";
+import {
+  SYSTEMIC_REPASS_WORDING_KEYS,
+  applySupportiveExtraction,
+  assertOwnerReplacements,
+  classificationReviewAudit,
+  classificationVerificationAudit,
+  manifestationPlainnessViolations,
+  sourceShadowAudit,
+  supportiveCoverageClosingAudit,
+  systemicFaultAudit,
+} from "./sky-calendar-component-repass.mjs";
+import {
+  REALIZATION_FIELDS,
+  addTypedRealizations,
+  assertTypedRealizationSchema,
+} from "./sky-calendar-realization-types.mjs";
+import {
+  SUPPORTIVE_CLOSING_EXTRACTIONS,
+  SUPPORTIVE_EXTRACTIONS,
+} from "./sky-calendar-supportive-extractions.mjs";
+import {
+  SKY_COMPONENT_APPROVAL_DATE,
+  SKY_COMPONENT_APPROVAL_LEVEL,
+  SKY_COMPONENT_APPROVAL_RECORD_PATH,
+  SKY_COMPONENT_APPROVAL_SOURCE,
+  SKY_COMPONENT_APPROVAL_STATUS,
+  componentSetEntries,
+  componentSetSha256,
+  exactApprovalMetadataFor,
+} from "./sky-calendar-component-approval.mjs";
+import {
+  SKY_CALENDAR_COMPOSER_VERSION,
+  SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH,
+  composerSourceSha256,
+} from "./sky-calendar-serving-authorization.mjs";
+
+const repoRoot = process.cwd();
+const reviewDir = path.join(
+  repoRoot,
+  "packages/astro-knowledge/review/sky-calendar-meaning-components-v1",
+);
+const outputDir = path.join(
+  repoRoot,
+  "outputs/sky-calendar-meaning-components-2026-08-14",
+);
+const workbookPath = path.join(outputDir, "sky-calendar-meaning-components-owner-review.xlsx");
+const registryPath = path.join(reviewDir, "sky-calendar-meaning-components-v1.json");
+const classificationReportPath = path.join(reviewDir, "REALIZATION-CLASSIFICATION-AUDIT.md");
+const classificationVerificationJsonPath = path.join(reviewDir, "targeted-classification-verification.json");
+const classificationVerificationReportPath = path.join(reviewDir, "TARGETED-CLASSIFICATION-VERIFICATION.md");
+const supportiveCoverageClosingJsonPath = path.join(reviewDir, "supportive-coverage-closing-report.json");
+const supportiveCoverageClosingReportPath = path.join(reviewDir, "SUPPORTIVE-COVERAGE-CLOSING-REPORT.md");
+const exactApprovalPath = path.join(repoRoot, SKY_COMPONENT_APPROVAL_RECORD_PATH);
+const servingAuthorizationPath = path.join(repoRoot, SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH);
+
+const fallbackPath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
+const v9Path = "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-governance-labeled/knowledge-matrix-v9-owner-approved-rows.json";
+const v13Path = "apps/web/public/content/knowledge-matrix-v13/v13-direct-language-owner-approved/knowledge-matrix-v13-owner-approved-locked.json";
+
+const planetFunctions = {
+  sun: "people notice who is visible, who leads, and whose name stays attached to the work",
+  moon: "people react from habit, memory, and what helps them feel safe",
+  mercury: "messages, decisions, and explanations change what people know and what they can agree on",
+  venus: "people decide what they want, what feels fair, and what they will agree to",
+  mars: "people act, push, defend, and spend energy on what matters",
+  jupiter: "people take up more room, trust a larger possibility, and sometimes promise too much",
+  saturn: "deadlines, smaller budgets, hard limits, and named responsibilities set the terms",
+  uranus: "a sudden change breaks the old routine and forces people to respond differently",
+  neptune: "people have a harder time separating the facts from the wish when hope and imagination take over",
+  pluto: "a power arrangement stops holding and people have to face who controls the outcome",
+  chiron: "people protect themselves differently when an old hurt enters the situation",
+  lilith: "people refuse rules that ask them to hide, comply, or make themselves acceptable",
+};
+
+const signExpressions = {
+  aries: "someone moves first and asks everyone else to catch up",
+  taurus: "people work with what can be afforded, maintained, and made to last",
+  gemini: "new facts and quick replies keep changing the choices",
+  cancer: "people respond through care, memory, and private loyalties",
+  leo: "the work becomes visible and someone wants the credit attached to it",
+  virgo: "people check the method, find the error, and fix what is not working",
+  libra: "each side compares the terms and asks whether the deal is fair",
+  scorpio: "people guard what is private and notice who holds leverage",
+  sagittarius: "people follow a larger promise or belief beyond the issue's first limits",
+  capricorn: "deadlines, duties, and long-term results decide what can proceed",
+  aquarius: "the group asks whether the same rule applies to everyone",
+  pisces: "people can lose track of where the facts end and the wish begins",
+};
+
+function sha256(value) {
+  return crypto.createHash("sha256").update(value).digest("hex");
+}
+
+function normalizeId(value) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/^black moon\s+/u, "")
+    .replace(/[^a-z]+/gu, "-")
+    .replace(/^-|-$/gu, "");
+}
+
+function isApproved(row) {
+  return String(row?.review_status ?? "").startsWith("approved");
+}
+
+function evidenceEntry(sourceId, sourceValue) {
+  return {
+    source_id: sourceId,
+    source_hash: sha256(JSON.stringify(sourceValue)),
+  };
+}
+
+const fallback = JSON.parse(await fs.readFile(path.join(repoRoot, fallbackPath), "utf8"));
+const v9 = JSON.parse(await fs.readFile(path.join(repoRoot, v9Path), "utf8"));
+const v13 = JSON.parse(await fs.readFile(path.join(repoRoot, v13Path), "utf8"));
+const allFallbackRows = [
+  ...fallback.vocabularyRows,
+  ...fallback.fallbackSourceRows,
+  ...fallback.hookRows,
+];
+
+const ownerPlanetRows = fallback.hookRows
+  .filter(isApproved)
+  .filter((row) => /^fallback-hook\/planet-lived\/[^/]+$/u.test(row.contentKey ?? ""));
+const ownerPlacementRows = fallback.hookRows
+  .filter(isApproved)
+  .filter((row) => /^fallback-hook\/placement-sign-lived\/[^/]+\/[^/]+$/u.test(row.contentKey ?? ""));
+const ownerPlanetByPlanet = new Map(
+  ownerPlanetRows.map((row) => [row.contentKey.split("/").at(-1), row]),
+);
+const ownerPlacementByUnit = new Map(
+  ownerPlacementRows.map((row) => {
+    const [, , planet, sign] = row.contentKey.split("/");
+    return [`${planet}|${sign}`, row];
+  }),
+);
+const ownerPlacementsByPlanet = new Map();
+const ownerPlacementsBySign = new Map();
+for (const row of ownerPlacementRows) {
+  const [, , planet, sign] = row.contentKey.split("/");
+  if (!ownerPlacementsByPlanet.has(planet)) ownerPlacementsByPlanet.set(planet, []);
+  if (!ownerPlacementsBySign.has(sign)) ownerPlacementsBySign.set(sign, []);
+  ownerPlacementsByPlanet.get(planet).push(row);
+  ownerPlacementsBySign.get(sign).push(row);
+}
+
+function ownerVoiceEvidenceFor(planet, sign) {
+  const exact = ownerPlacementByUnit.get(`${planet}|${sign}`) ?? null;
+  const planetRow = ownerPlanetByPlanet.get(planet) ?? null;
+  const samePlanet = (ownerPlacementsByPlanet.get(planet) ?? [])
+    .filter((row) => row !== exact)
+    .sort((left, right) => left.contentKey.localeCompare(right.contentKey))[0] ?? null;
+  const sameSign = (ownerPlacementsBySign.get(sign) ?? [])
+    .filter((row) => row !== exact)
+    .sort((left, right) => left.contentKey.localeCompare(right.contentKey))[0] ?? null;
+  const rows = [...new Set([planetRow, exact, samePlanet, sameSign].filter(Boolean))].slice(0, 3);
+  let coverage = "owner_voiced_exact_pair";
+  if (!exact && planetRow) coverage = "owner_voice_inferred_from_planet_and_sign";
+  if (!exact && !planetRow && samePlanet) coverage = "owner_voice_inferred_from_same_planet_and_sign";
+  if (!exact && !planetRow && !samePlanet) coverage = "doctrine_meaning_owner_register_inferred";
+  return {
+    coverage,
+    exactPair: Boolean(exact),
+    pointSpecificOwnerVoice: Boolean(planetRow || exact || samePlanet),
+    rows,
+  };
+}
+
+const servingByUnit = new Map(
+  fallback.hookRows
+    .filter(isApproved)
+    .filter((row) => /^fallback-hook\/sky-placement-hook\/[^/]+\/[^/]+$/u.test(row.contentKey ?? ""))
+    .map((row) => {
+      const [, , planet, sign] = row.contentKey.split("/");
+      return [`${planet}|${sign}`, row];
+    }),
+);
+const v9ByUnit = new Map();
+for (const row of v9.transit_meanings) {
+  if (row.Governance !== "owner-approved") continue;
+  const unit = `${normalizeId(row.Planet)}|${normalizeId(row.Sign)}`;
+  if (!v9ByUnit.has(unit)) v9ByUnit.set(unit, []);
+  v9ByUnit.get(unit).push(row);
+}
+const v13ByUnit = new Map();
+for (const row of v13.rows) {
+  if (!row.ownerApproved || row.runtimeFamily !== "placement-sign-lived") continue;
+  if (!v13ByUnit.has(row.key)) v13ByUnit.set(row.key, []);
+  v13ByUnit.get(row.key).push(row);
+}
+
+function firstDistinctByText(rows, field) {
+  const seen = new Set();
+  return rows.find((row) => {
+    const value = String(row[field] ?? "");
+    if (seen.has(value)) return false;
+    seen.add(value);
+    return true;
+  }) ?? null;
+}
+
+const signUnits = planets.flatMap((planet) => signs.map((sign) => {
+  const unit = `${planet}|${sign}`;
+  const serving = servingByUnit.get(unit) ?? null;
+  const cc = firstDistinctByText(v9ByUnit.get(unit) ?? [], "Copy");
+  const ll = firstDistinctByText(v13ByUnit.get(unit) ?? [], "copy");
+  const evidence = [
+    ...(serving ? [evidenceEntry(`${fallbackPath}#${serving.contentKey}`, serving)] : []),
+    ...(cc ? [evidenceEntry(`tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!${cc.source_row}`, cc)] : []),
+    ...(ll ? [evidenceEntry(`${ll.workbookProvenance.path}#${ll.workbookProvenance.sheet}!${ll.workbookRow}`, ll)] : []),
+  ];
+  if (evidence.length === 0) throw new Error(`No approved evidence for ${unit}`);
+  const wording = wordingForSignUnit(planet, sign);
+  const ownerVoice = ownerVoiceEvidenceFor(planet, sign);
+  const ownerVoiceEvidence = ownerVoice.rows.map((row) => (
+    evidenceEntry(`${fallbackPath}#${row.contentKey}`, row)
+  ));
+
+  const record = {
+    key: `sky-sign/${planet}/${sign}`,
+    planet_function: planetFunctions[planet],
+    sign_expression: signExpressions[sign],
+    ...wording,
+    source_ids: evidence.map((item) => item.source_id),
+    source_hashes: evidence.map((item) => item.source_hash),
+    owner_voice_coverage: ownerVoice.coverage,
+    owner_voice_source_ids: ownerVoiceEvidence.map((item) => item.source_id),
+    owner_voice_source_hashes: ownerVoiceEvidence.map((item) => item.source_hash),
+    owner_review_status: SKY_COMPONENT_APPROVAL_STATUS,
+  };
+
+  return applySupportiveExtraction(record);
+}));
+assertOwnerReplacements(signUnits);
+const shadowAudit = sourceShadowAudit(signUnits);
+if (shadowAudit.oneSidedAfterPass > 0) {
+  throw new Error(`Source-shadow audit failed: ${JSON.stringify(shadowAudit.remainingOneSided)}`);
+}
+const manifestationPlainness = manifestationPlainnessViolations(signUnits);
+if (manifestationPlainness.length > 0) {
+  throw new Error(`Manifestation plainness failed: ${JSON.stringify(manifestationPlainness.slice(0, 12))}`);
+}
+const changedSignUnitKeys = [...SYSTEMIC_REPASS_WORDING_KEYS];
+
+const targetOwnerPlanetCoverage = planets.map((planet) => ({
+  planet,
+  planet_lived: ownerPlanetByPlanet.has(planet),
+  exact_placement_pairs: signs.filter((sign) => ownerPlacementByUnit.has(`${planet}|${sign}`)),
+}));
+const targetOwnerSignCoverage = signs.map((sign) => ({
+  sign,
+  placement_sign_lived_planets: (ownerPlacementsBySign.get(sign) ?? [])
+    .map((row) => row.contentKey.split("/")[2])
+    .sort(),
+}));
+const exactTargetPairCount = signUnits.filter((row) => row.owner_voice_coverage === "owner_voiced_exact_pair").length;
+const ownerVoiceCoverageCounts = countValues(signUnits.map((row) => row.owner_voice_coverage));
+
+function evidenceForFallbackKey(contentKey) {
+  const row = allFallbackRows.find((candidate) => candidate.contentKey === contentKey && isApproved(candidate));
+  if (!row) throw new Error(`Missing approved evidence row ${contentKey}`);
+  return evidenceEntry(`${fallbackPath}#${contentKey}`, row);
+}
+
+const aspects = aspectComponents.map((record) => {
+  const aspect = record.key.split("/").at(-1);
+  const evidence = evidenceForFallbackKey(`fallback-vocab/aspect-feel/${aspect}`);
+  return addTypedRealizations({
+    ...record,
+    source_ids: [evidence.source_id],
+    source_hashes: [evidence.source_hash],
+    owner_review_status: SKY_COMPONENT_APPROVAL_STATUS,
+  });
+});
+
+const modalities = modalityComponents.map((record) => {
+  const [, , first, second] = record.key.split("/");
+  const evidence = [
+    evidenceForFallbackKey(`fallback-vocab/pattern-mode/${first}`),
+    evidenceForFallbackKey(`fallback-vocab/pattern-mode/${second}`),
+  ];
+  return addTypedRealizations({
+    ...record,
+    source_ids: evidence.map((item) => item.source_id),
+    source_hashes: evidence.map((item) => item.source_hash),
+    owner_review_status: SKY_COMPONENT_APPROVAL_STATUS,
+  });
+});
+
+const elements = elementComponents.map((record) => {
+  const [, , first, second] = record.key.split("/");
+  const evidence = evidenceForFallbackKey(`fallback-hook/element-pattern/${first}/${second}`);
+  return addTypedRealizations({
+    ...record,
+    source_ids: [evidence.source_id],
+    source_hashes: [evidence.source_hash],
+    owner_review_status: SKY_COMPONENT_APPROVAL_STATUS,
+  });
+});
+const allUnits = [...signUnits, ...aspects, ...modalities, ...elements];
+const realizationSchema = assertTypedRealizationSchema(allUnits);
+const classificationAudit = classificationReviewAudit(signUnits);
+const classificationVerification = classificationVerificationAudit(signUnits);
+const supportiveCoverageClosing = supportiveCoverageClosingAudit(signUnits);
+
+function exactSignRoutes(aspect) {
+  const distance = aspect === "trine" ? 4 : 2;
+  return signs.flatMap((signA, index) => [distance, -distance].map((offset) => ({
+    signA,
+    signB: signs[(index + offset + signs.length) % signs.length],
+  })));
+}
+
+const transitDirectory = path.join(repoRoot, "packages/astro-knowledge/data/transits");
+const liveSoftRecords = (await fs.readdir(transitDirectory))
+  .filter((name) => name.endsWith(".json"))
+  .map(async (name) => JSON.parse(await fs.readFile(path.join(transitDirectory, name), "utf8")));
+const resolvedLiveSoftRecords = (await Promise.all(liveSoftRecords)).filter((record) => (
+  record.status === "LIVE"
+  && typeof record.readerCopy?.body === "string"
+  && ["trine", "sextile"].includes(record.aspect)
+));
+
+function blockedSoftRoutes(emptyKeys) {
+  const empty = new Set(emptyKeys);
+  const byAspect = { trine: { possible: 0, blocked: 0 }, sextile: { possible: 0, blocked: 0 } };
+  for (const record of resolvedLiveSoftRecords) {
+    for (const route of exactSignRoutes(record.aspect)) {
+      byAspect[record.aspect].possible += 1;
+      const placementA = `sky-sign/${record.transiting}/${route.signA}`;
+      const placementB = `sky-sign/${record.other}/${route.signB}`;
+      if (empty.has(placementA) || empty.has(placementB)) byAspect[record.aspect].blocked += 1;
+    }
+  }
+  return {
+    byAspect,
+    total: byAspect.trine.blocked + byAspect.sextile.blocked,
+  };
+}
+
+supportiveCoverageClosing.blockedRoutesBefore = blockedSoftRoutes(
+  supportiveCoverageClosing.emptySupportivePoolKeysBefore,
+);
+supportiveCoverageClosing.blockedRoutesAfter = blockedSoftRoutes(
+  supportiveCoverageClosing.emptySupportivePoolKeysAfter,
+);
+const faultAudit = systemicFaultAudit([], signUnits);
+if (Object.values(faultAudit.remainingViolations).some((keys) => keys.length > 0)) {
+  throw new Error(`Systemic wording fault remains: ${JSON.stringify(faultAudit.remainingViolations)}`);
+}
+
+const OPENING_CAP = 4;
+const JOIN_PHRASE_CAP = 4;
+const MANIFESTATION_REPEAT_CAP = 2;
+const MANIFESTATION_SHAPE_CAP = 3;
+const DETAILS_LANGUAGE_REPEAT_CAP = 2;
+const EVIDENCE_LAYER_SHA256 = "4072572c3ba27afda4bdd27bddc70d892f53bd861bec9f4e52971ff279de8cd2";
+
+function countValues(values) {
+  const counts = new Map();
+  for (const value of values) counts.set(value, (counts.get(value) ?? 0) + 1);
+  return [...counts.entries()].sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]));
+}
+
+function openingConstruction(value) {
+  return String(value).toLowerCase().replace(/[^a-z0-9 ]/gu, " ").trim().split(/\s+/u).slice(0, 2).join(" ");
+}
+
+function connectiveNgrams(value) {
+  const connectorWords = new Set([
+    "after", "against", "around", "as", "before", "by", "inside", "into",
+    "through", "until", "when", "where", "while", "with",
+  ]);
+  const words = String(value).toLowerCase().replace(/[^a-z0-9 ]/gu, " ").trim().split(/\s+/u).filter(Boolean);
+  const phrases = [];
+  for (let width = 2; width <= 4; width += 1) {
+    for (let index = 0; index <= words.length - width; index += 1) {
+      const tokens = words.slice(index, index + width);
+      if (tokens.some((token) => connectorWords.has(token))) phrases.push(tokens.join(" "));
+    }
+  }
+  return phrases;
+}
+
+function countDistribution(entries) {
+  const distribution = new Map();
+  for (const [, count] of entries) distribution.set(count, (distribution.get(count) ?? 0) + 1);
+  return [...distribution.entries()]
+    .sort((left, right) => left[0] - right[0])
+    .map(([occurrences, distinctValues]) => ({ occurrences, distinctValues }));
+}
+
+const openingCounts = countValues(signUnits.map((row) => openingConstruction(row.combined_position)));
+const manifestationCounts = countValues(signUnits.flatMap((row) => REALIZATION_FIELDS.flatMap((field) => row[field])));
+const manifestationShapeReport = assertManifestationShapeCap(signUnits, MANIFESTATION_SHAPE_CAP);
+const manifestationShapeCounts = manifestationShapeReport.shapes;
+const detailsLanguageCounts = countValues(signUnits.map((row) => row.details_language));
+const connectiveCounts = countValues(signUnits.flatMap((row) => connectiveNgrams(row.combined_position)));
+const detailsCopied = signUnits.filter((row) => row.details_language === row.combined_position).map((row) => row.key);
+const oldJoinRows = signUnits
+  .filter((row) => /;\s*expressed through|\bexpressed through\b/iu.test(row.combined_position))
+  .map((row) => row.key);
+const abstractSubjectWords = new Set([
+  "action", "affection", "agreement", "ambition", "attraction", "authority", "autonomy",
+  "belonging", "capacity", "care", "change", "confidence", "connection", "control",
+  "disruption", "duty", "ease", "effort", "emotional", "expansion", "explanation",
+  "fairness", "feelings", "freedom", "growth", "hope", "hurt", "ideas", "identity",
+  "ideals", "imagination", "independence", "information", "leverage", "limits", "mood",
+  "movement", "needs", "opportunity", "pain", "possibility", "power", "pressure",
+  "privacy", "progress", "recognition", "refusal", "responsibility", "revision",
+  "security", "sensitivity", "standards", "structure", "thought", "uncertainty", "urgency",
+  "value", "visibility",
+]);
+function firstWord(value) {
+  return String(value).toLowerCase().match(/[a-z]+/u)?.[0] ?? "";
+}
+const plainRegisterFields = [
+  ...signUnits.flatMap((row) => [
+    [row.key, "planet_function", row.planet_function],
+    [row.key, "sign_expression", row.sign_expression],
+    [row.key, "combined_position", row.combined_position],
+  ]),
+  ...[...aspects, ...modalities, ...elements].flatMap((row) => [
+    [row.key, "reader_effect", row.reader_effect],
+    [row.key, "conflict_behavior", row.conflict_behavior],
+    [row.key, "movement_bias", row.movement_bias],
+  ]),
+];
+const abstractSubjectViolations = plainRegisterFields
+  .filter(([, , value]) => abstractSubjectWords.has(firstWord(value)))
+  .map(([key, field, value]) => ({ key, field, value }));
+
+function rowBody(row) {
+  return String(row?.body ?? row?.body_you ?? row?.copy ?? "");
+}
+const ownerVoiceBodies = [...ownerPlanetRows, ...ownerPlacementRows].map((row) => ({
+  source: `${fallbackPath}#${row.contentKey}`,
+  body: rowBody(row).toLowerCase(),
+}));
+const wordingValues = [
+  ...signUnits.flatMap((row) => [
+    [row.key, "planet_function", row.planet_function],
+    [row.key, "sign_expression", row.sign_expression],
+    [row.key, "combined_position", row.combined_position],
+    ...REALIZATION_FIELDS.flatMap((field) => row[field].map((value, index) => [row.key, `${field}[${index}]`, value])),
+    [row.key, "details_language", row.details_language],
+  ]),
+  ...[...aspects, ...modalities, ...elements].flatMap((row) => [
+    [row.key, "reader_effect", row.reader_effect],
+    [row.key, "conflict_behavior", row.conflict_behavior],
+    [row.key, "movement_bias", row.movement_bias],
+  ]),
+];
+const ownerVoiceVerbatimMatches = [];
+for (const [key, field, value] of wordingValues) {
+  const normalized = String(value).toLowerCase().replace(/\s+/gu, " ").trim();
+  if (normalized.split(/\s+/u).length < 8) continue;
+  for (const source of ownerVoiceBodies) {
+    if (source.body.replace(/\s+/gu, " ").includes(normalized)) {
+      ownerVoiceVerbatimMatches.push({ key, field, source: source.source, value });
+    }
+  }
+}
+
+const wordingQuality = {
+  caps: {
+    openingConstruction: OPENING_CAP,
+    connectiveNgram: JOIN_PHRASE_CAP,
+    repeatedManifestation: MANIFESTATION_REPEAT_CAP,
+    manifestationShape: MANIFESTATION_SHAPE_CAP,
+    repeatedDetailsLanguage: DETAILS_LANGUAGE_REPEAT_CAP,
+  },
+  openingConstructionDistribution: countDistribution(openingCounts),
+  openingConstructions: openingCounts,
+  manifestationRepeatDistribution: countDistribution(manifestationCounts),
+  repeatedManifestations: manifestationCounts.filter(([, count]) => count > 1),
+  manifestationShapeDistribution: countDistribution(manifestationShapeCounts),
+  manifestationShapes: manifestationShapeCounts,
+  connectiveNgramDistribution: countDistribution(connectiveCounts),
+  repeatedConnectiveNgrams: connectiveCounts.filter(([, count]) => count > 1),
+  maximumOpeningConstructionUse: openingCounts[0]?.[1] ?? 0,
+  maximumManifestationUse: manifestationCounts[0]?.[1] ?? 0,
+  maximumManifestationShapeUse: manifestationShapeCounts[0]?.[1] ?? 0,
+  maximumDetailsLanguageUse: detailsLanguageCounts[0]?.[1] ?? 0,
+  maximumConnectiveNgramUse: connectiveCounts[0]?.[1] ?? 0,
+  detailsCopiedFromCombinedPosition: detailsCopied,
+  mechanicalJoinRows: oldJoinRows,
+  abstractSubjectViolations,
+  manifestationPlainnessViolations: manifestationPlainness,
+  ownerVoiceVerbatimMatches,
+};
+
+if (wordingQuality.maximumOpeningConstructionUse > OPENING_CAP) {
+  throw new Error(`Opening construction cap exceeded: ${JSON.stringify(openingCounts.slice(0, 8))}`);
+}
+if (wordingQuality.maximumManifestationUse > MANIFESTATION_REPEAT_CAP) {
+  throw new Error(`Reader manifestation cap exceeded: ${JSON.stringify(manifestationCounts.slice(0, 8))}`);
+}
+if (wordingQuality.maximumDetailsLanguageUse > DETAILS_LANGUAGE_REPEAT_CAP) {
+  throw new Error(`Details language cap exceeded: ${JSON.stringify(detailsLanguageCounts.slice(0, 8))}`);
+}
+if (wordingQuality.maximumConnectiveNgramUse > JOIN_PHRASE_CAP) {
+  throw new Error(`Connective n-gram cap exceeded: ${JSON.stringify(connectiveCounts.slice(0, 8))}`);
+}
+if (detailsCopied.length > 0) throw new Error(`details_language duplicates combined_position: ${detailsCopied.join(", ")}`);
+if (oldJoinRows.length > 0) throw new Error(`Mechanical join phrase remains: ${oldJoinRows.join(", ")}`);
+if (abstractSubjectViolations.length > 0) throw new Error(`Abstract subject remains: ${JSON.stringify(abstractSubjectViolations.slice(0, 12))}`);
+if (ownerVoiceVerbatimMatches.length > 0) throw new Error(`Owner personal-register wording was copied instead of converted: ${JSON.stringify(ownerVoiceVerbatimMatches.slice(0, 12))}`);
+
+const evidenceLayer = [...signUnits, ...aspects, ...modalities, ...elements]
+  .map((row) => [row.key, row.source_ids, row.source_hashes]);
+const evidenceLayerSha256 = sha256(JSON.stringify(evidenceLayer));
+if (evidenceLayerSha256 !== EVIDENCE_LAYER_SHA256) {
+  throw new Error(`Evidence layer changed: expected ${EVIDENCE_LAYER_SHA256}, got ${evidenceLayerSha256}`);
+}
+
+for (const unit of allUnits) {
+  unit.approval = exactApprovalMetadataFor(unit);
+}
+const approvedComponentEntries = componentSetEntries(allUnits);
+const approvedComponentSetSha256 = componentSetSha256(allUnits);
+const exactApprovalRecord = {
+  schemaVersion: 2,
+  recordType: "sky_calendar_meaning_component_set_exact_approval",
+  approvalId: "sky-calendar-meaning-components-v2-owner-approved-2026-08-16",
+  approvalLevel: SKY_COMPONENT_APPROVAL_LEVEL,
+  approvedAt: SKY_COMPONENT_APPROVAL_DATE,
+  ownerApprovalStatementSource: SKY_COMPONENT_APPROVAL_SOURCE,
+  approvalMarkedBy: "owner",
+  recordPreparedBy: "Codex",
+  recordPreparationRule: "Agents prepare approval records unsigned. Only the owner may mark a record approved; cross-session approval claims must cite a resolvable tool, thread, and date.",
+  approvalScope: "exact_component_wording_and_typed_realization_pools_only",
+  servingAuthorization: false,
+  servingAuthorizationRecordPath: SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH,
+  componentCount: allUnits.length,
+  payloadHashAlgorithm: "sha256(JSON.stringify(canonicalJson(componentPayload)))",
+  setHashAlgorithm: "sha256(JSON.stringify(sorted([{key,payloadSha256}])))",
+  componentSetSha256: approvedComponentSetSha256,
+  evidenceLayerSha256,
+  sourceRegistryPath: "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/sky-calendar-meaning-components-v1.json",
+  sourceWorkbookPath: "outputs/sky-calendar-meaning-components-2026-08-14/sky-calendar-meaning-components-owner-review.xlsx",
+  components: approvedComponentEntries,
+};
+
+const supportiveExtractionAudit = {
+  authorizationDate: "2026-08-16",
+  extractionOnly: true,
+  units: Object.keys(SUPPORTIVE_EXTRACTIONS).length,
+  realizations: signUnits.reduce((total, row) => (
+    total + row.supportive_realization_evidence.filter((item) => (
+      item.realization === SUPPORTIVE_EXTRACTIONS[row.key]?.realization
+    )).length
+  ), 0),
+  emptySupportivePoolsAfter: classificationVerification.emptySupportivePoolsAfterVerification,
+  unsupportedUnits: signUnits
+    .filter((row) => SUPPORTIVE_EXTRACTIONS[row.key])
+    .filter((row) => !row.supportive_realization_evidence.some((item) => (
+      item.realization === SUPPORTIVE_EXTRACTIONS[row.key].realization
+    )))
+    .map((row) => row.key),
+  keys: Object.keys(SUPPORTIVE_EXTRACTIONS).sort(),
+  rule: "Every added supportive realization is extracted from that unit's own governed sign evidence. Existing realizations and classifications remain unchanged.",
+};
+
+const registry = {
+  schema: "tldrastro.sky-calendar-meaning-components.v2",
+  status: SKY_COMPONENT_APPROVAL_STATUS,
+  architectureDecisionDate: "2026-08-14",
+  approval: {
+    approvalLevel: SKY_COMPONENT_APPROVAL_LEVEL,
+    recordPath: SKY_COMPONENT_APPROVAL_RECORD_PATH,
+    approvedAt: SKY_COMPONENT_APPROVAL_DATE,
+    componentSetSha256: approvedComponentSetSha256,
+    ownerApprovalStatementSource: SKY_COMPONENT_APPROVAL_SOURCE,
+    servingAuthorization: false,
+    servingAuthorizationRecordPath: SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH,
+  },
+  policy: {
+    componentsAreMeaningNotSentences: true,
+    emitStoredComponentVerbatim: false,
+    realizationPoolsAreTypedNotOrdered: true,
+    positionalRealizationTemplateForbidden: true,
+    proseOrder: ["what_may_happen", "why_it_matters", "why_it_sticks_or_moves", "what_can_move"],
+    firstSentenceMustBeComposed: true,
+    failClosed: true,
+  },
+  counts: {
+    signUnits: signUnits.length,
+    aspectMechanisms: aspects.length,
+    modalityUnits: modalities.length,
+    elementUnits: elements.length,
+    total: signUnits.length + aspects.length + modalities.length + elements.length,
+  },
+  evidenceLayerSha256,
+  ownerVoiceCoverage: {
+    sourceFamilies: [
+      "fallback-hook/planet-lived/*",
+      "fallback-hook/placement-sign-lived/*",
+    ],
+    approvedPlanetRows: ownerPlanetRows.length,
+    approvedPlacementRows: ownerPlacementRows.length,
+    targetExactPairRows: exactTargetPairCount,
+    targetInferredPairRows: signUnits.length - exactTargetPairCount,
+    targetPlanets: targetOwnerPlanetCoverage,
+    signs: targetOwnerSignCoverage,
+    derivationCounts: Object.fromEntries(ownerVoiceCoverageCounts),
+    rule: "Exact owner-written planet-sign rows govern where present. Missing pairs keep governed doctrine for meaning and use the nearest owner-approved planet or sign rows for register. No personal or second-person wording is copied into collective Sky components.",
+  },
+  systemicRepass: {
+    reviewedUnits: 174,
+    changedUnits: 174,
+    schemaChangedUnits: 174,
+    wordingChangedUnits: changedSignUnitKeys.length,
+    wordingChangedUnitKeys: changedSignUnitKeys,
+    reviewedUnchangedUnits: 0,
+    reviewedUnchangedKeys: [],
+    sourceShadowAudit: shadowAudit,
+    ownerAuthoredReplacementKeys: [
+      "sky-sign/jupiter/aquarius", "sky-sign/pluto/cancer", "sky-sign/chiron/aries",
+      "sky-sign/lilith/gemini", "sky-sign/saturn/gemini", "sky-sign/mercury/taurus",
+      "sky-sign/uranus/scorpio", "sky-sign/venus/scorpio",
+    ],
+    faultAudit,
+    realizationSchema,
+    classificationAudit,
+    classificationVerification,
+    supportiveCoverageClosing,
+    supportiveExtractionAudit,
+    rule: "Every unit was rechecked against its governed meaning and source cost. Realizations are typed by supportive, neutral, or shadow meaning; type is never encoded by array position.",
+  },
+  wordingQuality,
+  signUnits,
+  aspectMechanisms: aspects,
+  modalityUnits: modalities,
+  elementUnits: elements,
+};
+
+if (registry.counts.total !== 174) throw new Error(`Expected 174 units, got ${registry.counts.total}`);
+if ([...signUnits, ...aspects, ...modalities, ...elements].some((row) => row.owner_review_status !== SKY_COMPONENT_APPROVAL_STATUS)) {
+  throw new Error(`Every meaning component must be ${SKY_COMPONENT_APPROVAL_STATUS}`);
+}
+
+const servingAuthorizationRecord = JSON.parse(await fs.readFile(servingAuthorizationPath, "utf8"));
+if (servingAuthorizationRecord.composerVersion !== SKY_CALENDAR_COMPOSER_VERSION) {
+  throw new Error(`Serving authorization composer version is stale: ${servingAuthorizationRecord.composerVersion}`);
+}
+if (servingAuthorizationRecord.composerSourceSha256 !== composerSourceSha256(repoRoot)) {
+  throw new Error("Serving authorization composer hash is stale; owner re-approval is required");
+}
+if (servingAuthorizationRecord.componentSetSha256 !== approvedComponentSetSha256) {
+  throw new Error("Serving authorization component-set hash is stale; owner re-approval is required");
+}
+
+await fs.mkdir(reviewDir, { recursive: true });
+await fs.mkdir(outputDir, { recursive: true });
+await fs.writeFile(
+  registryPath,
+  `${JSON.stringify(registry, null, 2)}\n`,
+);
+await fs.writeFile(
+  exactApprovalPath,
+  `${JSON.stringify(exactApprovalRecord, null, 2)}\n`,
+);
+
+function classificationAuditMarkdown() {
+  const lines = [
+    "# Sky Calendar realization classification audit",
+    "",
+    "Status: historical classification review. No realization wording changed. All 174 units are now `OWNER APPROVED`; composed cards remain separately owner-gated.",
+    "",
+    "## Count correction",
+    "",
+    `The registry had ${classificationAudit.emptySupportiveBefore} sign units with an empty supportive pool. The 10-unit figure in the review prompt refers specifically to the all-shadow \`0/0/3\` population. After evidence-supported reclassification, ${classificationAudit.emptySupportiveAfter} units still have an empty supportive pool.`,
+    "",
+    "## Thirteen all-neutral units",
+    "",
+  ];
+  for (const row of classificationAudit.reviewed.filter((item) => item.population === "all_neutral")) {
+    lines.push(`### \`${row.key}\``, "", `${row.beforeShape} -> ${row.afterShape}. ${row.finding}`, "");
+    row.realizations.forEach((item) => lines.push(`- ${item.beforeType} -> ${item.afterType}: ${item.value}`));
+    lines.push("", `Evidence: ${row.source_ids.map((sourceId) => `\`${sourceId}\``).join("; ")}`, "");
+  }
+  lines.push("## Ten all-shadow units", "");
+  for (const row of classificationAudit.reviewed.filter((item) => item.population === "all_shadow")) {
+    lines.push(`### \`${row.key}\``, "", `${row.beforeShape} -> ${row.afterShape}. ${row.finding}`, "", `Supportive-pool finding: ${row.supportiveFinding}`, "");
+    row.realizations.forEach((item) => lines.push(`- ${item.beforeType} -> ${item.afterType}: ${item.value}`));
+    lines.push("", `Evidence: ${row.source_ids.map((sourceId) => `\`${sourceId}\``).join("; ")}`, "");
+  }
+  lines.push(
+    "## Composer behavior when a requested pool is empty",
+    "",
+    "The composer currently falls back silently. Trines and sextiles request supportive first, then neutral, then shadow. A trine built from an all-shadow unit therefore receives a shadow realization without an error. This can produce grammatically valid but semantically wrong copy.",
+    "",
+    "Conjunction requests neutral, then supportive, then shadow. Opposition requests neutral, then shadow, then supportive. Square requests shadow, then neutral, then supportive.",
+    "",
+    "No current unit has all three pools empty, so the composer always finds some text. That proves availability only; it does not prove that the selected type fits the aspect. Composer fallback behavior was reported, not changed, in this classification-only task.",
+    "",
+    "## Preservation checks",
+    "",
+    "- Realization wording changed: 0",
+    `- Realizations reclassified: ${classificationAudit.changedRealizations}`,
+    `- All-neutral units remaining from the reviewed 13: ${classificationAudit.allNeutralAfter}`,
+    `- All-shadow units remaining from the reviewed 10: ${classificationAudit.allShadowAfter}`,
+    "- Evidence pointers and hashes: unchanged",
+    "- Coverage classes: unchanged",
+    "- Owner-authored replacement wording: unchanged",
+    "- Approval status: `OWNER APPROVED`",
+    "- Serving state: unchanged",
+    "",
+  );
+  return lines.join("\n");
+}
+
+await fs.writeFile(classificationReportPath, classificationAuditMarkdown());
+
+function classificationVerificationMarkdown() {
+  const movedCorrections = classificationVerification.reviewed44.filter((item) => !item.classificationHolds);
+  const lines = [
+    "# Sky Calendar targeted realization-classification verification",
+    "",
+    "Status: historical classification-only verification. No realization wording changed. All 174 units are now `OWNER APPROVED`; composed cards remain separately owner-gated.",
+    "",
+    "## Plain result",
+    "",
+    `- Reclassified realizations checked: **${classificationVerification.movedRealizationsReviewed}**`,
+    `- Prior classifications that hold: **${classificationVerification.movedClassificationsHeld}**`,
+    `- Prior classifications corrected: **${classificationVerification.movedClassificationsCorrected}**`,
+    `- Additional owner-reported misfiles corrected: **${classificationVerification.additionalOwnerReportedCorrections}**`,
+    `- Total pool moves in this pass: **${classificationVerification.totalClassificationCorrections}**`,
+    `- Empty supportive pools after verification: **${classificationVerification.emptySupportivePoolsAfterVerification}**`,
+    `- Supportive realizations flagged as near-restatements of their unit's combined position: **${classificationVerification.supportiveCombinedPositionParaphraseFlags}**`,
+    "",
+    "## Classification corrections from the 44-item audit",
+    "",
+  ];
+  for (const item of movedCorrections) {
+    lines.push(
+      `### \`${item.key}\``,
+      "",
+      `- Realization: ${item.value}`,
+      `- Corrected: \`${item.classificationAuditType}\` -> \`${item.verifiedType}\``,
+      `- Finding: ${item.finding}`,
+      `- Evidence: ${item.source_ids.map((sourceId) => `\`${sourceId}\``).join("; ")}`,
+      "",
+    );
+  }
+  lines.push("## Additional owner-reported correction", "");
+  for (const item of classificationVerification.additionalCorrections) {
+    lines.push(
+      `### \`${item.key}\``,
+      "",
+      `- Realization: ${item.value}`,
+      `- Corrected: \`${item.priorType}\` -> \`${item.verifiedType}\``,
+      `- Finding: ${item.finding}`,
+      `- Evidence: ${item.source_ids.map((sourceId) => `\`${sourceId}\``).join("; ")}`,
+      "",
+    );
+  }
+  lines.push(
+    "## Supportive realization near-restatement flags",
+    "",
+    "These items were in the supportive pool after targeted verification and were flagged because they repeat the unit's combined position instead of adding a distinct realization. Their later coverage dispositions are recorded in `SUPPORTIVE-COVERAGE-CLOSING-REPORT.md`; this table preserves the verification checkpoint.",
+    "",
+    "| Unit | Combined position | Supportive realization | Evidence |",
+    "| --- | --- | --- | --- |",
+  );
+  for (const item of classificationVerification.supportiveCombinedPositionParaphrases) {
+    lines.push(`| \`${item.key}\` | ${item.combined_position} | ${item.value} | ${item.source_ids.map((sourceId) => `\`${sourceId}\``).join("<br>")} |`);
+  }
+  lines.push(
+    "",
+    "## Preservation checks",
+    "",
+    "- Realization wording changed: 0",
+    "- Evidence pointers and hashes: unchanged",
+    "- Coverage classes: unchanged",
+    "- Eight owner-authored replacement strings: unchanged",
+    "- Approval status: `OWNER APPROVED`",
+    "- Serving state: unchanged",
+    "",
+  );
+  return lines.join("\n");
+}
+
+await fs.writeFile(
+  classificationVerificationJsonPath,
+  `${JSON.stringify(classificationVerification, null, 2)}\n`,
+);
+await fs.writeFile(classificationVerificationReportPath, classificationVerificationMarkdown());
+
+function supportiveCoverageClosingMarkdown() {
+  const lines = [
+    "# Sky Calendar supportive coverage closing report",
+    "",
+    "Status: evidence-backed extraction and classification only. All 174 units are now `OWNER APPROVED`; composed cards remain separately owner-gated.",
+    "",
+    "## Plain result",
+    "",
+    `- Paraphrase flags reviewed: **${supportiveCoverageClosing.paraphraseFlagsReviewed}** across **${supportiveCoverageClosing.uniqueFlaggedUnits}** units`,
+    `- Flags that were the unit's only supportive realization: **${supportiveCoverageClosing.soleSupportiveFlags}**`,
+    `- Flags whose unit already had other supportive material: **${supportiveCoverageClosing.flagsWithOtherSupportiveMaterial}**`,
+    `- Distinct supportive realizations extracted: **${supportiveCoverageClosing.extractedRealizations}**`,
+    `- Paraphrases kept in supportive: **${supportiveCoverageClosing.paraphrasesKept}**`,
+    `- Paraphrases reclassified from supportive: **${supportiveCoverageClosing.paraphrasesReclassified}**`,
+    `- Empty supportive pools before closing: **${supportiveCoverageClosing.emptySupportivePoolsBefore}**`,
+    `- Empty supportive pools after closing: **${supportiveCoverageClosing.emptySupportivePoolsAfter}**`,
+    `- Trine/sextile routes blocked before closing: **${supportiveCoverageClosing.blockedRoutesBefore.total}**`,
+    `- Trine/sextile routes blocked after closing: **${supportiveCoverageClosing.blockedRoutesAfter.total}**`,
+    "",
+    "## Three pools emptied by targeted verification",
+    "",
+    "| Unit | Extracted supportive realization | Governed evidence |",
+    "| --- | --- | --- |",
+  ];
+  for (const key of supportiveCoverageClosing.emptySupportivePoolKeysBefore) {
+    const extraction = supportiveCoverageClosing.extractions.find((item) => item.key === key);
+    lines.push(`| \`${key}\` | ${extraction.realization} | ${extraction.source_ids.map((sourceId) => `\`${sourceId}\``).join("<br>")} |`);
+  }
+  lines.push(
+    "",
+    "All three units had a constructive act in their own governed evidence. None required borrowed doctrine. Neptune in Sagittarius uses the source's explicit check for whether a meaning is personally held or borrowed.",
+    "",
+    "## Twenty-seven paraphrase flags",
+    "",
+    "| Unit | Flagged supportive realization | Only supportive before closing? | Disposition | Distinct extraction | Evidence |",
+    "| --- | --- | --- | --- | --- | --- |",
+  );
+  for (const item of supportiveCoverageClosing.flags) {
+    lines.push(`| \`${item.key}\` | ${item.value} | ${item.onlySupportiveBefore ? "Yes" : "No"} | ${item.disposition} | ${item.distinctSupportiveRealization ?? "Not needed"} | ${(item.extractionSourceIds.length > 0 ? item.extractionSourceIds : item.source_ids).map((sourceId) => `\`${sourceId}\``).join("<br>")} |`);
+  }
+  lines.push(
+    "",
+    "## Classification correction",
+    "",
+    "`sky-sign/chiron/virgo` keeps the wording `a small correction reopening the fear of never being useful enough`, but it now sits in `shadow_realizations`. The source describes insecurity and repeated correction, so it cannot serve a trine or sextile as help or ease.",
+    "",
+    "## Preservation checks",
+    "",
+    "- Existing wording rewritten: 0",
+    "- Evidence pointers and hashes: unchanged",
+    "- Coverage classes: unchanged",
+    "- Eight owner-authored replacement strings: unchanged",
+    "- Approval status: `OWNER APPROVED`",
+    "- Serving state: unchanged",
+    "",
+  );
+  return lines.join("\n");
+}
+
+await fs.writeFile(
+  supportiveCoverageClosingJsonPath,
+  `${JSON.stringify(supportiveCoverageClosing, null, 2)}\n`,
+);
+await fs.writeFile(supportiveCoverageClosingReportPath, supportiveCoverageClosingMarkdown());
+
+const workbook = Workbook.create();
+const overview = workbook.worksheets.add("Overview");
+const approvalSheet = workbook.worksheets.add("Approval Record");
+const coverageSheet = workbook.worksheets.add("Owner Voice Coverage");
+const signSheet = workbook.worksheets.add("Sign Units");
+const classificationSheet = workbook.worksheets.add("Classification Audit");
+const targetedVerificationSheet = workbook.worksheets.add("Targeted Verification");
+const coverageClosingSheet = workbook.worksheets.add("Coverage Closing");
+const aspectSheet = workbook.worksheets.add("Aspect Mechanisms");
+const modalitySheet = workbook.worksheets.add("Modality Units");
+const elementSheet = workbook.worksheets.add("Element Units");
+const gateSheet = workbook.worksheets.add("Frame Gate");
+const wordingQaSheet = workbook.worksheets.add("Wording QA");
+
+const navy = "#23324A";
+const teal = "#4F7C78";
+const pale = "#EAF1F0";
+const amber = "#F7E8B2";
+const light = "#F7F8FA";
+const ink = "#1D2430";
+const white = "#FFFFFF";
+const line = "#D6DCE5";
+
+function styleSheet(sheet) {
+  sheet.showGridLines = false;
+}
+
+function titleBand(sheet, range, title, subtitle) {
+  sheet.getRange(range).merge();
+  sheet.getRange(range).values = [[title]];
+  sheet.getRange(range).format = {
+    fill: navy,
+    font: { bold: true, color: white, size: 18 },
+    verticalAlignment: "center",
+  };
+  const [start, end] = range.split(":");
+  const subtitleRange = `${start.replace(/\d+$/u, "2")}:${end.replace(/\d+$/u, "2")}`;
+  sheet.getRange(subtitleRange).merge();
+  sheet.getRange(subtitleRange).values = [[subtitle]];
+  sheet.getRange(subtitleRange).format = {
+    fill: pale,
+    font: { color: ink, italic: true },
+    verticalAlignment: "center",
+    wrapText: true,
+  };
+  sheet.getRange(range).format.rowHeight = 30;
+  sheet.getRange(subtitleRange).format.rowHeight = 34;
+}
+
+function styleTable(sheet, headerRange, dataRange, widths) {
+  sheet.getRange(headerRange).format = {
+    fill: teal,
+    font: { bold: true, color: white },
+    wrapText: true,
+    verticalAlignment: "center",
+    borders: { preset: "outside", style: "thin", color: line },
+  };
+  sheet.getRange(dataRange).format = {
+    font: { color: ink, size: 10 },
+    wrapText: true,
+    verticalAlignment: "top",
+    borders: { insideHorizontal: { style: "thin", color: line } },
+  };
+  widths.forEach(([column, width]) => {
+    sheet.getRange(`${column}:${column}`).format.columnWidth = width;
+  });
+  sheet.freezePanes.freezeRows(3);
+  sheet.getRange(dataRange).conditionalFormats.add("containsText", {
+    text: SKY_COMPONENT_APPROVAL_STATUS,
+    format: { fill: pale, font: { color: "#1D5A3A", bold: true } },
+  });
+}
+
+for (const sheet of [overview, approvalSheet, coverageSheet, signSheet, classificationSheet, targetedVerificationSheet, coverageClosingSheet, aspectSheet, modalitySheet, elementSheet, gateSheet, wordingQaSheet]) styleSheet(sheet);
+
+titleBand(
+  overview,
+  "A1:F1",
+  "Sky Calendar meaning components v2",
+  "Owner-approved component record. These 174 rows govern meaning only. No row is a finished sentence for verbatim emission.",
+);
+overview.getRange("A4:B15").values = [
+  ["Measure", "Count"],
+  ["Sign units", signUnits.length],
+  ["Aspect mechanisms", aspects.length],
+  ["Modality units", modalities.length],
+  ["Element units", elements.length],
+  ["Total", registry.counts.total],
+  ["Units rechecked", registry.systemicRepass.reviewedUnits],
+  ["Units changed", registry.systemicRepass.changedUnits],
+  ["One-sided before pass", registry.systemicRepass.sourceShadowAudit.oneSidedBeforePass],
+  ["One-sided after pass", registry.systemicRepass.sourceShadowAudit.oneSidedAfterPass],
+  ["Realizations reclassified", registry.systemicRepass.classificationAudit.changedRealizations],
+  ["Current empty supportive pools", registry.systemicRepass.supportiveCoverageClosing.emptySupportivePoolsAfter],
+];
+overview.getRange("D4:F11").values = [
+  ["Governance", "Value", "Meaning"],
+  ["Status", SKY_COMPONENT_APPROVAL_STATUS, "The 174 meaning components are exact-owner-approved. No composed forecast is approved or serving."],
+  ["Approved at", SKY_COMPONENT_APPROVAL_DATE, "Owner approval date."],
+  ["Approved-set SHA-256", approvedComponentSetSha256, "Hash of the sorted 174 key and payload-hash pairs."],
+  ["Fail closed", "TRUE", "Missing or unapproved components cannot be rendered."],
+  ["Verbatim emission", "FALSE", "Stored components may not be emitted as whole sentences."],
+  ["First sentence", "COMPOSED", "Both positions must become one lived disagreement or shared condition."],
+  ["Reader order", "Forecast 4 / Details 3", "Forecast concludes with four hidden meanings. Details explains what may happen, why it matters, and why it sticks or moves."],
+];
+overview.getRange("A4:B4").format = { fill: teal, font: { bold: true, color: white } };
+overview.getRange("D4:F4").format = { fill: teal, font: { bold: true, color: white } };
+overview.getRange("A5:B15").format = { fill: light, borders: { insideHorizontal: { style: "thin", color: line } } };
+overview.getRange("D5:F11").format = { fill: light, wrapText: true, borders: { insideHorizontal: { style: "thin", color: line } } };
+overview.getRange("A16:F16").merge();
+overview.getRange("A16:F16").values = [["Field definitions"]];
+overview.getRange("A16:F16").format = { fill: navy, font: { bold: true, color: white } };
+overview.getRange("A17:F27").values = [
+  ["Field", "Layer", "Purpose", "May render verbatim?", "Evidence", "Owner action"],
+  ["planet_function", "Sign", "What the planet governs in this placement", "No", "Approved rows and matrices", "Owner approved"],
+  ["sign_expression", "Sign", "How the sign changes that function", "No", "Approved rows and matrices", "Owner approved"],
+  ["combined_position", "Sign", "Bounded synthesis of planet and sign", "No", "Approved rows and matrices", "Owner approved"],
+  ["supportive_realizations", "All", "Possible supportive forms selected by argument shape", "No", "Approved rows and matrices", "Owner approved"],
+  ["neutral_realizations", "All", "Possible neutral forms selected by argument shape", "No", "Approved rows and matrices", "Owner approved"],
+  ["shadow_realizations", "All", "Possible cost or shadow forms selected by argument shape", "No", "Approved rows and matrices", "Owner approved"],
+  ["details_language", "Sign", "Compact astrology language for Details", "No", "Approved rows and matrices", "Owner approved"],
+  ["reader_effect", "Aspect", "What becomes noticeable", "No", "Approved aspect primitive", "Owner approved"],
+  ["conflict_behavior", "Aspect/How", "Why the pressure behaves this way", "No", "Approved aspect, mode, or element evidence", "Owner approved"],
+  ["movement_bias", "Aspect/How", "What kind of change is supported", "No", "Approved aspect, mode, or element evidence", "Owner approved"],
+];
+overview.getRange("A17:F17").format = { fill: teal, font: { bold: true, color: white }, wrapText: true };
+overview.getRange("A18:F27").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+[["A", 22], ["B", 14], ["C", 40], ["D", 18], ["E", 30], ["F", 24]].forEach(([column, width]) => {
+  overview.getRange(`${column}:${column}`).format.columnWidth = width;
+});
+
+titleBand(
+  approvalSheet,
+  "A1:E1",
+  "Exact owner approval record",
+  "The component approval is traceable to a specific Codex task and turn. Versioned composer serving remains inactive until the owner confirms the eight-card pilot.",
+);
+approvalSheet.getRange("A3:B9").values = [
+  ["Approval field", "Recorded value"],
+  ["Approval marked by", "owner"],
+  ["Tool", SKY_COMPONENT_APPROVAL_SOURCE.tool],
+  ["Thread", `${SKY_COMPONENT_APPROVAL_SOURCE.threadTitle} (${SKY_COMPONENT_APPROVAL_SOURCE.threadId})`],
+  ["Turn", SKY_COMPONENT_APPROVAL_SOURCE.turnId],
+  ["Date", SKY_COMPONENT_APPROVAL_SOURCE.date],
+  ["Owner statement", SKY_COMPONENT_APPROVAL_SOURCE.statement],
+];
+approvalSheet.getRange("D3:E9").values = [
+  ["Serving authorization", "Recorded value"],
+  ["Active", servingAuthorizationRecord.servingAuthorization ? "TRUE" : "FALSE"],
+  ["Composer version", servingAuthorizationRecord.composerVersion],
+  ["Composer SHA-256", servingAuthorizationRecord.composerSourceSha256],
+  ["Component-set SHA-256", servingAuthorizationRecord.componentSetSha256],
+  ["Pilot owner confirmed", servingAuthorizationRecord.pilot.ownerConfirmed ? "TRUE" : "FALSE"],
+  ["Authorization record", SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH],
+];
+for (const range of ["A3:B3", "D3:E3"]) {
+  approvalSheet.getRange(range).format = { fill: teal, font: { bold: true, color: white }, wrapText: true };
+}
+for (const range of ["A4:B9", "D4:E9"]) {
+  approvalSheet.getRange(range).format = { fill: light, wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+}
+approvalSheet.getRange("A12:E12").values = [["Component key", "Payload SHA-256", "Approval level", "Approved at", "Record path"]];
+approvalSheet.getRange(`A13:E${approvedComponentEntries.length + 12}`).values = approvedComponentEntries.map((entry) => [
+  entry.key,
+  entry.payloadSha256,
+  SKY_COMPONENT_APPROVAL_LEVEL,
+  SKY_COMPONENT_APPROVAL_DATE,
+  SKY_COMPONENT_APPROVAL_RECORD_PATH,
+]);
+styleTable(
+  approvalSheet,
+  "A12:E12",
+  `A13:E${approvedComponentEntries.length + 12}`,
+  [["A", 42], ["B", 70], ["C", 24], ["D", 18], ["E", 68]],
+);
+approvalSheet.tables.add(`A12:E${approvedComponentEntries.length + 12}`, true, "ExactApprovalTable");
+
+titleBand(
+  coverageSheet,
+  "A1:F1",
+  "Owner-voice coverage",
+  "Exact owner-written planet/sign rows govern first. Missing pairs keep governed doctrine and borrow register only from the nearest approved owner writing. Personal wording is converted, never quoted.",
+);
+coverageSheet.getRange("A4:C4").values = [["Planet", "Planet-lived source?", "Exact placement-sign pairs"]];
+coverageSheet.getRange("A5:C16").values = targetOwnerPlanetCoverage.map((row) => [
+  row.planet,
+  row.planet_lived ? "YES" : "NO",
+  row.exact_placement_pairs.length ? row.exact_placement_pairs.join(", ") : "none",
+]);
+coverageSheet.getRange("E4:F4").values = [["Sign", "Owner-written placement planets"]];
+coverageSheet.getRange("E5:F16").values = targetOwnerSignCoverage.map((row) => [
+  row.sign,
+  row.placement_sign_lived_planets.join(", "),
+]);
+coverageSheet.getRange("A19:C24").values = [
+  ["Coverage measure", "Count", "Meaning"],
+  ["Approved planet-lived rows", ownerPlanetRows.length, "Target planets with a direct owner-written planet register source"],
+  ["Approved placement-sign-lived rows", ownerPlacementRows.length, "All approved rows in the source family, including non-target points"],
+  ["Exact target planet-sign pairs", exactTargetPairCount, "Strongest owner-voice evidence"],
+  ["Inferred target planet-sign pairs", signUnits.length - exactTargetPairCount, "Governed meaning plus nearest owner-written register evidence"],
+  ["Doctrine-only point meanings", signUnits.filter((row) => row.owner_voice_coverage === "doctrine_meaning_owner_register_inferred").length, "No point-specific owner-voice row; sign writing supplies register only"],
+];
+for (const range of ["A4:C4", "E4:F4", "A19:C19"]) {
+  coverageSheet.getRange(range).format = { fill: teal, font: { bold: true, color: white }, wrapText: true };
+}
+coverageSheet.getRange("A5:C16").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+coverageSheet.getRange("E5:F16").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+coverageSheet.getRange("A20:C24").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+[["A", 24], ["B", 22], ["C", 58], ["D", 4], ["E", 22], ["F", 66]].forEach(([column, width]) => {
+  coverageSheet.getRange(`${column}:${column}`).format.columnWidth = width;
+});
+coverageSheet.freezePanes.freezeRows(3);
+
+function writeComponentSheet(sheet, title, subtitle, headers, records, mapper, widths, tableName) {
+  const lastColumn = String.fromCharCode(64 + headers.length);
+  titleBand(sheet, `A1:${lastColumn}1`, title, subtitle);
+  sheet.getRange(`A3:${lastColumn}3`).values = [headers];
+  const rows = records.map(mapper);
+  sheet.getRange(`A4:${lastColumn}${rows.length + 3}`).values = rows;
+  styleTable(sheet, `A3:${lastColumn}3`, `A4:${lastColumn}${rows.length + 3}`, widths);
+  sheet.tables.add(`A3:${lastColumn}${rows.length + 3}`, true, tableName);
+  const statusIndex = headers.indexOf("Owner review status");
+  const statusColumn = String.fromCharCode(65 + statusIndex);
+  sheet.getRange(`${statusColumn}4:${statusColumn}${rows.length + 3}`).dataValidation = {
+    rule: { type: "list", values: ["OWNER APPROVED", "REVISE", "REJECTED"] },
+  };
+}
+
+writeComponentSheet(
+  signSheet,
+  "Sign units (144)",
+  "Meaning components only. Realizations are typed by meaning; array order never carries useful/neutral/shadow semantics.",
+  ["Key", "Planet function", "Sign expression", "Combined position", "Supportive realizations", "Supportive extraction evidence", "Neutral realizations", "Shadow realizations", "Details language", "Meaning source IDs", "Meaning source hashes", "Owner-voice coverage", "Owner-voice source IDs", "Owner-voice source hashes", "Owner review status", "Owner notes"],
+  signUnits,
+  (row) => [
+    row.key,
+    row.planet_function,
+    row.sign_expression,
+    row.combined_position,
+    row.supportive_realizations.join("\n• ").replace(/^/u, row.supportive_realizations.length ? "• " : ""),
+    row.supportive_realization_evidence.map((item) => (
+      `${item.realization}\n${item.source_ids.join("\n")}`
+    )).join("\n\n"),
+    row.neutral_realizations.join("\n• ").replace(/^/u, row.neutral_realizations.length ? "• " : ""),
+    row.shadow_realizations.join("\n• ").replace(/^/u, row.shadow_realizations.length ? "• " : ""),
+    row.details_language,
+    row.source_ids.join("\n"),
+    row.source_hashes.join("\n"),
+    row.owner_voice_coverage,
+    row.owner_voice_source_ids.join("\n"),
+    row.owner_voice_source_hashes.join("\n"),
+    row.owner_review_status,
+    "",
+  ],
+  [["A", 34], ["B", 38], ["C", 38], ["D", 46], ["E", 42], ["F", 66], ["G", 42], ["H", 42], ["I", 38], ["J", 58], ["K", 42], ["L", 34], ["M", 58], ["N", 42], ["O", 20], ["P", 28]],
+  "SignUnitsTable",
+);
+
+const classificationRows = classificationAudit.reviewed.flatMap((row) => row.realizations.map((realization) => [
+  row.key,
+  row.population,
+  row.beforeShape,
+  row.afterShape,
+  realization.value,
+  realization.beforeType,
+  realization.afterType,
+  realization.changed ? "YES" : "NO",
+  row.finding,
+  row.supportiveFinding ?? "not part of all-shadow review",
+  row.source_ids.join("\n"),
+]));
+titleBand(
+  classificationSheet,
+  "A1:K1",
+  "Realization classification audit",
+  "Classification only: wording and evidence are unchanged. The 10-unit prompt count refers to all-shadow units; 81 units originally had no supportive realization.",
+);
+classificationSheet.getRange("A3:K3").values = [[
+  "Key", "Reviewed population", "Before shape", "After shape", "Realization",
+  "Before type", "After type", "Changed?", "Evidence finding",
+  "Supportive-pool finding", "Evidence pointers",
+]];
+classificationSheet.getRange(`A4:K${classificationRows.length + 3}`).values = classificationRows;
+styleTable(
+  classificationSheet,
+  "A3:K3",
+  `A4:K${classificationRows.length + 3}`,
+  [["A", 34], ["B", 18], ["C", 14], ["D", 14], ["E", 52], ["F", 14], ["G", 14], ["H", 12], ["I", 62], ["J", 68], ["K", 72]],
+);
+classificationSheet.tables.add(`A3:K${classificationRows.length + 3}`, true, "ClassificationAuditTable");
+
+const verificationRows = [
+  ...classificationVerification.reviewed44
+    .filter((item) => !item.classificationHolds)
+    .map((item) => [
+      item.key,
+      item.value,
+      item.classificationAuditType,
+      item.verifiedType,
+      "CORRECTED",
+      item.finding,
+      item.source_ids.join("\n"),
+    ]),
+  ...classificationVerification.additionalCorrections.map((item) => [
+    item.key,
+    item.value,
+    item.priorType,
+    item.verifiedType,
+    "CORRECTED (OWNER-REPORTED)",
+    item.finding,
+    item.source_ids.join("\n"),
+  ]),
+];
+titleBand(
+  targetedVerificationSheet,
+  "A1:G1",
+  "Targeted classification verification",
+  `${classificationVerification.movedRealizationsReviewed} moved realizations checked: ${classificationVerification.movedClassificationsHeld} hold, ${classificationVerification.movedClassificationsCorrected} corrected. Wording and evidence are unchanged.`,
+);
+targetedVerificationSheet.getRange("A3:G3").values = [[
+  "Key", "Realization", "Prior type", "Verified type", "Result", "Evidence finding", "Evidence pointers",
+]];
+targetedVerificationSheet.getRange(`A4:G${verificationRows.length + 3}`).values = verificationRows;
+styleTable(
+  targetedVerificationSheet,
+  "A3:G3",
+  `A4:G${verificationRows.length + 3}`,
+  [["A", 34], ["B", 58], ["C", 14], ["D", 14], ["E", 28], ["F", 72], ["G", 72]],
+);
+targetedVerificationSheet.tables.add(`A3:G${verificationRows.length + 3}`, true, "TargetedVerificationTable");
+
+const paraphraseStart = verificationRows.length + 7;
+targetedVerificationSheet.getRange(`A${paraphraseStart}:D${paraphraseStart}`).values = [[
+  "Supportive paraphrase flag", "Combined position", "Supportive realization", "Evidence pointers",
+]];
+const paraphraseRows = classificationVerification.supportiveCombinedPositionParaphrases.map((item) => [
+  item.key,
+  item.combined_position,
+  item.value,
+  item.source_ids.join("\n"),
+]);
+targetedVerificationSheet.getRange(`A${paraphraseStart + 1}:D${paraphraseStart + paraphraseRows.length}`).values = paraphraseRows;
+styleTable(
+  targetedVerificationSheet,
+  `A${paraphraseStart}:D${paraphraseStart}`,
+  `A${paraphraseStart + 1}:D${paraphraseStart + paraphraseRows.length}`,
+  [["A", 34], ["B", 58], ["C", 58], ["D", 72]],
+);
+targetedVerificationSheet.tables.add(
+  `A${paraphraseStart}:D${paraphraseStart + paraphraseRows.length}`,
+  true,
+  "SupportiveParaphraseFlagsTable",
+);
+targetedVerificationSheet.freezePanes.freezeRows(3);
+
+const coverageClosingRows = supportiveCoverageClosing.flags.map((item) => [
+  item.key,
+  item.value,
+  item.onlySupportiveBefore ? "YES" : "NO",
+  item.supportiveCountBefore,
+  item.disposition.replaceAll("_", " "),
+  item.distinctSupportiveRealization ?? "",
+  (item.extractionSourceIds.length > 0 ? item.extractionSourceIds : item.source_ids).join("\n"),
+]);
+titleBand(
+  coverageClosingSheet,
+  "A1:G1",
+  "Supportive coverage closing review",
+  `${supportiveCoverageClosing.paraphraseFlagsReviewed} flags checked; ${supportiveCoverageClosing.soleSupportiveFlags} were sole-support items. ${supportiveCoverageClosing.extractedRealizations} evidence-backed supportive realizations added; blocked soft routes ${supportiveCoverageClosing.blockedRoutesBefore.total} -> ${supportiveCoverageClosing.blockedRoutesAfter.total}.`,
+);
+coverageClosingSheet.getRange("A3:G3").values = [[
+  "Key", "Flagged realization", "Only supportive?", "Supportive count before",
+  "Disposition", "Distinct supportive extraction", "Evidence pointers",
+]];
+coverageClosingSheet.getRange(`A4:G${coverageClosingRows.length + 3}`).values = coverageClosingRows;
+styleTable(
+  coverageClosingSheet,
+  "A3:G3",
+  `A4:G${coverageClosingRows.length + 3}`,
+  [["A", 34], ["B", 58], ["C", 16], ["D", 18], ["E", 42], ["F", 64], ["G", 72]],
+);
+coverageClosingSheet.tables.add(`A3:G${coverageClosingRows.length + 3}`, true, "SupportiveCoverageClosingTable");
+
+function writeMechanismSheet(sheet, title, subtitle, records, tableName) {
+  writeComponentSheet(
+    sheet,
+    title,
+    subtitle,
+    ["Key", "Reader effect", "Conflict behavior", "Movement bias", "Supportive realizations", "Neutral realizations", "Shadow realizations", "Source IDs", "Source hashes", "Owner review status", "Owner notes"],
+    records,
+    (row) => [
+      row.key,
+      row.reader_effect ?? "",
+      row.conflict_behavior,
+      row.movement_bias,
+      row.supportive_realizations.join("\n• ").replace(/^/u, row.supportive_realizations.length ? "• " : ""),
+      row.neutral_realizations.join("\n• ").replace(/^/u, row.neutral_realizations.length ? "• " : ""),
+      row.shadow_realizations.join("\n• ").replace(/^/u, row.shadow_realizations.length ? "• " : ""),
+      row.source_ids.join("\n"),
+      row.source_hashes.join("\n"),
+      row.owner_review_status,
+      "",
+    ],
+    [["A", 38], ["B", 38], ["C", 44], ["D", 44], ["E", 40], ["F", 40], ["G", 40], ["H", 58], ["I", 42], ["J", 20], ["K", 28]],
+    tableName,
+  );
+}
+
+writeMechanismSheet(aspectSheet, "Aspect mechanisms (5)", "Sign-neutral meaning components for Details. Not finished aspect sentences.", aspects, "AspectMechanismsTable");
+
+function writeHowSheet(sheet, title, subtitle, records, tableName) {
+  writeComponentSheet(
+    sheet,
+    title,
+    subtitle,
+    ["Key", "Reader effect", "Conflict behavior", "Movement bias", "Supportive realizations", "Neutral realizations", "Shadow realizations", "Source IDs", "Source hashes", "Owner review status", "Owner notes"],
+    records,
+    (row) => [
+      row.key,
+      row.reader_effect,
+      row.conflict_behavior,
+      row.movement_bias,
+      row.supportive_realizations.join("\n• ").replace(/^/u, row.supportive_realizations.length ? "• " : ""),
+      row.neutral_realizations.join("\n• ").replace(/^/u, row.neutral_realizations.length ? "• " : ""),
+      row.shadow_realizations.join("\n• ").replace(/^/u, row.shadow_realizations.length ? "• " : ""),
+      row.source_ids.join("\n"),
+      row.source_hashes.join("\n"),
+      row.owner_review_status,
+      "",
+    ],
+    [["A", 38], ["B", 42], ["C", 46], ["D", 46], ["E", 40], ["F", 40], ["G", 40], ["H", 58], ["I", 42], ["J", 20], ["K", 28]],
+    tableName,
+  );
+}
+
+writeHowSheet(modalitySheet, "Modality units (9)", "Ordered modality pairs. Each row composes reader effect, conflict behavior, and movement bias.", modalities, "ModalityUnitsTable");
+writeHowSheet(elementSheet, "Element units (16)", "Ordered element pairs. Each row is a collective meaning component, not an assembled label definition.", elements, "ElementUnitsTable");
+
+titleBand(
+  gateSheet,
+  "A1:F1",
+  "Frame uniqueness gate",
+  "Beats are hidden logic, not sentence positions. Forecast concludes; Details explains and stops. The composer must vary openers, closers, entry modes, and connective constructions.",
+);
+gateSheet.getRange("A4:F17").values = [
+  ["Rule", "Scope", "Cap", "Pass example", "Fail example", "Reason"],
+  ["Exact sentence uniqueness", "Forecast + Details", 1, "Every sentence appears once", "Same full sentence in two cards", "Prevents copied frames"],
+  ["Forecast opener construction", "Forecast first sentence", 4, "Four or fewer uses", "Five cards begin with the same normalized opening", "Prevents opener monoculture"],
+  ["Details opener construction", "Details first composed sentence", 4, "Four or fewer uses", "Five cards begin with the same normalized opening", "Details must also compose both positions"],
+  ["Connective construction", "Later sentences", 4, "Four or fewer uses of one opening phrase", "Repeated 'That can turn...' across five cards", "Beats do not require fixed connective wording"],
+  ["Required forecast beats", "Each forecast", 4, "All four meanings present", "A moral replaces what can move", "Meaning is required even when wording varies"],
+  ["Required Details beats", "Each Details block", 3, "Explanation ends after behavior", "Forecast conclusion repeated in Details", "Forecast concludes; Details explains"],
+  ["Verbatim component emission", "All components", 0, "Composer paraphrases and integrates", "A stored component appears as a full sentence", "Components govern meaning, not prose"],
+  ["Manifestation shape reuse", "Sign-unit manifestations", 3, "Planet-sign events use distinct grammar", "A sign frame survives after planet nouns are stripped", "String uniqueness alone does not catch slot templates"],
+  ["Plain-register subject", "Meaning components", 0, "People, deadlines, messages, rules, and other everyday actors lead", "Recognition, autonomy, or pressure narrates itself", "The owner's register uses active verbs and concrete nouns"],
+  ["Manifestation actor or act", "All sign manifestations", 0, "A person acts or a concrete act is visible", "Care turns into leverage", "An abstraction may not perform the behavior"],
+  ["Source shadow coverage", "All sign units", 0, "A supported cost or overreach remains available", "Jupiter becomes uniformly beneficial", "The component may not erase source challenge, shadow, or cost"],
+  ["Typed realization pools", "All 174 units", 0, "Supportive, neutral, and shadow meanings live in named arrays", "Useful/neutral/shadow is encoded as bullet position", "The composer chooses meaning type; it never learns a three-item rhythm"],
+  ["Owner-source conversion", "All owner-voice evidence", 0, "Personal source meaning is converted for collective Sky", "Eight or more source words are copied verbatim", "Owner voice governs without leaking second-person source prose"],
+];
+gateSheet.getRange("A4:F4").format = { fill: teal, font: { bold: true, color: white }, wrapText: true };
+gateSheet.getRange("A5:F17").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
+[["A", 34], ["B", 28], ["C", 10], ["D", 38], ["E", 42], ["F", 38]].forEach(([column, width]) => {
+  gateSheet.getRange(`${column}:${column}`).format.columnWidth = width;
+});
+
+titleBand(
+  wordingQaSheet,
+  "A1:H1",
+  "Wording-layer QA",
+  "The evidence layer is hash-locked. These checks show whether fixed joins, repeated bullets, structural slot templates, or opener monoculture have returned.",
+);
+wordingQaSheet.getRange("A4:C26").values = [
+  ["Measure", "Result", "Cap"],
+  ["Evidence-layer SHA-256", evidenceLayerSha256, "locked"],
+  ["Mechanical join rows", oldJoinRows.length, 0],
+  ["Details copied from combined position", detailsCopied.length, 0],
+  ["Maximum opening construction use", wordingQuality.maximumOpeningConstructionUse, OPENING_CAP],
+  ["Maximum exact manifestation use", wordingQuality.maximumManifestationUse, MANIFESTATION_REPEAT_CAP],
+  ["Maximum manifestation skeleton use", wordingQuality.maximumManifestationShapeUse, MANIFESTATION_SHAPE_CAP],
+  ["Maximum details-language use", wordingQuality.maximumDetailsLanguageUse, DETAILS_LANGUAGE_REPEAT_CAP],
+  ["Maximum connective n-gram use", wordingQuality.maximumConnectiveNgramUse, JOIN_PHRASE_CAP],
+  ["Abstract-subject violations", abstractSubjectViolations.length, 0],
+  ["Manifestation plainness violations", manifestationPlainness.length, 0],
+  ["Owner-source verbatim matches (8+ words)", ownerVoiceVerbatimMatches.length, 0],
+  ["Units rechecked", registry.systemicRepass.reviewedUnits, 174],
+  ["Units changed", registry.systemicRepass.changedUnits, "report"],
+  ["One-sided before source-shadow pass", shadowAudit.oneSidedBeforePass, "report"],
+  ["One-sided after source-shadow pass", shadowAudit.oneSidedAfterPass, 0],
+  ["Legacy ordered manifestation fields", realizationSchema.legacyReaderManifestationFields.length, 0],
+  ["Typed-array count shapes", realizationSchema.countShapeDistribution.length, ">= 2"],
+  ["Analytical-abstraction units changed", faultAudit.changedUnderFaultCategory.analytical_abstraction.units, "report"],
+  ["Assembled-construction units changed", faultAudit.changedUnderFaultCategory.assembled_construction.units, "report"],
+  ["Invented-motive units changed", faultAudit.changedUnderFaultCategory.invented_motive.units, "report"],
+  ["Unsupported-vocabulary units changed", faultAudit.changedUnderFaultCategory.unsupported_borrowed_vocabulary.units, "report"],
+  ["Generic-actor units simplified", faultAudit.changedUnderFaultCategory.generic_actor_removed.units, "report"],
+];
+wordingQaSheet.getRange("A4:C4").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange("A5:C26").format = { fill: light, wrapText: true, borders: { insideHorizontal: { style: "thin", color: line } } };
+
+const topOpeningRows = wordingQuality.openingConstructions.slice(0, 20).map(([construction, count]) => [construction, count]);
+wordingQaSheet.getRange("A29:B29").values = [["Opening construction", "Uses"]];
+wordingQaSheet.getRange(`A30:B${29 + topOpeningRows.length}`).values = topOpeningRows;
+wordingQaSheet.getRange("A29:B29").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`A30:B${29 + topOpeningRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
+
+wordingQaSheet.getRange("D4:E4").values = [["Manifestation occurrence count", "Distinct bullets"]];
+wordingQaSheet.getRange(`D5:E${4 + wordingQuality.manifestationRepeatDistribution.length}`).values = wordingQuality.manifestationRepeatDistribution.map((row) => [row.occurrences, row.distinctValues]);
+wordingQaSheet.getRange("D4:E4").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`D5:E${4 + wordingQuality.manifestationRepeatDistribution.length}`).format = { fill: light };
+
+wordingQaSheet.getRange("G4:H4").values = [["Skeleton occurrence count", "Distinct skeletons"]];
+wordingQaSheet.getRange(`G5:H${4 + wordingQuality.manifestationShapeDistribution.length}`).values = wordingQuality.manifestationShapeDistribution.map((row) => [row.occurrences, row.distinctValues]);
+wordingQaSheet.getRange("G4:H4").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`G5:H${4 + wordingQuality.manifestationShapeDistribution.length}`).format = { fill: light };
+
+wordingQaSheet.getRange("D29:E29").values = [["Repeated connective n-gram", "Uses"]];
+const topConnectiveRows = wordingQuality.repeatedConnectiveNgrams.slice(0, 20).map(([construction, count]) => [construction, count]);
+wordingQaSheet.getRange(`D30:E${29 + topConnectiveRows.length}`).values = topConnectiveRows;
+wordingQaSheet.getRange("D29:E29").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`D30:E${29 + topConnectiveRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
+wordingQaSheet.getRange("G29:H29").values = [["Manifestation skeleton", "Uses"]];
+const topShapeRows = wordingQuality.manifestationShapes.slice(0, 20).map(([construction, count]) => [construction, count]);
+wordingQaSheet.getRange(`G30:H${29 + topShapeRows.length}`).values = topShapeRows;
+wordingQaSheet.getRange("G29:H29").format = { fill: teal, font: { bold: true, color: white } };
+wordingQaSheet.getRange(`G30:H${29 + topShapeRows.length}`).format = { borders: { insideHorizontal: { style: "thin", color: line } } };
+[["A", 38], ["B", 48], ["C", 12], ["D", 44], ["E", 16], ["F", 3], ["G", 64], ["H", 12]].forEach(([column, width]) => {
+  wordingQaSheet.getRange(`${column}:${column}`).format.columnWidth = width;
+});
+wordingQaSheet.freezePanes.freezeRows(3);
+
+await workbook.inspect({
+  kind: "table",
+  range: "Overview!A1:F27",
+  include: "values,formulas",
+  tableMaxRows: 24,
+  tableMaxCols: 8,
+});
+await workbook.inspect({
+  kind: "table",
+  range: "Approval Record!A1:E12",
+  include: "values,formulas",
+  tableMaxRows: 12,
+  tableMaxCols: 5,
+});
+await workbook.inspect({
+  kind: "table",
+  range: "Classification Audit!A1:K12",
+  include: "values,formulas",
+  tableMaxRows: 12,
+  tableMaxCols: 11,
+});
+await workbook.inspect({
+  kind: "table",
+  range: "Coverage Closing!A1:G15",
+  include: "values,formulas",
+  tableMaxRows: 15,
+  tableMaxCols: 7,
+});
+const errors = await workbook.inspect({
+  kind: "match",
+  searchTerm: "#REF!|#DIV/0!|#VALUE!|#NAME\\?|#N/A",
+  options: { useRegex: true, maxResults: 300 },
+  summary: "final formula error scan",
+});
+if (/"matchCount":\s*[1-9]/u.test(errors.ndjson)) throw new Error(errors.ndjson);
+
+for (const [sheetName, range] of [
+  ["Overview", "A1:F27"],
+  ["Approval Record", "A1:E22"],
+  ["Owner Voice Coverage", "A1:F24"],
+  ["Sign Units", "A1:P12"],
+  ["Classification Audit", "A1:K20"],
+  ["Targeted Verification", `A1:G${Math.min(paraphraseStart + paraphraseRows.length, 42)}`],
+  ["Coverage Closing", `A1:G${coverageClosingRows.length + 3}`],
+  ["Aspect Mechanisms", "A1:K8"],
+  ["Modality Units", "A1:K12"],
+  ["Element Units", "A1:K12"],
+  ["Frame Gate", "A1:F17"],
+  ["Wording QA", "A1:H53"],
+]) {
+  const preview = await workbook.render({ sheetName, range, scale: 1, format: "png" });
+  await fs.writeFile(
+    path.join(outputDir, `${sheetName.toLowerCase().replace(/\s+/gu, "-")}-preview.png`),
+    new Uint8Array(await preview.arrayBuffer()),
+  );
+}
+
+const output = await SpreadsheetFile.exportXlsx(workbook);
+await output.save(workbookPath);
+
+console.log(JSON.stringify({ workbookPath, reviewDir, counts: registry.counts }, null, 2));

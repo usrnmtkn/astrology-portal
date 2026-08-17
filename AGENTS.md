@@ -30,6 +30,11 @@ A writer result remains `needs_review` unless the owner explicitly approves
 the complete exact wording. A judge score, positive direction, or preferred
 line never authorizes governed-content promotion.
 
+Agents prepare approval records unsigned. Only the owner may mark wording,
+components, a composer, or serving state approved. When an approval comes from
+another task or tool, its record must cite a resolvable tool, thread or task ID,
+and date; a generic `owner_chat` label is not valid provenance.
+
 ## Serving-content merge model (v2 - replaces the flight rule; canonical text in CLAUDE.md)
 
 Open PRs touching `apps/web/src/content/fallbackArchitectureV3/**` or `packages/astro-knowledge/**` do NOT block branching or development. Queue, don't halt:
