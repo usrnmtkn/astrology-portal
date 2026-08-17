@@ -16,6 +16,10 @@ import {
   selectRealizationForAspect,
 } from "./sky-calendar-realization-types.mjs";
 import { assertExactComponentApproval } from "./sky-calendar-component-approval.mjs";
+import {
+  assertSkyCalendarServingAuthorization,
+  loadSkyCalendarServingAuthorization,
+} from "./sky-calendar-serving-authorization.mjs";
 
 const moduleRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -315,7 +319,16 @@ function validateSentenceRealization(specification, resolved) {
   return { forecastCoverage, detailsCoverage };
 }
 
-export function composeSkyCalendarTwoPartCard(registry, specification, { reviewMode = false } = {}) {
+export function composeSkyCalendarTwoPartCard(
+  registry,
+  specification,
+  {
+    reviewMode = false,
+    servingMode = false,
+    servingAuthorization = null,
+    repoRoot = moduleRoot,
+  } = {},
+) {
   const key = specification.contentKey;
   if (!entryModes.includes(specification.entryMode)) throw new Error(`${key}: unsupported entryMode`);
   if (!closingFunctions.includes(specification.closingFunction)) throw new Error(`${key}: unsupported closingFunction`);
@@ -332,6 +345,16 @@ export function composeSkyCalendarTwoPartCard(registry, specification, { reviewM
   if (!componentsApproved && !reviewMode) {
     throw new Error(`${key}: component approval is incomplete; composer fails closed (${approvalErrors[0]?.message})`);
   }
+  const servingAuthorizationMetadata = servingMode
+    ? {
+      servingAuthorization: true,
+      ...assertSkyCalendarServingAuthorization(
+        registry,
+        servingAuthorization ?? loadSkyCalendarServingAuthorization(),
+        { repoRoot },
+      ),
+    }
+    : false;
 
   validateCausalSituation(specification, resolved);
   const { forecastCoverage, detailsCoverage } = validateSentenceRealization(specification, resolved);
@@ -349,8 +372,9 @@ export function composeSkyCalendarTwoPartCard(registry, specification, { reviewM
 
   return {
     contentKey: key,
-    status: "PENDING OWNER",
-    generationAllowed: false,
+    status: servingMode ? "COMPOSER AUTHORIZED" : "PENDING OWNER",
+    generationAllowed: servingMode,
+    servingAuthorization: servingAuthorizationMetadata,
     reviewMode,
     componentApprovalComplete: componentsApproved,
     classification: specification.classification,
@@ -621,9 +645,15 @@ export function auditSkyCalendarTwoPartCards(cards, {
     if (projectedFrameUses > frameCap) {
       addDefect(defects, "forecast_opener_frame_cap_against_live_corpus", { frame, frameCap, projectedFrameUses });
     }
+    const machineAuthorized = (
+      card.status === "COMPOSER AUTHORIZED"
+      && card.generationAllowed === true
+      && card.servingAuthorization?.servingAuthorization === true
+    );
+    const exactCardApproved = card.status === "OWNER APPROVED" && card.generationAllowed === true;
     const expectedGovernanceBlock = !card.componentApprovalComplete
       ? "components_pending_owner"
-      : (card.status !== "OWNER APPROVED" || card.generationAllowed !== true ? "card_pending_owner" : null);
+      : (!machineAuthorized && !exactCardApproved ? "card_pending_owner" : null);
     return {
       contentKey: card.contentKey,
       openerFamily,

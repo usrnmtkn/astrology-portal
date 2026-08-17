@@ -1,6 +1,6 @@
 # Sky Calendar meaning components v2
 
-Status: `OWNER APPROVED` on 2026-08-16. The 174 meaning components are hash-pinned in `exact-approval.json`. No composed forecast is approved or serving.
+Status: `OWNER APPROVED` on 2026-08-16. The 174 meaning components are hash-pinned in `exact-approval.json`. The approval source names the exact Codex task and turn so an auditor can resolve it. No composed forecast is serving.
 
 This set implements the owner architecture decision of 2026-08-14:
 
@@ -14,6 +14,7 @@ This set implements the owner architecture decision of 2026-08-14:
 
 - `sky-calendar-meaning-components-v1.json`: 174 governed, exact-owner-approved components with evidence pointers and hashes.
 - `exact-approval.json`: the canonical per-component payload hashes and the hash of the complete approved set.
+- `serving-authorization.json`: the versioned machine authorization. It pins the composer version, composer-and-gates source hash, and approved component-set hash. It remains inactive until the owner confirms the eight-card unscripted pilot.
 - Owner-review workbook: `outputs/sky-calendar-meaning-components-2026-08-14/sky-calendar-meaning-components-owner-review.xlsx`.
 
 Counts:
@@ -23,7 +24,21 @@ Counts:
 - 9 ordered modality pairs
 - 16 ordered element pairs
 
-All 174 components are exact-owner-approved. The composer verifies each component against its approved payload hash and still fails closed on missing, unapproved, or modified components. Composed Forecast and Details copy remains a separate owner-approval step.
+All 174 components are exact-owner-approved. The composer verifies each component against its approved payload hash and still fails closed on missing, unapproved, or modified components. The owner has chosen a machine-authorization model for composed Forecast and Details copy: once the eight-card pilot is confirmed, cards may serve only from the exact composer and component hashes recorded in `serving-authorization.json`. Any composer, gate, or component change voids that authorization.
+
+Approval records follow one standing rule: agents prepare them unsigned; only the owner marks an approval or activates serving. Cross-session decisions must cite a resolvable tool, task or thread ID, and date.
+
+## Standing composed-card audit
+
+After serving is activated, sample live composed cards with:
+
+```text
+node scripts/sample-live-sky-composed-cards.mjs --input <live-cards.json> --count <N> --out <owner-audit-sample.json>
+```
+
+The sample includes Forecast, Details, realization selections, every component input and payload hash, the composer version and source hash, and the component-set hash. The command fails closed while serving is inactive or when either authorized hash has drifted.
+
+Cadence: sample 12 cards weekly for the first eight weeks after activation, then 20 cards monthly. Run an additional sample immediately after every owner-authorized composer or component version change.
 
 The frame-uniqueness gate is implemented in `scripts/sky-calendar-frame-uniqueness.mjs` and permanently tested by `scripts/test-sky-calendar-frame-uniqueness.mjs`.
 
