@@ -1,0 +1,68 @@
+{
+  "schema": "sky-placement-copy-defect-proposal-v1",
+  "date": "2026-08-16",
+  "status": "owner_review_required",
+  "billedCalls": 0,
+  "appliedChanges": 0,
+  "flagOnly": [
+    {
+      "contentKey": "fallback-hook/placement-house-sentence/jupiter/2",
+      "term": "leak",
+      "current": "The one leak in the boat is spending big",
+      "recommendation": "keep_literal_use"
+    }
+  ],
+  "proposals": [
+    {
+      "contentKey": "fallback-hook/placement-sentence/venus/virgo",
+      "term": "leak",
+      "beforeYou": "the critical eye you turn on yourself can leak onto the people you care about.",
+      "afterYou": "the critical eye you turn on yourself can become criticism of the people you care about.",
+      "beforeFriend": "the critical eye they turn on themselves can leak onto the people they care about.",
+      "afterFriend": "the critical eye they turn on themselves can become criticism of the people they care about."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-turn/mars/pisces",
+      "term": "leaks",
+      "before": "When clear boundaries fade, effort leaks out in quiet frustration, and you spend days simmering without saying what's wrong.",
+      "after": "When clear boundaries fade, effort turns into quiet frustration, and you spend days simmering without saying what's wrong."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-turn/sun/virgo",
+      "term": "leaks",
+      "before": "The line blurs when fixing leaks becomes blaming the whole house.",
+      "after": "The line blurs when fixing problems becomes blaming the whole house."
+    },
+    {
+      "contentKey": "fallback-hook/sky-season-shadow/libra",
+      "term": "self-erasure",
+      "before": "Libra season's shadow is harmony bought with self-erasure.",
+      "after": "Libra season's shadow is harmony bought by giving up your own needs."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-lived/lilith/pisces",
+      "term": "self-erasure",
+      "before": "Compassion that was really self-erasure starts coming with limits attached.",
+      "after": "Compassion that kept asking someone to give themselves up starts coming with limits attached.",
+      "ownerLocked": true
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/scorpio",
+      "term": "reckoning",
+      "before": "The useful version is depth on purpose: one honest reckoning entered voluntarily, with the money, the intimacy, or the grief.",
+      "after": "The useful version is depth on purpose: one hard truth faced voluntarily, with the money, the intimacy, or the grief."
+    },
+    {
+      "contentKey": "authored/sky-newmoon/aquarius",
+      "term": "permission slip",
+      "before": "this New Moon in Aquarius is your permission slip to stop fitting in where you were never meant to belong.",
+      "after": "this New Moon in Aquarius gives you a reason to stop fitting in where you were never meant to belong."
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-hook/venus/libra",
+      "term": "tilts",
+      "before": "Venus in Libra tilts love toward fairness and ease, but it asks a price: choosing peace over your truth leaves a quiet friction beneath the surface.",
+      "after": "Venus in Libra makes fairness and ease more appealing in love, but it asks a price: choosing peace over your truth leaves a quiet friction beneath the surface."
+    }
+  ]
+}
