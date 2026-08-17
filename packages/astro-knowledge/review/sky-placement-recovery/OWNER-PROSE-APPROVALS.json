@@ -424,10 +424,10 @@
       "reference": "owner ruling: These are good enough, wire them and serve them"
     },
     "chiron/capricorn": {
-      "source_hash": "a7277e0e4407d0cdb15383602226d771cfc62e9ed6dbb59956ab94b2cd64f5fe",
+      "source_hash": "f8f63d6005f94b65aebe833ec76b25be9f52c368f3ab85fd16086d7fea1d694a",
       "approved_by": "owner",
-      "approved_on": "2026-08-15",
-      "reference": "owner ruling: These are good enough, wire them and serve them"
+      "approved_on": "2026-08-16",
+      "reference": "owner rulings 2026-08-16: chiron/capricorn typo and node residency wording"
     },
     "chiron/aquarius": {
       "source_hash": "fb999fc37ce5ed386368b1dbd954247108299346fc288321e57c8cbaa2d33792",
@@ -448,16 +448,16 @@
       "reference": "owner ruling: These are good enough, wire them and serve them"
     },
     "north-node/taurus": {
-      "source_hash": "0da6051cec85d663d71e96a54731e1ce20554a8244dce61c3c28d08c754cc768",
+      "source_hash": "a36d1b56fde7980e7b22cb4760ec3f8327ffca13be8927b823dee79a8bf32edd",
       "approved_by": "owner",
-      "approved_on": "2026-08-15",
-      "reference": "owner ruling: These are good enough, wire them and serve them"
+      "approved_on": "2026-08-16",
+      "reference": "owner rulings 2026-08-16: chiron/capricorn typo and node residency wording"
     },
     "north-node/gemini": {
-      "source_hash": "b88e3d388e08c6db5e2b011ea658a74e7070209f3b1277be97c83729c8234dde",
+      "source_hash": "2e2cf6046533de9eea96444de899fca61edab0b316818a5b0c4bcbb12bec38c9",
       "approved_by": "owner",
-      "approved_on": "2026-08-15",
-      "reference": "owner ruling: These are good enough, wire them and serve them"
+      "approved_on": "2026-08-16",
+      "reference": "owner rulings 2026-08-16: chiron/capricorn typo and node residency wording"
     },
     "north-node/cancer": {
       "source_hash": "f85d65437bbc4ff6646098370a997d5d005dc46c3770b8adb85b3234ffe66fa7",
@@ -472,10 +472,10 @@
       "reference": "owner ruling: These are good enough, wire them and serve them"
     },
     "north-node/virgo": {
-      "source_hash": "37fee9d68e3d687a3e14e76d532244dbc7a109fa44472106e0ba486c1c4cdb3d",
+      "source_hash": "cfb2cba5cbaafb2d6422569ae3a66b70a6a1682a14b66daf50a6653b8ad8630b",
       "approved_by": "owner",
-      "approved_on": "2026-08-15",
-      "reference": "owner ruling: These are good enough, wire them and serve them"
+      "approved_on": "2026-08-16",
+      "reference": "owner rulings 2026-08-16: chiron/capricorn typo and node residency wording"
     },
     "north-node/libra": {
       "source_hash": "9817ecdc065abc557d37252bcd4c4bcaa233346dbb5eb142ab4ffb019554d1a8",
@@ -484,10 +484,10 @@
       "reference": "owner ruling: These are good enough, wire them and serve them"
     },
     "north-node/scorpio": {
-      "source_hash": "11009a776201a7a95f1ad76158925d5a4969b252994f0b886b0bb01430f28fca",
+      "source_hash": "86730cbf9f0d1f5b26bd6244e470bb6cfc81e7b63797d9beaedf4d8e36995699",
       "approved_by": "owner",
-      "approved_on": "2026-08-15",
-      "reference": "owner ruling: These are good enough, wire them and serve them"
+      "approved_on": "2026-08-16",
+      "reference": "owner rulings 2026-08-16: chiron/capricorn typo and node residency wording"
     },
     "north-node/sagittarius": {
       "source_hash": "a39a18cdcedd6d527cab275a080fc9a5563208f261bfff0d8c88c5ac69e080ac",
@@ -508,10 +508,10 @@
       "reference": "owner ruling: These are good enough, wire them and serve them"
     },
     "north-node/pisces": {
-      "source_hash": "bf86b60459669ddb6db04063e5747f6fde2d0a4307f75ca1359924614c14467e",
+      "source_hash": "a4a3d6ae9581b4c2063cc63bb56b673560a144a471c4bc4df98c691d531654c5",
       "approved_by": "owner",
-      "approved_on": "2026-08-15",
-      "reference": "owner ruling: These are good enough, wire them and serve them"
+      "approved_on": "2026-08-16",
+      "reference": "owner rulings 2026-08-16: chiron/capricorn typo and node residency wording"
     },
     "south-node/aries": {
       "source_hash": "f95d2d0c0a8d1c8557dbb6a93e2fb4bcdca57304dde55d8ef4314d2becf6bb14",
@@ -520,16 +520,16 @@
       "reference": "owner ruling: These are good enough, wire them and serve them"
     },
     "south-node/taurus": {
-      "source_hash": "cbc7458e946d96cae379bb7466e544bfde484fc2f545d95b17d6a6ba9719f2f2",
+      "source_hash": "3ec2d1d24bea04800887a2ad60b8276058a65e7eec23cde09963cd6a81334a04",
       "approved_by": "owner",
-      "approved_on": "2026-08-15",
-      "reference": "owner ruling: These are good enough, wire them and serve them"
+      "approved_on": "2026-08-16",
+      "reference": "owner rulings 2026-08-16: chiron/capricorn typo and node residency wording"
     },
     "south-node/gemini": {
-      "source_hash": "619ebdbea7f2806c93fbfa56663f39af1ab19edda7192f44c5c11fc300f7e1e7",
+      "source_hash": "402fcd4f3a981297c65e1fd1099fc8a0b26be8a17847b0566349bf857c87ec92",
       "approved_by": "owner",
-      "approved_on": "2026-08-15",
-      "reference": "owner ruling: These are good enough, wire them and serve them"
+      "approved_on": "2026-08-16",
+      "reference": "owner rulings 2026-08-16: chiron/capricorn typo and node residency wording"
     },
     "south-node/cancer": {
       "source_hash": "556e03b5604e7fb2640caf62e45fe6bf1a40407c27f90e85fcce91f910059ecb",
@@ -544,16 +544,16 @@
       "reference": "owner ruling: These are good enough, wire them and serve them"
     },
     "south-node/virgo": {
-      "source_hash": "8648550d873c3d1729369d58ad8acb49f04150edabad780d9f567efd3e1133b0",
+      "source_hash": "37a25e4fe68bf38133889f17140441ccc00f1754d5dd9a34a75aeeb0ab61dc27",
       "approved_by": "owner",
-      "approved_on": "2026-08-15",
-      "reference": "owner ruling: These are good enough, wire them and serve them"
+      "approved_on": "2026-08-16",
+      "reference": "owner rulings 2026-08-16: chiron/capricorn typo and node residency wording"
     },
     "south-node/libra": {
-      "source_hash": "275fedee2b94663673f7d5bc658045a88c19ce78d5e2c97a05e7e3887101c3d6",
+      "source_hash": "47bae48372c91f38ba99213f8a727907e6521ba46aa30176e6478936335b3cd7",
       "approved_by": "owner",
-      "approved_on": "2026-08-15",
-      "reference": "owner ruling: These are good enough, wire them and serve them"
+      "approved_on": "2026-08-16",
+      "reference": "owner rulings 2026-08-16: chiron/capricorn typo and node residency wording"
     },
     "south-node/scorpio": {
       "source_hash": "af469924b9e527f9673742399c9e2539adc424c4cfe21b94b4f03d403a56c348",
@@ -568,10 +568,10 @@
       "reference": "owner ruling: These are good enough, wire them and serve them"
     },
     "south-node/capricorn": {
-      "source_hash": "11fec513e5515f50cbf41ba97f9b75bdec17006951fbea4f5b56941637b4cb34",
+      "source_hash": "c9f0eecab8fc2785ccddd53f380c14963dd6c814b6ca301791fcba9e81817019",
       "approved_by": "owner",
-      "approved_on": "2026-08-15",
-      "reference": "owner ruling: These are good enough, wire them and serve them"
+      "approved_on": "2026-08-16",
+      "reference": "owner rulings 2026-08-16: chiron/capricorn typo and node residency wording"
     },
     "south-node/aquarius": {
       "source_hash": "3c2e6138fd6c2b5ee93ce2655706fe4fa8e4259ad4f1e3834fbb638d37c50bef",
