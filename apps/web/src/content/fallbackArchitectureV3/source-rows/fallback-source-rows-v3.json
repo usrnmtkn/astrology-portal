@@ -45636,7 +45636,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "a7277e0e4407d0cdb15383602226d771cfc62e9ed6dbb59956ab94b2cd64f5fe"
+   "source_hash": "f8f63d6005f94b65aebe833ec76b25be9f52c368f3ab85fd16086d7fea1d694a"
   },
   {
    "contentKey": "fallback-hook/sky-placement-hook/chiron/capricorn",
@@ -45653,7 +45653,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "a7277e0e4407d0cdb15383602226d771cfc62e9ed6dbb59956ab94b2cd64f5fe"
+   "source_hash": "f8f63d6005f94b65aebe833ec76b25be9f52c368f3ab85fd16086d7fea1d694a"
   },
   {
    "contentKey": "fallback-hook/sky-placement-lived/chiron/capricorn",
@@ -45670,13 +45670,13 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "a7277e0e4407d0cdb15383602226d771cfc62e9ed6dbb59956ab94b2cd64f5fe"
+   "source_hash": "f8f63d6005f94b65aebe833ec76b25be9f52c368f3ab85fd16086d7fea1d694a"
   },
   {
    "contentKey": "fallback-hook/sky-placement-turn/chiron/capricorn",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "The gift turns sharp when the hunger for approval turns into silent self-sabotage: staying stuck in roles that drain instead of challenge, refusing offers that feel unearned, or shrinking your voice because you're still tallying your worth. Chiron in Capricorn wounds by making you think you must always perform to justify your place. You don't get to belong only if you've checked every box - that's the bruise you have to name and ignore.",
+   "body_you": "The gift turns sharp when the hunger for approval turns into silent self-sabotage: staying stuck in roles that drain instead of challenge, refusing offers that feel unearned, or shrinking your voice because you're still tallying your worth. Chiron in Capricorn wounds by making you think you must always perform to justify your place. You don't get to belong only if you've checked every box - that's the bruise you have to name, not ignore.",
    "body_they": "The gift turns sharp when the hunger for approval turns into silent self-sabotage: staying stuck in roles that drain instead of challenge, refusing offers that feel unearned, or shrinking your voice because you're still tallying your worth. Chiron in Capricorn wounds by making you think you must always perform to justify your place. You don't get to belong only if you've checked every box - that's the bruise you have to name and ignore.",
    "review_status": "approved",
    "source_keys": [
@@ -45687,7 +45687,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "a7277e0e4407d0cdb15383602226d771cfc62e9ed6dbb59956ab94b2cd64f5fe"
+   "source_hash": "f8f63d6005f94b65aebe833ec76b25be9f52c368f3ab85fd16086d7fea1d694a"
   },
   {
    "contentKey": "fallback-hook/sky-placement-tagline/chiron/gemini",
@@ -49901,13 +49901,13 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "b88e3d388e08c6db5e2b011ea658a74e7070209f3b1277be97c83729c8234dde"
+   "source_hash": "2e2cf6046533de9eea96444de899fca61edab0b316818a5b0c4bcbb12bec38c9"
   },
   {
    "contentKey": "fallback-hook/sky-placement-hook/north-node/gemini",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "You're scrolling through facts and opinions faster than you can respond. The North Node in Gemini pulls us into a year and a half of gathering pieces, not locking answers. It's not about knowing better yet - it's about knowing more.",
+   "body_you": "You're scrolling through facts and opinions faster than you can respond. The North Node in Gemini pulls us into eighteen months of gathering pieces, not locking answers. It's not about knowing better yet - it's about knowing more.",
    "body_they": "You're scrolling through facts and opinions faster than you can respond. The North Node in Gemini pulls us into a year and a half of gathering pieces, not locking answers. It's not about knowing better yet - it's about knowing more.",
    "review_status": "approved",
    "source_keys": [
@@ -49918,7 +49918,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "b88e3d388e08c6db5e2b011ea658a74e7070209f3b1277be97c83729c8234dde"
+   "source_hash": "2e2cf6046533de9eea96444de899fca61edab0b316818a5b0c4bcbb12bec38c9"
   },
   {
    "contentKey": "fallback-hook/sky-placement-lived/north-node/gemini",
@@ -49935,7 +49935,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "b88e3d388e08c6db5e2b011ea658a74e7070209f3b1277be97c83729c8234dde"
+   "source_hash": "2e2cf6046533de9eea96444de899fca61edab0b316818a5b0c4bcbb12bec38c9"
   },
   {
    "contentKey": "fallback-hook/sky-placement-turn/north-node/gemini",
@@ -49952,7 +49952,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "b88e3d388e08c6db5e2b011ea658a74e7070209f3b1277be97c83729c8234dde"
+   "source_hash": "2e2cf6046533de9eea96444de899fca61edab0b316818a5b0c4bcbb12bec38c9"
   },
   {
    "contentKey": "fallback-hook/sky-placement-tagline/north-node/leo",
@@ -50105,7 +50105,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "bf86b60459669ddb6db04063e5747f6fde2d0a4307f75ca1359924614c14467e"
+   "source_hash": "a4a3d6ae9581b4c2063cc63bb56b673560a144a471c4bc4df98c691d531654c5"
   },
   {
    "contentKey": "fallback-hook/sky-placement-hook/north-node/pisces",
@@ -50122,13 +50122,13 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "bf86b60459669ddb6db04063e5747f6fde2d0a4307f75ca1359924614c14467e"
+   "source_hash": "a4a3d6ae9581b4c2063cc63bb56b673560a144a471c4bc4df98c691d531654c5"
   },
   {
    "contentKey": "fallback-hook/sky-placement-lived/north-node/pisces",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "For nearly two years, decisions blur at the edges. Deadlines stretch or dissolve because someone trusts a hunch over a schedule. Conversations circle back like lazy rivers, revealing what logic skips. We lean into moments when plans slip and instead notice the threads of connection, the moods that color a room, or the quiet pulse beneath the noise.",
+   "body_you": "For eighteen months, decisions blur at the edges. Deadlines stretch or dissolve because someone trusts a hunch over a schedule. Conversations circle back like lazy rivers, revealing what logic skips. We lean into moments when plans slip and instead notice the threads of connection, the moods that color a room, or the quiet pulse beneath the noise.",
    "body_they": "For nearly two years, decisions blur at the edges. Deadlines stretch or dissolve because someone trusts a hunch over a schedule. Conversations circle back like lazy rivers, revealing what logic skips. We lean into moments when plans slip and instead notice the threads of connection, the moods that color a room, or the quiet pulse beneath the noise.",
    "review_status": "approved",
    "source_keys": [
@@ -50139,7 +50139,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "bf86b60459669ddb6db04063e5747f6fde2d0a4307f75ca1359924614c14467e"
+   "source_hash": "a4a3d6ae9581b4c2063cc63bb56b673560a144a471c4bc4df98c691d531654c5"
   },
   {
    "contentKey": "fallback-hook/sky-placement-turn/north-node/pisces",
@@ -50156,7 +50156,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "bf86b60459669ddb6db04063e5747f6fde2d0a4307f75ca1359924614c14467e"
+   "source_hash": "a4a3d6ae9581b4c2063cc63bb56b673560a144a471c4bc4df98c691d531654c5"
   },
   {
    "contentKey": "fallback-hook/sky-placement-tagline/north-node/sagittarius",
@@ -50241,7 +50241,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "11009a776201a7a95f1ad76158925d5a4969b252994f0b886b0bb01430f28fca"
+   "source_hash": "86730cbf9f0d1f5b26bd6244e470bb6cfc81e7b63797d9beaedf4d8e36995699"
   },
   {
    "contentKey": "fallback-hook/sky-placement-hook/north-node/scorpio",
@@ -50258,13 +50258,13 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "11009a776201a7a95f1ad76158925d5a4969b252994f0b886b0bb01430f28fca"
+   "source_hash": "86730cbf9f0d1f5b26bd6244e470bb6cfc81e7b63797d9beaedf4d8e36995699"
   },
   {
    "contentKey": "fallback-hook/sky-placement-lived/north-node/scorpio",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "For nearly two years, you lean into conversations that don't stay on the surface. We start to hand over the parts of ourselves we usually keep locked away - old grudges, secret fears, raw hopes - and watch how relationships change in response. The pace demands patience; trust builds in slow, uneven layers, not quick confessions or neat resolutions.",
+   "body_you": "For eighteen months, you lean into conversations that don't stay on the surface. We start to hand over the parts of ourselves we usually keep locked away - old grudges, secret fears, raw hopes - and watch how relationships change in response. The pace demands patience; trust builds in slow, uneven layers, not quick confessions or neat resolutions.",
    "body_they": "For nearly two years, you lean into conversations that don't stay on the surface. We start to hand over the parts of ourselves we usually keep locked away - old grudges, secret fears, raw hopes - and watch how relationships change in response. The pace demands patience; trust builds in slow, uneven layers, not quick confessions or neat resolutions.",
    "review_status": "approved",
    "source_keys": [
@@ -50275,7 +50275,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "11009a776201a7a95f1ad76158925d5a4969b252994f0b886b0bb01430f28fca"
+   "source_hash": "86730cbf9f0d1f5b26bd6244e470bb6cfc81e7b63797d9beaedf4d8e36995699"
   },
   {
    "contentKey": "fallback-hook/sky-placement-turn/north-node/scorpio",
@@ -50292,7 +50292,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "11009a776201a7a95f1ad76158925d5a4969b252994f0b886b0bb01430f28fca"
+   "source_hash": "86730cbf9f0d1f5b26bd6244e470bb6cfc81e7b63797d9beaedf4d8e36995699"
   },
   {
    "contentKey": "fallback-hook/sky-placement-tagline/north-node/taurus",
@@ -50309,13 +50309,13 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "0da6051cec85d663d71e96a54731e1ce20554a8244dce61c3c28d08c754cc768"
+   "source_hash": "a36d1b56fde7980e7b22cb4760ec3f8327ffca13be8927b823dee79a8bf32edd"
   },
   {
    "contentKey": "fallback-hook/sky-placement-hook/north-node/taurus",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "You keep adding to your pile of things that feel like yours, like a quiet rebellion against chaos. The North Node in Taurus stretches over a year and a half, asking us to slow the chase and trust what we can hold onto for real.",
+   "body_you": "You keep adding to your pile of things that feel like yours, like a quiet rebellion against chaos. The North Node in Taurus stretches over eighteen months, asking us to slow the chase and trust what we can hold onto for real.",
    "body_they": "You keep adding to your pile of things that feel like yours, like a quiet rebellion against chaos. The North Node in Taurus stretches over a year and a half, asking us to slow the chase and trust what we can hold onto for real.",
    "review_status": "approved",
    "source_keys": [
@@ -50326,13 +50326,13 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "0da6051cec85d663d71e96a54731e1ce20554a8244dce61c3c28d08c754cc768"
+   "source_hash": "a36d1b56fde7980e7b22cb4760ec3f8327ffca13be8927b823dee79a8bf32edd"
   },
   {
    "contentKey": "fallback-hook/sky-placement-lived/north-node/taurus",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "For nearly two years, we notice how much time we spend making a place or a thing truly ours - locking in routines, paying attention to the feel of daily life, and letting small comforts ground us. Someone might finally fix that leaky faucet or set aside quiet hours for a hobby that doesn't aim to impress anyone. This is about growing through solid steps that build something reliable underfoot, not flashy leaps forward.",
+   "body_you": "For eighteen months, we notice how much time we spend making a place or a thing truly ours - locking in routines, paying attention to the feel of daily life, and letting small comforts ground us. Someone might finally fix that leaky faucet or set aside quiet hours for a hobby that doesn't aim to impress anyone. This is about growing through solid steps that build something reliable underfoot, not flashy leaps forward.",
    "body_they": "For nearly two years, we notice how much time we spend making a place or a thing truly ours - locking in routines, paying attention to the feel of daily life, and letting small comforts ground us. Someone might finally fix that leaky faucet or set aside quiet hours for a hobby that doesn't aim to impress anyone. This is about growing through solid steps that build something reliable underfoot, not flashy leaps forward.",
    "review_status": "approved",
    "source_keys": [
@@ -50343,7 +50343,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "0da6051cec85d663d71e96a54731e1ce20554a8244dce61c3c28d08c754cc768"
+   "source_hash": "a36d1b56fde7980e7b22cb4760ec3f8327ffca13be8927b823dee79a8bf32edd"
   },
   {
    "contentKey": "fallback-hook/sky-placement-turn/north-node/taurus",
@@ -50360,7 +50360,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "0da6051cec85d663d71e96a54731e1ce20554a8244dce61c3c28d08c754cc768"
+   "source_hash": "a36d1b56fde7980e7b22cb4760ec3f8327ffca13be8927b823dee79a8bf32edd"
   },
   {
    "contentKey": "fallback-hook/sky-placement-tagline/north-node/virgo",
@@ -50377,7 +50377,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "37fee9d68e3d687a3e14e76d532244dbc7a109fa44472106e0ba486c1c4cdb3d"
+   "source_hash": "cfb2cba5cbaafb2d6422569ae3a66b70a6a1682a14b66daf50a6653b8ad8630b"
   },
   {
    "contentKey": "fallback-hook/sky-placement-hook/north-node/virgo",
@@ -50394,13 +50394,13 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "37fee9d68e3d687a3e14e76d532244dbc7a109fa44472106e0ba486c1c4cdb3d"
+   "source_hash": "cfb2cba5cbaafb2d6422569ae3a66b70a6a1682a14b66daf50a6653b8ad8630b"
   },
   {
    "contentKey": "fallback-hook/sky-placement-lived/north-node/virgo",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "For nearly two years, we sift through details that shape what actually gets done. Meetings run smoother when agendas tighten. Group projects hit fewer snags when roles clarify. You see more emails answered on time, tasks crossed off with care, and health habits that aren't just ideas but actions. It's about the grind that builds the story, not the flash that interrupts it.",
+   "body_you": "For eighteen months, we sift through details that shape what actually gets done. Meetings run smoother when agendas tighten. Group projects hit fewer snags when roles clarify. You see more emails answered on time, tasks crossed off with care, and health habits that aren't just ideas but actions. It's about the grind that builds the story, not the flash that interrupts it.",
    "body_they": "For nearly two years, we sift through details that shape what actually gets done. Meetings run smoother when agendas tighten. Group projects hit fewer snags when roles clarify. You see more emails answered on time, tasks crossed off with care, and health habits that aren't just ideas but actions. It's about the grind that builds the story, not the flash that interrupts it.",
    "review_status": "approved",
    "source_keys": [
@@ -50411,7 +50411,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "37fee9d68e3d687a3e14e76d532244dbc7a109fa44472106e0ba486c1c4cdb3d"
+   "source_hash": "cfb2cba5cbaafb2d6422569ae3a66b70a6a1682a14b66daf50a6653b8ad8630b"
   },
   {
    "contentKey": "fallback-hook/sky-placement-turn/north-node/virgo",
@@ -50428,7 +50428,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "37fee9d68e3d687a3e14e76d532244dbc7a109fa44472106e0ba486c1c4cdb3d"
+   "source_hash": "cfb2cba5cbaafb2d6422569ae3a66b70a6a1682a14b66daf50a6653b8ad8630b"
   },
   {
    "contentKey": "fallback-hook/sky-placement-tagline/pluto/aries",
@@ -52213,7 +52213,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "11fec513e5515f50cbf41ba97f9b75bdec17006951fbea4f5b56941637b4cb34"
+   "source_hash": "c9f0eecab8fc2785ccddd53f380c14963dd6c814b6ca301791fcba9e81817019"
   },
   {
    "contentKey": "fallback-hook/sky-placement-hook/south-node/capricorn",
@@ -52230,13 +52230,13 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "11fec513e5515f50cbf41ba97f9b75bdec17006951fbea4f5b56941637b4cb34"
+   "source_hash": "c9f0eecab8fc2785ccddd53f380c14963dd6c814b6ca301791fcba9e81817019"
   },
   {
    "contentKey": "fallback-hook/sky-placement-lived/south-node/capricorn",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "For nearly two years, we keep showing up to the same meetings, filing the same reports, and defending the same status markers. Tasks that once felt like achievements start to wear thin, yet the impulse to push harder sticks around. You see it in the way we reset goals without changing direction, like running laps inside a glass box. The routine is familiar and the weight of duty feels like a habit that's harder to drop than a phone.",
+   "body_you": "For eighteen months, we keep showing up to the same meetings, filing the same reports, and defending the same status markers. Tasks that once felt like achievements start to wear thin, yet the impulse to push harder sticks around. You see it in the way we reset goals without changing direction, like running laps inside a glass box. The routine is familiar and the weight of duty feels like a habit that's harder to drop than a phone.",
    "body_they": "For nearly two years, we keep showing up to the same meetings, filing the same reports, and defending the same status markers. Tasks that once felt like achievements start to wear thin, yet the impulse to push harder sticks around. You see it in the way we reset goals without changing direction, like running laps inside a glass box. The routine is familiar and the weight of duty feels like a habit that's harder to drop than a phone.",
    "review_status": "approved",
    "source_keys": [
@@ -52247,7 +52247,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "11fec513e5515f50cbf41ba97f9b75bdec17006951fbea4f5b56941637b4cb34"
+   "source_hash": "c9f0eecab8fc2785ccddd53f380c14963dd6c814b6ca301791fcba9e81817019"
   },
   {
    "contentKey": "fallback-hook/sky-placement-turn/south-node/capricorn",
@@ -52264,7 +52264,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "11fec513e5515f50cbf41ba97f9b75bdec17006951fbea4f5b56941637b4cb34"
+   "source_hash": "c9f0eecab8fc2785ccddd53f380c14963dd6c814b6ca301791fcba9e81817019"
   },
   {
    "contentKey": "fallback-hook/sky-placement-tagline/south-node/gemini",
@@ -52281,7 +52281,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "619ebdbea7f2806c93fbfa56663f39af1ab19edda7192f44c5c11fc300f7e1e7"
+   "source_hash": "402fcd4f3a981297c65e1fd1099fc8a0b26be8a17847b0566349bf857c87ec92"
   },
   {
    "contentKey": "fallback-hook/sky-placement-hook/south-node/gemini",
@@ -52298,13 +52298,13 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "619ebdbea7f2806c93fbfa56663f39af1ab19edda7192f44c5c11fc300f7e1e7"
+   "source_hash": "402fcd4f3a981297c65e1fd1099fc8a0b26be8a17847b0566349bf857c87ec92"
   },
   {
    "contentKey": "fallback-hook/sky-placement-lived/south-node/gemini",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "For nearly two years, conversations loop back on themselves, and meetings feel like rehearsals. You notice how the same few stories, emails, or ideas keep showing up - sometimes in different voices but with the same core. We spend less time gathering new details and more time patching together what we already know, like fixing a familiar puzzle rather than starting a new one.",
+   "body_you": "For eighteen months, conversations loop back on themselves, and meetings feel like rehearsals. You notice how the same few stories, emails, or ideas keep showing up - sometimes in different voices but with the same core. We spend less time gathering new details and more time patching together what we already know, like fixing a familiar puzzle rather than starting a new one.",
    "body_they": "For nearly two years, conversations loop back on themselves, and meetings feel like rehearsals. You notice how the same few stories, emails, or ideas keep showing up - sometimes in different voices but with the same core. We spend less time gathering new details and more time patching together what we already know, like fixing a familiar puzzle rather than starting a new one.",
    "review_status": "approved",
    "source_keys": [
@@ -52315,7 +52315,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "619ebdbea7f2806c93fbfa56663f39af1ab19edda7192f44c5c11fc300f7e1e7"
+   "source_hash": "402fcd4f3a981297c65e1fd1099fc8a0b26be8a17847b0566349bf857c87ec92"
   },
   {
    "contentKey": "fallback-hook/sky-placement-turn/south-node/gemini",
@@ -52332,7 +52332,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "619ebdbea7f2806c93fbfa56663f39af1ab19edda7192f44c5c11fc300f7e1e7"
+   "source_hash": "402fcd4f3a981297c65e1fd1099fc8a0b26be8a17847b0566349bf857c87ec92"
   },
   {
    "contentKey": "fallback-hook/sky-placement-tagline/south-node/leo",
@@ -52417,7 +52417,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "275fedee2b94663673f7d5bc658045a88c19ce78d5e2c97a05e7e3887101c3d6"
+   "source_hash": "47bae48372c91f38ba99213f8a727907e6521ba46aa30176e6478936335b3cd7"
   },
   {
    "contentKey": "fallback-hook/sky-placement-hook/south-node/libra",
@@ -52434,13 +52434,13 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "275fedee2b94663673f7d5bc658045a88c19ce78d5e2c97a05e7e3887101c3d6"
+   "source_hash": "47bae48372c91f38ba99213f8a727907e6521ba46aa30176e6478936335b3cd7"
   },
   {
    "contentKey": "fallback-hook/sky-placement-lived/south-node/libra",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "For nearly two years, you'll see how easy it is to fall back into the habit of making yourself small for the sake of balance. Meetings drag on because nobody wants to ruffle feathers. Decisions get delayed so everyone feels included. You'll watch groups hold the line on politeness while the real tension simmers underneath, unnoticed or ignored.",
+   "body_you": "For eighteen months, you'll see how easy it is to fall back into the habit of making yourself small for the sake of balance. Meetings drag on because nobody wants to ruffle feathers. Decisions get delayed so everyone feels included. You'll watch groups hold the line on politeness while the real tension simmers underneath, unnoticed or ignored.",
    "body_they": "For nearly two years, you'll see how easy it is to fall back into the habit of making yourself small for the sake of balance. Meetings drag on because nobody wants to ruffle feathers. Decisions get delayed so everyone feels included. You'll watch groups hold the line on politeness while the real tension simmers underneath, unnoticed or ignored.",
    "review_status": "approved",
    "source_keys": [
@@ -52451,7 +52451,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "275fedee2b94663673f7d5bc658045a88c19ce78d5e2c97a05e7e3887101c3d6"
+   "source_hash": "47bae48372c91f38ba99213f8a727907e6521ba46aa30176e6478936335b3cd7"
   },
   {
    "contentKey": "fallback-hook/sky-placement-turn/south-node/libra",
@@ -52468,7 +52468,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "275fedee2b94663673f7d5bc658045a88c19ce78d5e2c97a05e7e3887101c3d6"
+   "source_hash": "47bae48372c91f38ba99213f8a727907e6521ba46aa30176e6478936335b3cd7"
   },
   {
    "contentKey": "fallback-hook/sky-placement-tagline/south-node/pisces",
@@ -52689,13 +52689,13 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "cbc7458e946d96cae379bb7466e544bfde484fc2f545d95b17d6a6ba9719f2f2"
+   "source_hash": "3ec2d1d24bea04800887a2ad60b8276058a65e7eec23cde09963cd6a81334a04"
   },
   {
    "contentKey": "fallback-hook/sky-placement-hook/south-node/taurus",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Someone's still clutching the same old safety net from years ago. The South Node in Taurus makes us notice how tightly we hold what no longer holds us. It's a slow shift - nearly two years of unlearning comfort as control.",
+   "body_you": "Someone's still clutching the same old safety net from years ago. The South Node in Taurus makes us notice how tightly we hold what no longer holds us. It's a slow shift - eighteen months of unlearning comfort as control.",
    "body_they": "Someone's still clutching the same old safety net from years ago. The South Node in Taurus makes us notice how tightly we hold what no longer holds us. It's a slow shift - nearly two years of unlearning comfort as control.",
    "review_status": "approved",
    "source_keys": [
@@ -52706,7 +52706,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "cbc7458e946d96cae379bb7466e544bfde484fc2f545d95b17d6a6ba9719f2f2"
+   "source_hash": "3ec2d1d24bea04800887a2ad60b8276058a65e7eec23cde09963cd6a81334a04"
   },
   {
    "contentKey": "fallback-hook/sky-placement-lived/south-node/taurus",
@@ -52723,7 +52723,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "cbc7458e946d96cae379bb7466e544bfde484fc2f545d95b17d6a6ba9719f2f2"
+   "source_hash": "3ec2d1d24bea04800887a2ad60b8276058a65e7eec23cde09963cd6a81334a04"
   },
   {
    "contentKey": "fallback-hook/sky-placement-turn/south-node/taurus",
@@ -52740,7 +52740,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "cbc7458e946d96cae379bb7466e544bfde484fc2f545d95b17d6a6ba9719f2f2"
+   "source_hash": "3ec2d1d24bea04800887a2ad60b8276058a65e7eec23cde09963cd6a81334a04"
   },
   {
    "contentKey": "fallback-hook/sky-placement-tagline/south-node/virgo",
@@ -52757,13 +52757,13 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "8648550d873c3d1729369d58ad8acb49f04150edabad780d9f567efd3e1133b0"
+   "source_hash": "37a25e4fe68bf38133889f17140441ccc00f1754d5dd9a34a75aeeb0ab61dc27"
   },
   {
    "contentKey": "fallback-hook/sky-placement-hook/south-node/virgo",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "You're still fixing what's already good enough. The South Node in Virgo rolls up sleeves for nearly two years, nudging us to stop polishing and start releasing. It's less about perfecting and more about tolerating imperfection.",
+   "body_you": "You're still fixing what's already good enough. The South Node in Virgo rolls up sleeves for eighteen months, nudging us to stop polishing and start releasing. It's less about perfecting and more about tolerating imperfection.",
    "body_they": "You're still fixing what's already good enough. The South Node in Virgo rolls up sleeves for nearly two years, nudging us to stop polishing and start releasing. It's less about perfecting and more about tolerating imperfection.",
    "review_status": "approved",
    "source_keys": [
@@ -52774,7 +52774,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "8648550d873c3d1729369d58ad8acb49f04150edabad780d9f567efd3e1133b0"
+   "source_hash": "37a25e4fe68bf38133889f17140441ccc00f1754d5dd9a34a75aeeb0ab61dc27"
   },
   {
    "contentKey": "fallback-hook/sky-placement-lived/south-node/virgo",
@@ -52791,7 +52791,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "8648550d873c3d1729369d58ad8acb49f04150edabad780d9f567efd3e1133b0"
+   "source_hash": "37a25e4fe68bf38133889f17140441ccc00f1754d5dd9a34a75aeeb0ab61dc27"
   },
   {
    "contentKey": "fallback-hook/sky-placement-turn/south-node/virgo",
@@ -52808,7 +52808,7 @@
    "render_eligible": true,
    "owner_prose_approved": true,
    "deterministic_validation": "pass",
-   "source_hash": "8648550d873c3d1729369d58ad8acb49f04150edabad780d9f567efd3e1133b0"
+   "source_hash": "37a25e4fe68bf38133889f17140441ccc00f1754d5dd9a34a75aeeb0ab61dc27"
   },
   {
    "contentKey": "fallback-hook/sky-placement-tagline/sun/aquarius",
