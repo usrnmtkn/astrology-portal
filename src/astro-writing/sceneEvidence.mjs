@@ -20,6 +20,16 @@ const DEFAULT_MAX_PRIMARY_HOUSE_CORES = 12;
 const DEFAULT_MAX_MATRIX_SCENES = 4;
 const DEFAULT_MAX_SERVING_SCENES = 4;
 
+const GENERIC_PLANET_EDUCATION_PARAGRAPHS = Object.freeze([
+  "Your Moon is your instinctual emotional world: how you feel, what comforts you, how you care for yourself and others, how you react when you are upset, and what helps you recover after stress. Most of it is unconscious, conditioned behavior.",
+  "The Sun is your core identity. It shows what you are here to build, and where you need to be seen."
+]);
+
+export function withoutGenericPlanetEducation(text) {
+  const paragraphs = String(text ?? "").split(/\n\n+/u);
+  return paragraphs.filter((paragraph) => !GENERIC_PLANET_EDUCATION_PARAGRAPHS.includes(paragraph.trim())).join("\n\n").trim();
+}
+
 function normalizedToken(value) {
   return String(value ?? "").trim().toLowerCase().replace(/[_\s-]+/gu, "-");
 }
@@ -210,15 +220,17 @@ export function knowledgeMatrixSceneCatalog(voiceIndex) {
 
 export function approvedServingSceneCatalog(approvedExamples, { sceneNounLexicon = SCENE_NOUNS } = {}) {
   return (approvedExamples ?? [])
+    .map((entry) => ({ ...entry, sceneText: withoutGenericPlanetEducation(entry.text) }))
     .filter((entry) => (
       entry.ownerApproved === true
       && entry.authority === "serving-review-status-approved"
       && entry.family !== "house-core"
       && !String(entry.family ?? "").startsWith("knowledge-matrix-")
-      && typeof entry.text === "string"
-      && distinctSceneNouns(entry.text, sceneNounLexicon).length >= SERVING_SCENE_MIN_DISTINCT_NOUNS
+      && entry.family !== "fallback-hook/planet-intro"
+      && typeof entry.sceneText === "string"
+      && distinctSceneNouns(entry.sceneText, sceneNounLexicon).length >= SERVING_SCENE_MIN_DISTINCT_NOUNS
     ))
-    .map((entry) => asSceneEvidence({ ...entry, ...planetSignFromServingKey(entry.contentKey), sceneNouns: distinctSceneNouns(entry.text, sceneNounLexicon) }, {
+    .map((entry) => asSceneEvidence({ ...entry, text: entry.sceneText, ...planetSignFromServingKey(entry.contentKey), sceneNouns: distinctSceneNouns(entry.sceneText, sceneNounLexicon) }, {
       evidenceRole: "approved_serving_scene",
       sourceKind: "approved_serving_row",
       sourceFamily: entry.family,
