@@ -133,15 +133,15 @@ const combinedTransit = {
   authoredCards: [...transitRows.authoredCards, ...skyArticleV1.authoredCards]
 };
 const renderer = createTransitSynastryRenderer(combinedTransit, templates, combinedRows);
-assert.throws(
-  () => renderer.renderSkyPlacement({
-    planet: "saturn",
-    sign: "pisces",
-    asOfDate: "2025-01-15T12:00:00Z"
-  }),
-  /SOURCE_GAP: continuous sky placement sign copy saturn\/pisces/u,
-  "An out-of-window article must not fall through to the retired module stack."
-);
+const outOfWindowSaturnPisces = renderer.renderSkyPlacement({
+  planet: "saturn",
+  sign: "pisces",
+  asOfDate: "2025-01-15T12:00:00Z",
+  entryDate: "March 7, 2023",
+  exitDate: "May 24, 2025"
+});
+assert.equal(outOfWindowSaturnPisces.templateKey, "sky-placement-frame-v3");
+assert.equal(outOfWindowSaturnPisces.contentKey, "fallback-hook/sky-placement/saturn");
 
 const previewRenderer = createTransitSynastryRenderer(
   combinedTransit,
@@ -158,7 +158,7 @@ assert.throws(
     exitDate: "Oct 13, 2026"
   }),
   /SOURCE_GAP: continuous sky placement sign copy venus\/virgo/u,
-  "Approved legacy Venus modules must remain dark until the canonical replacement file is approved."
+  "Unstamped legacy Venus modules must remain dark in this source-only renderer."
 );
 
 const sunLeo = renderer.renderSkyPlacement({
@@ -246,15 +246,33 @@ for (const unapprovedSign of ["aries", "taurus", "gemini", "cancer", "virgo", "l
 
 for (const facts of [
   { planet: "mercury", sign: "leo", entryDate: "Jun 29, 2026", exitDate: "Aug 10, 2026" },
-  { planet: "venus", sign: "virgo", entryDate: "Sep 19, 2026", exitDate: "Oct 13, 2026" },
-  { planet: "saturn", sign: "aries", entryDate: "Feb 13, 2026", exitDate: "Apr 12, 2028", isRetrograde: true },
-  { planet: "north-node", sign: "aquarius", entryDate: "Jul 26, 2026", exitDate: "Mar 26, 2028" },
-  { planet: "south-node", sign: "leo", entryDate: "Jul 26, 2026", exitDate: "Mar 26, 2028" }
+  { planet: "venus", sign: "virgo", entryDate: "Sep 19, 2026", exitDate: "Oct 13, 2026" }
 ]) {
   assert.throws(
     () => previewRenderer.renderSkyPlacement({ ...facts, asOfDate: "2026-07-29T16:00:00Z" }),
     /SOURCE_GAP: continuous sky placement sign copy/u,
-    `${facts.planet}/${facts.sign} must not use the retired module stack, even in preview.`
+    `${facts.planet}/${facts.sign} must remain unavailable without its approved continuous source row.`
+  );
+}
+
+for (const facts of [
+  { planet: "saturn", sign: "aries", entryDate: "Feb 13, 2026", exitDate: "Apr 12, 2028", isRetrograde: true },
+  { planet: "north-node", sign: "aquarius", entryDate: "Jul 26, 2026", exitDate: "Mar 26, 2028" },
+  { planet: "south-node", sign: "leo", entryDate: "Jul 26, 2026", exitDate: "Mar 26, 2028" }
+]) {
+  const rendered = previewRenderer.renderSkyPlacement({
+    ...facts,
+    asOfDate: "2026-07-29T16:00:00Z",
+    priorSign: "pisces",
+    priorSignEntryDate: "January 1, 2025",
+    priorSignExitDate: "January 1, 2026",
+    previousResidencyEntryDate: "January 1, 2000",
+    previousResidencyExitDate: "January 1, 2001"
+  });
+  assert.equal(
+    rendered.templateKey,
+    "sky-placement-frame-v3",
+    `${facts.planet}/${facts.sign} must use the stamped four-slot frame, not the retired module stack.`
   );
 }
 
@@ -294,15 +312,14 @@ const liveRenderer = createTransitSynastryRenderer(
   combinedRows
 );
 for (const isShadowPhase of [false, true]) {
-  assert.throws(
-    () => liveRenderer.renderSkyPlacement({
-      planet: "saturn",
-      sign: "pisces",
-      asOfDate: "2024-07-01T12:00:00Z",
-      isShadowPhase
-    }),
-    /SOURCE_GAP: continuous sky placement sign copy saturn\/pisces/u
-  );
+  const rendered = liveRenderer.renderSkyPlacement({
+    planet: "saturn",
+    sign: "pisces",
+    asOfDate: "2024-07-01T12:00:00Z",
+    isShadowPhase
+  });
+  assert.equal(rendered.templateKey, "fallback-template/sky.placement-article");
+  assert.notEqual(rendered.templateKey, "sky-placement-standalone-hook-v1");
 }
 
 const fastDirectArticle = {

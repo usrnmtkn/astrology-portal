@@ -58,6 +58,13 @@ const modernRulers = {
 };
 const traditionalOuterRulers = { scorpio: "mars", aquarius: "saturn", pisces: "jupiter" };
 const ordinal = (house) => house === 1 ? "1st" : house === 2 ? "2nd" : house === 3 ? "3rd" : `${house}th`;
+const normalizeReaderPunctuation = (value) => value
+  .replace(/[\u2018\u2019]/gu, "'")
+  .replace(/[\u201c\u201d]/gu, "\"")
+  .replace(/\u2026/gu, "...")
+  .replace(/[\u2013\u2014]/gu, "-")
+  .replace(/\u00a0/gu, " ")
+  .replace(/[\u200b-\u200f\ufeff\u202a-\u202e\u2066-\u2069]/gu, "");
 const categoryCounts = Object.fromEntries(
   [
     "principle",
@@ -118,14 +125,15 @@ assert.equal(friendReview.rows.length, 541);
 assert.equal(authored.friend_payload_sha256, friendReview.payload_sha256);
 assert.equal(authored.prior_projection_body_they_digest_sha256, projection.prior_body_they_digest_sha256);
 assert.equal(friendReview.prior_projection_body_they_digest_sha256, projection.prior_body_they_digest_sha256);
+assert.equal(authored.reader_punctuation_normalization.source_payload_sha256, projection.body_they_approval_payload_sha256);
 assert.equal(
   crypto.createHash("sha256").update(JSON.stringify(authored.rows.map(({ corpus_key, body_they }) => ({ corpus_key, body_they })))).digest("hex"),
-  projection.body_they_approval_payload_sha256,
-  "Projection-5 corrected Friend bytes must remain exact."
+  authored.reader_punctuation_normalization.normalized_payload_sha256,
+  "Projection-5 corrected Friend bytes must remain exact after the globally approved reader-punctuation normalization."
 );
 assert.equal(approval.payload_sha256, friendReview.payload_sha256);
 assert.equal(approval.row_count, 541);
-assert.equal(PACKAGE_VERSION, promoted ? "v3-2026-08-15a" : "v3-2026-08-10b");
+assert.equal(PACKAGE_VERSION, promoted ? "v3-2026-08-16a" : "v3-2026-08-10b");
 
 for (const entry of canonical.entries) {
   assert.equal(entry.owner_approved, true, `${entry.key}: V14 You copy must be owner-approved.`);
@@ -138,7 +146,11 @@ for (const entry of canonical.entries) {
 for (const entry of readerEntries) {
   const row = authoredByKey.get(entry.key);
   assert.ok(row, `${entry.key}: missing authored projection.`);
-  assert.equal(row.body_you, ownerRevisionByKey.get(entry.key)?.body_you ?? entry.copy_you, `${entry.key}: owner-approved You bytes changed.`);
+  assert.equal(
+    row.body_you,
+    normalizeReaderPunctuation(ownerRevisionByKey.get(entry.key)?.body_you ?? entry.copy_you),
+    `${entry.key}: owner-approved You bytes changed beyond normalized punctuation.`
+  );
   assert.ok(row.body_they?.trim(), `${entry.key}: missing explicit Friend variant.`);
   assert.doesNotMatch(row.body_they, /\b(?:you|your|yours|yourself)\b/iu, `${entry.key}: Friend copy leaks second person.`);
   assert.equal(row.body_you_review_status, "approved");
@@ -150,13 +162,13 @@ for (const entry of readerEntries) {
   const correction = correctionByKey.get(entry.key);
   const decision = decisionByKey.get(entry.key);
   if (correction) {
-    assert.equal(row.body_they, correction.body_they, `${entry.key}: owner-adopted correction changed.`);
+    assert.equal(row.body_they, normalizeReaderPunctuation(correction.body_they), `${entry.key}: owner-adopted correction changed beyond normalized punctuation.`);
     assert.equal(row.body_they_flag_disposition, "corrected_wording_adopted");
     assert.equal(decision?.verdict, "corrected_wording_proposed");
     assert.match(row.body_they_flag, /^corrected wording adopted by owner 2026-08-10/u);
   } else if (decision) {
     assert.equal(decision.verdict, "approve_as_is");
-    assert.equal(row.body_they, decision.body_they_drafted, `${entry.key}: approved-as-is Friend wording changed.`);
+    assert.equal(row.body_they, normalizeReaderPunctuation(decision.body_they_drafted), `${entry.key}: approved-as-is Friend wording changed beyond normalized punctuation.`);
     assert.equal(row.body_they_flag, decision.flag);
     assert.equal(row.body_they_flag_disposition, "approve_as_is");
   } else {

@@ -24,8 +24,8 @@ const passByKey = new Map(pass.rows.map((row) => [row.contentKey, row]));
 
 assert.equal(
   crypto.createHash("sha256").update(JSON.stringify(pass.rows)).digest("hex"),
-  "b174cf71bffeb04eba4394040a75af8bc3226d7e3a0ae6a1b6303334eb30c46d",
-  "The staged owner source must remain byte-stable after JSON parsing."
+  "6c4aad07a0d5c5511b73a3182ba76136a0d9ddfede68f30093265d5a6c60f56d",
+  "The staged owner source must remain byte-stable after the globally approved reader-punctuation normalization."
 );
 assert.equal(pass.rows.length, 139);
 assert.equal(passByKey.size, 139, "Pass 2 keys must be unique.");

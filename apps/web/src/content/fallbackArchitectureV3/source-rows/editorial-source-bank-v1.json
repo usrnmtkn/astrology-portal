@@ -20,37 +20,37 @@
       "entries": [
         {
           "id": "aries-libra",
-          "headline": "Aries / Libra – Self vs. Others",
+          "headline": "Aries / Libra - Self vs. Others",
           "body": "Core Tension: Independence vs. Partnership Integration Question: Can you stand fully in yourself while still making room for someone else? Aries is about trusting your gut, taking action, and not waiting for someone else to lead. Libra is about slowing down, listening, and making space for other perspectives. The work is knowing when to step forward and when to meet someone in the middle. Shadow Work: Times you kept the peace but lost yourself in the process, or times you pushed people away in the name of independence.",
           "signs": ["aries", "libra"]
         },
         {
           "id": "taurus-scorpio",
-          "headline": "Taurus / Scorpio – Security vs. Transformation",
+          "headline": "Taurus / Scorpio - Security vs. Transformation",
           "body": "Core Tension: Stability vs. Change Integration Question: Can you create stability in your life that also leaves room for change? Taurus is about steady routines, comfort, and things you can count on. Scorpio is about the moments that break those routines open and force growth. The work is learning how to hold on to what matters while letting go of what's run its course. Shadow Work: Times you stayed too long because it felt safe, or times you blew everything up because stability felt suffocating.",
           "signs": ["taurus", "scorpio"]
         },
         {
           "id": "gemini-sagittarius",
-          "headline": "Gemini / Sagittarius – Information vs. Wisdom",
+          "headline": "Gemini / Sagittarius - Information vs. Wisdom",
           "body": "Core Tension: Details vs. Big Picture Integration Question: Can you stay curious without getting lost in the details, and share your insights without oversimplifying them? Gemini wants to gather facts, ask questions, and explore all the options. Sagittarius wants to zoom out, see the pattern, and find meaning. The work is knowing when to dig deeper and when to trust what you already know. Shadow Work: Times you avoided making a decision by asking endless questions, or times you clung to a belief so tightly you stopped listening.",
           "signs": ["gemini", "sagittarius"]
         },
         {
           "id": "cancer-capricorn",
-          "headline": "Cancer / Capricorn – Nurturing vs. Achievement",
+          "headline": "Cancer / Capricorn - Nurturing vs. Achievement",
           "body": "Core Tension: Emotional Safety vs. Public Success Integration Question: Can you build success without sacrificing the people and peace that matter most? Cancer focuses on home, care, and emotional connection. Capricorn focuses on building, achieving, and making a mark. The work is letting your ambitions strengthen your foundations instead of strain them. Shadow Work: Times you avoided challenges in the name of self-care, or times you pursued success at the expense of your well-being.",
           "signs": ["cancer", "capricorn"]
         },
         {
           "id": "leo-aquarius",
-          "headline": "Leo / Aquarius – Personal Expression vs. Collective Good",
+          "headline": "Leo / Aquarius - Personal Expression vs. Collective Good",
           "body": "Core Tension: Standing Out vs. Belonging Integration Question: Can you shine without making it all about you, and contribute to the group without disappearing? Leo is about showing up, sharing your gifts, and letting yourself be seen. Aquarius is about the collective, working together, and creating change that benefits everyone. The work is knowing when to lead and when to make space for others. Shadow Work: Times you shaped yourself to be accepted instead of showing up authentically, or moments you withdrew just to prove you didn't need anyone.",
           "signs": ["leo", "aquarius"]
         },
         {
           "id": "virgo-pisces",
-          "headline": "Virgo / Pisces – Precision vs. Flow",
+          "headline": "Virgo / Pisces - Precision vs. Flow",
           "body": "Core Tension: Control vs. Surrender Integration Question: Can you give your all without losing yourself, and loosen your grip without letting go of the vision? Virgo asks you to tend to the tangible: the lists, the plans, the small daily actions. Pisces asks you to trust what can't be measured, to rest in the mystery. The work is knowing when focused effort serves you and when it's time to step back. Shadow Work: Times you fixated on details to avoid uncertainty, or drifted into fantasy to avoid facing reality.",
           "signs": ["virgo", "pisces"]
         }
@@ -302,7 +302,7 @@
         "source_tags": ["CC"],
         "statement": "The first Saturn return is ages 27 to 30, the second 57 to 60, and the third in the late 80s. Each return spans roughly three years from ingress to final exit of the natal Saturn sign and is traditionally harder for night charts. Saturn's orbital period is about 29.4 years; 27 to 30 is an age range, not its period.",
         "values": {"first_return_ages": "27-30", "second_return_ages": "57-60", "third_return_ages": "late 80s", "return_span_years": 3, "orbital_period_years": 29.4},
-        "conflictPatterns": ["\\bSaturn(?:'s)?\\s+(?:orbital\\s+)?period\\b[^.]{0,36}\\b27\\s*(?:to|-|–)\\s*30\\s+years\\b"]
+        "conflictPatterns": ["\\bSaturn(?:'s)?\\s+(?:orbital\\s+)?period\\b[^.]{0,36}\\b27\\s*(?:to|-|-)\\s*30\\s+years\\b"]
       },
       {
         "id": "black-moon-lilith-astronomy",
@@ -367,7 +367,7 @@
           }
         ],
         "conflictPatterns": [
-          "\\bBarbault\\b[^.]{0,64}\\b(?:called|described)\\b[^.]{0,80}\\bSaturn(?:-|–|\\s+)Neptune conjunction\\b[^.]{0,48}\\b(?:as(?!\\s+part\\b)|was|is)\\b[^.]{0,24}\\bthe most benefic configuration of the century\\b",
+          "\\bBarbault\\b[^.]{0,64}\\b(?:called|described)\\b[^.]{0,80}\\bSaturn(?:-|-|\\s+)Neptune conjunction\\b[^.]{0,48}\\b(?:as(?!\\s+part\\b)|was|is)\\b[^.]{0,24}\\bthe most benefic configuration of the century\\b",
           "\\bBarbault called it the most benefic configuration of the century\\b"
         ]
       }
