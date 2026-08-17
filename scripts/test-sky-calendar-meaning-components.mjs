@@ -82,7 +82,7 @@ assert.equal(registry.policy.firstSentenceMustBeComposed, true);
 assert.equal(registry.policy.failClosed, true);
 assert.equal(registry.policy.realizationPoolsAreTypedNotOrdered, true);
 assert.equal(registry.policy.positionalRealizationTemplateForbidden, true);
-assert.equal(registry.evidenceLayerSha256, "0ceb85f5897fb42238dfdd69e7b02271f87befe202f009da8659add9b9337c23");
+assert.equal(registry.evidenceLayerSha256, "4072572c3ba27afda4bdd27bddc70d892f53bd861bec9f4e52971ff279de8cd2");
 assert.equal(registry.wordingQuality.maximumOpeningConstructionUse <= registry.wordingQuality.caps.openingConstruction, true);
 assert.equal(registry.wordingQuality.maximumManifestationUse <= registry.wordingQuality.caps.repeatedManifestation, true);
 assert.equal(registry.wordingQuality.caps.manifestationShape, 3);
