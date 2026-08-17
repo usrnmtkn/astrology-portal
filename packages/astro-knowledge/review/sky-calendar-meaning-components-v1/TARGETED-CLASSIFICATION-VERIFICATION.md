@@ -1,6 +1,6 @@
 # Sky Calendar targeted realization-classification verification
 
-Status: classification-only verification. No realization wording changed. All 174 units remain `PENDING OWNER` and fail closed.
+Status: historical classification-only verification. No realization wording changed. All 174 units are now `OWNER APPROVED`; composed cards remain separately owner-gated.
 
 ## Plain result
 
@@ -77,5 +77,5 @@ These items were in the supportive pool after targeted verification and were fla
 - Evidence pointers and hashes: unchanged
 - Coverage classes: unchanged
 - Eight owner-authored replacement strings: unchanged
-- Approval status: `PENDING OWNER`
+- Approval status: `OWNER APPROVED`
 - Serving state: unchanged

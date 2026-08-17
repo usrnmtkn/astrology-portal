@@ -15,6 +15,7 @@ import {
   requiredRealizationGap,
   selectRealizationForAspect,
 } from "./sky-calendar-realization-types.mjs";
+import { assertExactComponentApproval } from "./sky-calendar-component-approval.mjs";
 
 const moduleRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -319,10 +320,17 @@ export function composeSkyCalendarTwoPartCard(registry, specification, { reviewM
   if (!entryModes.includes(specification.entryMode)) throw new Error(`${key}: unsupported entryMode`);
   if (!closingFunctions.includes(specification.closingFunction)) throw new Error(`${key}: unsupported closingFunction`);
   const resolved = resolveSkyCalendarComponents(registry, { ...specification.input, key });
-  const statuses = Object.values(resolved.units).map((unit) => unit.owner_review_status);
-  const componentsApproved = statuses.every((status) => status === "OWNER APPROVED");
+  const approvalErrors = [];
+  for (const unit of Object.values(resolved.units)) {
+    try {
+      assertExactComponentApproval(unit);
+    } catch (error) {
+      approvalErrors.push(error);
+    }
+  }
+  const componentsApproved = approvalErrors.length === 0;
   if (!componentsApproved && !reviewMode) {
-    throw new Error(`${key}: component approval is incomplete; composer fails closed`);
+    throw new Error(`${key}: component approval is incomplete; composer fails closed (${approvalErrors[0]?.message})`);
   }
 
   validateCausalSituation(specification, resolved);
@@ -613,14 +621,17 @@ export function auditSkyCalendarTwoPartCards(cards, {
     if (projectedFrameUses > frameCap) {
       addDefect(defects, "forecast_opener_frame_cap_against_live_corpus", { frame, frameCap, projectedFrameUses });
     }
+    const expectedGovernanceBlock = !card.componentApprovalComplete
+      ? "components_pending_owner"
+      : (card.status !== "OWNER APPROVED" || card.generationAllowed !== true ? "card_pending_owner" : null);
     return {
       contentKey: card.contentKey,
       openerFamily,
       closingFamily,
       entryMode: card.entryMode,
       constructionPass: defects.length === 0,
-      servingEligible: card.componentApprovalComplete && defects.length === 0,
-      expectedGovernanceBlock: card.componentApprovalComplete ? null : "components_pending_owner",
+      servingEligible: expectedGovernanceBlock === null && defects.length === 0,
+      expectedGovernanceBlock,
       defects,
     };
   });

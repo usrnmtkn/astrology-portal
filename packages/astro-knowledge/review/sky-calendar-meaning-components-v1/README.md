@@ -1,6 +1,6 @@
 # Sky Calendar meaning components v2
 
-Status: `PENDING OWNER`. Nothing in this review set is approved or serving.
+Status: `OWNER APPROVED` on 2026-08-16. The 174 meaning components are hash-pinned in `exact-approval.json`. No composed forecast is approved or serving.
 
 This set implements the owner architecture decision of 2026-08-14:
 
@@ -12,7 +12,8 @@ This set implements the owner architecture decision of 2026-08-14:
 
 ## Contents
 
-- `sky-calendar-meaning-components-v1.json`: 174 governed draft components with evidence pointers and hashes.
+- `sky-calendar-meaning-components-v1.json`: 174 governed, exact-owner-approved components with evidence pointers and hashes.
+- `exact-approval.json`: the canonical per-component payload hashes and the hash of the complete approved set.
 - Owner-review workbook: `outputs/sky-calendar-meaning-components-2026-08-14/sky-calendar-meaning-components-owner-review.xlsx`.
 
 Counts:
@@ -22,7 +23,7 @@ Counts:
 - 9 ordered modality pairs
 - 16 ordered element pairs
 
-All 174 rows fail closed until exact owner approval.
+All 174 components are exact-owner-approved. The composer verifies each component against its approved payload hash and still fails closed on missing, unapproved, or modified components. Composed Forecast and Details copy remains a separate owner-approval step.
 
 The frame-uniqueness gate is implemented in `scripts/sky-calendar-frame-uniqueness.mjs` and permanently tested by `scripts/test-sky-calendar-frame-uniqueness.mjs`.
 
@@ -67,7 +68,7 @@ These checks run during workbook generation and are pinned by `scripts/test-sky-
 
 The owner sampled Jupiter in Aquarius, Pluto in Cancer, and Chiron in Aries and found four faults distributed through the wording layer: source shadows dropped from otherwise positive meanings, abstractions acting like people, authored descriptions in place of recognizable behavior, and cumbersome constructions. The three owner-authored replacements are exact fixtures.
 
-All 174 units were rechecked. The evidence pointers, source hashes, coverage classes, fail-closed policy, and `PENDING OWNER` status did not change.
+All 174 units were rechecked. The evidence pointers, source hashes, coverage classes, and fail-closed policy did not change. The later exact owner approval is recorded separately in `exact-approval.json`.
 
 - All 174 units changed schema; 8 sign units changed wording in this pass.
 - 39 sign units were one-sided relative to their source challenge or shadow before the pass; 0 remain one-sided.
@@ -85,7 +86,7 @@ The classification review changed no wording. It checked the 13 sign units that 
 - 0 of the reviewed 13 remain all-neutral.
 - 1 of the reviewed 10 remains all-shadow: `sky-sign/neptune/libra`.
 - The prompt's 10-unit count refers to the all-shadow population. Across all shapes, 81 sign units originally had no supportive realization; 64 still have no supportive realization after this evidence-only reclassification.
-- The evidence pointers, hashes, coverage classes, fail-closed status, `PENDING OWNER` status, and eight exact owner-authored replacements remain unchanged.
+- The evidence pointers, hashes, coverage classes, fail-closed status, and eight exact owner-authored replacements remain unchanged. The later exact owner approval is recorded separately in `exact-approval.json`.
 
 The composer now fails closed when the aspect's required realization type is empty. It records the named gap `sky-calendar-missing-required-realization`; it never substitutes neutral or shadow material into a trine or sextile. The complete unit-by-unit classification record is in `REALIZATION-CLASSIFICATION-AUDIT.md` and the workbook's Classification Audit sheet.
 
@@ -101,7 +102,7 @@ The owner authorized an additive editorial extraction for the 64 supportive pool
 - Routes still blocked for missing supportive material: 0
 - Units whose evidence could not support an extraction: 0
 
-All units remain `PENDING OWNER` and fail closed until owner review. The eight owner-authored replacements preserve every previously locked string; four receive one authorized additive supportive realization because their supportive pool was empty. The complete extraction ledger is in `SUPPORTIVE-POOL-EXTRACTION-REPORT.md` and the workbook's Sign Units sheet.
+At this historical checkpoint, all units remained `PENDING OWNER`. The eight owner-authored replacements preserve every previously locked string; four receive one authorized additive supportive realization because their supportive pool was empty. The complete extraction ledger is in `SUPPORTIVE-POOL-EXTRACTION-REPORT.md` and the workbook's Sign Units sheet. The later exact owner approval is recorded in `exact-approval.json`.
 
 The counts above record the completed extraction pass at that checkpoint. The later targeted classification verification below correctly moved three items out of the supportive pool, creating three temporary gaps that were resolved in the closing coverage pass.
 
@@ -130,6 +131,6 @@ The 27 supportive near-restatement flags were also checked as a coverage questio
 - `sky-sign/chiron/virgo` keeps its exact wording but moves from supportive to shadow because it describes insecurity and repeated correction rather than help or ease.
 - Existing wording rewritten: 0.
 - Empty supportive pools now: 0.
-- All 174 units remain `PENDING OWNER` and fail closed.
+- All 174 units are now `OWNER APPROVED`; composed cards remain separately owner-gated and nothing serves from this review set.
 
 The complete evidence ledger is in `SUPPORTIVE-COVERAGE-CLOSING-REPORT.md`, `supportive-coverage-closing-report.json`, and the workbook's Coverage Closing sheet.

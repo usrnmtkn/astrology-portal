@@ -1,6 +1,6 @@
 # Sky Calendar realization classification audit
 
-Status: classification review only. No realization wording changed. All 174 units remain `PENDING OWNER` and fail closed.
+Status: historical classification review. No realization wording changed. All 174 units are now `OWNER APPROVED`; composed cards remain separately owner-gated.
 
 ## Count correction
 
@@ -277,5 +277,5 @@ No current unit has all three pools empty, so the composer always finds some tex
 - Evidence pointers and hashes: unchanged
 - Coverage classes: unchanged
 - Owner-authored replacement wording: unchanged
-- Approval status: `PENDING OWNER`
+- Approval status: `OWNER APPROVED`
 - Serving state: unchanged

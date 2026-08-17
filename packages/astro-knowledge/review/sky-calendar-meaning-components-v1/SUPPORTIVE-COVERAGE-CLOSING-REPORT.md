@@ -1,6 +1,6 @@
 # Sky Calendar supportive coverage closing report
 
-Status: evidence-backed extraction and classification only. All 174 units remain `PENDING OWNER` and fail closed.
+Status: evidence-backed extraction and classification only. All 174 units are now `OWNER APPROVED`; composed cards remain separately owner-gated.
 
 ## Plain result
 
@@ -67,5 +67,5 @@ All three units had a constructive act in their own governed evidence. None requ
 - Evidence pointers and hashes: unchanged
 - Coverage classes: unchanged
 - Eight owner-authored replacement strings: unchanged
-- Approval status: `PENDING OWNER`
+- Approval status: `OWNER APPROVED`
 - Serving state: unchanged

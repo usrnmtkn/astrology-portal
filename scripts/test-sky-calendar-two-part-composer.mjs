@@ -11,6 +11,7 @@ import {
   loadLiveSkyReaderBodies,
   loadSkyCalendarComponentRegistry,
 } from "./sky-calendar-two-part-composer.mjs";
+import { assertExactComponentApproval } from "./sky-calendar-component-approval.mjs";
 
 const root = process.cwd();
 const registry = loadSkyCalendarComponentRegistry();
@@ -25,10 +26,17 @@ const workedArtifact = JSON.parse(fs.readFileSync(path.join(
 
 assert.equal(plans.schema, "tldr.sky-calendar.two-part.worked-card-plans.v2");
 assert.equal(plans.cards.length, 6);
+const approvedComponentCard = composeSkyCalendarTwoPartCard(registry, plans.cards[0]);
+assert.equal(approvedComponentCard.componentApprovalComplete, true);
+assert.equal(approvedComponentCard.status, "PENDING OWNER", "Component approval may not approve a composed card");
+assert.equal(approvedComponentCard.generationAllowed, false, "Component approval may not authorize serving");
+
+const tamperedComponentRegistry = structuredClone(registry);
+tamperedComponentRegistry.signUnits.find((unit) => unit.key === "sky-sign/sun/leo").combined_position += " altered";
 assert.throws(
-  () => composeSkyCalendarTwoPartCard(registry, plans.cards[0]),
-  /component approval is incomplete; composer fails closed/u,
-  "Production mode must reject PENDING OWNER components",
+  () => composeSkyCalendarTwoPartCard(tamperedComponentRegistry, plans.cards[0]),
+  /component approval is incomplete; composer fails closed.*approval hash or metadata is invalid/u,
+  "Production mode must reject a component that no longer matches its exact approval hash",
 );
 
 const allShadowTrineRegistry = structuredClone(registry);
@@ -92,20 +100,22 @@ const componentIndex = new Map([
   ...registry.modalityUnits,
   ...registry.elementUnits,
 ].map((unit) => [unit.key, unit]));
-const cards = workedArtifact.cards.map((card) => ({
-  ...card,
-  componentProseForGate: Object.values(card.inputs.componentKeys)
+const cards = workedArtifact.cards.map((card) => {
+  const selectedUnits = Object.values(card.inputs.componentKeys)
     .filter(Boolean)
-    .flatMap((key) => {
-      const unit = componentIndex.get(key);
-      return Object.entries(unit ?? {}).flatMap(([field, value]) => {
-        if (["key", "source_ids", "source_hashes", "owner_review_status"].includes(field)) return [];
-        if (typeof value === "string") return [value];
-        if (Array.isArray(value)) return value.filter((item) => typeof item === "string");
-        return [];
-      });
-    }),
-}));
+    .map((key) => componentIndex.get(key));
+  selectedUnits.forEach(assertExactComponentApproval);
+  return {
+    ...card,
+    componentApprovalComplete: true,
+    componentProseForGate: selectedUnits.flatMap((unit) => Object.entries(unit ?? {}).flatMap(([field, value]) => {
+      if (["key", "source_ids", "source_hashes", "owner_review_status", "approval"].includes(field)) return [];
+      if (typeof value === "string") return [value];
+      if (Array.isArray(value)) return value.filter((item) => typeof item === "string");
+      return [];
+    })),
+  };
+});
 
 const ownerApprovedShape = {
   contentKey: "owner-approved-calendar-two-part-shape",
@@ -147,7 +157,7 @@ assert.equal(report.pass, true, JSON.stringify(report, null, 2));
 assert.equal(report.servingEligible, false);
 assert.equal(report.batchShapeCap, 2);
 assert.equal(report.batchDefects.length, 0);
-assert.equal(report.cardReports.every((result) => result.expectedGovernanceBlock === "components_pending_owner"), true);
+assert.equal(report.cardReports.every((result) => result.expectedGovernanceBlock === "card_pending_owner"), true);
 assert.equal(Math.max(...Object.values(report.shapeDistribution.openerFamilies)), 2);
 assert.equal(Math.max(...Object.values(report.shapeDistribution.closingFamilies)), 2);
 assert.equal(Math.max(...Object.values(report.shapeDistribution.entryModes)), 2);

@@ -1,7 +1,15 @@
 {
   "schema": "tldrastro.sky-calendar-meaning-components.v2",
-  "status": "PENDING OWNER",
+  "status": "OWNER APPROVED",
   "architectureDecisionDate": "2026-08-14",
+  "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+    "approvedAt": "2026-08-16",
+    "componentSetSha256": "aee970d7c40d1331eaf981886ec5007ea5e99eb3e18c18ed1889cbe470e8a443",
+    "ownerApprovalStatementSource": "owner_chat_2026-08-16_approves_174_sky_calendar_meaning_components",
+    "servingAuthorization": false
+  },
   "policy": {
     "componentsAreMeaningNotSentences": true,
     "emitStoredComponentVerbatim": false,
@@ -5490,8 +5498,14 @@
       "owner_voice_source_hashes": [
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "d93234eaa35f46d494227fbcefb1703c9b28757a135b247e6ce4da69b97564bc",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/sun/taurus",
@@ -5521,8 +5535,14 @@
       "owner_voice_source_hashes": [
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "a070d99aa69ec1cc1528b6275ef924e33675d15a157062544d8561c1f8ff60e9",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/sun/gemini",
@@ -5553,8 +5573,14 @@
       "owner_voice_source_hashes": [
         "e5a5c3ddd4f70863638ddb523cb1344dbdc74cf43900b2a6a4e9c6112e995a73"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "8dbdd3a23b289214698d10472ded86f358c550f70d96fa795cae6171eb5870c4",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/sun/cancer",
@@ -5586,8 +5612,14 @@
       "owner_voice_source_hashes": [
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "7aecc0dd0630501d043a0ccc26c0547e16e58bed4752506a0be5f2f412929740",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/sun/leo",
@@ -5619,7 +5651,7 @@
       "owner_voice_source_hashes": [
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone showing work they are proud of instead of leaving it hidden",
@@ -5630,7 +5662,13 @@
             "5a1a1afe886e333285757d200173943001914480ea44b65ce9124efc5e398551"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "255d6b8df01c18a9c55f996d27d04aef2ea7d3dba1b6ba4d1551179d133a5c52",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/sun/virgo",
@@ -5662,8 +5700,14 @@
       "owner_voice_source_hashes": [
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "d64af29f70dcb0504bc87a609a22c3163e4359ed319fdc26d5943ad4fae774a1",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/sun/libra",
@@ -5694,8 +5738,14 @@
       "owner_voice_source_hashes": [
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "13369efd99d989b8715edcc6b6f2492f261e13f515bafbc3a562c1e18b0ddc33",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/sun/scorpio",
@@ -5728,7 +5778,7 @@
       "owner_voice_source_hashes": [
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone naming the hidden fact before it keeps shaping the decision",
@@ -5739,7 +5789,13 @@
             "e58c141239bac2092c59cafde00a9758984ca8b477f2fb194c49e8e77ff3ffb3"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "1d83e2561244910e28cf3b3716a31817793399aa4aa8cefc379c89013985edc1",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/sun/sagittarius",
@@ -5772,7 +5828,7 @@
       "owner_voice_source_hashes": [
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone asking why until the larger purpose behind a decision becomes clear",
@@ -5783,7 +5839,13 @@
             "ed83780b31908b7f8f73c92696bcf917542995f87449837b8a9b8ac82927b94b"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "0c8a015501fd372f31f9e05d8a6139ccef62b4a3b544b8c7adcdf9b422d23240",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/sun/capricorn",
@@ -5814,8 +5876,14 @@
       "owner_voice_source_hashes": [
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "40b7b3aa40204b3aaa62bf1418741a28f1e8fb8491a427ba95d92dfeccd4ea8a",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/sun/aquarius",
@@ -5847,8 +5915,14 @@
       "owner_voice_source_hashes": [
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "92a4037f5122b10913bd70df596178eff1f5478acc416454be0f069deec0fa0d",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/sun/pisces",
@@ -5879,8 +5953,14 @@
       "owner_voice_source_hashes": [
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "809ad8f4f327640be5d15b117667ccafe62a2305052aa67b2cae6be8faf550f6",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/moon/aries",
@@ -5916,8 +5996,14 @@
         "e1628fe5260f72fa02a61cb521104a5e206409048d232ec541ad2c9cc96b3412",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "bbf2a467a17d7d0906269d20376b391af825a913f074e5ccd554e85d83d87b0f",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/moon/taurus",
@@ -5952,8 +6038,14 @@
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e",
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "fa03ce71096944c25305e590a106c297a17a6b6aec1d623e181a56f82f6e68dc",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/moon/gemini",
@@ -5992,7 +6084,7 @@
         "94fea140f19241daebca8ead4e1e3d084594e6132fdf3d19d9563cf9f66e6370",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone talking through a worry until the simple feeling underneath becomes clear",
@@ -6003,7 +6095,13 @@
             "d6d255fc952ee42f9df13243dcbc4978f9c6d77cab6be9cb87682c20e32dfba7"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "48220436578be26a9c81ba764ff0efec0201805816a0bdc497db36484e2127e6",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/moon/cancer",
@@ -6038,8 +6136,14 @@
         "09c59de1342f4ae2d556f14461f1dd5c36cb2db3e045a51d5739f188524c0e0c",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "f02b07bf72107fbc1bce2aa176b18f04ce039b0fc5d5a59bf268ca93e63c22ab",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/moon/leo",
@@ -6074,8 +6178,14 @@
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e",
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "a31e49603a525a46b4c40dbe23a2a36dcc4db0189ac4e6405a3902f8729e44dc",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/moon/virgo",
@@ -6113,8 +6223,14 @@
         "9a22d877bc6e93e77344d9b7e36962f007ee7a2e50e525046456484b63dccf79",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "9135b7e0bc661be2c83568d6003089956725fdd5f6622c738141390c4fd66865",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/moon/libra",
@@ -6148,8 +6264,14 @@
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e",
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "968f843608c8e44df3770c82797a026ca5a1e668c885e1ce75e9be63cf80dbb5",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/moon/scorpio",
@@ -6188,7 +6310,7 @@
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone trusting a private feeling enough to say how much it still matters",
@@ -6199,7 +6321,13 @@
             "82e6549f5dec0b5e5556c379ec8272cee99e4f2f75a1156feb70e6493579c1c2"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "0e87e2c6d7d420b865af219df87cc2a8c323aaa76c81532d2890ce4f6ebc9d0c",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/moon/sagittarius",
@@ -6238,7 +6366,7 @@
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone finding enough perspective to admit the feeling and still see a way forward",
@@ -6249,7 +6377,13 @@
             "858215fcaf279b3dbdb342f792258f45167acc358c4b149161c152a9b35147e5"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "e3e633a27f31dd0d9f00f2ec2e7ee20768a7ad58bfeca129df52fbc0c6a6d53f",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/moon/capricorn",
@@ -6285,8 +6419,14 @@
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "e615fc79947de054b86176e8852d381bc3420dd9be542982ca5e4e4c6e1e9284",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/moon/aquarius",
@@ -6324,7 +6464,7 @@
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e",
         "e1628fe5260f72fa02a61cb521104a5e206409048d232ec541ad2c9cc96b3412"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone stepping back from a reaction long enough to see the pattern clearly",
@@ -6344,7 +6484,13 @@
             "035462284848f4e94886e4211ff7ce8d9ad1f63c411335eb55168821643c59b6"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "28ed094384735d5a0026f01f3304547669339aa22b5be973866f3b6b68e2841f",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/moon/pisces",
@@ -6381,8 +6527,14 @@
         "c8979d870ff57c3af33e2dbc83cdd5ae48f932c4aa97aee1294e5daaa21a4fe5",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "611471431df412516bc6c3b21c087ef2fba2775c3a8804c938c49f06dce11e14",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mercury/aries",
@@ -6422,7 +6574,7 @@
         "d3c91e98afca692d2c012eb99dbbdc4102724551d2cd1d6163ceab91dc1ed093",
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone giving the clear answer that gets a stalled decision moving again",
@@ -6442,7 +6594,13 @@
             "50c5676f41167ea227c5ba13c29caebde9f3cfcf23ca7a482d9c1a4ad78858b3"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "0e0ec7cfb3a45cf7668ff868266992a92137b49c6f05513c29d54257c4e311a8",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mercury/taurus",
@@ -6475,8 +6633,14 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "56ef0e94d91fe7a5f030ea6fd019065030df894c5fcac2b9d37b71da080466c6",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mercury/gemini",
@@ -6513,8 +6677,14 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "e5a5c3ddd4f70863638ddb523cb1344dbdc74cf43900b2a6a4e9c6112e995a73"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "b154d6acf6e81f18cee1e388e45cd93c573d7bb7396d230a5bdf49a3f97c3f56",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mercury/cancer",
@@ -6548,8 +6718,14 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "27a10e691a3e9d94f24a7f49c4bbb62be595cce3654dc6094c214ca01c9d11c8",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mercury/leo",
@@ -6587,8 +6763,14 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "aa82d6c9260b2002bfc77427df6d1d1106973f12d90efadab839735b232fa860",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mercury/virgo",
@@ -6621,8 +6803,14 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "7b6afbd044b1b3820e8f5156ec813b8da5957d612155cd0c84bb0a5f6de42bc3",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mercury/libra",
@@ -6656,8 +6844,14 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "8ccde0a19e06b3046b3b287f6f83643ebd151c488271b36503233e1585fd17a6",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mercury/scorpio",
@@ -6692,7 +6886,7 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone naming the private fact that lets a stalled decision move",
@@ -6703,7 +6897,13 @@
             "379a1b9b2940ae97fb0fc26750e590d9c11e000a5717690ba726b32757af5416"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "2fdee4909c7b29b5aa91b8e5dd228ddb5dee3284d3a18af9cde05936f15c89b7",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mercury/sagittarius",
@@ -6736,8 +6936,14 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "933de85b251c0724430898c4c44585c30e43b6b1109ba0fb48758ff3f4f82ac4",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mercury/capricorn",
@@ -6772,7 +6978,7 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone putting the deadline and responsibility in writing so the decision can proceed",
@@ -6783,7 +6989,13 @@
             "9b257f1e586392f5ebfa62fbd86d2873079360610fd9d8188c4241c0d4a3aca9"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "3c8a018120d3474da647c93aa657bf2a7bb23fcb9d3e83dbcd0d35b2aed3073f",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mercury/aquarius",
@@ -6818,7 +7030,7 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone showing where a new rule can work in practice",
@@ -6829,7 +7041,13 @@
             "8267f0d54861a0712e03dcc4472bce8e50de6220e09877ee51ca4e84a145a16d"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "a233ccc43f80010bf5b565c4c63f99cfe8a86e5bc51f76f57d9b4f8d1fb6306f",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mercury/pisces",
@@ -6867,7 +7085,7 @@
         "0237fd88c302885a82be4afc5d3bdd2a9fa17712edf983a4aa37202e50c64de9",
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone finding words for an image or hunch so other people can follow the reasoning",
@@ -6878,7 +7096,13 @@
             "9350e839fe167dc84002c28847495d2c0f29ed14f588f8bc666560cecaed54ed"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "3c5ec589f688868786f1be0ae46b02a5e62b8b42e7f4f4829d2516e6cda46af4",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/venus/aries",
@@ -6911,8 +7135,14 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "f59180645cbd04fb1114dfb1fcb55bdb871c9f3ecc264cf4211d54c53ffc5d23",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/venus/taurus",
@@ -6952,7 +7182,7 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone choosing the arrangement that feels good and can still hold up over time",
@@ -6972,7 +7202,13 @@
             "6dee87d21887dc5751848bda35e5cc92a8cca58c619062652f4e78d06305df61"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "d1b60a14411e83cdda69529064ab2e7ef56381d0f4b48ffc3a7b03c2326fc9d2",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/venus/gemini",
@@ -7011,7 +7247,7 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "e5a5c3ddd4f70863638ddb523cb1344dbdc74cf43900b2a6a4e9c6112e995a73"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone asking the missing question that gets the conversation moving again",
@@ -7022,7 +7258,13 @@
             "d5e6f6b96b9b5279475b0c30df270a0ef4c8809e2c50c4d8169f131338c7427b"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "b2c543bb12e16aa0057c6e7e98488d0c82d2e43c86fdb44d4237faa5e1fff874",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/venus/cancer",
@@ -7056,8 +7298,14 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "30a0337ae749acc536a0137707dc438d9a84ef72053f0a6ca9dfc328365bf1d0",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/venus/leo",
@@ -7095,8 +7343,14 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "7b05ea364dc5a7f7971e3083d1b221ba18bb086dce800fdf79108fb66f3ea713",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/venus/virgo",
@@ -7133,8 +7387,14 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "47ca034001a7b9ff166431202cf37408a736c546cbba6c8b07a6307576130e93",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/venus/libra",
@@ -7172,8 +7432,14 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "31908515be8ec1f52b2fbaecd0f9fb3d6f6b679c001d9efc3b8b14354f5c3fe4",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/venus/scorpio",
@@ -7206,8 +7472,14 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "111471a3de8d3cbb039359826b7ab3975e3ab4b666e9c0679900198315148934",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/venus/sagittarius",
@@ -7247,7 +7519,7 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone choosing a connection that leaves both people room to keep growing",
@@ -7267,7 +7539,13 @@
             "8536df484d62507cd74941fb64d98a411d15c0878e56e1d3db660a9656426bae"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "d73371dfffe5f38e77a8e728aabbea9d35f9507b210d8e2270aff92bb60f145e",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/venus/capricorn",
@@ -7306,7 +7584,7 @@
         "176e6d64edd1e1ccf2dd6e4da470e7120a3fcb30dfc333b236bf57c9192d6a5c",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone making commitment credible by carrying the ordinary work it requires",
@@ -7317,7 +7595,13 @@
             "8b125bf88f1aee6436760a54e01cd7005a62722d39fa6bb71a50c7715c57f107"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "62db30586c136fc8269d6c00b6f81597340cfc78a95017bfce40e592344dbf64",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/venus/aquarius",
@@ -7352,7 +7636,7 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone making room for an offbeat idea without asking the person behind it to explain themselves",
@@ -7363,7 +7647,13 @@
             "cb1c7e3fd7b93583d6051822f082ba1babfe845d6aac761de0ab20eed276560a"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "420ac6e4eaa9fc642987cb3bc15a4541cd763b2eaeec50c38b999021647338f5",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/venus/pisces",
@@ -7398,7 +7688,7 @@
         "874f74aed91207823207a8c5d4d874b6b94fd33d506ec5a395ad934399aacff5",
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone defining the hope clearly enough for both people to act on it",
@@ -7409,7 +7699,13 @@
             "015929baf8822626da459cf3d1f3ae4ce64c685829f5d0149220131eb0c834ec"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "02a7f71d0e765837df9918a1efda9c874c78f891972506fa3d2d68d815216de1",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mars/aries",
@@ -7447,8 +7743,14 @@
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "d7cab5670a0c7f9c9dfa1cbfbcb060cdec4d595b4856980d0341038331e295ce",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mars/taurus",
@@ -7487,7 +7789,7 @@
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone finishing a careful repair instead of changing tactics halfway through",
@@ -7498,7 +7800,13 @@
             "eeae0d838c1ad19bfbc96d004795b6662cd50802af29f83072e4e90d10f7243b"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "dae270e651d0935f6cc598bbf6be7ef9d4f886735c8e7d8d6bd7890f0ae3cf0e",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mars/gemini",
@@ -7535,8 +7843,14 @@
         "0be04b090c7fcce3670de327a1f2d6a95ccdbbe042681852d42413dc8f9f2187",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "29278033c0c4db0f7fd581ccc28650eedd0fa981505704d27c50779ee753b74f",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mars/cancer",
@@ -7574,7 +7888,7 @@
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone separating the practical need from the feeling before choosing the next step",
@@ -7585,7 +7899,13 @@
             "af3858af454d9e5b5dcc6c54bf51f2791304f3c6f8a929023d7662fb9c16190e"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "feaedf878df1b2eca9f6f19dd79e88f7a4b33001e9817bdf65d8460116f1a3ed",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mars/leo",
@@ -7624,7 +7944,7 @@
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone putting their name on an effort and carrying it through where everyone can see",
@@ -7635,7 +7955,13 @@
             "a8d85d92ff58a5c46e06ca6dba908db966488e38599ec572c9a5fc3574a1c286"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "2fcf2c034ad56bbaa6362b3a41bd219028b469eefa184f04719216e73f1e982c",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mars/virgo",
@@ -7673,8 +7999,14 @@
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "9d04ded2e37e9a8540583d49dcd4b40079592f497135eab9ae09eb26866e8de3",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mars/libra",
@@ -7713,7 +8045,7 @@
         "382a3770451272b03f8fb084cd8b0aa3dae8d2c4da37e7cc43d7ebd1cec2958c",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone using tact to state the real disagreement without abandoning the shared plan",
@@ -7724,7 +8056,13 @@
             "492b1f314d8a6df9b534e659ea4f3313edc71b437c6d1d7dd7d054ddb5576768"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "92a0184aefca5f846e8726b7ff88cbd23eb3582390dd0021cfcb64b18485a9f7",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mars/scorpio",
@@ -7761,7 +8099,7 @@
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f",
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone using what the delay revealed instead of starting the work over",
@@ -7772,7 +8110,13 @@
             "cee20b568b72a43b2df40e3a0dfe84b6e42c81c96912d5010a5a5947c0029fab"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "0bdbc2c338f190171b8588a2a0b875ecd34fc37f7f3391010dfccc69140f0533",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mars/sagittarius",
@@ -7809,7 +8153,7 @@
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f",
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone moving the larger plan once the facts can carry the confidence",
@@ -7820,7 +8164,13 @@
             "c51a9dab166de602ddf124b7a1f08aadc4f0639534c467e83e2d185ff101f9a0"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "f3c4423a17c11b3cb8e994f0e71612bda1b2b6707ba57f2b94fa54fba896cbe6",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mars/capricorn",
@@ -7858,8 +8208,14 @@
         "bfcf38b2a4649dfab75b46e1540455e34106f6e1448421f273c8754f14625845",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "890c9d7d63eff860c6c916af3ea920ac60dd10f0069855314d0023d4b65061f0",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mars/aquarius",
@@ -7896,7 +8252,7 @@
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone proving another method works before asking the group to change the rule",
@@ -7907,7 +8263,13 @@
             "5f8ce9b7212e3b7cc14497b412a8162cbea650eba30c66985269448c79b0e229"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "95e15aaa6a9d0733a9855809f603cf153b7a23ece94b4c925532752685c6ce80",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/mars/pisces",
@@ -7946,7 +8308,7 @@
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca",
         "ae859686a38da4eaf2363e2c080c0b027e74de23766f617d125260962426126f"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone turning a strong feeling into useful work that addresses the problem indirectly",
@@ -7957,7 +8319,13 @@
             "ce39b9484f05ee4b4de00ed7f559d9ec63c9799e6d15afed33154562b15b086e"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "48ec1e5c8be5a35919256256ee9db2dec22982882bf04776fadc035f85921520",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/jupiter/aries",
@@ -7996,7 +8364,7 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone taking the first practical step while confidence is high enough to act",
@@ -8007,7 +8375,13 @@
             "e4f01e9514f9a57aed31a2fa97438e6aa6577e788da968121d2255064f671d06"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "4b3580223315f2a4d649b2219c5648fc9ac6b2d7812ac5e97e24cbf5386ff576",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/jupiter/taurus",
@@ -8042,8 +8416,14 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "647ff1d3da3f6d2f09aecede7798f28fb66b647a7791a92225027c3d33f3c288",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/jupiter/gemini",
@@ -8081,8 +8461,14 @@
         "e5a5c3ddd4f70863638ddb523cb1344dbdc74cf43900b2a6a4e9c6112e995a73",
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "e268e130a3965b97c00302a35a97d8a844561a011a6896f2532fb975ad7a6183",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/jupiter/cancer",
@@ -8117,8 +8503,14 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "4bdcf86821f4f070131fdff7c4a1f5768a38e434b7c95f12b3227044ead10917",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/jupiter/leo",
@@ -8154,8 +8546,14 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "cd62fb54741b97cfd7a0fbd94fdf838854de5ab619a04f86d269d639334487fd",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/jupiter/virgo",
@@ -8190,8 +8588,14 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "2ee6b23b9eb36f092341ce94777de33c4836b4ae2e04aa9e59a0d0a69f83141b",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/jupiter/libra",
@@ -8228,8 +8632,14 @@
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e",
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "cc7ad0c89ffb9faac5684a82e20e6ccdd583bd3442bb18e4f17380a0aa24d8bd",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/jupiter/scorpio",
@@ -8266,7 +8676,7 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone facing the difficult truth that makes grief or change feel less stuck",
@@ -8277,7 +8687,13 @@
             "4f25fcfbf9248a585d7b669cb800935266a6eaabc0120128ad34bf78efb3c72a"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "3dd80f368d1a43b7a94e9ce80b3bfc7dd2df66bb363debb97ebdc39b176c513a",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/jupiter/sagittarius",
@@ -8312,8 +8728,14 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "0e26e3ebf4944b020cfb0cf4a08d816596c4a40f47c05b42f0eb8d06aacd00ad",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/jupiter/capricorn",
@@ -8350,8 +8772,14 @@
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d",
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "1f95b1193d452cfaf5d8d30b98ccc68b8ccb98ee39cf5e8c9e78698a4ad159db",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/jupiter/aquarius",
@@ -8386,8 +8814,14 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "37247e46320a8c8545da9d3f2077fd8b8390e18cc2a3511462466169e19602d7",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/jupiter/pisces",
@@ -8423,8 +8857,14 @@
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8",
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "cec599f4dca7e68ff4833151cccced2a76bc2c759d90c43d28bbb9fc4ebe7cc4",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/saturn/aries",
@@ -8461,7 +8901,7 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone setting a limit that keeps the first move from outrunning what can be maintained",
@@ -8472,7 +8912,13 @@
             "7e5fb724918b17ca3725051fbd9c0295cf672fe75c1d97e8c30c8b46df8dfc55"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "10f92d115f5418940b8e8c7eb6e9810d5606ad4c9b33ab4cde84f6b81415bcf8",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/saturn/taurus",
@@ -8511,7 +8957,7 @@
         "e62714c27f3ae326c39891724c3fdf96868b923777fe0255d6311a3f66167b67",
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone rebuilding trust through work that can be repeated and maintained",
@@ -8522,7 +8968,13 @@
             "3b0435cddd077f55c6ff8fd51efecf026f841287d6594bb384362db6d84aad16"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "d1a187415351b74aa36fc5bf02e1569b20d1c24fcec44847ef98253e4b768f7f",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/saturn/gemini",
@@ -8561,7 +9013,7 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "c24a0129e78e1b2ef600fcbf1e95a95da630f19c792093382a1897a4b5e57836"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone finishing the course or project they kept setting down",
@@ -8572,7 +9024,13 @@
             "d867e451c4e3aad4e2c9cec4b15f972f1f2c0a2d64b91d8717944500f914f374"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "fe1278b7c36a6715bab354bd017a70860f8b08db15be6bc2aa66e7de7a6c72c3",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/saturn/cancer",
@@ -8608,8 +9066,14 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "df15862d4f01a8b47f9bbab089ccc096621378a1ba5a9e5c8e67776129960a1c",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/saturn/leo",
@@ -8646,7 +9110,7 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone earning recognition by finishing the work even when no applause arrives",
@@ -8657,7 +9121,13 @@
             "73c4292b0b670c63064e19f4b8e0c8b029cf29910c4438116ef878683f905dae"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "59df3cefc9672403668db1b74c9d5b70e96d3dd5744e3f3c072fb2bc24616b55",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/saturn/virgo",
@@ -8694,7 +9164,7 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone building real competence by repeating the unglamorous work until it holds",
@@ -8705,7 +9175,13 @@
             "24fd7d31306750ccba043b18fe9c8f60523e5246ee4fb31b744b1413ef81d26c"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "82cf740ff893b6b801d93b61b49f56bbaa878110374600e36a83147eda753243",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/saturn/libra",
@@ -8742,7 +9218,7 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone writing fair terms that still work when the agreement becomes difficult",
@@ -8753,7 +9229,13 @@
             "368bb13fb490aa824d76054f2495eefc059a67927e26ce94eef551955ae46f33"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "91bd4bb3d9d079d6d8406c744520bd2dd3d099e6f2c891f072943d2d5295cf6c",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/saturn/scorpio",
@@ -8789,8 +9271,14 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "0621ece10a1dd9a35dba8b7264c4951bea9af62b2453f747f6b6c5f42147ba40",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/saturn/sagittarius",
@@ -8828,7 +9316,7 @@
         "c24a0129e78e1b2ef600fcbf1e95a95da630f19c792093382a1897a4b5e57836",
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone turning a vague obligation into a deadline that can be met",
@@ -8839,7 +9327,13 @@
             "bf9303bb03e278d3e0fb235c8cd4a9dedfb1e7a4880c5d9f6f95355e48818e25"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "eaee9ea8226201a1e39004034c0abfec099f7c715b85e8fb93311c845873ea5b",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/saturn/capricorn",
@@ -8876,7 +9370,7 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone acting once the responsibility and limit are no longer hypothetical",
@@ -8887,7 +9381,13 @@
             "51e474631540a435c287607a99ec26dbfab40e3c6d6ef5365a577a9a5cab4a92"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "9b1d34e5d5522468d95f0e925b7a3b13208973150f331561595cde6deaf75206",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/saturn/aquarius",
@@ -8923,7 +9423,7 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone proving a different method works before the old rule is treated as permanent",
@@ -8934,7 +9434,13 @@
             "ee211e5057deb529b7154fcf93a1bffadcae23ebd35ddb729eb76695eee4f753"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "451ad5261f894ef42c0afd52153659e8e0b44286515c60e80af6246a508eef50",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/saturn/pisces",
@@ -8970,8 +9476,14 @@
         "dc8e50574db21526e48e22d6b035e89902ebf7b07417613d18d41dabfd24a2ae",
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "379ec63d73b0e2f8a57ff66642458eafea5060507444d554c439c3f88244730e",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/uranus/aries",
@@ -9008,8 +9520,14 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "291b086de9d78c55682911be838f729ecaf736e75884cad3852cd16ef7153503"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "8673eb2db1753955362b8c12b11de460816235dfb5833a40a699a8f175624a40",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/uranus/taurus",
@@ -9046,7 +9564,7 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone changing a routine after the old version stops protecting what matters",
@@ -9057,7 +9575,13 @@
             "447e068caf4b7ff17812902ea09095706df1053ccd80bd3161a07947288149eb"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "c48b6bed39e0678d11a0d2f52b580588fcc6dfa29759d4eb0693c3af70a468e1",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/uranus/gemini",
@@ -9094,8 +9618,14 @@
         "291b086de9d78c55682911be838f729ecaf736e75884cad3852cd16ef7153503",
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "cd71b2bc35c954d79df5ff21f7fb4813e712014f0e8f44f3cc54c2778c677dc6",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/uranus/cancer",
@@ -9131,8 +9661,14 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "3eda1670e64922cacbb89f8a1813a5594dc6ce5bd5d3db86ed5b5f88d0231fa1",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/uranus/leo",
@@ -9167,8 +9703,14 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "69626b367d28570253f27e5d96456248d7fc9d6b705cd7af25124c441a409862",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/uranus/virgo",
@@ -9203,8 +9745,14 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "25d4185524a0a5aa72580fdbd2b5430a8e4c4c97d8014f58606fb96a820dc251",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/uranus/libra",
@@ -9239,8 +9787,14 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "3ebae69916009fe618f42197a788256c812252edaaa139bfa5679f4816fbdf5b",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/uranus/scorpio",
@@ -9277,7 +9831,7 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone repairing trust by renegotiating access after a private disclosure",
@@ -9288,7 +9842,13 @@
             "a2d3ac8ff4c43961ef8985b236f50e5251c858f480b2d91596f0dd23933a6074"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "63a77b242e25002ebb41ce85dc73209f844fd22294a9d0c1b9c0449e03ff6062",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/uranus/sagittarius",
@@ -9325,8 +9885,14 @@
         "ee2d2aa8cee6ff4fadf947f69e08ac6806ea2e14d279e442b3e4d39d861ffbde",
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "f0a9aec94055ae8c3000ddd5cf5ad37a1a95caeb1e33c5751b8eb156fa0ad62f",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/uranus/capricorn",
@@ -9363,7 +9929,7 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone changing the structure once the old plan no longer supports the result",
@@ -9374,7 +9940,13 @@
             "7cc3fa6004b46427a26906c749a0ca0bd2125f28957eb5992c9cd116e286354c"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "55a9a4975de5db718f5d9a3f82c81b2c6cbdbd1272d04a812f0b6136bc04fbe1",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/uranus/aquarius",
@@ -9411,7 +9983,7 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone proving a different system can give the group more room to act",
@@ -9422,7 +9994,13 @@
             "0b25fb329bb37dcb8844ef406f5c268075a7608a5de3a8a5a8ec47f5a53677b6"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "1583707e9163a817899c1329c17663c3259ed7f9e7dccf1b7eda67c63b99cd38",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/uranus/pisces",
@@ -9458,8 +10036,14 @@
         "3fc31839983c0a9db46769426c7542beb585799eebbabd7b4d494bbc6e814c38",
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "8ca671f0a8a0b243ca4ed3ed63c347bf906b0ad7fb8a2fa7b20bfe8779929298",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/neptune/aries",
@@ -9496,8 +10080,14 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "e2a017f1917a1f4162da46cbab3604b2fb029b7f60f6a7151b061c04117c4cb2"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "29be5036c1e6f0f6df1a61dcbbd534a261f7d1225404b24ffa5b56b3cb16b492",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/neptune/taurus",
@@ -9536,7 +10126,7 @@
         "cdbfd6b52e7240725b80691e9ce2cba4d14b2814f3c3cbfb895aeeb66e9d2905",
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone making an ideal practical enough to protect what people actually depend on",
@@ -9547,7 +10137,13 @@
             "a2347094d9321f6a196c01f6200e7986f65a2e463e2966c3a8ec4e785f785ac0"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "de6cdd9a52403c7e217b6b97bcc4dec0ed9efd1edef1a3b19a42b5d250c4efcf",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/neptune/gemini",
@@ -9586,7 +10182,7 @@
         "e2a017f1917a1f4162da46cbab3604b2fb029b7f60f6a7151b061c04117c4cb2",
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone giving an imaginative idea words that other people can understand and use",
@@ -9597,7 +10193,13 @@
             "c0f8836c5c1a1172338e5acdf3cd097f45693271d06149b0a26c139d31098dfe"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "2f0fc941303e757306a049d44e7969549bdb0ec1d2f9f5992d319d33177cfd14",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/neptune/cancer",
@@ -9634,7 +10236,7 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone offering care without assuming they know what another person needs",
@@ -9645,7 +10247,13 @@
             "070f3cfc10da7ac3099e6eca89f82f3855914fd86896986d6d030dbe0ffc73f9"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "3cd8b68cee7dbf24f03502334dc4f47240386af4daf668477538471c1bc3e02b",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/neptune/leo",
@@ -9682,8 +10290,14 @@
         "2e865f02ac87bd39d0532a7c6ac1bc8afd4eb4b467fdacae0d507ccaa58491ce",
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "c833b5ab305a9ae2e3308c053bcf133a0b4b39b73cf7ac21007f2b949dffeceb",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/neptune/virgo",
@@ -9720,7 +10334,7 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone turning an imagined possibility into a method that can actually be followed",
@@ -9731,7 +10345,13 @@
             "d7bd95bf8533bc3079c5d81ae46eac40d254d5b2d6b578b42ea990f7a9294e39"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "4a0c75c43648a7f8a3022468afa83da8574fbbd36dd13e3487091ae2d9b942f5",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/neptune/libra",
@@ -9767,7 +10387,7 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone checking the agreement against what fairness looks like beyond the fantasy",
@@ -9778,7 +10398,13 @@
             "ac71ce5dc69cda4540b6e94a12649ad377ea80775509fb3977b920ae326dd228"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "c040836db8774fb7431848c637d90428fd22c3027226c2a3155c9fbdf7fd7142",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/neptune/scorpio",
@@ -9817,7 +10443,7 @@
         "a94a3431c25f7bb48dee0dcbc354dcc62f02451481788b1f7f18609f024a7e3f",
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone naming the motive clearly enough for trust to deepen without hiding the power involved",
@@ -9828,7 +10454,13 @@
             "784d57f41ce8fb7f246e05203c322f24ab8f3dd71aa0211b950b1b35919d8c05"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "86dcfd9bd4d90d21385e51e3a52b393b4c54d347f1cf972c824d737b6d7a6f9d",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/neptune/sagittarius",
@@ -9864,7 +10496,7 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone checking whether a belief is their own before making a decision around it",
@@ -9875,7 +10507,13 @@
             "f32d1712124abc70f2b60d2ed0e2af485b346fe87854056a5a8fda31790ea7d9"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "1e082aecbe3dd781e07ac12f64193b8f689ad08cf7334cef1e0a833e07d4f1b5",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/neptune/capricorn",
@@ -9912,7 +10550,7 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone rebuilding a plan around what still matters after the old blueprint stops working",
@@ -9923,7 +10561,13 @@
             "f0b963c36f04d533c99c313b29b5f145acda559523d2441dce5c7c90f77ecc26"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "5fdf1598cd5e955e7a8dc68e5c791699a4ede3fa7890beb602ad282874efd716",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/neptune/aquarius",
@@ -9959,8 +10603,14 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "f72a54567b20eeaf22c904cd7805922a0c299dd4fc035a49d2df1a964b1db820",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/neptune/pisces",
@@ -9996,8 +10646,14 @@
         "980e768db22a14fb5bd28cd3a98894beb992e4d63450221133c4c2db7bc41005",
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "ad9919a0bafd93fb3949046ef2aabb2ce5759b9542ace68b8e39b4d699904262",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/pluto/aries",
@@ -10034,7 +10690,7 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone saying what they want and taking the first step after an old hesitation breaks",
@@ -10045,7 +10701,13 @@
             "38151f49bf83f9963c6fd871a5a68b9804aed3ae6d498a67b2e215b076ec98c2"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "9f2df75dd60dd43dbfe2309e904506ff105ebd2dab77b1c1c334b724a69a940e",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/pluto/taurus",
@@ -10084,7 +10746,7 @@
         "9faea77b36867dc3f3adafa7344436577a3b353caab8177f6cf222f14aa102bc",
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone rebuilding security after an honest look at what the old arrangement costs",
@@ -10095,7 +10757,13 @@
             "210776fa92bc87f5045ba0d2f237581eb42335ea7a8ea06b3f0b9b065eb07e0a"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "2329d1b1f0d289c628d98ade0a91a8ff53925037f4eccddeaa5459ec2988b2c9",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/pluto/gemini",
@@ -10132,7 +10800,7 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "e5a5c3ddd4f70863638ddb523cb1344dbdc74cf43900b2a6a4e9c6112e995a73"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone questioning an old belief after one conversation makes its limits impossible to ignore",
@@ -10143,7 +10811,13 @@
             "a9518abaec842c1f0de30f34c0888d93c846bc5de4c7bf2e266eb0d737cfbe6e"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "80fe11fe1d30c517ea4250122a86c4d979e38574660438f9577145e0bced790e",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/pluto/cancer",
@@ -10180,7 +10854,7 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone changing an old family arrangement after naming what the household actually needs",
@@ -10191,7 +10865,13 @@
             "20f1ef6fbf6b19bc2fd56e2b91c2f2347a4cb63c433fc84493349182ee15d0df"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "bcfaa847124b464163ca91a905d305c2c37d8ead7ca799f5a1546432352faa19",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/pluto/leo",
@@ -10228,7 +10908,7 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone claiming visible space for work that was previously easy to overlook",
@@ -10239,7 +10919,13 @@
             "9adcd6ba13260b466db67a799b750d360f8a09ad42313c7df9a052c893263b27"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "f2a1bacda932944bade2e15325477484e294ee801523e90f620258fe1651903b",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/pluto/virgo",
@@ -10277,8 +10963,14 @@
         "f8ffad517ffe6102610b065deb560255528c2ca1081bc3cdbfd677fb276a02bc",
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "8531d44a7e6ba56c67aee9ced4ed80bf4546d5f92f005e9d23c7c27672ee8a71",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/pluto/libra",
@@ -10315,7 +11007,7 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone renegotiating an agreement after repeated compromise reveals who keeps yielding",
@@ -10326,7 +11018,13 @@
             "5a504ba7155cd45d03b0d4627458bb9d8198536da8024a5e248ccc99f96770fd"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "6b6d8e811f8d6cd9463fb260f4d1fee49c6fdc273d6d1ee91e77a38e76978926",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/pluto/scorpio",
@@ -10365,7 +11063,7 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "9faea77b36867dc3f3adafa7344436577a3b353caab8177f6cf222f14aa102bc"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone opening the hidden material and changing the arrangement that kept it buried",
@@ -10376,7 +11074,13 @@
             "b3f845992e2a982a389e5d0292dc27dbc0635a259e98d115d8ae7540a4badaf0"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "159358e682550060b3c071a5870e8b32b07cb0fb136030aa271ba66f8bb066d0",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/pluto/sagittarius",
@@ -10413,7 +11117,7 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone questioning an inherited belief until a larger and more honest view becomes possible",
@@ -10424,7 +11128,13 @@
             "1ca242e50bf0e6785b30a34640ffca4cca814829c2ee54ed18b28db52ebf0e9a"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "4cd588b531199618ca49995095fadd83e7b23cf7fb4274a842ebc6b9dc4a040e",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/pluto/capricorn",
@@ -10461,7 +11171,7 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone moving a decision once responsibility and control are named directly",
@@ -10472,7 +11182,13 @@
             "561ab8da2a85c422ac3be616352c3b5b5b514c39865886c11c6cf6fc94b141a3"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "1b2d4497b69741548b4a94fe1af6ec29e962ff8fd3d57a05197878bff7ab4b3a",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/pluto/aquarius",
@@ -10508,8 +11224,14 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "e9db96fa68d639bcd71a52b32de4421c4203e2f03808855015a07de51a016a27",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/pluto/pisces",
@@ -10546,7 +11268,7 @@
         "34f90018f678363d3673ce43884220539861e92b3ec5415e9b36e7e7534acaf7",
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone releasing a belief or coping habit that no longer provides real comfort",
@@ -10557,7 +11279,13 @@
             "c37156cad7ff9a237bf0785b39b83107bd40d8f64297ac16e61bcefa3fab773d"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "df0ddb96aef5018e79529a9b2508e322aca97cacd3059d45b433bb35a0c4879c",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/chiron/aries",
@@ -10590,7 +11318,7 @@
       "owner_voice_source_hashes": [
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone trying the first move again after an old setback stopped deciding the outcome",
@@ -10601,7 +11329,13 @@
             "b2cabb3951c0a2b65c79395a2f0e42f03e2f17d6fc7126ada780b5ccb20569cc"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "7b39885c04ed22af727d2d9b59f7434f69f6c61e72d6ded605e4e092ad4dcbc0",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/chiron/taurus",
@@ -10634,7 +11368,7 @@
       "owner_voice_source_hashes": [
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone choosing a workable change after comfort alone stops protecting the old setup",
@@ -10645,7 +11379,13 @@
             "dba3adff229b8043a48f7604a778f8fc29393b5dc7910bb21fe50f4cebc684d8"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "d125a9d9c7f748f83b4340c1adfb59e9591e0f9fa56faa7c34b00b11bd8ae548",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/chiron/gemini",
@@ -10678,7 +11418,7 @@
       "owner_voice_source_hashes": [
         "e5a5c3ddd4f70863638ddb523cb1344dbdc74cf43900b2a6a4e9c6112e995a73"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone sending the message after checking that their own meaning is still there",
@@ -10689,7 +11429,13 @@
             "78edaff067639521b44181d003467ca5cccaa5b8d381f08a95e8bbca9011e4c1"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "6192f7d792be8df2604000be738eb1e87a1d5a2702252492a4ec3c3623c323df",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/chiron/cancer",
@@ -10720,8 +11466,14 @@
       "owner_voice_source_hashes": [
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "c7a3a2f4808adbe489a9ccff340089e5d4dc198c2930242c3deb08ed7fb8cdb9",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/chiron/leo",
@@ -10754,7 +11506,7 @@
       "owner_voice_source_hashes": [
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone sharing the work without making it impressive enough to hide behind",
@@ -10765,7 +11517,13 @@
             "009b737f732c579020195c6b992dac19f826715af6227895d676973202a80207"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "0af4544e5e730b11a3cf7a4e97e4a2e9f606f873949690421c3629ad446e3a1b",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/chiron/virgo",
@@ -10797,7 +11555,7 @@
       "owner_voice_source_hashes": [
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone letting a finished task stand before every small flaw has been fixed",
@@ -10808,7 +11566,13 @@
             "e24b7e1d96a7ba688793694b4d58a2383c697e652d2e0edc984be800e00b32be"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "0f17d84b2408103321f82bfed4f89b83a1cc62e20a1526f67b0fcecb98f8de7e",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/chiron/libra",
@@ -10841,7 +11605,7 @@
       "owner_voice_source_hashes": [
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone stating a real preference without making agreement the price of staying close",
@@ -10852,7 +11616,13 @@
             "95c29facac24c9ec132ba8092cb83bf1a2b20941e1c37193c39a208f1eaedce7"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "4cc05953884246671636ab0aefe3f41f1d5ff143821e991b40151073567faed1",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/chiron/scorpio",
@@ -10885,7 +11655,7 @@
       "owner_voice_source_hashes": [
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone letting another person closer without demanding proof before trust can begin",
@@ -10896,7 +11666,13 @@
             "f82bbd6e0681e6c94ba555224695abe258d9faa2ffb78329d2f0750fbbf6cbb5"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "6ee182762b15b150c044ed79697bd00e86ffcb4ddc968c83d4c0e5f89dbd424d",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/chiron/sagittarius",
@@ -10929,7 +11705,7 @@
       "owner_voice_source_hashes": [
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone stating a conviction without softening it before anyone has disagreed",
@@ -10940,7 +11716,13 @@
             "96edddc9530f9f16866239920c92e516223b6d6ba683b90afef8667d6709addb"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "c706402d771d6a35526a075c2da8de3be32d0ac75ed04aeae7d640cf0f4ce310",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/chiron/capricorn",
@@ -10973,7 +11755,7 @@
       "owner_voice_source_hashes": [
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone setting down extra work that was only meant to prove they were capable",
@@ -10984,7 +11766,13 @@
             "e9a1fde6aaf473bf5e407f5ef9ade3769bcea4d9ebdb56134d53195f50a91b68"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "38adca41c29a137d80a8d283be8b53a489a7ebaa9a103e4691c012c3c6077c59",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/chiron/aquarius",
@@ -11017,7 +11805,7 @@
       "owner_voice_source_hashes": [
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone sharing a different opinion without editing it into what the group will accept",
@@ -11028,7 +11816,13 @@
             "e90ad5413bd8cfc6a1adf1ad804faa1d46479f77ed63fc1959307297736d0325"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "84893f91ae05d27e3a609a91590a08769e51b685db5795ea2d7c4b6d3ca40d51",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/chiron/pisces",
@@ -11061,7 +11855,7 @@
       "owner_voice_source_hashes": [
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone changing a practical commitment so it matches what they actually believe",
@@ -11072,7 +11866,13 @@
             "8978b0b7d8ad7dd7076fc2927c2ad508edc7887e3668de982bd0207149dfa945"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "31c08b4a494e9751736cc1506e43202243b9f594d4a288ce88b1d24ac0e673ad",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/lilith/aries",
@@ -11103,7 +11903,7 @@
       "owner_voice_source_hashes": [
         "72972ccce314fbc5e054e6452354fa0d0420430ff8a9837ea8023d0afa10a3a8"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone saying no before another repeated demand becomes an obligation",
@@ -11114,7 +11914,13 @@
             "60f3943efd141a5fc1b4c2b73952ff8780970099c425d27ed59d7b4f1799fe28"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "d2a956911f2a9ac3c94d0ec0c42a7e0fa5de3b4b20afcf19fe7c9fb3e62d3681",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/lilith/taurus",
@@ -11145,7 +11951,7 @@
       "owner_voice_source_hashes": [
         "83329b96ce1e5300b28c1769022d60047da0e704e55f095c0592ce0339a62916"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone naming what their work, body, or time is worth without defending the need",
@@ -11156,7 +11962,13 @@
             "30b02d3985023529701ee6367165fc038f6729a2b4587ac8e6dd595d94353c48"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "2f4aea83624aa448aaaf8e68e0d1b4dae6f8b89d639d3ec8209be9735bd91d34",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/lilith/gemini",
@@ -11187,7 +11999,7 @@
       "owner_voice_source_hashes": [
         "e5a5c3ddd4f70863638ddb523cb1344dbdc74cf43900b2a6a4e9c6112e995a73"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone correcting the official story with the fact everyone learned to leave out",
@@ -11198,7 +12010,13 @@
             "5092d02d000e5a5fe5efcc5932adef0127e0778ed515dc5d66e718710bc0060a"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "defc0a0a6ac76faef04ede33da3736806e677e820bd00cd92d2337360908aa73",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/lilith/cancer",
@@ -11227,8 +12045,14 @@
       "owner_voice_source_hashes": [
         "6a70e8bd0e8123471cd85390093ca9edf40f033aace79ac4d8ed98433bb77ef2"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "f39b7ac19fef40a442c4811cba45fa4d660b75e02155e0fcbbb17820ba68dbd9",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/lilith/leo",
@@ -11257,8 +12081,14 @@
       "owner_voice_source_hashes": [
         "452ae918e2c73c87aaddb415748fd6f9b0d23667b3f4d029a353cec183cf80f6"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "a8915d38ae36d4b0d8082fd9877d2b98361167346d41c9e8ae777135dc6e589d",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/lilith/virgo",
@@ -11287,8 +12117,14 @@
       "owner_voice_source_hashes": [
         "6823133e48389c4c6eea0cc5a3b9286b374682ec835b8b8209569559f80f1512"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "b1aac0c3641b43acf7ff8d4b081cad4fb9c92ead92040e3c6699dd035d699256",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/lilith/libra",
@@ -11319,7 +12155,7 @@
       "owner_voice_source_hashes": [
         "d4a947529855c45bb9a43ab1027a95454f8c1a9e7afbdae49d140914122c000e"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone saying plainly that an arrangement does not work for them",
@@ -11330,7 +12166,13 @@
             "25d84057e92e0d10c8e3d53a73964fc31fe0041aec5b8500a65d6ba1f05ca2d7"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "8fd8d6101a90d7ae15a39fe1dcf73fae0128210fbda828bf6ef81640e84a9705",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/lilith/scorpio",
@@ -11360,7 +12202,7 @@
       "owner_voice_source_hashes": [
         "dee5b5d87e95d946b9e42fa8a7dd3ab1a19c7becc5415333794f07ee74f8e6e2"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone naming the private agreement everybody has been organizing around",
@@ -11371,7 +12213,13 @@
             "f11d95323ebec883f65ad583cfb50566860103e7dbca2c57b6822fc72a2b8167"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "c022f290ccc0c2d69e3d0ebab9601290d208b81591db115925443a8db4db5431",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/lilith/sagittarius",
@@ -11402,7 +12250,7 @@
       "owner_voice_source_hashes": [
         "6b37221546da9e3e194352a0ff4109a95a1621f15b05aa6356a9c1c907eaba7a"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone challenging a rule that treats disagreement as ignorance or disloyalty",
@@ -11413,7 +12261,13 @@
             "7c20900feca4cf403950a92fda1855e5be2db9221b6c0b0896d8e2599f55eb9d"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "c913fa51f4abcae09a214758513e557f63d9712ad8d6fa99c14d39efc296e32e",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/lilith/capricorn",
@@ -11442,8 +12296,14 @@
       "owner_voice_source_hashes": [
         "394a299be23d55eef871ed0f0efe85c4b37a860b927bbfbd92890802fbf77b2d"
       ],
-      "owner_review_status": "PENDING OWNER",
-      "supportive_realization_evidence": []
+      "owner_review_status": "OWNER APPROVED",
+      "supportive_realization_evidence": [],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "e8018157b454d008fa2d3327aa66197e94464209489911ca87f3cd1eb13569d2",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/lilith/aquarius",
@@ -11474,7 +12334,7 @@
       "owner_voice_source_hashes": [
         "915195d361c9a5bb87614f4d694f613dbddfff52c82ab70be9f380e56a9db82e"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone leaving a group that only includes them while they remain useful or agreeable",
@@ -11485,7 +12345,13 @@
             "8b2278b5d06f8f109b87da66ab89d8c16520207aab9459c71ab45d8b44c6f1ba"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "a49e608c73e7b2b95dc014aee25a941f4fba37f58d67470fb54568b6e7799892",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-sign/lilith/pisces",
@@ -11516,7 +12382,7 @@
       "owner_voice_source_hashes": [
         "5a739c35987c5f57d401893bff3325eb04d28ee4a05ff9f2db1abe4b9e2477ca"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realization_evidence": [
         {
           "realization": "someone ending an arrangement that depends on their needs disappearing",
@@ -11527,7 +12393,13 @@
             "2804160df9db69f9b14b6a20c6c11fbcc9985d1243ff62673ffd1fd97f948a07"
           ]
         }
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "9ca09c91e965eef1cdc8d0ce7dc7444d8071a96ea2255d4df5a5f85d1a1d3a82",
+        "approvedAt": "2026-08-16"
+      }
     }
   ],
   "aspectMechanisms": [
@@ -11542,7 +12414,7 @@
       "source_hashes": [
         "5782520905147db09233ae0c5a02afa6d27fc4aafbcc269f639be451f56a9cd6"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "people have to address the point both concerns share"
       ],
@@ -11551,7 +12423,13 @@
       ],
       "shadow_realizations": [
         "what people do about one concern immediately changes the other"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "9b9add40b6713735e70a45863c5b75a6f8d8273918327fee74107ac92d86fea1",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-aspect-mechanism/opposition",
@@ -11564,7 +12442,7 @@
       "source_hashes": [
         "0c985f34298dc283834fd1b91585e605b471ece33c4f833ec5e248dcb3dc7702"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "people usually have to deal with both positions instead of removing one"
       ],
@@ -11573,7 +12451,13 @@
       ],
       "shadow_realizations": [
         "the two sides are more likely to state the disagreement openly"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "a05232a0f5712362adb512da6e59b160e3878cfcabc10c7486f425447201f361",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-aspect-mechanism/square",
@@ -11586,7 +12470,7 @@
       "source_hashes": [
         "abe32521ed5431d91f9fa96f4707f5454cf038ca1a884d42e95480e8cc446cd6"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "people have to change the arrangement because neither demand can continue as it was"
       ],
@@ -11595,7 +12479,13 @@
       ],
       "shadow_realizations": [
         "each attempted answer brings the unresolved mismatch back into view"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "a67d11e3e3a99454c72b29393eaff76e1f214f7eb04adff2efe93001edb3d91b",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-aspect-mechanism/trine",
@@ -11608,7 +12498,7 @@
       "source_hashes": [
         "6324996e9487500061aad62d67693bd4156b7174106c97e77e06dd5aa78f73ad"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "the opening becomes useful when people name the terms clearly"
       ],
@@ -11617,7 +12507,13 @@
       ],
       "shadow_realizations": [
         "people may let a weak assumption pass because the work feels easy"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "f4bbaba7d174ae2f5bbda931baa59df7be3999d9a06b7a471cb14f44215db496",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-aspect-mechanism/sextile",
@@ -11630,7 +12526,7 @@
       "source_hashes": [
         "64ca1edb4c0aa3cee0dee90fe1a557dd3b4656b7281ec9b12d0c4724cc386fd8"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "someone has to make one concrete move that connects the two concerns"
       ],
@@ -11639,7 +12535,13 @@
       ],
       "shadow_realizations": [
         "people can notice the opening and still leave it unused"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "8b2692da3b8c420cb5443ca64fcc57a1e8b7924869d123c44bc56385fddfc399",
+        "approvedAt": "2026-08-16"
+      }
     }
   ],
   "modalityUnits": [
@@ -11656,7 +12558,7 @@
         "c8bb886bf5a7daf1cff047bb46e3b4c95c4ad46e3b7b5a0cb041d7fdeaf77349",
         "c8bb886bf5a7daf1cff047bb46e3b4c95c4ad46e3b7b5a0cb041d7fdeaf77349"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "both sides need a shared first step or a clear decision about who leads"
       ],
@@ -11665,7 +12567,13 @@
       ],
       "shadow_realizations": [
         "both positions push to lead, so delay quickly becomes a contest over the first move"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "b72085f4829f67bc6afe1f680509d04f2d5fee6e8543cb12997bc7481d39c6b6",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/modality/cardinal/fixed",
@@ -11680,7 +12588,7 @@
         "c8bb886bf5a7daf1cff047bb46e3b4c95c4ad46e3b7b5a0cb041d7fdeaf77349",
         "c1af5c2de3d3f5860119897ad43903f3b0214beeab6d10548a14663ec22de3ae"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "people need an action that preserves the fixed position's central limit"
       ],
@@ -11689,7 +12597,13 @@
       ],
       "shadow_realizations": [
         "one position keeps initiating while the other protects what cannot be surrendered"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "5fd8682d3e6dcd2fc6e42063ce1721606962955b231339829947490f41767b90",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/modality/cardinal/mutable",
@@ -11704,7 +12618,7 @@
         "c8bb886bf5a7daf1cff047bb46e3b4c95c4ad46e3b7b5a0cb041d7fdeaf77349",
         "1d50f30d05d27a1dddaa3d0303836016780e89fa39b0749b6b4ee29dd3f37b41"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "the first step has to leave room for a defined adjustment"
       ],
@@ -11713,7 +12627,13 @@
       ],
       "shadow_realizations": [
         "one position wants a decision while the other adapts as new conditions appear"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "be751aebddd438e080e949b2693ea0b5b89844bbfc79864747683d39d3b7fefd",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/modality/fixed/cardinal",
@@ -11728,7 +12648,7 @@
         "c1af5c2de3d3f5860119897ad43903f3b0214beeab6d10548a14663ec22de3ae",
         "c8bb886bf5a7daf1cff047bb46e3b4c95c4ad46e3b7b5a0cb041d7fdeaf77349"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "the proposed action must work inside the limit that is not moving"
       ],
@@ -11737,7 +12657,13 @@
       ],
       "shadow_realizations": [
         "one side holds its ground while the other treats movement as urgent"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "bd4f190fa58e04c0d345ffeef92da9f388defa8b97364676a893b3b489a9556f",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/modality/fixed/fixed",
@@ -11752,7 +12678,7 @@
         "c1af5c2de3d3f5860119897ad43903f3b0214beeab6d10548a14663ec22de3ae",
         "c1af5c2de3d3f5860119897ad43903f3b0214beeab6d10548a14663ec22de3ae"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "people are more likely to change the terms or structure than to make either side back down"
       ],
@@ -11761,7 +12687,13 @@
       ],
       "shadow_realizations": [
         "neither side gives ground easily under pressure"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "48a8949913431f9c9c2933965de641df8fe6cb1bd38ff75e34ea79ab41381da6",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/modality/fixed/mutable",
@@ -11776,7 +12708,7 @@
         "c1af5c2de3d3f5860119897ad43903f3b0214beeab6d10548a14663ec22de3ae",
         "1d50f30d05d27a1dddaa3d0303836016780e89fa39b0749b6b4ee29dd3f37b41"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "people have to name the nonnegotiable point instead of revising around it"
       ],
@@ -11785,7 +12717,13 @@
       ],
       "shadow_realizations": [
         "one position holds the line while the other revises around it"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "8c5a88c1a642d44c85ec2502ef9ceca6da8e8292868de2a107f84b02374ca04c",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/modality/mutable/cardinal",
@@ -11800,7 +12738,7 @@
         "1d50f30d05d27a1dddaa3d0303836016780e89fa39b0749b6b4ee29dd3f37b41",
         "c8bb886bf5a7daf1cff047bb46e3b4c95c4ad46e3b7b5a0cb041d7fdeaf77349"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "a decision can move if it includes a defined point for review"
       ],
@@ -11809,7 +12747,13 @@
       ],
       "shadow_realizations": [
         "one position keeps revising while the other insists that action cannot wait"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "1b055f21e309129c4e2796e7efb637d1875391c00460089ac39c457527d65b4d",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/modality/mutable/fixed",
@@ -11824,7 +12768,7 @@
         "1d50f30d05d27a1dddaa3d0303836016780e89fa39b0749b6b4ee29dd3f37b41",
         "c1af5c2de3d3f5860119897ad43903f3b0214beeab6d10548a14663ec22de3ae"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "people can move once the flexible side stops revising around an unnamed demand"
       ],
@@ -11833,7 +12777,13 @@
       ],
       "shadow_realizations": [
         "one position adapts repeatedly while the other protects a fixed requirement"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "240132a8dde5b5e7d38515ddebe9cf55f3919c4c9c809e5b9150cb1ed8c060f9",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/modality/mutable/mutable",
@@ -11848,7 +12798,7 @@
         "1d50f30d05d27a1dddaa3d0303836016780e89fa39b0749b6b4ee29dd3f37b41",
         "1d50f30d05d27a1dddaa3d0303836016780e89fa39b0749b6b4ee29dd3f37b41"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "one workable version has to remain in place long enough to show what it does"
       ],
@@ -11857,7 +12807,13 @@
       ],
       "shadow_realizations": [
         "each answer creates another possible version before the last one can be tested"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "4a936df6c6f0d71217a1cadfb46c17194e3d5453de92487f11d0143cc8363730",
+        "approvedAt": "2026-08-16"
+      }
     }
   ],
   "elementUnits": [
@@ -11872,7 +12828,7 @@
       "source_hashes": [
         "5266b43daa66d9840988ee1bdbdd2f5dd70165403785551ad37f409d5d921769"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "both sides need a shared direction before adding more force"
       ],
@@ -11881,7 +12837,13 @@
       ],
       "shadow_realizations": [
         "each position treats movement as proof that the direction matters"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "f157d99cb48e37cf0fb1b3ccaeef86d28df09ecf382371fc03c1f4fa70f1091c",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/element/fire/earth",
@@ -11894,7 +12856,7 @@
       "source_hashes": [
         "d31e44ef713033e1a195d81c45b4274af703eede1fa5aff45a578a615f211d72"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "the action has to become a plan that can be maintained"
       ],
@@ -11903,7 +12865,13 @@
       ],
       "shadow_realizations": [
         "speed raises the pressure while material limits determine what can hold"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "03c62bff53113925ab31de4f103998598f2d0471f60e1af7561ae16f9439f9b1",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/element/fire/air",
@@ -11916,7 +12884,7 @@
       "source_hashes": [
         "43ea3308ae1473b4351a2ef833847faaefa0a4c4f0b5c5ada5ca471e72198396"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "a clear purpose can keep the movement from scattering"
       ],
@@ -11925,7 +12893,13 @@
       ],
       "shadow_realizations": [
         "language accelerates the action, sometimes before the direction is settled"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "402dc418b4732a2983088922a9841a5fe4801785470070058ad76d02bb90b078",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/element/fire/water",
@@ -11938,7 +12912,7 @@
       "source_hashes": [
         "afc05d018a4c4076b64264d5cf3206dd4f08efdd724022c7905edf074a16d4e5"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "the action can change once that protected stake is included"
       ],
@@ -11947,7 +12921,13 @@
       ],
       "shadow_realizations": [
         "the push to act can overlook what people are trying to protect"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "0854c576282458501a79019dc6004545d3ea4f741a8debf8d8161548684a60cb",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/element/earth/fire",
@@ -11960,7 +12940,7 @@
       "source_hashes": [
         "07b42e02d589b32a85840328d0327d7ce89f27051d80a0daf469857ee5409f61"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "the next move has to fit what can actually be sustained"
       ],
@@ -11969,7 +12949,13 @@
       ],
       "shadow_realizations": [
         "the available money, time, or material slows the action even when urgency remains high"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "beaa48fcfaf8e630560f00c3b5d6f26e62517c41962c7b034856f65070887005",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/element/earth/earth",
@@ -11982,7 +12968,7 @@
       "source_hashes": [
         "0976ac2fc1b638e58d3390a7125683e61c241abad346caa2bec64e0dfc13ec5f"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "a practical term can move the situation if both sides can carry it"
       ],
@@ -11991,7 +12977,13 @@
       ],
       "shadow_realizations": [
         "neither side is persuaded by movement that cannot be maintained"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "665e8c9625f05caad65baa68a49b4f5239e44d59d96faba105c94f74ec857a72",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/element/earth/air",
@@ -12004,7 +12996,7 @@
       "source_hashes": [
         "655d501967f3c04534805a1b45792258b1e706604463175304359d97fe9597d4"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "the terms can move once they describe something workable"
       ],
@@ -12013,7 +13005,13 @@
       ],
       "shadow_realizations": [
         "facts and practical use test whether the language still holds"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "bc52c3dd277985488a2a6ef60a7c4a7376fbd54bb4554c944f44dc2ed11babec",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/element/earth/water",
@@ -12026,7 +13024,7 @@
       "source_hashes": [
         "1292eb824bbe0a7c1cd65f654bbd0018d50b2d6be70255dbe81c4de600f7a846"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "the arrangement has to protect both the limit and the human stake"
       ],
@@ -12035,7 +13033,13 @@
       ],
       "shadow_realizations": [
         "a practical answer can feel insufficient if it erases trust or belonging"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "5a6c3a8a4c1620015d93fca7f86f1b8cb4ae2f6f7158ef337575decba8a044f2",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/element/air/fire",
@@ -12048,7 +13052,7 @@
       "source_hashes": [
         "b025cbb18975d3bbdf51dda4ff2db883cd54c077296244aef51cfa44fa1d273c"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "clearer language can turn pressure into a defined next step"
       ],
@@ -12057,7 +13061,13 @@
       ],
       "shadow_realizations": [
         "the need to act can outrun agreement about what the words mean"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "642e51330b99923fe6fe7d3c16f8d85fb6f9d1ffc58cfa7bbc682ad84a0e296b",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/element/air/earth",
@@ -12070,7 +13080,7 @@
       "source_hashes": [
         "2fcd39ab4b191e8d9fa4249fcb99c4dfc59b83fef0660c3fc244ef01e094d1c0"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "the language can change until it matches what is workable"
       ],
@@ -12079,7 +13089,13 @@
       ],
       "shadow_realizations": [
         "an explanation loses force when the material facts do not support it"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "a317e77784476c3dd138bbf33789e3d74db8cdb623599ca6685414865454fcc2",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/element/air/air",
@@ -12092,7 +13108,7 @@
       "source_hashes": [
         "84051c3040e83d12f93f73121e4e4f850e698a9e75a3dba0824bd2e43a0d80ba"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "a shared definition can hold the conversation in one place"
       ],
@@ -12101,7 +13117,13 @@
       ],
       "shadow_realizations": [
         "each explanation creates another distinction instead of settling the terms"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "529e9a0c2574f8eceba200413aa953719dfcb3feed22ae5bf984f67757395ead",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/element/air/water",
@@ -12114,7 +13136,7 @@
       "source_hashes": [
         "6663c814575bd0bc351518f3b3534b3771d8647d47c97f24054bbfcaf3d67c93"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "the language can change enough to name the affected feeling or bond"
       ],
@@ -12123,7 +13145,13 @@
       ],
       "shadow_realizations": [
         "words may stay precise while missing why the issue matters to people"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "829382402a84f61c465a6bb8afa4727039efa1a1ca3b9ffb6e98479fd4352307",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/element/water/fire",
@@ -12136,7 +13164,7 @@
       "source_hashes": [
         "e57deb427e56e6d4743ca727090c5abd9cf7854a26184c34414e1d28c6a58464"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "the action can move once it acknowledges what is being protected"
       ],
@@ -12145,7 +13173,13 @@
       ],
       "shadow_realizations": [
         "people can make the feeling louder without making the response safer"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "fc5c0dd8366b2ba9c51aa2ccfa21cf7f476db2e3737541cb7aff44f90caa423b",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/element/water/earth",
@@ -12158,7 +13192,7 @@
       "source_hashes": [
         "6e775be0aa101de9cf1b2da3b8e00ed98b89014f4677a968c5b751334616e099"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "a practical arrangement can change without denying why it matters"
       ],
@@ -12167,7 +13201,13 @@
       ],
       "shadow_realizations": [
         "the emotional stake remains even when capacity sets a firm boundary"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "04ffb3319e027489173a172cd69703f5c580b80b463d988f58d4aa86b19be5ee",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/element/water/air",
@@ -12180,7 +13220,7 @@
       "source_hashes": [
         "e4d815faf52fd0e2d8d3e0a8afc94bfe16db896b63b610bdf336c1fb57fc7ac3"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "more specific words can hold the feeling without turning it into the only fact"
       ],
@@ -12189,7 +13229,13 @@
       ],
       "shadow_realizations": [
         "people can use explanation to create distance from the stake it is trying to describe"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "59819b8f3fab28f883ca0047c6fb97ad249e4c1d8ad9ce2e95978a6a5871e2be",
+        "approvedAt": "2026-08-16"
+      }
     },
     {
       "key": "sky-how/element/water/water",
@@ -12202,7 +13248,7 @@
       "source_hashes": [
         "65ca6eddd03b94f4e03b4a95801db127b48b41ae3db1368ebe9754c4efe44eec"
       ],
-      "owner_review_status": "PENDING OWNER",
+      "owner_review_status": "OWNER APPROVED",
       "supportive_realizations": [
         "people can move once the shared feeling is named alongside the other facts"
       ],
@@ -12211,7 +13257,13 @@
       ],
       "shadow_realizations": [
         "each response deepens the emotional consequence before the facts are separated"
-      ]
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/exact-approval.json",
+        "payloadSha256": "091a3b7db7a2b4e56973ea3052c544650d401556bdf77e5ac68ad8da5e918a19",
+        "approvedAt": "2026-08-16"
+      }
     }
   ]
 }

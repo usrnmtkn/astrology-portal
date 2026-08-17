@@ -10,6 +10,16 @@ import {
   selectRealizationForAspect,
 } from "./sky-calendar-realization-types.mjs";
 import {
+  SKY_COMPONENT_APPROVAL_DATE,
+  SKY_COMPONENT_APPROVAL_LEVEL,
+  SKY_COMPONENT_APPROVAL_RECORD_PATH,
+  SKY_COMPONENT_APPROVAL_SOURCE,
+  SKY_COMPONENT_APPROVAL_STATUS,
+  componentSetEntries,
+  componentSetSha256,
+  exactApprovalMetadataFor,
+} from "./sky-calendar-component-approval.mjs";
+import {
   assertOwnerReplacements,
   classificationReviewAudit,
   classificationVerificationAudit,
@@ -24,6 +34,7 @@ const v9Path = "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-go
 const v13Path = "apps/web/public/content/knowledge-matrix-v13/v13-direct-language-owner-approved/knowledge-matrix-v13-owner-approved-locked.json";
 
 const registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
+const exactApproval = JSON.parse(fs.readFileSync(SKY_COMPONENT_APPROVAL_RECORD_PATH, "utf8"));
 const fallback = JSON.parse(fs.readFileSync(fallbackPath, "utf8"));
 const v9 = JSON.parse(fs.readFileSync(v9Path, "utf8"));
 const v13 = JSON.parse(fs.readFileSync(v13Path, "utf8"));
@@ -51,7 +62,7 @@ function sourceValue(sourceId) {
 }
 
 assert.equal(registry.schema, "tldrastro.sky-calendar-meaning-components.v2");
-assert.equal(registry.status, "PENDING OWNER");
+assert.equal(registry.status, SKY_COMPONENT_APPROVAL_STATUS);
 assert.deepEqual(registry.counts, {
   signUnits: 144,
   aspectMechanisms: 5,
@@ -206,6 +217,23 @@ const all = [
 ];
 assert.equal(all.length, 174);
 assert.equal(new Set(all.map((row) => row.key)).size, 174);
+assert.deepEqual(registry.approval, {
+  approvalLevel: SKY_COMPONENT_APPROVAL_LEVEL,
+  recordPath: SKY_COMPONENT_APPROVAL_RECORD_PATH,
+  approvedAt: SKY_COMPONENT_APPROVAL_DATE,
+  componentSetSha256: componentSetSha256(all),
+  ownerApprovalStatementSource: SKY_COMPONENT_APPROVAL_SOURCE,
+  servingAuthorization: false,
+});
+assert.equal(exactApproval.recordType, "sky_calendar_meaning_component_set_exact_approval");
+assert.equal(exactApproval.approvalLevel, SKY_COMPONENT_APPROVAL_LEVEL);
+assert.equal(exactApproval.approvedAt, SKY_COMPONENT_APPROVAL_DATE);
+assert.equal(exactApproval.ownerApprovalStatementSource, SKY_COMPONENT_APPROVAL_SOURCE);
+assert.equal(exactApproval.servingAuthorization, false);
+assert.equal(exactApproval.componentCount, 174);
+assert.equal(exactApproval.componentSetSha256, componentSetSha256(all));
+assert.equal(exactApproval.evidenceLayerSha256, registry.evidenceLayerSha256);
+assert.deepEqual(exactApproval.components, componentSetEntries(all));
 assertTypedRealizationSchema(all);
 const renderedRegistryText = JSON.stringify({
   signUnits: registry.signUnits,
@@ -219,7 +247,8 @@ assert.equal([...renderedRegistryText].some((character) => character.charCodeAt(
 assert.doesNotMatch(renderedRegistryText, /\bsteady\b/iu, "banned word steady");
 
 for (const row of all) {
-  assert.equal(row.owner_review_status, "PENDING OWNER", `${row.key} must remain pending`);
+  assert.equal(row.owner_review_status, SKY_COMPONENT_APPROVAL_STATUS, `${row.key} must remain owner approved`);
+  assert.deepEqual(row.approval, exactApprovalMetadataFor(row), `${row.key} exact approval metadata`);
   assert.equal(Object.hasOwn(row, "reader_manifestations"), false, `${row.key} may not carry the positional legacy field`);
   REALIZATION_FIELDS.forEach((field) => assert.ok(Array.isArray(row[field]), `${row.key} ${field}`));
   assert.ok(Array.isArray(row.source_ids) && row.source_ids.length > 0, `${row.key} source_ids`);
