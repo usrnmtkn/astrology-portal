@@ -61,7 +61,7 @@
         ],
         "detailsSentences": [
           { "text": "A practical choice starts carrying the meaning of care and loyalty", "beats": ["whatMayHappen"], "supportKeys": ["sky-sign/moon/cancer", "sky-sign/venus/cancer"] },
-          { "text": "The Moon in Cancer ties the moment to protection and belonging, while Venus in Cancer measures the agreement by whether care is returned", "beats": ["whyItMatters"], "supportKeys": ["sky-sign/moon/cancer", "sky-sign/venus/cancer"] },
+          { "text": "The Moon in Cancer ties the moment to protection and belonging, while Venus in Cancer weighs the bond by what comes back", "beats": ["whyItMatters"], "supportKeys": ["sky-sign/moon/cancer", "sky-sign/venus/cancer"] },
           { "text": "Because the placements are conjunct in water signs, the feeling and the agreement can merge before anyone names the difference", "beats": ["whyItSticksOrMoves"], "supportKeys": ["sky-aspect-mechanism/conjunction", "sky-how/element/water/water"] }
         ]
       }
@@ -157,7 +157,7 @@
         "detailsSentences": [
           { "text": "A new fact creates an opening for a proposal that had stalled", "beats": ["whatMayHappen"], "supportKeys": ["sky-sign/jupiter/aries", "sky-sign/uranus/gemini"] },
           { "text": "Jupiter in Aries increases the confidence to begin, while Uranus in Gemini changes the route as new information arrives", "beats": ["whyItMatters"], "supportKeys": ["sky-sign/jupiter/aries", "sky-sign/uranus/gemini"] },
-          { "text": "The sextile makes the connection available rather than automatic, and the cardinal-to-mutable pattern supports a first move that can still be revised", "beats": ["whyItSticksOrMoves"], "supportKeys": ["sky-aspect-mechanism/sextile", "sky-how/modality/cardinal/mutable"] }
+          { "text": "The sextile makes the connection available rather than automatic, and the cardinal-to-mutable pattern leaves room to adjust after the opening step", "beats": ["whyItSticksOrMoves"], "supportKeys": ["sky-aspect-mechanism/sextile", "sky-how/modality/cardinal/mutable"] }
         ]
       }
     },
