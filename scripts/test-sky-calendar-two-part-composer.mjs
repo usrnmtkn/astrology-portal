@@ -252,3 +252,30 @@ const personifiedPlanetReport = auditSkyCalendarTwoPartCards([personifiedPlanetC
 assert.ok(personifiedPlanetReport.cardReports[0].defects.some((defect) => defect.code === "planet_narrated_as_character"));
 
 console.log(`Sky Calendar Aspect Composer v2: PASS (${cards.length} worked cards, ${report.baselineBodyCount} LIVE bodies checked)`);
+
+const nearVerbatimProbe = {
+  contentKey: "near-verbatim-probe",
+  componentApprovalComplete: false,
+  componentProseForGate: ["one workable version has to remain in place long enough to show what it does"],
+  entryMode: "person_and_action",
+  closingFunction: "practical_distinction",
+  inputs: { placements: [{ planet: "venus", sign: "virgo" }, { planet: "neptune", sign: "pisces" }], aspect: "opposition" },
+  forecast: "someone asks for a workable version of the promise. That turns a vague hope into a question about what was agreed. Neither reading disappears on its own. The distinction is between what was promised and what can be shown.",
+  forecastBeats: { whatMayHappen: [0], whatItTurnsInto: [1], howItBehaves: [2], whatCanMove: [3] },
+  detailsTransitLabel: "Venus in Virgo opposite Neptune in Pisces.",
+  details: "Venus in Virgo opposite Neptune in Pisces. A practical request meets an undefined hope. Venus in Virgo shows care through practical attention, while Neptune in Pisces lets a shared hope spread before its terms are clear. The opposition keeps both visible, so one version has to remain in place long enough to show what it does.",
+  detailsSentences: [
+    { text: "A practical request meets an undefined hope.", beats: ["whatMayHappen"] },
+    { text: "Venus in Virgo shows care through practical attention, while Neptune in Pisces lets a shared hope spread before its terms are clear.", beats: ["whyItMatters"] },
+    { text: "The opposition keeps both visible, so one version has to remain in place long enough to show what it does.", beats: ["whyItSticksOrMoves"] },
+  ],
+  detailsBeats: { whatMayHappen: [0], whyItMatters: [1], whyItSticksOrMoves: [2] },
+};
+const nearVerbatimReport = auditSkyCalendarTwoPartCards([nearVerbatimProbe]);
+assert.equal(
+  nearVerbatimReport.cardReports[0].defects.some((defect) => defect.code === "near_verbatim_component_sentence"),
+  true,
+  "lightly reworded component text must fail the emission gate",
+);
+
+console.log("Sky Calendar near-verbatim emission gate: PASS");

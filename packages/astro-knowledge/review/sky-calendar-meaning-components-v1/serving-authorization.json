@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "recordType": "sky_calendar_versioned_composer_serving_authorization",
-  "authorizationId": "sky-calendar-two-part-composer-v2.1.0-component-set-aee970d7-pending-pilot",
+  "authorizationId": "sky-calendar-two-part-composer-v2.2.0-component-set-aee970d7-pending-pilot",
   "authorizationDecisionDate": "2026-08-16",
   "authorizationDecisionSource": {
     "tool": "Codex Desktop",
@@ -12,8 +12,8 @@
     "statement": "The owner authorizes composed cards to serve without per-card approval only when the composer version and component hash match and after owner confirmation of the eight-card unscripted pilot."
   },
   "authorizationModel": "versioned_composer_and_component_set",
-  "composerVersion": "sky-calendar-two-part-composer-v2.1.0",
-  "composerSourceSha256": "e723b58e5046c671f1a2ec6d244d1b64a20361e107c29970d5840bfc1002abc3",
+  "composerVersion": "sky-calendar-two-part-composer-v2.2.0",
+  "composerSourceSha256": "fa78fb0b70126bf1657aff06d83ee9510ce3859792fbb50d16098b9723af20c4",
   "composerSourceFiles": [
     "scripts/sky-calendar-component-approval.mjs",
     "scripts/sky-calendar-frame-uniqueness.mjs",
@@ -27,7 +27,8 @@
     "required": true,
     "cardCount": 8,
     "ownerConfirmed": false,
-    "ownerConfirmationStatementSource": null
+    "ownerConfirmationStatementSource": null,
+    "note": "Composer changed after the eight-card pilot. The pilot must be regenerated on v2.2.0 before the owner confirms."
   },
   "invalidationRule": "Any change to the composer, its deterministic gates, or any approved component invalidates serving authorization until the owner re-approves the new hashes.",
   "approvalRecordGovernance": {
@@ -46,5 +47,13 @@
       "composer version and hash",
       "component-set hash"
     ]
-  }
+  },
+  "composerVersionHistory": [
+    {
+      "version": "sky-calendar-two-part-composer-v2.1.0",
+      "composerSourceSha256": "e723b58e5046c671f1a2ec6d244d1b64a20361e107c29970d5840bfc1002abc3",
+      "supersededOn": "2026-08-17",
+      "reason": "Near-verbatim component emission gate added. The exact-string check missed lightly reworded component text; replaced with vocabulary-containment and shared-run checks."
+    }
+  ]
 }
