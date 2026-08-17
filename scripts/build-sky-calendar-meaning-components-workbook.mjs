@@ -34,6 +34,16 @@ import {
   SUPPORTIVE_CLOSING_EXTRACTIONS,
   SUPPORTIVE_EXTRACTIONS,
 } from "./sky-calendar-supportive-extractions.mjs";
+import {
+  SKY_COMPONENT_APPROVAL_DATE,
+  SKY_COMPONENT_APPROVAL_LEVEL,
+  SKY_COMPONENT_APPROVAL_RECORD_PATH,
+  SKY_COMPONENT_APPROVAL_SOURCE,
+  SKY_COMPONENT_APPROVAL_STATUS,
+  componentSetEntries,
+  componentSetSha256,
+  exactApprovalMetadataFor,
+} from "./sky-calendar-component-approval.mjs";
 
 const repoRoot = process.cwd();
 const reviewDir = path.join(
@@ -51,6 +61,7 @@ const classificationVerificationJsonPath = path.join(reviewDir, "targeted-classi
 const classificationVerificationReportPath = path.join(reviewDir, "TARGETED-CLASSIFICATION-VERIFICATION.md");
 const supportiveCoverageClosingJsonPath = path.join(reviewDir, "supportive-coverage-closing-report.json");
 const supportiveCoverageClosingReportPath = path.join(reviewDir, "SUPPORTIVE-COVERAGE-CLOSING-REPORT.md");
+const exactApprovalPath = path.join(repoRoot, SKY_COMPONENT_APPROVAL_RECORD_PATH);
 
 const fallbackPath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
 const v9Path = "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-governance-labeled/knowledge-matrix-v9-owner-approved-rows.json";
@@ -226,7 +237,7 @@ const signUnits = planets.flatMap((planet) => signs.map((sign) => {
     owner_voice_coverage: ownerVoice.coverage,
     owner_voice_source_ids: ownerVoiceEvidence.map((item) => item.source_id),
     owner_voice_source_hashes: ownerVoiceEvidence.map((item) => item.source_hash),
-    owner_review_status: "PENDING OWNER",
+    owner_review_status: SKY_COMPONENT_APPROVAL_STATUS,
   };
 
   return applySupportiveExtraction(record);
@@ -269,7 +280,7 @@ const aspects = aspectComponents.map((record) => {
     ...record,
     source_ids: [evidence.source_id],
     source_hashes: [evidence.source_hash],
-    owner_review_status: "PENDING OWNER",
+    owner_review_status: SKY_COMPONENT_APPROVAL_STATUS,
   });
 });
 
@@ -283,7 +294,7 @@ const modalities = modalityComponents.map((record) => {
     ...record,
     source_ids: evidence.map((item) => item.source_id),
     source_hashes: evidence.map((item) => item.source_hash),
-    owner_review_status: "PENDING OWNER",
+    owner_review_status: SKY_COMPONENT_APPROVAL_STATUS,
   });
 });
 
@@ -294,7 +305,7 @@ const elements = elementComponents.map((record) => {
     ...record,
     source_ids: [evidence.source_id],
     source_hashes: [evidence.source_hash],
-    owner_review_status: "PENDING OWNER",
+    owner_review_status: SKY_COMPONENT_APPROVAL_STATUS,
   });
 });
 const allUnits = [...signUnits, ...aspects, ...modalities, ...elements];
@@ -514,6 +525,30 @@ if (evidenceLayerSha256 !== EVIDENCE_LAYER_SHA256) {
   throw new Error(`Evidence layer changed: expected ${EVIDENCE_LAYER_SHA256}, got ${evidenceLayerSha256}`);
 }
 
+for (const unit of allUnits) {
+  unit.approval = exactApprovalMetadataFor(unit);
+}
+const approvedComponentEntries = componentSetEntries(allUnits);
+const approvedComponentSetSha256 = componentSetSha256(allUnits);
+const exactApprovalRecord = {
+  schemaVersion: 1,
+  recordType: "sky_calendar_meaning_component_set_exact_approval",
+  approvalId: "sky-calendar-meaning-components-v2-owner-approved-2026-08-16",
+  approvalLevel: SKY_COMPONENT_APPROVAL_LEVEL,
+  approvedAt: SKY_COMPONENT_APPROVAL_DATE,
+  ownerApprovalStatementSource: SKY_COMPONENT_APPROVAL_SOURCE,
+  approvalScope: "exact_component_wording_and_typed_realization_pools_only",
+  servingAuthorization: false,
+  componentCount: allUnits.length,
+  payloadHashAlgorithm: "sha256(JSON.stringify(canonicalJson(componentPayload)))",
+  setHashAlgorithm: "sha256(JSON.stringify(sorted([{key,payloadSha256}])))",
+  componentSetSha256: approvedComponentSetSha256,
+  evidenceLayerSha256,
+  sourceRegistryPath: "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/sky-calendar-meaning-components-v1.json",
+  sourceWorkbookPath: "outputs/sky-calendar-meaning-components-2026-08-14/sky-calendar-meaning-components-owner-review.xlsx",
+  components: approvedComponentEntries,
+};
+
 const supportiveExtractionAudit = {
   authorizationDate: "2026-08-16",
   extractionOnly: true,
@@ -536,8 +571,16 @@ const supportiveExtractionAudit = {
 
 const registry = {
   schema: "tldrastro.sky-calendar-meaning-components.v2",
-  status: "PENDING OWNER",
+  status: SKY_COMPONENT_APPROVAL_STATUS,
   architectureDecisionDate: "2026-08-14",
+  approval: {
+    approvalLevel: SKY_COMPONENT_APPROVAL_LEVEL,
+    recordPath: SKY_COMPONENT_APPROVAL_RECORD_PATH,
+    approvedAt: SKY_COMPONENT_APPROVAL_DATE,
+    componentSetSha256: approvedComponentSetSha256,
+    ownerApprovalStatementSource: SKY_COMPONENT_APPROVAL_SOURCE,
+    servingAuthorization: false,
+  },
   policy: {
     componentsAreMeaningNotSentences: true,
     emitStoredComponentVerbatim: false,
@@ -599,8 +642,8 @@ const registry = {
 };
 
 if (registry.counts.total !== 174) throw new Error(`Expected 174 units, got ${registry.counts.total}`);
-if ([...signUnits, ...aspects, ...modalities, ...elements].some((row) => row.owner_review_status !== "PENDING OWNER")) {
-  throw new Error("Every meaning component must remain PENDING OWNER");
+if ([...signUnits, ...aspects, ...modalities, ...elements].some((row) => row.owner_review_status !== SKY_COMPONENT_APPROVAL_STATUS)) {
+  throw new Error(`Every meaning component must be ${SKY_COMPONENT_APPROVAL_STATUS}`);
 }
 
 await fs.mkdir(reviewDir, { recursive: true });
@@ -609,12 +652,16 @@ await fs.writeFile(
   registryPath,
   `${JSON.stringify(registry, null, 2)}\n`,
 );
+await fs.writeFile(
+  exactApprovalPath,
+  `${JSON.stringify(exactApprovalRecord, null, 2)}\n`,
+);
 
 function classificationAuditMarkdown() {
   const lines = [
     "# Sky Calendar realization classification audit",
     "",
-    "Status: classification review only. No realization wording changed. All 174 units remain `PENDING OWNER` and fail closed.",
+    "Status: historical classification review. No realization wording changed. All 174 units are now `OWNER APPROVED`; composed cards remain separately owner-gated.",
     "",
     "## Count correction",
     "",
@@ -652,7 +699,7 @@ function classificationAuditMarkdown() {
     "- Evidence pointers and hashes: unchanged",
     "- Coverage classes: unchanged",
     "- Owner-authored replacement wording: unchanged",
-    "- Approval status: `PENDING OWNER`",
+    "- Approval status: `OWNER APPROVED`",
     "- Serving state: unchanged",
     "",
   );
@@ -666,7 +713,7 @@ function classificationVerificationMarkdown() {
   const lines = [
     "# Sky Calendar targeted realization-classification verification",
     "",
-    "Status: classification-only verification. No realization wording changed. All 174 units remain `PENDING OWNER` and fail closed.",
+    "Status: historical classification-only verification. No realization wording changed. All 174 units are now `OWNER APPROVED`; composed cards remain separately owner-gated.",
     "",
     "## Plain result",
     "",
@@ -723,7 +770,7 @@ function classificationVerificationMarkdown() {
     "- Evidence pointers and hashes: unchanged",
     "- Coverage classes: unchanged",
     "- Eight owner-authored replacement strings: unchanged",
-    "- Approval status: `PENDING OWNER`",
+    "- Approval status: `OWNER APPROVED`",
     "- Serving state: unchanged",
     "",
   );
@@ -740,7 +787,7 @@ function supportiveCoverageClosingMarkdown() {
   const lines = [
     "# Sky Calendar supportive coverage closing report",
     "",
-    "Status: evidence-backed extraction and classification only. All 174 units remain `PENDING OWNER` and fail closed.",
+    "Status: evidence-backed extraction and classification only. All 174 units are now `OWNER APPROVED`; composed cards remain separately owner-gated.",
     "",
     "## Plain result",
     "",
@@ -788,7 +835,7 @@ function supportiveCoverageClosingMarkdown() {
     "- Evidence pointers and hashes: unchanged",
     "- Coverage classes: unchanged",
     "- Eight owner-authored replacement strings: unchanged",
-    "- Approval status: `PENDING OWNER`",
+    "- Approval status: `OWNER APPROVED`",
     "- Serving state: unchanged",
     "",
   );
@@ -803,6 +850,7 @@ await fs.writeFile(supportiveCoverageClosingReportPath, supportiveCoverageClosin
 
 const workbook = Workbook.create();
 const overview = workbook.worksheets.add("Overview");
+const approvalSheet = workbook.worksheets.add("Approval Record");
 const coverageSheet = workbook.worksheets.add("Owner Voice Coverage");
 const signSheet = workbook.worksheets.add("Sign Units");
 const classificationSheet = workbook.worksheets.add("Classification Audit");
@@ -868,18 +916,18 @@ function styleTable(sheet, headerRange, dataRange, widths) {
   });
   sheet.freezePanes.freezeRows(3);
   sheet.getRange(dataRange).conditionalFormats.add("containsText", {
-    text: "PENDING OWNER",
-    format: { fill: amber, font: { color: "#6B4F00", bold: true } },
+    text: SKY_COMPONENT_APPROVAL_STATUS,
+    format: { fill: pale, font: { color: "#1D5A3A", bold: true } },
   });
 }
 
-for (const sheet of [overview, coverageSheet, signSheet, classificationSheet, targetedVerificationSheet, coverageClosingSheet, aspectSheet, modalitySheet, elementSheet, gateSheet, wordingQaSheet]) styleSheet(sheet);
+for (const sheet of [overview, approvalSheet, coverageSheet, signSheet, classificationSheet, targetedVerificationSheet, coverageClosingSheet, aspectSheet, modalitySheet, elementSheet, gateSheet, wordingQaSheet]) styleSheet(sheet);
 
 titleBand(
   overview,
   "A1:F1",
   "Sky Calendar meaning components v2",
-  "Owner review workbook. These 174 rows govern meaning only. No row is a finished sentence for verbatim emission.",
+  "Owner-approved component record. These 174 rows govern meaning only. No row is a finished sentence for verbatim emission.",
 );
 overview.getRange("A4:B15").values = [
   ["Measure", "Count"],
@@ -895,9 +943,11 @@ overview.getRange("A4:B15").values = [
   ["Realizations reclassified", registry.systemicRepass.classificationAudit.changedRealizations],
   ["Current empty supportive pools", registry.systemicRepass.supportiveCoverageClosing.emptySupportivePoolsAfter],
 ];
-overview.getRange("D4:F9").values = [
+overview.getRange("D4:F11").values = [
   ["Governance", "Value", "Meaning"],
-  ["Status", "PENDING OWNER", "Nothing in this workbook is approved or serving."],
+  ["Status", SKY_COMPONENT_APPROVAL_STATUS, "The 174 meaning components are exact-owner-approved. No composed forecast is approved or serving."],
+  ["Approved at", SKY_COMPONENT_APPROVAL_DATE, "Owner approval date."],
+  ["Approved-set SHA-256", approvedComponentSetSha256, "Hash of the sorted 174 key and payload-hash pairs."],
   ["Fail closed", "TRUE", "Missing or unapproved components cannot be rendered."],
   ["Verbatim emission", "FALSE", "Stored components may not be emitted as whole sentences."],
   ["First sentence", "COMPOSED", "Both positions must become one lived disagreement or shared condition."],
@@ -906,28 +956,50 @@ overview.getRange("D4:F9").values = [
 overview.getRange("A4:B4").format = { fill: teal, font: { bold: true, color: white } };
 overview.getRange("D4:F4").format = { fill: teal, font: { bold: true, color: white } };
 overview.getRange("A5:B15").format = { fill: light, borders: { insideHorizontal: { style: "thin", color: line } } };
-overview.getRange("D5:F9").format = { fill: light, wrapText: true, borders: { insideHorizontal: { style: "thin", color: line } } };
+overview.getRange("D5:F11").format = { fill: light, wrapText: true, borders: { insideHorizontal: { style: "thin", color: line } } };
 overview.getRange("A16:F16").merge();
 overview.getRange("A16:F16").values = [["Field definitions"]];
 overview.getRange("A16:F16").format = { fill: navy, font: { bold: true, color: white } };
 overview.getRange("A17:F27").values = [
   ["Field", "Layer", "Purpose", "May render verbatim?", "Evidence", "Owner action"],
-  ["planet_function", "Sign", "What the planet governs in this placement", "No", "Approved rows and matrices", "Approve, revise, or reject"],
-  ["sign_expression", "Sign", "How the sign changes that function", "No", "Approved rows and matrices", "Approve, revise, or reject"],
-  ["combined_position", "Sign", "Bounded synthesis of planet and sign", "No", "Approved rows and matrices", "Approve, revise, or reject"],
-  ["supportive_realizations", "All", "Possible supportive forms selected by argument shape", "No", "Approved rows and matrices", "Approve, revise, or reject"],
-  ["neutral_realizations", "All", "Possible neutral forms selected by argument shape", "No", "Approved rows and matrices", "Approve, revise, or reject"],
-  ["shadow_realizations", "All", "Possible cost or shadow forms selected by argument shape", "No", "Approved rows and matrices", "Approve, revise, or reject"],
-  ["details_language", "Sign", "Compact astrology language for Details", "No", "Approved rows and matrices", "Approve, revise, or reject"],
-  ["reader_effect", "Aspect", "What becomes noticeable", "No", "Approved aspect primitive", "Approve, revise, or reject"],
-  ["conflict_behavior", "Aspect/How", "Why the pressure behaves this way", "No", "Approved aspect, mode, or element evidence", "Approve, revise, or reject"],
-  ["movement_bias", "Aspect/How", "What kind of change is supported", "No", "Approved aspect, mode, or element evidence", "Approve, revise, or reject"],
+  ["planet_function", "Sign", "What the planet governs in this placement", "No", "Approved rows and matrices", "Owner approved"],
+  ["sign_expression", "Sign", "How the sign changes that function", "No", "Approved rows and matrices", "Owner approved"],
+  ["combined_position", "Sign", "Bounded synthesis of planet and sign", "No", "Approved rows and matrices", "Owner approved"],
+  ["supportive_realizations", "All", "Possible supportive forms selected by argument shape", "No", "Approved rows and matrices", "Owner approved"],
+  ["neutral_realizations", "All", "Possible neutral forms selected by argument shape", "No", "Approved rows and matrices", "Owner approved"],
+  ["shadow_realizations", "All", "Possible cost or shadow forms selected by argument shape", "No", "Approved rows and matrices", "Owner approved"],
+  ["details_language", "Sign", "Compact astrology language for Details", "No", "Approved rows and matrices", "Owner approved"],
+  ["reader_effect", "Aspect", "What becomes noticeable", "No", "Approved aspect primitive", "Owner approved"],
+  ["conflict_behavior", "Aspect/How", "Why the pressure behaves this way", "No", "Approved aspect, mode, or element evidence", "Owner approved"],
+  ["movement_bias", "Aspect/How", "What kind of change is supported", "No", "Approved aspect, mode, or element evidence", "Owner approved"],
 ];
 overview.getRange("A17:F17").format = { fill: teal, font: { bold: true, color: white }, wrapText: true };
 overview.getRange("A18:F27").format = { wrapText: true, verticalAlignment: "top", borders: { insideHorizontal: { style: "thin", color: line } } };
 [["A", 22], ["B", 14], ["C", 40], ["D", 18], ["E", 30], ["F", 24]].forEach(([column, width]) => {
   overview.getRange(`${column}:${column}`).format.columnWidth = width;
 });
+
+titleBand(
+  approvalSheet,
+  "A1:E1",
+  "Exact owner approval record",
+  "The payload hash covers each component's exact meaning fields and typed realization pools. Approval does not authorize a composed card or serving change.",
+);
+approvalSheet.getRange("A3:E3").values = [["Component key", "Payload SHA-256", "Approval level", "Approved at", "Record path"]];
+approvalSheet.getRange(`A4:E${approvedComponentEntries.length + 3}`).values = approvedComponentEntries.map((entry) => [
+  entry.key,
+  entry.payloadSha256,
+  SKY_COMPONENT_APPROVAL_LEVEL,
+  SKY_COMPONENT_APPROVAL_DATE,
+  SKY_COMPONENT_APPROVAL_RECORD_PATH,
+]);
+styleTable(
+  approvalSheet,
+  "A3:E3",
+  `A4:E${approvedComponentEntries.length + 3}`,
+  [["A", 42], ["B", 70], ["C", 24], ["D", 18], ["E", 68]],
+);
+approvalSheet.tables.add(`A3:E${approvedComponentEntries.length + 3}`, true, "ExactApprovalTable");
 
 titleBand(
   coverageSheet,
@@ -976,7 +1048,7 @@ function writeComponentSheet(sheet, title, subtitle, headers, records, mapper, w
   const statusIndex = headers.indexOf("Owner review status");
   const statusColumn = String.fromCharCode(65 + statusIndex);
   sheet.getRange(`${statusColumn}4:${statusColumn}${rows.length + 3}`).dataValidation = {
-    rule: { type: "list", values: ["PENDING OWNER", "APPROVED", "REVISE", "REJECTED"] },
+    rule: { type: "list", values: ["OWNER APPROVED", "REVISE", "REJECTED"] },
   };
 }
 
@@ -1292,6 +1364,13 @@ await workbook.inspect({
 });
 await workbook.inspect({
   kind: "table",
+  range: "Approval Record!A1:E12",
+  include: "values,formulas",
+  tableMaxRows: 12,
+  tableMaxCols: 5,
+});
+await workbook.inspect({
+  kind: "table",
   range: "Classification Audit!A1:K12",
   include: "values,formulas",
   tableMaxRows: 12,
@@ -1314,6 +1393,7 @@ if (/"matchCount":\s*[1-9]/u.test(errors.ndjson)) throw new Error(errors.ndjson)
 
 for (const [sheetName, range] of [
   ["Overview", "A1:F27"],
+  ["Approval Record", "A1:E22"],
   ["Owner Voice Coverage", "A1:F24"],
   ["Sign Units", "A1:P12"],
   ["Classification Audit", "A1:K20"],
