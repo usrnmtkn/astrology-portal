@@ -6,12 +6,12 @@ Index key: `planet|sign; *|* is globally eligible register evidence`
 
 ## Role counts
 
-- Meaning: **1876**
+- Meaning: **2177**
 - Register: **1710**
-- Scene: **419**
-- Argument: **510**
+- Scene: **413**
+- Argument: **1182**
 - Phrase: **346**
-- Total entries: **4861** across **190** planet-sign keys
+- Total entries: **5828** across **247** planet-sign keys
 
 Scene precedence is fixed as: same-planet-sign owner-approved house cores; approved serving
 rows; knowledge-matrix scene rows. Governance precedence still applies within each source tier.
@@ -21,6 +21,8 @@ rows; knowledge-matrix scene rows. Governance precedence still applies within ea
 - `packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json`
 - `data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl`
 - `data/writing/matrix-evidence-index/TLDR-Matrix-Coverage-By-Placement.json`
+- `packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json`
+- `packages/astro-knowledge/review/ll-matrix-v13-runtime-manifest.json`
 - `packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json`
 - `data/writing/OWNER_APPROVED_EXAMPLES.jsonl`
 - `data/writing/owner-register-gold.json`
@@ -47,7 +49,6 @@ None among the stores represented by the approved-example export.
 - `authored/transit-return`
 - `fallback-hook/angle-intro`
 - `fallback-hook/angle-sign`
-- `fallback-hook/aspect-lived`
 - `fallback-hook/aspect-pair`
 - `fallback-hook/aspect-pattern`
 - `fallback-hook/aspect-pattern-activation`
@@ -73,7 +74,6 @@ None among the stores represented by the approved-example export.
 - `fallback-hook/fog-note`
 - `fallback-hook/house-cusp`
 - `fallback-hook/house-glossary`
-- `fallback-hook/house-lived`
 - `fallback-hook/house-meaning`
 - `fallback-hook/lunation-higher-path`
 - `fallback-hook/lunation-moment`
@@ -92,13 +92,11 @@ None among the stores represented by the approved-example export.
 - `fallback-hook/planet-best`
 - `fallback-hook/planet-grates`
 - `fallback-hook/planet-intro`
-- `fallback-hook/planet-lived`
 - `fallback-hook/planet-mode`
 - `fallback-hook/profection-explainer`
 - `fallback-hook/profection-year`
 - `fallback-hook/ruler-method`
 - `fallback-hook/season-marker`
-- `fallback-hook/sign-lived`
 - `fallback-hook/sky-axis`
 - `fallback-hook/sky-eclipse-close`
 - `fallback-hook/sky-eclipse-node`

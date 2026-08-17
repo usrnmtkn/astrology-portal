@@ -2,12 +2,70 @@ export const MATRIX_EVIDENCE_INDEX_VERSION = "matrix-evidence-role-index-v1-2026
 export const MATRIX_EVIDENCE_ROLES = Object.freeze(["meaning", "register", "scene", "argument_candidate"]);
 export const MATRIX_EVIDENCE_SOURCE_PATH = "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl";
 export const MATRIX_COVERAGE_SOURCE_PATH = "data/writing/matrix-evidence-index/TLDR-Matrix-Coverage-By-Placement.json";
+export const LL_MATRIX_V13_SOURCE_PATH = "packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json";
 
 export function normalizeMatrixToken(value) {
   const normalized = String(value ?? "").trim().toLowerCase()
-    .replace(/^black moon lilith$/u, "lilith")
-    .replace(/[_\s-]+/gu, "-");
+    .replace(/[_\s-]+/gu, "-")
+    .replace(/^black-moon-lilith$/u, "lilith")
+    .replace(/^lunar-nodes$/u, "nodes");
   return normalized === "any" || normalized === "none" || normalized === "unspecified" ? null : normalized;
+}
+
+function placementFromRuntimeKey(contentKey) {
+  const match = String(contentKey ?? "").match(/^fallback-hook\/placement-sign-lived\/([^/]+)\/([^/]+)$/u);
+  if (match) return { planet: normalizeMatrixToken(match[1]), sign: normalizeMatrixToken(match[2]) };
+  const sign = String(contentKey ?? "").match(/^fallback-hook\/sign-lived\/([^/]+)$/u);
+  if (sign) return { planet: null, sign: normalizeMatrixToken(sign[1]) };
+  const planet = String(contentKey ?? "").match(/^fallback-hook\/planet-lived\/([^/]+)$/u);
+  if (planet) return { planet: normalizeMatrixToken(planet[1]), sign: null };
+  const aspect = String(contentKey ?? "").match(/^fallback-hook\/natal-aspect-lived\/([^/]+)\/([^/]+)\/([^/]+)$/u);
+  if (aspect) return { planet: normalizeMatrixToken(aspect[1]), sign: null, eventType: normalizeMatrixToken(aspect[2]) };
+  return { planet: null, sign: null, eventType: null };
+}
+
+export function llMatrixV13EvidenceCatalog(rows = [], manifestRows = []) {
+  const sourceRows = new Map(rows
+    .filter((row) => row.ownerApproved === true)
+    .map((row) => [`${row.sheet}|${row.key}`, row]));
+  return Object.freeze(manifestRows.map((manifestRow, index) => {
+    const row = sourceRows.get(`${manifestRow.sourceSheet}|${manifestRow.workbookKey}`);
+    if (!row) throw new Error(`SOURCE_GAP: LL Matrix V13 row ${manifestRow.sourceSheet}|${manifestRow.workbookKey}`);
+    const target = placementFromRuntimeKey(manifestRow.contentKey);
+    return Object.freeze({
+      id: `ll-matrix-v13:meaning:${manifestRow.payloadSha256}`,
+      contentKey: manifestRow.contentKey,
+      family: "knowledge-matrix-meaning",
+      sourceFamily: manifestRow.sourceSheet,
+      sourcePath: LL_MATRIX_V13_SOURCE_PATH,
+      sourceRecordSha256: manifestRow.payloadSha256,
+      copySha: manifestRow.payloadSha256,
+      planet: normalizeMatrixToken(row.planet) ?? target.planet,
+      sign: normalizeMatrixToken(row.position) ?? target.sign,
+      eventType: target.eventType ?? null,
+      register: /\b(?:you|your|yours|yourself|yourselves)\b/iu.test(row.copy) ? "second_person" : "collective",
+      text: row.copy,
+      sceneNouns: Object.freeze([]),
+      thesisCandidates: Object.freeze([]),
+      duplicateGroupSize: 1,
+      governance: manifestRow.governance,
+      governanceTier: manifestRow.governance,
+      judgeLineage: "owner-approved-ll-matrix-v13",
+      precedence: 0,
+      workbookSourceRow: manifestRow.workbookRow ?? index + 1,
+      authorityClass: "exact_owner_approved",
+      editorialStatus: "owner-approved-v13",
+      ownerApproved: true,
+      ownerAuthored: true,
+      generated: false,
+      useAsPositiveVoiceEvidence: true,
+      useAsSceneEvidence: false,
+      evidenceRole: "knowledge_matrix_meaning",
+      role: "meaning",
+      sourceKind: "owner-approved-ll-matrix-v13",
+      eligibleForWriterRegister: false
+    });
+  }));
 }
 
 function governancePrecedence(row) {
@@ -91,8 +149,8 @@ export function matrixEvidenceForTarget(rows, { planet, sign, eventType = null }
   const catalog = matrixEvidenceCatalog(rows);
   return Object.freeze(Object.fromEntries(MATRIX_EVIDENCE_ROLES.map((role) => [role, Object.freeze(catalog[role].filter((entry) => (
     entry.ownerApproved === true
-    && entry.planet === targetPlanet
-    && entry.sign === targetSign
+    && (!entry.planet || entry.planet === targetPlanet || (entry.planet === "nodes" && ["north-node", "south-node"].includes(targetPlanet)))
+    && (!entry.sign || entry.sign === targetSign)
     && (role === "argument_candidate" || !targetEvent || !entry.eventType || entry.eventType === targetEvent)
   ))) ])));
 }
