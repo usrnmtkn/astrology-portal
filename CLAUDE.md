@@ -40,8 +40,10 @@ Calendar cards have two parts (owner decision, 2026-08-14). Forecast
 first, astrology underneath.
 
 **Main copy: the forecast.** Forecast concludes; Details explains. The
-forecast carries four semantic beats: what may happen, what it turns into,
-how it behaves, and what can move. Those beats are hidden logic, not a
+forecast remains responsible for what may happen, why it matters, and what
+can move. Its four semantic beats are what may happen, what it turns into,
+how it behaves, and what can move; the consequence in what it turns into
+carries why the event matters. Those beats are hidden logic, not a
 four-sentence template. Beats may share a sentence, have no required
 position, and may take two to five sentences. The reader must understand
 the event before receiving explanation or strategy. No astrology
@@ -66,7 +68,9 @@ Details stops after the explanation. It does not repeat the forecast's
 conclusion, closing list, action, or moral. Placement A and B mechanisms
 and the aspect mechanism are required. Modality or element appears only
 when it materially explains the behavior; unused components remain in the
-evidence packet.
+evidence packet. Details still translates the astrology back into the part
+of the situation where movement is possible, but it explains that pressure
+point rather than repeating the forecast's `what can move` conclusion.
 
 The astrology library governs the explanation. The reader logic governs
 the order of the prose.
@@ -194,9 +198,10 @@ A pattern in the birth chart. Person first, "you tend to".
   the piece, promise resolution, or deliver a moral.
 - Invent nothing. Concrete detail must come from governed source material.
 - Plain over clever; the meaning survives one read. No em dashes, ASCII
-  only, no "steady", and no generic coaching or permission language. A
-  concrete direct action may close a forecast when the governed situation
-  supports it. Contractions are fine.
+  only, no "steady", and no coaching or permission language. A concrete
+  direct action may close a forecast when the governed situation supports
+  it; that is a description of what can move, not generic coaching.
+  Contractions are fine.
 - Voice exemplars must themselves pass every rule above. An exemplar that
   violates a rule is a counter-example and must be removed from the packet.
 
