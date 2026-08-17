@@ -1,0 +1,673 @@
+{
+  "schema": "tldr.sky-calendar.supportive-pool-extraction-report.v1",
+  "status": "PENDING OWNER",
+  "generatedAt": "2026-08-16",
+  "rules": {
+    "extractionOnly": true,
+    "sourceBoundary": "Each realization comes only from its own sky-sign unit's governed evidence.",
+    "existingRealizationsChanged": 0,
+    "existingClassificationsChanged": 0,
+    "evidenceHashesChanged": 0
+  },
+  "totals": {
+    "extractedUnits": 64,
+    "extractedRealizations": 64,
+    "previouslyBlockedRoutes": 1345,
+    "blockedRoutesAfter": 0,
+    "unblockedRoutes": 1345,
+    "emptySupportivePoolsAfter": 0,
+    "unsupportedUnits": []
+  },
+  "byAspectAfter": {
+    "trine": {
+      "possible": 1008,
+      "blocked": 0
+    },
+    "sextile": {
+      "possible": 1032,
+      "blocked": 0
+    }
+  },
+  "extractions": [
+    {
+      "key": "sky-sign/chiron/aquarius",
+      "realization": "someone sharing a different opinion without editing it into what the group will accept",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!31"
+      ],
+      "source_hashes": [
+        "e90ad5413bd8cfc6a1adf1ad804faa1d46479f77ed63fc1959307297736d0325"
+      ]
+    },
+    {
+      "key": "sky-sign/chiron/aries",
+      "realization": "someone trying the first move again after an old setback stopped deciding the outcome",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!4"
+      ],
+      "source_hashes": [
+        "b2cabb3951c0a2b65c79395a2f0e42f03e2f17d6fc7126ada780b5ccb20569cc"
+      ]
+    },
+    {
+      "key": "sky-sign/chiron/capricorn",
+      "realization": "someone setting down extra work that was only meant to prove they were capable",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!29"
+      ],
+      "source_hashes": [
+        "e9a1fde6aaf473bf5e407f5ef9ade3769bcea4d9ebdb56134d53195f50a91b68"
+      ]
+    },
+    {
+      "key": "sky-sign/chiron/gemini",
+      "realization": "someone sending the message after checking that their own meaning is still there",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!15"
+      ],
+      "source_hashes": [
+        "78edaff067639521b44181d003467ca5cccaa5b8d381f08a95e8bbca9011e4c1"
+      ]
+    },
+    {
+      "key": "sky-sign/chiron/leo",
+      "realization": "someone sharing the work without making it impressive enough to hide behind",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!19"
+      ],
+      "source_hashes": [
+        "009b737f732c579020195c6b992dac19f826715af6227895d676973202a80207"
+      ]
+    },
+    {
+      "key": "sky-sign/chiron/libra",
+      "realization": "someone stating a real preference without making agreement the price of staying close",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!23"
+      ],
+      "source_hashes": [
+        "95c29facac24c9ec132ba8092cb83bf1a2b20941e1c37193c39a208f1eaedce7"
+      ]
+    },
+    {
+      "key": "sky-sign/chiron/pisces",
+      "realization": "someone changing a practical commitment so it matches what they actually believe",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!33"
+      ],
+      "source_hashes": [
+        "8978b0b7d8ad7dd7076fc2927c2ad508edc7887e3668de982bd0207149dfa945"
+      ]
+    },
+    {
+      "key": "sky-sign/chiron/sagittarius",
+      "realization": "someone stating a conviction without softening it before anyone has disagreed",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!27"
+      ],
+      "source_hashes": [
+        "96edddc9530f9f16866239920c92e516223b6d6ba683b90afef8667d6709addb"
+      ]
+    },
+    {
+      "key": "sky-sign/chiron/scorpio",
+      "realization": "someone letting another person closer without demanding proof before trust can begin",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!25"
+      ],
+      "source_hashes": [
+        "f82bbd6e0681e6c94ba555224695abe258d9faa2ffb78329d2f0750fbbf6cbb5"
+      ]
+    },
+    {
+      "key": "sky-sign/chiron/taurus",
+      "realization": "someone choosing a workable change after comfort alone stops protecting the old setup",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!10"
+      ],
+      "source_hashes": [
+        "dba3adff229b8043a48f7604a778f8fc29393b5dc7910bb21fe50f4cebc684d8"
+      ]
+    },
+    {
+      "key": "sky-sign/jupiter/aries",
+      "realization": "someone taking the first practical step while confidence is high enough to act",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!168"
+      ],
+      "source_hashes": [
+        "e4f01e9514f9a57aed31a2fa97438e6aa6577e788da968121d2255064f671d06"
+      ]
+    },
+    {
+      "key": "sky-sign/jupiter/scorpio",
+      "realization": "someone facing the difficult truth that makes grief or change feel less stuck",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!89"
+      ],
+      "source_hashes": [
+        "4f25fcfbf9248a585d7b669cb800935266a6eaabc0120128ad34bf78efb3c72a"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/aquarius",
+      "realization": "someone leaving a group that only includes them while they remain useful or agreeable",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/aquarius"
+      ],
+      "source_hashes": [
+        "8b2278b5d06f8f109b87da66ab89d8c16520207aab9459c71ab45d8b44c6f1ba"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/aries",
+      "realization": "someone saying no before another repeated demand becomes an obligation",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/aries"
+      ],
+      "source_hashes": [
+        "60f3943efd141a5fc1b4c2b73952ff8780970099c425d27ed59d7b4f1799fe28"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/gemini",
+      "realization": "someone correcting the official story with the fact everyone learned to leave out",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/gemini"
+      ],
+      "source_hashes": [
+        "5092d02d000e5a5fe5efcc5932adef0127e0778ed515dc5d66e718710bc0060a"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/pisces",
+      "realization": "someone ending an arrangement that depends on their needs disappearing",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/pisces"
+      ],
+      "source_hashes": [
+        "2804160df9db69f9b14b6a20c6c11fbcc9985d1243ff62673ffd1fd97f948a07"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/sagittarius",
+      "realization": "someone challenging a rule that treats disagreement as ignorance or disloyalty",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/sagittarius"
+      ],
+      "source_hashes": [
+        "7c20900feca4cf403950a92fda1855e5be2db9221b6c0b0896d8e2599f55eb9d"
+      ]
+    },
+    {
+      "key": "sky-sign/lilith/taurus",
+      "realization": "someone naming what their work, body, or time is worth without defending the need",
+      "source_ids": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/sky-placement-hook/lilith/taurus"
+      ],
+      "source_hashes": [
+        "30b02d3985023529701ee6367165fc038f6729a2b4587ac8e6dd595d94353c48"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/aquarius",
+      "realization": "someone proving another method works before asking the group to change the rule",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!223"
+      ],
+      "source_hashes": [
+        "5f8ce9b7212e3b7cc14497b412a8162cbea650eba30c66985269448c79b0e229"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/leo",
+      "realization": "someone putting their name on an effort and carrying it through where everyone can see",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!40"
+      ],
+      "source_hashes": [
+        "a8d85d92ff58a5c46e06ca6dba908db966488e38599ec572c9a5fc3574a1c286"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/libra",
+      "realization": "someone using tact to state the real disagreement without abandoning the shared plan",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!42"
+      ],
+      "source_hashes": [
+        "492b1f314d8a6df9b534e659ea4f3313edc71b437c6d1d7dd7d054ddb5576768"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/pisces",
+      "realization": "someone turning a strong feeling into useful work that addresses the problem indirectly",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!47"
+      ],
+      "source_hashes": [
+        "ce39b9484f05ee4b4de00ed7f559d9ec63c9799e6d15afed33154562b15b086e"
+      ]
+    },
+    {
+      "key": "sky-sign/mars/sagittarius",
+      "realization": "someone moving the larger plan once the facts can carry the confidence",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!203"
+      ],
+      "source_hashes": [
+        "c51a9dab166de602ddf124b7a1f08aadc4f0639534c467e83e2d185ff101f9a0"
+      ]
+    },
+    {
+      "key": "sky-sign/mercury/aquarius",
+      "realization": "someone showing where a new rule can work in practice",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!445"
+      ],
+      "source_hashes": [
+        "8267f0d54861a0712e03dcc4472bce8e50de6220e09877ee51ca4e84a145a16d"
+      ]
+    },
+    {
+      "key": "sky-sign/mercury/aries",
+      "realization": "someone giving the clear answer that gets a stalled decision moving again",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!251"
+      ],
+      "source_hashes": [
+        "0ab8c1ff29ab1bc9658e67fd43c08ca864ff6dd2ef0bcf1dc070557091127af2"
+      ]
+    },
+    {
+      "key": "sky-sign/mercury/capricorn",
+      "realization": "someone putting the deadline and responsibility in writing so the decision can proceed",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!429"
+      ],
+      "source_hashes": [
+        "9b257f1e586392f5ebfa62fbd86d2873079360610fd9d8188c4241c0d4a3aca9"
+      ]
+    },
+    {
+      "key": "sky-sign/mercury/scorpio",
+      "realization": "someone naming the private fact that lets a stalled decision move",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!392"
+      ],
+      "source_hashes": [
+        "379a1b9b2940ae97fb0fc26750e590d9c11e000a5717690ba726b32757af5416"
+      ]
+    },
+    {
+      "key": "sky-sign/moon/aquarius",
+      "realization": "someone stepping back from a reaction long enough to see the pattern clearly",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!118"
+      ],
+      "source_hashes": [
+        "035462284848f4e94886e4211ff7ce8d9ad1f63c411335eb55168821643c59b6"
+      ]
+    },
+    {
+      "key": "sky-sign/moon/gemini",
+      "realization": "someone talking through a worry until the simple feeling underneath becomes clear",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!110"
+      ],
+      "source_hashes": [
+        "d6d255fc952ee42f9df13243dcbc4978f9c6d77cab6be9cb87682c20e32dfba7"
+      ]
+    },
+    {
+      "key": "sky-sign/moon/sagittarius",
+      "realization": "someone finding enough perspective to admit the feeling and still see a way forward",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!116"
+      ],
+      "source_hashes": [
+        "858215fcaf279b3dbdb342f792258f45167acc358c4b149161c152a9b35147e5"
+      ]
+    },
+    {
+      "key": "sky-sign/moon/scorpio",
+      "realization": "someone trusting a private feeling enough to say how much it still matters",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!115"
+      ],
+      "source_hashes": [
+        "82e6549f5dec0b5e5556c379ec8272cee99e4f2f75a1156feb70e6493579c1c2"
+      ]
+    },
+    {
+      "key": "sky-sign/neptune/cancer",
+      "realization": "someone offering care without assuming they know what another person needs",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!537"
+      ],
+      "source_hashes": [
+        "070f3cfc10da7ac3099e6eca89f82f3855914fd86896986d6d030dbe0ffc73f9"
+      ]
+    },
+    {
+      "key": "sky-sign/neptune/capricorn",
+      "realization": "someone rebuilding a plan around what still matters after the old blueprint stops working",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!549"
+      ],
+      "source_hashes": [
+        "f0b963c36f04d533c99c313b29b5f145acda559523d2441dce5c7c90f77ecc26"
+      ]
+    },
+    {
+      "key": "sky-sign/neptune/gemini",
+      "realization": "someone giving an imaginative idea words that other people can understand and use",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!242"
+      ],
+      "source_hashes": [
+        "c0f8836c5c1a1172338e5acdf3cd097f45693271d06149b0a26c139d31098dfe"
+      ]
+    },
+    {
+      "key": "sky-sign/neptune/libra",
+      "realization": "someone checking the agreement against what fairness looks like beyond the fantasy",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!543"
+      ],
+      "source_hashes": [
+        "ac71ce5dc69cda4540b6e94a12649ad377ea80775509fb3977b920ae326dd228"
+      ]
+    },
+    {
+      "key": "sky-sign/neptune/scorpio",
+      "realization": "someone naming the motive clearly enough for trust to deepen without hiding the power involved",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!247"
+      ],
+      "source_hashes": [
+        "784d57f41ce8fb7f246e05203c322f24ab8f3dd71aa0211b950b1b35919d8c05"
+      ]
+    },
+    {
+      "key": "sky-sign/neptune/taurus",
+      "realization": "someone making an ideal practical enough to protect what people actually depend on",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!241"
+      ],
+      "source_hashes": [
+        "a2347094d9321f6a196c01f6200e7986f65a2e463e2966c3a8ec4e785f785ac0"
+      ]
+    },
+    {
+      "key": "sky-sign/neptune/virgo",
+      "realization": "someone turning an imagined possibility into a method that can actually be followed",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!541"
+      ],
+      "source_hashes": [
+        "d7bd95bf8533bc3079c5d81ae46eac40d254d5b2d6b578b42ea990f7a9294e39"
+      ]
+    },
+    {
+      "key": "sky-sign/pluto/aries",
+      "realization": "someone saying what they want and taking the first step after an old hesitation breaks",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!599"
+      ],
+      "source_hashes": [
+        "38151f49bf83f9963c6fd871a5a68b9804aed3ae6d498a67b2e215b076ec98c2"
+      ]
+    },
+    {
+      "key": "sky-sign/pluto/cancer",
+      "realization": "someone changing an old family arrangement after naming what the household actually needs",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!605"
+      ],
+      "source_hashes": [
+        "20f1ef6fbf6b19bc2fd56e2b91c2f2347a4cb63c433fc84493349182ee15d0df"
+      ]
+    },
+    {
+      "key": "sky-sign/pluto/capricorn",
+      "realization": "someone moving a decision once responsibility and control are named directly",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!617"
+      ],
+      "source_hashes": [
+        "561ab8da2a85c422ac3be616352c3b5b5b514c39865886c11c6cf6fc94b141a3"
+      ]
+    },
+    {
+      "key": "sky-sign/pluto/gemini",
+      "realization": "someone questioning an old belief after one conversation makes its limits impossible to ignore",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!603"
+      ],
+      "source_hashes": [
+        "a9518abaec842c1f0de30f34c0888d93c846bc5de4c7bf2e266eb0d737cfbe6e"
+      ]
+    },
+    {
+      "key": "sky-sign/pluto/leo",
+      "realization": "someone claiming visible space for work that was previously easy to overlook",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!607"
+      ],
+      "source_hashes": [
+        "9adcd6ba13260b466db67a799b750d360f8a09ad42313c7df9a052c893263b27"
+      ]
+    },
+    {
+      "key": "sky-sign/pluto/libra",
+      "realization": "someone renegotiating an agreement after repeated compromise reveals who keeps yielding",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!611"
+      ],
+      "source_hashes": [
+        "5a504ba7155cd45d03b0d4627458bb9d8198536da8024a5e248ccc99f96770fd"
+      ]
+    },
+    {
+      "key": "sky-sign/pluto/pisces",
+      "realization": "someone releasing a belief or coping habit that no longer provides real comfort",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!647"
+      ],
+      "source_hashes": [
+        "c37156cad7ff9a237bf0785b39b83107bd40d8f64297ac16e61bcefa3fab773d"
+      ]
+    },
+    {
+      "key": "sky-sign/pluto/sagittarius",
+      "realization": "someone questioning an inherited belief until a larger and more honest view becomes possible",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!615"
+      ],
+      "source_hashes": [
+        "1ca242e50bf0e6785b30a34640ffca4cca814829c2ee54ed18b28db52ebf0e9a"
+      ]
+    },
+    {
+      "key": "sky-sign/pluto/scorpio",
+      "realization": "someone opening the hidden material and changing the arrangement that kept it buried",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!151"
+      ],
+      "source_hashes": [
+        "b3f845992e2a982a389e5d0292dc27dbc0635a259e98d115d8ae7540a4badaf0"
+      ]
+    },
+    {
+      "key": "sky-sign/pluto/taurus",
+      "realization": "someone rebuilding security after an honest look at what the old arrangement costs",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!601"
+      ],
+      "source_hashes": [
+        "210776fa92bc87f5045ba0d2f237581eb42335ea7a8ea06b3f0b9b065eb07e0a"
+      ]
+    },
+    {
+      "key": "sky-sign/saturn/aries",
+      "realization": "someone setting a limit that keeps the first move from outrunning what can be maintained",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!654"
+      ],
+      "source_hashes": [
+        "7e5fb724918b17ca3725051fbd9c0295cf672fe75c1d97e8c30c8b46df8dfc55"
+      ]
+    },
+    {
+      "key": "sky-sign/saturn/capricorn",
+      "realization": "someone acting once the responsibility and limit are no longer hypothetical",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!705"
+      ],
+      "source_hashes": [
+        "51e474631540a435c287607a99ec26dbfab40e3c6d6ef5365a577a9a5cab4a92"
+      ]
+    },
+    {
+      "key": "sky-sign/saturn/leo",
+      "realization": "someone earning recognition by finishing the work even when no applause arrives",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!671"
+      ],
+      "source_hashes": [
+        "73c4292b0b670c63064e19f4b8e0c8b029cf29910c4438116ef878683f905dae"
+      ]
+    },
+    {
+      "key": "sky-sign/saturn/libra",
+      "realization": "someone writing fair terms that still work when the agreement becomes difficult",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!676"
+      ],
+      "source_hashes": [
+        "368bb13fb490aa824d76054f2495eefc059a67927e26ce94eef551955ae46f33"
+      ]
+    },
+    {
+      "key": "sky-sign/saturn/taurus",
+      "realization": "someone rebuilding trust through work that can be repeated and maintained",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!193"
+      ],
+      "source_hashes": [
+        "3b0435cddd077f55c6ff8fd51efecf026f841287d6594bb384362db6d84aad16"
+      ]
+    },
+    {
+      "key": "sky-sign/saturn/virgo",
+      "realization": "someone building real competence by repeating the unglamorous work until it holds",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!673"
+      ],
+      "source_hashes": [
+        "24fd7d31306750ccba043b18fe9c8f60523e5246ee4fb31b744b1413ef81d26c"
+      ]
+    },
+    {
+      "key": "sky-sign/sun/scorpio",
+      "realization": "someone naming the hidden fact before it keeps shaping the decision",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!838"
+      ],
+      "source_hashes": [
+        "e58c141239bac2092c59cafde00a9758984ca8b477f2fb194c49e8e77ff3ffb3"
+      ]
+    },
+    {
+      "key": "sky-sign/uranus/aquarius",
+      "realization": "someone proving a different system can give the group more room to act",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!953"
+      ],
+      "source_hashes": [
+        "0b25fb329bb37dcb8844ef406f5c268075a7608a5de3a8a5a8ec47f5a53677b6"
+      ]
+    },
+    {
+      "key": "sky-sign/uranus/capricorn",
+      "realization": "someone changing the structure once the old plan no longer supports the result",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!951"
+      ],
+      "source_hashes": [
+        "7cc3fa6004b46427a26906c749a0ca0bd2125f28957eb5992c9cd116e286354c"
+      ]
+    },
+    {
+      "key": "sky-sign/uranus/scorpio",
+      "realization": "someone repairing trust by renegotiating access after a private disclosure",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!947"
+      ],
+      "source_hashes": [
+        "a2d3ac8ff4c43961ef8985b236f50e5251c858f480b2d91596f0dd23933a6074"
+      ]
+    },
+    {
+      "key": "sky-sign/uranus/taurus",
+      "realization": "someone changing a routine after the old version stops protecting what matters",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!911"
+      ],
+      "source_hashes": [
+        "447e068caf4b7ff17812902ea09095706df1053ccd80bd3161a07947288149eb"
+      ]
+    },
+    {
+      "key": "sky-sign/venus/capricorn",
+      "realization": "someone making commitment credible by carrying the ordinary work it requires",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!69"
+      ],
+      "source_hashes": [
+        "8b125bf88f1aee6436760a54e01cd7005a62722d39fa6bb71a50c7715c57f107"
+      ]
+    },
+    {
+      "key": "sky-sign/venus/gemini",
+      "realization": "someone asking the missing question that gets the conversation moving again",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!62"
+      ],
+      "source_hashes": [
+        "d5e6f6b96b9b5279475b0c30df270a0ef4c8809e2c50c4d8169f131338c7427b"
+      ]
+    },
+    {
+      "key": "sky-sign/venus/pisces",
+      "realization": "someone defining the hope clearly enough for both people to act on it",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx#TransitMeanings!1093"
+      ],
+      "source_hashes": [
+        "015929baf8822626da459cf3d1f3ae4ce64c685829f5d0149220131eb0c834ec"
+      ]
+    },
+    {
+      "key": "sky-sign/venus/sagittarius",
+      "realization": "someone choosing a connection that leaves both people room to keep growing",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!68"
+      ],
+      "source_hashes": [
+        "8536df484d62507cd74941fb64d98a411d15c0878e56e1d3db660a9656426bae"
+      ]
+    },
+    {
+      "key": "sky-sign/venus/taurus",
+      "realization": "someone choosing the arrangement that feels good and can still hold up over time",
+      "source_ids": [
+        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx#PlacementMeanings!61"
+      ],
+      "source_hashes": [
+        "6dee87d21887dc5751848bda35e5cc92a8cca58c619062652f4e78d06305df61"
+      ]
+    }
+  ]
+}
