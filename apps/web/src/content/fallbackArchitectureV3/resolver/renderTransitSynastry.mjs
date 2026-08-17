@@ -1855,7 +1855,7 @@ function renderSkyPlacementCopy({
   // Editorial rules stay in the policy compiler and linter; the resolver only reads
   // the resulting eligibility stamp.
   function skyPlacementRenderEligible(planet, sign) {
-    const slots = ["hook", "lived", "turn"].map(
+    const slots = ["tagline", "hook", "lived", "turn"].map(
       (slot) => hooks.get(`fallback-hook/sky-placement-${slot}/${planet}/${sign}`)
     );
     if (slots.some((row) => !row || typeof row.body_you !== "string" || !row.body_you.trim())) return false;
@@ -1870,21 +1870,6 @@ function renderSkyPlacementCopy({
 
   if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet)) {
     const standaloneHook = hooks.get(`fallback-hook/sky-placement-sign/${planet}/${sign}`);
-    if (!continuousSignCopy && standaloneHook?.body_you) {
-      const body = standaloneHook.body_you.trim();
-      if (!body || /\{\{/u.test(body)) {
-        throw new SourceGapError(`SOURCE_GAP: standalone sky placement hook ${planet}/${sign}`);
-      }
-      return {
-        headline: `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
-        tagline: null,
-        keyDates: [],
-        body,
-        parts: [body],
-        templateKey: "sky-placement-standalone-hook-v1",
-        contentKey: standaloneHook.contentKey
-      };
-    }
     if (continuousSignCopy) {
       return renderContinuousSkyPlacement(continuousSignCopy, {
         planet,
@@ -1898,6 +1883,21 @@ function renderSkyPlacementCopy({
         previousResidencyEntryDate,
         previousResidencyExitDate
       });
+    }
+    if (!skyPlacementRenderEligible(planet, sign) && standaloneHook?.body_you) {
+      const body = standaloneHook.body_you.trim();
+      if (!body || /\{\{/u.test(body)) {
+        throw new SourceGapError(`SOURCE_GAP: standalone sky placement hook ${planet}/${sign}`);
+      }
+      return {
+        headline: `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
+        tagline: null,
+        keyDates: [],
+        body,
+        parts: [body],
+        templateKey: "sky-placement-standalone-hook-v1",
+        contentKey: standaloneHook.contentKey
+      };
     }
     if (!skyPlacementRenderEligible(planet, sign)) {
       throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);

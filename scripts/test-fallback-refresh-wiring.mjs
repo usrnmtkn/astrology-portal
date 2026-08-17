@@ -89,8 +89,8 @@ const servingArticleSnapshot = skyPlacementOwnerApprovedFallbacks.rows
 assert.equal(skyPlacementCurrentApproval.articleCount, servingArticleSnapshot.length);
 assert.equal(
   createHash("sha256").update(JSON.stringify(servingArticleSnapshot)).digest("hex"),
-  skyPlacementCurrentApproval.articlesSha256,
-  "The exact serving articles must match the owner-approved Sun-in-Leo V3 snapshot."
+  skyPlacementCurrentApproval.readerPunctuationNormalizedArticlesSha256,
+  "The exact serving articles must match the owner-approved snapshot after the globally approved reader-punctuation normalization."
 );
 for (const servingRow of skyPlacementOwnerApprovedFallbacks.rows.filter((row) => Object.hasOwn(row, "body_you"))) {
   assert.equal(
@@ -173,7 +173,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-15a");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-16a");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
