@@ -15,7 +15,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -40,7 +40,7 @@
         "meaning": 15,
         "register": 14,
         "scene": 1,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {
@@ -66,7 +66,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -89,7 +89,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -115,7 +115,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 3,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {
@@ -141,7 +141,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 2,
+        "argument": 6,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -164,7 +164,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -187,7 +187,7 @@
         "meaning": 3,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -210,7 +210,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -233,7 +233,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -256,7 +256,7 @@
         "meaning": 14,
         "register": 10,
         "scene": 0,
-        "argument": 3,
+        "argument": 7,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -279,7 +279,7 @@
         "meaning": 2,
         "register": 1,
         "scene": 1,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {
@@ -304,7 +304,7 @@
         "meaning": 6,
         "register": 2,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -326,10 +326,10 @@
         ]
       },
       "extended": {
-        "meaning": 16,
+        "meaning": 17,
         "register": 11,
         "scene": 1,
-        "argument": 3,
+        "argument": 7,
         "phrase": 0
       },
       "sceneBySource": {
@@ -356,7 +356,7 @@
         "meaning": 16,
         "register": 110,
         "scene": 3,
-        "argument": 6,
+        "argument": 10,
         "phrase": 0
       },
       "sceneBySource": {
@@ -382,10 +382,10 @@
         ]
       },
       "extended": {
-        "meaning": 5,
+        "meaning": 6,
         "register": 2,
         "scene": 2,
-        "argument": 2,
+        "argument": 6,
         "phrase": 0
       },
       "sceneBySource": {
@@ -410,10 +410,10 @@
         ]
       },
       "extended": {
-        "meaning": 17,
+        "meaning": 18,
         "register": 10,
         "scene": 2,
-        "argument": 4,
+        "argument": 8,
         "phrase": 0
       },
       "sceneBySource": {
@@ -441,7 +441,7 @@
         "meaning": 15,
         "register": 13,
         "scene": 1,
-        "argument": 6,
+        "argument": 10,
         "phrase": 0
       },
       "sceneBySource": {
@@ -463,10 +463,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 8,
+        "meaning": 9,
         "register": 2,
         "scene": 0,
-        "argument": 5,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -492,7 +492,7 @@
         "meaning": 17,
         "register": 12,
         "scene": 1,
-        "argument": 6,
+        "argument": 10,
         "phrase": 0
       },
       "sceneBySource": {
@@ -517,7 +517,7 @@
         "meaning": 23,
         "register": 13,
         "scene": 0,
-        "argument": 10,
+        "argument": 14,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -542,7 +542,7 @@
         "meaning": 6,
         "register": 2,
         "scene": 1,
-        "argument": 3,
+        "argument": 7,
         "phrase": 0
       },
       "sceneBySource": {
@@ -567,7 +567,7 @@
         "meaning": 18,
         "register": 12,
         "scene": 0,
-        "argument": 7,
+        "argument": 11,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -590,7 +590,7 @@
         "meaning": 5,
         "register": 0,
         "scene": 0,
-        "argument": 2,
+        "argument": 6,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -614,7 +614,7 @@
         "meaning": 19,
         "register": 11,
         "scene": 1,
-        "argument": 5,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {
@@ -639,10 +639,10 @@
         ]
       },
       "extended": {
-        "meaning": 20,
+        "meaning": 21,
         "register": 14,
         "scene": 2,
-        "argument": 5,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {
@@ -668,10 +668,10 @@
         ]
       },
       "extended": {
-        "meaning": 30,
+        "meaning": 31,
         "register": 69,
         "scene": 3,
-        "argument": 7,
+        "argument": 11,
         "phrase": 0
       },
       "sceneBySource": {
@@ -698,10 +698,10 @@
         ]
       },
       "extended": {
-        "meaning": 30,
+        "meaning": 31,
         "register": 20,
         "scene": 4,
-        "argument": 3,
+        "argument": 7,
         "phrase": 0
       },
       "sceneBySource": {
@@ -727,10 +727,10 @@
         ]
       },
       "extended": {
-        "meaning": 20,
+        "meaning": 21,
         "register": 13,
         "scene": 7,
-        "argument": 7,
+        "argument": 11,
         "phrase": 0
       },
       "sceneBySource": {
@@ -756,10 +756,10 @@
         ]
       },
       "extended": {
-        "meaning": 18,
+        "meaning": 19,
         "register": 13,
         "scene": 2,
-        "argument": 7,
+        "argument": 11,
         "phrase": 0
       },
       "sceneBySource": {
@@ -784,10 +784,10 @@
         ]
       },
       "extended": {
-        "meaning": 19,
+        "meaning": 20,
         "register": 12,
         "scene": 5,
-        "argument": 8,
+        "argument": 12,
         "phrase": 0
       },
       "sceneBySource": {
@@ -813,10 +813,10 @@
         ]
       },
       "extended": {
-        "meaning": 18,
+        "meaning": 19,
         "register": 14,
         "scene": 1,
-        "argument": 6,
+        "argument": 10,
         "phrase": 0
       },
       "sceneBySource": {
@@ -843,7 +843,7 @@
         "meaning": 30,
         "register": 21,
         "scene": 1,
-        "argument": 11,
+        "argument": 15,
         "phrase": 0
       },
       "sceneBySource": {
@@ -870,7 +870,7 @@
         "meaning": 19,
         "register": 10,
         "scene": 1,
-        "argument": 5,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {
@@ -895,10 +895,10 @@
         ]
       },
       "extended": {
-        "meaning": 20,
+        "meaning": 21,
         "register": 14,
         "scene": 3,
-        "argument": 8,
+        "argument": 12,
         "phrase": 0
       },
       "sceneBySource": {
@@ -924,10 +924,10 @@
         ]
       },
       "extended": {
-        "meaning": 21,
+        "meaning": 22,
         "register": 11,
         "scene": 3,
-        "argument": 8,
+        "argument": 12,
         "phrase": 0
       },
       "sceneBySource": {
@@ -979,7 +979,7 @@
         "meaning": 30,
         "register": 17,
         "scene": 7,
-        "argument": 6,
+        "argument": 10,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1005,10 +1005,10 @@
         ]
       },
       "extended": {
-        "meaning": 35,
+        "meaning": 36,
         "register": 23,
         "scene": 6,
-        "argument": 7,
+        "argument": 11,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1036,7 +1036,7 @@
         "meaning": 23,
         "register": 10,
         "scene": 8,
-        "argument": 9,
+        "argument": 13,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1065,7 +1065,7 @@
         "meaning": 29,
         "register": 11,
         "scene": 12,
-        "argument": 8,
+        "argument": 12,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1091,10 +1091,10 @@
         ]
       },
       "extended": {
-        "meaning": 26,
+        "meaning": 27,
         "register": 14,
         "scene": 6,
-        "argument": 6,
+        "argument": 10,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1119,10 +1119,10 @@
         ]
       },
       "extended": {
-        "meaning": 47,
+        "meaning": 48,
         "register": 37,
         "scene": 9,
-        "argument": 16,
+        "argument": 20,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1151,7 +1151,7 @@
         "meaning": 22,
         "register": 14,
         "scene": 10,
-        "argument": 7,
+        "argument": 11,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1198,10 +1198,10 @@
         ]
       },
       "extended": {
-        "meaning": 46,
+        "meaning": 47,
         "register": 33,
         "scene": 10,
-        "argument": 7,
+        "argument": 11,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1229,7 +1229,7 @@
         "meaning": 22,
         "register": 8,
         "scene": 7,
-        "argument": 11,
+        "argument": 15,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1258,7 +1258,7 @@
         "meaning": 21,
         "register": 8,
         "scene": 6,
-        "argument": 3,
+        "argument": 7,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1286,7 +1286,7 @@
         "meaning": 19,
         "register": 23,
         "scene": 7,
-        "argument": 8,
+        "argument": 12,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1316,7 +1316,7 @@
         "meaning": 22,
         "register": 14,
         "scene": 10,
-        "argument": 4,
+        "argument": 8,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1340,10 +1340,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 1,
+        "meaning": 2,
         "register": 1,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1366,7 +1366,7 @@
         "meaning": 1,
         "register": 1,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1386,10 +1386,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 1,
+        "meaning": 2,
         "register": 1,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1412,7 +1412,7 @@
         "meaning": 13,
         "register": 13,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1432,10 +1432,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 2,
+        "meaning": 3,
         "register": 2,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1455,10 +1455,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 1,
+        "meaning": 2,
         "register": 1,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1478,10 +1478,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 13,
+        "meaning": 14,
         "register": 13,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1504,7 +1504,7 @@
         "meaning": 1,
         "register": 1,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1524,10 +1524,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 13,
+        "meaning": 14,
         "register": 13,
         "scene": 1,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1552,7 +1552,7 @@
         "meaning": 4,
         "register": 2,
         "scene": 0,
-        "argument": 2,
+        "argument": 6,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1575,10 +1575,10 @@
         ]
       },
       "extended": {
-        "meaning": 14,
+        "meaning": 15,
         "register": 9,
         "scene": 1,
-        "argument": 5,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1603,7 +1603,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1626,7 +1626,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 1,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1648,10 +1648,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 2,
+        "meaning": 3,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1671,10 +1671,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 2,
+        "meaning": 3,
         "register": 2,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1697,7 +1697,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1720,7 +1720,7 @@
         "meaning": 24,
         "register": 9,
         "scene": 0,
-        "argument": 9,
+        "argument": 13,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1743,7 +1743,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1763,10 +1763,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 2,
+        "meaning": 3,
         "register": 2,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1786,10 +1786,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 2,
+        "meaning": 3,
         "register": 1,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1812,7 +1812,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1858,7 +1858,7 @@
         "meaning": 1,
         "register": 0,
         "scene": 1,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1883,7 +1883,7 @@
         "meaning": 13,
         "register": 12,
         "scene": 1,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1908,7 +1908,7 @@
         "meaning": 2,
         "register": 1,
         "scene": 1,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1933,7 +1933,7 @@
         "meaning": 1,
         "register": 0,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -1956,7 +1956,7 @@
         "meaning": 13,
         "register": 12,
         "scene": 1,
-        "argument": 2,
+        "argument": 6,
         "phrase": 0
       },
       "sceneBySource": {
@@ -1981,7 +1981,7 @@
         "meaning": 1,
         "register": 1,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2004,7 +2004,7 @@
         "meaning": 2,
         "register": 1,
         "scene": 0,
-        "argument": 2,
+        "argument": 6,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2027,7 +2027,7 @@
         "meaning": 1,
         "register": 0,
         "scene": 1,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {
@@ -2050,7 +2050,7 @@
         "meaning": 1,
         "register": 1,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2073,7 +2073,7 @@
         "meaning": 2,
         "register": 1,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2096,7 +2096,7 @@
         "meaning": 13,
         "register": 11,
         "scene": 0,
-        "argument": 3,
+        "argument": 7,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2119,7 +2119,7 @@
         "meaning": 2,
         "register": 0,
         "scene": 1,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {
@@ -2142,7 +2142,7 @@
         "meaning": 14,
         "register": 8,
         "scene": 1,
-        "argument": 2,
+        "argument": 6,
         "phrase": 0
       },
       "sceneBySource": {
@@ -2167,7 +2167,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2190,7 +2190,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2215,7 +2215,7 @@
         "meaning": 36,
         "register": 21,
         "scene": 1,
-        "argument": 3,
+        "argument": 7,
         "phrase": 0
       },
       "sceneBySource": {
@@ -2240,7 +2240,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 1,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {
@@ -2265,7 +2265,7 @@
         "meaning": 2,
         "register": 1,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2288,7 +2288,7 @@
         "meaning": 2,
         "register": 1,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2311,7 +2311,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2334,7 +2334,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2354,10 +2354,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 2,
+        "meaning": 3,
         "register": 1,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2377,10 +2377,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 2,
+        "meaning": 3,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2400,10 +2400,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 2,
+        "meaning": 3,
         "register": 1,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2428,7 +2428,7 @@
         "meaning": 17,
         "register": 9,
         "scene": 1,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {
@@ -2455,7 +2455,7 @@
         "meaning": 14,
         "register": 132,
         "scene": 2,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {
@@ -2482,7 +2482,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2505,7 +2505,7 @@
         "meaning": 23,
         "register": 12,
         "scene": 1,
-        "argument": 3,
+        "argument": 7,
         "phrase": 0
       },
       "sceneBySource": {
@@ -2527,10 +2527,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 2,
+        "meaning": 3,
         "register": 2,
         "scene": 1,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {
@@ -2555,7 +2555,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 2,
+        "argument": 6,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2578,7 +2578,7 @@
         "meaning": 10,
         "register": 4,
         "scene": 1,
-        "argument": 5,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {
@@ -2606,7 +2606,7 @@
         "meaning": 14,
         "register": 7,
         "scene": 2,
-        "argument": 2,
+        "argument": 6,
         "phrase": 0
       },
       "sceneBySource": {
@@ -2629,10 +2629,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 8,
+        "meaning": 9,
         "register": 0,
         "scene": 0,
-        "argument": 5,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2653,7 +2653,7 @@
         "meaning": 6,
         "register": 2,
         "scene": 0,
-        "argument": 2,
+        "argument": 6,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2673,10 +2673,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 2,
+        "meaning": 3,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2720,7 +2720,7 @@
         "meaning": 3,
         "register": 2,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2743,7 +2743,7 @@
         "meaning": 1,
         "register": 1,
         "scene": 1,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {
@@ -2768,7 +2768,7 @@
         "meaning": 2,
         "register": 1,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2791,7 +2791,7 @@
         "meaning": 1,
         "register": 1,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2814,7 +2814,7 @@
         "meaning": 2,
         "register": 1,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2837,7 +2837,7 @@
         "meaning": 1,
         "register": 1,
         "scene": 1,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {
@@ -2862,7 +2862,7 @@
         "meaning": 1,
         "register": 0,
         "scene": 0,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2883,7 +2883,7 @@
         "meaning": 13,
         "register": 12,
         "scene": 0,
-        "argument": 4,
+        "argument": 8,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2906,7 +2906,7 @@
         "meaning": 2,
         "register": 1,
         "scene": 0,
-        "argument": 2,
+        "argument": 6,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2929,7 +2929,7 @@
         "meaning": 13,
         "register": 8,
         "scene": 0,
-        "argument": 6,
+        "argument": 10,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2952,7 +2952,7 @@
         "meaning": 12,
         "register": 8,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2975,7 +2975,7 @@
         "meaning": 2,
         "register": 1,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -2998,7 +2998,7 @@
         "meaning": 1,
         "register": 0,
         "scene": 1,
-        "argument": 0,
+        "argument": 4,
         "phrase": 0
       },
       "sceneBySource": {
@@ -3047,7 +3047,7 @@
         "meaning": 15,
         "register": 12,
         "scene": 1,
-        "argument": 5,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {
@@ -3117,7 +3117,7 @@
         "meaning": 29,
         "register": 25,
         "scene": 2,
-        "argument": 6,
+        "argument": 10,
         "phrase": 0
       },
       "sceneBySource": {
@@ -3166,7 +3166,7 @@
         "meaning": 16,
         "register": 11,
         "scene": 2,
-        "argument": 4,
+        "argument": 8,
         "phrase": 0
       },
       "sceneBySource": {
@@ -3278,7 +3278,7 @@
         "meaning": 27,
         "register": 23,
         "scene": 4,
-        "argument": 3,
+        "argument": 7,
         "phrase": 0
       },
       "sceneBySource": {
@@ -3328,7 +3328,7 @@
         "meaning": 27,
         "register": 24,
         "scene": 3,
-        "argument": 6,
+        "argument": 10,
         "phrase": 0
       },
       "sceneBySource": {
@@ -3420,7 +3420,7 @@
         "meaning": 16,
         "register": 13,
         "scene": 13,
-        "argument": 5,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {
@@ -3470,7 +3470,7 @@
         "meaning": 15,
         "register": 13,
         "scene": 1,
-        "argument": 8,
+        "argument": 12,
         "phrase": 0
       },
       "sceneBySource": {
@@ -3561,7 +3561,7 @@
         "meaning": 31,
         "register": 22,
         "scene": 2,
-        "argument": 11,
+        "argument": 15,
         "phrase": 0
       },
       "sceneBySource": {
@@ -3611,7 +3611,7 @@
         "meaning": 28,
         "register": 23,
         "scene": 2,
-        "argument": 11,
+        "argument": 15,
         "phrase": 0
       },
       "sceneBySource": {
@@ -3661,7 +3661,7 @@
         "meaning": 16,
         "register": 12,
         "scene": 2,
-        "argument": 4,
+        "argument": 8,
         "phrase": 0
       },
       "sceneBySource": {
@@ -3753,7 +3753,7 @@
         "meaning": 27,
         "register": 23,
         "scene": 3,
-        "argument": 7,
+        "argument": 11,
         "phrase": 0
       },
       "sceneBySource": {
@@ -3782,7 +3782,7 @@
         "meaning": 15,
         "register": 11,
         "scene": 1,
-        "argument": 5,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {
@@ -3807,7 +3807,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -3827,10 +3827,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 13,
+        "meaning": 14,
         "register": 4,
         "scene": 0,
-        "argument": 6,
+        "argument": 10,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -3855,7 +3855,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 1,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {
@@ -3880,7 +3880,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -3903,10 +3903,10 @@
         ]
       },
       "extended": {
-        "meaning": 14,
+        "meaning": 15,
         "register": 66,
         "scene": 5,
-        "argument": 4,
+        "argument": 8,
         "phrase": 0
       },
       "sceneBySource": {
@@ -3933,7 +3933,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -3956,7 +3956,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -3979,7 +3979,7 @@
         "meaning": 4,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -3999,10 +3999,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 2,
+        "meaning": 3,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -4025,7 +4025,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -4051,7 +4051,7 @@
         "meaning": 28,
         "register": 97,
         "scene": 2,
-        "argument": 8,
+        "argument": 12,
         "phrase": 0
       },
       "sceneBySource": {
@@ -4077,7 +4077,7 @@
         "meaning": 2,
         "register": 2,
         "scene": 0,
-        "argument": 1,
+        "argument": 5,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -4130,7 +4130,7 @@
         "meaning": 19,
         "register": 16,
         "scene": 1,
-        "argument": 3,
+        "argument": 7,
         "phrase": 0
       },
       "sceneBySource": {
@@ -4158,7 +4158,7 @@
         "meaning": 32,
         "register": 30,
         "scene": 2,
-        "argument": 5,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {
@@ -4188,7 +4188,7 @@
         "meaning": 16,
         "register": 20,
         "scene": 1,
-        "argument": 3,
+        "argument": 7,
         "phrase": 0
       },
       "sceneBySource": {
@@ -4214,10 +4214,10 @@
         ]
       },
       "extended": {
-        "meaning": 21,
+        "meaning": 22,
         "register": 14,
         "scene": 5,
-        "argument": 5,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {
@@ -4243,10 +4243,10 @@
         ]
       },
       "extended": {
-        "meaning": 22,
+        "meaning": 23,
         "register": 17,
         "scene": 5,
-        "argument": 5,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {
@@ -4272,10 +4272,10 @@
         ]
       },
       "extended": {
-        "meaning": 20,
+        "meaning": 21,
         "register": 14,
         "scene": 2,
-        "argument": 3,
+        "argument": 7,
         "phrase": 0
       },
       "sceneBySource": {
@@ -4301,10 +4301,10 @@
         ]
       },
       "extended": {
-        "meaning": 21,
+        "meaning": 22,
         "register": 14,
         "scene": 15,
-        "argument": 15,
+        "argument": 19,
         "phrase": 0
       },
       "sceneBySource": {
@@ -4334,7 +4334,7 @@
         "meaning": 28,
         "register": 22,
         "scene": 1,
-        "argument": 5,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {
@@ -4356,10 +4356,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 16,
+        "meaning": 17,
         "register": 13,
         "scene": 1,
-        "argument": 8,
+        "argument": 12,
         "phrase": 0
       },
       "sceneBySource": {
@@ -4384,7 +4384,7 @@
         "meaning": 22,
         "register": 13,
         "scene": 0,
-        "argument": 6,
+        "argument": 10,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -4404,10 +4404,10 @@
         "scene_examples": []
       },
       "extended": {
-        "meaning": 29,
+        "meaning": 30,
         "register": 26,
         "scene": 0,
-        "argument": 5,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {},
@@ -4430,10 +4430,5238 @@
         ]
       },
       "extended": {
-        "meaning": 16,
+        "meaning": 17,
         "register": 39,
         "scene": 1,
-        "argument": 2,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13,
+        "owner-corpus-passage": 26
+      }
+    },
+    {
+      "placementKey": "chiron|aquarius",
+      "planet": "chiron",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "chiron|aries",
+      "planet": "chiron",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 15,
+        "register": 14,
+        "scene": 1,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 10,
+        "owner-corpus-passage": 4
+      }
+    },
+    {
+      "placementKey": "chiron|cancer",
+      "planet": "chiron",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "chiron|capricorn",
+      "planet": "chiron",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "chiron|gemini",
+      "planet": "chiron",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 3,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "chiron|leo",
+      "planet": "chiron",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "chiron|libra",
+      "planet": "chiron",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "chiron|pisces",
+      "planet": "chiron",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "chiron|sagittarius",
+      "planet": "chiron",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "chiron|scorpio",
+      "planet": "chiron",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "chiron|taurus",
+      "planet": "chiron",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 14,
+        "register": 10,
+        "scene": 0,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 10
+      }
+    },
+    {
+      "placementKey": "chiron|virgo",
+      "planet": "chiron",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 1,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "jupiter|10th-house",
+      "planet": "jupiter",
+      "sign": "10th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "jupiter|11th-house",
+      "planet": "jupiter",
+      "sign": "11th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "jupiter|12th-house",
+      "planet": "jupiter",
+      "sign": "12th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "jupiter|2nd-house",
+      "planet": "jupiter",
+      "sign": "2nd-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "jupiter|9th-house",
+      "planet": "jupiter",
+      "sign": "9th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "jupiter|aquarius",
+      "planet": "jupiter",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 6,
+        "register": 2,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "jupiter|aries",
+      "planet": "jupiter",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 17,
+        "register": 11,
+        "scene": 1,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11
+      }
+    },
+    {
+      "placementKey": "jupiter|cancer",
+      "planet": "jupiter",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 16,
+        "register": 110,
+        "scene": 3,
+        "argument": 10,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1,
+        "owner_corpus_fixture_scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11,
+        "owner-corpus-passage": 99
+      }
+    },
+    {
+      "placementKey": "jupiter|capricorn",
+      "planet": "jupiter",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 6,
+        "register": 2,
+        "scene": 2,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "jupiter|gemini",
+      "planet": "jupiter",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 18,
+        "register": 10,
+        "scene": 2,
+        "argument": 8,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 10
+      }
+    },
+    {
+      "placementKey": "jupiter|leo",
+      "planet": "jupiter",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 15,
+        "register": 13,
+        "scene": 1,
+        "argument": 10,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "jupiter|libra",
+      "planet": "jupiter",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 9,
+        "register": 2,
+        "scene": 0,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "jupiter|pisces",
+      "planet": "jupiter",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 17,
+        "register": 12,
+        "scene": 1,
+        "argument": 10,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "jupiter|sagittarius",
+      "planet": "jupiter",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 23,
+        "register": 13,
+        "scene": 0,
+        "argument": 14,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "jupiter|scorpio",
+      "planet": "jupiter",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 6,
+        "register": 2,
+        "scene": 1,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "jupiter|taurus",
+      "planet": "jupiter",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 18,
+        "register": 12,
+        "scene": 0,
+        "argument": 11,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "jupiter|virgo",
+      "planet": "jupiter",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 5,
+        "register": 0,
+        "scene": 0,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "lilith|aquarius",
+      "planet": "lilith",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "lilith|aries",
+      "planet": "lilith",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "lilith|cancer",
+      "planet": "lilith",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "lilith|capricorn",
+      "planet": "lilith",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "lilith|gemini",
+      "planet": "lilith",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "lilith|leo",
+      "planet": "lilith",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "lilith|libra",
+      "planet": "lilith",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "lilith|pisces",
+      "planet": "lilith",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "lilith|sagittarius",
+      "planet": "lilith",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "lilith|scorpio",
+      "planet": "lilith",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 1,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "lilith|taurus",
+      "planet": "lilith",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "lilith|virgo",
+      "planet": "lilith",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "mars|10th-house",
+      "planet": "mars",
+      "sign": "10th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "mars|12th-house",
+      "planet": "mars",
+      "sign": "12th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "mars|1st-house",
+      "planet": "mars",
+      "sign": "1st-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "mars|2nd-house",
+      "planet": "mars",
+      "sign": "2nd-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "mars|3rd-house",
+      "planet": "mars",
+      "sign": "3rd-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "mars|4th-house",
+      "planet": "mars",
+      "sign": "4th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "mars|5th-house",
+      "planet": "mars",
+      "sign": "5th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "mars|6th-house",
+      "planet": "mars",
+      "sign": "6th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "mars|aquarius",
+      "planet": "mars",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 19,
+        "register": 11,
+        "scene": 1,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11
+      }
+    },
+    {
+      "placementKey": "mars|aries",
+      "planet": "mars",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 21,
+        "register": 14,
+        "scene": 2,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "mars|cancer",
+      "planet": "mars",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 31,
+        "register": 69,
+        "scene": 3,
+        "argument": 11,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 22,
+        "owner-corpus-passage": 47
+      }
+    },
+    {
+      "placementKey": "mars|capricorn",
+      "planet": "mars",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 31,
+        "register": 20,
+        "scene": 4,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 3
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 20
+      }
+    },
+    {
+      "placementKey": "mars|gemini",
+      "planet": "mars",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 21,
+        "register": 13,
+        "scene": 7,
+        "argument": 11,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 5,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "mars|leo",
+      "planet": "mars",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 19,
+        "register": 13,
+        "scene": 2,
+        "argument": 11,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "mars|libra",
+      "planet": "mars",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 20,
+        "register": 12,
+        "scene": 5,
+        "argument": 12,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 3,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "mars|pisces",
+      "planet": "mars",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 19,
+        "register": 14,
+        "scene": 1,
+        "argument": 10,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "mars|sagittarius",
+      "planet": "mars",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 30,
+        "register": 21,
+        "scene": 1,
+        "argument": 15,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 21
+      }
+    },
+    {
+      "placementKey": "mars|scorpio",
+      "planet": "mars",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 19,
+        "register": 10,
+        "scene": 1,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 10
+      }
+    },
+    {
+      "placementKey": "mars|taurus",
+      "planet": "mars",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 21,
+        "register": 14,
+        "scene": 3,
+        "argument": 12,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 2,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "mars|virgo",
+      "planet": "mars",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 22,
+        "register": 11,
+        "scene": 3,
+        "argument": 12,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11
+      }
+    },
+    {
+      "placementKey": "mercury-(stellium)|virgo",
+      "planet": "mercury-(stellium)",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "mercury|11th-house",
+      "planet": "mercury",
+      "sign": "11th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "mercury|12th-house",
+      "planet": "mercury",
+      "sign": "12th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "mercury|6th-house",
+      "planet": "mercury",
+      "sign": "6th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "mercury|aquarius",
+      "planet": "mercury",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 30,
+        "register": 17,
+        "scene": 7,
+        "argument": 10,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 6
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 17
+      }
+    },
+    {
+      "placementKey": "mercury|aries",
+      "planet": "mercury",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 36,
+        "register": 23,
+        "scene": 6,
+        "argument": 11,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 6
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 23
+      }
+    },
+    {
+      "placementKey": "mercury|cancer",
+      "planet": "mercury",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 23,
+        "register": 10,
+        "scene": 8,
+        "argument": 13,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 7
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 10
+      }
+    },
+    {
+      "placementKey": "mercury|capricorn",
+      "planet": "mercury",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 29,
+        "register": 11,
+        "scene": 12,
+        "argument": 12,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 11
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11
+      }
+    },
+    {
+      "placementKey": "mercury|gemini",
+      "planet": "mercury",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 27,
+        "register": 14,
+        "scene": 6,
+        "argument": 10,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 6
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "mercury|leo",
+      "planet": "mercury",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 48,
+        "register": 37,
+        "scene": 9,
+        "argument": 20,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 9
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 28,
+        "owner-corpus-passage": 9
+      }
+    },
+    {
+      "placementKey": "mercury|libra",
+      "planet": "mercury",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 22,
+        "register": 14,
+        "scene": 10,
+        "argument": 11,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 9
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "mercury|pisces",
+      "planet": "mercury",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 47,
+        "register": 33,
+        "scene": 10,
+        "argument": 11,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 10
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 33
+      }
+    },
+    {
+      "placementKey": "mercury|sagittarius",
+      "planet": "mercury",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 22,
+        "register": 8,
+        "scene": 7,
+        "argument": 15,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 6
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 8
+      }
+    },
+    {
+      "placementKey": "mercury|scorpio",
+      "planet": "mercury",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 21,
+        "register": 8,
+        "scene": 6,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 6
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 8
+      }
+    },
+    {
+      "placementKey": "mercury|taurus",
+      "planet": "mercury",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 19,
+        "register": 23,
+        "scene": 7,
+        "argument": 12,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 2,
+        "owner-approved-knowledge-matrix-scene": 5
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 9,
+        "owner-corpus-passage": 14
+      }
+    },
+    {
+      "placementKey": "mercury|virgo",
+      "planet": "mercury",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 22,
+        "register": 14,
+        "scene": 10,
+        "argument": 8,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 2,
+        "owner-approved-knowledge-matrix-scene": 8
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 9,
+        "owner-corpus-passage": 5
+      }
+    },
+    {
+      "placementKey": "moon|10th-house",
+      "planet": "moon",
+      "sign": "10th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "moon|5th-house",
+      "planet": "moon",
+      "sign": "5th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "moon|6th-house",
+      "planet": "moon",
+      "sign": "6th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "moon|9th-house",
+      "planet": "moon",
+      "sign": "9th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "moon|aquarius",
+      "planet": "moon",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "moon|aries",
+      "planet": "moon",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "moon|cancer",
+      "planet": "moon",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "moon|capricorn",
+      "planet": "moon",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "moon|gemini",
+      "planet": "moon",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "moon|leo",
+      "planet": "moon",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 13,
+        "register": 13,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "moon|libra",
+      "planet": "moon",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "moon|pisces",
+      "planet": "moon",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 2,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "moon|sagittarius",
+      "planet": "moon",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "moon|scorpio",
+      "planet": "moon",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 14,
+        "register": 13,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "moon|taurus",
+      "planet": "moon",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "moon|virgo",
+      "planet": "moon",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 14,
+        "register": 13,
+        "scene": 1,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "neptune|11th-house",
+      "planet": "neptune",
+      "sign": "11th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "neptune|12th-house",
+      "planet": "neptune",
+      "sign": "12th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "neptune|2nd-house",
+      "planet": "neptune",
+      "sign": "2nd-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "neptune|5th-house",
+      "planet": "neptune",
+      "sign": "5th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "neptune|8th-house",
+      "planet": "neptune",
+      "sign": "8th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "neptune|9th-house",
+      "planet": "neptune",
+      "sign": "9th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "neptune|aquarius",
+      "planet": "neptune",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 4,
+        "register": 2,
+        "scene": 0,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "neptune|aries",
+      "planet": "neptune",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 15,
+        "register": 9,
+        "scene": 1,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 9
+      }
+    },
+    {
+      "placementKey": "neptune|cancer",
+      "planet": "neptune",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "neptune|capricorn",
+      "planet": "neptune",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 1,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "neptune|gemini",
+      "planet": "neptune",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "neptune|leo",
+      "planet": "neptune",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 2,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "neptune|libra",
+      "planet": "neptune",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "neptune|pisces",
+      "planet": "neptune",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 24,
+        "register": 9,
+        "scene": 0,
+        "argument": 13,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 9
+      }
+    },
+    {
+      "placementKey": "neptune|sagittarius",
+      "planet": "neptune",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "neptune|scorpio",
+      "planet": "neptune",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 2,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "neptune|taurus",
+      "planet": "neptune",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 1,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "neptune|virgo",
+      "planet": "neptune",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "nodes|aquarius-leo",
+      "planet": "nodes",
+      "sign": "aquarius-leo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "nodes|pisces",
+      "planet": "nodes",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 12,
+        "register": 10,
+        "scene": 0,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 10
+      }
+    },
+    {
+      "placementKey": "north-node|aquarius",
+      "planet": "north-node",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 1,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "north-node|aries",
+      "planet": "north-node",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 13,
+        "register": 12,
+        "scene": 1,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "north-node|cancer",
+      "planet": "north-node",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 1,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "north-node|capricorn",
+      "planet": "north-node",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "north-node|gemini",
+      "planet": "north-node",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 13,
+        "register": 12,
+        "scene": 1,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "north-node|leo",
+      "planet": "north-node",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "north-node|libra",
+      "planet": "north-node",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "north-node|pisces",
+      "planet": "north-node",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 1,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "north-node|sagittarius",
+      "planet": "north-node",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "north-node|scorpio",
+      "planet": "north-node",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "north-node|taurus",
+      "planet": "north-node",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 13,
+        "register": 11,
+        "scene": 0,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11
+      }
+    },
+    {
+      "placementKey": "north-node|virgo",
+      "planet": "north-node",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 0,
+        "scene": 1,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "pluto|12th-house",
+      "planet": "pluto",
+      "sign": "12th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "pluto|3rd-house",
+      "planet": "pluto",
+      "sign": "3rd-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "pluto|5th-house",
+      "planet": "pluto",
+      "sign": "5th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "pluto|6th-house",
+      "planet": "pluto",
+      "sign": "6th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "pluto|7th-house",
+      "planet": "pluto",
+      "sign": "7th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "pluto|9th-house",
+      "planet": "pluto",
+      "sign": "9th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "pluto|aquarius",
+      "planet": "pluto",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 14,
+        "register": 8,
+        "scene": 1,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 8
+      }
+    },
+    {
+      "placementKey": "pluto|aries",
+      "planet": "pluto",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "pluto|cancer",
+      "planet": "pluto",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "pluto|capricorn",
+      "planet": "pluto",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 36,
+        "register": 21,
+        "scene": 1,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 21
+      }
+    },
+    {
+      "placementKey": "pluto|gemini",
+      "planet": "pluto",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 1,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "pluto|leo",
+      "planet": "pluto",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "pluto|libra",
+      "planet": "pluto",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "pluto|pisces",
+      "planet": "pluto",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "pluto|sagittarius",
+      "planet": "pluto",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "pluto|scorpio",
+      "planet": "pluto",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 1,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "pluto|taurus",
+      "planet": "pluto",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "pluto|virgo",
+      "planet": "pluto",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 1,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "saturn|3rd-house",
+      "planet": "saturn",
+      "sign": "3rd-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "saturn|6th-house",
+      "planet": "saturn",
+      "sign": "6th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "saturn|8th-house",
+      "planet": "saturn",
+      "sign": "8th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "saturn|aquarius",
+      "planet": "saturn",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 17,
+        "register": 9,
+        "scene": 1,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 9
+      }
+    },
+    {
+      "placementKey": "saturn|aries",
+      "planet": "saturn",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 14,
+        "register": 132,
+        "scene": 2,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 10,
+        "owner-corpus-passage": 122
+      }
+    },
+    {
+      "placementKey": "saturn|cancer",
+      "planet": "saturn",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "saturn|capricorn",
+      "planet": "saturn",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 23,
+        "register": 12,
+        "scene": 1,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "saturn|gemini",
+      "planet": "saturn",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 2,
+        "scene": 1,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "saturn|leo",
+      "planet": "saturn",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "saturn|libra",
+      "planet": "saturn",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 10,
+        "register": 4,
+        "scene": 1,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 4
+      }
+    },
+    {
+      "placementKey": "saturn|pisces",
+      "planet": "saturn",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 14,
+        "register": 7,
+        "scene": 2,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 7
+      }
+    },
+    {
+      "placementKey": "saturn|sagittarius",
+      "planet": "saturn",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 9,
+        "register": 0,
+        "scene": 0,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "saturn|scorpio",
+      "planet": "saturn",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 6,
+        "register": 2,
+        "scene": 0,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "saturn|taurus",
+      "planet": "saturn",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "saturn|virgo",
+      "planet": "saturn",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 2,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "south-node|aquarius",
+      "planet": "south-node",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 1,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "south-node|aries",
+      "planet": "south-node",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "south-node|cancer",
+      "planet": "south-node",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "south-node|capricorn",
+      "planet": "south-node",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "south-node|gemini",
+      "planet": "south-node",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 1,
+        "scene": 1,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "south-node|leo",
+      "planet": "south-node",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "south-node|libra",
+      "planet": "south-node",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 13,
+        "register": 12,
+        "scene": 0,
+        "argument": 8,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "south-node|pisces",
+      "planet": "south-node",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 6,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "south-node|sagittarius",
+      "planet": "south-node",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 13,
+        "register": 8,
+        "scene": 0,
+        "argument": 10,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 8
+      }
+    },
+    {
+      "placementKey": "south-node|scorpio",
+      "planet": "south-node",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 12,
+        "register": 8,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 8
+      }
+    },
+    {
+      "placementKey": "south-node|taurus",
+      "planet": "south-node",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 1,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 1
+      }
+    },
+    {
+      "placementKey": "south-node|virgo",
+      "planet": "south-node",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 1,
+        "argument": 4,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "stellium-(mars,-jupiter,-saturn,-pluto)|capricorn",
+      "planet": "stellium-(mars,-jupiter,-saturn,-pluto)",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 3,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 3
+      }
+    },
+    {
+      "placementKey": "sun|5th-house",
+      "planet": "sun",
+      "sign": "5th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|8th-house",
+      "planet": "sun",
+      "sign": "8th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|aquarius",
+      "planet": "sun",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 15,
+        "register": 12,
+        "scene": 1,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "sun|aquarius-i",
+      "planet": "sun",
+      "sign": "aquarius-i",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|aquarius-ii",
+      "planet": "sun",
+      "sign": "aquarius-ii",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|aries",
+      "planet": "sun",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 29,
+        "register": 25,
+        "scene": 2,
+        "argument": 10,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 25
+      }
+    },
+    {
+      "placementKey": "sun|aries-ii",
+      "planet": "sun",
+      "sign": "aries-ii",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|cancer",
+      "planet": "sun",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 16,
+        "register": 11,
+        "scene": 2,
+        "argument": 8,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11
+      }
+    },
+    {
+      "placementKey": "sun|cancer-(2nd-decan)",
+      "planet": "sun",
+      "sign": "cancer-(2nd-decan)",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|cancer-i",
+      "planet": "sun",
+      "sign": "cancer-i",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|cancer-ii",
+      "planet": "sun",
+      "sign": "cancer-ii",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|cancer-iii",
+      "planet": "sun",
+      "sign": "cancer-iii",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|capricorn",
+      "planet": "sun",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 27,
+        "register": 23,
+        "scene": 4,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 3
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 23
+      }
+    },
+    {
+      "placementKey": "sun|capricorn-iii",
+      "planet": "sun",
+      "sign": "capricorn-iii",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|gemini",
+      "planet": "sun",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 27,
+        "register": 24,
+        "scene": 3,
+        "argument": 10,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 24
+      }
+    },
+    {
+      "placementKey": "sun|gemini-i",
+      "planet": "sun",
+      "sign": "gemini-i",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|gemini-ii",
+      "planet": "sun",
+      "sign": "gemini-ii",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|gemini-iii",
+      "planet": "sun",
+      "sign": "gemini-iii",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|leo",
+      "planet": "sun",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 16,
+        "register": 13,
+        "scene": 13,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_house_horoscope_core": 12,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "sun|leo-i",
+      "planet": "sun",
+      "sign": "leo-i",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|libra",
+      "planet": "sun",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 15,
+        "register": 13,
+        "scene": 1,
+        "argument": 12,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "sun|libra-(decan-2)",
+      "planet": "sun",
+      "sign": "libra-(decan-2)",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|libra-i",
+      "planet": "sun",
+      "sign": "libra-i",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|libra-iii",
+      "planet": "sun",
+      "sign": "libra-iii",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|pisces",
+      "planet": "sun",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 31,
+        "register": 22,
+        "scene": 2,
+        "argument": 15,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 22
+      }
+    },
+    {
+      "placementKey": "sun|pisces-iii",
+      "planet": "sun",
+      "sign": "pisces-iii",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|sagittarius",
+      "planet": "sun",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 28,
+        "register": 23,
+        "scene": 2,
+        "argument": 15,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 23
+      }
+    },
+    {
+      "placementKey": "sun|sagittarius-i",
+      "planet": "sun",
+      "sign": "sagittarius-i",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|scorpio",
+      "planet": "sun",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 16,
+        "register": 12,
+        "scene": 2,
+        "argument": 8,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 12
+      }
+    },
+    {
+      "placementKey": "sun|scorpio-(decan-1)",
+      "planet": "sun",
+      "sign": "scorpio-(decan-1)",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|scorpio-(decan-2)",
+      "planet": "sun",
+      "sign": "scorpio-(decan-2)",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|scorpio-(third-decan)",
+      "planet": "sun",
+      "sign": "scorpio-(third-decan)",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 1,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "sun|taurus",
+      "planet": "sun",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 27,
+        "register": 23,
+        "scene": 3,
+        "argument": 11,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 23
+      }
+    },
+    {
+      "placementKey": "sun|virgo",
+      "planet": "sun",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 15,
+        "register": 11,
+        "scene": 1,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 11
+      }
+    },
+    {
+      "placementKey": "uranus|10th-house",
+      "planet": "uranus",
+      "sign": "10th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "uranus|aquarius",
+      "planet": "uranus",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "uranus|aries",
+      "planet": "uranus",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 14,
+        "register": 4,
+        "scene": 0,
+        "argument": 10,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 4
+      }
+    },
+    {
+      "placementKey": "uranus|cancer",
+      "planet": "uranus",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 1,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "uranus|capricorn",
+      "planet": "uranus",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "uranus|gemini",
+      "planet": "uranus",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 15,
+        "register": 66,
+        "scene": 5,
+        "argument": 8,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 4
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 7,
+        "owner-corpus-passage": 59
+      }
+    },
+    {
+      "placementKey": "uranus|leo",
+      "planet": "uranus",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "uranus|libra",
+      "planet": "uranus",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "uranus|pisces",
+      "planet": "uranus",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 4,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "uranus|sagittarius",
+      "planet": "uranus",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 3,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "uranus|scorpio",
+      "planet": "uranus",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "uranus|taurus",
+      "planet": "uranus",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 28,
+        "register": 97,
+        "scene": 2,
+        "argument": 12,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 16,
+        "owner-corpus-passage": 81
+      }
+    },
+    {
+      "placementKey": "uranus|virgo",
+      "planet": "uranus",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 2,
+        "register": 2,
+        "scene": 0,
+        "argument": 5,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 2
+      }
+    },
+    {
+      "placementKey": "venus/sun|virgo",
+      "planet": "venus/sun",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 12,
+        "register": 3,
+        "scene": 1,
+        "argument": 3,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 3
+      }
+    },
+    {
+      "placementKey": "venus|11th-house",
+      "planet": "venus",
+      "sign": "11th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "venus|12th-house",
+      "planet": "venus",
+      "sign": "12th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "venus|1st-house",
+      "planet": "venus",
+      "sign": "1st-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "venus|5th-house",
+      "planet": "venus",
+      "sign": "5th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "venus|7th-house",
+      "planet": "venus",
+      "sign": "7th-house",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 1,
+        "register": 0,
+        "scene": 0,
+        "argument": 0,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {}
+    },
+    {
+      "placementKey": "venus|aquarius",
+      "planet": "venus",
+      "sign": "aquarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 19,
+        "register": 16,
+        "scene": 1,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 16
+      }
+    },
+    {
+      "placementKey": "venus|aries",
+      "planet": "venus",
+      "sign": "aries",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 32,
+        "register": 30,
+        "scene": 2,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1,
+        "owner_corpus_fixture_scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 26,
+        "owner-corpus-passage": 4
+      }
+    },
+    {
+      "placementKey": "venus|cancer",
+      "planet": "venus",
+      "sign": "cancer",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 16,
+        "register": 20,
+        "scene": 1,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14,
+        "owner-corpus-passage": 6
+      }
+    },
+    {
+      "placementKey": "venus|capricorn",
+      "planet": "venus",
+      "sign": "capricorn",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 22,
+        "register": 14,
+        "scene": 5,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 2,
+        "owner-approved-knowledge-matrix-scene": 3
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "venus|gemini",
+      "planet": "venus",
+      "sign": "gemini",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 23,
+        "register": 17,
+        "scene": 5,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 3,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 17
+      }
+    },
+    {
+      "placementKey": "venus|leo",
+      "planet": "venus",
+      "sign": "leo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 21,
+        "register": 14,
+        "scene": 2,
+        "argument": 7,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "venus|libra",
+      "planet": "venus",
+      "sign": "libra",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 22,
+        "register": 14,
+        "scene": 15,
+        "argument": 19,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_house_horoscope_core": 12,
+        "approved_serving_row": 1,
+        "owner-approved-knowledge-matrix-scene": 2
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 14
+      }
+    },
+    {
+      "placementKey": "venus|pisces",
+      "planet": "venus",
+      "sign": "pisces",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 28,
+        "register": 22,
+        "scene": 1,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "owner-approved-knowledge-matrix-scene": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 22
+      }
+    },
+    {
+      "placementKey": "venus|sagittarius",
+      "planet": "venus",
+      "sign": "sagittarius",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 17,
+        "register": 13,
+        "scene": 1,
+        "argument": 12,
+        "phrase": 0
+      },
+      "sceneBySource": {
+        "approved_serving_row": 1
+      },
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "venus|scorpio",
+      "planet": "venus",
+      "sign": "scorpio",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 22,
+        "register": 13,
+        "scene": 0,
+        "argument": 10,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 13
+      }
+    },
+    {
+      "placementKey": "venus|taurus",
+      "planet": "venus",
+      "sign": "taurus",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 30,
+        "register": 26,
+        "scene": 0,
+        "argument": 9,
+        "phrase": 0
+      },
+      "sceneBySource": {},
+      "registerBySource": {
+        "owner-approved-knowledge-matrix-register": 26
+      }
+    },
+    {
+      "placementKey": "venus|virgo",
+      "planet": "venus",
+      "sign": "virgo",
+      "matrixRaw": {
+        "meaning": 0,
+        "register": 0,
+        "scene": 0,
+        "argument_candidate": 0
+      },
+      "extended": {
+        "meaning": 17,
+        "register": 39,
+        "scene": 1,
+        "argument": 6,
         "phrase": 0
       },
       "sceneBySource": {
@@ -4446,11 +9674,12 @@
     }
   ],
   "counts": {
-    "placements": 179,
+    "placements": 415,
     "matrixZeroScene": 114,
-    "extendedZeroScene": 98,
-    "extendedZeroMeaning": 2,
-    "extendedZeroArgument": 53
+    "extendedZeroScene": 252,
+    "extendedZeroSceneWithinMatrixPlacements": 98,
+    "extendedZeroMeaning": 16,
+    "extendedZeroArgument": 71
   },
   "zeroScenePlacements": [
     "Chiron|Aquarius",
@@ -4550,6 +9779,160 @@
     "Uranus|Scorpio",
     "Uranus|Virgo",
     "Venus|Scorpio",
-    "Venus|Taurus"
+    "Venus|Taurus",
+    "chiron|aquarius",
+    "chiron|cancer",
+    "chiron|capricorn",
+    "chiron|leo",
+    "chiron|libra",
+    "chiron|pisces",
+    "chiron|sagittarius",
+    "chiron|scorpio",
+    "chiron|taurus",
+    "jupiter|10th-house",
+    "jupiter|11th-house",
+    "jupiter|12th-house",
+    "jupiter|2nd-house",
+    "jupiter|9th-house",
+    "jupiter|aquarius",
+    "jupiter|libra",
+    "jupiter|sagittarius",
+    "jupiter|taurus",
+    "jupiter|virgo",
+    "lilith|aquarius",
+    "lilith|aries",
+    "lilith|cancer",
+    "lilith|capricorn",
+    "lilith|gemini",
+    "lilith|leo",
+    "lilith|libra",
+    "lilith|pisces",
+    "lilith|sagittarius",
+    "lilith|taurus",
+    "lilith|virgo",
+    "mars|10th-house",
+    "mars|12th-house",
+    "mars|1st-house",
+    "mars|2nd-house",
+    "mars|3rd-house",
+    "mars|4th-house",
+    "mars|5th-house",
+    "mars|6th-house",
+    "mercury-(stellium)|virgo",
+    "mercury|11th-house",
+    "mercury|12th-house",
+    "mercury|6th-house",
+    "moon|10th-house",
+    "moon|5th-house",
+    "moon|6th-house",
+    "moon|9th-house",
+    "moon|aquarius",
+    "moon|aries",
+    "moon|cancer",
+    "moon|capricorn",
+    "moon|gemini",
+    "moon|leo",
+    "moon|libra",
+    "moon|pisces",
+    "moon|sagittarius",
+    "moon|scorpio",
+    "moon|taurus",
+    "neptune|11th-house",
+    "neptune|12th-house",
+    "neptune|2nd-house",
+    "neptune|5th-house",
+    "neptune|8th-house",
+    "neptune|9th-house",
+    "neptune|aquarius",
+    "neptune|cancer",
+    "neptune|gemini",
+    "neptune|leo",
+    "neptune|libra",
+    "neptune|pisces",
+    "neptune|sagittarius",
+    "neptune|scorpio",
+    "neptune|taurus",
+    "neptune|virgo",
+    "nodes|aquarius-leo",
+    "nodes|pisces",
+    "north-node|capricorn",
+    "north-node|leo",
+    "north-node|libra",
+    "north-node|sagittarius",
+    "north-node|scorpio",
+    "north-node|taurus",
+    "pluto|12th-house",
+    "pluto|3rd-house",
+    "pluto|5th-house",
+    "pluto|6th-house",
+    "pluto|7th-house",
+    "pluto|9th-house",
+    "pluto|aries",
+    "pluto|cancer",
+    "pluto|leo",
+    "pluto|libra",
+    "pluto|pisces",
+    "pluto|sagittarius",
+    "pluto|scorpio",
+    "pluto|taurus",
+    "pluto|virgo",
+    "saturn|3rd-house",
+    "saturn|6th-house",
+    "saturn|8th-house",
+    "saturn|cancer",
+    "saturn|leo",
+    "saturn|sagittarius",
+    "saturn|scorpio",
+    "saturn|taurus",
+    "saturn|virgo",
+    "south-node|aries",
+    "south-node|cancer",
+    "south-node|capricorn",
+    "south-node|leo",
+    "south-node|libra",
+    "south-node|pisces",
+    "south-node|sagittarius",
+    "south-node|scorpio",
+    "south-node|taurus",
+    "stellium-(mars,-jupiter,-saturn,-pluto)|capricorn",
+    "sun|5th-house",
+    "sun|8th-house",
+    "sun|aquarius-i",
+    "sun|aquarius-ii",
+    "sun|aries-ii",
+    "sun|cancer-(2nd-decan)",
+    "sun|cancer-i",
+    "sun|cancer-ii",
+    "sun|cancer-iii",
+    "sun|capricorn-iii",
+    "sun|gemini-i",
+    "sun|gemini-ii",
+    "sun|gemini-iii",
+    "sun|leo-i",
+    "sun|libra-(decan-2)",
+    "sun|libra-i",
+    "sun|libra-iii",
+    "sun|pisces-iii",
+    "sun|sagittarius-i",
+    "sun|scorpio-(decan-1)",
+    "sun|scorpio-(decan-2)",
+    "sun|scorpio-(third-decan)",
+    "uranus|10th-house",
+    "uranus|aquarius",
+    "uranus|aries",
+    "uranus|capricorn",
+    "uranus|leo",
+    "uranus|libra",
+    "uranus|pisces",
+    "uranus|sagittarius",
+    "uranus|scorpio",
+    "uranus|virgo",
+    "venus|11th-house",
+    "venus|12th-house",
+    "venus|1st-house",
+    "venus|5th-house",
+    "venus|7th-house",
+    "venus|scorpio",
+    "venus|taurus"
   ]
 }

@@ -3,7 +3,7 @@ import {
   approvedServingSceneCatalog,
   ownerCorpusSceneCatalog
 } from "./sceneEvidence.mjs";
-import { matrixEvidenceCatalog, matrixSceneNounLexicon } from "./matrixEvidenceIndex.mjs";
+import { llMatrixV13EvidenceCatalog, matrixEvidenceCatalog, matrixSceneNounLexicon } from "./matrixEvidenceIndex.mjs";
 
 export const SHARED_EVIDENCE_STANDARD_VERSION = "shared-evidence-standard-v1-2026-08-13";
 export const SHARED_EVIDENCE_ROLES = Object.freeze(["meaning", "register", "scene", "argument", "phrase"]);
@@ -83,6 +83,25 @@ function matrixRoleEntries(matrixEvidenceRows) {
   }));
 }
 
+function evidencePrecedence(entry) {
+  const tier = String(entry.governanceTier ?? "").toLowerCase();
+  if (tier.includes("owner-approved-exact-copy")) return 0;
+  if (tier.includes("owner-approved-v13")) return 1;
+  if (tier.includes("owner-approved-v8-locked")) return 2;
+  if (tier.includes("rewritten-owner-voice-audited")) return 3;
+  return 9;
+}
+
+function dedupeEvidence(entries) {
+  const selected = new Map();
+  for (const entry of entries) {
+    const key = `${entry.role}|${entry.indexKey}|${entry.eventType ?? "*"}|${entry.copySha ?? entry.text}`;
+    const current = selected.get(key);
+    if (!current || evidencePrecedence(entry) < evidencePrecedence(current)) selected.set(key, entry);
+  }
+  return [...selected.values()];
+}
+
 function registerEntries(registerExamples, registerGoldExamples) {
   return [...(registerExamples ?? []), ...(registerGoldExamples ?? [])]
     .filter((entry) => entry.ownerApproved === true && typeof (entry.text ?? entry.sections?.join("\n\n")) === "string")
@@ -109,34 +128,49 @@ function argumentEntries(approvedExamples) {
     .filter((entry) => (
       entry.ownerApproved === true
       && entry.authority === "serving-review-status-approved"
-      && entry.family === "fallback-hook/sky-sign-copy"
-      && /^fallback-hook\/sky-sign-copy\/[^/]+\/[^/]+$/u.test(entry.contentKey)
+      && (
+        (entry.family === "fallback-hook/sky-sign-copy" && /^fallback-hook\/sky-sign-copy\/[^/]+\/[^/]+$/u.test(entry.contentKey))
+        || /^fallback-hook\/sky-placement-(?:tagline|hook|lived|turn)\/[^/]+\/[^/]+$/u.test(entry.contentKey)
+      )
       && typeof entry.text === "string"
       && entry.text.trim()
     ))
     .map((entry) => {
-      const [, , planet, sign] = entry.contentKey.split("/");
+      const parts = entry.contentKey.split("/");
+      const planet = parts.at(-2);
+      const sign = parts.at(-1);
       return namedEntry(entry, "argument", {
         id: `argument:${entry.contentKey}`,
         planet,
         sign,
         sourcePath: "data/writing/OWNER_APPROVED_EXAMPLES.jsonl",
         ownerAuthored: false,
-        sourceKind: "current-owner-approved-placement-article"
+        sourceKind: entry.family === "fallback-hook/sky-sign-copy"
+          ? "current-owner-approved-placement-article"
+          : "current-owner-approved-placement-card"
       });
     });
 }
 
 export function buildSharedEvidenceIndex({
   matrixEvidenceRows = [],
+  llMatrixV13Rows = [],
+  llMatrixV13ManifestRows = [],
   approvedExamples = [],
   registerExamples = [],
   registerGoldExamples = [],
   phraseExamples = []
 } = {}) {
   const sceneNounLexicon = matrixSceneNounLexicon(matrixEvidenceRows);
-  const entries = [
+  const entries = dedupeEvidence([
     ...matrixRoleEntries(matrixEvidenceRows),
+    ...llMatrixV13EvidenceCatalog(llMatrixV13Rows, llMatrixV13ManifestRows).map((entry) => namedEntry(entry, "meaning", {
+      id: entry.id,
+      sourceKind: entry.sourceKind,
+      governanceTier: entry.governanceTier,
+      copySha: entry.copySha,
+      eligibleForWriterRegister: false
+    })),
     ...registerEntries(registerExamples, registerGoldExamples),
     ...sceneEntries(approvedExamples, registerExamples, sceneNounLexicon),
     ...argumentEntries(approvedExamples),
@@ -147,7 +181,7 @@ export function buildSharedEvidenceIndex({
       ownerAuthored: true,
       text: entry.text
     }))
-  ];
+  ]);
   const byPlanetSign = {};
   for (const entry of entries) {
     byPlanetSign[entry.indexKey] ??= Object.fromEntries(SHARED_EVIDENCE_ROLES.map((role) => [role, []]));
@@ -175,7 +209,12 @@ function placementFromCoverageKey(key) {
 }
 
 export function buildExtendedEvidenceCoverage({ matrixCoverage = {}, index } = {}) {
-  const rows = Object.entries(matrixCoverage).map(([placementKey, matrix]) => {
+  const placementKeys = new Set(Object.keys(matrixCoverage));
+  for (const entry of index?.entries ?? []) {
+    if (entry.planet && entry.sign) placementKeys.add(`${entry.planet}|${entry.sign}`);
+  }
+  const rows = [...placementKeys].sort().map((placementKey) => {
+    const matrix = matrixCoverage[placementKey] ?? { meaning: 0, register: 0, scene: 0, argument_candidate: 0 };
     const { planet, sign } = placementFromCoverageKey(placementKey);
     const indexKey = planetSignKey(planet, sign);
     const roleEntries = Object.fromEntries(SHARED_EVIDENCE_ROLES.map((role) => [
@@ -200,8 +239,9 @@ export function buildExtendedEvidenceCoverage({ matrixCoverage = {}, index } = {
     placements: Object.freeze(rows),
     counts: Object.freeze({
       placements: rows.length,
-      matrixZeroScene: rows.filter((row) => row.matrixRaw.scene === 0).length,
+      matrixZeroScene: rows.filter((row) => Object.hasOwn(matrixCoverage, row.placementKey) && row.matrixRaw.scene === 0).length,
       extendedZeroScene: rows.filter((row) => row.extended.scene === 0).length,
+      extendedZeroSceneWithinMatrixPlacements: rows.filter((row) => Object.hasOwn(matrixCoverage, row.placementKey) && row.extended.scene === 0).length,
       extendedZeroMeaning: rows.filter((row) => row.extended.meaning === 0).length,
       extendedZeroArgument: rows.filter((row) => row.extended.argument === 0).length
     }),

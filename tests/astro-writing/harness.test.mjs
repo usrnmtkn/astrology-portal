@@ -59,6 +59,9 @@ import {
   extractCollocations,
   novelCollocationAdvisories,
   matrixSceneNounLexicon,
+  matrixEvidenceForTarget,
+  normalizeMatrixToken,
+  withoutGenericPlanetEducation,
   evidenceUseReview,
   loadPhraseEvidenceIndex,
   selectPhraseEvidence,
@@ -293,6 +296,8 @@ const ownerPositiveEvidence = ownerPositiveEvidenceFromSurfaceQualifiedPool(JSON
 const writerVoiceIndex = JSON.parse(read("packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json"));
 const matrixEvidenceRows = jsonl("data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl");
 const matrixCoverage = JSON.parse(read("data/writing/matrix-evidence-index/TLDR-Matrix-Coverage-By-Placement.json"));
+const llMatrixV13Rows = JSON.parse(read("packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json")).rows;
+const llMatrixV13ManifestRows = JSON.parse(read("packages/astro-knowledge/review/ll-matrix-v13-runtime-manifest.json")).rows;
 const ownerPhraseEvidence = loadPhraseEvidenceIndex(path.join(repoRoot, "data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl"));
 const ownerPhraseEvidenceReport = JSON.parse(read("packages/astro-knowledge/review/writing-pipeline-v3/phrase-evidence-v1/phrase-evidence-index-report.json"));
 assert.equal(ownerPhraseEvidence.filter((entry) => entry.store === "voice-bank").length, 87);
@@ -318,6 +323,14 @@ assert.equal(ownerPhraseEvidenceReport.integrity.builderCreatedJoinedSegments, 0
 assert.equal(matrixEvidenceRows.length, 3473);
 assert.equal(Object.keys(matrixCoverage).length, 179);
 assert.equal(Object.values(matrixCoverage).filter((entry) => entry.scene === 0).length, 114);
+assert.equal(llMatrixV13Rows.filter((row) => row.ownerApproved === true).length, 301);
+assert.equal(llMatrixV13ManifestRows.length, 301);
+assert.equal(normalizeMatrixToken("Black Moon Lilith"), "lilith");
+assert.equal(normalizeMatrixToken("Lunar Nodes"), "nodes");
+assert.equal(normalizeMatrixToken("Any"), null);
+assert.ok(matrixEvidenceForTarget(matrixEvidenceRows, { planet: "lilith", sign: "aries" }).meaning.length > 0, "Global Lilith meaning evidence must retrieve for a concrete sign.");
+const moonEducation = "Your Moon is your instinctual emotional world: how you feel, what comforts you, how you care for yourself and others, how you react when you are upset, and what helps you recover after stress. Most of it is unconscious, conditioned behavior.";
+assert.equal(withoutGenericPlanetEducation(`${moonEducation}\n\nThe message changes the plan.`), "The message changes the plan.");
 const venusLibraRoleEvidence = ownerApprovedMatrixRoleEvidenceForTarget(matrixEvidenceRows, { planet: "venus", sign: "libra", eventType: "ingress" });
 assert.ok(venusLibraRoleEvidence.meaning.length > 0);
 assert.ok(venusLibraRoleEvidence.scene.length > 0);
@@ -369,6 +382,8 @@ assert.ok(venusLibraSceneEvidence.selected.every((entry) => entry.useAsSceneEvid
 assert.ok(approvedExamples.length > 6000, "Owner-approved evidence seed must cover the serving package and locked matrix tier.");
 const sharedEvidenceIndex = buildSharedEvidenceIndex({
   matrixEvidenceRows,
+  llMatrixV13Rows,
+  llMatrixV13ManifestRows,
   approvedExamples,
   registerExamples: ownerPositiveEvidence,
   registerGoldExamples: ownerRegisterGold,
@@ -381,6 +396,12 @@ assert.ok(sharedEvidenceIndex.counts.scene > 400);
 assert.ok(sharedEvidenceIndex.byPlanetSign["venus|libra"].meaning.length >= 20);
 assert.ok(sharedEvidenceIndex.byPlanetSign["venus|libra"].scene.length >= 12);
 assert.ok(sharedEvidenceIndex.byPlanetSign["venus|libra"].argument.length >= 1);
+assert.equal(sharedEvidenceIndex.entries.filter((entry) => entry.sourceKind === "owner-approved-ll-matrix-v13").length, 301);
+assert.ok(sharedEvidenceIndex.byPlanetSign["moon|cancer"].meaning.some((id) => id.startsWith("ll-matrix-v13:")));
+assert.ok(sharedEvidenceIndex.byPlanetSign["moon|aquarius"].meaning.some((id) => id.startsWith("ll-matrix-v13:")));
+for (const sign of ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]) {
+  assert.ok((sharedEvidenceIndex.byPlanetSign[`lilith|${sign}`]?.scene.length ?? 0) + (sharedEvidenceIndex.byPlanetSign[`lilith|${sign}`]?.argument.length ?? 0) > 0, `Lilith ${sign} must retrieve real scene or argument evidence.`);
+}
 assert.equal(sharedEvidenceIndex.byPlanetSign["*|*"].phrase.length, 346);
 const venusPhraseSelection = selectPhraseEvidence(venusLibraSceneEvidence.plan ?? {
   object: "venus",
@@ -392,9 +413,9 @@ const venusPhraseSelection = selectPhraseEvidence(venusLibraSceneEvidence.plan ?
 assert.equal(venusPhraseSelection.themeMatched, true);
 assert.ok(venusPhraseSelection.selectedCount >= 5 && venusPhraseSelection.selectedCount <= 10);
 assert.ok(venusPhraseSelection.selected.every((entry) => entry.role === "phrase" && entry.ownerApproved === true));
-assert.equal(extendedCoverage.counts.placements, 179);
+assert.ok(extendedCoverage.counts.placements >= 179);
 assert.equal(extendedCoverage.counts.matrixZeroScene, 114);
-assert.ok(extendedCoverage.counts.extendedZeroScene <= 114);
+assert.ok(extendedCoverage.counts.extendedZeroSceneWithinMatrixPlacements <= 114);
 assert.ok(matrixSceneNounLexicon(matrixEvidenceRows).length > 20);
 assert.equal(MIN_SAME_FAMILY_OWNER_PASSAGES, 3);
 assert.equal(ownerRegisterGold.length, 1);
