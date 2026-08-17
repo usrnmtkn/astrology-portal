@@ -8,6 +8,11 @@ optional context-gathering; it is the specification. A spec assembled from
 conversation instead of from these files has produced four failed passes and is
 the single largest source of wasted owner review time on this project.
 
+0. `tldr-astro-phrasebank/TLDR-WRITING-AUTHORITY-INDEX.md` — read this first. It
+   names the standard, gives the consolidated do-not-use list in one block, lists
+   the live rulings by surface, and marks the superseded version chains. It
+   exists because 95 files in that folder made it possible to miss the stated
+   authority entirely.
 1. `tldr-astro-phrasebank/WRITING-STANDARD.md` — the stated authority for all
    authored and generated copy across compatibility, synastry, natal, transit,
    email, and social. Contains the voice habits, the construction rules, the
