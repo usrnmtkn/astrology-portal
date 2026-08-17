@@ -91,6 +91,7 @@ export type CalendarEditorialContent = {
   overview?: string;
   dailyMoonCopy?: string;
   eventCopy?: string;
+  eventDetailsCopy?: string;
   keyShiftIds?: string[];
   keyShiftLabels?: string[];
   practicalActions?: string[];
