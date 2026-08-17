@@ -20,6 +20,11 @@ import {
   exactApprovalMetadataFor,
 } from "./sky-calendar-component-approval.mjs";
 import {
+  SKY_CALENDAR_COMPOSER_VERSION,
+  SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH,
+  composerSourceSha256,
+} from "./sky-calendar-serving-authorization.mjs";
+import {
   assertOwnerReplacements,
   classificationReviewAudit,
   classificationVerificationAudit,
@@ -35,6 +40,7 @@ const v13Path = "apps/web/public/content/knowledge-matrix-v13/v13-direct-languag
 
 const registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
 const exactApproval = JSON.parse(fs.readFileSync(SKY_COMPONENT_APPROVAL_RECORD_PATH, "utf8"));
+const servingAuthorization = JSON.parse(fs.readFileSync(SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH, "utf8"));
 const fallback = JSON.parse(fs.readFileSync(fallbackPath, "utf8"));
 const v9 = JSON.parse(fs.readFileSync(v9Path, "utf8"));
 const v13 = JSON.parse(fs.readFileSync(v13Path, "utf8"));
@@ -224,16 +230,28 @@ assert.deepEqual(registry.approval, {
   componentSetSha256: componentSetSha256(all),
   ownerApprovalStatementSource: SKY_COMPONENT_APPROVAL_SOURCE,
   servingAuthorization: false,
+  servingAuthorizationRecordPath: SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH,
 });
 assert.equal(exactApproval.recordType, "sky_calendar_meaning_component_set_exact_approval");
+assert.equal(exactApproval.schemaVersion, 2);
 assert.equal(exactApproval.approvalLevel, SKY_COMPONENT_APPROVAL_LEVEL);
 assert.equal(exactApproval.approvedAt, SKY_COMPONENT_APPROVAL_DATE);
-assert.equal(exactApproval.ownerApprovalStatementSource, SKY_COMPONENT_APPROVAL_SOURCE);
+assert.deepEqual(exactApproval.ownerApprovalStatementSource, SKY_COMPONENT_APPROVAL_SOURCE);
+assert.equal(exactApproval.approvalMarkedBy, "owner");
+assert.equal(exactApproval.recordPreparedBy, "Codex");
 assert.equal(exactApproval.servingAuthorization, false);
+assert.equal(exactApproval.servingAuthorizationRecordPath, SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH);
 assert.equal(exactApproval.componentCount, 174);
 assert.equal(exactApproval.componentSetSha256, componentSetSha256(all));
 assert.equal(exactApproval.evidenceLayerSha256, registry.evidenceLayerSha256);
 assert.deepEqual(exactApproval.components, componentSetEntries(all));
+assert.equal(servingAuthorization.servingAuthorization, false);
+assert.equal(servingAuthorization.pilot.ownerConfirmed, false);
+assert.equal(servingAuthorization.composerVersion, SKY_CALENDAR_COMPOSER_VERSION);
+assert.equal(servingAuthorization.composerSourceSha256, composerSourceSha256(process.cwd()));
+assert.equal(servingAuthorization.componentSetSha256, componentSetSha256(all));
+assert.equal(servingAuthorization.authorizationDecisionSource.tool, "Codex Desktop");
+assert.equal(servingAuthorization.authorizationDecisionSource.threadId, SKY_COMPONENT_APPROVAL_SOURCE.threadId);
 assertTypedRealizationSchema(all);
 const renderedRegistryText = JSON.stringify({
   signUnits: registry.signUnits,
