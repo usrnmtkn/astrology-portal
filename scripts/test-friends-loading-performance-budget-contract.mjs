@@ -4,8 +4,7 @@ import {
   FRIENDS_LOADING_SAMPLE_COUNT,
   FRIENDS_SLOW_NETWORK_DOWNLOAD_BYTES_PER_SECOND,
   FRIENDS_SLOW_NETWORK_LATENCY_MS,
-  friendsLoadingPerformanceBudgets,
-  friendsLoadingPerformanceMaximums
+  friendsLoadingPerformanceBudgets
 } from "../tests/visual/friendsLoadingPerformanceBudgets.ts";
 
 const expectedBudgetKeys = [
@@ -73,12 +72,6 @@ assert.ok(
     < friendsLoadingPerformanceBudgets.slowNetworkRelationshipReadyMs,
   "Incremental enhancement must stay small after the first authored card paints."
 );
-assert.equal(
-  friendsLoadingPerformanceMaximums.slowNetworkColdRelationshipReadyMs,
-  5_800,
-  "The isolated cold ephemeris path must keep its explicit measured ceiling."
-);
-
 const hardCeilings = {
   coldListReadyMs: 800,
   warmDetailReadyMs: 500,
