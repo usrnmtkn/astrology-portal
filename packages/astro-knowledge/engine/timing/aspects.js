@@ -34,7 +34,10 @@ const ORB_PROFILES = Object.freeze({
     trine: 7,
     square: 7,
     sextile: 5,
-    luminaryModifier: 2
+    luminaryModifier: 2,
+    luminaryModifiers: Object.freeze({
+      square: 5
+    })
   }),
   transit: Object.freeze({
     conjunction: 3,
@@ -97,7 +100,10 @@ function effectiveOrb(aspect, profile = "transit", bodies = []) {
     return normalized === "sun" || normalized === "moon";
   });
 
-  return baseOrb + (hasLuminary ? profileConfig.luminaryModifier : 0);
+  const luminaryModifier = profileConfig.luminaryModifiers?.[aspectName]
+    ?? profileConfig.luminaryModifier;
+
+  return baseOrb + (hasLuminary ? luminaryModifier : 0);
 }
 
 function isAspectActive(input) {

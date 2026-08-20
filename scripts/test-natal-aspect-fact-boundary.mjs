@@ -7,6 +7,10 @@ import SwissEph from "swisseph-wasm";
 
 import { canonicalNatalAspectsForSnapshot } from "../apps/web/src/services/natalAspectFacts.ts";
 import {
+  completeNatalAspectsForPlacement,
+  uniqueDisplayableNatalAspects
+} from "../apps/web/src/services/natalAspectDisplay.ts";
+import {
   calculateNatalAspects,
   calculateSkyAspects,
   NATAL_ASPECT_DEFINITIONS
@@ -36,14 +40,18 @@ assert.deepEqual(
   Object.fromEntries(NATAL_ASPECT_DEFINITIONS
     .filter(({ type }) => type !== "quincunx")
     .map(({ type, maxOrb }) => [type, maxOrb])),
-  Object.fromEntries(Object.entries(ORB_PROFILES.natal).filter(([key]) => key !== "luminaryModifier")),
+  Object.fromEntries(Object.entries(ORB_PROFILES.natal).filter(([key]) => !key.startsWith("luminaryModifier"))),
   "The reader natal matrix must stay aligned with the canonical timing-engine natal orb profile."
 );
-assert.equal(
-  NATAL_ASPECT_DEFINITIONS.find(({ type }) => type === "conjunction")?.luminaryModifier,
-  ORB_PROFILES.natal.luminaryModifier,
-  "The reader natal matrix must stay aligned with the canonical luminary modifier."
-);
+NATAL_ASPECT_DEFINITIONS.forEach((definition) => {
+  const expectedModifier = ORB_PROFILES.natal.luminaryModifiers?.[definition.type]
+    ?? (definition.type === "quincunx" ? 0 : ORB_PROFILES.natal.luminaryModifier);
+  assert.equal(
+    definition.luminaryModifier,
+    expectedModifier,
+    `The ${definition.type} natal reader matrix must stay aligned with the canonical luminary modifier.`
+  );
+});
 
 const snapshot = {
   positions: [
@@ -113,15 +121,20 @@ assert.equal(actual.some((aspect) => aspect.from.startsWith("Transit ") || aspec
 
 const marieMoonRegression = {
   positions: [
-    position("Moon", 220),
-    position("Venus", 278),
-    position("Mars", 317),
-    position("Jupiter", 318),
-    position("Saturn", 159),
-    position("Uranus", 229),
-    position("North Node", 285)
+    position("Moon", 222.7888),
+    position("Mercury", 337.0589),
+    position("Venus", 284.9428),
+    position("Mars", 322.7631),
+    position("Jupiter", 120.9424),
+    position("Saturn", 161.4219),
+    position("Uranus", 230.9859),
+    position("Chiron", 35.6203),
+    position("Lilith", 155.9261),
+    position("North Node", 167.5673)
   ],
-  aspects: [{ from: "Moon", type: "sextile", to: "Mercury", orb: 1 }]
+  aspects: [{ from: "Moon", type: "sextile", to: "Neptune", orb: 1 }],
+  ascendantLongitude: 71.0469,
+  midheavenLongitude: 316.573
 };
 const marieMoonAspects = canonicalNatalAspectsForSnapshot(marieMoonRegression)
   .filter((aspect) => aspect.from === "Moon" || aspect.to === "Moon")
@@ -131,13 +144,18 @@ assert.deepEqual(
   marieMoonAspects,
   [
     "Moon|sextile|Saturn",
+    "Moon|quincunx|Ascendant",
     "Moon|sextile|Venus",
+    "Moon|square|Midheaven",
     "Moon|sextile|North Node",
+    "Moon|trine|Mercury",
+    "Moon|sextile|Lilith",
+    "Moon|opposition|Chiron",
+    "Moon|conjunction|Uranus",
     "Moon|square|Mars",
-    "Moon|square|Jupiter",
-    "Moon|conjunction|Uranus"
+    "Moon|square|Jupiter"
   ],
-  "Marie Moon regression: the natal boundary must retain wider luminary squares and conjunctions alongside tight sextiles."
+  "Marie Moon regression: the actual birth-chart geometry must retain every canonical Moon contact."
 );
 assert.equal(
   calculateSkyAspects(marieMoonRegression.positions).some((aspect) => (
@@ -162,6 +180,19 @@ assert.equal(boundaryCases.some((aspect) => aspectKey(aspect) === "Mercury|squar
 assert.equal(boundaryCases.some((aspect) => aspectKey(aspect) === "Moon|trine|Mars"), false, "A luminary trine beyond 9 degrees must fail closed.");
 assert.equal(boundaryCases.some((aspect) => aspectKey(aspect) === "Moon|quincunx|Jupiter"), false, "Quincunx must not receive a luminary orb expansion.");
 assert.equal(boundaryCases.some((aspect) => aspectKey(aspect) === "Sun|sextile|Saturn"), false, "A luminary sextile beyond 7 degrees must fail closed.");
+
+assert.equal(
+  calculateNatalAspects([position("Moon", 0), position("Mars", 102)])
+    .some((aspect) => aspectKey(aspect) === "Moon|square|Mars"),
+  true,
+  "A 12-degree luminary square is included at the canonical boundary."
+);
+assert.equal(
+  calculateNatalAspects([position("Moon", 0), position("Mars", 102.1)])
+    .some((aspect) => aspectKey(aspect) === "Moon|square|Mars"),
+  false,
+  "A luminary square beyond 12 degrees must fail closed."
+);
 
 const angleAspects = canonicalNatalAspectsForSnapshot({
   positions: [position("Moon", 220)],
@@ -227,7 +258,11 @@ const directBodies = [
   ["Pluto", swe.SE_PLUTO], ["Chiron", 15], ["Lilith", 13], ["North Node", swe.SE_TRUE_NODE]
 ];
 
-for (const date of [new Date("1978-11-15T14:30:00.000Z"), new Date("1990-01-01T12:00:00.000Z")]) {
+for (const date of [
+  new Date("1978-11-15T14:30:00.000Z"),
+  new Date("1979-02-18T16:20:00.000Z"),
+  new Date("1990-01-01T12:00:00.000Z")
+]) {
   const julianDay = swe.julday(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate(), utcHour(date));
   const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SPEED;
   const positions = directBodies.map(([planet, id]) => {
@@ -248,6 +283,23 @@ for (const date of [new Date("1978-11-15T14:30:00.000Z"), new Date("1990-01-01T1
     referenceNatalMatrix(positions),
     `Natal aspect matrix must match direct Swiss Ephemeris positions at ${date.toISOString()}.`
   );
+
+  const displayable = uniqueDisplayableNatalAspects(calculateNatalAspects(positions));
+  positions.forEach(({ planet }) => {
+    const expectedKeys = displayable
+      .filter((aspect) => aspect.from === planet || aspect.to === planet)
+      .map(aspectKey)
+      .sort();
+    const displayedKeys = completeNatalAspectsForPlacement(displayable, planet)
+      .map(aspectKey)
+      .sort();
+
+    assert.deepEqual(
+      displayedKeys,
+      expectedKeys,
+      `${planet} placement detail must retain every displayable natal aspect at ${date.toISOString()}.`
+    );
+  });
 }
 
 const app = read("apps/web/src/App.tsx");
@@ -267,4 +319,4 @@ assert.match(friendPanel, /natalPlacementDetailArticle\(position, natalSky,/u, "
 assert.match(friendRail, /aspects=\{canonicalNatalAspectsForSnapshot\(natalSky\)\}/u, "The Friend natal wheel must use the natal-only boundary.");
 assert.doesNotMatch(friendRail, /aspects=\{natalSky\.aspects\}/u, "The Friend natal wheel must not trust the snapshot aspect list.");
 
-console.log("natal aspect fact boundary: ok (natal orbs, Marie Moon regression, angles, two direct ephemeris instants, and every You/Friend consumer)");
+console.log("natal aspect fact boundary: ok (natal orbs, Marie Moon regression, angles, three direct ephemeris instants, complete placement inventories, and every You/Friend consumer)");

@@ -28,11 +28,12 @@ import {
 } from "../../utils/articleText";
 
 export type AspectToneBucket = "gifts" | "lessons";
+export type RelatedAspectGroup = AspectToneBucket | "planets" | "points";
 
 export type SkyDetailRelatedAspectRow = {
   key: string;
   aspectType?: string;
-  group?: AspectToneBucket;
+  group?: RelatedAspectGroup;
   node: ReactNode;
 };
 
@@ -88,6 +89,7 @@ export type SkyDetail = {
   sections?: SkyDetailSection[];
   relatedAspects?: {
     heading: string;
+    grouping?: "tone" | "counterpart";
     rows: Array<ReactNode | SkyDetailRelatedAspectRow>;
   };
   personalizedPlacement?: SkyPersonalizedPlacement | null;
@@ -417,12 +419,21 @@ export function SkyDetailArticle({
     title: detail.title
   });
   const relatedAspectRows = (detail.relatedAspects?.rows ?? []).map(normalizeRelatedAspectRow);
-  const aspectGroups = ([
-    { id: "gifts" as const, label: "Gifts" },
-    { id: "lessons" as const, label: "Lessons" }
-  ]).map((group) => ({
+  const relatedAspectGrouping = detail.relatedAspects?.grouping ?? "tone";
+  const aspectGroupDefinitions = relatedAspectGrouping === "counterpart"
+    ? ([
+        { id: "planets" as const, label: "Planetary aspects" },
+        { id: "points" as const, label: "Angles and points" }
+      ])
+    : ([
+        { id: "gifts" as const, label: "Gifts" },
+        { id: "lessons" as const, label: "Lessons" }
+      ]);
+  const aspectGroups = aspectGroupDefinitions.map((group) => ({
     ...group,
-    sections: aspectSections.filter((section) => section.group === group.id),
+    sections: relatedAspectGrouping === "tone"
+      ? aspectSections.filter((section) => section.group === group.id)
+      : [],
     rows: relatedAspectRows.filter((row) => row.group === group.id)
   })).filter((group) => group.sections.length > 0 || group.rows.length > 0);
   const hasAspectCard = aspectGroups.length > 0;
@@ -631,7 +642,7 @@ export function SkyDetailArticle({
 
         {hasAspectCard ? (
           <span className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside">
-            Aspects to the planet
+            {detail.relatedAspects?.heading ?? "Aspects to the planet"}
           </span>
         ) : null}
 
