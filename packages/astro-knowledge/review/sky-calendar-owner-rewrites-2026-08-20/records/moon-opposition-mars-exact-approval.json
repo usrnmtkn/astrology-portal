@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.opposition.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "85df5b18ddcc0721624aef07c90b5102206507c46e32b1ff8730f4769cf06001",
+  "payload": {
+    "summary": "The people trying to protect a routine face the person insisting that disruption is necessary now.",
+    "body": "The people trying to protect a routine face the person insisting that disruption is necessary now. Moon opposite Mars can make one side defend children, health, housing, or the need for calm while the other points to danger, urgency, or work that cannot wait. The decision may still need to happen quickly. That does not make the cost of disruption imaginary. Name who needs protection during the change and build that into the plan before asking them to absorb the consequences for everyone else."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

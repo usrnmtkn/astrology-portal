@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.opposition.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "3763f8310437d4c4b28169bd3c6386029957eddc5e10bddcfd42847278a9f81f",
+  "payload": {
+    "summary": "The person making the offer may face someone who wants different terms and is willing to push for them.",
+    "body": "The person making the offer may face someone who wants different terms and is willing to push for them. Venus opposite Mars can make attraction and conflict share the same negotiation, especially when one side wants cooperation and the other wants a faster answer, a lower price, or more control over the next move. Interest does not erase disagreement. Put the terms where both sides can see them. If the offer only works while one person is chasing and the other is resisting, the chemistry is doing more work than the agreement."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

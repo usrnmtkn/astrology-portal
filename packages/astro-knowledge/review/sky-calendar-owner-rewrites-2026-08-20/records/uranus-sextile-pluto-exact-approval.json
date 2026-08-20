@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.uranus.sextile.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "3c481129685fac96680d229e77748dc330f7346aa6eff509b47ac11105b5fea0",
+  "payload": {
+    "summary": "One legal opening, technical update, or ownership change may give ordinary users access to tools that used to sit behind a gatekeeper.",
+    "body": "One legal opening, technical update, or ownership change may give ordinary users access to tools that used to sit behind a gatekeeper. Uranus sextile Pluto can create a practical chance to move power closer to the people actually using the system, but the opening is only useful if the access changes with it. Rewrite the permissions, ownership, or decision rights while the route is open. A reform has gone far enough when people can point to what they are now allowed to enter, control, or leave without asking the same authority as before."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

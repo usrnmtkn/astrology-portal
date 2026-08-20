@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.trine.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "3bec36104c16ba989f5f4f900dc558714b5a27937342fe6a1e70a61b24340da5",
+  "payload": {
+    "summary": "The caregiver schedule, budget, and backup plan are confirmed before the need becomes urgent.",
+    "body": "The caregiver schedule, budget, and backup plan are confirmed before the need becomes urgent. Moon trine Saturn can make compassion more reliable because everybody knows who is covering each shift, what the money pays for, and when the arrangement will be reviewed. Care feels less cold when the structure protects both the person receiving it and the people providing it. Keep the backup current. A good plan should survive one person getting sick, needing a day off, or simply reaching their limit."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

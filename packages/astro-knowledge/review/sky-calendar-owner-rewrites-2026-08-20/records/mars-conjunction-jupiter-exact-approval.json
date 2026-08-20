@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.conjunction.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "19a220f9c900939104e00e6b75aef2fb3264d56799da3949ff3159ec78ca154f",
+  "payload": {
+    "summary": "One bold move turns into a full-scale campaign before anyone calls for a pause.",
+    "body": "One bold move turns into a full-scale campaign before anyone calls for a pause. Mars conjunct Jupiter can make confidence feed momentum so quickly that the next commitment is made while the last one is still being absorbed. Spending rises, the audience grows, and caution starts to sound like disloyalty. Big energy can produce a big result, but it can also turn enthusiasm into a promise nobody planned to keep. Check the staff, budget, and actual limit before saying yes to the next expansion."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

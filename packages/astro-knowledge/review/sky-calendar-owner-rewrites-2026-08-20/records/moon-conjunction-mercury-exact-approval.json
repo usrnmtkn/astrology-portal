@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.conjunction.mercury",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "40390b356d3fd8029efe2c09c2baf1afed627d472e01c9a9cef4c3d6e5096c2b",
+  "payload": {
+    "summary": "A private admission changes the tone and direction of the entire conversation.",
+    "body": "A private admission changes the tone and direction of the entire conversation. Moon conjunct Mercury can make news about a family problem, health concern, housing loss, or old hurt become part of the decision at the same moment it is finally spoken. The room cannot go back to the easier version of the conversation after that. Listen for what changed in the facts as well as the mood. Respond to the information that was disclosed instead of treating the emotion around it as a distraction."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

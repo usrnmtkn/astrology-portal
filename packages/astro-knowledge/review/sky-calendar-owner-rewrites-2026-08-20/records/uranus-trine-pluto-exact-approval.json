@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.uranus.trine.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "5e0bdc142da734f72d745d6f6c63f374fe4c12eba1a11ba1a9e200f89d80853b",
+  "payload": {
+    "summary": "A quiet infrastructure overhaul can shift power without forcing everyone through a public crisis first.",
+    "body": "A quiet infrastructure overhaul can shift power without forcing everyone through a public crisis first. Uranus trine Pluto can help technology, ownership, and authority change together when the work has been planned around cost, deadlines, and the people who still need the system to function every day. The strongest reform may look boring from the outside. Let it. Measure the change by who can now access the tool, make a decision, or move without asking the old gatekeeper for permission."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

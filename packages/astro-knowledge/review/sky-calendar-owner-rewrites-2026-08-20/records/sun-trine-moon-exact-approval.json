@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.trine.moon",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "553c0711c32017d9469e7b91b7d739f631922722a9fb861534940c462b7c77fa",
+  "payload": {
+    "summary": "A difficult change is easier to absorb when the explanation arrives with the details people need to plan around it.",
+    "body": "A difficult change is easier to absorb when the explanation arrives with the details people need to plan around it. Sun trine Moon can help leadership and the people affected by a decision move in the same direction because the practical consequences are included from the beginning. Revised hours, direct contacts, childcare, or another small accommodation can prevent a reasonable change from becoming an unnecessary mess. Say what is changing, why it is changing, and what support is already in place. People do not have to like the decision to understand what happens next."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

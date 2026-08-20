@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.sextile.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "e4220771051d0cfc1f0717421ac39368b0f0ebed26ff8b94c1b89e0e30fb450b",
+  "payload": {
+    "summary": "A vague hope becomes a campaign people can actually support once it has a name, a budget, and somewhere for the money to go.",
+    "body": "A vague hope becomes a campaign people can actually support once it has a name, a budget, and somewhere for the money to go. Sun sextile Neptune can help a compassionate or creative idea find a public form without requiring the whole vision to be finished first. A donation link, first event, named organizer, or clear beneficiary may be enough to turn concern into useful participation. Make the first promise specific. People should know what they are contributing to, who is responsible for it, and what the first round of support is meant to accomplish."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

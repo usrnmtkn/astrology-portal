@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.sextile.venus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "a740f5e0658b2f67eeb1cd8d0c73e12673fcf0653b04b690b9c8b6bbc8328986",
+  "payload": {
+    "summary": "One carefully worded message gives an agreement a chance to survive a difficult correction.",
+    "body": "One carefully worded message gives an agreement a chance to survive a difficult correction. Mercury sextile Venus can help someone clarify the price, change the date, or name missing credit without turning the whole exchange into a public complaint. The relationship matters, but politeness cannot carry a correction nobody is willing to make. Send the honest version. State what changed, what needs to be fixed, and what would make the agreement workable again."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

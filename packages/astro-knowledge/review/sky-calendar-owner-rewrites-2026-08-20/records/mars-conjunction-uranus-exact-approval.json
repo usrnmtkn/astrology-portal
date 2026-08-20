@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.conjunction.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "d9cb5333951a4c302488d492c7163f77ac724069e2dd78c6199ce2a3140255fa",
+  "payload": {
+    "summary": "A sudden break forces people to act before a replacement plan exists.",
+    "body": "A sudden break forces people to act before a replacement plan exists. Mars conjunct Uranus can make the disruption and the response happen in the same instant: a system goes down, somebody walks out, a rule is ignored, or a risky workaround becomes the only available option. Speed may be necessary, but improvisation creates its own consequences. Stabilize the immediate problem first. Then make sure the temporary fix does not quietly become the new system just because everyone survived the first hour."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

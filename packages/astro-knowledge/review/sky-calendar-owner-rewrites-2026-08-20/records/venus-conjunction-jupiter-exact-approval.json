@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.conjunction.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "066ac58d1345f60b8705782ae46b046411915444793b4420f45c6e75b9e532fd",
+  "payload": {
+    "summary": "Every enthusiastic yes can make the party, purchase, or promise larger than the version anyone originally agreed to pay for.",
+    "body": "Every enthusiastic yes can make the party, purchase, or promise larger than the version anyone originally agreed to pay for. Venus conjunct Jupiter can make pleasure and generosity feed each other until another guest, upgrade, gift, or public promise feels too good to refuse. The problem usually appears on the bill, the schedule, or the person expected to keep the experience feeling abundant. Enjoy the expansion, but name the limit while the choices are still optional. Generosity gets less generous once somebody else is quietly financing it with their money or time."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

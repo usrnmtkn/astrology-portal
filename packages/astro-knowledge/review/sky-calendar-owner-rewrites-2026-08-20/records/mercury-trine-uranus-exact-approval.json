@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.trine.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "ec579bbfca363de78451e658ec2cfce4a4551c013bb87a4e7d8c11611bc2a831",
+  "payload": {
+    "summary": "Spotting one detail everyone else glossed over fixes a problem that has been costing time and money.",
+    "body": "Spotting one detail everyone else glossed over fixes a problem that has been costing time and money. Mercury trine Uranus can make a small correction travel through the system quickly, especially when an outdated form, setting, or process is the thing causing the larger blockage. The fix may look minor on paper while the workflow gets dramatically easier. Make the change and document why it worked. The useful insight is the one the next person does not have to rediscover from scratch."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

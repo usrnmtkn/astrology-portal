@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.conjunction.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "b8dd70377d7a4a41f667812b4f0071d18809e5c04b16d8b9921a1c0e5096d8d8",
+  "payload": {
+    "summary": "One signature can move the budget, the public story, and the decision-making power at the same time.",
+    "body": "One signature can move the budget, the public story, and the decision-making power at the same time. Sun conjunct Pluto can concentrate visible authority and the leverage behind it in the same hands, which makes a merger, succession, election, or takeover feel decisive very quickly. The question is what becomes harder to challenge once the change is complete. Follow the title to the money, records, and access that come with it. If one person can make the decision and control the information used to review it, the new structure needs more oversight, not less."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

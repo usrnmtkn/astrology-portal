@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.opposition.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "a102d5388f32a04e699979a4585a7601025d849b9e64093f5f9d726a220160ae",
+  "payload": {
+    "summary": "The official update says the system is under control while users, staff, or residents document a completely different failure.",
+    "body": "The official update says the system is under control while users, staff, or residents document a completely different failure. Mercury opposite Uranus puts the approved explanation directly against the live record of outages, errors, and workarounds happening now. Credibility depends on acknowledging the mismatch before somebody outside the institution does. Compare the official timeline with the reports coming from the people using the system. Update the statement when the public has better information than the people writing it."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

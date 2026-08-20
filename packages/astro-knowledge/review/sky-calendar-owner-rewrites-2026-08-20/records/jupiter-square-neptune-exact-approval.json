@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.square.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "5ea459b713f076670c3cf694fd030fda84e77d78e7e49328233c527a45ab32ad",
+  "payload": {
+    "summary": "An inspiring campaign attracts donors and investors before anyone can explain the budget or measure the result.",
+    "body": "An inspiring campaign attracts donors and investors before anyone can explain the budget or measure the result. Jupiter square Neptune can make optimism fill every blank the plan has not answered yet, especially once basic questions start sounding like criticism of the cause itself. Cost, eligibility, delivery, and responsibility may still be open to several readings while support keeps growing. Excitement is not a substitute for structure. Require clear terms, timelines, and numbers before backing the next phase."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

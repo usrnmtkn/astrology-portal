@@ -20,7 +20,9 @@ the single largest source of wasted owner review time on this project.
    reference passages. **Its do-not-use list is binding**, including "the
    challenge" rather than "the catch" or any invented substitute, the ban on
    `real` and `true` as intensifiers, the ban on `settle`, `steady`, `comfort`,
-   and `warmth` as standalone abstractions, and the ban on the `room` metaphor.
+   and `warmth` as standalone abstractions. `Room` language is allowed sparingly
+   when it names an actual group setting or power dynamic; stock room metaphors
+   remain disallowed.
 2. The owner rulings in `tldr-astro-phrasebank/` that postdate it, including the
    lived-prose standard and its amendments, the natal placement delineation
    standard, and any ruling dated later than the work in hand.
@@ -71,8 +73,10 @@ placement, a personal transit, or a relationship condition.
 Current-sky temporality does not make every Sky surface sound identical. Sky
 Placement articles may address the reader under their article contract, but
 they describe the current transit rather than a standing personality.
-Calendar aspect cards remain collective and use no second person. Apply the
-sub-surface contract only after the current-sky classification is fixed. If
+Calendar aspect cards remain collective in subject. They may use `you` or
+`your` when the card directly addresses the reader with practical guidance.
+That direct address must not turn the card into a natal standing-pattern claim.
+Apply the sub-surface contract only after the current-sky classification is fixed. If
 the route, renderer, or surface is ambiguous, fail closed and ask the owner
 instead of guessing.
 
@@ -136,7 +140,8 @@ named once, in Details.
 - Stay general enough that anyone recognizes it. A single narrow scene (one
   bakery, one council meeting, one comment thread) is a personal-transit
   move and does not belong here. Ordinary life is texture, not plot.
-- No second person. No standing-pattern claims.
+- `You` and `your` are allowed when the Calendar directly addresses the reader.
+  The event itself remains collective and temporary; no standing-pattern claims.
 - Stored bodies begin lowercase; the Calendar composes the date lead-in.
 
 Approved shape (owner-authored, 2026-08-14):

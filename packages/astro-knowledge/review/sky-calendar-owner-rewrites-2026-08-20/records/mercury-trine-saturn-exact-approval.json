@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.trine.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "a672d2d54391c411aea7eb0c03ff9812e7722d4ccab39e8b3290a99b3411234c",
+  "payload": {
+    "summary": "The final answer arrives with every condition, date, and responsibility clearly stated.",
+    "body": "The final answer arrives with every condition, date, and responsibility clearly stated. Mercury trine Saturn makes the message useful because the language matches the rule it is meant to enforce, so an approval, refusal, contract, or warning can be followed without another call. Strict is easier to work with than vague. Put the important dates somewhere visible and plan from what is actually written, not from the more generous version everyone hoped the answer would become."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

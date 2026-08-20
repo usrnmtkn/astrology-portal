@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.trine.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "1af68bc311d8ad300976f3ba0c1079767c536bc5dea4ff80a1f626199f0e89b2",
+  "payload": {
+    "summary": "A large idea becomes easier to believe once someone can explain the cost, schedule, and first step.",
+    "body": "A large idea becomes easier to believe once someone can explain the cost, schedule, and first step. Mercury trine Jupiter can help the message carry the scale of the opportunity without losing the details that make it credible. A proposal, application, publication, or teaching plan lands because the big picture and the practical explanation support each other. This is good timing for making the case. Lead with the reason, then give people the information they need to say yes without guessing what they are agreeing to."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

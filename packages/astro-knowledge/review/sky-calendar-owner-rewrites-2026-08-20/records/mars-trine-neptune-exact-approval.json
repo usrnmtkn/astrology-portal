@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.trine.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "e19443d74b690a75c64eefce29bc69eaf9422d59d480912c1c39a9d6fcb1a1b4",
+  "payload": {
+    "summary": "A rescue, creative effort, or public action moves because people understand both the need and the reason they are showing up.",
+    "body": "A rescue, creative effort, or public action moves because people understand both the need and the reason they are showing up. Mars trine Neptune can keep practical effort connected to compassion without letting the emotional charge replace the work itself. Volunteers know their roles, organizers can explain the goal, and the story behind the effort still matters after the first burst of urgency. That combination is worth protecting. Keep the purpose visible, but make sure every new person knows exactly what they are responsible for carrying."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

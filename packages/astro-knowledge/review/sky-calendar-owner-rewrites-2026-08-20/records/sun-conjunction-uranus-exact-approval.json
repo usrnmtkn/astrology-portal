@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.conjunction.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "a6273acd442580db2b362f649c581d93b5292c0dbe5cf8de8291bf13721d769b",
+  "payload": {
+    "summary": "One unexpected resignation, disclosure, or break from the plan can change the public story before leadership has time to prepare the response.",
+    "body": "One unexpected resignation, disclosure, or break from the plan can change the public story before leadership has time to prepare the response. Sun conjunct Uranus can make the disruption itself become the new direction, especially when the person at the center decides the old arrangement is no longer worth protecting. The shock may be useful if it exposes a problem everyone was already avoiding. Do not spend the whole response trying to restore the old script. Name what actually changed and what now has to be rebuilt because the break made the previous plan impossible."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

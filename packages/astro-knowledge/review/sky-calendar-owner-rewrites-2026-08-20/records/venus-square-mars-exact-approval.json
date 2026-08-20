@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.square.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "93c5c9225ffd9e4a2faaf70c2ee7c11a5b131ab275dfc93ee4d16cd954de1564",
+  "payload": {
+    "summary": "A desirable offer can become a fight over who gets to set the pace.",
+    "body": "A desirable offer can become a fight over who gets to set the pace. Venus square Mars can make an immediate commitment, purchase, answer, or public show of support feel like proof of interest, while the person being rushed starts pulling back simply to regain room to choose. Pressure turns the yes into weaker evidence of agreement. Slow down the part that has become a test. Name the price, date, boundary, or decision that actually needs agreement and give the other side enough space to answer it without having to fight for the right to think."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

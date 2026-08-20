@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.sextile.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "153d724daa88c99db05d6decdfa2c0c5d5891240759f7c5dede683bf2427f6bf",
+  "payload": {
+    "summary": "A direct challenge finally reaches the person holding the money, access, or final signature.",
+    "body": "A direct challenge finally reaches the person holding the money, access, or final signature. Mars sextile Pluto can make pressure useful once it stops circling the symptom and reaches the source of control. A clause gets reopened, a gatekeeper answers publicly, or withheld access is restored because the conversation is finally happening with the person who can change the outcome. Use that opening carefully. Keep the request to the exact change required, document the answer, and do not spend the moment arguing about every grievance that led there."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

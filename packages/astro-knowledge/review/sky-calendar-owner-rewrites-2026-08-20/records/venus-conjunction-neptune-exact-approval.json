@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.conjunction.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "875b5d75fadc4af8ca421b9fe22896396d8dbcf10b5fc19d0fcb65e31b824453",
+  "payload": {
+    "summary": "An offer can become more powerful because each person sees their own hope reflected inside it.",
+    "body": "An offer can become more powerful because each person sees their own hope reflected inside it. Venus conjunct Neptune can make a creative deal, relationship promise, purchase, or charitable appeal feel unusually meaningful while the exact terms stay soft enough for everyone to imagine a different outcome. Beauty and goodwill are not the problem. Unnamed expectations are. Put the price, commitment, ownership, and timeline into plain language before the fantasy has to survive ordinary life. If naming the terms ruins the appeal, the appeal was carrying too much of the agreement."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

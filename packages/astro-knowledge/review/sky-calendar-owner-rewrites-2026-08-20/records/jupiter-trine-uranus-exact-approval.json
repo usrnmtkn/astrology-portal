@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.trine.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "cf7bb4e644bbbf9f7bb8da72ce64de0cd7515e209c27409742efc9f8c160739e",
+  "payload": {
+    "summary": "A new model expands access faster than the older system ever managed.",
+    "body": "A new model expands access faster than the older system ever managed. Jupiter trine Uranus can help innovation scale without forcing every improvement through the gatekeepers that kept participation narrow in the first place. Applications move, prices fall, services reach new areas, or people gain access that once depended on location or status. This is useful disruption because the result is visible in who can participate. Protect the route before success gives someone a reason to close it again."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

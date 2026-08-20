@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.opposition.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "748bd55cd466a6293a7095ec33ff45b536c621e7da4b06b2847664c612f52286",
+  "payload": {
+    "summary": "The people celebrating rapid innovation face the communities dealing with its cost.",
+    "body": "The people celebrating rapid innovation face the communities dealing with its cost. Jupiter opposite Uranus can put the promise of a better future directly across from higher prices, displacement, unstable work, or services that no longer fit the people who depended on the older system. Both sides may be describing the same change accurately. The question is who gets the benefit first and who is expected to adjust. Count the disruption as part of the result before expanding the model again."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}
