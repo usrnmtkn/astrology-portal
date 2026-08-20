@@ -1,0 +1,292 @@
+{
+  "schema": "tldr-natal-moon-final-serving-import/v1",
+  "importedAt": "2026-08-20",
+  "source": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+  "authority": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+  "ownerApproval": "I approve the finished Moon sign copy, 12 Moon house sections, and all 144 no-childhood rendered samples in V3 exactly as hashed for publication on the You natal placement surface. Compatibility and Friend remain unchanged. Childhood remains excluded.",
+  "artifactSha256": "be3d8c8b89f99bc76798ee18ceef5de926fde736a98a0af6694e2d1ecfa48027",
+  "workbookSha256": "8190d07cfadf1b50063ec13038738851a606057e5e2f48ba57ab4d0dead1578e",
+  "counts": {
+    "signRows": 12,
+    "houseRows": 12,
+    "renderedSamplesValidated": 144,
+    "rowsAddedOrReconciled": 24,
+    "unrelatedApprovedRowsChanged": 0,
+    "friendRowsChanged": 0,
+    "compatibilityRowsChanged": 0,
+    "childhoodPassagesImported": 0
+  },
+  "invariants": {
+    "exactV3RenderedHashesValidated": true,
+    "existingV13RowsRetainedByteIdentical": true,
+    "existingHouseRowsRetainedByteIdentical": true,
+    "readerOnlyYouSurface": true,
+    "noDuplicateContentKeys": true
+  },
+  "rows": [
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/aries",
+      "runtimeKey": "moon|aries",
+      "bodySha256": "0ebaf246b84725b4b9fbf8974195b73303c94a2ee32913fd896fce36e638da5c",
+      "payloadSha256": "f0a8061a6ab15662b3d15190beed79f35159b48674afbce4015427ef0b88e10e",
+      "componentHashes": {
+        "introSha256": "5fe0af5019fac6f9c5680cb6e081e7aec70f613fb8e3b96b317edd2d8e0167a1",
+        "bodySha256": "2775b23427ac93a3ca525242e660abe1e97d5eb4a3dda18c5d3ca2ff60bf4dd0",
+        "renderedSignSectionSha256": "0ebaf246b84725b4b9fbf8974195b73303c94a2ee32913fd896fce36e638da5c"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/taurus",
+      "runtimeKey": "moon|taurus",
+      "bodySha256": "a2ec018e8255df1fb4c538ac959ad48f09e7eed3ed54fb4dcadb0977bcf32bd4",
+      "payloadSha256": "16a6e1a9ac240080e50fcc89b46a550116c06ed2ce4a82d81660883fdd3a8786",
+      "componentHashes": {
+        "introSha256": "5fe0af5019fac6f9c5680cb6e081e7aec70f613fb8e3b96b317edd2d8e0167a1",
+        "bodySha256": "46f80a98f57034866b54ca68f19238bd579453e1b19ed6869f719fcce6f92942",
+        "renderedSignSectionSha256": "a2ec018e8255df1fb4c538ac959ad48f09e7eed3ed54fb4dcadb0977bcf32bd4"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/gemini",
+      "runtimeKey": "moon|gemini",
+      "bodySha256": "15df0bf61859fad15b07472034ec7a3227447030a4f52a13dd65367ed76c0fc7",
+      "payloadSha256": "2c41dd0326a698c8c8833c067b56fd4e853a08e49a16f0ab3a56caab76fa031d",
+      "componentHashes": {
+        "introSha256": "5fe0af5019fac6f9c5680cb6e081e7aec70f613fb8e3b96b317edd2d8e0167a1",
+        "bodySha256": "2853d7fb862b1850433a0ab84f6904bdc60fecf80a8982159a19265bc08ccccd",
+        "renderedSignSectionSha256": "15df0bf61859fad15b07472034ec7a3227447030a4f52a13dd65367ed76c0fc7"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/cancer",
+      "runtimeKey": "moon|cancer",
+      "bodySha256": "f194a565b1a0c4b061a8d1ca4e4ea439d4e20926bb1ac3f833f2395ba8aa7473",
+      "payloadSha256": "f5c8ccdc8771f9e834c01618e2cc2e90883e392c85417800cfbec1127745fecb",
+      "componentHashes": {
+        "introSha256": "5fe0af5019fac6f9c5680cb6e081e7aec70f613fb8e3b96b317edd2d8e0167a1",
+        "bodySha256": "39a68daed583431188b9911253bd542d97c50d8838ed92f134490e7f484a5480",
+        "renderedSignSectionSha256": "f194a565b1a0c4b061a8d1ca4e4ea439d4e20926bb1ac3f833f2395ba8aa7473"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/leo",
+      "runtimeKey": "moon|leo",
+      "bodySha256": "2795c2926f94068e4655afc90e8e402f2fd1b90c091a0b291cfb908db5ee3ea9",
+      "payloadSha256": "e9c6de16eb0dedec096b565ca4fba0d8d4071b298395276c6e5094e2c4dc2691",
+      "componentHashes": {
+        "introSha256": "5fe0af5019fac6f9c5680cb6e081e7aec70f613fb8e3b96b317edd2d8e0167a1",
+        "bodySha256": "2e7034817133e2fc1b952df5f324d416ae673ba4b1d116602067bf472caa29fc",
+        "renderedSignSectionSha256": "2795c2926f94068e4655afc90e8e402f2fd1b90c091a0b291cfb908db5ee3ea9"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/virgo",
+      "runtimeKey": "moon|virgo",
+      "bodySha256": "6f1dd3d78ee1df5cf83007b51508712274d69b6631b07692e518c90cd39ad986",
+      "payloadSha256": "4e8f57c5f6cb15e3dc89d2f9fb7dc8ee205cdc57f7778f3fee81eafa0ce2f566",
+      "componentHashes": {
+        "introSha256": "5fe0af5019fac6f9c5680cb6e081e7aec70f613fb8e3b96b317edd2d8e0167a1",
+        "bodySha256": "4a5a3b34bbab9c18cb8d15f41700704e871fec2da362840ed0feb02818d88fdc",
+        "renderedSignSectionSha256": "6f1dd3d78ee1df5cf83007b51508712274d69b6631b07692e518c90cd39ad986"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/libra",
+      "runtimeKey": "moon|libra",
+      "bodySha256": "a01d4dedb3022793360d88d1df9be807f39e30284fce105f7d7858520c57325f",
+      "payloadSha256": "955a6f05e00c4ee40d91137e7e9f3c356a95fd7e5bb094ff9e1d45e402d08cbc",
+      "componentHashes": {
+        "introSha256": "5fe0af5019fac6f9c5680cb6e081e7aec70f613fb8e3b96b317edd2d8e0167a1",
+        "bodySha256": "56722fea3e40d1cebb39cc91522fd07e1a6d877dd42c1852f5eaa89940ab61fa",
+        "renderedSignSectionSha256": "a01d4dedb3022793360d88d1df9be807f39e30284fce105f7d7858520c57325f"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/scorpio",
+      "runtimeKey": "moon|scorpio",
+      "bodySha256": "3a35a18fee498bb42245492c92cb523eb9eef9c7c27685ddf05599afe593578c",
+      "payloadSha256": "749f2b8121b9e41be2716aa411826c6e4df2dfb183f51897891c6b0e9492e3fe",
+      "componentHashes": {
+        "introSha256": "5fe0af5019fac6f9c5680cb6e081e7aec70f613fb8e3b96b317edd2d8e0167a1",
+        "bodySha256": "6ce5fe31937732b04eb780452ea58232d9703e986a342f500e936aa97a7148d5",
+        "renderedSignSectionSha256": "3a35a18fee498bb42245492c92cb523eb9eef9c7c27685ddf05599afe593578c"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/sagittarius",
+      "runtimeKey": "moon|sagittarius",
+      "bodySha256": "415d8aa08fc8a046c6b71fb68f2a721fc0a29325b05709cf58cb306c880c0ed1",
+      "payloadSha256": "1a29e65a7eddde3cb3e2194034ef3465da1578b83e01c30859889cf849619142",
+      "componentHashes": {
+        "introSha256": "5fe0af5019fac6f9c5680cb6e081e7aec70f613fb8e3b96b317edd2d8e0167a1",
+        "bodySha256": "3668c159cee62d734ddf673010a4fe5b96fad589d1365dcec94d0421559e1e4d",
+        "renderedSignSectionSha256": "415d8aa08fc8a046c6b71fb68f2a721fc0a29325b05709cf58cb306c880c0ed1"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/capricorn",
+      "runtimeKey": "moon|capricorn",
+      "bodySha256": "357cccd684ea2832f97a9f10b02a317dbb191802a157119dfa063ed5fb958e54",
+      "payloadSha256": "853a780f776d7c2ae53452000d39321213e0f6a08b7a06146bc49666c5215ea8",
+      "componentHashes": {
+        "introSha256": "5fe0af5019fac6f9c5680cb6e081e7aec70f613fb8e3b96b317edd2d8e0167a1",
+        "bodySha256": "9d826d7d03c8deed15c6819c804fc5fec0abe7ef827ef45fb56ed607b7d18ccd",
+        "renderedSignSectionSha256": "357cccd684ea2832f97a9f10b02a317dbb191802a157119dfa063ed5fb958e54"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/aquarius",
+      "runtimeKey": "moon|aquarius",
+      "bodySha256": "d2c3b28170d5342c04a66c961801cefacc7d2ef001ae0ece564fea23ae06ff57",
+      "payloadSha256": "f47c4314e96ee30b549b6090e1f0079ea4ab98ff4ecace90de00aabed3ba610d",
+      "componentHashes": {
+        "introSha256": "5fe0af5019fac6f9c5680cb6e081e7aec70f613fb8e3b96b317edd2d8e0167a1",
+        "bodySha256": "73bfd2dfbc31732df4da56246e1351d2eaa80b96d784c891c20eecb7bdf77923",
+        "renderedSignSectionSha256": "d2c3b28170d5342c04a66c961801cefacc7d2ef001ae0ece564fea23ae06ff57"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/pisces",
+      "runtimeKey": "moon|pisces",
+      "bodySha256": "f523a8b6c333575f19f8f481f357c8f77e94d8a985b6bd28bb53f953055e9a65",
+      "payloadSha256": "d3169cf8cf59daf46a498711e1b42e164131e184f9fc9ee2a600575f44791f58",
+      "componentHashes": {
+        "introSha256": "5fe0af5019fac6f9c5680cb6e081e7aec70f613fb8e3b96b317edd2d8e0167a1",
+        "bodySha256": "b07141348fe9c97ebaf95cf3fc32e3df3d6fa9f95cb62b9e40afffb837a13caa",
+        "renderedSignSectionSha256": "f523a8b6c333575f19f8f481f357c8f77e94d8a985b6bd28bb53f953055e9a65"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/1",
+      "runtimeKey": "moon|1st house",
+      "bodySha256": "8aa773b4995f1928e944d14fbd115798f7c1fea289fff3f6fdba8ae066b6ed09",
+      "payloadSha256": "ca4866b356c5079dcd575d6ab56e2b9c4796c571795df45425e91617349c3b03",
+      "componentHashes": {
+        "bridgeSha256": "aecfb0a15b8ce21d8f7c523649a0bc55227e3e0257aa0354650c73a31535f4a7",
+        "bodySha256": "e5069174ca90b1de8780f55a8598169db1b679f150dcd0861d972d0cd18af044",
+        "renderedHouseSectionSha256": "8aa773b4995f1928e944d14fbd115798f7c1fea289fff3f6fdba8ae066b6ed09"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/2",
+      "runtimeKey": "moon|2nd house",
+      "bodySha256": "075d763d73235215ab6a49a26de501bcbfaeca496c7090936d495b0487623edc",
+      "payloadSha256": "a524be5f0ced0510da5b94049ea627611f88f0a45ef9f9dbf39c43cdfd4a2aa8",
+      "componentHashes": {
+        "bridgeSha256": "70a5791cecfc8c370cf8a120c4dc808ec957ecbdb4fd8a4d994c6a64b2481235",
+        "bodySha256": "bfb9204f5dc7a9a2d470fd057e919c7f23268a408ca2cdbce9f01b8dff81b01f",
+        "renderedHouseSectionSha256": "075d763d73235215ab6a49a26de501bcbfaeca496c7090936d495b0487623edc"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/3",
+      "runtimeKey": "moon|3rd house",
+      "bodySha256": "226a73b8b4df312697fb2d5a76d41130e21285f235269c30d1faf4813b64b94b",
+      "payloadSha256": "3b4fa3f0d5a4430f0a75075ef0d7372d16e544e0e3ac388228351e1dc0aa0ad0",
+      "componentHashes": {
+        "bridgeSha256": "6b92f02b2ddcef51ec1f02481761d7aebb6bc9813c79282f45623ded2fb62e01",
+        "bodySha256": "ca09d6fb441a3a51adb43290dcb43f9722512f03c750aedd92f145aa91a25952",
+        "renderedHouseSectionSha256": "226a73b8b4df312697fb2d5a76d41130e21285f235269c30d1faf4813b64b94b"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/4",
+      "runtimeKey": "moon|4th house",
+      "bodySha256": "e017ca935b3ec8968884f1ebf50d56403dbde8555e97f3ec7732b64c8539530f",
+      "payloadSha256": "926faaafd6264994d583c9e68c74272e922ccf27e4026680d2077ef39f96fa7f",
+      "componentHashes": {
+        "bridgeSha256": "033bafa2ae406df7d9b6bd7c798d2a5a43966e38495b72c11b421f3f0f5797ac",
+        "bodySha256": "9fdcbc7f95709bf26bb0b6329563818ec36d3edb9c000dd2e0c4cf1c8f854e2b",
+        "renderedHouseSectionSha256": "e017ca935b3ec8968884f1ebf50d56403dbde8555e97f3ec7732b64c8539530f"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/5",
+      "runtimeKey": "moon|5th house",
+      "bodySha256": "ae416130cd0db3804ee3d30ea52045042e5bafd2604475a270e4e4208109c501",
+      "payloadSha256": "8b4dda87c2be20a03c7fe8b3bcc1d2622b8469619d24f7dd355e4c2e6f756be6",
+      "componentHashes": {
+        "bridgeSha256": "9a335cf433e5adf97846bdef23aa49183da067d23d72704f0340c34a8b7800b7",
+        "bodySha256": "6d8f8b5a9524168149b1e1d53b2d893bfd3f206e63e88902fd6613b9cde601c8",
+        "renderedHouseSectionSha256": "ae416130cd0db3804ee3d30ea52045042e5bafd2604475a270e4e4208109c501"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/6",
+      "runtimeKey": "moon|6th house",
+      "bodySha256": "4be0bec372de772fb83a617a1244312ab40f852627e405bc2ee97e05e92beb06",
+      "payloadSha256": "0222fef4a7ebadbfcca4af443e1d4e5f7ef33656c96de34da811ee6192fc3a41",
+      "componentHashes": {
+        "bridgeSha256": "cb00f98788aebd58c82d7b9f8615ec793c35e9147c4dd289b510b3cb397d0d45",
+        "bodySha256": "ea92c5fae537dc3550f3f074e7f11d9614cbbdadc8219916fe82e3e45ab5923f",
+        "renderedHouseSectionSha256": "4be0bec372de772fb83a617a1244312ab40f852627e405bc2ee97e05e92beb06"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/7",
+      "runtimeKey": "moon|7th house",
+      "bodySha256": "f9ea1d93c254f149e6440f148ad2d43f8d143cd41a2712c44778fcf73bb04391",
+      "payloadSha256": "2680e2be8cd2207537c40992f1fef2998c1dfaf68f91a09f7213b05a8749efb1",
+      "componentHashes": {
+        "bridgeSha256": "b4227c46ecb16fa8c611be16fab852933aa6de59e83aa9dc3680f62e842aacbe",
+        "bodySha256": "2422d0b82c18433775b5a9a0afb2b96b2074db38a78aa6afdcd5d179cc037df1",
+        "renderedHouseSectionSha256": "f9ea1d93c254f149e6440f148ad2d43f8d143cd41a2712c44778fcf73bb04391"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/8",
+      "runtimeKey": "moon|8th house",
+      "bodySha256": "55eb5def11ce49dbd5c1880a3d374e8c51994f2353cdd143de532a631d8083d1",
+      "payloadSha256": "ab48a8fc46805bd6203bebb56cdd0987cea90a3e489c62a88904d84334832491",
+      "componentHashes": {
+        "bridgeSha256": "bfb13628a2425f5a7a7281dcc81a25208874ddab0de8212aebe32f91ab91cfad",
+        "bodySha256": "9a018debaa34b9607dca50d60e3c89baa92c99645512115c7cbdabdecc803040",
+        "renderedHouseSectionSha256": "55eb5def11ce49dbd5c1880a3d374e8c51994f2353cdd143de532a631d8083d1"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/9",
+      "runtimeKey": "moon|9th house",
+      "bodySha256": "43beb0d213101e4ce576ce7989bea66b28b16ecd4d38850ec7ca2555b1786560",
+      "payloadSha256": "3ad7cde6227bb5c90f1ad1a17ab735ec3341b12a20e2878f84e4e520414e224a",
+      "componentHashes": {
+        "bridgeSha256": "9c5af944bcc34bbf792a6d5e8b31c77048cf90eea2ba1bd4801051ea78af0ac0",
+        "bodySha256": "04b980e56818910a92a8fc17af6cbab06d7193c625238318ad99b38ad42aab54",
+        "renderedHouseSectionSha256": "43beb0d213101e4ce576ce7989bea66b28b16ecd4d38850ec7ca2555b1786560"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/10",
+      "runtimeKey": "moon|10th house",
+      "bodySha256": "51dd8cb8110d1a2f7e8fd051d253d28517ce5549134029b9a05fb990e05e2000",
+      "payloadSha256": "b6b457978d31007d0810f83b6305f72684cc4e98967642bd1255569dbefc820d",
+      "componentHashes": {
+        "bridgeSha256": "051628b0fb8500b31c72fbc14ead2233d3c43acda91ed24ec14d768a6e4e0b29",
+        "bodySha256": "3e7281347d1a9e70754a1d18e771390956b1714c95c6931575cbe52ee322bfb8",
+        "renderedHouseSectionSha256": "51dd8cb8110d1a2f7e8fd051d253d28517ce5549134029b9a05fb990e05e2000"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/11",
+      "runtimeKey": "moon|11th house",
+      "bodySha256": "fc11e4496e6272d1daa2cb1c574682dce6314a23e42397d2b8ebc8c5ec727f7a",
+      "payloadSha256": "7001fe7d889d076c0f31de7e14116cd21867f36922f14a7e5bb61934ceeeb364",
+      "componentHashes": {
+        "bridgeSha256": "5e95368225f315389de395bfc85125dcddba8f7a454f81497d9ceae0ef2088b0",
+        "bodySha256": "52fe5756fc4dd6483bc308d2cb02abeeff82c8f662c87cb5ae80e561a6c39f85",
+        "renderedHouseSectionSha256": "fc11e4496e6272d1daa2cb1c574682dce6314a23e42397d2b8ebc8c5ec727f7a"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/12",
+      "runtimeKey": "moon|12th house",
+      "bodySha256": "d0aa20f741760fa441f5f6bb4e9c115dcd204e079b7e78677a1e39237567f1b4",
+      "payloadSha256": "c368cbfbb16e7d9f20989a43b378373128226e5f0b2d16cbb94e277abe4cc97d",
+      "componentHashes": {
+        "bridgeSha256": "aca1ce24e23da3d8c2db3ea7781813db93246749a478939c749305a375bf7892",
+        "bodySha256": "13b6a018e68e0abcc0d133f66fcb6aff1c62678b6dd2e18c6f2396a7f231e19d",
+        "renderedHouseSectionSha256": "d0aa20f741760fa441f5f6bb4e9c115dcd204e079b7e78677a1e39237567f1b4"
+      }
+    }
+  ]
+}

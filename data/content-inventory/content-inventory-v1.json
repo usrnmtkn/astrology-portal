@@ -1,12 +1,12 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "4d822d557c0598114b7ea436974d34ace2d6944d",
+  "sourceCommit": "3196ea16627fb7480d7a0cfa9bb79be107549c96",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "32e3f691e20406843ef55d85486ad2c499b6f5eaae4e9a9ef0524c4f5d8411b3",
-  "recordCount": 9539,
+  "contentFingerprint": "c4fdf26be4c8e18c7e17d6e7cf76c5566d4f5471f8f72a6e8b2a0db63e049fe9",
+  "recordCount": 9563,
   "statusCounts": {
-    "owner-approved": 9539
+    "owner-approved": 9563
   },
   "familyCounts": {
     "approved/calendar-weekly-overview": 1,
@@ -105,7 +105,7 @@
     "house-horoscope-core": 24,
     "lunation": 144,
     "natal-aspect": 252,
-    "natal-placement": 228,
+    "natal-placement": 252,
     "sky": 26,
     "sky-article/saturn": 2,
     "sky-aspect": 112,
@@ -124668,6 +124668,654 @@
       "astrology": {
         "objects": [],
         "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/1",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "ca4866b356c5079dcd575d6ab56e2b9c4796c571795df45425e91617349c3b03",
+      "wording": {
+        "body": "It's in your 1st house, meaning this side of you is right on the surface: it shapes first impressions and how you start things.\n\nPeople usually know how you feel before you have decided what to say about it. Your face changes, your voice sharpens or softens, or you start moving before the room has caught up. When a plan stalls, you may be the first person to react, name the problem, or change direction. That immediacy makes you responsive and easy to read. It can also make the first feeling look more final than it is. You do better when you give the reaction a minute to become information before letting it decide what happens next."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": [
+          1
+        ]
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/10",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "b6b457978d31007d0810f83b6305f72684cc4e98967642bd1255569dbefc820d",
+      "wording": {
+        "body": "It's in your 10th house, meaning this side of you is on public display: career, reputation, and what you're known for.\n\nWork can follow you home because public responsibility carries emotional weight for you. A meeting that went well, a client who went quiet, a deadline, or a comment from someone in charge can change how you feel long after the workday ends. You care about doing something useful and being known as someone who can be trusted with responsibility. That investment can make you attentive and dependable in visible roles. The complication is letting reputation decide which feelings you are allowed to show. You need a private place where a difficult day can simply be difficult before it becomes a judgment about your future."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": [
+          10
+        ]
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/11",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "7001fe7d889d076c0f31de7e14116cd21867f36922f14a7e5bb61934ceeeb364",
+      "wording": {
+        "body": "It's in your 11th house, meaning friends, groups, and your plans for the future bring this side of you out.\n\nYou notice quickly when a group chat changes tone, an invitation does not arrive, or a shared plan starts moving without you. Friendship and belonging are not background details for you; they affect how hopeful and connected you feel. You may be the person who checks in, organizes the meeting, remembers who has gone quiet, or keeps a future plan alive. That awareness helps groups hold together. The complication is carrying everyone's needs after the conversation has ended. Community supports you best when contribution moves in more than one direction and you are not responsible for keeping every person connected."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": [
+          11
+        ]
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/12",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "c368cbfbb16e7d9f20989a43b378373128226e5f0b2d16cbb94e277abe4cc97d",
+      "wording": {
+        "body": "It's in your 12th house, meaning this side of you works behind the scenes: solitude, privacy, and what you keep to yourself.\n\nYou need more private time than people may realize. A closed door, a quiet room, a long bath, a late walk, or a cancelled plan can give you enough space to understand what you absorbed during the day. Feelings may arrive without a clear label, especially after crowded rooms or emotionally charged conversations. Solitude helps you separate your own reaction from everything you noticed around you. The complication is disappearing before anyone knows you need support. Privacy restores you, but it works best when at least one trusted person knows how to reach you and when you plan to return."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": [
+          12
+        ]
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/2",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "a524be5f0ced0510da5b94049ea627611f88f0a45ef9f9dbf39c43cdfd4a2aa8",
+      "wording": {
+        "body": "It's in your 2nd house, meaning this side of you comes out around money, security, and what you own and value.\n\nYou relax more easily when the basics are handled and the things you rely on are where you expect them to be. A paid bill, a stocked fridge, a familiar blanket, or enough money left after the week's expenses can change your mood more than a vague promise that everything will work out. You are good at noticing what needs to be maintained and protecting what matters. The complication begins when uncertainty makes you hold too tightly to money, objects, food, or a routine that has stopped helping. Security matters, but it works best when it supports your life instead of narrowing it."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": [
+          2
+        ]
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/3",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "3b4fa3f0d5a4430f0a75075ef0d7372d16e544e0e3ac388228351e1dc0aa0ad0",
+      "wording": {
+        "body": "It's in your 3rd house, meaning this side of you comes out in how you talk, text, learn, and get through an ordinary day.\n\nYou often understand a feeling by talking through it, writing it down, or moving through the ordinary errands of the day. A message that sounds different, a question left unanswered, or a conversation that ends too quickly can stay on your mind until you know what changed. You notice tone and timing before many people do, and putting the details into words can help you decide what you need. The complication is that you can keep asking, explaining, or collecting information after the feeling is already clear. Sometimes the useful answer arrives when you stop the conversation long enough to hear your own reaction."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": [
+          3
+        ]
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/4",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "926faaafd6264994d583c9e68c74272e922ccf27e4026680d2077ef39f96fa7f",
+      "wording": {
+        "body": "It's in your 4th house, meaning this side of you lives close to home: family, roots, and your private life bring it out.\n\nYou need home to feel like a place where you can lower your guard and respond honestly. When something feels wrong there, you may act immediately: confronting the issue, rearranging the room, taking over a household problem, or leaving to clear your head. You can be fiercely protective of the people and places you consider yours. The complication is that the reaction can arrive before you know what is underneath it. Anger may be the first feeling you recognize even when what you actually need is privacy, a clear answer, or a stronger sense of safety. You recover faster when you have room to move, make a decision, and deal with the problem directly."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": [
+          4
+        ]
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/5",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "8b4dda87c2be20a03c7fe8b3bcc1d2622b8469619d24f7dd355e4c2e6f756be6",
+      "wording": {
+        "body": "It's in your 5th house, meaning this side of you comes out through romance, creativity, and play.\n\nYour mood lifts when you have something to make, enjoy, perform, or share. You may reach for a sketchbook, a playlist, a game, a date, or a joke when the day has become too heavy. Being received matters too. A warm response can bring you back to yourself, while silence after you offer something personal can land harder than you expected. You have a generous instinct for making life more expressive and enjoyable. The complication is treating attention as proof that you are cared for. Play and creativity restore you most reliably when they are allowed to matter even before anyone applauds."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": [
+          5
+        ]
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/6",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "0222fef4a7ebadbfcca4af443e1d4e5f7ef33656c96de34da811ee6192fc3a41",
+      "wording": {
+        "body": "It's in your 6th house, meaning this side of you comes out at work, in your health habits, and in your daily routine.\n\nOne small problem can take over your whole day. You notice the missed detail, the unfinished task, the physical symptom, or the coworker who suddenly needs help, and it can be hard to think about anything else until it is handled. Stress can follow you into lunch, your commute, or the hour you meant to spend resting because your mind is still running through what needs fixing. You are good at noticing what is not working and doing something about it. The harder part is knowing when the problem actually needs your attention and when your day is being reorganized around something that could have waited until tomorrow."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": [
+          6
+        ]
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/7",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "2680e2be8cd2207537c40992f1fef2998c1dfaf68f91a09f7213b05a8749efb1",
+      "wording": {
+        "body": "It's in your 7th house, meaning close relationships bring this side of you out more than anything else.\n\nClose relationships have a direct line to your mood. A changed tone, an unreturned message, or a plan made without you can affect the rest of your day, even when everything else is going well. You are quick to notice what another person needs and may adjust the schedule, reopen the conversation, or offer a compromise before they ask. That responsiveness can make you a thoughtful partner and a careful negotiator. The complication is losing track of your own position while you work to keep the relationship intact. Cooperation helps most when both people are allowed to have a clear answer."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": [
+          7
+        ]
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/8",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "ab48a8fc46805bd6203bebb56cdd0987cea90a3e489c62a88904d84334832491",
+      "wording": {
+        "body": "It's in your 8th house, meaning this side of you only fully shows once real trust is on the table: intimacy, shared money, the deep end.\n\nTrust changes what you reveal, what you share, and how closely you watch the details. A private conversation, a shared bill, a password, or a promise about money can carry more emotional weight for you than it appears to carry on the surface. You notice when an agreement shifts or when someone avoids the part of the story that matters. That attention can make you loyal and careful with other people's vulnerabilities. The complication is deciding that uncertainty means betrayal before you have the full account. You feel safer when shared responsibilities and private boundaries are named clearly instead of left for you to infer."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": [
+          8
+        ]
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/moon/9",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "3ad7cde6227bb5c90f1ad1a17ab735ec3341b12a20e2878f84e4e520414e224a",
+      "wording": {
+        "body": "It's in your 9th house, meaning this side of you comes out through travel, study, belief, and the big questions.\n\nWhen life starts feeling small, your mood often improves once you have somewhere larger to point your attention. A book, a class, a long conversation, a trip, or even planning where you want to go next can help you understand what the current moment means. You recover by finding perspective and remembering that today's problem is not the whole story. That instinct can restore hope quickly. The complication is reaching for the explanation before you have dealt with the immediate feeling. A larger view helps most when it brings you back to the life in front of you instead of carrying you away from it."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": [
+          9
+        ]
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/aquarius",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "f47c4314e96ee30b549b6090e1f0079ea4ab98ff4ecace90de00aabed3ba610d",
+      "wording": {
+        "body": "Your Moon is your instinctual emotional world: how you feel, what comforts you, how you care for yourself and others, how you react when you are upset, and what helps you recover after stress. Most of it is unconscious, conditioned behavior.\n\nYour Moon is in Aquarius, meaning you need the freedom to stay your own person, no matter how close someone gets. You get called distant until someone actually needs help. Then, knock, knock. A deep dive down some rabbit hole, a group chat full of running jokes, or a night with no plans and no guilt can bring you back when you're upset or peopled out. An Aquarius Moon gives you the reflex: step back. You need the freedom to think your own thoughts and run your own life, because being managed, crowded, or told what to believe shuts you down fast. When you're upset, you go quiet and logical: the feeling gets filed for later, and later doesn't always come. The frost is defense, not indifference. Give it a day or two, and you'll explain the whole thing calmly, like it happened to someone else."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [
+          "aquarius"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/aries",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "f0a8061a6ab15662b3d15190beed79f35159b48674afbce4015427ef0b88e10e",
+      "wording": {
+        "body": "Your Moon is your instinctual emotional world: how you feel, what comforts you, how you care for yourself and others, how you react when you are upset, and what helps you recover after stress. Most of it is unconscious, conditioned behavior.\n\nYour Moon is in Aries, meaning your emotional world runs on freedom, movement, and being able to handle things for yourself. You're the one who takes charge in an emergency while everyone else is frozen. Anger comes easier to you than helplessness, and a run, a hard workout, or cleaning the entire apartment can burn off the tension when you're upset or frustrated. An Aries Moon gives you the reflex: act. You still need wins and a say in what happens next, because nothing sits worse with you than feeling powerless. When you're upset, you can react before you've had time to think, and you're often over it while the other person is still upset. Once it's out, it's over; you don't hold on to it."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [
+          "aries"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/cancer",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "f5c8ccdc8771f9e834c01618e2cc2e90883e392c85417800cfbec1127745fecb",
+      "wording": {
+        "body": "Your Moon is your instinctual emotional world: how you feel, what comforts you, how you care for yourself and others, how you react when you are upset, and what helps you recover after stress. Most of it is unconscious, conditioned behavior.\n\nYour Moon is in Cancer, meaning your emotional world runs on closeness, care, and knowing your people are okay. Your intuition picks up on the change in someone's voice, the message that sounds a little off, or the friend who has gone quiet, and you're often the first person to check in. For you, home is less about a place and more about feeling safe with the people you love. Cooking your favorite meal, spending an hour on the phone with your oldest friend, or rewatching a show you know by heart is your idea of a good night, especially when you're upset or overwhelmed. A Cancer Moon gives you the reflex: take care of everyone else first. You still need to know that care goes both ways, because nothing sits worse with you than doing everything for someone and wondering if that person would do the same. When you're upset, you may not say what's wrong. You still ask about everyone's day, make dinner, and look after everyone else while you wait to see who asks about you."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [
+          "cancer"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/capricorn",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "853a780f776d7c2ae53452000d39321213e0f6a08b7a06146bc49666c5215ea8",
+      "wording": {
+        "body": "Your Moon is your instinctual emotional world: how you feel, what comforts you, how you care for yourself and others, how you react when you are upset, and what helps you recover after stress. Most of it is unconscious, conditioned behavior.\n\nYour Moon is in Capricorn, meaning you keep it together and get on with it, whatever the day throws at you. Your caring doesn't announce itself; it looks like showing up on time, keeping your word, and quietly handling things so the people you love never have to think about them. You're the one people call when something actually goes wrong. A long hike, an early night with tomorrow already planned, or finally letting yourself be off the clock can bring you back when you're upset or stretched thin, though fun is the one thing you treat like it has to be earned. A Capricorn Moon gives you the reflex: handle it. You need respect and proof that your effort adds up to something, because nothing gets to you like the feeling that it was all for nothing. When you're upset, you cope alone by default: you go quiet, keep moving, and take care of everything except the conversation about how you feel. The dry joke is usually the tell, and the people who know you listen for it."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [
+          "capricorn"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/gemini",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "2c41dd0326a698c8c8833c067b56fd4e853a08e49a16f0ab3a56caab76fa031d",
+      "wording": {
+        "body": "Your Moon is your instinctual emotional world: how you feel, what comforts you, how you care for yourself and others, how you react when you are upset, and what helps you recover after stress. Most of it is unconscious, conditioned behavior.\n\nYour Moon is in Gemini, meaning a feeling you can't put into words rarely feels finished. You're the one who knows something about almost everything and can get anyone talking. When the static in your head gets too loud, a new show, an exhibit you haven't seen, or a dinner-table debate that lasts until sunrise can change your whole mood. A Gemini Moon gives you the reflex: talk it out. Information was how you kept up. You need stimulation and something new to look forward to, because boredom weighs on you more than most problems do. When you're upset, you have an answer for everything before you admit you're sad, and you can joke your way around a feeling instead of through it."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [
+          "gemini"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/leo",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "e9c6de16eb0dedec096b565ca4fba0d8d4071b298395276c6e5094e2c4dc2691",
+      "wording": {
+        "body": "Your Moon is your instinctual emotional world: how you feel, what comforts you, how you care for yourself and others, how you react when you are upset, and what helps you recover after stress. Most of it is unconscious, conditioned behavior.\n\nYour Moon is in Leo, meaning your emotional world runs on recognition, appreciation, and being celebrated by the people you love; you feel hollowed out when they don't notice the energy you bring. You're the one who treats a regular Tuesday like an opening night, working behind the scenes to make sure everyone around you is having a good time. When you're stuck in a rut or feeling invisible, your quick fix is to go big: planning a massive birthday event, getting dressed up to go out, or making something creative that forces people to look up. A Leo Moon gives you the reflex: put on a show. You still need the credit and the validation, because being ignored cuts deeper than being criticized. When you're upset, pride keeps you from saying so; you go quiet and wait for the people you love to show they still care. An act of appreciation brings you back faster than any apology."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [
+          "leo"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/libra",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "955a6f05e00c4ee40d91137e7e9f3c356a95fd7e5bb094ff9e1d45e402d08cbc",
+      "wording": {
+        "body": "Your Moon is your instinctual emotional world: how you feel, what comforts you, how you care for yourself and others, how you react when you are upset, and what helps you recover after stress. Most of it is unconscious, conditioned behavior.\n\nYour Moon is in Libra, meaning tension with someone you care about feels physical: you can't fully drop your shoulders while something between you is unresolved. You're the natural mediator and the designated sounding board, the one who'll play devil's advocate for whoever isn't there, just to keep the scales level. Your comfort is atmosphere: good lighting, a clean space, the right music, easy back-and-forth. Those aren't superficial preferences; they're how you calm yourself down. A Libra Moon gives you the reflex: keep the peace. You still need things to feel fair and even, but you can confuse silence with peace. When you're upset, you adapt: you smooth things over, offer reasonable explanations for behavior that upset you, and hold off on the uncomfortable conversation that would actually fix it. Being agreeable isn't the same as being fine, and the people who truly know you know a polite 'it's fine' is usually the first sign that it isn't."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [
+          "libra"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/pisces",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "d3169cf8cf59daf46a498711e1b42e164131e184f9fc9ee2a600575f44791f58",
+      "wording": {
+        "body": "Your Moon is your instinctual emotional world: how you feel, what comforts you, how you care for yourself and others, how you react when you are upset, and what helps you recover after stress. Most of it is unconscious, conditioned behavior.\n\nYour Moon is in Pisces, meaning you feel everything, yours and everyone else's, and the line between the two blurs fast. You cry at commercials, give more than you have, and somehow always know which friend is quietly not okay. A nap that turns into a half-remembered dream, music in the dark, or an afternoon lost in a book or a playlist can bring you back when you're upset or the world gets too loud. A Pisces Moon gives you the reflex: drift. You need your sensitivity taken seriously and something to believe in that's bigger than the to-do list, because a life that's only logistics drains you. When you're upset, you drift: fewer texts, vaguer answers, more time in your own world. You won't bring it up on your own. But if someone asks if you're okay and means it, they'll get the whole story."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [
+          "pisces"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/sagittarius",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "1a29e65a7eddde3cb3e2194034ef3465da1578b83e01c30859889cf849619142",
+      "wording": {
+        "body": "Your Moon is your instinctual emotional world: how you feel, what comforts you, how you care for yourself and others, how you react when you are upset, and what helps you recover after stress. Most of it is unconscious, conditioned behavior.\n\nYour Moon is in Sagittarius, meaning your emotional world runs on adventure, honesty, and the freedom to wander off and come back. You're the one who finds the upside when everyone else is spiraling, and your enthusiasm talks people into trips they didn't know they wanted to take. Booking a trip to places you can't pronounce, exploring a neighborhood you've never been to, or staying up until morning with fellow night-owls, deep in existential conversations until the sun bleeds through the blinds, can bring you back when you're upset or feeling trapped. A Sagittarius Moon gives you the reflex: zoom out. Pan out until the whole house is a speck. You still need independence and opinions people actually listen to, because nothing wears you down faster than being boxed in or brushed off. When you're upset, your first move is distance: a drive, a run, anything that outruns the claustrophobia. You'd rather find the lesson than sit in the sadness, and once you can laugh about it, you're ready to talk about it."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [
+          "sagittarius"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/scorpio",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "749f2b8121b9e41be2716aa411826c6e4df2dfb183f51897891c6b0e9492e3fe",
+      "wording": {
+        "body": "Your Moon is your instinctual emotional world: how you feel, what comforts you, how you care for yourself and others, how you react when you are upset, and what helps you recover after stress. Most of it is unconscious, conditioned behavior.\n\nYour Moon is in Scorpio, meaning you tend to feel things at full depth and show little of it until someone has earned your trust. You're the one people tell their secrets to, because nothing shocks you and nothing gets repeated, and you can spot a lie. A hard workout, binge watching a true crime documentary, or a night completely to yourself can bring you back when you're upset or on edge. A Scorpio Moon gives you the reflex: hold back until you're sure. You still need to get to the bottom of things, because surface answers never feel like enough. When you're upset, you go quiet and take space until you know what you actually feel. When you finally say it, you say all of it."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [
+          "scorpio"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/taurus",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "16a6e1a9ac240080e50fcc89b46a550116c06ed2ce4a82d81660883fdd3a8786",
+      "wording": {
+        "body": "Your Moon is your instinctual emotional world: how you feel, what comforts you, how you care for yourself and others, how you react when you are upset, and what helps you recover after stress. Most of it is unconscious, conditioned behavior.\n\nYour Moon is in Taurus, meaning you find emotional stability through your body and your senses. A good meal, a hug, a slow yoga class, hike or time at home can help your body relax when you're upset or overstimulated. A Taurus Moon gives you the reflex: hold on to what has already proved reliable. You still need comfort and consistency, because your body can take time to adjust after a sudden change. When you're upset, you take your time before answering, and once you're ready, you say exactly what's wrong."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [
+          "taurus"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-sign-final/moon/virgo",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json",
+      "approvalVersionDate": "2026-08-20",
+      "contentHash": "4e8f57c5f6cb15e3dc89d2f9fb7dc8ee205cdc57f7778f3fee81eafa0ce2f566",
+      "wording": {
+        "body": "Your Moon is your instinctual emotional world: how you feel, what comforts you, how you care for yourself and others, how you react when you are upset, and what helps you recover after stress. Most of it is unconscious, conditioned behavior.\n\nYour Moon is in Virgo, meaning your emotional world runs on being useful: caring, for you, is something you do, not something you say. You're the one who says yes to the airport ride, remembers the appointment, and shows up with exactly what was needed. Cleaning the kitchen, crossing three things off a list, or finally sorting the drawer everyone else ignores can calm you down when you're upset or overloaded. A Virgo Moon gives you the reflex: fix it. You still need your effort to be noticed and to hear you were right, because when nobody says it, the critic in your head says the opposite. When you're upset, you get busy: cleaning, organizing, fixing things that may or may not be the actual problem. The tidying soothes you even when it solves nothing, and no one is harder on you than you are. You'd rather be asked what you think than told it'll be okay."
+      },
+      "astrology": {
+        "objects": [
+          "moon"
+        ],
+        "signs": [
+          "virgo"
+        ],
         "aspects": [],
         "events": [],
         "houses": []
