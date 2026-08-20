@@ -441,7 +441,19 @@ function auditRegister(card, defects) {
       addDefect(defects, "forecast_contains_astrology_vocabulary", { term });
     }
   }
-  if (/\b(?:you|your|yours|yourself|yourselves)\b/iu.test(allText)) addDefect(defects, "second_person_register");
+  const secondPerson = /\b(?:you|your|yours|yourself|yourselves)\b/iu;
+  const forecastSentenceTexts = Array.isArray(card.forecastSentences)
+    ? card.forecastSentences.map((sentence) => sentence.text)
+    : splitSentences(card.forecast);
+  const whatCanMoveIndexes = new Set(card.forecastBeats?.whatCanMove ?? []);
+  forecastSentenceTexts.forEach((sentence, index) => {
+    if (secondPerson.test(sentence) && !whatCanMoveIndexes.has(index)) {
+      addDefect(defects, "second_person_outside_direct_guidance", { surface: "forecast", sentence, index });
+    }
+  });
+  if (secondPerson.test(card.details)) {
+    addDefect(defects, "second_person_outside_direct_guidance", { surface: "details" });
+  }
   if (/\b(?:tend(?:s)?\s+to|usually|always|typically|by nature)\b/iu.test(allText)) addDefect(defects, "standing_pattern_register");
   if (/\b(?:you should|should try|remember to|give yourself permission|allow yourself)\b/iu.test(allText)) addDefect(defects, "generic_coaching_register");
   if (/steady/iu.test(allText)) addDefect(defects, "banned_word_steady");
