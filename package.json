@@ -8,6 +8,9 @@
     "packages/*"
   ],
   "scripts": {
+    "build:canonical-content": "node scripts/build-canonical-content-hub.mjs --write",
+    "check:canonical-content": "node scripts/build-canonical-content-hub.mjs --check",
+    "test:canonical-content": "node scripts/test-canonical-content-hub.mjs && node --experimental-strip-types scripts/test-canonical-natal-adapter.mjs",
     "build:approved-collocations": "node scripts/build-approved-collocations.mjs",
     "audit:style-flag-policy": "node scripts/report-style-flag-policy-impact.mjs",
     "dev": "npm run dev:web",

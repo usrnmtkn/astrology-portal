@@ -66,14 +66,21 @@ const v13Leo = baseRows.hookRows.find((row) => (
   && row.source_release === "ll-matrix-v13-owner-approved-runtime"
 ));
 assert.ok(v13Leo, "The owner-approved V13 Leo row must be present.");
-assert.equal(liveLeo.body, v13Leo.body);
-assert.equal(previewLeo.body, v13Leo.body);
 assert.equal(liveLeo.templateKey, "fallback-template/natal.planet-in-sign");
 assert.equal(previewLeo.templateKey, "fallback-template/natal.planet-in-sign/lilith");
+assert.match(liveLeo.body, /Your Lilith is in Leo/u);
+assert.match(liveLeo.body, /recognition and warmth/u);
+assert.match(previewLeo.body, /Your Lilith is in Leo/u);
+assert.match(previewLeo.body, /recognition and devotion/u);
+assert.notEqual(
+  liveLeo.body,
+  v13Leo.body,
+  "The generic V13 sign row remains available as a floor but must not outrank a complete planet-specific composition.",
+);
 assert.equal(
   interim.vocabularyRows.find((row) => row.contentKey === "fallback-vocab/sign-need/leo")?.body,
   "recognition and devotion",
-  "The review-gated interim source row must remain byte-identical even when V13 wins serving precedence."
+  "The review-gated interim source row must remain byte-identical when preview composition has precedence."
 );
 assert.match(
   interim.templates.find((row) => row.contentKey === "fallback-template/natal.planet-in-sign/lilith")?.body ?? "",
