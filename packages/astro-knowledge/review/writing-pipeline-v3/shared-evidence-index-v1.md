@@ -8,10 +8,10 @@ Index key: `planet|sign; *|* is globally eligible register evidence`
 
 - Meaning: **2177**
 - Register: **1710**
-- Scene: **413**
+- Scene: **416**
 - Argument: **1182**
 - Phrase: **346**
-- Total entries: **5828** across **247** planet-sign keys
+- Total entries: **5831** across **247** planet-sign keys
 
 Scene precedence is fixed as: same-planet-sign owner-approved house cores; approved serving
 rows; knowledge-matrix scene rows. Governance precedence still applies within each source tier.

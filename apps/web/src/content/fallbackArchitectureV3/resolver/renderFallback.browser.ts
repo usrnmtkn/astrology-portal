@@ -47,6 +47,8 @@ export interface HookRow {
   approval?: ApprovalReference;
   render_policy?: string;
   reader_only?: boolean;
+  /** Owner-approved You-only replacement for an earlier exact sign lineage. */
+  serving_precedence?: "owner-approved-natal-final-v3";
   sourceMechanism?: string;
   astroHint?: string;
   fact_line?: string;
@@ -259,10 +261,12 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     const { planet, sign, house } = facts;
     const voice: "you" | "they" = facts.voice === "you" ? "you" : "they";
     const exactHouseLived = house
-      ? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, opts)
+      ? getReaderLivedRow(`fallback-hook/natal-you-placement-house-final/${planet}/${house}`, voice, opts)
+        ?? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, opts)
         ?? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, opts)
       : null;
-    const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts)
+    const exactSignLived = getReaderLivedRow(`fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, voice, opts)
+      ?? getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts)
       ?? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, opts);
     const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
     const possessive = facts.voice === "you" ? "Your" : `${facts.voice}'s`;

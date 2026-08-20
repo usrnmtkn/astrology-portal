@@ -36,6 +36,10 @@ const placementInterim = JSON.parse(fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json"),
   "utf8",
 ));
+const natalMoonFinal = JSON.parse(fs.readFileSync(
+  path.join(repoRoot, "packages/astro-knowledge/review/natal-moon-final-rendered-review-v3.json"),
+  "utf8",
+));
 const browser = createFallbackRenderer(
   { templates: [...templates.templates, ...placementInterim.templates] },
   {
@@ -79,6 +83,8 @@ const llMatrixV13ByContentKey = new Map(source.hookRows
   .map((row) => [row.contentKey, row]));
 const repairByContentKey = new Map(repair.entries.map((entry) => [entry.contentKey, entry]));
 const manifestByWorkbookKey = new Map(manifest.rows.map((row) => [row.workbookKey, row]));
+const natalMoonFinalSigns = new Map(natalMoonFinal.signRows.map((row) => [row.runtimeKey, row]));
+const natalMoonFinalHouses = new Map(natalMoonFinal.houseRows.map((row) => [row.runtimeKey, row]));
 const livedRows = manifest.rows.map((row) => llMatrixV13ByContentKey.get(row.contentKey)).filter(Boolean);
 assert.equal(livedRows.length, 108);
 assert.ok(livedRows.every((row) => row.source_release === llMatrixV13Release));
@@ -96,6 +102,7 @@ const existingApprovedRows = source.hookRows.filter((row) => (
   row.review_status === "approved"
   && !livedPrefixes.some((prefix) => row.contentKey.startsWith(prefix))
   && row.source_release !== llMatrixV13Release
+  && row.source_release !== "natal-moon-final-rendered-v3"
 ));
 assert.equal(
   sha256(JSON.stringify(existingApprovedRows)),
@@ -173,7 +180,13 @@ for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
   if (parts.length === 2 && / house$/u.test(parts[1])) {
     const object = normalizeObject(parts[0]);
     const house = Number(parts[1].match(/^(1[0-2]|[1-9])(?:st|nd|rd|th) house$/u)?.[1]);
-    const expectedBody = llMatrixV13ByContentKey.get(mappedKey(workbookKey))?.body ?? entry.payload.body;
+    const finalMoonRow = natalMoonFinalHouses.get(`${object}|${house}${house === 1 ? "st" : house === 2 ? "nd" : house === 3 ? "rd" : "th"} house`);
+    const expectedBody = finalMoonRow?.rendered
+      ?? llMatrixV13ByContentKey.get(mappedKey(workbookKey))?.body
+      ?? entry.payload.body;
+    const expectedTemplateKey = finalMoonRow
+      ? `fallback-hook/natal-you-placement-house-final/${object}/${house}`
+      : mappedKey(workbookKey);
     for (const [label, render] of [
       ["node", renderNodeNatalPlacement],
       ["browser", browser.renderNatalPlacement],
@@ -189,14 +202,17 @@ for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
         1,
         `${label}:${workbookKey}: approved house body must appear exactly once`
       );
-      assert.equal(result.templateKey, mappedKey(workbookKey));
+      assert.equal(result.templateKey, expectedTemplateKey);
     }
     continue;
   }
 
   if (parts.length === 2) {
     const [planet, sign] = parts;
-    const expectedBody = llMatrixV13ByContentKey.get(mappedKey(workbookKey))?.body ?? entry.payload.body;
+    const finalMoonRow = natalMoonFinalSigns.get(`${planet}|${sign}`);
+    const expectedBody = finalMoonRow
+      ? `${finalMoonRow.intro}\n\n${finalMoonRow.body}`
+      : llMatrixV13ByContentKey.get(mappedKey(workbookKey))?.body ?? entry.payload.body;
     for (const [label, render] of [
       ["node", renderNodeNatalPlacement],
       ["browser", browser.renderNatalPlacement],

@@ -158,10 +158,12 @@ export function renderNatalPlacement(facts, opts = {}) {
   const allowUnreviewed = opts.allowUnreviewed ?? false;
   const voice = facts.voice === "you" ? "you" : "they";
   const exactHouseLived = house
-    ? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, { allowUnreviewed })
+    ? getReaderLivedRow(`fallback-hook/natal-you-placement-house-final/${planet}/${house}`, voice, { allowUnreviewed })
+      ?? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, { allowUnreviewed })
       ?? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, { allowUnreviewed })
     : null;
-  const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, { allowUnreviewed })
+  const exactSignLived = getReaderLivedRow(`fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, voice, { allowUnreviewed })
+    ?? getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, { allowUnreviewed })
     ?? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, { allowUnreviewed });
 
   const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
