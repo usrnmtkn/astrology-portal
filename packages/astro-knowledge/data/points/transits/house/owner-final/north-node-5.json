@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "north-node-5",
+  "canonicalId": "transit-house/north_node/5",
+  "kind": "house",
+  "transiting": "north-node",
+  "house": 5,
+  "headline": "Taking your joy seriously",
+  "body": "The North Node in your 5th house makes creativity, romance, pleasure, and play much more vital. You might pick up an old hobby, share an unfinished project, admit a crush, or realize you turned all your passions into chores. Pursuing joy can feel risky because it shows what you care about before anyone else weighs in on it.\n\nAcross from this transit, the 11th house pulls you toward group consensus and social expectations. Those relationships still count, but the lesson is learning to belong without letting the group decide what you create, who you date, or how you spend your free time.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "North Node — 5H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

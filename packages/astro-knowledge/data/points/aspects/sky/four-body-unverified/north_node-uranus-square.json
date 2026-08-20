@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.square.north-node",
+  "canonicalId": "sky-aspect/north_node/uranus/square",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "uranus",
+  "aspect": "square",
+  "humanMoment": "People are feeling the urge to torch the whole plan, and it arrives dressed as clarity.",
+  "developmentDetail": "Someone mid-build declares the direction wrong, the structure a cage, the commitment a mistake, and their case sounds excellent at two in the morning.",
+  "planetaryDynamic": "With Uranus square the North Node, people feel restless about both roads at once, the one behind and the one ahead, and the restlessness reads everything they have built as a prison, which is exactly why they cannot let it choose.",
+  "aspectMechanic": "Anyone awake at two in the morning sees every wall as bars.",
+  "conditionalConsequence": "The itch may contain real information, but people who interview their demolition plans in daylight tend to sign fewer of them, and they keep the information anyway.",
+  "body": "People are feeling the urge to torch the whole plan, and it arrives dressed as clarity.\n\nSomeone mid-build declares the direction wrong, the structure a cage, the commitment a mistake, and their case sounds excellent at two in the morning.\n\nWith Uranus square the North Node, people feel restless about both roads at once, the one behind and the one ahead, and the restlessness reads everything they have built as a prison, which is exactly why they cannot let it choose.\n\nAnyone awake at two in the morning sees every wall as bars.\n\nThe itch may contain real information, but people who interview their demolition plans in daylight tend to sign fewer of them, and they keep the information anyway.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.uranus.square.north-node",
+    "sourceHeading": "Uranus square North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

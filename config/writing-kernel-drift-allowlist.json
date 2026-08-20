@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "policy": "Temporary exceptions for bypasses that predate the governed writing kernel. Entries may be removed but never added.",
+  "entries": [
+    { "path": ".agents/skills/satori-writer/scripts/compile-writing-packet-legacy-audit.js", "category": "packet_builder", "removalTicket": "WE-KERNEL-003-sky-packet-builder" },
+    { "path": "api/_lib/content-generation.ts", "category": "owner_prose_prompt_read", "removalTicket": "WE-KERNEL-005-production-adapter" },
+    { "path": "api/_lib/content-generation.ts", "category": "provider_call", "removalTicket": "WE-KERNEL-005-production-adapter" },
+    { "path": "api/_lib/report-model-client.ts", "category": "provider_call", "removalTicket": "WE-KERNEL-006-report-adapter" },
+    { "path": "packages/astro-knowledge/scripts/audit-daily-glance-voice.js", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "packages/astro-knowledge/scripts/daily-glance-writer-runtime.js", "category": "owner_prose_prompt_read", "removalTicket": "WE-KERNEL-003-daily-packet-builder" },
+    { "path": "packages/astro-knowledge/scripts/generate-sky-aspect-cards.js", "category": "owner_prose_prompt_read", "removalTicket": "WE-KERNEL-008-sky-aspect-generation" },
+    { "path": "packages/astro-knowledge/scripts/generate-sky-aspect-cards.js", "category": "provider_call", "removalTicket": "WE-KERNEL-008-sky-aspect-generation" },
+    { "path": "packages/astro-knowledge/scripts/generate-sky-exact-aspect-drafts.js", "category": "owner_prose_prompt_read", "removalTicket": "WE-KERNEL-008-sky-aspect-generation" },
+    { "path": "packages/astro-knowledge/scripts/judge-daily-glance.js", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "packages/astro-knowledge/scripts/run-daily-glance-judged.js", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "packages/astro-knowledge/scripts/run-daily-glance-self-audit-pilot.js", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "packages/astro-knowledge/scripts/run-daily-glance-writer-pilots.js", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "packages/astro-knowledge/scripts/run-sky-placement-judge-ab-evaluation.js", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "packages/astro-knowledge/scripts/run-sky-placement-writer-sample.js", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "scripts/run-ascendant-batch-drafts.mjs", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "scripts/run-astro-writing-harness.mjs", "category": "owner_prose_prompt_read", "removalTicket": "WE-KERNEL-009-harness-context" },
+    { "path": "scripts/run-astro-writing-harness.mjs", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "scripts/run-astro-writing-live-reviewer-eval-v3-1-run-2c.mjs", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "scripts/run-astro-writing-live-reviewer-eval-v3-1.mjs", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "scripts/run-astro-writing-live-reviewer-eval-v3.mjs", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "scripts/run-astro-writing-live-reviewer-eval.mjs", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "scripts/run-cold-rendered-prose-live-eval.mjs", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "scripts/run-cold-rendered-prose-round-2-live-eval.mjs", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "scripts/run-sky-placement-hook-audit.mjs", "category": "provider_call", "removalTicket": "WE-KERNEL-007-offline-client-migration" },
+    { "path": "scripts/run-sun-aquarius-9th-admin-draft-test.mjs", "category": "owner_prose_prompt_read", "removalTicket": "WE-KERNEL-010-private-source-test" },
+    { "path": "scripts/run-sun-aquarius-9th-admin-draft-test.mjs", "category": "provider_call", "removalTicket": "WE-KERNEL-010-private-source-test" }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.opposition.north-node",
+  "canonicalId": "sky-aspect/north_node/saturn/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "saturn",
+  "aspect": "opposition",
+  "humanMoment": "The release is finally happening because maintaining it got too expensive.",
+  "developmentDetail": "Someone looks at the role, the property, the arrangement that defined the last era and finds it no longer justifies its upkeep, and the letting go arrives as arithmetic before it arrives as grief.",
+  "planetaryDynamic": "With Saturn opposite the North Node, people find duty itself arguing for the ending, because they keep paying the true costs on the familiar side of life while the new direction asks for nothing but attention.",
+  "aspectMechanic": "Even the most responsible people in the room say close it.",
+  "conditionalConsequence": "The release may still hurt, but people who maintain structures past their era pay interest in life, and the ones who close the account are also paying the future something.",
+  "body": "The release is finally happening because maintaining it got too expensive.\n\nSomeone looks at the role, the property, the arrangement that defined the last era and finds it no longer justifies its upkeep, and the letting go arrives as arithmetic before it arrives as grief.\n\nWith Saturn opposite the North Node, people find duty itself arguing for the ending, because they keep paying the true costs on the familiar side of life while the new direction asks for nothing but attention.\n\nEven the most responsible people in the room say close it.\n\nThe release may still hurt, but people who maintain structures past their era pay interest in life, and the ones who close the account are also paying the future something.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.saturn.opposition.north-node",
+    "sourceHeading": "Saturn opposition North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.opposition.chiron",
+  "canonicalId": "sky-aspect/chiron/saturn/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "saturn",
+  "aspect": "opposition",
+  "humanMoment": "The taskmaster and the tender one negotiate over one person's workload.",
+  "developmentDetail": "One argues the standard is the way back, the other argues the standard is how it broke, and the person in the middle has believed both at different times.",
+  "planetaryDynamic": "With Saturn opposite Chiron, one side makes the case for rigor while the other keeps the record of what rigor once did.",
+  "aspectMechanic": "The old private argument finally has two faces.",
+  "conditionalConsequence": "A working compromise may exist, but it tends to arrive only after the adult in the middle renegotiates the standard instead of inheriting it from the original scene.",
+  "body": "The taskmaster and the tender one negotiate over one person's workload.\n\nOne argues the standard is the way back, the other argues the standard is how it broke, and the person in the middle has believed both at different times.\n\nWith Saturn opposite Chiron, one side makes the case for rigor while the other keeps the record of what rigor once did.\n\nThe old private argument finally has two faces.\n\nA working compromise may exist, but it tends to arrive only after the adult in the middle renegotiates the standard instead of inheriting it from the original scene.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.saturn.opposition.chiron",
+    "sourceHeading": "Saturn opposition Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

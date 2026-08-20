@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-3",
+  "canonicalId": "transit-house/lilith/3",
+  "kind": "house",
+  "transiting": "lilith",
+  "house": 3,
+  "headline": "Saying the sentence you keep editing",
+  "body": "With Black Moon Lilith in your 3rd house, swallowed words and unaddressed conversations become too heavy to carry. You will notice how often you dilute a disagreement into vague politeness, leave important texts in drafts, or rewrite your point so it does not upset anyone. Those unsaid words do not vanish; they show up as low-key resentment toward people who do not even know the full story.\n\nDo not unleash months of pent-up annoyance all at once and label it \"being honest.\" Direct communication still works best with good timing and clear delivery. Speak the clear truth to the person who actually needs to hear it.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Lilith — 3H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

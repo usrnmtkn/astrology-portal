@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.quincunx.chiron",
+  "canonicalId": "sky-aspect/chiron/venus/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "venus",
+  "aspect": "quincunx",
+  "humanMoment": "Someone keeps demanding proof of love in a currency their person does not carry.",
+  "developmentDetail": "They set the small tests, leave the delayed reply unremarked, withhold the invitation to see what happens, and end up measuring a fear instead of a partner.",
+  "planetaryDynamic": "With Venus quincunx Chiron, people give what they know how to give while the one testing them accepts only the single form of proof history made mandatory.",
+  "aspectMechanic": "Real affection keeps failing a rigged exam.",
+  "conditionalConsequence": "The tests may keep producing results, but people who run them tend to push away exactly what they were checking for, and the results say more about the fear than the partner.",
+  "body": "Someone keeps demanding proof of love in a currency their person does not carry.\n\nThey set the small tests, leave the delayed reply unremarked, withhold the invitation to see what happens, and end up measuring a fear instead of a partner.\n\nWith Venus quincunx Chiron, people give what they know how to give while the one testing them accepts only the single form of proof history made mandatory.\n\nReal affection keeps failing a rigged exam.\n\nThe tests may keep producing results, but people who run them tend to push away exactly what they were checking for, and the results say more about the fear than the partner.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.venus.quincunx.chiron",
+    "sourceHeading": "Venus quincunx Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

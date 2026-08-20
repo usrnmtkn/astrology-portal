@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.square.chiron",
+  "canonicalId": "sky-aspect/chiron/jupiter/square",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "jupiter",
+  "aspect": "square",
+  "humanMoment": "People's growth spurt is outrunning their repair schedule.",
+  "developmentDetail": "Someone takes on new scale, new audience, new stakes, and feels the bigger platform amplify the old doubt right along with the reach.",
+  "planetaryDynamic": "With Jupiter square Chiron, people want more and sooner while carrying a place that was never resourced for the current size, and the two demands fight for the same season.",
+  "aspectMechanic": "Whichever one they feed, the other goes hungry.",
+  "conditionalConsequence": "The expansion may be exactly right, but pacing is part of the treatment, and people who let growth outrun repair tend to borrow against the very capacity the growth needs.",
+  "body": "People's growth spurt is outrunning their repair schedule.\n\nSomeone takes on new scale, new audience, new stakes, and feels the bigger platform amplify the old doubt right along with the reach.\n\nWith Jupiter square Chiron, people want more and sooner while carrying a place that was never resourced for the current size, and the two demands fight for the same season.\n\nWhichever one they feed, the other goes hungry.\n\nThe expansion may be exactly right, but pacing is part of the treatment, and people who let growth outrun repair tend to borrow against the very capacity the growth needs.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.jupiter.square.chiron",
+    "sourceHeading": "Jupiter square Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

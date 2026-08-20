@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.sextile.chiron",
+  "canonicalId": "sky-aspect/chiron/jupiter/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "jupiter",
+  "aspect": "sextile",
+  "humanMoment": "A teacher's offhand comment lands in the sore spot and turns out to help.",
+  "developmentDetail": "Someone hears their exact pattern named in a workshop, a book, a mentor's aside; the recognition stings for a minute and then organizes years.",
+  "planetaryDynamic": "With Jupiter sextile Chiron, people are surrounded by lessons with reach, and the sore spot marks precisely which lesson is theirs.",
+  "aspectMechanic": "The teaching only works on students who bring the sore spot to class.",
+  "conditionalConsequence": "The material may sit around all month, but recognition tends to convert to repair only for the person who sits down with it.",
+  "body": "A teacher's offhand comment lands in the sore spot and turns out to help.\n\nSomeone hears their exact pattern named in a workshop, a book, a mentor's aside; the recognition stings for a minute and then organizes years.\n\nWith Jupiter sextile Chiron, people are surrounded by lessons with reach, and the sore spot marks precisely which lesson is theirs.\n\nThe teaching only works on students who bring the sore spot to class.\n\nThe material may sit around all month, but recognition tends to convert to repair only for the person who sits down with it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.jupiter.sextile.chiron",
+    "sourceHeading": "Jupiter sextile Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

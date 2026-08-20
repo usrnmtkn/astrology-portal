@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.lilith.conjunction.north-node",
+  "canonicalId": "sky-aspect/lilith/north_node/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "north_node",
+  "aspect": "conjunction",
+  "humanMoment": "Someone finds out the banned want and the next chapter are the same assignment.",
+  "developmentDetail": "The appetite they dismissed for years reappears inside the plan everyone already agrees is the direction: the work, the place, the way of living.",
+  "planetaryDynamic": "With Lilith conjunct the North Node, people carry a want that was ruled out of bounds straight into the unfamiliar direction that keeps demanding practice.",
+  "aspectMechanic": "So anyone avoiding the want is now avoiding the path.",
+  "conditionalConsequence": "The chapter may proceed slowly either way, but nobody gets to proceed around this want, only through it.",
+  "body": "Someone finds out the banned want and the next chapter are the same assignment.\n\nThe appetite they dismissed for years reappears inside the plan everyone already agrees is the direction: the work, the place, the way of living.\n\nWith Lilith conjunct the North Node, people carry a want that was ruled out of bounds straight into the unfamiliar direction that keeps demanding practice.\n\nSo anyone avoiding the want is now avoiding the path.\n\nThe chapter may proceed slowly either way, but nobody gets to proceed around this want, only through it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.lilith.conjunction.north-node",
+    "sourceHeading": "Lilith conjunction North Node",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -15,6 +15,7 @@ const bannedWordsPath = path.join(packageRoot, "voice", "banned-words.json");
 const placementVoicePath = path.join(packageRoot, "voice", "tldr-astro", "sky-placement.json");
 const servingLintPolicyPath = path.join(packageRoot, "config", "daily-glance-writer-lint-policy-v3.json");
 const { POLICY_CLASSES, findingForEntry, normalizePolicyEntry } = require("./banned-word-policy.js");
+const knowledgeResolver = require("./knowledge-resolver.js");
 
 function readJson(filePath) {
   const parsed = JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -290,10 +291,27 @@ function verifySceneEvidence(target, config) {
   };
 }
 
-function buildPacket(key, config = readJson(configPath)) {
+function compileDailyPacket(key, config = readJson(configPath)) {
   const target = config.keys.find((entry) => entry.key === key);
   if (!target) throw new Error(`Unknown Daily At-a-Glance writer key: ${key}.`);
   target.facts.forEach(verifyFact);
+  const governedEvidence = knowledgeResolver.buildPacket(`daily/${key}`, {
+    surface: "daily",
+    register: "daily",
+    maxChars: 8000,
+    includeRelated: false
+  });
+  const verifiedAstrology = [...governedEvidence.evidence]
+    .sort((a, b) => Number(a.field.split(".")[1]) - Number(b.field.split(".")[1]))
+    .map((record) => ({
+    text: record.text,
+    sourcePath: record.sourceReference?.path ?? record.path,
+    selector: record.sourceReference?.selector ?? record.field,
+    match: record.sourceReference?.match ?? null,
+    authorityClass: record.authorityClass,
+    evidenceSha256: record.evidenceSha256,
+    sourceSha256: record.sourceSha256
+    }));
   const ownerPassages = loadOwnerPassages(config, target);
   const warmthHarvest = verifyWarmthHarvest(target, config);
   const sceneEvidence = verifySceneEvidence(target, config);
@@ -323,7 +341,8 @@ function buildPacket(key, config = readJson(configPath)) {
       skeleton: target.skeleton || null
     },
     routing: config.routing,
-    verifiedAstrology: target.facts,
+    verifiedAstrology,
+    governedEvidence,
     format: config.output,
     styleMarkers: config.styleMarkers,
     dailyRules: config.dailyRules || [],
@@ -814,7 +833,8 @@ module.exports = {
   batchLint,
   applyLintTiers,
   blockingChecksPassed,
-  buildPacket,
+  buildPacket: compileDailyPacket,
+  compileDailyPacket,
   configPath,
   estimateCost,
   lintTextAgainstBans,

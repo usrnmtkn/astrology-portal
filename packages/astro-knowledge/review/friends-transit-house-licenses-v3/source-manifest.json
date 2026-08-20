@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Stable, checkout-relative source addressing for the Friends transit V3 provenance review.",
+  "addressingPolicy": "Citations use canonical source-family ids and row or section keys. No citation depends on a local filesystem path.",
+  "sources": {
+    "MASTER-V1": {
+      "path": "packages/astro-knowledge/review/friends-transit-house-licenses-v3/TLDR-ASTRO-MASTER-HOUSE-LICENSE-CONCEPTS-V1-REVIEW.md",
+      "sha256": "acda100dc20f1e19ffb8ab73c0f0b9dfcac252dc035d77299857662d34ff1c25",
+      "vendoredByteIdentically": true
+    },
+    "MASTER-V2": {
+      "path": "packages/astro-knowledge/review/friends-transit-house-licenses-v3/TLDR-ASTRO-MASTER-HOUSE-LICENSE-CONCEPTS-V2-PROVENANCE-REPAIRED-REVIEW.md",
+      "sha256": "93c5add54830acfd8b496fd249378b44112d4c3afb580ad7838b513c56a98545"
+    },
+    "MS-CA": {
+      "canonicalWorkId": "MS-CA",
+      "title": "Celestial Alchemy: Tarot And Astrology Correspondences For Self-Discovery",
+      "author": "Marie Satori",
+      "reconciledFromFilename": "[ePub] Tarot and the Astrology.docx",
+      "identityBasis": "The original work's title page names Celestial Alchemy and Marie Satori.",
+      "originalWorkSha256": "0c0900be92ab76cb02eeee37edecae6635fb53f2e1c0575d9e1f8c0f1a446ffa",
+      "fullExtractSha256": "4d5a55cbe4266b91144f3652014998a29f8141362a6cfbad7ab40cea1e17b47b",
+      "vendoredExtract": {
+        "path": "packages/astro-knowledge/sources/authored/marie-satori-book/celestial-alchemy-license-quote-extract.json",
+        "sha256": "842d2c6bfab08904ef22e3cdc59b9981cb07118b75a93f269ceaf9e5d551be66",
+        "sectionKeyField": "sections[].id",
+        "sourceLocatorField": "sections[].sourceLineRange"
+      }
+    },
+    "MS-AASB": {
+      "canonicalWorkId": "MS-AASB",
+      "title": "As Above, So Below: A Guide to Astrology for Tarot Readers",
+      "author": "Marie Satori",
+      "vendoredExtract": {
+        "path": "tldr-astro-phrasebank/sources/book-as-above-extract.json",
+        "sha256": "42e5b6e9d12ffbdc02bd59d46bc55ce1febe16114f138d8d81d4c61d69a91f7a",
+        "sectionKeyField": "house_meanings.<house>"
+      }
+    },
+    "MATRIX-V9": {
+      "path": "apps/web/public/content/knowledge-matrix-v9/v9-owner-approved-governance-labeled/knowledge-matrix-v9-owner-approved-rows.json",
+      "sha256": "5907cbdbc6e015c4d0a68ce54f24506fe7e8eff51fbdf4b83485e492032e9a4c"
+    },
+    "V13": {
+      "path": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json",
+      "sha256": "a85593bdfb90b136054768bfa9c3c4dbaabe5aee103f2ba371f2d42161c1cd03"
+    },
+    "PRIOR-REGISTRY-V3": {
+      "path": "packages/astro-knowledge/config/friends-transit-scene-licenses-v3.json",
+      "sha256": "2dc40f312733f50dc0140b208053c882972c8068760b90120875442112345fc4"
+    }
+  }
+}

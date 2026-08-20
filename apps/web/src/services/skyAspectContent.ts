@@ -125,7 +125,8 @@ function generatedSkyAspectCardPassesBoundary(
     && lint?.score === 3
     && lint?.fails === 0
     && content.judgeScore === 3
-    && content.judgeGate === "auto-publish"
+    && content.status === "LIVE"
+    && content.judgeGate === "human-review"
     && source.pairSource === expected.pairSource
     && source.pairKey === expected.pairKey
     && facts?.a === expected.a

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.conjunction.chiron",
+  "canonicalId": "sky-aspect/chiron/sun/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "sun",
+  "aspect": "conjunction",
+  "humanMoment": "Some people are finding the award ceremony harder to sit through than the bad year was.",
+  "developmentDetail": "Someone watches a colleague shine without effort and feels the applause land like an accusation, as if every clap were counting the things that got missed.",
+  "planetaryDynamic": "With the Sun conjunct Chiron, people want to be seen in the same breath that they remember being seen going wrong.",
+  "aspectMechanic": "The person they envy is standing exactly where they want to stand.",
+  "conditionalConsequence": "The envy may be uncomfortable, but it tends to point at a gift waiting for its owner to claim it, and the people who read it that way stop treating the shining colleague as a rival.",
+  "body": "Some people are finding the award ceremony harder to sit through than the bad year was.\n\nSomeone watches a colleague shine without effort and feels the applause land like an accusation, as if every clap were counting the things that got missed.\n\nWith the Sun conjunct Chiron, people want to be seen in the same breath that they remember being seen going wrong.\n\nThe person they envy is standing exactly where they want to stand.\n\nThe envy may be uncomfortable, but it tends to point at a gift waiting for its owner to claim it, and the people who read it that way stop treating the shining colleague as a rival.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.sun.conjunction.chiron",
+    "sourceHeading": "Sun conjunction Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

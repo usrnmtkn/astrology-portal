@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.conjunction.lilith",
+  "canonicalId": "sky-aspect/lilith/venus/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "venus",
+  "aspect": "conjunction",
+  "humanMoment": "Someone brings the presentable relationship and the actual desire to the same event, and they arrive in the same outfit.",
+  "developmentDetail": "They cannot make the charm cover it: who they actually want to sit beside, what they actually enjoy, surfaces undisguised, and the polite guests have less to work with.",
+  "planetaryDynamic": "With Venus conjunct Lilith, the person curating what will be liked and the person wanting without permission are the same person all evening.",
+  "aspectMechanic": "The room reads that single voice as magnetic or as too much, depending on who is standing in it.",
+  "conditionalConsequence": "Their appeal may spike, but whatever someone wants this openly can no longer be filed under harmless.",
+  "body": "Someone brings the presentable relationship and the actual desire to the same event, and they arrive in the same outfit.\n\nThey cannot make the charm cover it: who they actually want to sit beside, what they actually enjoy, surfaces undisguised, and the polite guests have less to work with.\n\nWith Venus conjunct Lilith, the person curating what will be liked and the person wanting without permission are the same person all evening.\n\nThe room reads that single voice as magnetic or as too much, depending on who is standing in it.\n\nTheir appeal may spike, but whatever someone wants this openly can no longer be filed under harmless.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.venus.conjunction.lilith",
+    "sourceHeading": "Venus conjunction Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.trine.north-node",
+  "canonicalId": "sky-aspect/jupiter/north_node/trine",
+  "kind": "sky-aspect",
+  "bodyA": "jupiter",
+  "bodyB": "north_node",
+  "aspect": "trine",
+  "humanMoment": "The small forward doorway is opening into rooms.",
+  "developmentDetail": "Someone takes the modest commitment, the class, the trial project, the short contract, and watches it unfold into further invitations they never solicited.",
+  "planetaryDynamic": "With Jupiter trine the North Node, people find the growth and the direction feeding each other without friction, so every step they take forward enlarges the map instead of just crossing it.",
+  "aspectMechanic": "The people who said the little yes keep getting handed more.",
+  "conditionalConsequence": "The doorway may have looked minor at the threshold, but people who choose forward over big tend to find that forward pays out differently, and this is what that looks like.",
+  "body": "The small forward doorway is opening into rooms.\n\nSomeone takes the modest commitment, the class, the trial project, the short contract, and watches it unfold into further invitations they never solicited.\n\nWith Jupiter trine the North Node, people find the growth and the direction feeding each other without friction, so every step they take forward enlarges the map instead of just crossing it.\n\nThe people who said the little yes keep getting handed more.\n\nThe doorway may have looked minor at the threshold, but people who choose forward over big tend to find that forward pays out differently, and this is what that looks like.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.jupiter.trine.north-node",
+    "sourceHeading": "Jupiter trine North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

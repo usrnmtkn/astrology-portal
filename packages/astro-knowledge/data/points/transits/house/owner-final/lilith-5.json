@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-5",
+  "canonicalId": "transit-house/lilith/5",
+  "kind": "house",
+  "transiting": "lilith",
+  "house": 5,
+  "headline": "Desire without explanation",
+  "body": "Black Moon Lilith in your 5th house brings creative, romantic, and personal desires out of hiding. You might return to an unconventional art form, admit an inconvenient crush, or feel angry about how much fun you sacrificed after someone made you feel stupid for enjoying it. Desire gets loud when it has been treated like something to be ashamed of.\n\nReclaim your right to enjoy what you like without turning it into a dramatic statement. You do not need to shock anyone or over-explain your taste. The shift is letting yourself enjoy what you love without needing to justify it to anyone.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Lilith — 5H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

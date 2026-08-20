@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.sextile.chiron",
+  "canonicalId": "sky-aspect/chiron/pluto/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "pluto",
+  "aspect": "sextile",
+  "humanMoment": "The root becomes findable for anyone willing to look.",
+  "developmentDetail": "Someone watches a pattern name itself across decades, the same fear under different bosses, partners, and cities, and suddenly holds a map with a legend.",
+  "planetaryDynamic": "With Pluto sextile Chiron, people can reach the root without a crisis forcing them there, following the one thread that runs all the way down.",
+  "aspectMechanic": "Somebody still has to go looking.",
+  "conditionalConsequence": "The insight may sit unused, and unused it stays trivia; the people who apply it once tend to start getting years back.",
+  "body": "The root becomes findable for anyone willing to look.\n\nSomeone watches a pattern name itself across decades, the same fear under different bosses, partners, and cities, and suddenly holds a map with a legend.\n\nWith Pluto sextile Chiron, people can reach the root without a crisis forcing them there, following the one thread that runs all the way down.\n\nSomebody still has to go looking.\n\nThe insight may sit unused, and unused it stays trivia; the people who apply it once tend to start getting years back.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.pluto.sextile.chiron",
+    "sourceHeading": "Pluto sextile Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.quincunx.chiron",
+  "canonicalId": "sky-aspect/chiron/sun/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "sun",
+  "aspect": "quincunx",
+  "humanMoment": "The role everyone sees keeps demanding the one skill people find most expensive.",
+  "developmentDetail": "Someone preps a presentation that needs confidence, spends the whole morning managing the ache so the confidence can appear, and finds that the performing and the recovering never share a calendar.",
+  "planetaryDynamic": "With the Sun quincunx Chiron, people book the appearances on one schedule and the repair on another, and nobody has introduced the two schedules.",
+  "aspectMechanic": "Every week they patch the gap instead of closing it.",
+  "conditionalConsequence": "The role may stay workable on patches, but people who patch every week are keeping a schedule, not getting treatment, and the difference tends to show eventually.",
+  "body": "The role everyone sees keeps demanding the one skill people find most expensive.\n\nSomeone preps a presentation that needs confidence, spends the whole morning managing the ache so the confidence can appear, and finds that the performing and the recovering never share a calendar.\n\nWith the Sun quincunx Chiron, people book the appearances on one schedule and the repair on another, and nobody has introduced the two schedules.\n\nEvery week they patch the gap instead of closing it.\n\nThe role may stay workable on patches, but people who patch every week are keeping a schedule, not getting treatment, and the difference tends to show eventually.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.sun.quincunx.chiron",
+    "sourceHeading": "Sun quincunx Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

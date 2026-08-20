@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.trine.chiron",
+  "canonicalId": "sky-aspect/chiron/mercury/trine",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "mercury",
+  "aspect": "trine",
+  "humanMoment": "The person who doubts their own voice explains the hard thing better than anyone in the room.",
+  "developmentDetail": "They lay it out and the room follows, because the same doubt that questioned the voice spent years digging deeper than the people who never had to.",
+  "planetaryDynamic": "With Mercury trine Chiron, people get the words and the depth underneath them at the same time, without paying the usual toll.",
+  "aspectMechanic": "The explanation lands because they built it underground.",
+  "conditionalConsequence": "The fluency may surprise its owner, and it tends to deserve at least as much trust as the doubt has been getting all these years.",
+  "body": "The person who doubts their own voice explains the hard thing better than anyone in the room.\n\nThey lay it out and the room follows, because the same doubt that questioned the voice spent years digging deeper than the people who never had to.\n\nWith Mercury trine Chiron, people get the words and the depth underneath them at the same time, without paying the usual toll.\n\nThe explanation lands because they built it underground.\n\nThe fluency may surprise its owner, and it tends to deserve at least as much trust as the doubt has been getting all these years.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.mercury.trine.chiron",
+    "sourceHeading": "Mercury trine Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

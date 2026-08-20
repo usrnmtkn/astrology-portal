@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.sextile.lilith",
+  "canonicalId": "sky-aspect/lilith/mars/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "mars",
+  "aspect": "sextile",
+  "humanMoment": "Someone finally finds a legitimate channel for the long-swallowed objection.",
+  "developmentDetail": "They turn the grievance into an agenda item, a formal complaint, a proposal to change the rule; the anger gets a job instead of a target.",
+  "planetaryDynamic": "With Mars sextile Lilith, the people who know the procedure can lend it to a refusal that never had one.",
+  "aspectMechanic": "The channel is open now, but someone has to file while the office is.",
+  "conditionalConsequence": "The channel may close unused, but anger that people give a procedure stops needing an ambush.",
+  "body": "Someone finally finds a legitimate channel for the long-swallowed objection.\n\nThey turn the grievance into an agenda item, a formal complaint, a proposal to change the rule; the anger gets a job instead of a target.\n\nWith Mars sextile Lilith, the people who know the procedure can lend it to a refusal that never had one.\n\nThe channel is open now, but someone has to file while the office is.\n\nThe channel may close unused, but anger that people give a procedure stops needing an ambush.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.mars.sextile.lilith",
+    "sourceHeading": "Mars sextile Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

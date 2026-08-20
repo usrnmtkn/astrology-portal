@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "chiron-10",
+  "canonicalId": "transit-house/chiron/10",
+  "kind": "house",
+  "transiting": "chiron",
+  "house": 10,
+  "headline": "Being visible while learning",
+  "body": "Chiron in your 10th house makes career visibility, professional status, and public scrutiny feel intensely personal. Past mistakes, hyper-critical bosses, or imposter syndrome can flare up with every promotion or public decision. You might play small and stay in a job below your skill level because it feels safer than making mistakes where people can see them.\n\nThis transit changes how you view professional missteps. Your track record can include revisions, clumsy initial attempts, and work that improved over time. Stop letting an old failure dictate how much professional responsibility you allow yourself to take on now.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Chiron — 10H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

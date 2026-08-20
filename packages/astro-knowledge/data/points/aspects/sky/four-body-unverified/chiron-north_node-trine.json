@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.chiron.trine.north-node",
+  "canonicalId": "sky-aspect/chiron/north_node/trine",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "north_node",
+  "aspect": "trine",
+  "humanMoment": "People's recovery and their direction start feeding each other.",
+  "developmentDetail": "Someone repairs a capacity and finds the next stretch of road open, then walks the road and finds the repair exercised; the familiar end carries instead of dragging.",
+  "planetaryDynamic": "With Chiron trine the North Node, people mend and put the mending to use in the same motion, which is what makes it hold.",
+  "aspectMechanic": "No confrontation has to mark the progress.",
+  "conditionalConsequence": "The pace may look slow from outside, but people whose repair builds on itself tend to be moving at the fastest speed there is.",
+  "body": "People's recovery and their direction start feeding each other.\n\nSomeone repairs a capacity and finds the next stretch of road open, then walks the road and finds the repair exercised; the familiar end carries instead of dragging.\n\nWith Chiron trine the North Node, people mend and put the mending to use in the same motion, which is what makes it hold.\n\nNo confrontation has to mark the progress.\n\nThe pace may look slow from outside, but people whose repair builds on itself tend to be moving at the fastest speed there is.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.chiron.trine.north-node",
+    "sourceHeading": "Chiron trine North Node",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

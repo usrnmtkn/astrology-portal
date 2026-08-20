@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.trine.chiron",
+  "canonicalId": "sky-aspect/chiron/saturn/trine",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "saturn",
+  "aspect": "trine",
+  "humanMoment": "The discipline someone built around an old limit becomes the thing others come to learn.",
+  "developmentDetail": "People show up to study the workaround, the pacing, the method born from necessity, and they read as mastery what its owner still files as scar tissue.",
+  "planetaryDynamic": "With Saturn trine Chiron, people can formalize a practice around knowledge that only the injury could have taught them.",
+  "aspectMechanic": "The limitation has quietly become curriculum.",
+  "conditionalConsequence": "The expertise may still feel like scar tissue from inside, but it teaches, and what teaches other people tends to stop being only an injury.",
+  "body": "The discipline someone built around an old limit becomes the thing others come to learn.\n\nPeople show up to study the workaround, the pacing, the method born from necessity, and they read as mastery what its owner still files as scar tissue.\n\nWith Saturn trine Chiron, people can formalize a practice around knowledge that only the injury could have taught them.\n\nThe limitation has quietly become curriculum.\n\nThe expertise may still feel like scar tissue from inside, but it teaches, and what teaches other people tends to stop being only an injury.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.saturn.trine.chiron",
+    "sourceHeading": "Saturn trine Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

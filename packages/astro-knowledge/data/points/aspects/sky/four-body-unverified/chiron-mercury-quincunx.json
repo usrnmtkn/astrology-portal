@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.quincunx.chiron",
+  "canonicalId": "sky-aspect/chiron/mercury/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "mercury",
+  "aspect": "quincunx",
+  "humanMoment": "People keep finding the right words a day after the conversation needed them.",
+  "developmentDetail": "Someone composes the perfect sentence on the drive home, again, because live exchanges keep moving faster than the careful drafting the old doubt insists on.",
+  "planetaryDynamic": "With Mercury quincunx Chiron, people talk at conversation speed while checking every line for safety first, and the two paces never meet.",
+  "aspectMechanic": "They arrive accurate or on time, never both.",
+  "conditionalConsequence": "The drafts may be excellent, but people who trade presence for preparation tend to find that more preparation never buys the timing back.",
+  "body": "People keep finding the right words a day after the conversation needed them.\n\nSomeone composes the perfect sentence on the drive home, again, because live exchanges keep moving faster than the careful drafting the old doubt insists on.\n\nWith Mercury quincunx Chiron, people talk at conversation speed while checking every line for safety first, and the two paces never meet.\n\nThey arrive accurate or on time, never both.\n\nThe drafts may be excellent, but people who trade presence for preparation tend to find that more preparation never buys the timing back.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.mercury.quincunx.chiron",
+    "sourceHeading": "Mercury quincunx Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

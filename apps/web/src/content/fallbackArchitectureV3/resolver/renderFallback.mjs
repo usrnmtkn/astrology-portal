@@ -328,7 +328,7 @@ export function normalizeAspect(input) {
     opposition: "opposition", opposite: "opposition", opposed: "opposition", oppose: "opposition",
     quincunx: "quincunx", inconjunct: "quincunx",
     semisextile: "semisextile", "semi-sextile": "semisextile", "semi sextile": "semisextile",
-    nonagen: "nonagen",
+    nonagen: "semisextile",
   };
   return map[k] ?? null;
 }

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.neptune.conjunction.lilith",
+  "canonicalId": "sky-aspect/lilith/neptune/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "neptune",
+  "aspect": "conjunction",
+  "humanMoment": "Someone's daydream stops being occasional and starts being a location.",
+  "developmentDetail": "They furnish the fantasy life, the imagined career, the imagined person, the imagined elsewhere, and route hours there without logging them.",
+  "planetaryDynamic": "With Neptune conjunct Lilith, people dissolve the border between wish and plan on behalf of a want too banned to apply for planning.",
+  "aspectMechanic": "So they keep the want fully imagined and fully unclaimed.",
+  "conditionalConsequence": "The dream may be a rehearsal or a substitute, and which one shows in whether the dreamer changes anything outside it.",
+  "body": "Someone's daydream stops being occasional and starts being a location.\n\nThey furnish the fantasy life, the imagined career, the imagined person, the imagined elsewhere, and route hours there without logging them.\n\nWith Neptune conjunct Lilith, people dissolve the border between wish and plan on behalf of a want too banned to apply for planning.\n\nSo they keep the want fully imagined and fully unclaimed.\n\nThe dream may be a rehearsal or a substitute, and which one shows in whether the dreamer changes anything outside it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.neptune.conjunction.lilith",
+    "sourceHeading": "Neptune conjunction Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

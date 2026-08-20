@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-2",
+  "canonicalId": "transit-house/lilith/2",
+  "kind": "house",
+  "transiting": "lilith",
+  "house": 2,
+  "headline": "Admitting what you want",
+  "body": "Black Moon Lilith in your 2nd house makes your true desires around money, comfort, possessions, and lifestyle impossible to pass off as mere \"practicality.\" You might finally admit the income you want, the quality you prefer, or the comforts you denied yourself because wanting them felt greedy or shallow. Resentment builds when you suppress every desire until it explodes in impulse buying.\n\nThis is not an excuse to blow your savings or make pointlessly flashy purchases. It is about dropping the guilt around wanting nice things so you can manage your money intentionally. Wanting comfort does not make you a bad person.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Lilith — 2H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

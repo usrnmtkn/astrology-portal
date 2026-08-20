@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.conjunction.north-node",
+  "canonicalId": "sky-aspect/mercury/north_node/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "mercury",
+  "bodyB": "north_node",
+  "aspect": "conjunction",
+  "humanMoment": "The same question keeps arriving from different mouths.",
+  "developmentDetail": "Three unrelated people ask someone about the same idea, the same move, the same possibility inside a single week, and the person being asked stops believing in the coincidence.",
+  "planetaryDynamic": "With Mercury conjunct the North Node, people find the important conversation scheduling itself: the talk that belongs to the new direction keeps landing in their laps, while the familiar small talk suddenly has less to say.",
+  "aspectMechanic": "Someone is going to ask it again next week.",
+  "conditionalConsequence": "They may deflect the question again, but questions that arrive on a pattern tend to be a direction introducing itself, and the people who answer one usually find out.",
+  "body": "The same question keeps arriving from different mouths.\n\nThree unrelated people ask someone about the same idea, the same move, the same possibility inside a single week, and the person being asked stops believing in the coincidence.\n\nWith Mercury conjunct the North Node, people find the important conversation scheduling itself: the talk that belongs to the new direction keeps landing in their laps, while the familiar small talk suddenly has less to say.\n\nSomeone is going to ask it again next week.\n\nThey may deflect the question again, but questions that arrive on a pattern tend to be a direction introducing itself, and the people who answer one usually find out.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.mercury.conjunction.north-node",
+    "sourceHeading": "Mercury conjunction North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.trine.lilith",
+  "canonicalId": "sky-aspect/lilith/uranus/trine",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "uranus",
+  "aspect": "trine",
+  "humanMoment": "Someone makes the exit without drama, and that is the surprise.",
+  "developmentDetail": "They normalize the unconventional arrangement, the odd schedule, the open declaration, the role refused without ceremony, and yesterday's scandal reads as this week's obvious choice.",
+  "planetaryDynamic": "With Uranus trine Lilith, the people who normalize deviation take up the deviation that waited longest.",
+  "aspectMechanic": "Nobody charges the usual price at the door, so leaving costs less than staying for once.",
+  "conditionalConsequence": "The ease may be earned, but people copy a liberation that cost nothing carelessly, and not every copier can afford one.",
+  "body": "Someone makes the exit without drama, and that is the surprise.\n\nThey normalize the unconventional arrangement, the odd schedule, the open declaration, the role refused without ceremony, and yesterday's scandal reads as this week's obvious choice.\n\nWith Uranus trine Lilith, the people who normalize deviation take up the deviation that waited longest.\n\nNobody charges the usual price at the door, so leaving costs less than staying for once.\n\nThe ease may be earned, but people copy a liberation that cost nothing carelessly, and not every copier can afford one.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.uranus.trine.lilith",
+    "sourceHeading": "Uranus trine Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

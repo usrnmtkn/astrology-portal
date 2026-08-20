@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.quincunx.lilith",
+  "canonicalId": "sky-aspect/lilith/uranus/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "uranus",
+  "aspect": "quincunx",
+  "humanMoment": "Someone keeps discovering that half-free is still the arrangement.",
+  "developmentDetail": "They lengthen the chain without unlocking it: more slack, same anchor; each renegotiation frees an evening but never the person.",
+  "planetaryDynamic": "With Uranus quincunx Lilith, people keep promising themselves the clean break while accepting installments on it.",
+  "aspectMechanic": "So each adjustment they accept resets the countdown.",
+  "conditionalConsequence": "The improvements may be real, but a longer leash teaches people the wrong lesson: that the next adjustment will finally be the freedom.",
+  "body": "Someone keeps discovering that half-free is still the arrangement.\n\nThey lengthen the chain without unlocking it: more slack, same anchor; each renegotiation frees an evening but never the person.\n\nWith Uranus quincunx Lilith, people keep promising themselves the clean break while accepting installments on it.\n\nSo each adjustment they accept resets the countdown.\n\nThe improvements may be real, but a longer leash teaches people the wrong lesson: that the next adjustment will finally be the freedom.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.uranus.quincunx.lilith",
+    "sourceHeading": "Uranus quincunx Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

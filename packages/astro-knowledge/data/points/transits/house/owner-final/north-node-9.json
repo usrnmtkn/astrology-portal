@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "north-node-9",
+  "canonicalId": "transit-house/north_node/9",
+  "kind": "house",
+  "transiting": "north-node",
+  "house": 9,
+  "headline": "Learning that changes you",
+  "body": "The North Node in your 9th house can bring a degree, legal matter, travel plan, belief system, or teaching opportunity that alters how you view the world. You will need to move past casual curiosity by enrolling, publishing, traveling, or sticking with a topic after the initial spark wears off. Information only matters if it changes how you live.\n\nThe 3rd house on the other side offers the trap of quick commentary, easy routines, and staying in your comfort zone. Growth here means letting what you learn actually reshape your life choices.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "North Node — 9H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

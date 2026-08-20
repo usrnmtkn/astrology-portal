@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "south-node-1",
+  "canonicalId": "transit-house/south_node/1",
+  "kind": "house",
+  "transiting": "south-node",
+  "house": 1,
+  "headline": "Handling everything yourself",
+  "body": "As the South Node moves through your 1st house for about a year and a half, the habit of handling everything yourself becomes obvious. You might refuse help before someone finishes offering it, fix problems in private, or feel annoyed when someone else's needs slow you down. Being self-reliant is useful, but it can also keep anyone from getting close enough to support you.\n\nAcross from this transit, the 7th house focuses on partnership, compromise, and what changes when you actually let someone else influence the plan. The goal is not to give up your independence. It is to notice if keeping your distance protects your freedom or just keeps you isolated.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "South Node — 1H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

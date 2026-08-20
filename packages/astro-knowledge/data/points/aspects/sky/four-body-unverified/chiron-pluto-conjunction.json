@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.conjunction.chiron",
+  "canonicalId": "sky-aspect/chiron/pluto/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "pluto",
+  "aspect": "conjunction",
+  "humanMoment": "Someone's dig reaches the original layer.",
+  "developmentDetail": "In the therapy session, the estate sorting, the honest conversation, they hit the first version of the story, the one all the later versions were edits of, and feel everything built above it briefly shake.",
+  "planetaryDynamic": "With Pluto conjunct Chiron, people excavate straight down and find the oldest buried thing waiting at the bottom.",
+  "aspectMechanic": "They get no warning between digging and discovery.",
+  "conditionalConsequence": "The intensity may be proportional to how long the find waited, not to any present danger, and the people who read it that way can keep digging without alarm.",
+  "body": "Someone's dig reaches the original layer.\n\nIn the therapy session, the estate sorting, the honest conversation, they hit the first version of the story, the one all the later versions were edits of, and feel everything built above it briefly shake.\n\nWith Pluto conjunct Chiron, people excavate straight down and find the oldest buried thing waiting at the bottom.\n\nThey get no warning between digging and discovery.\n\nThe intensity may be proportional to how long the find waited, not to any present danger, and the people who read it that way can keep digging without alarm.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.pluto.conjunction.chiron",
+    "sourceHeading": "Pluto conjunction Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

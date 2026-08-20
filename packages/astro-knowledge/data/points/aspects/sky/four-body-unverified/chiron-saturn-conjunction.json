@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.conjunction.chiron",
+  "canonicalId": "sky-aspect/chiron/saturn/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "saturn",
+  "aspect": "conjunction",
+  "humanMoment": "The deadline arrives with a much older voice attached.",
+  "developmentDetail": "Someone reads a routine reminder and hears the examiner from decades ago in its tone, so they end up doing a doable task under two supervisions.",
+  "planetaryDynamic": "With Saturn conjunct Chiron, people meet a current standard in the exact place where a standard was once used as a weapon.",
+  "aspectMechanic": "One email carries both messages.",
+  "conditionalConsequence": "The requirement may be perfectly reasonable even though the feeling it triggers is old, and the people who file those two facts separately get to answer only the current one.",
+  "body": "The deadline arrives with a much older voice attached.\n\nSomeone reads a routine reminder and hears the examiner from decades ago in its tone, so they end up doing a doable task under two supervisions.\n\nWith Saturn conjunct Chiron, people meet a current standard in the exact place where a standard was once used as a weapon.\n\nOne email carries both messages.\n\nThe requirement may be perfectly reasonable even though the feeling it triggers is old, and the people who file those two facts separately get to answer only the current one.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.saturn.conjunction.chiron",
+    "sourceHeading": "Saturn conjunction Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.quincunx.chiron",
+  "canonicalId": "sky-aspect/chiron/saturn/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "saturn",
+  "aspect": "quincunx",
+  "humanMoment": "The obligations keep landing on the exact days people set aside for repair.",
+  "developmentDetail": "Someone splits the calendar between what they owe and what is mending, and honors each schedule by borrowing from the other one.",
+  "planetaryDynamic": "With Saturn quincunx Chiron, people keep their commitments where everyone can see while running a recovery schedule the commitments never see.",
+  "aspectMechanic": "Every week ends with one side shortchanged.",
+  "conditionalConsequence": "The juggling may go on for a while, but a calendar shows what its owner actually values, and this one tends to need an honest edit from the person holding the pen.",
+  "body": "The obligations keep landing on the exact days people set aside for repair.\n\nSomeone splits the calendar between what they owe and what is mending, and honors each schedule by borrowing from the other one.\n\nWith Saturn quincunx Chiron, people keep their commitments where everyone can see while running a recovery schedule the commitments never see.\n\nEvery week ends with one side shortchanged.\n\nThe juggling may go on for a while, but a calendar shows what its owner actually values, and this one tends to need an honest edit from the person holding the pen.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.saturn.quincunx.chiron",
+    "sourceHeading": "Saturn quincunx Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

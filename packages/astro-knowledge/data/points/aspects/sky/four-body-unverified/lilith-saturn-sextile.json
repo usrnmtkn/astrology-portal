@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.sextile.lilith",
+  "canonicalId": "sky-aspect/lilith/saturn/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "saturn",
+  "aspect": "sextile",
+  "humanMoment": "Someone brings the unworkable policy to the meeting as an agenda item instead of a resentment.",
+  "developmentDetail": "Because the objection arrives in proper form, the people who run the structure actually bend it.",
+  "planetaryDynamic": "With Saturn sextile Lilith, the people who respect process and precedent get to hear from a refusal that never used either.",
+  "aspectMechanic": "The door is procedural and it is open, but somebody still has to file the paperwork.",
+  "conditionalConsequence": "The policy may survive mostly intact, but a refusal that gets representation stops needing sabotage.",
+  "body": "Someone brings the unworkable policy to the meeting as an agenda item instead of a resentment.\n\nBecause the objection arrives in proper form, the people who run the structure actually bend it.\n\nWith Saturn sextile Lilith, the people who respect process and precedent get to hear from a refusal that never used either.\n\nThe door is procedural and it is open, but somebody still has to file the paperwork.\n\nThe policy may survive mostly intact, but a refusal that gets representation stops needing sabotage.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.saturn.sextile.lilith",
+    "sourceHeading": "Saturn sextile Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

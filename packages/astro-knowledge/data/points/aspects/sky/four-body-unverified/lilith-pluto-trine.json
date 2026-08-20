@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.trine.lilith",
+  "canonicalId": "sky-aspect/lilith/pluto/trine",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "pluto",
+  "aspect": "trine",
+  "humanMoment": "Someone reclaims a want and discovers it is load-bearing.",
+  "developmentDetail": "An appetite they denied for years gets acknowledged and immediately starts organizing their decisions: what they accept, what they refuse, what they no longer perform.",
+  "planetaryDynamic": "With Pluto trine Lilith, people supply the depth and the follow-through to a want that never had either.",
+  "aspectMechanic": "Nobody needs a crisis; they surface the material and settle it in one motion.",
+  "conditionalConsequence": "The shift may look quiet from outside, but people who reclaim a banished want change what they will accept from then on.",
+  "body": "Someone reclaims a want and discovers it is load-bearing.\n\nAn appetite they denied for years gets acknowledged and immediately starts organizing their decisions: what they accept, what they refuse, what they no longer perform.\n\nWith Pluto trine Lilith, people supply the depth and the follow-through to a want that never had either.\n\nNobody needs a crisis; they surface the material and settle it in one motion.\n\nThe shift may look quiet from outside, but people who reclaim a banished want change what they will accept from then on.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.pluto.trine.lilith",
+    "sourceHeading": "Pluto trine Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

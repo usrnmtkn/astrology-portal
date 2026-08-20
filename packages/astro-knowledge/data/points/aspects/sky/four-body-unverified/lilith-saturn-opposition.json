@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.opposition.lilith",
+  "canonicalId": "sky-aspect/lilith/saturn/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "saturn",
+  "aspect": "opposition",
+  "humanMoment": "The enforcer and the refuser face each other with the whole room watching.",
+  "developmentDetail": "One holds the policy, the other holds the reasons the policy was never fair, and everyone reads every concession as precedent.",
+  "planetaryDynamic": "With Saturn opposite Lilith, one negotiator defends the order that keeps things running while the other defends what the order keeps running over.",
+  "aspectMechanic": "They negotiate in the open, and the stakes belong to everybody at the table.",
+  "conditionalConsequence": "A settlement may come, but the room learns whether the institution wants order or agreement, and those are different purchases.",
+  "body": "The enforcer and the refuser face each other with the whole room watching.\n\nOne holds the policy, the other holds the reasons the policy was never fair, and everyone reads every concession as precedent.\n\nWith Saturn opposite Lilith, one negotiator defends the order that keeps things running while the other defends what the order keeps running over.\n\nThey negotiate in the open, and the stakes belong to everybody at the table.\n\nA settlement may come, but the room learns whether the institution wants order or agreement, and those are different purchases.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.saturn.opposition.lilith",
+    "sourceHeading": "Saturn opposition Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

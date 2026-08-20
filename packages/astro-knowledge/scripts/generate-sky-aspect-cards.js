@@ -74,20 +74,6 @@ const PLACEMENT_WITH_TOPPER_MODE = "collective-placement-with-topper";
 const TRADITIONAL_PLACEMENT_BODIES = new Set(PLANET_ORDER.slice(0, 10));
 const POINT_PLACEMENT_BODIES = new Set(["chiron", "north-node", "lilith"]);
 const PLACEMENT_BODIES = new Set([...TRADITIONAL_PLACEMENT_BODIES, ...POINT_PLACEMENT_BODIES, "south-node"]);
-const OPPOSITE_SIGN = {
-  aries: "libra",
-  taurus: "scorpio",
-  gemini: "sagittarius",
-  cancer: "capricorn",
-  leo: "aquarius",
-  virgo: "pisces",
-  libra: "aries",
-  scorpio: "taurus",
-  sagittarius: "gemini",
-  capricorn: "cancer",
-  aquarius: "leo",
-  pisces: "virgo"
-};
 const PLACEMENT_TIER_OF = {
   sun: "luminary",
   moon: "luminary",
@@ -225,7 +211,7 @@ function placementSourcePath(planet, sign) {
   }
 
   if (planet === "south-node") {
-    return path.join(root, "data", "points", "placements", "sign", `north-node-${OPPOSITE_SIGN[sign]}.json`);
+    return path.join(root, "data", "placements", "sign", `south-node-${sign}.json`);
   }
 
   return null;
@@ -263,11 +249,9 @@ function normalizePlacementArgs({ planet, body, sign }) {
 
   const source = readJson(sourcePath);
   const sourcePlanet = canonicalPlacementBody(source.planet ?? source.point);
-  const expectedSourcePlanet = normalizedPlanet === "south-node" ? "north-node" : normalizedPlanet;
+  const expectedSourcePlanet = normalizedPlanet;
   const sourceSign = normalizeToken(source.key ?? source.sign);
-  const expectedSourceSign = normalizedPlanet === "south-node"
-    ? OPPOSITE_SIGN[normalizedSign]
-    : normalizedSign;
+  const expectedSourceSign = normalizedSign;
 
   if (sourcePlanet !== expectedSourcePlanet || sourceSign !== expectedSourceSign) {
     throw new SourceGapError(
@@ -287,13 +271,7 @@ function normalizePlacementArgs({ planet, body, sign }) {
     sign: normalizedSign,
     source,
     placementSource: path.relative(root, sourcePath).replaceAll(path.sep, "/"),
-    derivedFrom: normalizedPlanet === "south-node"
-      ? {
-          planet: "north-node",
-          sign: expectedSourceSign,
-          frame: "comfort-zone/release"
-        }
-      : null,
+    derivedFrom: null,
     tier: PLACEMENT_TIER_OF[normalizedPlanet],
     pace: PLACEMENT_PACE[normalizedPlanet]
   };
@@ -585,9 +563,6 @@ function buildPlacementPrompt({ planet, body, sign }, { avoidTerms = [] } = {}) 
     challenge: source.challenge ?? source.shadow ?? "",
     shadow: source.shadow ?? ""
   };
-  const derivedNote = normalized.derivedFrom
-    ? `This is South Node in ${cap(normalized.sign)}, derived from North Node in ${cap(normalized.derivedFrom.sign)}. Reframe the source's familiar South Node pattern as a collective comfort zone to recognize and release. Do not describe South Node as the growth destination.`
-    : "";
   const golds = rotatedPlacementGolds(normalized);
   const placementVoice = spec.voiceDescription.replace(
     "Collective and third-person (never 'you')",
@@ -611,7 +586,6 @@ function buildPlacementPrompt({ planet, body, sign }, { avoidTerms = [] } = {}) 
     ...(sourceMeaning.shadow && sourceMeaning.shadow !== sourceMeaning.challenge
       ? [`  additional shadow: ${sourceMeaning.shadow}`]
       : []),
-    ...(derivedNote ? [`  DERIVED NODE AXIS RULE: ${derivedNote}`] : []),
     ``,
     `SHAPE - exactly two short paragraphs:`,
     `  1. Open on a claim, never an announcement that the body is "now in" the sign.`,
@@ -954,8 +928,13 @@ function buildRepairPrompt(text, reason, { warmthHarvest = null } = {}) {
 
 // Must return the poetic card body only. Facts such as dates, degrees, series,
 // and mechanics are deliberately not accepted here.
-async function generateWithConfig(prompt, config, { temperature } = {}) {
+async function generateWithConfig(prompt, config, { temperature, beforeProviderCall } = {}) {
   const temp = temperature ?? config.temperature;
+
+  if (beforeProviderCall != null && typeof beforeProviderCall !== "function") {
+    throw new Error("Sky Aspect beforeProviderCall must be a function.");
+  }
+  await beforeProviderCall?.({ provider: config.provider, model: config.model, role: config.role });
 
   if (!config.apiKey) {
     const keyName = config.provider === "claude" ? "ANTHROPIC_API_KEY" : "OPENAI_API_KEY";
@@ -1055,6 +1034,9 @@ async function runCardPipeline({
   repairFn,
   withJudge = false,
   judgeFn,
+  judgeBeforeProviderCall,
+  judgeGovernedPrompt = "",
+  generationMetadata = null,
   judgeFeedback
 } = {}) {
   const promptFor = (avoidTerms = []) => {
@@ -1091,7 +1073,7 @@ async function runCardPipeline({
       : cardLint;
     lastAttempt = { text, lint };
     if (lint.score === 3 && lint.fails === 0) {
-      const config = generateFn === generate ? generationConfig() : null;
+      const config = generationMetadata ?? (generateFn === generate ? generationConfig() : null);
       const result = {
         text,
         lint,
@@ -1123,7 +1105,9 @@ async function runCardPipeline({
           mode: judgeMode,
           tier: judgeTier,
           foundationLines: warmthHarvest?.ownerFoundationLines || [],
-          judgeFn
+          judgeFn,
+          beforeProviderCall: judgeBeforeProviderCall,
+          governedPrompt: judgeGovernedPrompt
         });
         result.gate = result.judge.gate; // human-review | regenerate (model verdicts are advisory)
 
@@ -1159,7 +1143,9 @@ async function runCardPipeline({
                 mode: judgeMode,
                 tier: judgeTier,
                 foundationLines: warmthHarvest?.ownerFoundationLines || [],
-                judgeFn
+                judgeFn,
+                beforeProviderCall: judgeBeforeProviderCall,
+                governedPrompt: judgeGovernedPrompt
               });
               repair.repairedScore = repairedJudge.score;
               repair.result = repairedText === text
@@ -1201,7 +1187,7 @@ async function runCardPipeline({
     lintRetryAvoidTerms.push(avoidTerms);
     prompt = promptFor(avoidTerms);
   }
-  const config = generateFn === generate ? generationConfig() : null;
+  const config = generationMetadata ?? (generateFn === generate ? generationConfig() : null);
   return {
     status: "needs-review",
     note: "did not pass the linter within retries",

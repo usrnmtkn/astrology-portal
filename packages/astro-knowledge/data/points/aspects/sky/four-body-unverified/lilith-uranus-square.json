@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.square.lilith",
+  "canonicalId": "sky-aspect/lilith/uranus/square",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "uranus",
+  "aspect": "square",
+  "humanMoment": "Someone's urge to burn it down keeps interrupting their plan to renegotiate it.",
+  "developmentDetail": "Every incremental fix starts to look to them like collaboration, every rupture starts to look like relief, and people talk each other toward cliffs.",
+  "planetaryDynamic": "With Uranus square Lilith, people want the break immediate and visible and also want the exile ended on its own terms, and this week the two hungers blur.",
+  "aspectMechanic": "So they tangle the need to be free with the need to be seen escaping.",
+  "conditionalConsequence": "Something may genuinely need breaking, but under this pressure nobody can tell demolition from theater, and the difference is expensive.",
+  "body": "Someone's urge to burn it down keeps interrupting their plan to renegotiate it.\n\nEvery incremental fix starts to look to them like collaboration, every rupture starts to look like relief, and people talk each other toward cliffs.\n\nWith Uranus square Lilith, people want the break immediate and visible and also want the exile ended on its own terms, and this week the two hungers blur.\n\nSo they tangle the need to be free with the need to be seen escaping.\n\nSomething may genuinely need breaking, but under this pressure nobody can tell demolition from theater, and the difference is expensive.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.uranus.square.lilith",
+    "sourceHeading": "Uranus square Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -5,7 +5,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { assembleReportGenerationPayload } from "../api/_lib/report-generation.ts";
-import { callReportModel, judgeModelTarget } from "../api/_lib/report-model-client.ts";
+import { callReportCalibrationModel, judgeModelTarget } from "../api/_lib/report-model-client.ts";
 import { scopeReportPayloadToUnit } from "../api/_lib/report-unit-scope.ts";
 import { REPORT_DEFECT_CATEGORIES } from "../api/_lib/report-writer-chain.ts";
 import { loadActiveReportCritiquePrompt, loadActiveReportJudgePrompt } from "../api/_lib/report-prompt-versions.ts";
@@ -332,7 +332,7 @@ try {
     const positive = extractUnit(fixture);
     const negative = negativeUnit(fixture, positive);
     for (const [variant, unit] of [["positive", positive], ["negative", negative]]) {
-      const response = await callReportModel({
+      const response = await callReportCalibrationModel({
         ...target,
         prompt: judgePrompt(fixture, unit),
         schemaName: "report_judge_v3_calibration",
@@ -356,7 +356,7 @@ try {
   const findingFixture = manifest.findingLevelFixtures[0];
   const positive = extractUnit(findingFixture);
   const unit = negativeUnit(findingFixture, positive);
-  const response = await callReportModel({
+  const response = await callReportCalibrationModel({
     ...target,
     prompt: critiquePrompt(findingFixture, unit),
     schemaName: "report_critique_v3_calibration",

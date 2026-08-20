@@ -157,7 +157,7 @@
           "family": "natal-aspect/experience/moon/square/sun",
           "surface": "natal-aspect",
           "text_you": "What you want for yourself and what helps you feel settled do not always agree. You may choose a direction, then struggle with what that choice requires from you. At other times, you may protect your immediate comfort and later feel frustrated that you are no closer to the life you want.",
-          "text_they": "What they want for themselves and what helps them feel settled do not always agree. They may choose a direction, then struggle with what that choice requires from they. At other times, they may protect their immediate comfort and later feel frustrated that they are no closer to the life they want.",
+          "text_they": "What they want for themselves and what helps them feel settled do not always agree. They may choose a direction, then struggle with what that choice requires from them. At other times, they may protect their immediate comfort and later feel frustrated that they are no closer to the life they want.",
           "source_keys": [
             "cc/natal/aspect/moon-sun-square",
             "cc/planet/moon",
@@ -223,7 +223,7 @@
           "family": "natal-aspect/experience/sun/square/moon",
           "surface": "natal-aspect",
           "text_you": "What you want for yourself and what helps you feel settled do not always agree. You may choose a direction, then struggle with what that choice requires from you. At other times, you may protect your immediate comfort and later feel frustrated that you are no closer to the life you want.",
-          "text_they": "What they want for themselves and what helps them feel settled do not always agree. They may choose a direction, then struggle with what that choice requires from they. At other times, they may protect their immediate comfort and later feel frustrated that they are no closer to the life they want.",
+          "text_they": "What they want for themselves and what helps them feel settled do not always agree. They may choose a direction, then struggle with what that choice requires from them. At other times, they may protect their immediate comfort and later feel frustrated that they are no closer to the life they want.",
           "source_keys": [
             "cc/natal/aspect/moon-sun-square",
             "cc/planet/sun",
@@ -289,7 +289,7 @@
           "family": "natal-aspect/experience/moon/opposition/sun",
           "surface": "natal-aspect",
           "text_you": "What you want for yourself and what helps you feel settled do not always agree. You may choose a direction, then struggle with what that choice requires from you. At other times, you may protect your immediate comfort and later feel frustrated that you are no closer to the life you want.",
-          "text_they": "What they want for themselves and what helps them feel settled do not always agree. They may choose a direction, then struggle with what that choice requires from they. At other times, they may protect their immediate comfort and later feel frustrated that they are no closer to the life they want.",
+          "text_they": "What they want for themselves and what helps them feel settled do not always agree. They may choose a direction, then struggle with what that choice requires from them. At other times, they may protect their immediate comfort and later feel frustrated that they are no closer to the life they want.",
           "source_keys": [
             "cc/natal/aspect/moon-sun-opposition",
             "cc/planet/moon",
@@ -355,7 +355,7 @@
           "family": "natal-aspect/experience/sun/opposition/moon",
           "surface": "natal-aspect",
           "text_you": "What you want for yourself and what helps you feel settled do not always agree. You may choose a direction, then struggle with what that choice requires from you. At other times, you may protect your immediate comfort and later feel frustrated that you are no closer to the life you want.",
-          "text_they": "What they want for themselves and what helps them feel settled do not always agree. They may choose a direction, then struggle with what that choice requires from they. At other times, they may protect their immediate comfort and later feel frustrated that they are no closer to the life they want.",
+          "text_they": "What they want for themselves and what helps them feel settled do not always agree. They may choose a direction, then struggle with what that choice requires from them. At other times, they may protect their immediate comfort and later feel frustrated that they are no closer to the life they want.",
           "source_keys": [
             "cc/natal/aspect/moon-sun-opposition",
             "cc/planet/sun",
@@ -28732,7 +28732,7 @@
           "family": "placement/house-synthesis/sun/7",
           "surface": "natal-placement",
           "text_you": "you meet yourself through partnership and the person across from you",
-          "text_they": "they meet themselves through partnership and the person across from they",
+          "text_they": "they meet themselves through partnership and the person across from them",
           "source_keys": [
             "cc/planet-in-house/sun-in-7th-house",
             "cc/house/7"
@@ -29572,7 +29572,7 @@
           "family": "placement/house-synthesis/sun/7",
           "surface": "natal-placement",
           "text_you": "you meet yourself through partnership and the person across from you",
-          "text_they": "they meet themselves through partnership and the person across from they",
+          "text_they": "they meet themselves through partnership and the person across from them",
           "source_keys": [
             "cc/planet-in-house/sun-in-7th-house",
             "cc/house/7"
@@ -30412,7 +30412,7 @@
           "family": "placement/house-synthesis/sun/7",
           "surface": "natal-placement",
           "text_you": "you meet yourself through partnership and the person across from you",
-          "text_they": "they meet themselves through partnership and the person across from they",
+          "text_they": "they meet themselves through partnership and the person across from them",
           "source_keys": [
             "cc/planet-in-house/sun-in-7th-house",
             "cc/house/7"
@@ -31252,7 +31252,7 @@
           "family": "placement/house-synthesis/sun/7",
           "surface": "natal-placement",
           "text_you": "you meet yourself through partnership and the person across from you",
-          "text_they": "they meet themselves through partnership and the person across from they",
+          "text_they": "they meet themselves through partnership and the person across from them",
           "source_keys": [
             "cc/planet-in-house/sun-in-7th-house",
             "cc/house/7"
@@ -32092,7 +32092,7 @@
           "family": "placement/house-synthesis/sun/7",
           "surface": "natal-placement",
           "text_you": "you meet yourself through partnership and the person across from you",
-          "text_they": "they meet themselves through partnership and the person across from they",
+          "text_they": "they meet themselves through partnership and the person across from them",
           "source_keys": [
             "cc/planet-in-house/sun-in-7th-house",
             "cc/house/7"
@@ -32932,7 +32932,7 @@
           "family": "placement/house-synthesis/sun/7",
           "surface": "natal-placement",
           "text_you": "you meet yourself through partnership and the person across from you",
-          "text_they": "they meet themselves through partnership and the person across from they",
+          "text_they": "they meet themselves through partnership and the person across from them",
           "source_keys": [
             "cc/planet-in-house/sun-in-7th-house",
             "cc/house/7"
@@ -33313,7 +33313,7 @@
           "family": "placement/core-behavior/sun/libra",
           "surface": "natal-placement",
           "text_you": "Your identity forms in relationship; you find yourself in the space between you and another",
-          "text_they": "Their identity forms in relationship; they find themselves in the space between they and another",
+          "text_they": "Their identity forms in relationship; they find themselves in the space between them and another",
           "source_keys": [
             "cc/planet-in-sign/sun-in-libra",
             "cc/planet/sun",
@@ -33361,7 +33361,7 @@
           "family": "placement/core-behavior/sun/libra",
           "surface": "natal-placement",
           "text_you": "Your identity forms in relationship; you find yourself in the space between you and another",
-          "text_they": "Their identity forms in relationship; they find themselves in the space between they and another",
+          "text_they": "Their identity forms in relationship; they find themselves in the space between them and another",
           "source_keys": [
             "cc/planet-in-sign/sun-in-libra",
             "cc/planet/sun",
@@ -33427,7 +33427,7 @@
           "family": "placement/core-behavior/sun/libra",
           "surface": "natal-placement",
           "text_you": "Your identity forms in relationship; you find yourself in the space between you and another",
-          "text_they": "Their identity forms in relationship; they find themselves in the space between they and another",
+          "text_they": "Their identity forms in relationship; they find themselves in the space between them and another",
           "source_keys": [
             "cc/planet-in-sign/sun-in-libra",
             "cc/planet/sun",
@@ -33493,7 +33493,7 @@
           "family": "placement/core-behavior/sun/libra",
           "surface": "natal-placement",
           "text_you": "Your identity forms in relationship; you find yourself in the space between you and another",
-          "text_they": "Their identity forms in relationship; they find themselves in the space between they and another",
+          "text_they": "Their identity forms in relationship; they find themselves in the space between them and another",
           "source_keys": [
             "cc/planet-in-sign/sun-in-libra",
             "cc/planet/sun",
@@ -33559,7 +33559,7 @@
           "family": "placement/core-behavior/sun/libra",
           "surface": "natal-placement",
           "text_you": "Your identity forms in relationship; you find yourself in the space between you and another",
-          "text_they": "Their identity forms in relationship; they find themselves in the space between they and another",
+          "text_they": "Their identity forms in relationship; they find themselves in the space between them and another",
           "source_keys": [
             "cc/planet-in-sign/sun-in-libra",
             "cc/planet/sun",
@@ -33625,7 +33625,7 @@
           "family": "placement/core-behavior/sun/libra",
           "surface": "natal-placement",
           "text_you": "Your identity forms in relationship; you find yourself in the space between you and another",
-          "text_they": "Their identity forms in relationship; they find themselves in the space between they and another",
+          "text_they": "Their identity forms in relationship; they find themselves in the space between them and another",
           "source_keys": [
             "cc/planet-in-sign/sun-in-libra",
             "cc/planet/sun",
@@ -33691,7 +33691,7 @@
           "family": "placement/core-behavior/sun/libra",
           "surface": "natal-placement",
           "text_you": "Your identity forms in relationship; you find yourself in the space between you and another",
-          "text_they": "Their identity forms in relationship; they find themselves in the space between they and another",
+          "text_they": "Their identity forms in relationship; they find themselves in the space between them and another",
           "source_keys": [
             "cc/planet-in-sign/sun-in-libra",
             "cc/planet/sun",
@@ -33757,7 +33757,7 @@
           "family": "placement/core-behavior/sun/libra",
           "surface": "natal-placement",
           "text_you": "Your identity forms in relationship; you find yourself in the space between you and another",
-          "text_they": "Their identity forms in relationship; they find themselves in the space between they and another",
+          "text_they": "Their identity forms in relationship; they find themselves in the space between them and another",
           "source_keys": [
             "cc/planet-in-sign/sun-in-libra",
             "cc/planet/sun",
@@ -33772,7 +33772,7 @@
           "family": "placement/house-synthesis/sun/7",
           "surface": "natal-placement",
           "text_you": "you meet yourself through partnership and the person across from you",
-          "text_they": "they meet themselves through partnership and the person across from they",
+          "text_they": "they meet themselves through partnership and the person across from them",
           "source_keys": [
             "cc/planet-in-house/sun-in-7th-house",
             "cc/house/7"
@@ -33823,7 +33823,7 @@
           "family": "placement/core-behavior/sun/libra",
           "surface": "natal-placement",
           "text_you": "Your identity forms in relationship; you find yourself in the space between you and another",
-          "text_they": "Their identity forms in relationship; they find themselves in the space between they and another",
+          "text_they": "Their identity forms in relationship; they find themselves in the space between them and another",
           "source_keys": [
             "cc/planet-in-sign/sun-in-libra",
             "cc/planet/sun",
@@ -33889,7 +33889,7 @@
           "family": "placement/core-behavior/sun/libra",
           "surface": "natal-placement",
           "text_you": "Your identity forms in relationship; you find yourself in the space between you and another",
-          "text_they": "Their identity forms in relationship; they find themselves in the space between they and another",
+          "text_they": "Their identity forms in relationship; they find themselves in the space between them and another",
           "source_keys": [
             "cc/planet-in-sign/sun-in-libra",
             "cc/planet/sun",
@@ -33955,7 +33955,7 @@
           "family": "placement/core-behavior/sun/libra",
           "surface": "natal-placement",
           "text_you": "Your identity forms in relationship; you find yourself in the space between you and another",
-          "text_they": "Their identity forms in relationship; they find themselves in the space between they and another",
+          "text_they": "Their identity forms in relationship; they find themselves in the space between them and another",
           "source_keys": [
             "cc/planet-in-sign/sun-in-libra",
             "cc/planet/sun",
@@ -34021,7 +34021,7 @@
           "family": "placement/core-behavior/sun/libra",
           "surface": "natal-placement",
           "text_you": "Your identity forms in relationship; you find yourself in the space between you and another",
-          "text_they": "Their identity forms in relationship; they find themselves in the space between they and another",
+          "text_they": "Their identity forms in relationship; they find themselves in the space between them and another",
           "source_keys": [
             "cc/planet-in-sign/sun-in-libra",
             "cc/planet/sun",
@@ -34087,7 +34087,7 @@
           "family": "placement/core-behavior/sun/libra",
           "surface": "natal-placement",
           "text_you": "Your identity forms in relationship; you find yourself in the space between you and another",
-          "text_they": "Their identity forms in relationship; they find themselves in the space between they and another",
+          "text_they": "Their identity forms in relationship; they find themselves in the space between them and another",
           "source_keys": [
             "cc/planet-in-sign/sun-in-libra",
             "cc/planet/sun",
@@ -34612,7 +34612,7 @@
           "family": "placement/house-synthesis/sun/7",
           "surface": "natal-placement",
           "text_you": "you meet yourself through partnership and the person across from you",
-          "text_they": "they meet themselves through partnership and the person across from they",
+          "text_they": "they meet themselves through partnership and the person across from them",
           "source_keys": [
             "cc/planet-in-house/sun-in-7th-house",
             "cc/house/7"
@@ -35452,7 +35452,7 @@
           "family": "placement/house-synthesis/sun/7",
           "surface": "natal-placement",
           "text_you": "you meet yourself through partnership and the person across from you",
-          "text_they": "they meet themselves through partnership and the person across from they",
+          "text_they": "they meet themselves through partnership and the person across from them",
           "source_keys": [
             "cc/planet-in-house/sun-in-7th-house",
             "cc/house/7"
@@ -36292,7 +36292,7 @@
           "family": "placement/house-synthesis/sun/7",
           "surface": "natal-placement",
           "text_you": "you meet yourself through partnership and the person across from you",
-          "text_they": "they meet themselves through partnership and the person across from they",
+          "text_they": "they meet themselves through partnership and the person across from them",
           "source_keys": [
             "cc/planet-in-house/sun-in-7th-house",
             "cc/house/7"
@@ -37132,7 +37132,7 @@
           "family": "placement/house-synthesis/sun/7",
           "surface": "natal-placement",
           "text_you": "you meet yourself through partnership and the person across from you",
-          "text_they": "they meet themselves through partnership and the person across from they",
+          "text_they": "they meet themselves through partnership and the person across from them",
           "source_keys": [
             "cc/planet-in-house/sun-in-7th-house",
             "cc/house/7"
@@ -37972,7 +37972,7 @@
           "family": "placement/house-synthesis/sun/7",
           "surface": "natal-placement",
           "text_you": "you meet yourself through partnership and the person across from you",
-          "text_they": "they meet themselves through partnership and the person across from they",
+          "text_they": "they meet themselves through partnership and the person across from them",
           "source_keys": [
             "cc/planet-in-house/sun-in-7th-house",
             "cc/house/7"
@@ -38812,7 +38812,7 @@
           "family": "placement/house-synthesis/moon/7",
           "surface": "natal-placement",
           "text_you": "your feelings center on the person across from you and being met",
-          "text_they": "their feelings center on the person across from they and being met",
+          "text_they": "their feelings center on the person across from them and being met",
           "source_keys": [
             "cc/planet-in-house/moon-in-7th-house",
             "cc/house/7"
@@ -39652,7 +39652,7 @@
           "family": "placement/house-synthesis/moon/7",
           "surface": "natal-placement",
           "text_you": "your feelings center on the person across from you and being met",
-          "text_they": "their feelings center on the person across from they and being met",
+          "text_they": "their feelings center on the person across from them and being met",
           "source_keys": [
             "cc/planet-in-house/moon-in-7th-house",
             "cc/house/7"
@@ -40492,7 +40492,7 @@
           "family": "placement/house-synthesis/moon/7",
           "surface": "natal-placement",
           "text_you": "your feelings center on the person across from you and being met",
-          "text_they": "their feelings center on the person across from they and being met",
+          "text_they": "their feelings center on the person across from them and being met",
           "source_keys": [
             "cc/planet-in-house/moon-in-7th-house",
             "cc/house/7"
@@ -41332,7 +41332,7 @@
           "family": "placement/house-synthesis/moon/7",
           "surface": "natal-placement",
           "text_you": "your feelings center on the person across from you and being met",
-          "text_they": "their feelings center on the person across from they and being met",
+          "text_they": "their feelings center on the person across from them and being met",
           "source_keys": [
             "cc/planet-in-house/moon-in-7th-house",
             "cc/house/7"
@@ -42172,7 +42172,7 @@
           "family": "placement/house-synthesis/moon/7",
           "surface": "natal-placement",
           "text_you": "your feelings center on the person across from you and being met",
-          "text_they": "their feelings center on the person across from they and being met",
+          "text_they": "their feelings center on the person across from them and being met",
           "source_keys": [
             "cc/planet-in-house/moon-in-7th-house",
             "cc/house/7"
@@ -43012,7 +43012,7 @@
           "family": "placement/house-synthesis/moon/7",
           "surface": "natal-placement",
           "text_you": "your feelings center on the person across from you and being met",
-          "text_they": "their feelings center on the person across from they and being met",
+          "text_they": "their feelings center on the person across from them and being met",
           "source_keys": [
             "cc/planet-in-house/moon-in-7th-house",
             "cc/house/7"
@@ -43852,7 +43852,7 @@
           "family": "placement/house-synthesis/moon/7",
           "surface": "natal-placement",
           "text_you": "your feelings center on the person across from you and being met",
-          "text_they": "their feelings center on the person across from they and being met",
+          "text_they": "their feelings center on the person across from them and being met",
           "source_keys": [
             "cc/planet-in-house/moon-in-7th-house",
             "cc/house/7"
@@ -44692,7 +44692,7 @@
           "family": "placement/house-synthesis/moon/7",
           "surface": "natal-placement",
           "text_you": "your feelings center on the person across from you and being met",
-          "text_they": "their feelings center on the person across from they and being met",
+          "text_they": "their feelings center on the person across from them and being met",
           "source_keys": [
             "cc/planet-in-house/moon-in-7th-house",
             "cc/house/7"
@@ -45532,7 +45532,7 @@
           "family": "placement/house-synthesis/moon/7",
           "surface": "natal-placement",
           "text_you": "your feelings center on the person across from you and being met",
-          "text_they": "their feelings center on the person across from they and being met",
+          "text_they": "their feelings center on the person across from them and being met",
           "source_keys": [
             "cc/planet-in-house/moon-in-7th-house",
             "cc/house/7"
@@ -46372,7 +46372,7 @@
           "family": "placement/house-synthesis/moon/7",
           "surface": "natal-placement",
           "text_you": "your feelings center on the person across from you and being met",
-          "text_they": "their feelings center on the person across from they and being met",
+          "text_they": "their feelings center on the person across from them and being met",
           "source_keys": [
             "cc/planet-in-house/moon-in-7th-house",
             "cc/house/7"
@@ -47212,7 +47212,7 @@
           "family": "placement/house-synthesis/moon/7",
           "surface": "natal-placement",
           "text_you": "your feelings center on the person across from you and being met",
-          "text_they": "their feelings center on the person across from they and being met",
+          "text_they": "their feelings center on the person across from them and being met",
           "source_keys": [
             "cc/planet-in-house/moon-in-7th-house",
             "cc/house/7"
@@ -48052,7 +48052,7 @@
           "family": "placement/house-synthesis/moon/7",
           "surface": "natal-placement",
           "text_you": "your feelings center on the person across from you and being met",
-          "text_they": "their feelings center on the person across from they and being met",
+          "text_they": "their feelings center on the person across from them and being met",
           "source_keys": [
             "cc/planet-in-house/moon-in-7th-house",
             "cc/house/7"

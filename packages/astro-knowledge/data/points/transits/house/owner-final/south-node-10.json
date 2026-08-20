@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "south-node-10",
+  "canonicalId": "transit-house/south_node/10",
+  "kind": "house",
+  "transiting": "south-node",
+  "house": 10,
+  "headline": "The role everyone knows",
+  "body": "The South Node in your 10th house pulls you back toward public roles and responsibilities you know how to handle. More work, higher titles, or familiar praise might come your way because people rely on you. You earned that trust, but professional success can easily become a hiding place when your personal life feels messy or unrewarding.\n\nAcross the chart, the 4th house highlights home, family, rest, and your emotional foundation. This is not about giving up ambition. It is about checking if your work identity has become more important than your actual life behind closed doors.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "South Node — 10H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

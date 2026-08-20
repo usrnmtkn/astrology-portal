@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.conjunction.north-node",
+  "canonicalId": "sky-aspect/north_node/pluto/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "pluto",
+  "aspect": "conjunction",
+  "humanMoment": "The collective question is getting personal.",
+  "developmentDetail": "Someone who always treated the issue, the institution, the system, the way things are run, as somebody else's problem finds it on their own doorstep with a form bearing their name.",
+  "planetaryDynamic": "With Pluto conjunct the North Node, people discover the path forward runs straight through the material they found easiest to leave buried, and the digging and the direction turn out to be the same work.",
+  "aspectMechanic": "Nobody else's name is on the form.",
+  "conditionalConsequence": "They may decline the assignment for a while, but people rarely get a question to go abstract again once it has gone personal, and the form tends to stay on the table.",
+  "body": "The collective question is getting personal.\n\nSomeone who always treated the issue, the institution, the system, the way things are run, as somebody else's problem finds it on their own doorstep with a form bearing their name.\n\nWith Pluto conjunct the North Node, people discover the path forward runs straight through the material they found easiest to leave buried, and the digging and the direction turn out to be the same work.\n\nNobody else's name is on the form.\n\nThey may decline the assignment for a while, but people rarely get a question to go abstract again once it has gone personal, and the form tends to stay on the table.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.pluto.conjunction.north-node",
+    "sourceHeading": "Pluto conjunction North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

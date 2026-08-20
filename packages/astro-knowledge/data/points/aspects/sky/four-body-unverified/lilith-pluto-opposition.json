@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.opposition.lilith",
+  "canonicalId": "sky-aspect/lilith/pluto/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "pluto",
+  "aspect": "opposition",
+  "humanMoment": "Two people fight over who gets to bring their buried thing into the open first.",
+  "developmentDetail": "Each holds a confession, a grievance, or a claim, and each treats the other's surfacing as a threat to their own.",
+  "planetaryDynamic": "With Pluto opposite Lilith, one of them controls the excavation schedule while the other speaks for the material that refuses to wait its turn.",
+  "aspectMechanic": "So they turn disclosure into a contest instead of a relief.",
+  "conditionalConsequence": "A negotiated order may emerge, but a room only holds so much surfacing at once, and somebody's material gets deferred.",
+  "body": "Two people fight over who gets to bring their buried thing into the open first.\n\nEach holds a confession, a grievance, or a claim, and each treats the other's surfacing as a threat to their own.\n\nWith Pluto opposite Lilith, one of them controls the excavation schedule while the other speaks for the material that refuses to wait its turn.\n\nSo they turn disclosure into a contest instead of a relief.\n\nA negotiated order may emerge, but a room only holds so much surfacing at once, and somebody's material gets deferred.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.pluto.opposition.lilith",
+    "sourceHeading": "Pluto opposition Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

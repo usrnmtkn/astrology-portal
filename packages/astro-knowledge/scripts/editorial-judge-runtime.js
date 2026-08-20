@@ -70,6 +70,7 @@ async function runJudgeSamples({
   samples = 1,
   temperature = 0.1,
   judgeFn,
+  beforeProviderCall,
   parseVerdict,
   context = {},
   calibration = false
@@ -92,11 +93,15 @@ async function runJudgeSamples({
   }
 
   const modelSurface = context.modelSurface || context.surface || "default";
-  const fn = judgeFn || ((value) => generateJudge(value, { temperature, surface: modelSurface }));
+  const fn = judgeFn || ((value) => generateJudge(value, {
+    temperature,
+    surface: modelSurface,
+    beforeProviderCall: (attempt) => beforeProviderCall?.(attempt, { content, context })
+  }));
   const count = Math.max(1, Number(samples) || 1);
   const verdicts = [];
   for (let i = 0; i < count; i += 1) {
-    verdicts.push(parseVerdict(await fn(outboundPrompt, context)));
+    verdicts.push(parseVerdict(await fn(outboundPrompt, { ...context, content })));
   }
 
   const scores = verdicts.map((verdict) => normalizeScore(verdict.score)).sort((a, b) => a - b);

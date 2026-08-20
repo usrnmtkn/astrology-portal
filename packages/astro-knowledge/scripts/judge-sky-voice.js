@@ -192,7 +192,10 @@ function parseVerdict(raw) {
 // samples > 1 runs the judge N times and takes the median score (self-consistency).
 // Default 1 is cheap for production; calibration uses 3 for a stable read.
 async function judgeCard(card, opts = {}) {
-  const prompt = buildJudgePrompt(card, opts);
+  const prompt = [
+    buildJudgePrompt(card, opts),
+    opts.governedPrompt ? `GOVERNED KNOWLEDGE EVIDENCE\n${opts.governedPrompt}` : ""
+  ].filter(Boolean).join("\n\n");
   const result = await runJudgeSamples({
     content: card,
     prompt,
@@ -207,6 +210,7 @@ async function judgeCard(card, opts = {}) {
     samples: opts.samples,
     temperature: JUDGE_TEMPERATURE,
     judgeFn: opts.judgeFn,
+    beforeProviderCall: opts.beforeProviderCall,
     parseVerdict,
     context: { surface: "sky-aspect", mode: opts.mode || "collective-aspect-card", tier: opts.tier || "" },
     calibration: Boolean(opts.calibration)

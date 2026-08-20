@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "lilith-9",
+  "canonicalId": "transit-house/lilith/9",
+  "kind": "house",
+  "transiting": "lilith",
+  "house": 9,
+  "headline": "The belief you are allowed to question",
+  "body": "Black Moon Lilith in your 9th house makes inherited beliefs, religious dogmas, and authority figures fair game for questioning. You might challenge a teacher, reject a tradition, or admit that a philosophy you were taught does not match your real life. That break feels uncomfortable when fitting in required you to repeat the approved script.\n\nRebellion for its own sake is not true freedom. Simply opposing everything still lets someone else's rules control your attention. Build a core set of beliefs that survives your own tough questions, rather than picking a stance just to irritate the people who taught you.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Lilith — 9H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

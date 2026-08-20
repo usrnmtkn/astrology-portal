@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "south-node-9",
+  "canonicalId": "transit-house/south_node/9",
+  "kind": "house",
+  "transiting": "south-node",
+  "house": 9,
+  "headline": "Living what you already know",
+  "body": "As the South Node moves through your 9th house, another class, trip, book, or big philosophy might look like the missing piece. You could easily spend your time searching for grand theories that explain everything while ignoring the practical work right in front of you. Having a broad vision expands your mind, but it can also become an excuse to stay above the messy details of daily life.\n\nThe 3rd house across the chart brings you back to plain speech, local commitments, and putting ideas into practice. You probably know enough already. The real test is seeing if your beliefs actually work when applied to ordinary decisions.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "South Node — 9H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

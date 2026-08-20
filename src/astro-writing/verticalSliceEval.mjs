@@ -26,7 +26,8 @@ function evaluateNegative(fixture) {
     register: "collective",
     expectedPlaceholders: [],
     requiredFields: ["body"],
-    protectedOwnerLines: []
+    protectedOwnerLines: [],
+    validationProfile: "sky-placement"
   });
   const categories = [...new Set(review.violations.map((item) => item.category))];
   const missed = fixture.expected_failures.filter((category) => !categories.includes(category));

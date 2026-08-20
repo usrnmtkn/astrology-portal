@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.square.lilith",
+  "canonicalId": "sky-aspect/lilith/mercury/square",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "mercury",
+  "aspect": "square",
+  "humanMoment": "Someone's polite phrasing and their true sentence are fighting over the same email.",
+  "developmentDetail": "By the fourth draft they have softened the point into fog, the recipient answers the fog, and the real message still has not been sent.",
+  "planetaryDynamic": "With Mercury square Lilith, people want the exchange smooth and answerable while carrying a point that refuses to be paraphrased.",
+  "aspectMechanic": "Every softening feels to them like a lie, and every plain version feels like an attack.",
+  "conditionalConsequence": "A message may finally go out, but the edit history shows exactly what this workplace lets people say.",
+  "body": "Someone's polite phrasing and their true sentence are fighting over the same email.\n\nBy the fourth draft they have softened the point into fog, the recipient answers the fog, and the real message still has not been sent.\n\nWith Mercury square Lilith, people want the exchange smooth and answerable while carrying a point that refuses to be paraphrased.\n\nEvery softening feels to them like a lie, and every plain version feels like an attack.\n\nA message may finally go out, but the edit history shows exactly what this workplace lets people say.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.mercury.square.lilith",
+    "sourceHeading": "Mercury square Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.conjunction.chiron",
+  "canonicalId": "sky-aspect/chiron/uranus/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "uranus",
+  "aspect": "conjunction",
+  "humanMoment": "The disruption shows people what the routine was protecting.",
+  "developmentDetail": "Someone loses the arrangement or the plan without warning, and with the padding gone, they meet the old sore spot standing there unannounced.",
+  "planetaryDynamic": "With Uranus conjunct Chiron, people watch a pattern break on contact in the exact place where the pattern grew around an injury.",
+  "aspectMechanic": "The change and the ache arrive as one event.",
+  "conditionalConsequence": "The exposure may feel like an accident, but what got uncovered may have been waiting for exactly this, and the people who look at it now tend to meet it on better terms than more padding would buy.",
+  "body": "The disruption shows people what the routine was protecting.\n\nSomeone loses the arrangement or the plan without warning, and with the padding gone, they meet the old sore spot standing there unannounced.\n\nWith Uranus conjunct Chiron, people watch a pattern break on contact in the exact place where the pattern grew around an injury.\n\nThe change and the ache arrive as one event.\n\nThe exposure may feel like an accident, but what got uncovered may have been waiting for exactly this, and the people who look at it now tend to meet it on better terms than more padding would buy.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.uranus.conjunction.chiron",
+    "sourceHeading": "Uranus conjunction Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

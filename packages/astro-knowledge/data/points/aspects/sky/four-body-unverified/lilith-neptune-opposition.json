@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.neptune.opposition.lilith",
+  "canonicalId": "sky-aspect/lilith/neptune/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "neptune",
+  "aspect": "opposition",
+  "humanMoment": "One person holds the dream while the other holds the appetite, and each calls the other unrealistic.",
+  "developmentDetail": "The romantic and the hungry one argue about the same future in different languages, and the argument stays perfectly circular.",
+  "planetaryDynamic": "With Neptune opposite Lilith, one of them defends the vision as imagined while the other demands the version that can be touched.",
+  "aspectMechanic": "They stage in front of everyone a confusion either could have carried alone.",
+  "conditionalConsequence": "The argument may never resolve in theory, but one concrete test tells both of them what the dream is made of.",
+  "body": "One person holds the dream while the other holds the appetite, and each calls the other unrealistic.\n\nThe romantic and the hungry one argue about the same future in different languages, and the argument stays perfectly circular.\n\nWith Neptune opposite Lilith, one of them defends the vision as imagined while the other demands the version that can be touched.\n\nThey stage in front of everyone a confusion either could have carried alone.\n\nThe argument may never resolve in theory, but one concrete test tells both of them what the dream is made of.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.neptune.opposition.lilith",
+    "sourceHeading": "Neptune opposition Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

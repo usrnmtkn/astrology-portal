@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "north-node-6",
+  "canonicalId": "transit-house/north_node/6",
+  "kind": "house",
+  "transiting": "north-node",
+  "house": 6,
+  "headline": "A life your body can live in",
+  "body": "As the North Node moves through your 6th house, daily habits become impossible to ignore. Work routines, sleep, meals, exercise, appointments, and errands need a practical structure that holds up even on tough weeks. This progress is quiet because nobody cheers for basic maintenance, but these small routines dictate how much health and energy you actually have.\n\nThe 12th house across the chart carries the habit of checked-out waiting and hoping clarity magically appears. Rest is essential, but this transit shows the difference between rest that restores you and avoidance that leaves tomorrow with twice as much work.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "North Node — 6H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

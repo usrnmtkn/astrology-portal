@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.lilith.square.north-node",
+  "canonicalId": "sky-aspect/lilith/north_node/square",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "north_node",
+  "aspect": "square",
+  "humanMoment": "Someone has to commit, and the respectable route and the real hunger both want the signature.",
+  "developmentDetail": "If they sign the safe renewal, the lease, the role, the standing yes, they block the direction; if they choose the hunger, they pay in standing; and waiting quietly chooses too.",
+  "planetaryDynamic": "With Lilith square the North Node, people refuse the domesticated version of the want while both the practiced route and the unpracticed direction pull at the same signature.",
+  "aspectMechanic": "One way or another, they finally face the step they keep skipping.",
+  "conditionalConsequence": "Either choice may be defensible, but the fork does not stay open, and the automatic yes is the only indefensible answer.",
+  "body": "Someone has to commit, and the respectable route and the real hunger both want the signature.\n\nIf they sign the safe renewal, the lease, the role, the standing yes, they block the direction; if they choose the hunger, they pay in standing; and waiting quietly chooses too.\n\nWith Lilith square the North Node, people refuse the domesticated version of the want while both the practiced route and the unpracticed direction pull at the same signature.\n\nOne way or another, they finally face the step they keep skipping.\n\nEither choice may be defensible, but the fork does not stay open, and the automatic yes is the only indefensible answer.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.lilith.square.north-node",
+    "sourceHeading": "Lilith square North Node",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

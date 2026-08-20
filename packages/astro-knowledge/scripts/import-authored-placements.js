@@ -1,10 +1,33 @@
 const fs = require("fs");
 const path = require("path");
+const {
+  buildHouseDoctrine,
+  contentClass,
+  separateAstrologyBody
+} = require("./authored-placement-schema-separation.cjs");
 
 const root = path.resolve(__dirname, "..");
-const sourceRoot = path.join(root, "sources", "authored", "marie-satori-book");
 const outputRoot = path.join(root, "generated", "tldr-astro", "authored-placements");
 const outputPath = path.join(outputRoot, "authored-placements.json");
+const args = process.argv.slice(2);
+const argValue = (flag) => {
+  const index = args.indexOf(flag);
+  return index === -1 ? "" : args[index + 1] ?? "";
+};
+const bookArg = argValue("--book");
+const keepLegacyNotes = args.includes("--keep-legacy-notes");
+const check = args.includes("--check");
+
+if (!bookArg) {
+  console.error("Missing required --book <owner-held-source.json>. No in-repo source default is permitted.");
+  process.exit(2);
+}
+
+const bookPath = path.resolve(process.cwd(), bookArg);
+if (!fs.existsSync(bookPath)) {
+  console.error(`Owner-held source not found: ${bookPath}`);
+  process.exit(2);
+}
 
 function stringValue(value) {
   if (typeof value === "number" && Number.isFinite(value)) return String(value);
@@ -53,26 +76,14 @@ function normalizedMatchType(value) {
   return key(value).replace(/-/g, "_");
 }
 
-function readJsonFiles(dir) {
-  if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir)
-    .filter((file) => file.endsWith(".json"))
-    .sort()
-    .map((file) => path.join(dir, file));
-}
-
 const entries = [];
-const sourceFiles = [];
+const source = JSON.parse(fs.readFileSync(bookPath, "utf8"));
+const sections = Array.isArray(source.sections) ? source.sections : [];
 
-for (const filePath of readJsonFiles(sourceRoot)) {
-  const source = JSON.parse(fs.readFileSync(filePath, "utf8"));
-  const sections = Array.isArray(source.sections) ? source.sections : [];
-  sourceFiles.push(path.relative(root, filePath));
-
-  for (const section of sections) {
+for (const section of sections) {
     const id = entryId(section);
     const sourceBody = stringValue(section.sourceBody) || stringValue(section.body);
-    const astrologyBody = stringValue(section.astrologyBody);
+    const separated = separateAstrologyBody(stringValue(section.astrologyBody));
     const tarotNotes = stringValue(section.tarotNotes);
     const businessNotes = stringValue(section.businessNotes);
     const appBody = stringValue(section.appBody);
@@ -81,7 +92,7 @@ for (const filePath of readJsonFiles(sourceRoot)) {
 
     if (!id || !sourceBody || !matchType) continue;
 
-    entries.push({
+    const entry = {
       id,
       matchType,
       planet: stringValue(section.planet),
@@ -89,31 +100,90 @@ for (const filePath of readJsonFiles(sourceRoot)) {
       house: stringValue(section.house),
       title: stringValue(section.title),
       body: appBody,
-      sourceBody,
-      astrologyBody,
-      tarotNotes,
-      businessNotes,
+      astrologyBody: separated.astrologyBody,
+      astrologySupport: "",
+      readerCopy: "",
+      placementMechanism: "",
+      sourceExcerpt: "",
+      tarotCorrespondence: separated.tarotCorrespondence,
+      naturalZodiacAnalogy: separated.naturalZodiacAnalogy,
       appBody,
       draftBody,
       editStatus: stringValue(section.editStatus) || "needs_review",
-      sourceDocument: stringValue(source.sourceDocument),
-      sourcePath: path.relative(root, filePath),
       sourceLineRange: stringValue(section.sourceLineRange),
       sourceType: stringValue(section.sourceType) || "project_authored_book_excerpt",
       themes: Array.isArray(section.themes) ? section.themes.map(stringValue).filter(Boolean) : [],
       directPlacementBody: section.directPlacementBody === true,
       directUseAllowed: section.directUseAllowed === true,
-      usage: stringValue(section.usage) || "sourceBody is preserved for review. astrologyBody is the only authored source field used for natal placement app copy. tarotNotes and businessNotes are not reader-facing in natal placement output."
-    });
+      sourceProvenance: {
+        sourceFamily: "MS-CA",
+        sourceKey: stringValue(section.id),
+        sourceLineRange: stringValue(section.sourceLineRange),
+        governance: "owner-authored-source-review-needed",
+        fullExtractSha256: "4d5a55cbe4266b91144f3652014998a29f8141362a6cfbad7ab40cea1e17b47b"
+      },
+      editorialStatus: {
+        contentClass: contentClass(section),
+        reviewState: "review_needed",
+        readerCopyClassification: "not_assessed",
+        astrologySupportExtraction: "not_extracted",
+        placementMechanismExtraction: "not_extracted",
+        exactMatchIsProvenanceOnly: true
+      },
+      ownerApproved: false,
+      servingEligible: false,
+      usage: "astrologyBody remains the only production-consumed authored field. Separated fields are review-only and fail-closed."
+    };
+    if (keepLegacyNotes) {
+      entry.sourceBody = sourceBody;
+      entry.tarotNotes = tarotNotes;
+      entry.businessNotes = businessNotes;
+    }
+    entries.push(entry);
+}
+
+const corpus = {
+  id: "authored-placements",
+  kind: "authored-placement-corpus",
+  status: "review_needed",
+  sourceIds: ["MS-CA"],
+  sourceManifest: "packages/astro-knowledge/review/friends-transit-house-licenses-v3/source-manifest.json",
+  houseDoctrine: buildHouseDoctrine(sections),
+  governance: {
+    ownerApproved: false,
+    servingEligible: false,
+    productionConsumerField: "astrologyBody",
+    tarotEnabledForOrdinaryAstrology: false
+  },
+  schemaSeparation: {
+    sentenceGranularity: true,
+    houseDoctrineNormalizedOncePerHouse: true,
+    placementMechanismStatus: "not_extracted_review_needed",
+    readerCopyNeverInferred: true,
+    shortEntryCountNotReclassifiedAsCopy: 93
+  },
+  entries
+};
+const output = JSON.stringify(corpus, null, 2) + "\n";
+
+if (check) {
+  const current = fs.existsSync(outputPath) ? fs.readFileSync(outputPath, "utf8") : "";
+  if (current !== output) {
+    console.error("STALE: authored placements do not match the owner-held source and importer.");
+    process.exit(1);
   }
+  console.log("Authored placements are current.");
+  process.exit(0);
 }
 
 fs.mkdirSync(outputRoot, { recursive: true });
-fs.writeFileSync(outputPath, JSON.stringify({
-  id: "authored-placements",
-  kind: "authored-placement-corpus",
-  sourceFiles,
-  entries
-}, null, 2) + "\n");
+fs.writeFileSync(outputPath, output);
 
-console.log("Imported " + entries.length + " authored placement entries to " + path.relative(root, outputPath));
+console.log(JSON.stringify({
+  importedEntries: entries.length,
+  houseDoctrineRecords: corpus.houseDoctrine.length,
+  tarotSeparatedEntries: entries.filter((entry) => entry.tarotCorrespondence).length,
+  naturalZodiacSeparatedEntries: entries.filter((entry) => entry.naturalZodiacAnalogy).length,
+  legacyNotesRetained: keepLegacyNotes,
+  output: path.relative(root, outputPath)
+}, null, 2));

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.trine.chiron",
+  "canonicalId": "sky-aspect/chiron/moon/trine",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "moon",
+  "aspect": "trine",
+  "humanMoment": "The household adjusts around someone's sore spot without being asked.",
+  "developmentDetail": "Family members handle the topic gently, quietly rebalance the load, and deliver care in the one dialect the person can actually receive.",
+  "planetaryDynamic": "With the Moon trine Chiron, people sense what is needed and remember, without saying so, where the needing was once punished.",
+  "aspectMechanic": "Nobody sets off the old defenses on the way in.",
+  "conditionalConsequence": "The ease may go unremarked, and that is fine; people who receive care without ceremony are still receiving it, and their nervous systems tend to take the note.",
+  "body": "The household adjusts around someone's sore spot without being asked.\n\nFamily members handle the topic gently, quietly rebalance the load, and deliver care in the one dialect the person can actually receive.\n\nWith the Moon trine Chiron, people sense what is needed and remember, without saying so, where the needing was once punished.\n\nNobody sets off the old defenses on the way in.\n\nThe ease may go unremarked, and that is fine; people who receive care without ceremony are still receiving it, and their nervous systems tend to take the note.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.moon.trine.chiron",
+    "sourceHeading": "Moon trine Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

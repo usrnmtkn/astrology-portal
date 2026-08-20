@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.opposition.north-node",
+  "canonicalId": "sky-aspect/moon/north_node/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "moon",
+  "bodyB": "north_node",
+  "aspect": "opposition",
+  "humanMoment": "The homesickness is getting specific: one place, one era, one table.",
+  "developmentDetail": "Someone remembers the old neighborhood, the old crew, the way they used to spend their evenings, all in high resolution, and the new territory cannot compete on warmth yet.",
+  "planetaryDynamic": "With the Moon opposite the North Node, people feel most nourished by exactly what is finished, because they keep their comfort stored at the familiar end of the road while the new rooms do not smell like anything yet.",
+  "aspectMechanic": "People are choosing between a memory and a room that has not earned one yet.",
+  "conditionalConsequence": "The visit home may be worth taking, but people who mistake the museum for a residence tend to spend the whole season in the gift shop.",
+  "body": "The homesickness is getting specific: one place, one era, one table.\n\nSomeone remembers the old neighborhood, the old crew, the way they used to spend their evenings, all in high resolution, and the new territory cannot compete on warmth yet.\n\nWith the Moon opposite the North Node, people feel most nourished by exactly what is finished, because they keep their comfort stored at the familiar end of the road while the new rooms do not smell like anything yet.\n\nPeople are choosing between a memory and a room that has not earned one yet.\n\nThe visit home may be worth taking, but people who mistake the museum for a residence tend to spend the whole season in the gift shop.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.moon.opposition.north-node",
+    "sourceHeading": "Moon opposition North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

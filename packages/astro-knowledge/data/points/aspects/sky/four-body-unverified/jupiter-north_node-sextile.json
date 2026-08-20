@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.sextile.north-node",
+  "canonicalId": "sky-aspect/jupiter/north_node/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "jupiter",
+  "bodyB": "north_node",
+  "aspect": "sextile",
+  "humanMoment": "The luck is showing up now that people have chosen a direction.",
+  "developmentDetail": "Someone commits, and then the helpful coincidences begin: a friend mentions them, a stranger knows a person, a discount appears, small tailwinds that stayed away during all the hedging.",
+  "planetaryDynamic": "With Jupiter sextile the North Node, people find the favors arriving along the road they picked, and the old life supplies its share of them, but the favors only find people who are moving.",
+  "aspectMechanic": "Nobody gets a tailwind while parked.",
+  "conditionalConsequence": "The coincidences may be modest one by one, but they add up for people traveling a chosen line, and they scatter around people who have not chosen one.",
+  "body": "The luck is showing up now that people have chosen a direction.\n\nSomeone commits, and then the helpful coincidences begin: a friend mentions them, a stranger knows a person, a discount appears, small tailwinds that stayed away during all the hedging.\n\nWith Jupiter sextile the North Node, people find the favors arriving along the road they picked, and the old life supplies its share of them, but the favors only find people who are moving.\n\nNobody gets a tailwind while parked.\n\nThe coincidences may be modest one by one, but they add up for people traveling a chosen line, and they scatter around people who have not chosen one.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.jupiter.sextile.north-node",
+    "sourceHeading": "Jupiter sextile North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

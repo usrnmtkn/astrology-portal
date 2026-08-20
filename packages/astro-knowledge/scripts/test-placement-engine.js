@@ -154,13 +154,22 @@ assert.deepEqual(
 const chiron = generator.normalizePlacementArgs({ planet: "Chiron", sign: "Aries" });
 assert.equal(chiron.placementSource, "data/points/placements/sign/chiron-aries.json");
 
-const southNode = generator.normalizePlacementArgs({ planet: "South Node", sign: "Aries" });
-assert.equal(southNode.placementSource, "data/points/placements/sign/north-node-libra.json");
-assert.deepEqual(southNode.derivedFrom, {
-  planet: "north-node",
-  sign: "libra",
-  frame: "comfort-zone/release"
-});
+const southNode = generator.normalizePlacementArgs({ planet: "South Node", sign: "Leo" });
+assert.equal(southNode.placementSource, "data/placements/sign/south-node-leo.json");
+assert.equal(southNode.derivedFrom, null);
+assert.equal(southNode.source.planet, "south-node");
+assert.throws(
+  () => generator.normalizePlacementArgs({ planet: "South Node", sign: "Aries" }),
+  (error) => error instanceof generator.SourceGapError && error.code === "missing-source"
+);
+let southNodeSourceGapProviderCalls = 0;
+const southNodeSourceGap = await generator.generatePlacementCard(
+  { planet: "South Node", sign: "Aries" },
+  { generateFn: async () => { southNodeSourceGapProviderCalls += 1; return "should-not-run"; } }
+);
+assert.equal(southNodeSourceGap.status, "skipped");
+assert.equal(southNodeSourceGap.reason, "missing-source");
+assert.equal(southNodeSourceGapProviderCalls, 0, "Missing South Node sources must fail before billing.");
 
 const bodies = [
   "sun",
@@ -193,9 +202,18 @@ const signs = [
   "pisces"
 ];
 let covered = 0;
+let sourceGaps = 0;
 
 for (const planet of bodies) {
   for (const sign of signs) {
+    if (planet === "south-node" && sign !== "leo") {
+      assert.throws(
+        () => generator.normalizePlacementArgs({ planet, sign }),
+        (error) => error instanceof generator.SourceGapError && error.code === "missing-source"
+      );
+      sourceGaps += 1;
+      continue;
+    }
     const normalized = generator.normalizePlacementArgs({ planet, sign });
     assert.equal(normalized.planet, planet);
     assert.equal(normalized.sign, sign);
@@ -204,7 +222,8 @@ for (const planet of bodies) {
   }
 }
 
-assert.equal(covered, 168);
+assert.equal(covered, 157);
+assert.equal(sourceGaps, 11);
 
 const prompt = generator.buildPlacementPrompt({ planet: "sun", sign: "leo" });
 assert.match(prompt, /collective sky placement card for Sun in Leo/i);
@@ -236,10 +255,11 @@ assert.match(aspectPrompt, /Words shared by Marie and AC/);
 assert.doesNotMatch(aspectPrompt, /DELETE THE PRE-CLOSE APHORISM - less is more/);
 assert.doesNotMatch(aspectPrompt, /MAKE THE MIDDLE CONCRETE/);
 
-const southNodePrompt = generator.buildPlacementPrompt({ planet: "south-node", sign: "aries" });
-assert.match(southNodePrompt, /derived from North Node in Libra/i);
-assert.match(southNodePrompt, /comfort zone to recognize and release/i);
-assert.match(southNodePrompt, /Do not describe South Node as the growth destination/i);
+const southNodePrompt = generator.buildPlacementPrompt({ planet: "south-node", sign: "leo" });
+assert.match(southNodePrompt, /South Node in Leo/i);
+assert.match(southNodePrompt, /familiar ground is personal recognition/i);
+assert.doesNotMatch(southNodePrompt, /derived from North Node/i);
+assert.doesNotMatch(southNodePrompt, /DERIVED NODE AXIS RULE/i);
 
 const judgePrompt = buildJudgePrompt(sunGold.body, {
   mode: placementMode,
@@ -377,7 +397,7 @@ assert.equal(judged.judge.score, 3);
 assert.equal(judged.gate, "human-review");
 assert.equal(judged.judge.recommendation, "approve");
 
-  console.log("Sky-placement engine contract passed: 17 aspect golds, 4 placement golds, 2 topper golds, 168 source-backed placements.");
+  console.log("Sky-placement engine contract passed: 17 aspect golds, 4 placement golds, 2 topper golds, 157 source-backed placements, 11 fail-closed South Node gaps.");
 }
 
 main().catch((error) => {

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.conjunction.lilith",
+  "canonicalId": "sky-aspect/jupiter/lilith/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "jupiter",
+  "bodyB": "lilith",
+  "aspect": "conjunction",
+  "humanMoment": "Someone hands a megaphone to the appetite that was kept in the basement.",
+  "developmentDetail": "Overnight they inflate the modest wish into a plan: the bigger ask, the open secret, the want announced before anyone examined it.",
+  "planetaryDynamic": "With Jupiter conjunct Lilith, the person doing the enlarging and the person doing the wanting are the same person, and the want was never vetted for this volume.",
+  "aspectMechanic": "So the private appetite debuts in front of everyone at full size, with its owner still catching up.",
+  "conditionalConsequence": "The announcement may be liberating, but a line that seemed obvious last month deserves a sober look before anyone crosses it.",
+  "body": "Someone hands a megaphone to the appetite that was kept in the basement.\n\nOvernight they inflate the modest wish into a plan: the bigger ask, the open secret, the want announced before anyone examined it.\n\nWith Jupiter conjunct Lilith, the person doing the enlarging and the person doing the wanting are the same person, and the want was never vetted for this volume.\n\nSo the private appetite debuts in front of everyone at full size, with its owner still catching up.\n\nThe announcement may be liberating, but a line that seemed obvious last month deserves a sober look before anyone crosses it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.jupiter.conjunction.lilith",
+    "sourceHeading": "Jupiter conjunction Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

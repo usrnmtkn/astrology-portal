@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.opposition.north-node",
+  "canonicalId": "sky-aspect/north_node/venus/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "venus",
+  "aspect": "opposition",
+  "humanMoment": "The most attractive option in view is one people have already lived.",
+  "developmentDetail": "Someone watches the former person, the former place, the former version of pleasure present at full strength, polished by memory and stripped of the reasons it ended.",
+  "planetaryDynamic": "With Venus opposite the North Node, people want most what sits at the familiar end of the road, because they have already harvested that territory while the new company is still mostly strangers.",
+  "aspectMechanic": "Nobody remembering it includes the exit interview.",
+  "conditionalConsequence": "The reunion may be sweet, but people who reread the original reasons tend to find them still on file, and the file rarely improves with age.",
+  "body": "The most attractive option in view is one people have already lived.\n\nSomeone watches the former person, the former place, the former version of pleasure present at full strength, polished by memory and stripped of the reasons it ended.\n\nWith Venus opposite the North Node, people want most what sits at the familiar end of the road, because they have already harvested that territory while the new company is still mostly strangers.\n\nNobody remembering it includes the exit interview.\n\nThe reunion may be sweet, but people who reread the original reasons tend to find them still on file, and the file rarely improves with age.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.venus.opposition.north-node",
+    "sourceHeading": "Venus opposition North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -6,10 +6,10 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const vercel = JSON.parse(fs.readFileSync(path.join(repoRoot, "vercel.json"), "utf8"));
 const functionConfig = vercel.functions?.["api/**/*.ts"];
-const expectedIncludeGlob = "{api/_lib/{content-generation.ts,report-*.ts,supabase-report-admin.ts},artifacts/*.md,config/*.json,packages/astro-knowledge/data/manifestation-sets/*.json,tldr-astro-phrasebank/*.md}";
+const expectedIncludeGlob = "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/marie-satori-book},apps/web/{public/content,src/content},tldr-astro-phrasebank}/**/*.{cjs,js,json,md,mjs,ts}";
 
 assert.ok(functionConfig, "Every TypeScript API function must receive the report runtime include manifest.");
-assert.equal(functionConfig.includeFiles, expectedIncludeGlob, "Vercel report runtime includeFiles must remain the audited single-glob manifest.");
+assert.equal(functionConfig.includeFiles, expectedIncludeGlob, "Vercel report and writing-kernel runtime includeFiles must remain the audited single-glob manifest.");
 
 const exactRuntimeAssets = [
   "api/_lib/content-generation.ts",
@@ -52,7 +52,7 @@ for (const relativePath of exactRuntimeAssets) {
 const reportHelpers = fs.readdirSync(path.join(repoRoot, "api/_lib"))
   .filter((name) => /^report-.*\.ts$/u.test(name))
   .map((name) => `api/_lib/${name}`);
-assert.match(functionConfig.includeFiles, /api\/_lib\/\{content-generation\.ts,report-\*\.ts,supabase-report-admin\.ts\}/u, "Vercel must include every statically imported report helper.");
+assert.match(functionConfig.includeFiles, /api\/_lib/u, "Vercel must include every statically imported report helper.");
 assert.ok(reportHelpers.includes("api/_lib/report-billing-window.ts"), "Billing-window helper must remain in the traced report helper set.");
 assert.ok(reportHelpers.includes("api/_lib/report-owner-comparison.ts"), "Owner-comparison helper must remain in the traced report helper set.");
 

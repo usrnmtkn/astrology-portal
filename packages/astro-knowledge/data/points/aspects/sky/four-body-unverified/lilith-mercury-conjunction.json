@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.conjunction.lilith",
+  "canonicalId": "sky-aspect/lilith/mercury/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "mercury",
+  "aspect": "conjunction",
+  "humanMoment": "Someone says the words that were never supposed to be said out loud, mid-meeting, in a normal tone.",
+  "developmentDetail": "They offer no buildup and no apology; the unsayable arrives as plain information, and suddenly everyone cares what goes in the minutes.",
+  "planetaryDynamic": "With Mercury conjunct Lilith, the person keeping the conversation moving is the same person carrying the sentence the room agreed not to say.",
+  "aspectMechanic": "An ordinary update ends up hauling unusual cargo.",
+  "conditionalConsequence": "The meeting may run long, but nobody can unhear the subject, and the next agenda has to include it.",
+  "body": "Someone says the words that were never supposed to be said out loud, mid-meeting, in a normal tone.\n\nThey offer no buildup and no apology; the unsayable arrives as plain information, and suddenly everyone cares what goes in the minutes.\n\nWith Mercury conjunct Lilith, the person keeping the conversation moving is the same person carrying the sentence the room agreed not to say.\n\nAn ordinary update ends up hauling unusual cargo.\n\nThe meeting may run long, but nobody can unhear the subject, and the next agenda has to include it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.mercury.conjunction.lilith",
+    "sourceHeading": "Mercury conjunction Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

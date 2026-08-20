@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.conjunction.north-node",
+  "canonicalId": "sky-aspect/north_node/uranus/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "uranus",
+  "aspect": "conjunction",
+  "humanMoment": "The shortcut nobody planned is opening in the middle of the week.",
+  "developmentDetail": "Someone has the chance encounter, the canceled plan that frees the decisive day, the tool that removes a year of steps, and suddenly the direction has an express lane.",
+  "planetaryDynamic": "With Uranus conjunct the North Node, people get rerouted without consultation and land pointed the right way: the disruption and the direction are, for once, the same event, and the gradual plan looks slow beside them.",
+  "aspectMechanic": "Whoever is packed can take the lane today.",
+  "conditionalConsequence": "The lane may close as abruptly as it opened, and people with a packed bag tend to do better in express lanes than people with a perfect plan.",
+  "body": "The shortcut nobody planned is opening in the middle of the week.\n\nSomeone has the chance encounter, the canceled plan that frees the decisive day, the tool that removes a year of steps, and suddenly the direction has an express lane.\n\nWith Uranus conjunct the North Node, people get rerouted without consultation and land pointed the right way: the disruption and the direction are, for once, the same event, and the gradual plan looks slow beside them.\n\nWhoever is packed can take the lane today.\n\nThe lane may close as abruptly as it opened, and people with a packed bag tend to do better in express lanes than people with a perfect plan.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.uranus.conjunction.north-node",
+    "sourceHeading": "Uranus conjunction North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

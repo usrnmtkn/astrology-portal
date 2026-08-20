@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.opposition.lilith",
+  "canonicalId": "sky-aspect/lilith/uranus/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "uranus",
+  "aspect": "opposition",
+  "humanMoment": "One person's breakout becomes another person's emergency.",
+  "developmentDetail": "The one who leaves and the one who stays split the community, and both narrate the same event as betrayal.",
+  "planetaryDynamic": "With Uranus opposite Lilith, one of them acts out the visible rupture while the other carries the long-suppressed reasons it was coming.",
+  "aspectMechanic": "They describe the same event twice, once as departure and once as abandonment.",
+  "conditionalConsequence": "The exit may stand, but how the leaver and the stayer treat each other afterward decides whether the freedom spreads or scars.",
+  "body": "One person's breakout becomes another person's emergency.\n\nThe one who leaves and the one who stays split the community, and both narrate the same event as betrayal.\n\nWith Uranus opposite Lilith, one of them acts out the visible rupture while the other carries the long-suppressed reasons it was coming.\n\nThey describe the same event twice, once as departure and once as abandonment.\n\nThe exit may stand, but how the leaver and the stayer treat each other afterward decides whether the freedom spreads or scars.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.uranus.opposition.lilith",
+    "sourceHeading": "Uranus opposition Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

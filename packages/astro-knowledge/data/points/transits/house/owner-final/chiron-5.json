@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "chiron-5",
+  "canonicalId": "transit-house/chiron/5",
+  "kind": "house",
+  "transiting": "chiron",
+  "house": 5,
+  "headline": "Creating after embarrassment",
+  "body": "Chiron in your 5th house brings old shame around creativity, dating, pleasure, or uninhibited joy back to the surface. You might remember someone mocking your artwork, a crush you were too embarrassed to pursue, or the exact moment you decided being passionate made you look foolish. The result is often a life where you only put things out there if a positive reaction is guaranteed.\n\nThis transit invites you back to being a beginner. Taking a class, writing a messy first draft, going on an awkward date, or showing work to one trusted friend breaks the idea that joy must be flawless to be valid. The real risk is not looking inexperienced; it is letting old embarrassment rob you of fun.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Chiron — 5H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

@@ -136,7 +136,9 @@ export interface EmptyHouseFacts {
   modernRuler?: string;
   voice?: Voice;
 }
-export interface AspectFacts { planetA: string; planetB: string; aspect: "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx" | "semisextile" | "nonagen"; voice: Voice }
+export type NormalizedAspect = "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx" | "semisextile";
+export type AspectInput = NormalizedAspect | "nonagen";
+export interface AspectFacts { planetA: string; planetB: string; aspect: AspectInput; voice: Voice }
 export interface RenderResult { headline: string; parts: string[]; partKeys?: string[]; body: string; templateKey: string; astroHint?: string; sourceKeys?: string[] }
 export interface RenderOpts {
   allowUnreviewed?: boolean;
@@ -535,9 +537,9 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
 
 /** Normalize app wording to the supported canonical aspect ids ("conjunct" -> "conjunction", etc).
  *  Inconjunct normalizes to the engine's canonical quincunx id. */
-export function normalizeAspect(input: string): "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx" | "semisextile" | "nonagen" | null {
+export function normalizeAspect(input: string): NormalizedAspect | null {
   const k = input.trim().toLowerCase();
-  const map: Record<string, "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx" | "semisextile" | "nonagen"> = {
+  const map: Record<string, NormalizedAspect> = {
     conjunction: "conjunction", conjunct: "conjunction", conj: "conjunction",
     square: "square", sq: "square",
     trine: "trine",
@@ -545,7 +547,7 @@ export function normalizeAspect(input: string): "conjunction" | "square" | "trin
     opposition: "opposition", opposite: "opposition", opposed: "opposition", oppose: "opposition",
     quincunx: "quincunx", inconjunct: "quincunx",
     semisextile: "semisextile", "semi-sextile": "semisextile", "semi sextile": "semisextile",
-    nonagen: "nonagen",
+    nonagen: "semisextile",
   };
   return map[k] ?? null;
 }

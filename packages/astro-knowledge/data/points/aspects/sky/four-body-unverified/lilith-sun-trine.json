@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.trine.lilith",
+  "canonicalId": "sky-aspect/lilith/sun/trine",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "sun",
+  "aspect": "trine",
+  "humanMoment": "People approve the unconventional version of the plan without the fight anyone predicted.",
+  "developmentDetail": "The fight never comes; the candidate with the strange resume reads as interesting instead of risky, and people treat the story that used to be a liability as a credential.",
+  "planetaryDynamic": "With the Sun trine Lilith, the people in charge give daylight and legitimacy to the very story that was kept out of the official account.",
+  "aspectMechanic": "Nobody contests it, so the shift is easy to miss.",
+  "conditionalConsequence": "The shift may look like pure progress, but what people carried as defiance last year quietly turns into brand, and some of its edge goes with it.",
+  "body": "People approve the unconventional version of the plan without the fight anyone predicted.\n\nThe fight never comes; the candidate with the strange resume reads as interesting instead of risky, and people treat the story that used to be a liability as a credential.\n\nWith the Sun trine Lilith, the people in charge give daylight and legitimacy to the very story that was kept out of the official account.\n\nNobody contests it, so the shift is easy to miss.\n\nThe shift may look like pure progress, but what people carried as defiance last year quietly turns into brand, and some of its edge goes with it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.sun.trine.lilith",
+    "sourceHeading": "Sun trine Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

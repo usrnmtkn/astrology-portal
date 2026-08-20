@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.square.lilith",
+  "canonicalId": "sky-aspect/lilith/mars/square",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "mars",
+  "aspect": "square",
+  "humanMoment": "Someone says calm down, and it produces the opposite.",
+  "developmentDetail": "One side manages tone and process, the other hears domestication and digs in, and the original topic disappears under the question of who gets tamed.",
+  "planetaryDynamic": "With Mars square Lilith, one person wants the win on the stated terms while the other refuses any terms that require becoming smaller.",
+  "aspectMechanic": "Each de-escalation reads to them as control, and each flare reads as proof the control was needed.",
+  "conditionalConsequence": "A truce may get imposed, but the contest was never about the topic, and it keeps returning until someone hears the refusal in full.",
+  "body": "Someone says calm down, and it produces the opposite.\n\nOne side manages tone and process, the other hears domestication and digs in, and the original topic disappears under the question of who gets tamed.\n\nWith Mars square Lilith, one person wants the win on the stated terms while the other refuses any terms that require becoming smaller.\n\nEach de-escalation reads to them as control, and each flare reads as proof the control was needed.\n\nA truce may get imposed, but the contest was never about the topic, and it keeps returning until someone hears the refusal in full.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.mars.square.lilith",
+    "sourceHeading": "Mars square Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

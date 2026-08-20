@@ -50,10 +50,14 @@ const preflightSelectedSources = requiredIds.map((id) => {
     editStatus: row?.editStatus ?? null,
     sourceType: row?.sourceType ?? null,
     sourcePath: row?.sourcePath ?? null,
-    hasSourceBody: Boolean(row?.sourceBody),
+    sourceBodyAbsent: !Object.hasOwn(row ?? {}, "sourceBody"),
     hasAstrologyBody: Boolean(row?.astrologyBody),
-    hasTarotNotes: Boolean(row?.tarotNotes),
-    hasBusinessNotes: Boolean(row?.businessNotes),
+    tarotNotesAbsent: !Object.hasOwn(row ?? {}, "tarotNotes"),
+    businessNotesAbsent: !Object.hasOwn(row ?? {}, "businessNotes"),
+    tarotSeparated: Boolean(row?.tarotCorrespondence),
+    naturalZodiacSeparated: Boolean(row?.naturalZodiacAnalogy),
+    ownerApproved: row?.ownerApproved === true,
+    servingEligible: row?.servingEligible === true,
     astrologyExcerpt: String(row?.astrologyBody ?? "").slice(0, 700)
   };
 });
@@ -286,10 +290,12 @@ const result = {
   promptSourcePacket,
   promptChecks: {
     includesRequiredSourceIds: requiredIds.every((id) => promptSourceIds.includes(id)),
-    includesSourceBodyKey: promptText.includes("sourceBody"),
+    excludesSourceBodyKey: !promptText.includes("sourceBody"),
     includesAstrologyBodyKey: promptText.includes("astrologyBody"),
-    includesTarotNotesKey: promptText.includes("tarotNotes"),
-    includesBusinessNotesKey: promptText.includes("businessNotes"),
+    excludesTarotNotesKey: !promptText.includes("tarotNotes"),
+    excludesBusinessNotesKey: !promptText.includes("businessNotes"),
+    excludesTarotCorrespondenceKey: !promptText.includes("tarotCorrespondence"),
+    excludesNaturalZodiacAnalogyKey: !promptText.includes("naturalZodiacAnalogy"),
     includesAstrologySourceMaterial: promptText.includes("ASTROLOGY SOURCE MATERIAL"),
     includesTarotOrSymbolicNotesLabel: promptText.includes("TAROT / SYMBOLIC NOTES"),
     includesBusinessNotesLabel: promptText.includes("BUSINESS NOTES")

@@ -3,7 +3,7 @@ import { REPORT_REDUNDANCY_SCHEMA } from "../api/_lib/report-assembly.ts";
 import { REPORT_JUDGE_SCHEMA } from "../api/_lib/report-judge.ts";
 import {
   assertOpenAiStrictResponseSchema,
-  callReportModel,
+  callReportCalibrationModel,
   ReportProviderSchemaError
 } from "../api/_lib/report-model-client.ts";
 import {
@@ -87,7 +87,7 @@ globalThis.fetch = async () => {
   throw new Error("Provider fetch must not run for an invalid schema.");
 };
 try {
-  await assert.rejects(callReportModel({
+  await assert.rejects(callReportCalibrationModel({
     provider: "openai",
     model: "FIXTURE_ONLY_MODEL",
     prompt: "FIXTURE_ONLY_PROMPT",

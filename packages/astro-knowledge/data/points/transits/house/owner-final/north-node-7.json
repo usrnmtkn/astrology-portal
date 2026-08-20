@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "north-node-7",
+  "canonicalId": "transit-house/north_node/7",
+  "kind": "house",
+  "transiting": "north-node",
+  "house": 7,
+  "headline": "Letting another person matter",
+  "body": "The North Node in your 7th house moves partnership from theory into reality. A friend, partner, client, or collaborator will require you to negotiate, stick to your word, or adjust a schedule that used to be entirely up to you. The connection matters specifically because you cannot handle everything from a safe distance.\n\nAcross the axis, the 1st house offers the comfortable default of acting alone and answering to nobody. Independence is great, but growth here means seeing if you can let someone close enough to influence you without losing yourself in the process.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "North Node — 7H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}
