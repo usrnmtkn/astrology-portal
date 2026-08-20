@@ -244,8 +244,8 @@ function assertSamples(samples: TimedSample[], budgetMs: number) {
     maximumMs: maximum,
     budgetMs
   }));
-  expect(maximum, `${samples[0]?.label} maximum should remain within ${budgetMs * 2}ms`).toBeLessThanOrEqual(budgetMs * 2);
-  expect(median, `${samples[0]?.label} median should remain within ${budgetMs}ms`).toBeLessThanOrEqual(budgetMs);
+  expect.soft(median, `${samples[0]?.label} median should remain within ${budgetMs}ms`).toBeLessThanOrEqual(budgetMs);
+  expect.soft(maximum, `${samples[0]?.label} maximum should remain within ${budgetMs * 2}ms`).toBeLessThanOrEqual(budgetMs * 2);
 }
 
 test.describe("Friends loading performance matrix", () => {
