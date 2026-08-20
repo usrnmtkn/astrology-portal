@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "recordType": "sky_calendar_sign_aware_semantic_layer_binding",
+  "status": "REVIEW ARTIFACT",
+  "createdAt": "2026-08-20",
+  "sourceWorkbook": {
+    "fileName": "sky-calendar-all-live-aspects-SIGN-AWARE-AUTHORING.xlsx",
+    "sha256": "edf5cd7da9996da060302d94d8b747e099c8a36dbf371a3afde7a7b2c6efd5c1"
+  },
+  "correctedWorkbook": {
+    "path": "packages/astro-knowledge/review/sky-calendar-sign-aware-semantic-layer-v2/sky-calendar-all-live-aspects-SIGN-AWARE-SEMANTIC-LAYER-V2.xlsx",
+    "sha256": "013612d656255a0c513dc80c82858ed7beb6f8405bc7a1b60bf83100c176cd8d"
+  },
+  "semanticAuthority": {
+    "registryPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/sky-calendar-meaning-components-v1.json",
+    "componentSetSha256": "aee970d7c40d1331eaf981886ec5007ea5e99eb3e18c18ed1889cbe470e8a443",
+    "counts": {
+      "signUnits": 144,
+      "aspectMechanisms": 5,
+      "modalityUnits": 9,
+      "elementUnits": 16,
+      "total": 174
+    }
+  },
+  "composerBinding": {
+    "authorizationRecordPath": "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/serving-authorization.json",
+    "composerVersion": "sky-calendar-two-part-composer-v2.3.0",
+    "composerSourceSha256": "c192c3859b7007a18081e584f684c8a5f6123a6b4ca977a03a677f469984f4dc",
+    "servingAuthorization": false,
+    "pilotOwnerConfirmed": false,
+    "failClosed": true
+  },
+  "registerPolicy": {
+    "surface": "sky_calendar_collective",
+    "eventRemainsCollectiveAndTemporary": true,
+    "directReaderAddress": "allowed_in_forecast_what_can_move_guidance",
+    "secondPersonInDetails": false,
+    "standingPatternLanguage": false
+  },
+  "supersededWorkbookLayers": [
+    "Pair Meaning",
+    "Aspect Behavior",
+    "Planet Sign Layer",
+    "Sign-Aware Composer"
+  ],
+  "preservedWorkbookLayers": [
+    "Rewrite Workspace",
+    "Source Doctrine",
+    "Owner Calibration",
+    "Date Context",
+    "Sign-Aware Benchmarks"
+  ],
+  "ownerDecisionSource": {
+    "tool": "Codex Desktop",
+    "threadId": "019fc997-4b31-79f2-9a53-b363197a6ee2",
+    "threadTitle": "WIP: Aspects",
+    "date": "2026-08-20",
+    "statements": [
+      "I’m removing the second-person flags: you/your is allowed when Calendar directly addresses the reader.",
+      "please proceed with a plan and a fix"
+    ]
+  },
+  "scope": {
+    "modelCalls": 0,
+    "readerCopyChanged": false,
+    "servingChanged": false,
+    "componentWordingChanged": false
+  }
+}
