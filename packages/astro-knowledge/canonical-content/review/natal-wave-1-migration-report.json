@@ -1,0 +1,156 @@
+{
+  "compositionSlots": {
+    "authorityResolved": 7,
+    "authorityResolvedSlotIds": [
+      "canonical-slot/natal/planet-intro/jupiter",
+      "canonical-slot/natal/planet-intro/mars",
+      "canonical-slot/natal/planet-intro/moon",
+      "canonical-slot/natal/planet-intro/neptune",
+      "canonical-slot/natal/planet-intro/pluto",
+      "canonical-slot/natal/planet-intro/saturn",
+      "canonical-slot/natal/planet-intro/uranus"
+    ],
+    "conflicts": 0,
+    "total": 1579
+  },
+  "counts": {
+    "byBucket": {
+      "AUTHORITY_RESOLVED": 223,
+      "AUTO_MERGE_EXACT": 0,
+      "AUTO_MERGE_NORMALIZED": 0,
+      "COMPOSED_ONLY": 2127,
+      "OWNER_DECISION_REQUIRED": 0,
+      "SINGLE_SOURCE": 0,
+      "SOURCE_GAP": 20
+    },
+    "byKind": {
+      "aspect": 450,
+      "empty-house": 1584,
+      "placement-house": 168,
+      "placement-sign": 168
+    },
+    "byMode": {
+      "authored": 0,
+      "composed": 2350,
+      "gap": 20
+    },
+    "byPerspectiveMode": {
+      "they": {
+        "authored": 0,
+        "composed": 2335,
+        "gap": 35
+      },
+      "you": {
+        "authored": 223,
+        "composed": 2127,
+        "gap": 20
+      }
+    },
+    "total": 2370
+  },
+  "mechanisms": {
+    "wave1": {
+      "conflicting": 0,
+      "expected": 111,
+      "mapped": 95,
+      "missing": 0,
+      "notInUnitUniverse": 16,
+      "notInUnitUniverseSourceIds": [
+        "fallback-hook/placement-house-lived/part-of-fortune/10",
+        "fallback-hook/placement-house-lived/part-of-fortune/4",
+        "fallback-hook/placement-house-lived/part-of-fortune/5",
+        "fallback-hook/placement-house-lived/part-of-fortune/6",
+        "fallback-hook/placement-house-lived/part-of-fortune/7",
+        "fallback-hook/placement-house-lived/part-of-fortune/8",
+        "fallback-hook/placement-house-lived/part-of-fortune/9",
+        "fallback-hook/placement-sign-lived/part-of-fortune/aquarius",
+        "fallback-hook/placement-sign-lived/part-of-fortune/aries",
+        "fallback-hook/placement-sign-lived/part-of-fortune/cancer",
+        "fallback-hook/placement-sign-lived/part-of-fortune/gemini",
+        "fallback-hook/placement-sign-lived/part-of-fortune/leo",
+        "fallback-hook/placement-sign-lived/part-of-fortune/libra",
+        "fallback-hook/placement-sign-lived/part-of-fortune/pisces",
+        "fallback-hook/placement-sign-lived/part-of-fortune/sagittarius",
+        "fallback-hook/placement-sign-lived/part-of-fortune/scorpio"
+      ],
+      "pendingReview": 0
+    },
+    "wave2": {
+      "conflicting": 0,
+      "expected": 120,
+      "mapped": 108,
+      "mappedBodies": [
+        "sun",
+        "moon",
+        "mercury",
+        "venus",
+        "mars",
+        "jupiter",
+        "saturn",
+        "uranus",
+        "neptune"
+      ],
+      "missing": 0,
+      "pendingReview": 0,
+      "sourceGapBody": "lilith",
+      "sourceGaps": 12
+    }
+  },
+  "ownerDecisionRequired": 0,
+  "parity": {
+    "bugs": 0,
+    "exactParity": 2370,
+    "intentionalAuthorityCorrection": 0,
+    "unresolvedOwnerDecision": 0
+  },
+  "preservedBaselineSubstitutions": [
+    {
+      "authority": "owner-approved in the Phase-1 implementation directive",
+      "legacyPayloadHashStatus": "STALE_AFTER_OWNER_APPROVED_SUBSTITUTION",
+      "legacyPayloadHashUsedToAutoResolve": false,
+      "sourceKey": "fallback-hook/planet-lived/moon",
+      "substitution": "what unsettles you -> what puts you on edge"
+    },
+    {
+      "authority": "owner-approved in the Phase-1 implementation directive",
+      "legacyPayloadHashStatus": "STALE_AFTER_OWNER_APPROVED_SUBSTITUTION",
+      "legacyPayloadHashUsedToAutoResolve": false,
+      "sourceKey": "fallback-hook/planet-lived/pluto",
+      "substitution": "the old leverage is gone -> the old advantage is gone"
+    }
+  ],
+  "preservedEditorialFlags": [
+    {
+      "action": "preserved byte-for-byte; later editorial review only",
+      "sourceKey": "fallback-hook/planet-lived/moon",
+      "terms": [
+        "settles",
+        "comfort"
+      ]
+    }
+  ],
+  "provenanceVerification": {
+    "convention": "sha256(JSON.stringify({ body: copy }))",
+    "failed": 0,
+    "failures": [],
+    "total": 111,
+    "unresolved": 0,
+    "verified": 111
+  },
+  "resolverAuthorities": [
+    {
+      "authority": "createFallbackRenderer",
+      "migration": "post-fix shipped output becomes revision zero; future adapter reads canonical units"
+    },
+    {
+      "authority": "createKnowledgeMatrixV13Resolver",
+      "migration": "its exact owner-approved rows are provenance candidates inside canonical units; it is not an independent future precedence path"
+    },
+    {
+      "authority": "createKnowledgeMatrixV9Resolver",
+      "migration": "inventoried; no Wave-1 natal API, so it contributes no natal unit authority"
+    }
+  ],
+  "schema": "tldr-astro-canonical-content-migration-report/v1",
+  "version": "global-foundation-natal-wave-1"
+}
