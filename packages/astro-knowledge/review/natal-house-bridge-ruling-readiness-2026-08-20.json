@@ -1,0 +1,55 @@
+{
+  "schema": "tldr-natal-house-bridge-ruling-readiness/v1",
+  "createdAt": "2026-08-20",
+  "authority": "tldr-astro-phrasebank/TLDR-NATAL-HOUSE-BRIDGE-RULING-OWNER.md",
+  "governance": {
+    "advisoryOnly": true,
+    "servingChanges": false,
+    "approvalChanges": false,
+    "autoPublish": false,
+    "writerPromotion": false,
+    "friendAuthoring": false
+  },
+  "composition": {
+    "surface": "you-natal-placement-house",
+    "order": [
+      "engine-owned house header",
+      "exact canonical house-meaning bridge",
+      "fresh exact-key direct-reader candidate",
+      "authorized house modifiers"
+    ],
+    "forbiddenCandidateOpening": "Planet in the Nth house...",
+    "priorServingCopyAvailableToWriter": false,
+    "friendDerivedFromSelf": false
+  },
+  "counts": {
+    "canonicalHouseBridges": 12,
+    "exactPlanetHouseKeys": 168,
+    "ownerReviewedMechanisms": 168,
+    "renderedCalibrationSamplesReady": 12,
+    "newReviewGatedReaderCandidates": 11,
+    "samplesBlockedPendingMechanismReview": 0,
+    "servingSourceMutations": 0,
+    "friendCandidates": 0,
+    "ownerApprovedSupportedMechanisms": 156,
+    "retainedLilithSourceGaps": 12
+  },
+  "source": {
+    "path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+    "sha256": "8e3af69a1e0acddcdd8b706eb1ff8e7fe8ea8bbe0f7a42868c99d6337d5168d8"
+  },
+  "reviewableSample": {
+    "runtimeKey": "moon|6th house",
+    "bridgeContentKey": "fallback-hook/house-meaning/6",
+    "bridgeSha256": "cb00f98788aebd58c82d7b9f8615ec793c35e9147c4dd289b510b3cb397d0d45",
+    "candidateAuthority": "owner-supplied calibration; source-supported; not serving approval",
+    "candidateSha256": "ea92c5fae537dc3550f3f074e7f11d9614cbbdadc8219916fe82e3e45ab5923f",
+    "renderedSha256": "4be0bec372de772fb83a617a1244312ab40f852627e405bc2ee97e05e92beb06",
+    "ownerVerdict": "",
+    "ownerEdit": ""
+  },
+  "blockingCondition": "Mechanism review is complete. Reader-facing candidates remain review-gated and non-serving; Lilith expansion remains SOURCE_GAP.",
+  "sampleArtifact": "packages/astro-knowledge/review/natal-house-bridge-review-samples-2026-08-20.json",
+  "workbook": "outputs/019fedfe-d553-75e3-be16-8abaa96cdf44/TLDR-NATAL-HOUSE-BRIDGE-REVIEW-SAMPLES-V1.xlsx",
+  "mechanismApprovalRecord": "packages/astro-knowledge/review/natal-house-mechanism-owner-approval-2026-08-20.json"
+}

@@ -18,10 +18,10 @@ rows.vocabularyRows.push(...interim.vocabularyRows);
 
 const renderBrowserPlacement = createFallbackRenderer(templates, rows).renderNatalPlacement;
 const expectedSignBody = rows.hookRows.find(
-  (row) => row.contentKey === "fallback-hook/placement-sign-lived/moon/scorpio"
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-sign-final/moon/scorpio"
 )?.body;
 const expectedHouseBody = rows.hookRows.find(
-  (row) => row.contentKey === "fallback-hook/placement-house-lived/moon/6"
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-house-final/moon/6"
 )?.body;
 const expectedMercurySignBody = rows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/placement-sign-lived/mercury/pisces"
@@ -48,8 +48,8 @@ for (const [rendererName, renderPlacement] of [
   assert.deepEqual(
     you.partKeys,
     [
-      "fallback-hook/placement-sign-lived/moon/scorpio",
-      "fallback-hook/placement-house-lived/moon/6"
+      "fallback-hook/natal-you-placement-sign-final/moon/scorpio",
+      "fallback-hook/natal-you-placement-house-final/moon/6"
     ],
     `${rendererName} You placement must expose per-section provenance.`
   );

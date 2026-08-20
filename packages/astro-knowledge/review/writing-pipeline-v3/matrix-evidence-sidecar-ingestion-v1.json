@@ -20,10 +20,10 @@
     "argument_candidate": 788
   },
   "deduplicatedSharedIndexCounts": {
-    "entries": 5828,
+    "entries": 5831,
     "meaning": 2177,
     "register": 1710,
-    "scene": 413,
+    "scene": 416,
     "argument": 1182,
     "phrase": 346,
     "planetSignKeys": 247
@@ -88,7 +88,7 @@
     "approved_serving_row": {
       "meaning": 0,
       "register": 0,
-      "scene": 220,
+      "scene": 223,
       "argument": 0,
       "phrase": 0
     },
@@ -146,10 +146,10 @@
     "planetSignKeys": 190
   },
   "afterCounts": {
-    "entries": 5828,
+    "entries": 5831,
     "meaning": 2177,
     "register": 1710,
-    "scene": 413,
+    "scene": 416,
     "argument": 1182,
     "phrase": 346,
     "planetSignKeys": 247
@@ -168,7 +168,7 @@
     "anyOrUnspecifiedSignRows": 62
   },
   "genericEducation": {
-    "moonParagraphsRemovedFromSceneText": 145,
+    "moonParagraphsRemovedFromSceneText": 157,
     "planetIntroRowsExcludedFromSceneRole": 14
   },
   "requiredEvidence": {

@@ -20,16 +20,16 @@ Canonical workbook changed: **no**
 - Approved V13 source rows: **301**
 - Runtime-manifest rows: **301**
 - Rows added to the shared evidence index: **301**
-- Shared-index entries: **4861 → 5828**
+- Shared-index entries: **4861 → 5831**
 - Meaning entries: **1876 → 2177**
-- Scene entries after education cleanup: **419 → 413**
+- Scene entries after education cleanup: **419 → 416**
 - Argument entries after approved four-slot cards were indexed: **510 → 1182**
 
 Alias normalization covers **123** Lilith/node rows
 and **62** global-sign rows. Global rows are eligible
 for a concrete target; exact planet-sign rows retain precedence.
 
-Generic planet education is not scene evidence: **145**
+Generic planet education is not scene evidence: **157**
 repeated Moon lead paragraphs are stripped before scene qualification, and
 **14** standing planet-intro rows are excluded.
 
@@ -44,7 +44,7 @@ register-gold page.
 ## Extended role counts by source
 
 - `approved_house_horoscope_core`: meaning 0, register 0, scene 24, argument 0, phrase 0
-- `approved_serving_row`: meaning 0, register 0, scene 220, argument 0, phrase 0
+- `approved_serving_row`: meaning 0, register 0, scene 223, argument 0, phrase 0
 - `current-owner-approved-placement-article`: meaning 0, register 0, scene 0, argument 56, phrase 0
 - `current-owner-approved-placement-card`: meaning 0, register 0, scene 0, argument 672, phrase 0
 - `owner_corpus_fixture_scene`: meaning 0, register 0, scene 3, argument 0, phrase 0
