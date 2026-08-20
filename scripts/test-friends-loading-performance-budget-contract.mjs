@@ -74,7 +74,7 @@ assert.ok(
   "Incremental enhancement must stay small after the first authored card paints."
 );
 assert.equal(
-  friendsLoadingPerformanceMaximums.slowNetworkRelationshipReadyMs,
+  friendsLoadingPerformanceMaximums.slowNetworkColdRelationshipReadyMs,
   5_800,
   "The isolated cold ephemeris path must keep its explicit measured ceiling."
 );
