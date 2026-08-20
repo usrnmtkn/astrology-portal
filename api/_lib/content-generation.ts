@@ -8,6 +8,16 @@ import { generatedApprovalState, markPipelineReady } from "../../src/astro-writi
 import { writeGenerationMetadata } from "../../src/astro-writing/generationMetadata.mjs";
 import { callOpenAIResponses } from "../../src/astro-writing/openAIResponses.cjs";
 import {
+  buildProductionEvidenceShadow,
+  recordLegacyPromptShadow
+} from "../../src/astro-writing/productionEvidenceAdapter.cjs";
+import { validateCopy } from "../../src/astro-writing/validateCopy.mjs";
+import { assertValidationProfile } from "../../src/astro-writing/validationProfiles.mjs";
+import {
+  prepareProductionPreCallGate,
+  assertProductionPreCallGate
+} from "../../src/astro-writing/productionPreCallGate.cjs";
+import {
   reportPromptFromPayload,
   validateReportDraft,
   type ReportGenerationPayload
@@ -5178,14 +5188,60 @@ function renderedGeneratedCopy(draft: GeneratedContent) {
   ].filter((value): value is string => typeof value === "string" && value.trim().length > 0).join("\n\n");
 }
 
+function deterministicReaderCopy(draft: GeneratedContent) {
+  return {
+    tldr: draft.tldr ?? draft.summary,
+    summary: draft.summary,
+    body: draft.body,
+    action: draft.action ?? "",
+    timing: draft.timing ?? "",
+    sections: (draft.sections ?? []).flatMap((section) => [section.heading, section.body])
+  };
+}
+
+function deterministicProductionValidation(
+  gate: ReturnType<typeof prepareProductionPreCallGate>,
+  draft: GeneratedContent,
+  input: GenerateContentInput,
+  meaningPlan: Record<string, unknown> | null = null
+) {
+  assertValidationProfile(gate.validation.validationProfile);
+  return validateCopy(deterministicReaderCopy(draft), {
+    validationProfile: gate.validation.validationProfile,
+    family: input.eventType,
+    register: gate.validation.register,
+    plan: meaningPlan
+  });
+}
+
+function assertProductionRoleGate(
+  gate: ReturnType<typeof prepareProductionPreCallGate>,
+  role: "MEANING_PLANNER" | "WRITER" | "COLD_REVIEWER" | "REVIEWER" | "REVISER",
+  input: GenerateContentInput,
+  draft?: GeneratedContent,
+  meaningPlan: Record<string, unknown> | null = null
+) {
+  const draftValidation = draft
+    ? deterministicProductionValidation(gate, draft, input, meaningPlan)
+    : null;
+  return assertProductionPreCallGate(gate, { role, input, draftValidation });
+}
+
 async function reviewColdRenderedContentWithOpenAI({
   apiKey,
-  draft
+  draft,
+  input,
+  meaningPlan,
+  productionGate
 }: {
   apiKey: string;
   draft: GeneratedContent;
+  input: GenerateContentInput;
+  meaningPlan: Record<string, unknown>;
+  productionGate: ReturnType<typeof prepareProductionPreCallGate>;
 }): Promise<ColdRenderedProseReview> {
   const model = process.env.OPENAI_REVIEW_MODEL ?? process.env.OPENAI_JUDGE_MODEL ?? "gpt-5.6-terra";
+  assertProductionRoleGate(productionGate, "COLD_REVIEWER", input, draft, meaningPlan);
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "COLD_REVIEWER",
@@ -5225,15 +5281,18 @@ async function reviewGeneratedContentWithOpenAI({
   apiKey,
   draft,
   input,
-  meaningPlan
+  meaningPlan,
+  productionGate
 }: {
   apiKey: string;
   draft: GeneratedContent;
   input: GenerateContentInput;
   meaningPlan: Record<string, unknown>;
+  productionGate: ReturnType<typeof prepareProductionPreCallGate>;
 }): Promise<CanonicalReview> {
-  const coldReview = await reviewColdRenderedContentWithOpenAI({ apiKey, draft });
+  const coldReview = await reviewColdRenderedContentWithOpenAI({ apiKey, draft, input, meaningPlan, productionGate });
   const model = process.env.OPENAI_REVIEW_MODEL ?? process.env.OPENAI_JUDGE_MODEL ?? "gpt-5.6-terra";
+  assertProductionRoleGate(productionGate, "REVIEWER", input, draft, meaningPlan);
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "REVIEWER",
@@ -5245,6 +5304,9 @@ async function reviewGeneratedContentWithOpenAI({
         surface: input.surface,
         mode: input.mode,
         governedFacts: input.facts,
+        ...(productionGate.governedPromptEnabled
+          ? { governedKnowledgeEvidence: productionGate.governedPrompt }
+          : {}),
         meaningPlan,
         draft
       }),
@@ -5286,13 +5348,16 @@ async function reviewGeneratedContentWithOpenAI({
 
 async function planGeneratedContentWithOpenAI({
   apiKey,
-  input
+  input,
+  productionGate
 }: {
   apiKey: string;
   input: GenerateContentInput;
+  productionGate: ReturnType<typeof prepareProductionPreCallGate>;
 }) {
   const model = process.env.OPENAI_PLANNER_MODEL ?? process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? defaultOpenAiModel;
   const reasoningEffort = configuredOpenAiReasoningEffort(model);
+  assertProductionRoleGate(productionGate, "MEANING_PLANNER", input);
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "MEANING_PLANNER",
@@ -5305,7 +5370,10 @@ async function planGeneratedContentWithOpenAI({
         surface: input.surface,
         mode: input.mode,
         contentKey: input.contentKey,
-        governedFacts: input.facts
+        governedFacts: input.facts,
+        ...(productionGate.governedPromptEnabled
+          ? { governedKnowledgeEvidence: productionGate.governedPrompt }
+          : {})
       }),
       text: {
         format: {
@@ -5335,13 +5403,15 @@ async function reviseGeneratedContentWithOpenAI({
   draft,
   input,
   review,
-  meaningPlan
+  meaningPlan,
+  productionGate
 }: {
   apiKey: string;
   draft: StoredGeneratedContent;
   input: GenerateContentInput;
   review: CanonicalReview;
   meaningPlan: Record<string, unknown>;
+  productionGate: ReturnType<typeof prepareProductionPreCallGate>;
 }): Promise<StoredGeneratedContent> {
   const fields = [...new Set(review.violations.map((violation) => violation.location))];
   if (!fields.length || fields.some((field) => !generatedContentRevisionFields.has(field))) {
@@ -5350,6 +5420,7 @@ async function reviseGeneratedContentWithOpenAI({
   const failedLines = Object.fromEntries(fields.map((field) => [field, String(draft[field as keyof StoredGeneratedContent] ?? "")]));
   const model = process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? defaultOpenAiModel;
   const reasoningEffort = configuredOpenAiReasoningEffort(model);
+  assertProductionRoleGate(productionGate, "REVISER", input, draft, meaningPlan);
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "REVISER",
@@ -5359,6 +5430,9 @@ async function reviseGeneratedContentWithOpenAI({
       input: JSON.stringify({
         task: "Revise only the supplied failed lines. Return only the listed fields. Do not rewrite successful material.",
         governedFacts: input.facts,
+        ...(productionGate.governedPromptEnabled
+          ? { governedKnowledgeEvidence: productionGate.governedPrompt }
+          : {}),
         meaningPlan,
         failedLines,
         violations: review.violations
@@ -5404,19 +5478,28 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
     return deterministicNatalPlacementDraft(input);
   }
 
+  const productionGate = prepareProductionPreCallGate(input);
+  assertValidationProfile(productionGate.validation.validationProfile);
+  const evidenceShadow = buildProductionEvidenceShadow(input);
   const apiKey = requireEnv("OPENAI_API_KEY");
   const model = process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? defaultOpenAiModel;
   const reasoningEffort = configuredOpenAiReasoningEffort(model);
   const lockedHeadline = factualHeadlineFor(input);
   const approvedExamples = await loadApprovedExamples(input);
-  const meaningPlan = await planGeneratedContentWithOpenAI({ apiKey, input });
+  const meaningPlan = await planGeneratedContentWithOpenAI({ apiKey, input, productionGate });
+  const legacyPrompt = `${buildPrompt(input, approvedExamples, "")}\n\nGOVERNED MEANING PLAN\n${JSON.stringify(meaningPlan, null, 2)}`;
+  const writerPrompt = productionGate.governedPromptEnabled
+    ? `${legacyPrompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`
+    : legacyPrompt;
+  recordLegacyPromptShadow(evidenceShadow, legacyPrompt);
+  assertProductionRoleGate(productionGate, "WRITER", input);
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "WRITER",
     request: {
       model,
       ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
-      input: `${buildPrompt(input, approvedExamples, "")}\n\nGOVERNED MEANING PLAN\n${JSON.stringify(meaningPlan, null, 2)}`,
+      input: writerPrompt,
       text: {
         format: {
           type: "json_schema",
@@ -5451,12 +5534,17 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
     })
   };
   validateGeneratedContentForInput(draft, input);
+  const deterministicValidation = deterministicProductionValidation(productionGate, draft, input, meaningPlan);
+  if (!deterministicValidation.passed) {
+    const details = deterministicValidation.violations.map((violation) => `${violation.category}: ${violation.detail}`).join("; ");
+    throw new ContentGenerationQualityError(`Deterministic production gate failed: ${details}`);
+  }
 
-  let review = await reviewGeneratedContentWithOpenAI({ apiKey, draft, input, meaningPlan });
+  let review = await reviewGeneratedContentWithOpenAI({ apiKey, draft, input, meaningPlan, productionGate });
   if (review.decision !== "PASS") {
-    draft = await reviseGeneratedContentWithOpenAI({ apiKey, draft, input, review, meaningPlan });
+    draft = await reviseGeneratedContentWithOpenAI({ apiKey, draft, input, review, meaningPlan, productionGate });
     validateGeneratedContentForInput(draft, input);
-    review = await reviewGeneratedContentWithOpenAI({ apiKey, draft, input, meaningPlan });
+    review = await reviewGeneratedContentWithOpenAI({ apiKey, draft, input, meaningPlan, productionGate });
   }
   if (review.decision !== "PASS") {
     const details = review.violations.map((violation) => `${violation.category}: ${violation.reason}`).join("; ");
@@ -5489,6 +5577,9 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
     return deterministicNatalPlacementDraft(input);
   }
 
+  const productionGate = prepareProductionPreCallGate(input);
+  assertValidationProfile(productionGate.validation.validationProfile);
+  const evidenceShadow = buildProductionEvidenceShadow(input);
   const apiKey = requireEnv("ANTHROPIC_API_KEY");
   const model = process.env.ANTHROPIC_MODEL ?? defaultClaudeModel;
   const lockedHeadline = factualHeadlineFor(input);
@@ -5498,6 +5589,12 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
   let lastDraft: StoredGeneratedContent | null = null;
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
+    const legacyPrompt = buildPrompt(input, approvedExamples, qualityFeedback);
+    const writerPrompt = productionGate.governedPromptEnabled
+      ? `${legacyPrompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`
+      : legacyPrompt;
+    if (attempt === 0) recordLegacyPromptShadow(evidenceShadow, legacyPrompt);
+    assertProductionRoleGate(productionGate, "WRITER", input);
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -5514,7 +5611,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
             content: [
               {
                 type: "text",
-                text: buildPrompt(input, approvedExamples, qualityFeedback)
+                text: writerPrompt
               }
             ]
           }
@@ -5569,6 +5666,11 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
 
       lastDraft = draft;
       validateGeneratedContentForInput(draft, input);
+      const deterministicValidation = deterministicProductionValidation(productionGate, draft, input);
+      if (!deterministicValidation.passed) {
+        const details = deterministicValidation.violations.map((violation) => `${violation.category}: ${violation.detail}`).join("; ");
+        throw new ContentGenerationQualityError(`Deterministic production gate failed: ${details}`);
+      }
 
       return withGenerationQualityDiagnostics(draft, input);
     } catch (error) {

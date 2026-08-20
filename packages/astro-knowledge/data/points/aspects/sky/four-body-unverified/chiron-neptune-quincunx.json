@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.neptune.quincunx.chiron",
+  "canonicalId": "sky-aspect/chiron/neptune/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "neptune",
+  "aspect": "quincunx",
+  "humanMoment": "The empathy keeps mistaking whose emergency this is.",
+  "developmentDetail": "The rescuer comes home exhausted from carrying loads nobody assigned, while the one load with their name on it waits at home untouched.",
+  "planetaryDynamic": "With Neptune quincunx Chiron, people feel everyone's emergencies while ignoring the one ache that is specifically theirs.",
+  "aspectMechanic": "Their care keeps arriving one address off.",
+  "conditionalConsequence": "The care may be endless, but the people who readdress it to their own door are not being selfish; they tend to be the only ones being accurate.",
+  "body": "The empathy keeps mistaking whose emergency this is.\n\nThe rescuer comes home exhausted from carrying loads nobody assigned, while the one load with their name on it waits at home untouched.\n\nWith Neptune quincunx Chiron, people feel everyone's emergencies while ignoring the one ache that is specifically theirs.\n\nTheir care keeps arriving one address off.\n\nThe care may be endless, but the people who readdress it to their own door are not being selfish; they tend to be the only ones being accurate.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.neptune.quincunx.chiron",
+    "sourceHeading": "Neptune quincunx Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.neptune.square.north-node",
+  "canonicalId": "sky-aspect/neptune/north_node/square",
+  "kind": "sky-aspect",
+  "bodyA": "neptune",
+  "bodyB": "north_node",
+  "aspect": "square",
+  "humanMoment": "People are hitting the fork just as the fog rolls in.",
+  "developmentDetail": "Someone reaches the decision point and watches the picture blur: every option shimmers, every commitment feels premature, and their deferral starts dressing itself as openness.",
+  "planetaryDynamic": "With Neptune square the North Node, people cannot see either road clearly, the one they should be leaving or the one they should be walking, and choosing without perfect sight is the step they keep skipping.",
+  "aspectMechanic": "Nobody makes a map out of mist.",
+  "conditionalConsequence": "The waiting may feel wise, but people who take a provisional step in the fog tend to learn more than people who postpone a permanent stance because of it.",
+  "body": "People are hitting the fork just as the fog rolls in.\n\nSomeone reaches the decision point and watches the picture blur: every option shimmers, every commitment feels premature, and their deferral starts dressing itself as openness.\n\nWith Neptune square the North Node, people cannot see either road clearly, the one they should be leaving or the one they should be walking, and choosing without perfect sight is the step they keep skipping.\n\nNobody makes a map out of mist.\n\nThe waiting may feel wise, but people who take a provisional step in the fog tend to learn more than people who postpone a permanent stance because of it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.neptune.square.north-node",
+    "sourceHeading": "Neptune square North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

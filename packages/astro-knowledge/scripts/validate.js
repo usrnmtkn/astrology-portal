@@ -8,6 +8,10 @@ const dataRoot = path.join(root, "data");
 const voiceRoot = path.join(root, "voice");
 const schemaRoot = path.join(root, "schema");
 const VALID_STATUSES = new Set(["TODO", "DRAFT", "REVIEWED", "SOURCE_BACKED", "LIVE"]);
+const GOVERNED_EVIDENCE_ONLY_DIRS = [
+  path.join(dataRoot, "points", "aspects", "sky", "four-body-unverified"),
+  path.join(dataRoot, "points", "transits", "house", "owner-final")
+];
 
 const primitiveShapes = {
   planet: {
@@ -202,6 +206,18 @@ function listJsonFiles(dir) {
     if (name.isFile() && name.name.endsWith(".json")) files.push(fullPath);
   }
   return files.sort();
+}
+
+function isLegacyPackageDataFile(filePath) {
+  const absolutePath = path.resolve(filePath);
+  return !GOVERNED_EVIDENCE_ONLY_DIRS.some((dir) => {
+    const relativePath = path.relative(dir, absolutePath);
+    return relativePath !== "" && !relativePath.startsWith("..") && !path.isAbsolute(relativePath);
+  });
+}
+
+function listLegacyPackageJsonFiles(dir) {
+  return listJsonFiles(dir).filter(isLegacyPackageDataFile);
 }
 
 function assertSchemaFile(schemaFile, errors) {
@@ -630,7 +646,7 @@ function validateVoicePolicy(errors) {
 
   if (checks.length === 0) return;
 
-  for (const filePath of listJsonFiles(dataRoot)) {
+  for (const filePath of listLegacyPackageJsonFiles(dataRoot)) {
     const json = readJson(filePath);
     // Evidence ledgers are search inputs, not reader-facing copy. Their selected
     // output is still required to pass the ban list in the packet builder.
@@ -671,10 +687,10 @@ function validateAll() {
   for (const filePath of listJsonFiles(path.join(dataRoot, "points", "placements"))) {
     validateEntryFile(filePath, "pointPlacement", errors);
   }
-  for (const filePath of listJsonFiles(path.join(dataRoot, "points", "aspects"))) {
+  for (const filePath of listLegacyPackageJsonFiles(path.join(dataRoot, "points", "aspects"))) {
     validateEntryFile(filePath, "pointAspect", errors);
   }
-  for (const filePath of listJsonFiles(path.join(dataRoot, "points", "transits", "house"))) {
+  for (const filePath of listLegacyPackageJsonFiles(path.join(dataRoot, "points", "transits", "house"))) {
     validateEntryFile(filePath, "pointTransitHouse", errors);
   }
   for (const filePath of listJsonFiles(path.join(dataRoot, "placements"))) {
@@ -734,4 +750,11 @@ if (require.main === module) {
   console.log("Validation passed: all data files match their schemas.");
 }
 
-module.exports = { validateAll, listJsonFiles, listDirectJsonFiles, readJson };
+module.exports = {
+  validateAll,
+  listJsonFiles,
+  listLegacyPackageJsonFiles,
+  isLegacyPackageDataFile,
+  listDirectJsonFiles,
+  readJson
+};

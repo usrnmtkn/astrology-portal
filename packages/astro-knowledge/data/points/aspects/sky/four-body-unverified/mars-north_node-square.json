@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.square.north-node",
+  "canonicalId": "sky-aspect/mars/north_node/square",
+  "kind": "sky-aspect",
+  "bodyA": "mars",
+  "bodyB": "north_node",
+  "aspect": "square",
+  "humanMoment": "The old fight is breaking out again exactly when the new work needed the energy.",
+  "developmentDetail": "Someone reopens the previous era's unfinished business, the feud, the grievance, the contest already decided, and everyone involved spends the week's best hours on it.",
+  "planetaryDynamic": "With Mars square the North Node, people get pulled hard in both directions: the expired battlefield calls loudest, the waiting worksite needs the same hours, and deciding where the force goes is the step they keep skipping.",
+  "aspectMechanic": "Anyone counting can see the hours coming off the build.",
+  "conditionalConsequence": "They may even win the fight, but people who spend the season on the old battlefield win arguments and lose chapters, and only one of those endures.",
+  "body": "The old fight is breaking out again exactly when the new work needed the energy.\n\nSomeone reopens the previous era's unfinished business, the feud, the grievance, the contest already decided, and everyone involved spends the week's best hours on it.\n\nWith Mars square the North Node, people get pulled hard in both directions: the expired battlefield calls loudest, the waiting worksite needs the same hours, and deciding where the force goes is the step they keep skipping.\n\nAnyone counting can see the hours coming off the build.\n\nThey may even win the fight, but people who spend the season on the old battlefield win arguments and lose chapters, and only one of those endures.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.mars.square.north-node",
+    "sourceHeading": "Mars square North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

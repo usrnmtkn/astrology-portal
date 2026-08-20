@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.quincunx.lilith",
+  "canonicalId": "sky-aspect/lilith/mercury/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "mercury",
+  "aspect": "quincunx",
+  "humanMoment": "Every time someone tries to put the real subject into words, it comes out slightly beside the point.",
+  "developmentDetail": "They file the complaint about the schedule when it is about respect; management fixes the schedule, and the problem survives intact.",
+  "planetaryDynamic": "With Mercury quincunx Lilith, people can name what is nameable while the grievance keeps arriving without a caption.",
+  "aspectMechanic": "So they keep correcting each accurate-sounding sentence with another one.",
+  "conditionalConsequence": "The conversations may continue indefinitely, but the matter only resolves when someone names it at the right altitude.",
+  "body": "Every time someone tries to put the real subject into words, it comes out slightly beside the point.\n\nThey file the complaint about the schedule when it is about respect; management fixes the schedule, and the problem survives intact.\n\nWith Mercury quincunx Lilith, people can name what is nameable while the grievance keeps arriving without a caption.\n\nSo they keep correcting each accurate-sounding sentence with another one.\n\nThe conversations may continue indefinitely, but the matter only resolves when someone names it at the right altitude.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.mercury.quincunx.lilith",
+    "sourceHeading": "Mercury quincunx Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

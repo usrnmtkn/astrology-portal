@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.neptune.conjunction.north-node",
+  "canonicalId": "sky-aspect/neptune/north_node/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "neptune",
+  "bodyB": "north_node",
+  "aspect": "conjunction",
+  "humanMoment": "People are feeling the calling before they can specify it.",
+  "developmentDetail": "Someone knows, with full conviction, that they are pulled toward the work that matters, the place that fits, the life that makes sense, and they cannot give any of it an address, and their planning tools slide right off it.",
+  "planetaryDynamic": "With Neptune conjunct the North Node, people receive the new direction as longing and imagery first, a chapter announced in a language that resists scheduling, while they still have to walk the road in shoes.",
+  "aspectMechanic": "Someone is certain of everything except the address.",
+  "conditionalConsequence": "The vagueness may persist for a while, but people who take one concrete step tend to learn more from the fog's answer than from a year of wondering at it.",
+  "body": "People are feeling the calling before they can specify it.\n\nSomeone knows, with full conviction, that they are pulled toward the work that matters, the place that fits, the life that makes sense, and they cannot give any of it an address, and their planning tools slide right off it.\n\nWith Neptune conjunct the North Node, people receive the new direction as longing and imagery first, a chapter announced in a language that resists scheduling, while they still have to walk the road in shoes.\n\nSomeone is certain of everything except the address.\n\nThe vagueness may persist for a while, but people who take one concrete step tend to learn more from the fog's answer than from a year of wondering at it.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.neptune.conjunction.north-node",
+    "sourceHeading": "Neptune conjunction North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

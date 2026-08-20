@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.trine.north-node",
+  "canonicalId": "sky-aspect/north_node/venus/trine",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "venus",
+  "aspect": "trine",
+  "humanMoment": "The pleasures are starting to feed the direction instead of postponing it.",
+  "developmentDetail": "Someone notices the dinners, the company, the beautiful things now overlap with the territory they are building in, so they stop having to choose between delight and development.",
+  "planetaryDynamic": "With Venus trine the North Node, people find the enjoyable choice and the developmental choice keep being the same choice, because what they love has moved into the neighborhood they are headed toward.",
+  "aspectMechanic": "Nobody has to earn the fun by betraying the plan.",
+  "conditionalConsequence": "The overlap may feel like luck, but people mostly built it by curating what they said yes to, and what people build on purpose they can maintain on purpose.",
+  "body": "The pleasures are starting to feed the direction instead of postponing it.\n\nSomeone notices the dinners, the company, the beautiful things now overlap with the territory they are building in, so they stop having to choose between delight and development.\n\nWith Venus trine the North Node, people find the enjoyable choice and the developmental choice keep being the same choice, because what they love has moved into the neighborhood they are headed toward.\n\nNobody has to earn the fun by betraying the plan.\n\nThe overlap may feel like luck, but people mostly built it by curating what they said yes to, and what people build on purpose they can maintain on purpose.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.venus.trine.north-node",
+    "sourceHeading": "Venus trine North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

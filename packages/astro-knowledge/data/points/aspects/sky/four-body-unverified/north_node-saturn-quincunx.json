@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.quincunx.north-node",
+  "canonicalId": "sky-aspect/north_node/saturn/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "saturn",
+  "aspect": "quincunx",
+  "humanMoment": "People keep fielding competing claims on the same season from their duties and their direction.",
+  "developmentDetail": "Someone balances the duty schedule against the development schedule by hand every single week, because no standing arrangement covers both and each claim is valid.",
+  "planetaryDynamic": "With Saturn quincunx the North Node, people keep administering what they already promised while the new direction petitions for time nobody ever budgeted, and every settlement they reach expires by Friday.",
+  "aspectMechanic": "Nobody has built the week that holds both yet.",
+  "conditionalConsequence": "The juggling may be sustainable short term, but people who feed a direction on leftovers keep it a hobby, and promoting it tends to require changing the structure, not the effort.",
+  "body": "People keep fielding competing claims on the same season from their duties and their direction.\n\nSomeone balances the duty schedule against the development schedule by hand every single week, because no standing arrangement covers both and each claim is valid.\n\nWith Saturn quincunx the North Node, people keep administering what they already promised while the new direction petitions for time nobody ever budgeted, and every settlement they reach expires by Friday.\n\nNobody has built the week that holds both yet.\n\nThe juggling may be sustainable short term, but people who feed a direction on leftovers keep it a hobby, and promoting it tends to require changing the structure, not the effort.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.saturn.quincunx.north-node",
+    "sourceHeading": "Saturn quincunx North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

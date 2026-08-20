@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.conjunction.lilith",
+  "canonicalId": "sky-aspect/lilith/sun/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "sun",
+  "aspect": "conjunction",
+  "humanMoment": "A keynote speaker goes off script and says the thing the event was designed to avoid.",
+  "developmentDetail": "Half the room checks the exits while the other half finally leans in, and the speaker feels a reputation built on staying agreeable stop fitting mid-sentence.",
+  "planetaryDynamic": "With the Sun conjunct Lilith, the person on stage is working for approval in daylight while carrying the want that was ruled unacceptable, and today both come out of the same mouth.",
+  "aspectMechanic": "The official version and the off-record version merge into one speech, ready or not.",
+  "conditionalConsequence": "The delivery may wobble, but whatever people say with both voices at once stops being deniable afterward.",
+  "body": "A keynote speaker goes off script and says the thing the event was designed to avoid.\n\nHalf the room checks the exits while the other half finally leans in, and the speaker feels a reputation built on staying agreeable stop fitting mid-sentence.\n\nWith the Sun conjunct Lilith, the person on stage is working for approval in daylight while carrying the want that was ruled unacceptable, and today both come out of the same mouth.\n\nThe official version and the off-record version merge into one speech, ready or not.\n\nThe delivery may wobble, but whatever people say with both voices at once stops being deniable afterward.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.sun.conjunction.lilith",
+    "sourceHeading": "Sun conjunction Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

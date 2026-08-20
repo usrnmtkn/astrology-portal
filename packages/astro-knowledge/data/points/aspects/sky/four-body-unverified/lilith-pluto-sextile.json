@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.sextile.lilith",
+  "canonicalId": "sky-aspect/lilith/pluto/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "pluto",
+  "aspect": "sextile",
+  "humanMoment": "Someone finds a safe room for the oldest confession.",
+  "developmentDetail": "With a therapist, a trusted friend, or a structured process, they move the banned material from secret to case, and the handling can begin.",
+  "planetaryDynamic": "With Pluto sextile Lilith, the people who offer depth and containment meet the material that needed both.",
+  "aspectMechanic": "The vault door is open, but somebody has to walk in and start the inventory.",
+  "conditionalConsequence": "The room may go unused, which is its own decision; people who handle the material early pay less than people who wait for it to schedule itself.",
+  "body": "Someone finds a safe room for the oldest confession.\n\nWith a therapist, a trusted friend, or a structured process, they move the banned material from secret to case, and the handling can begin.\n\nWith Pluto sextile Lilith, the people who offer depth and containment meet the material that needed both.\n\nThe vault door is open, but somebody has to walk in and start the inventory.\n\nThe room may go unused, which is its own decision; people who handle the material early pay less than people who wait for it to schedule itself.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.pluto.sextile.lilith",
+    "sourceHeading": "Pluto sextile Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

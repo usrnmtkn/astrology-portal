@@ -55,7 +55,10 @@ function textFromGroup(group) {
 
 function geminiOutputText(payload) {
   if (typeof payload?.output_text === "string") return payload.output_text;
-  for (const key of ["outputs", "output", "candidates"]) {
+  // The Interactions API replaced the legacy `outputs` array with `steps` in
+  // June 2026. Keep both shapes readable so preserved fixtures and current
+  // responses use the same adapter.
+  for (const key of ["steps", "outputs", "output", "candidates"]) {
     if (!Array.isArray(payload?.[key])) continue;
     for (let index = payload[key].length - 1; index >= 0; index -= 1) {
       const text = textFromGroup(payload[key][index]);

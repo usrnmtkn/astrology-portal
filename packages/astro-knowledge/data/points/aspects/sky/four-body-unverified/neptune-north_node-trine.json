@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.neptune.trine.north-node",
+  "canonicalId": "sky-aspect/neptune/north_node/trine",
+  "kind": "sky-aspect",
+  "bodyA": "neptune",
+  "bodyB": "north_node",
+  "aspect": "trine",
+  "humanMoment": "People are finding the work finally means what it was supposed to mean.",
+  "developmentDetail": "Someone doing the direction's tasks stops experiencing them as career moves and starts experiencing them as the point, and their inner picture and outer schedule finally describe the same life.",
+  "planetaryDynamic": "With Neptune trine the North Node, people find the meaning arriving through the work rather than instead of it, and the vision and the direction water each other without argument.",
+  "aspectMechanic": "Someone's dream and day job are finally working the same shift.",
+  "conditionalConsequence": "The alignment may feel effortless, but people paid for it with every unglamorous step that preceded it; they simply paid the invoice in advance.",
+  "body": "People are finding the work finally means what it was supposed to mean.\n\nSomeone doing the direction's tasks stops experiencing them as career moves and starts experiencing them as the point, and their inner picture and outer schedule finally describe the same life.\n\nWith Neptune trine the North Node, people find the meaning arriving through the work rather than instead of it, and the vision and the direction water each other without argument.\n\nSomeone's dream and day job are finally working the same shift.\n\nThe alignment may feel effortless, but people paid for it with every unglamorous step that preceded it; they simply paid the invoice in advance.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.neptune.trine.north-node",
+    "sourceHeading": "Neptune trine North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

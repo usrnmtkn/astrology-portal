@@ -1657,6 +1657,7 @@ test.describe("client-facing user flow case studies", () => {
       contentKey: "sky.aspect.venus.square.mars.virgo.gemini",
       surface: "sky",
       mode: "article" as const,
+      status: "LIVE",
       eventType: "sky_aspect",
       targetDate: null,
       headline: "Venus square Mars",
@@ -1678,7 +1679,7 @@ test.describe("client-facing user flow case studies", () => {
         }
       },
       judgeScore: 3,
-      judgeGate: "auto-publish",
+      judgeGate: "human-review",
       model: null,
       updatedAt: "2026-07-30T12:00:00.000Z"
     };

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.opposition.north-node",
+  "canonicalId": "sky-aspect/north_node/pluto/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "pluto",
+  "aspect": "opposition",
+  "humanMoment": "People are getting endings with transformation attached.",
+  "developmentDetail": "Someone leaves, and the chapter refuses to close quietly: the departure exposes what the arrangement really ran on, and the leaving changes the leaver more than the staying ever did.",
+  "planetaryDynamic": "With Pluto opposite the North Node, people do the heaviest work on the familiar ground they are exiting, giving the old order the full reckoning it demands as its price for becoming past, while the new direction waits for whoever emerges.",
+  "aspectMechanic": "Nobody gets out without settling up first.",
+  "conditionalConsequence": "The ending may take longer than planned, but people whose endings transform them tend not to repeat them, and people whose endings merely close tend to reopen them.",
+  "body": "People are getting endings with transformation attached.\n\nSomeone leaves, and the chapter refuses to close quietly: the departure exposes what the arrangement really ran on, and the leaving changes the leaver more than the staying ever did.\n\nWith Pluto opposite the North Node, people do the heaviest work on the familiar ground they are exiting, giving the old order the full reckoning it demands as its price for becoming past, while the new direction waits for whoever emerges.\n\nNobody gets out without settling up first.\n\nThe ending may take longer than planned, but people whose endings transform them tend not to repeat them, and people whose endings merely close tend to reopen them.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.pluto.opposition.north-node",
+    "sourceHeading": "Pluto opposition North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

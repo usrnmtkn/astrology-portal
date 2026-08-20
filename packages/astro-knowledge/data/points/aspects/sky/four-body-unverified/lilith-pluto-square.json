@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.square.lilith",
+  "canonicalId": "sky-aspect/lilith/pluto/square",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "pluto",
+  "aspect": "square",
+  "humanMoment": "Someone watches a power struggle repeat an old banishment beat for beat.",
+  "developmentDetail": "Somebody gets excluded, silenced, or managed out, everyone with a memory recognizes the pattern, and people organize their resistance around that recognition.",
+  "planetaryDynamic": "With Pluto square Lilith, the people concentrating control over who belongs face everyone that control has expelled before.",
+  "aspectMechanic": "So the crowd stops arguing the case and starts arguing the pattern.",
+  "conditionalConsequence": "The current round may be winnable, but the repetition is the real finding, and it does not end with this round's winner.",
+  "body": "Someone watches a power struggle repeat an old banishment beat for beat.\n\nSomebody gets excluded, silenced, or managed out, everyone with a memory recognizes the pattern, and people organize their resistance around that recognition.\n\nWith Pluto square Lilith, the people concentrating control over who belongs face everyone that control has expelled before.\n\nSo the crowd stops arguing the case and starts arguing the pattern.\n\nThe current round may be winnable, but the repetition is the real finding, and it does not end with this round's winner.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.pluto.square.lilith",
+    "sourceHeading": "Pluto square Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

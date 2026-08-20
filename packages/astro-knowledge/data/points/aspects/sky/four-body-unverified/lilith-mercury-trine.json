@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.trine.lilith",
+  "canonicalId": "sky-aspect/lilith/mercury/trine",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "mercury",
+  "aspect": "trine",
+  "humanMoment": "The blunt speaker and the careful audience finally manage to have the same conversation.",
+  "developmentDetail": "They discuss the avoided topic with specifics and without casualties: the pay gap, the family secret, the criticism of the beloved plan.",
+  "planetaryDynamic": "With Mercury trine Lilith, the people who translate meet the material that always resisted translation, and this week it goes through.",
+  "aspectMechanic": "The banned subject travels through ordinary conversation without anyone sounding the alarm.",
+  "conditionalConsequence": "The talk may change little on paper, but a topic that moves from unspeakable to routine changes what people can plan.",
+  "body": "The blunt speaker and the careful audience finally manage to have the same conversation.\n\nThey discuss the avoided topic with specifics and without casualties: the pay gap, the family secret, the criticism of the beloved plan.\n\nWith Mercury trine Lilith, the people who translate meet the material that always resisted translation, and this week it goes through.\n\nThe banned subject travels through ordinary conversation without anyone sounding the alarm.\n\nThe talk may change little on paper, but a topic that moves from unspeakable to routine changes what people can plan.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.mercury.trine.lilith",
+    "sourceHeading": "Mercury trine Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

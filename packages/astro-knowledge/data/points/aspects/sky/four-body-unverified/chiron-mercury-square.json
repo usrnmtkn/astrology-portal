@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.square.chiron",
+  "canonicalId": "sky-aspect/chiron/mercury/square",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "mercury",
+  "aspect": "square",
+  "humanMoment": "Someone's reply comes out with spikes the question did not earn.",
+  "developmentDetail": "They hear condescension whether or not it was sent, fire back sharp, then put the cheerful mask up fast, and neither the spikes nor the cheer is their real answer.",
+  "planetaryDynamic": "With Mercury square Chiron, people are running the exchange and guarding the tender place it keeps grazing at the same time.",
+  "aspectMechanic": "The real answer never gets a turn.",
+  "conditionalConsequence": "The sharpness may keep the tender place safe, but it guards it just as well from the people who were trying to reach it kindly.",
+  "body": "Someone's reply comes out with spikes the question did not earn.\n\nThey hear condescension whether or not it was sent, fire back sharp, then put the cheerful mask up fast, and neither the spikes nor the cheer is their real answer.\n\nWith Mercury square Chiron, people are running the exchange and guarding the tender place it keeps grazing at the same time.\n\nThe real answer never gets a turn.\n\nThe sharpness may keep the tender place safe, but it guards it just as well from the people who were trying to reach it kindly.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.mercury.square.chiron",
+    "sourceHeading": "Mercury square Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

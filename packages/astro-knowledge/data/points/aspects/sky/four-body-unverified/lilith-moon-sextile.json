@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.sextile.lilith",
+  "canonicalId": "sky-aspect/lilith/moon/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "moon",
+  "aspect": "sextile",
+  "humanMoment": "Someone says an honest sentence at the family table, and it lands better than years of managing around the subject predicted.",
+  "developmentDetail": "They name the preference that was always ruled out, skipping the holiday, changing the tradition, retiring the obligation, and the pushback turns out smaller than the fear of it was.",
+  "planetaryDynamic": "With the Moon sextile Lilith, the people who guard belonging and the familiar arrangement can briefly make room for the appetite the arrangement never included.",
+  "aspectMechanic": "The opening only counts if somebody actually says the sentence.",
+  "conditionalConsequence": "The tradition may survive anyway, but the family finally learns which parts of it are love and which parts are habit.",
+  "body": "Someone says an honest sentence at the family table, and it lands better than years of managing around the subject predicted.\n\nThey name the preference that was always ruled out, skipping the holiday, changing the tradition, retiring the obligation, and the pushback turns out smaller than the fear of it was.\n\nWith the Moon sextile Lilith, the people who guard belonging and the familiar arrangement can briefly make room for the appetite the arrangement never included.\n\nThe opening only counts if somebody actually says the sentence.\n\nThe tradition may survive anyway, but the family finally learns which parts of it are love and which parts are habit.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.moon.sextile.lilith",
+    "sourceHeading": "Moon sextile Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

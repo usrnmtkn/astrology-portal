@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "north-node-3",
+  "canonicalId": "transit-house/north_node/3",
+  "kind": "house",
+  "transiting": "north-node",
+  "house": 3,
+  "headline": "Saying what you mean",
+  "body": "The North Node in your 3rd house makes direct, day-to-day communication far more important than grand speeches. Ask the simple question, reply to the email you keep avoiding, speak plainly to family, or write the short draft instead of hiding behind a long essay. Your voice gets stronger by using it, not by waiting until your thoughts sound flawless.\n\nAcross the axis, the 9th house offers the familiar comfort of abstract debates and speaking from on high. Growth here is down-to-earth. It happens when you stay engaged with the person right in front of you and listen to how your words land.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "North Node — 3H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

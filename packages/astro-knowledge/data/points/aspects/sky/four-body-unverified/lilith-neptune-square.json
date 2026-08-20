@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.neptune.square.lilith",
+  "canonicalId": "sky-aspect/lilith/neptune/square",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "neptune",
+  "aspect": "square",
+  "humanMoment": "Someone lets the escape and the appetite feed each other past the point of use.",
+  "developmentDetail": "They put on the show, the scroll, the pour in place of the want again, and the relief gets shorter while the dose gets larger.",
+  "planetaryDynamic": "With Neptune square Lilith, people take the exit on offer while the unmet want underneath keeps paying for the tickets.",
+  "aspectMechanic": "Every time they use one, they deepen the claim of the other.",
+  "conditionalConsequence": "The relief may still work tonight, but a want people medicate is not a want they have met, and the gap between the two widens quietly.",
+  "body": "Someone lets the escape and the appetite feed each other past the point of use.\n\nThey put on the show, the scroll, the pour in place of the want again, and the relief gets shorter while the dose gets larger.\n\nWith Neptune square Lilith, people take the exit on offer while the unmet want underneath keeps paying for the tickets.\n\nEvery time they use one, they deepen the claim of the other.\n\nThe relief may still work tonight, but a want people medicate is not a want they have met, and the gap between the two widens quietly.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.neptune.square.lilith",
+    "sourceHeading": "Neptune square Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

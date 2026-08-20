@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.quincunx.chiron",
+  "canonicalId": "sky-aspect/chiron/moon/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "moon",
+  "aspect": "quincunx",
+  "humanMoment": "The comfort people offer and the comfort people need keep missing by one size.",
+  "developmentDetail": "A friend brings advice when listening was wanted, another gives space when company was wanted, and everyone in the exchange means well while nobody lands.",
+  "planetaryDynamic": "With the Moon quincunx Chiron, people give care in the form they know while the person receiving it needs the one form the old injury dictates.",
+  "aspectMechanic": "Everyone keeps almost getting it right.",
+  "conditionalConsequence": "The misses may be nobody's fault, but they tend to continue until somebody says out loud exactly what kind of comfort they are asking for.",
+  "body": "The comfort people offer and the comfort people need keep missing by one size.\n\nA friend brings advice when listening was wanted, another gives space when company was wanted, and everyone in the exchange means well while nobody lands.\n\nWith the Moon quincunx Chiron, people give care in the form they know while the person receiving it needs the one form the old injury dictates.\n\nEveryone keeps almost getting it right.\n\nThe misses may be nobody's fault, but they tend to continue until somebody says out loud exactly what kind of comfort they are asking for.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.moon.quincunx.chiron",
+    "sourceHeading": "Moon quincunx Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

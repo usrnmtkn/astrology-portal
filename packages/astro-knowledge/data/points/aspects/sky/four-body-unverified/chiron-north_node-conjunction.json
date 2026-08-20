@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.chiron.conjunction.north-node",
+  "canonicalId": "sky-aspect/chiron/north_node/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "north_node",
+  "aspect": "conjunction",
+  "humanMoment": "The next chapter opens directly onto someone's old injury.",
+  "developmentDetail": "Everyone agrees on the direction, and the direction runs through the exact skill the wound made expensive: speaking, leading, staying, leaving.",
+  "planetaryDynamic": "With Chiron conjunct the North Node, people carry the injury and the medicine it became straight into the unfamiliar direction that requires both.",
+  "aspectMechanic": "Progress on either one is progress on both.",
+  "conditionalConsequence": "The timing may look cruel, but the assignment tends to need the wound opened in order to finish closing it, and the people who accept that walk the chapter and the repair at once.",
+  "body": "The next chapter opens directly onto someone's old injury.\n\nEveryone agrees on the direction, and the direction runs through the exact skill the wound made expensive: speaking, leading, staying, leaving.\n\nWith Chiron conjunct the North Node, people carry the injury and the medicine it became straight into the unfamiliar direction that requires both.\n\nProgress on either one is progress on both.\n\nThe timing may look cruel, but the assignment tends to need the wound opened in order to finish closing it, and the people who accept that walk the chapter and the repair at once.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.chiron.conjunction.north-node",
+    "sourceHeading": "Chiron conjunction North Node",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

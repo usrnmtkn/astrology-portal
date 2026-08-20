@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.opposition.lilith",
+  "canonicalId": "sky-aspect/lilith/mercury/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "mercury",
+  "aspect": "opposition",
+  "humanMoment": "The person who says everything and the person who says nothing end up negotiating for the whole room.",
+  "developmentDetail": "One overstates to force the issue, the other understates to bury it, and everyone else watches the real subject bounce between them.",
+  "planetaryDynamic": "With Mercury opposite Lilith, one negotiator argues for manageable words while the other backs the version those words were hiding.",
+  "aspectMechanic": "The room hears a debate when what it needed was a disclosure.",
+  "conditionalConsequence": "A settlement may come, but everyone watching learns that the silence and the shock were both strategies, and neither was the truth.",
+  "body": "The person who says everything and the person who says nothing end up negotiating for the whole room.\n\nOne overstates to force the issue, the other understates to bury it, and everyone else watches the real subject bounce between them.\n\nWith Mercury opposite Lilith, one negotiator argues for manageable words while the other backs the version those words were hiding.\n\nThe room hears a debate when what it needed was a disclosure.\n\nA settlement may come, but everyone watching learns that the silence and the shock were both strategies, and neither was the truth.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.mercury.opposition.lilith",
+    "sourceHeading": "Mercury opposition Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

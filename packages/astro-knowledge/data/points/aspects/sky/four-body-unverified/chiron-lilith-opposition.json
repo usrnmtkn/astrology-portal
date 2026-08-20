@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.chiron.opposition.lilith",
+  "canonicalId": "sky-aspect/chiron/lilith/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "lilith",
+  "aspect": "opposition",
+  "humanMoment": "The healer and the wild one argue over the same person's next step.",
+  "developmentDetail": "One counsels protection, the other counsels exposure, and the person in the middle recognizes both voices as their own history talking.",
+  "planetaryDynamic": "With Chiron opposite Lilith, one advocate carries the caution the injury taught while the other carries the appetite the injury interrupted.",
+  "aspectMechanic": "So the person in the middle gets to hear an internal negotiation out loud for once.",
+  "conditionalConsequence": "Either counsel may fit this case, but the listener is really hearing the old injury negotiate with the old exile, and people who notice that hear both voices differently.",
+  "body": "The healer and the wild one argue over the same person's next step.\n\nOne counsels protection, the other counsels exposure, and the person in the middle recognizes both voices as their own history talking.\n\nWith Chiron opposite Lilith, one advocate carries the caution the injury taught while the other carries the appetite the injury interrupted.\n\nSo the person in the middle gets to hear an internal negotiation out loud for once.\n\nEither counsel may fit this case, but the listener is really hearing the old injury negotiate with the old exile, and people who notice that hear both voices differently.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.chiron.opposition.lilith",
+    "sourceHeading": "Chiron opposition Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}
