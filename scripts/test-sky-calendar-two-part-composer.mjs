@@ -209,10 +209,35 @@ assert.equal(
   "Facets of one policy question are not alternative scenes",
 );
 
-const secondPersonCard = structuredClone(cards[0]);
-secondPersonCard.forecast = secondPersonCard.forecast.replace("someone asks", "you ask");
-const secondPersonReport = auditSkyCalendarTwoPartCards([secondPersonCard]);
-assert.ok(secondPersonReport.cardReports[0].defects.some((defect) => defect.code === "second_person_register"));
+const directReaderGuidanceCard = structuredClone(cards[0]);
+const guidanceIndex = directReaderGuidanceCard.forecastBeats.whatCanMove[0];
+directReaderGuidanceCard.forecastSentences[guidanceIndex].text = "You can compare the revised rule with the record before accepting it.";
+directReaderGuidanceCard.forecast = directReaderGuidanceCard.forecastSentences.map((sentence) => sentence.text).join(" ");
+const directReaderGuidanceReport = auditSkyCalendarTwoPartCards([directReaderGuidanceCard]);
+assert.equal(
+  directReaderGuidanceReport.cardReports[0].defects.some((defect) => defect.code === "second_person_outside_direct_guidance"),
+  false,
+  "Calendar may address the reader directly in the concrete what-can-move guidance beat",
+);
+
+const nonGuidanceSecondPersonCard = structuredClone(cards[0]);
+const nonGuidanceIndex = nonGuidanceSecondPersonCard.forecastSentences.findIndex((_, index) => !nonGuidanceSecondPersonCard.forecastBeats.whatCanMove.includes(index));
+nonGuidanceSecondPersonCard.forecastSentences[nonGuidanceIndex].text = "You are the person who always carries this problem.";
+nonGuidanceSecondPersonCard.forecast = nonGuidanceSecondPersonCard.forecastSentences.map((sentence) => sentence.text).join(" ");
+const nonGuidanceSecondPersonReport = auditSkyCalendarTwoPartCards([nonGuidanceSecondPersonCard]);
+assert.ok(nonGuidanceSecondPersonReport.cardReports[0].defects.some((defect) => defect.code === "second_person_outside_direct_guidance"));
+assert.ok(nonGuidanceSecondPersonReport.cardReports[0].defects.some((defect) => defect.code === "standing_pattern_register"));
+
+const detailsSecondPersonCard = structuredClone(cards[0]);
+detailsSecondPersonCard.detailsSentences[0].text = "You can see the same demand becoming harder to ignore.";
+detailsSecondPersonCard.details = [
+  detailsSecondPersonCard.detailsTransitLabel,
+  ...detailsSecondPersonCard.detailsSentences.map((sentence) => sentence.text),
+].join(" ");
+const detailsSecondPersonReport = auditSkyCalendarTwoPartCards([detailsSecondPersonCard]);
+assert.ok(detailsSecondPersonReport.cardReports[0].defects.some((defect) => (
+  defect.code === "second_person_outside_direct_guidance" && defect.surface === "details"
+)));
 
 const genericPeopleCard = structuredClone(cards[0]);
 genericPeopleCard.forecast = genericPeopleCard.forecast.replace("someone asks", "people ask");

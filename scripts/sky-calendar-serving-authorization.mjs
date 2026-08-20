@@ -9,7 +9,7 @@ import { componentSetSha256 } from "./sky-calendar-component-approval.mjs";
 
 const moduleRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-export const SKY_CALENDAR_COMPOSER_VERSION = "sky-calendar-two-part-composer-v2.2.0";
+export const SKY_CALENDAR_COMPOSER_VERSION = "sky-calendar-two-part-composer-v2.3.0";
 export const SKY_CALENDAR_SERVING_AUTHORIZATION_RECORD_PATH =
   "packages/astro-knowledge/review/sky-calendar-meaning-components-v1/serving-authorization.json";
 export const SKY_CALENDAR_COMPOSER_SOURCE_FILES = Object.freeze([
