@@ -231,6 +231,7 @@ export function ManualChartsPanel({
   transitDateLabel,
   fallbackArchitectureV3Version,
   profileNatalSky,
+  profileNatalCalculationStatus,
   profileTransits,
   natalGeneratedContent,
   relationshipGeneratedContent,
@@ -253,6 +254,7 @@ export function ManualChartsPanel({
   transitDateLabel: string;
   fallbackArchitectureV3Version: number;
   profileNatalSky: SkySnapshot | null;
+  profileNatalCalculationStatus: "idle" | "loading" | "ready" | "error";
   profileTransits: TransitItem[];
   natalGeneratedContent: GeneratedContentMap;
   relationshipGeneratedContent: GeneratedContentMap;
@@ -1170,6 +1172,15 @@ export function ManualChartsPanel({
     selectedChartIsEvent,
     selectedRelationshipContextType
   ]);
+  const selectedCompatibilityIsLoading = Boolean(
+    friendProfileWork.compatibility
+    && selectedChart
+    && !selectedChartIsEvent
+    && relationshipComparisonIsSelf
+    && relationshipPersonB
+    && !relationshipComparisonSky
+    && profileNatalCalculationStatus !== "error"
+  );
   const selectedCompatibilityDynamics = useMemo(() => (
     friendProfileWork.compatibility
       ? compatibilityDynamicsFromContacts(
@@ -2620,7 +2631,26 @@ export function ManualChartsPanel({
         >
 
           {friendProfileTab === "compatibility" && (
-            selectedCompatibilityCards.length > 0 ? (
+            selectedCompatibilityIsLoading ? (
+              <div
+                className="friend-tab-pane friend-compat-stage friend-compatibility-stage friend-compatibility-loading"
+                aria-label={`${selectedChart.displayName} compatibility loading`}
+                aria-live="polite"
+                role="status"
+              >
+                <div className="friend-profile-copy-column compatibility-column">
+                  <article className="friends-logic-card friend-compatibility-loading__card">
+                    <span>Compatibility</span>
+                    <h3>Loading compatibility…</h3>
+                    <div className="friend-compatibility-loading__lines" aria-hidden="true">
+                      <span />
+                      <span />
+                      <span />
+                    </div>
+                  </article>
+                </div>
+              </div>
+            ) : selectedCompatibilityCards.length > 0 ? (
               <CompatibilityTab
                 cards={selectedCompatibilityCards}
                 daily={selectedPairDaily}

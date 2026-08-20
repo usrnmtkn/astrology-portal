@@ -378,6 +378,16 @@ assert.match(
   /const loadCompatibilityTab = \(\) =>\s*import\("\.\/CompatibilityTab"\)[\s\S]*const CompatibilityTab = lazy\(loadCompatibilityTab\);/u,
   "CompatibilityTab must load only when its Friends profile surface renders."
 );
+assert.match(
+  appSource,
+  /<ManualChartsPanel[\s\S]*profileNatalCalculationStatus=\{profileNatalCalculationStatus\}/u,
+  "Friends orchestration must expose profile-calculation state to its relationship loading UI."
+);
+assert.match(
+  manualChartsPanelSource,
+  /role="status"[\s\S]*Loading compatibility…/u,
+  "Compatibility must present a visible status while the comparison chart is still calculating."
+);
 assert.doesNotMatch(
   appSource,
   /BlockedAccountsSettings/u,

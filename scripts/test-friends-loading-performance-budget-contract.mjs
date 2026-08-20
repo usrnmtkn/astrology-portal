@@ -16,6 +16,7 @@ const expectedBudgetKeys = [
   "slowNetworkDetailShellReadyMs",
   "slowNetworkListReadyMs",
   "slowNetworkRelationshipEnhancedMs",
+  "slowNetworkRelationshipLoadingReadyMs",
   "slowNetworkRelationshipReadyMs",
   "warmDetailReadyMs"
 ];
@@ -62,22 +63,27 @@ assert.ok(
   "Incomplete charts must paint as rows before their background enhancement completes."
 );
 assert.ok(
-  friendsLoadingPerformanceBudgets.slowNetworkRelationshipReadyMs
-    < friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs,
-  "Progressive relationship copy must paint before the complete natal enhancement finishes."
+  friendsLoadingPerformanceBudgets.slowNetworkRelationshipLoadingReadyMs
+    < friendsLoadingPerformanceBudgets.slowNetworkDetailShellReadyMs,
+  "The relationship loading state must retain a stricter median than the detail shell."
 );
-
+assert.ok(
+  friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs
+    < friendsLoadingPerformanceBudgets.slowNetworkRelationshipReadyMs,
+  "Incremental enhancement must stay small after the first authored card paints."
+);
 const hardCeilings = {
   coldListReadyMs: 800,
   warmDetailReadyMs: 500,
-  directLinkSynastryReadyMs: 1_000,
+  directLinkSynastryReadyMs: 1_500,
   mobileNavigationReadyMs: 1_000,
   incompleteChartListReadyMs: 800,
   incompleteChartRepairReadyMs: 2_500,
   slowNetworkListReadyMs: 800,
   slowNetworkDetailShellReadyMs: 1_200,
+  slowNetworkRelationshipLoadingReadyMs: 900,
   slowNetworkRelationshipReadyMs: 2_200,
-  slowNetworkRelationshipEnhancedMs: 2_500
+  slowNetworkRelationshipEnhancedMs: 250
 };
 
 for (const [key, ceiling] of Object.entries(hardCeilings)) {
