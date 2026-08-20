@@ -13647,6 +13647,7 @@ export function App() {
                     transitDateLabel={formatSkyFullChartDate(skyDate)}
                     fallbackArchitectureV3Version={fallbackArchitectureV3Version}
                     profileNatalSky={profileNatalSky}
+                    profileNatalCalculationStatus={profileNatalCalculationStatus}
                     profileTransits={selectedDateTransits}
                     natalGeneratedContent={natalGeneratedContent}
                     relationshipGeneratedContent={relationshipGeneratedContent}
