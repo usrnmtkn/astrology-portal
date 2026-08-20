@@ -1,19 +1,18 @@
 {
   "schemaVersion": 1,
   "recordType": "sky_calendar_versioned_composer_serving_authorization",
-  "authorizationId": "sky-calendar-two-part-composer-v2.2.0-component-set-aee970d7-pending-pilot",
-  "authorizationDecisionDate": "2026-08-16",
+  "authorizationId": "sky-calendar-two-part-composer-v2.3.0-component-set-aee970d7-pending-pilot",
+  "authorizationDecisionDate": "2026-08-20",
   "authorizationDecisionSource": {
     "tool": "Codex Desktop",
     "threadId": "019fc997-4b31-79f2-9a53-b363197a6ee2",
     "threadTitle": "WIP: Aspects",
-    "turnId": "01a00dbc-c939-7211-9ce2-517f77901469",
-    "date": "2026-08-16",
-    "statement": "The owner authorizes composed cards to serve without per-card approval only when the composer version and component hash match and after owner confirmation of the eight-card unscripted pilot."
+    "date": "2026-08-20",
+    "statement": "The owner directed that you/your is allowed when Calendar directly addresses the reader, then instructed Codex to proceed with a plan and a fix for the full semantic layer. This record remains inactive pending owner review of the changed composer and its required pilot."
   },
   "authorizationModel": "versioned_composer_and_component_set",
-  "composerVersion": "sky-calendar-two-part-composer-v2.2.0",
-  "composerSourceSha256": "fa78fb0b70126bf1657aff06d83ee9510ce3859792fbb50d16098b9723af20c4",
+  "composerVersion": "sky-calendar-two-part-composer-v2.3.0",
+  "composerSourceSha256": "c192c3859b7007a18081e584f684c8a5f6123a6b4ca977a03a677f469984f4dc",
   "composerSourceFiles": [
     "scripts/sky-calendar-component-approval.mjs",
     "scripts/sky-calendar-frame-uniqueness.mjs",
@@ -28,7 +27,7 @@
     "cardCount": 8,
     "ownerConfirmed": false,
     "ownerConfirmationStatementSource": null,
-    "note": "Composer changed after the eight-card pilot. The pilot must be regenerated on v2.2.0 before the owner confirms."
+    "note": "Composer changed after the eight-card pilot. The pilot must be regenerated on v2.3.0 before the owner confirms."
   },
   "invalidationRule": "Any change to the composer, its deterministic gates, or any approved component invalidates serving authorization until the owner re-approves the new hashes.",
   "approvalRecordGovernance": {
@@ -49,6 +48,12 @@
     ]
   },
   "composerVersionHistory": [
+    {
+      "version": "sky-calendar-two-part-composer-v2.2.0",
+      "composerSourceSha256": "fa78fb0b70126bf1657aff06d83ee9510ce3859792fbb50d16098b9723af20c4",
+      "supersededOn": "2026-08-20",
+      "reason": "Calendar direct-reader guidance was owner-authorized. The register gate now allows you/your only in the Forecast what-can-move beat while continuing to reject second person in Details and standing-pattern language."
+    },
     {
       "version": "sky-calendar-two-part-composer-v2.1.0",
       "composerSourceSha256": "e723b58e5046c671f1a2ec6d244d1b64a20361e107c29970d5840bfc1002abc3",
