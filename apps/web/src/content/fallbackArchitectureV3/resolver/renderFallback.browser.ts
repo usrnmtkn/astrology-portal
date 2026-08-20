@@ -355,10 +355,11 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
         partKeys.push(exactHouseLived.contentKey);
       } else {
         const houseTemplate = getTemplate("fallback-template/natal.house-context");
+        const houseMeaning = getHook(`fallback-hook/house-meaning/${house}`, voice, opts);
         const houseCtx: Ctx = {
           ...ctx,
           houseOrdinal: ordinal(house),
-          houseMeaning: getHook(`fallback-hook/house-meaning/${house}`, voice, opts),
+          houseMeaning: houseMeaning == null ? null : mustache(houseMeaning, ctx),
           placementHouseSentences: getHook(`fallback-hook/placement-house-sentence/${planet}/${house}`, voice, opts),
           modifierSentences: mods,
         };

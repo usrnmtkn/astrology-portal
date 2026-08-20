@@ -171,10 +171,11 @@ function createFallbackRenderer(templatesFile, rowsFile) {
         partKeys.push(exactHouseLived.contentKey);
       } else {
         const houseTemplate = getTemplate("fallback-template/natal.house-context");
+        const houseMeaning = getHook(`fallback-hook/house-meaning/${house}`, voice, opts2);
         const houseCtx = {
           ...ctx,
           houseOrdinal: ordinal(house),
-          houseMeaning: getHook(`fallback-hook/house-meaning/${house}`, voice, opts2),
+          houseMeaning: houseMeaning == null ? null : mustache(houseMeaning, ctx),
           placementHouseSentences: getHook(`fallback-hook/placement-house-sentence/${planet}/${house}`, voice, opts2),
           modifierSentences: mods
         };
