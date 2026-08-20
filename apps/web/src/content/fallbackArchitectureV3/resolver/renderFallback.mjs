@@ -253,10 +253,11 @@ export function renderNatalPlacement(facts, opts = {}) {
       partKeys.push(exactHouseLived.contentKey);
     } else {
       const houseTemplate = getTemplate("fallback-template/natal.house-context");
+      const houseMeaning = getHook(`fallback-hook/house-meaning/${house}`, voice, { allowUnreviewed });
       const houseCtx = {
         ...ctx,
         houseOrdinal: ordinal(house),
-        houseMeaning: getHook(`fallback-hook/house-meaning/${house}`, voice, { allowUnreviewed }),
+        houseMeaning: houseMeaning == null ? null : mustache(houseMeaning, ctx),
         placementHouseSentences: getHook(`fallback-hook/placement-house-sentence/${planet}/${house}`, voice, { allowUnreviewed }),
         modifierSentences: mods,
       };
