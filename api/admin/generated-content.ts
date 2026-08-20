@@ -37,6 +37,7 @@ type GeneratedContentWriteBody = {
   evergreen?: boolean;
   evergreenAt?: string | null;
   evergreenBy?: string | null;
+  ownerAction?: "approve-and-schedule";
 };
 
 type GeneratedContentRequestBody = GeneratedContentWriteBody & {
@@ -816,6 +817,42 @@ async function updateGeneratedContent(req: IncomingMessage) {
     updated_at: new Date().toISOString()
   };
 
+  if (body.ownerAction === "approve-and-schedule") {
+    if (!existing || !["sky_aspect", "sky_placement"].includes(existing.block_type ?? "")) {
+      throw new Error("Approve and schedule is available only for generated Sky aspect and placement rows.");
+    }
+    const includesCopyEdit = [body.headline, body.summary, body.body, body.sections]
+      .some((value) => value !== undefined);
+    if (includesCopyEdit) {
+      throw new Error("Save and revalidate copy edits before approving and scheduling the row.");
+    }
+    const unexpectedFields = Object.entries(body)
+      .filter(([key, value]) => !["id", "ownerAction"].includes(key) && value !== undefined)
+      .map(([key]) => key);
+    if (unexpectedFields.length > 0) {
+      throw new Error(`Approve and schedule cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
+    }
+    if (existing.judge_gate !== "human-review") {
+      throw new Error("Approve and schedule requires the human-review judge gate.");
+    }
+    assertCanPublishGeneratedContent({
+      ...existing,
+      contentKey: existing.content_key,
+      provider: existing.provider,
+      promptVersion: existing.prompt_version,
+      sourceSnapshot: existing.source_snapshot,
+      blockType: existing.block_type,
+      judgeScore: existing.judge_score,
+      judgeGate: existing.judge_gate
+    });
+    const now = new Date().toISOString();
+    patch.status = "LIVE";
+    patch.lane = "serving";
+    patch.review_state = null;
+    patch.reviewed_at = now;
+    patch.published_at = now;
+  }
+
   if (isPackageRow && existing) {
     assertFallbackArchitectureV3StructureLocked(existing, body);
   }
@@ -927,14 +964,14 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.evergreen_by = body.evergreen ? body.evergreenBy ?? "admin" : null;
   }
 
-  const editsSkyAspectCopy = existing?.block_type === "sky_aspect" && (
+  const editsSkyCopy = ["sky_aspect", "sky_placement"].includes(existing?.block_type ?? "") && (
     (body.headline !== undefined && body.headline !== existing.headline)
     || (body.summary !== undefined && body.summary !== existing.summary)
     || (body.body !== undefined && body.body !== existing.body)
     || (body.sections !== undefined && JSON.stringify(body.sections) !== JSON.stringify(existing.sections))
   );
 
-  if (editsSkyAspectCopy) {
+  if (editsSkyCopy) {
     patch.status = "DRAFT";
     patch.review_state = "sky-voice-needs-review";
     patch.judge_score = null;
