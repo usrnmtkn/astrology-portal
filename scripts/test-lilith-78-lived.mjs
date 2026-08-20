@@ -73,7 +73,20 @@ const existingApprovedRows = source.hookRows.filter((row) => (
   && row.source_release !== llMatrixV13Release
   && row.source_release !== incrementalOwnerApprovalRelease
   && row.source_release !== "natal-moon-final-rendered-v3"
-));
+)).map((row) => {
+  // Preserve the frozen historical fingerprint while allowing the later,
+  // separately hash-bound Friend house-bridge context release.
+  if (row.source_release !== "friend-natal-house-bridge-context-v1") return row;
+  const historicalRow = {
+    ...row,
+    body_they: row.body_they.replace(
+      /^Their \{\{planetTitle\}\} is in their/u,
+      "It's in their",
+    ),
+  };
+  delete historicalRow.source_release;
+  return historicalRow;
+});
 assert.equal(
   sha256(JSON.stringify(existingApprovedRows)),
   manifest.invariants.readerPunctuationNormalizedExistingApprovedRowsSha256,
