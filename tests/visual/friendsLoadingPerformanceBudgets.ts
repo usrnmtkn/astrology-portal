@@ -16,7 +16,3 @@ export const friendsLoadingPerformanceBudgets = {
   slowNetworkRelationshipReadyMs: 2_200,
   slowNetworkRelationshipEnhancedMs: 250
 } as const;
-
-export const friendsLoadingPerformanceMaximums = {
-  slowNetworkColdRelationshipReadyMs: 5_800
-} as const;
