@@ -85,6 +85,9 @@ const chartRulerRanked = rankTransits([
 assert.ok(chartRulerRanked[0].factors.bonuses.includes("hits_chart_ruler"));
 
 assert.equal(effectiveOrb("conjunction", "transit", ["sun", "venus"]), 3);
+assert.equal(effectiveOrb("square", "natal", ["moon", "jupiter"]), 12);
+assert.equal(effectiveOrb("square", "natal", ["mars", "jupiter"]), 7);
+assert.equal(effectiveOrb("trine", "natal", ["moon", "mercury"]), 9);
 assert.deepEqual(isAspectActive({
   degreesA: 10,
   degreesB: 12,
