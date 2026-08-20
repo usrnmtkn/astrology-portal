@@ -282,6 +282,23 @@ const generatedContentRows = [
   }
 ];
 
+const horizonGeneratedRow = {
+  ...generatedContentRows[0],
+  id: "qa-horizon-sky-aspect",
+  content_key: "sky.aspect.mercury.trine.saturn.leo.aries",
+  status: "DRAFT",
+  event_type: "sky_aspect",
+  headline: "Mercury in Leo trine Saturn in Aries",
+  summary: "A governed reusable Sky-aspect draft.",
+  body: "Mercury in Leo gives the message visibility while Saturn in Aries tests whether the plan can hold its shape.",
+  block_type: "sky_aspect",
+  lane: "reference",
+  review_state: "sky-owner-approval-required",
+  judge_score: 2,
+  judge_gate: "human-review",
+  facts: { cardFacts: { a: "mercury", b: "saturn", aspect: "trine", signA: "leo", signB: "aries" } }
+};
+
 const reviewRecordRows = generatedContentRows.map((row) => ({
   id: row.id,
   source: "global",
@@ -348,6 +365,43 @@ async function seedAdminApi(
   await page.route("**/api/admin/**", async (route) => {
     const url = new URL(route.request().url());
     const pathname = url.pathname;
+
+    if (pathname.endsWith("/sky-review-horizon")) {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          ok: true,
+          horizon: {
+            startDate: "2026-08-20",
+            endDate: "2026-11-18",
+            snapshotCount: 91,
+            calculationMethod: "daily-active-sky-snapshot",
+            counts: { occurrences: 1, aspectCandidates: 1, placementCandidates: 0, activeWindows: 1 },
+            reviewCounts: { draft_needs_work: 1 },
+            generationPlan: {
+              status: "authorization_required",
+              reusableCandidatesMissingDrafts: 0,
+              writerCalls: 0,
+              reviewerCalls: 0,
+              minimumSuccessfulCalls: 0,
+              contentKeys: [],
+              note: "QA fixture"
+            },
+            occurrences: [{
+              kind: "aspect",
+              contentKey: horizonGeneratedRow.content_key,
+              label: "Mercury in Leo trine Saturn in Aries",
+              activeDates: ["2026-08-20"],
+              windows: [{ startDate: "2026-08-20", endDate: "2026-08-20" }],
+              reviewStatus: "draft_needs_work",
+              row: horizonGeneratedRow
+            }]
+          }
+        })
+      });
+      return;
+    }
 
     if (pathname.endsWith("/review-records")) {
       await route.fulfill({
@@ -986,6 +1040,24 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.locator("section[aria-label='Review queue filters']").getByLabel("Status")).toBeVisible();
     await expect(page.locator("section[aria-label='Review queue filters']").getByLabel("Evergreen")).toBeVisible();
 
+    await assertNoBrowserErrors();
+  });
+
+  test("upcoming Sky titles name each sign owner and existing drafts open in the editor", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await expectAdminRouteLoads(page, "/admin/content#review-queue");
+
+    await page.getByRole("button", { name: /Upcoming 90 days/ }).click();
+    const card = page.locator("article.admin-sky-voice-card", { hasText: "Mercury in Leo trine Saturn in Aries" });
+    await expect(card).toBeVisible();
+    await card.getByRole("button", { name: "Edit" }).click();
+
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor).toBeVisible();
+    await expect(editor.getByLabel("Headline")).toHaveValue("Mercury in Leo trine Saturn in Aries");
+    await editor.getByLabel("Body").fill("Updated governed Sky draft body.");
+    await expect(editor.getByLabel("Body")).toHaveValue("Updated governed Sky draft body.");
     await assertNoBrowserErrors();
   });
 

@@ -1,10 +1,13 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { createRequire } from "node:module";
 import { URL } from "node:url";
-import skyReviewHorizon from "../../src/astro-writing/skyReviewHorizon.cjs";
 import { currentSkyFacts, type SkySnapshot } from "../_lib/current-sky.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 
 loadLocalWebEnv();
+
+const require = createRequire(import.meta.url);
+const skyReviewHorizon = require("../../src/astro-writing/skyReviewHorizon.cjs");
 
 export const maxDuration = 60;
 
