@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.sextile.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "66465caf035d7e266617125c5ac56346d4af297391f8a8698e9154f96336df2a",
+  "payload": {
+    "summary": "A promising program receives conditional backing that can turn it into something lasting.",
+    "body": "A promising program receives conditional backing that can turn it into something lasting. Jupiter sextile Saturn gives the expansion a workable route through the rules: revise the budget, meet the reporting requirement, narrow the scope, or secure the person responsible for delivery. The opportunity comes with proof requirements because the structure has to carry what is being promised. Treat those conditions as design information. Meet the requirement that matters and leave the parts that do not need to grow alone."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.conjunction.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "05f9e3d451b0aa22e22392118be24a1d9fc0ab7b830a4160a1ee8cca257e9899",
+  "payload": {
+    "summary": "A promotion may arrive with the title, scrutiny, and a longer list of problems that now belong to the person being congratulated.",
+    "body": "A promotion may arrive with the title, scrutiny, and a longer list of problems that now belong to the person being congratulated. Sun conjunct Saturn can make recognition and responsibility part of the same offer, so the status looks better from the outside than the workload feels from inside the role. Read the duties as closely as the title. Ask what authority, pay, staff, and time come with the added responsibility. More responsibility should come with something that makes carrying it possible."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

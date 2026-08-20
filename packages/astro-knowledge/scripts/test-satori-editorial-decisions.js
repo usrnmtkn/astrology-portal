@@ -65,6 +65,7 @@ function main() {
     "on-paper-idiom-allowed",
     "on-paper-administrative-rejected",
     "literal-room-allowed",
+    "power-room-dynamic-allowed",
     "stock-room-hierarchy-rejected",
     "harm-literal-versus-dressed-up",
     "natural-english-abstract-personification",
@@ -74,7 +75,8 @@ function main() {
     "compressed-slogan-ending",
     "stacked-conclusion",
     "dated-communication-language",
-    "sky-aspect-calendar-second-person",
+    "sky-aspect-calendar-reader-address-allowed",
+    "sky-aspect-calendar-standing-pattern-rejected",
     "performance-literal-allowed",
     "performance-figurative-rejected",
     "tilt-figurative-fails",
@@ -124,6 +126,7 @@ function main() {
   mustPassDecision(article({ lived: "For about a year, the plan looks good on paper. The cost appears after someone agrees." }), "CF-014");
   mustFailDecision(article({ lived: "For about a year, someone puts the emergency plan on paper. The same problem returns." }), "CF-014");
   mustPassDecision(article({ lived: "For about a year, a guest room turns into an office. The household changes how the space is used." }), "CF-004");
+  mustPassDecision(article({ lived: "For about a year, the disclosure changes the balance of power in the room. The decision changes after everyone reads it." }), "CF-004");
   mustFailDecision(article({ lived: "For about a year, the loudest person in the room decides the plan. Everyone else goes along." }), "CF-004");
   mustPassDecision(article({ lived: "For about a year, the work takes steady effort. The result becomes easier to trust." }), "CF-015");
   mustFailDecision(article({ lived: "For about a year, steady energy fills the week. The result becomes easier to trust." }), "CF-015");
@@ -138,13 +141,8 @@ function main() {
   mustFailDecision(article({ lived: "For about a year, three families compare letters. The same response returns." }), "ED-007");
   const physicalLetter = lintArticle(article({ lived: "For about a year, a handwritten letter arrives in the mail. The family reads the paper letter together." }));
   assert(!physicalLetter.findings.some((entry) => entry.decisionId === "ED-007"), "physical mail must remain allowed");
-  mustPassDecision(article({ hook: "You keep accepting the same answer. Jupiter in Libra changes how a shared choice gets made." }), "ED-028");
-  const skyAspectCalendarRule = result.compiled.artifacts.linter.rules.find((entry) => entry.id === "ED-028");
-  assert(skyAspectCalendarRule, "ED-028 must remain active in the generated linter policy");
-  assert(
-    new RegExp(skyAspectCalendarRule.mechanical.pattern, skyAspectCalendarRule.mechanical.flags || "i").test("You already know what changed."),
-    "ED-028 must reject second person on the Calendar Sky aspect surface"
-  );
+  mustPassDecision(article({ hook: "You can name the responsibility before accepting another task. Jupiter in Libra changes how a shared choice gets made." }), "ED-028");
+  assert(!result.compiled.artifacts.linter.rules.some((entry) => entry.id === "ED-028"), "ED-028 must not mechanically reject direct reader address");
   mustFailDecision(article({ tagline: "The plan\u00a0changed after the reply." }), "ED-029");
   mustFailDecision(article({ tagline: "The plan\u200cchanged after the reply." }), "ED-029");
   mustPassDecision(article({ tagline: "The cafe sign says caf\u00e9 after the reply." }), "ED-029");

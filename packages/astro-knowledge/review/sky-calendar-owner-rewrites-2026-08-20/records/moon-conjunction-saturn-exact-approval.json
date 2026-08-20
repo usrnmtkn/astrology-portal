@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.conjunction.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "e166a8674ef96167c13e24bd64b5aca2ea51804250e7adef8d0e4fcffd06a3f7",
+  "payload": {
+    "summary": "A private responsibility becomes the condition attached to every other decision.",
+    "body": "A private responsibility becomes the condition attached to every other decision. Moon conjunct Saturn can make caregiving, grief, housing, or family duty feel less like one task and more like the structure the entire schedule has to move around. The arrangement may be necessary and still narrow the life of the person expected to maintain it. Name what the responsibility actually requires each week. If the plan only works because one person never gets to be unavailable, the plan needs more support."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

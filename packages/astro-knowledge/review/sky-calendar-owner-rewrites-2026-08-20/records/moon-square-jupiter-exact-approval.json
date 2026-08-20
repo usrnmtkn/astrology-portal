@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.square.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "d74251144705e4e1a78a05da472d679a4bb02fc4d382d689e35bfcd46f0c4ba2",
+  "payload": {
+    "summary": "A generous promise creates more emotional and practical responsibility than anyone planned to carry.",
+    "body": "A generous promise creates more emotional and practical responsibility than anyone planned to carry. Moon square Jupiter can make the guest list, family commitment, or relief effort keep expanding while the same people continue providing meals, rides, beds, and reassurance. Goodwill can become an invisible staffing plan. Count the hours and work required before saying yes to the next person. Support is more generous when the caregivers are not treated as the part of the budget that never runs out."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

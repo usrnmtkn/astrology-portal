@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.conjunction.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "349c7f59b5935bf7657060c0dca05e8be8f2f32b7aa0b4b3d0895be61da0d411",
+  "payload": {
+    "summary": "An unexpected proposal can rewrite a familiar agreement before either side has time to fall back on the old rules.",
+    "body": "An unexpected proposal can rewrite a familiar agreement before either side has time to fall back on the old rules. Venus conjunct Uranus can bring a new price, relationship term, invitation, or creative partnership that feels both freeing and unsettling because the value is still there while the format changes quickly. Do not confuse surprise with incompatibility. Name what the old arrangement stopped making room for and what the new one is asking each person to accept. The change has a better chance when freedom is written into the agreement instead of being taken outside it."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.trine.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "f41fb6fb275e7501bc4446404478a37df0f3c18bfb8264e696252d572504e6db",
+  "payload": {
+    "summary": "An agreement that has become too rigid may be easier to revise before the people living with it decide to leave.",
+    "body": "An agreement that has become too rigid may be easier to revise before the people living with it decide to leave. Venus trine Uranus can help a payment plan stretch, a deadline move, or a relationship rule change without turning the adjustment into proof that the whole agreement failed. The goal is not change for its own sake. It is making enough room for the arrangement to keep working. Name the term causing the problem and rewrite that term. A flexible agreement is stronger when people can adapt it before surprise becomes the only route to relief."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

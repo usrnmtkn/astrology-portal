@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.saturn.conjunction.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "1460817c639bac3515d5e3187d2791c519a57c4a1a626d371ff6cee8d68bbee6",
+  "payload": {
+    "summary": "A dream is placed inside a structure that will determine if it can survive ordinary life.",
+    "body": "A dream is placed inside a structure that will determine if it can survive ordinary life. Saturn conjunct Neptune can make a care program, creative institution, spiritual community, or recovery plan receive rules, funding limits, leadership, and formal responsibility all at once. Structure can protect the purpose and distort it when one office starts deciding who deserves access to the care. Keep the mission close to the paperwork. Review the eligibility, budget, and decision-making before administration quietly becomes the thing the project serves."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.square.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "759271fc426c082e018fe3530f5a28d5ff72f79760d516f4b71e5df3cef56581",
+  "payload": {
+    "summary": "The launch keeps adding features while the budget and sign-off stay put.",
+    "body": "The launch keeps adding features while the budget and sign-off stay put. Sun square Jupiter can make every new promise sound exciting in public while the staff, time, and legal authority needed to deliver it remain exactly the same. Scope grows because optimism keeps winning the meeting. The team inherits every expectation anyway. Freeze the additions long enough to compare the public promise with the resources underneath it. If the numbers did not grow, the scope cannot keep growing for free."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.conjunction.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "11ec9550f0462231e0cc918d463cf25b1a05e35312f3da9a5f06fa903be4401b",
+  "payload": {
+    "summary": "A high-stakes operation allows force, but only through a strict chain of command.",
+    "body": "A high-stakes operation allows force, but only through a strict chain of command. Mars conjunct Saturn can make action and restriction part of the same job, especially during an urgent repair, controlled shutdown, or disciplinary decision where timing and authority cannot be improvised. The structure may be frustrating, but it is also what keeps the pressure from creating a second problem. Follow the sequence that protects the work. Then review where the chain of command slowed the response for reasons that had nothing to do with safety."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

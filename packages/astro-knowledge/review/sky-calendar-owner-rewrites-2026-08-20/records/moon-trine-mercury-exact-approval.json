@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.trine.mercury",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "b2afe99d17aae450d8e4f54af9299a7aa74102dfc23eb95442398b3d4f4d1a00",
+  "payload": {
+    "summary": "The conversation finally reaches the reason someone was upset in the first place.",
+    "body": "The conversation finally reaches the reason someone was upset in the first place. Moon trine Mercury can make a voice note, private meeting, or direct reply clear enough to name what hurt, what changed, and what answer is needed next without starting another argument. Say the part that matters. The goal is not to explain every feeling perfectly; it is to give the other person enough information to respond to the actual problem instead of guessing at the reaction."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

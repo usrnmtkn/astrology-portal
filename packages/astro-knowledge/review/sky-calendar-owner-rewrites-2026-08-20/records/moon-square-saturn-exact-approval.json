@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.square.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "53f8a3f810d8d4fd33297ab86de75ff353e4727a4568659fa5e7bb8047fa27a6",
+  "payload": {
+    "summary": "A family, housing, or care need runs into a deadline that will not move.",
+    "body": "A family, housing, or care need runs into a deadline that will not move. Moon square Saturn can make an employer, landlord, lender, or agency keep returning to policy while the person living through the crisis keeps absorbing the cost. The rule may be technically correct and still create a preventable hardship. Get the deadline, policy, and escalation path in writing. Then focus on the part that can still be negotiated instead of spending the day arguing with a limit the person enforcing it has no authority to change."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

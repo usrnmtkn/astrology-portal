@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.sextile.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "7d5d7483ac5fa2c5eed917394cdf0ed7cfeaf6aed3109ed0819af590f9d9cc50",
+  "payload": {
+    "summary": "A small change in routine gives a household or team breathing room it did not know it had.",
+    "body": "A small change in routine gives a household or team breathing room it did not know it had. Moon sextile Uranus can make a different schedule, tool, transport option, or care arrangement useful before the existing system fails completely. The adjustment works because it removes one actual source of strain without demanding that everything else change too. Try it long enough to see the effect. If the day gets easier, keep the part that helped and stop defending the rule that caused the problem."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

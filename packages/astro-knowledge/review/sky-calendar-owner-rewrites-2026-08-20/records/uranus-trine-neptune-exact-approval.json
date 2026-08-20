@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.uranus.trine.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "f01befd0494efbdad1dc58f453bcc45fac784421c49106d975ed82e5bfb851aa",
+  "payload": {
+    "summary": "A new tool may make a distant human reality easier to understand without turning the people living through it into content.",
+    "body": "A new tool may make a distant human reality easier to understand without turning the people living through it into content. Uranus trine Neptune can help technology and empathy support each other, especially when artists, organizers, or mutual-aid networks use new formats to share testimony, route money, or coordinate help. The platform works best when it stays in service to the people at the center. Keep consent, attribution, and the practical purpose visible. If the technology becomes the most interesting part of the story, the work has probably drifted from what it was meant to help."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

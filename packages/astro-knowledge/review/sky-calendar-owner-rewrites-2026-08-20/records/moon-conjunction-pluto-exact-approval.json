@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.conjunction.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "743d5995ff43ed9c5bdb8596fe4d96d0067b1d1da5c7937936c015212bad1c8d",
+  "payload": {
+    "summary": "A feeling contained for years changes the terms of the entire conversation.",
+    "body": "A feeling contained for years changes the terms of the entire conversation. Moon conjunct Pluto can bring grief, resentment, fear, or a family secret into a decision that can no longer proceed as though the history were irrelevant. The disclosure changes both the emotional record and the balance of power between the people involved. Do not rush to make everyone comfortable again. Name what the new information changes, who now needs access or protection, and what can no longer be handled the old way."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.conjunction.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "84cbdf214fbaf939d6982d35c46fdff23430b34151141b3bf6e3109d221fe030",
+  "payload": {
+    "summary": "A message becomes more powerful because nobody can agree on exactly what it promises.",
+    "body": "A message becomes more powerful because nobody can agree on exactly what it promises. Mercury conjunct Neptune can make a speech, post, artistic statement, or private assurance feel meaningful while leaving enough room for each listener to hear the future they want. That ambiguity can build a large audience and a larger disappointment. The problem is not imagination; it is letting imagination stand in for terms. Put the promise into plain language and name what is not guaranteed before people begin planning around different versions of the same message."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.opposition.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "8f15af521360654b657248aa9ea52af6ea59bf4adb4b22c6cf739b003b9d034a",
+  "payload": {
+    "summary": "The person asking for fair terms may be negotiating with someone who controls the money, access, or future opportunity attached to the deal.",
+    "body": "The person asking for fair terms may be negotiating with someone who controls the money, access, or future opportunity attached to the deal. Venus opposite Pluto can make a request for recognition or mutual exchange run directly into the leverage that determines how much saying no would cost each side. That imbalance should be named, not hidden behind good manners. Ask who can walk away without losing income, access, credit, or the relationship itself. Fair terms mean more when both sides can refuse them without being punished for it."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

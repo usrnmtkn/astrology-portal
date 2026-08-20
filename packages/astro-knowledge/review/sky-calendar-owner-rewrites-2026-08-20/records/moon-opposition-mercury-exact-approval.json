@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.opposition.mercury",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "c32c41622971b3f240f9341f538214960313916816f9f40093839ea509fbe4ce",
+  "payload": {
+    "summary": "The written account describes a routine decision while the person affected describes the moment their life became harder.",
+    "body": "The written account describes a routine decision while the person affected describes the moment their life became harder. Moon opposite Mercury can put dates, policy, and the language on file directly across from missed care, panic, or a conversation nobody documented. The record matters, but so does what the record failed to capture. Correct the file if something material is missing. An official version loses credibility when it requires the human consequence to count as less evidence than the paperwork."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

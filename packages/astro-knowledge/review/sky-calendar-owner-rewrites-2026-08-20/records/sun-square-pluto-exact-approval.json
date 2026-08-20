@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.square.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "b370c1db2cf126d6699f46b006877088a04f0dea68ae7e0daed0f2e0d60411e0",
+  "payload": {
+    "summary": "Two versions of the same decision circulate, each edited to protect its author and make the other side look responsible.",
+    "body": "Two versions of the same decision circulate, each edited to protect its author and make the other side look responsible. Sun square Pluto can turn a dispute over credit or leadership into a fight over the record itself, especially when private access lets someone remove context, withhold documents, or decide which account looks official. A public argument cannot repair a missing paper trail. Preserve the emails, approvals, dates, and original files. When control of the story has become part of the conflict, the record needs to exist somewhere neither side can quietly rewrite it."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.sextile.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "fd46b1509cd57bf03d15e050226345d7a1c64e080b48dfa249089e939a23bb19",
+  "payload": {
+    "summary": "A strong idea finds the person who can help it travel farther.",
+    "body": "A strong idea finds the person who can help it travel farther. Mercury sextile Jupiter can connect a clear explanation with funding, publication, enrollment, an introduction, or a larger audience. The opportunity grows because the proposal is attached to a specific ask people can answer. Do not bury the request inside a long explanation. Name what is needed, why it matters, and the next step the other person can actually take."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

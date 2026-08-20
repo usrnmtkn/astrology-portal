@@ -1,11 +1,11 @@
 # Satori editorial propagation report
 
 Decision source: `voice/tldr-astro/satori-editorial-decisions.yaml`
-Source SHA-256: `c15f6146d4825cdf990a86e937ae208025d0fbf41ccc87feff63c418ab025d80`
+Source SHA-256: `b00fe9e687d4f0795f2008450e6da0957bfdad6ff1633a20a2b0a9c9afdb8c02`
 Approved active decisions: 47
 Unresolved decisions: 0
 Retired or superseded decisions: 3
-Active regression cases: 70
+Active regression cases: 72
 
 ## Generated artifacts
 

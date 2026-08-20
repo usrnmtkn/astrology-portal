@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.square.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "2d7ef3a3ddebf603dacad05469f2c259f03e51af990a9c049ffd4ffacb680ad1",
+  "payload": {
+    "summary": "Two sides use selective leaks and edited messages to control what the public believes happened.",
+    "body": "Two sides use selective leaks and edited messages to control what the public believes happened. Mercury square Pluto can turn communication into a fight over the official history, especially when each release contains enough truth to wound the other side and enough omission to protect its own position. The loudest version is not necessarily the complete one. Save the original records and compare timelines before choosing a side. The missing context is often where the leverage is."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

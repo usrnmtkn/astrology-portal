@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.opposition.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "0a4a14333422871ca0ea6e9e339feffc03b711069245bd8386892b698af18bc8",
+  "payload": {
+    "summary": "One side may want to preserve the agreement while the other believes staying requires different terms.",
+    "body": "One side may want to preserve the agreement while the other believes staying requires different terms. Venus opposite Uranus can make belonging and independence impossible to separate, especially when a familiar price, role, schedule, or relationship rule now feels restrictive to the person living under it. The old agreement does not become fair because it used to work. Put both versions on the table and decide what each side needs in order to stay by choice. If the relationship only survives when one person stays quiet, continuity is not the same thing as consent."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

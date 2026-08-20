@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.conjunction.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "6ec548dae6e16c80a94893dd05179b86d06842598d409e55d55ddeb2de541dce",
+  "payload": {
+    "summary": "A major acquisition puts more money, data, and decision-making power under one roof overnight.",
+    "body": "A major acquisition puts more money, data, and decision-making power under one roof overnight. Jupiter conjunct Pluto can expand an institution at the same time it concentrates control over prices, access, or the choices available across an entire field. The deal may create new resources, but it also makes the alternatives outside the larger structure easier to see. Growth is not neutral when the same move decides who gets to participate. Read the new terms closely and identify who gained authority before assuming bigger means better."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

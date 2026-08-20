@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.opposition.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "2c17d42c4f1fda9e4d63016b0e4f2cdf96b9cddb6c51df4fde7407c8fe09f895",
+  "payload": {
+    "summary": "One side keeps asking questions while the other treats every question as a delay.",
+    "body": "One side keeps asking questions while the other treats every question as a delay. Mercury opposite Mars can turn missing information into a fight about timing, especially when the planner sees changing terms and the operator sees a clock that is already running out. Explanation and execution both matter here. The team needs enough information to know what it is doing and a point where discussion ends. Decide which unanswered question could materially change the move, answer that one, and stop using the rest to postpone a decision."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

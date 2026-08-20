@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.sextile.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "f4abaf7e4117a8748ed4d44e805e455ce1b1e69cd524e4951badca7db560a60b",
+  "payload": {
+    "summary": "A beautiful idea may receive just enough practical support to become an actual event, collaboration, benefit, or act of care.",
+    "body": "A beautiful idea may receive just enough practical support to become an actual event, collaboration, benefit, or act of care. Venus sextile Neptune can help imagination find a room, budget, contact, or agreement without forcing the idea to lose the feeling that made people care in the first place. Secure the concrete piece while support is available. Confirm the space, cost, schedule, and person responsible for the next step. The vision does not become less meaningful because somebody booked the room and checked the invoice."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

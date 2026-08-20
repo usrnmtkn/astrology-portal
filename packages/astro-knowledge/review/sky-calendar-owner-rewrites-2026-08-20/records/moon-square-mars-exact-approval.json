@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.square.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "175cc924139a324a18188818b97feec66745922352b817940ba91f583fe56442",
+  "payload": {
+    "summary": "A last-minute demand turns an already strained household or team into a fight.",
+    "body": "A last-minute demand turns an already strained household or team into a fight. Moon square Mars can make an urgent request collide with exhaustion, care responsibilities, or private stress that was already close to the limit. Someone may still get the task done and carry the anger home afterward. Treat that anger as information about the workload, not just the tone of the response. Give the job a realistic timeline and stop treating one person's availability as proof that their plans can wait."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

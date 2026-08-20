@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.saturn.trine.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "80030631d152d701a60ba9af3a3a491262b3496427f7c5c02b4942e2e084c1a8",
+  "payload": {
+    "summary": "An institution rebuilds its authority after opening the records and changing who can exercise power without review.",
+    "body": "An institution rebuilds its authority after opening the records and changing who can exercise power without review. Saturn trine Pluto can make reform reach contracts, reporting lines, budgets, and consequences instead of ending with a symbolic resignation. The change lasts because the structure stops depending on one good leader to behave well. Put the new limits where the old abuse was possible. Trust returns more slowly than policy, but it has a chance when the rule changes for the office itself."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

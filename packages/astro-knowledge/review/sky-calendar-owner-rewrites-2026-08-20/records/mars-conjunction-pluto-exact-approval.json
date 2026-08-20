@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.conjunction.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "edcb47ec9f2cbf6551f81491fddd4a35c9f89678ba97b47188e33b935e4b0805",
+  "payload": {
+    "summary": "A shutdown, ultimatum, or takeover makes the next move a test of who can force the outcome.",
+    "body": "A shutdown, ultimatum, or takeover makes the next move a test of who can force the outcome. Mars conjunct Pluto can concentrate action around the exact pressure point everyone is afraid to release: the money, platform, building, records, or final approval. Once force and leverage merge, cooperation can start looking like surrender. Winning the immediate contest may cost more than either side expected. Identify the thing everyone is threatening to withhold and decide what must remain usable after the confrontation is over."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

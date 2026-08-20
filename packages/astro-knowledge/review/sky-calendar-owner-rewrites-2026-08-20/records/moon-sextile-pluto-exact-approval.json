@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.sextile.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "176351812b2086ff37578e980ddabda83e0cb78dfe34d270bd66b417790235bd",
+  "payload": {
+    "summary": "A difficult family or care conversation reaches the person with enough authority to change the arrangement.",
+    "body": "A difficult family or care conversation reaches the person with enough authority to change the arrangement. Moon sextile Pluto can turn one disclosure about money, safety, resentment, or an old loyalty into a chance to correct the problem before silence hardens around it again. The useful part is that the actual source of fear is finally being named. Ask for the change that would reduce the pressure now. Do not waste the opening on hints everyone has already learned to ignore."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}
