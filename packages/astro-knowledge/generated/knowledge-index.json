@@ -3,8 +3,8 @@
   "status": "index-only. No content moved, rewritten, or approved.",
   "deterministic": "This payload contains no timestamps. Identical inputs produce a byte-identical file.",
   "totals": {
-    "canonicalObjects": 13224,
-    "sourceRecordsIndexed": 24112,
+    "canonicalObjects": 13225,
+    "sourceRecordsIndexed": 24113,
     "objectsFoundInMoreThanOneStore": 2047,
     "unresolved": 0,
     "skipped": 55,
@@ -14,7 +14,7 @@
     "ll-matrix-v13": 1014,
     "v13-locked": 301,
     "phrasebank": 7064,
-    "astro-knowledge/data": 3190,
+    "astro-knowledge/data": 3191,
     "authored-placements": 314,
     "daily-glance-config": 31,
     "matrix-v9": 3430,
@@ -29,7 +29,7 @@
     "machine-proposal": 725,
     "owner-approved-prose": 8079,
     "unverified": 7748,
-    "factual-evidence": 7560
+    "factual-evidence": 7561
   },
   "byKind": {
     "aspect-generic": {
@@ -108,10 +108,10 @@
       }
     },
     "document": {
-      "objects": 375,
-      "records": 375,
+      "objects": 376,
+      "records": 376,
       "stores": {
-        "astro-knowledge/data": 375
+        "astro-knowledge/data": 376
       }
     },
     "phrasebank-entry": {
@@ -95043,6 +95043,27 @@
           },
           "path": "packages/astro-knowledge/data/frameworks/circle-feed-logic-framework.json",
           "sourceSha256": "12b7c50f223b2305b901bf9871e05a06685dd1ce5f217545e0c7f458ac5d8317"
+        }
+      ]
+    },
+    {
+      "id": "doc/composed_cards_v1",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "composed-cards-v1",
+          "rowKey": "composed-cards-v1",
+          "status": null,
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json",
+          "sourceSha256": "b25d48a12f215cc502fa1845dd19aae8fb81bfe76064dccfa57a05f65301b9ac"
         }
       ]
     },
@@ -488217,7 +488238,7 @@
     }
   ],
   "integrity": {
-    "contentSha256": "93c2d5e595a25eaa073ce546462220d4cbf854772b0a0eb1b4cb37b3f7b7c53c",
-    "distinctSourceFiles": 3225
+    "contentSha256": "c04b288265f4ce58718a030e1c240f9661d868cb4f6d7da262bc343c430b4037",
+    "distinctSourceFiles": 3226
   }
 }
