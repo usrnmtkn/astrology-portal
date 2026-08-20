@@ -38,14 +38,23 @@ declare module "@tldr/astro-knowledge/sky-aspect-engine" {
     type: CalculatedSkyAspect["type"];
     exactAngle: number;
     maxOrb: number;
+    luminaryModifier?: number;
+  }>>;
+  export const NATAL_ASPECT_DEFINITIONS: ReadonlyArray<Readonly<{
+    type: CalculatedSkyAspect["type"];
+    exactAngle: number;
+    maxOrb: number;
+    luminaryModifier?: number;
   }>>;
   export const SKY_ASPECT_POINT_ORDER: readonly string[];
+  export const NATAL_ASPECT_POINT_ORDER: readonly string[];
   export function canonicalizeNodeAxisAspects<T extends {
     from: string;
     to: string;
     orb: number;
   }>(aspects: T[]): T[];
   export function calculateSkyAspects(positions: SkyAspectPosition[]): CalculatedSkyAspect[];
+  export function calculateNatalAspects(positions: SkyAspectPosition[]): CalculatedSkyAspect[];
 }
 
 declare module "@tldr/astro-knowledge/natal" {
