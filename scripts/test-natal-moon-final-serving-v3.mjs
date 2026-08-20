@@ -5,6 +5,12 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { tsImport } from "tsx/esm/api";
+
+const { natalPlacementReaderSectionCopy } = await tsImport(
+  "../apps/web/src/content/natalPlacementReaderSections.ts",
+  import.meta.url
+);
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageRoot = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
@@ -18,6 +24,16 @@ const sha256 = (value) => crypto.createHash("sha256").update(String(value)).dige
 const rowsByKey = new Map(source.hookRows.map((row) => [row.contentKey, row]));
 assert.equal(rowsByKey.size, source.hookRows.length, "canonical hook rows must not contain duplicate contentKey values");
 assert.equal(artifact.renderRows.length, 144);
+assert.equal(
+  natalPlacementReaderSectionCopy("First paragraph.\n\nSecond paragraph.", "fallback-hook/natal-you-placement-sign-final/moon/scorpio"),
+  "First paragraph.\n\nSecond paragraph.",
+  "owner-approved final You placement sections must preserve every paragraph"
+);
+assert.equal(
+  natalPlacementReaderSectionCopy("First paragraph.\n\nSecond paragraph.", "fallback-template/natal.planet-in-sign"),
+  "First paragraph.",
+  "the Moon fix must not broaden the existing normalization behavior for Friend or other placement paths"
+);
 
 for (const signRow of artifact.signRows) {
   const servingSign = rowsByKey.get(`fallback-hook/natal-you-placement-sign-final/moon/${signRow.sign}`);
@@ -48,6 +64,20 @@ for (const row of artifact.renderRows) {
     `fallback-hook/natal-you-placement-sign-final/moon/${sign}`,
     `fallback-hook/natal-you-placement-house-final/moon/${house}`
   ]);
+
+  const normalizedSections = rendered.parts
+    .map((part, index) => natalPlacementReaderSectionCopy(part, rendered.partKeys?.[index]))
+    .filter(Boolean);
+  assert.deepEqual(
+    normalizedSections,
+    rendered.parts,
+    `${row.renderKey}: app normalization must preserve every paragraph in both approved sections`
+  );
+  assert.equal(
+    normalizedSections.join("\n\n"),
+    row.rendered,
+    `${row.renderKey}: app-normalized article must equal the complete owner-approved V3 passage`
+  );
 }
 
 const friend = renderer.renderNatalPlacement({ planet: "moon", sign: "scorpio", house: 6, voice: "Sample Friend" });

@@ -80,3 +80,8 @@ export function readerFacingParagraphs(values: Array<string | null | undefined>)
 export function firstReaderFacingCopy(values: Array<string | null | undefined>) {
   return readerFacingParagraphs(values)[0] ?? null;
 }
+
+export function allReaderFacingCopy(values: Array<string | null | undefined>) {
+  const paragraphs = readerFacingParagraphs(values);
+  return paragraphs.length > 0 ? paragraphs.join("\n\n") : null;
+}
