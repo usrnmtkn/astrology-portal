@@ -1,0 +1,107 @@
+{
+  "schema": "tldr-natal-moon-house-argument-owner-approval/v1",
+  "createdAt": "2026-08-20",
+  "authority": {
+    "type": "owner_chat_approval",
+    "exactText": "I approve the 12 Moon house argument cores for drafting only. Exclude childhood material for now and preserve it for later review. Do not publish until I approve the finished rendered samples."
+  },
+  "scope": {
+    "draftingOnly": true,
+    "argumentCoresApproved": 12,
+    "childhoodExcludedFromCurrentDraft": true,
+    "childhoodPreservedForLaterReview": true,
+    "finishedRenderedSamplesRequireOwnerApproval": true,
+    "readerCopyApproved": false,
+    "servingAuthorized": false,
+    "friendDerivationAuthorized": false,
+    "autoPublish": false,
+    "writerPromotion": false
+  },
+  "sourceArtifact": "packages/astro-knowledge/review/natal-moon-authoring-readiness-v2.json",
+  "decisions": [
+    {
+      "runtimeKey": "moon|1st house",
+      "decision": "approve_argument_core_for_drafting_only",
+      "argumentCoreSha256": "5f84d223a8892c53caaf819f6b8c3f26ad6cb675bcaa50bf2c2ac05a36552796",
+      "mechanismSha256": "ff71a691ba6e0f116b05e1981904c3c505069ac326596a6e7bd92c9ca4087356",
+      "bridgeSha256": "aecfb0a15b8ce21d8f7c523649a0bc55227e3e0257aa0354650c73a31535f4a7"
+    },
+    {
+      "runtimeKey": "moon|2nd house",
+      "decision": "approve_argument_core_for_drafting_only",
+      "argumentCoreSha256": "2e88d80c3f5ee56befd03615811a3eab5d112dcf3cec7569d9d5b9b94f51bc9b",
+      "mechanismSha256": "44215c7ba3a6597666564ae266b600fe5358ca92feefdccf7fdb8f0f2f514471",
+      "bridgeSha256": "70a5791cecfc8c370cf8a120c4dc808ec957ecbdb4fd8a4d994c6a64b2481235"
+    },
+    {
+      "runtimeKey": "moon|3rd house",
+      "decision": "approve_argument_core_for_drafting_only",
+      "argumentCoreSha256": "07602b204c4f0ac8227eb1b2a0757328334afd246923686af48c3591401587a7",
+      "mechanismSha256": "285eab9ddf6b9a84bc873ba9330162bea7ce2237fac8edfc5621d0d3d6e5b43c",
+      "bridgeSha256": "6b92f02b2ddcef51ec1f02481761d7aebb6bc9813c79282f45623ded2fb62e01"
+    },
+    {
+      "runtimeKey": "moon|4th house",
+      "decision": "approve_argument_core_for_drafting_only",
+      "argumentCoreSha256": "555ddf579d740c1324a52d98cdc5c2150192382108096fa529de2b85422401c9",
+      "mechanismSha256": "18814fda64aa44c65cc95d19838bf44c7ee3ee7c8b0c101be89e99605ddaad03",
+      "bridgeSha256": "033bafa2ae406df7d9b6bd7c798d2a5a43966e38495b72c11b421f3f0f5797ac"
+    },
+    {
+      "runtimeKey": "moon|5th house",
+      "decision": "approve_argument_core_for_drafting_only",
+      "argumentCoreSha256": "17b46424af107a85a43f3e1c79bbb702544ce1be27b3885e92b9ab44188c1523",
+      "mechanismSha256": "4a353356064dbc88cbd1d7f57497036be1c2b92a60499be493557a1302049afc",
+      "bridgeSha256": "9a335cf433e5adf97846bdef23aa49183da067d23d72704f0340c34a8b7800b7"
+    },
+    {
+      "runtimeKey": "moon|6th house",
+      "decision": "approve_argument_core_for_drafting_only",
+      "argumentCoreSha256": "24f88b0529b03257a21347e440ce9675c3e887ed6f9d8e77dc06e80570d941b7",
+      "mechanismSha256": "5b7b014cc6cc3183b387665102365e7c2c3a71890154b9e2594d853337ba7df1",
+      "bridgeSha256": "cb00f98788aebd58c82d7b9f8615ec793c35e9147c4dd289b510b3cb397d0d45"
+    },
+    {
+      "runtimeKey": "moon|7th house",
+      "decision": "approve_argument_core_for_drafting_only",
+      "argumentCoreSha256": "dd4d3f9407040f7aec03d6032633fc57f4db078d97fc2fdcac8e0d3dd2704123",
+      "mechanismSha256": "c8fd5c6c877d2878c7a9f50a74c8db3a12b58e0e0fed61a97c23b5e6119a1a70",
+      "bridgeSha256": "b4227c46ecb16fa8c611be16fab852933aa6de59e83aa9dc3680f62e842aacbe"
+    },
+    {
+      "runtimeKey": "moon|8th house",
+      "decision": "approve_argument_core_for_drafting_only",
+      "argumentCoreSha256": "c933a88ae4690ba5a5ff715f986f0b857092fe7d84eb0f20d7cdb999822442a0",
+      "mechanismSha256": "897f7ad7d4c202e07c26839a85d107e34a1cb6f62adf57737ae92d01b400464c",
+      "bridgeSha256": "bfb13628a2425f5a7a7281dcc81a25208874ddab0de8212aebe32f91ab91cfad"
+    },
+    {
+      "runtimeKey": "moon|9th house",
+      "decision": "approve_argument_core_for_drafting_only",
+      "argumentCoreSha256": "056f1c8c34aaec8cfb4c35064b9c0c281e0d754ea3eddbbf77ec64f80bcd265e",
+      "mechanismSha256": "9c43768d1bc401519a0c4cc675fe5d629b2a3b0c8f34b2acbc220f02b66d489c",
+      "bridgeSha256": "9c5af944bcc34bbf792a6d5e8b31c77048cf90eea2ba1bd4801051ea78af0ac0"
+    },
+    {
+      "runtimeKey": "moon|10th house",
+      "decision": "approve_argument_core_for_drafting_only",
+      "argumentCoreSha256": "45b6d5ddc74d1a1341a3d15cf336d10d05e1e234c4dd93a5e7a03fa7fd75574d",
+      "mechanismSha256": "d4f0a110371321c2c53f0ec88140e2aa131341d5477a7d8ca7770f2ff30b23d4",
+      "bridgeSha256": "051628b0fb8500b31c72fbc14ead2233d3c43acda91ed24ec14d768a6e4e0b29"
+    },
+    {
+      "runtimeKey": "moon|11th house",
+      "decision": "approve_argument_core_for_drafting_only",
+      "argumentCoreSha256": "a669c9eae6d85352e5508cfb6a4b9a3048e8bdf116f441039fbc3079c22dee91",
+      "mechanismSha256": "699a60f4985239df7723cc012e10172c04ad6edfa207e099fe1972219e31296b",
+      "bridgeSha256": "5e95368225f315389de395bfc85125dcddba8f7a454f81497d9ceae0ef2088b0"
+    },
+    {
+      "runtimeKey": "moon|12th house",
+      "decision": "approve_argument_core_for_drafting_only",
+      "argumentCoreSha256": "7980f654c18d85895827ee3b43e69fc5a04d1881a35e4d272665d8d6197d9de2",
+      "mechanismSha256": "8354d597294387e6ad913a92e60f77f66483df2b4e4ce20119f0a80b4a323ecf",
+      "bridgeSha256": "aca1ce24e23da3d8c2db3ea7781813db93246749a478939c749305a375bf7892"
+    }
+  ]
+}
