@@ -439,19 +439,14 @@ export const SkyWheel = memo(function SkyWheel({
     return new Map(
       positions.map((position) => {
         const activeAspects = aspectLinesByPlanet.get(position.planet) ?? [];
-        const visibleAspects = activeAspects.slice(0, 4);
-
-        if (activeAspects.length > visibleAspects.length) {
-          visibleAspects.push(`+${activeAspects.length - visibleAspects.length} more`);
-        }
 
         const placementLine = formatPlanetPlacementLine(position);
 
         return [
           position.planet,
           {
-            aspectLine: visibleAspects.join(" · "),
-            lines: [placementLine, ...visibleAspects],
+            aspectLine: activeAspects.join(" · "),
+            lines: [placementLine, ...activeAspects],
             placementLine
           }
         ];
