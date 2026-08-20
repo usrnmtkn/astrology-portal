@@ -7,6 +7,15 @@ export const SKY_ASPECT_DEFINITIONS = Object.freeze([
   Object.freeze({ type: "opposition", exactAngle: 180, maxOrb: 5 })
 ]);
 
+export const NATAL_ASPECT_DEFINITIONS = Object.freeze([
+  Object.freeze({ type: "conjunction", exactAngle: 0, maxOrb: 8, luminaryModifier: 2 }),
+  Object.freeze({ type: "sextile", exactAngle: 60, maxOrb: 5, luminaryModifier: 2 }),
+  Object.freeze({ type: "square", exactAngle: 90, maxOrb: 7, luminaryModifier: 2 }),
+  Object.freeze({ type: "trine", exactAngle: 120, maxOrb: 7, luminaryModifier: 2 }),
+  Object.freeze({ type: "quincunx", exactAngle: 150, maxOrb: 3, luminaryModifier: 0 }),
+  Object.freeze({ type: "opposition", exactAngle: 180, maxOrb: 8, luminaryModifier: 2 })
+]);
+
 export const SKY_ASPECT_POINT_ORDER = Object.freeze([
   "Sun",
   "Moon",
@@ -23,6 +32,14 @@ export const SKY_ASPECT_POINT_ORDER = Object.freeze([
   "North Node",
   "South Node"
 ]);
+
+export const NATAL_ASPECT_POINT_ORDER = Object.freeze([
+  ...SKY_ASPECT_POINT_ORDER,
+  "Ascendant",
+  "Midheaven"
+]);
+
+const NATAL_ANGLE_POINTS = new Set(["Ascendant", "Midheaven"]);
 
 export function normalizeDegrees(degrees) {
   return ((degrees % 360) + 360) % 360;
@@ -87,13 +104,16 @@ export function canonicalizeNodeAxisAspects(aspects) {
   return canonical.sort((first, second) => first.orb - second.orb);
 }
 
-function aspectForSeparation(separation) {
-  return SKY_ASPECT_DEFINITIONS
+function aspectForSeparation(separation, definitions, from, to) {
+  const hasLuminary = from === "Sun" || from === "Moon" || to === "Sun" || to === "Moon";
+
+  return definitions
     .map((definition) => ({
       ...definition,
-      orb: Math.abs(separation - definition.exactAngle)
+      orb: Math.abs(separation - definition.exactAngle),
+      effectiveMaxOrb: definition.maxOrb + (hasLuminary ? definition.luminaryModifier ?? 0 : 0)
     }))
-    .filter(({ orb, maxOrb }) => orb <= maxOrb)
+    .filter(({ orb, effectiveMaxOrb }) => orb <= effectiveMaxOrb)
     .sort((first, second) => first.orb - second.orb)[0] || null;
 }
 
@@ -119,7 +139,7 @@ function applyingForAspect(from, to, exactAngle) {
   return nextDistance < currentDistance;
 }
 
-export function calculateSkyAspects(positions) {
+function calculateAspects(positions, definitions, pointOrder, options = {}) {
   if (!Array.isArray(positions)) {
     throw new TypeError("positions must be an array");
   }
@@ -128,8 +148,8 @@ export function calculateSkyAspects(positions) {
     .map((position, index) => ({ position, index }))
     .filter(({ position }) => Number.isFinite(position?.longitude))
     .sort((first, second) => {
-      const firstOrder = SKY_ASPECT_POINT_ORDER.indexOf(pointName(first.position));
-      const secondOrder = SKY_ASPECT_POINT_ORDER.indexOf(pointName(second.position));
+      const firstOrder = pointOrder.indexOf(pointName(first.position));
+      const secondOrder = pointOrder.indexOf(pointName(second.position));
       const normalizedFirstOrder = firstOrder < 0 ? Number.MAX_SAFE_INTEGER : firstOrder;
       const normalizedSecondOrder = secondOrder < 0 ? Number.MAX_SAFE_INTEGER : secondOrder;
 
@@ -141,14 +161,18 @@ export function calculateSkyAspects(positions) {
   usablePositions.forEach((from, fromIndex) => {
     usablePositions.slice(fromIndex + 1).forEach((to) => {
       const separation = angularSeparation(from.longitude, to.longitude);
-      const aspect = aspectForSeparation(separation);
+      const fromName = pointName(from);
+      const toName = pointName(to);
+
+      if (options.excludeAnglePairs && NATAL_ANGLE_POINTS.has(fromName) && NATAL_ANGLE_POINTS.has(toName)) {
+        return;
+      }
+
+      const aspect = aspectForSeparation(separation, definitions, fromName, toName);
 
       if (!aspect) {
         return;
       }
-
-      const fromName = pointName(from);
-      const toName = pointName(to);
 
       aspects.push({
         id: `aspect.${pointSlug(fromName)}.${aspect.type}.${pointSlug(toName)}`,
@@ -166,4 +190,12 @@ export function calculateSkyAspects(positions) {
   });
 
   return aspects.sort((first, second) => first.orb - second.orb);
+}
+
+export function calculateSkyAspects(positions) {
+  return calculateAspects(positions, SKY_ASPECT_DEFINITIONS, SKY_ASPECT_POINT_ORDER);
+}
+
+export function calculateNatalAspects(positions) {
+  return calculateAspects(positions, NATAL_ASPECT_DEFINITIONS, NATAL_ASPECT_POINT_ORDER, { excludeAnglePairs: true });
 }
