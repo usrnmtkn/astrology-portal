@@ -1,0 +1,25 @@
+{
+  "schema": "tldr-natal-moon-final-owner-approval/v1",
+  "approvedAt": "2026-08-20",
+  "ownerApproval": "I approve the finished Moon sign copy, 12 Moon house sections, and all 144 no-childhood rendered samples in V3 exactly as hashed for publication on the You natal placement surface. Compatibility and Friend remain unchanged. Childhood remains excluded.",
+  "artifact": {
+    "path": "packages/astro-knowledge/review/natal-moon-final-rendered-review-v3.json",
+    "sha256": "be3d8c8b89f99bc76798ee18ceef5de926fde736a98a0af6694e2d1ecfa48027"
+  },
+  "workbook": {
+    "path": "outputs/019fedfe-d553-75e3-be16-8abaa96cdf44/TLDR-NATAL-MOON-FINAL-RENDERED-REVIEW-V3.xlsx",
+    "sha256": "8190d07cfadf1b50063ec13038738851a606057e5e2f48ba57ab4d0dead1578e"
+  },
+  "scope": {
+    "surface": "natal-placement",
+    "voice": "you",
+    "signSections": 12,
+    "houseSections": 12,
+    "renderedSamples": 144,
+    "compatibilityChangesAuthorized": false,
+    "friendChangesAuthorized": false,
+    "childhoodIncluded": false,
+    "autoPublish": false,
+    "writerPromotion": false
+  }
+}
