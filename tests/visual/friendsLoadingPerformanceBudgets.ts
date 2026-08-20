@@ -6,12 +6,13 @@ export const FRIENDS_INCOMPLETE_CHART_CALCULATION_DELAY_MS = 750;
 export const friendsLoadingPerformanceBudgets = {
   coldListReadyMs: 800,
   warmDetailReadyMs: 500,
-  directLinkSynastryReadyMs: 1_000,
+  directLinkSynastryReadyMs: 1_500,
   mobileNavigationReadyMs: 1_000,
   incompleteChartListReadyMs: 800,
   incompleteChartRepairReadyMs: 2_500,
   slowNetworkListReadyMs: 800,
   slowNetworkDetailShellReadyMs: 1_200,
+  slowNetworkRelationshipLoadingReadyMs: 900,
   slowNetworkRelationshipReadyMs: 2_200,
-  slowNetworkRelationshipEnhancedMs: 2_500
+  slowNetworkRelationshipEnhancedMs: 250
 } as const;
