@@ -26,6 +26,7 @@ type YouTab = "transits" | "chart";
 type NatalChartViewMode = "circle" | "table";
 type AspectToneBucket = "gifts" | "lessons";
 type RelatedAspectRow = {
+  group?: AspectToneBucket | "planets" | "points";
   key: string;
   node: ReactNode;
 };
@@ -80,6 +81,7 @@ export type YouTransitArticle = {
   }>;
   relatedAspects?: {
     heading: string;
+    grouping?: "tone" | "counterpart";
     rows: Array<ReactNode | RelatedAspectRow>;
   };
   meta: Array<{
@@ -908,6 +910,21 @@ function YouTransitArticlePage({
   );
   const mainSections = sections.filter((section) => section.role !== "aspect");
   const aspectSections = sections.filter((section) => section.role === "aspect");
+  const relatedAspectGroups = displayArticle.relatedAspects?.grouping === "counterpart"
+    ? ([
+        { key: "planets", label: "Planetary aspects" },
+        { key: "points", label: "Angles and points" }
+      ]).map((group) => ({
+        ...group,
+        rows: displayArticle.relatedAspects?.rows.filter((row) => (
+          isRelatedAspectRow(row) && row.group === group.key
+        )) ?? []
+      })).filter((group) => group.rows.length > 0)
+    : [{
+        key: "all",
+        label: "",
+        rows: displayArticle.relatedAspects?.rows ?? []
+      }];
   const aspectGroups = ([
     { id: "gifts" as const, label: "Gifts" },
     { id: "lessons" as const, label: "Lessons" }
@@ -1008,13 +1025,18 @@ function YouTransitArticlePage({
               {displayArticle.relatedAspects?.rows.length ? (
                 <section className="article-related-aspects" aria-label={displayArticle.relatedAspects.heading}>
                   <span className="eyebrow section-label article-related-aspects__label">{displayArticle.relatedAspects.heading}</span>
-                  <div className="article-related-aspects__list aspect-row-list">
-                    {displayArticle.relatedAspects.rows.map((row, index) => (
-                      isRelatedAspectRow(row)
-                        ? <Fragment key={row.key || `related-aspect-${index}`}>{row.node}</Fragment>
-                        : <Fragment key={`related-aspect-${index}`}>{row}</Fragment>
-                    ))}
-                  </div>
+                  {relatedAspectGroups.map((group) => (
+                    <div className="article-related-aspects__group" key={group.key}>
+                      {group.label ? <h3>{group.label}</h3> : null}
+                      <div className="article-related-aspects__list aspect-row-list">
+                        {group.rows.map((row, index) => (
+                          isRelatedAspectRow(row)
+                            ? <Fragment key={row.key || `related-aspect-${index}`}>{row.node}</Fragment>
+                            : <Fragment key={`related-aspect-${index}`}>{row}</Fragment>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </section>
               ) : null}
               <div className="sky-detail-end" aria-hidden="true">✦</div>
