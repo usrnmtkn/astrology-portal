@@ -84,5 +84,15 @@ assert.doesNotMatch(
 );
 assert.match(appSource, /rendered\.partKeys\?\.\[index\]/u, "The app must retain per-section placement provenance.");
 assert.match(appSource, /const housePartKey = rendered\.partKeys\?\.\[1\]/u, "The app must classify the house section from its own key.");
+assert.match(
+  appSource,
+  /natalPlacementReaderSectionCopy\([\s\S]*?rendered\.partKeys\?\.\[index\]/u,
+  "The app must preserve complete owner-approved final placement sections at its reader boundary."
+);
+assert.match(
+  appSource,
+  /fallback-hook\/natal-you-placement-house-final\//u,
+  "The app must classify the final Moon house row as exact house copy."
+);
 
 console.log("natal placement sign + house composition: ok (Moon and Mercury You routes; Friend composed rows)");
