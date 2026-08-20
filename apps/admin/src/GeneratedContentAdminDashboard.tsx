@@ -111,6 +111,14 @@ type SkyReviewHorizon = {
   };
   occurrences: SkyReviewHorizonOccurrence[];
 };
+
+function skyReviewStatusForRow(row: AdminGeneratedContentRow): SkyReviewHorizonOccurrence["reviewStatus"] {
+  if (row.status === "ARCHIVED") return "rejected";
+  if (row.status === "LIVE" && row.lane === "serving" && !row.review_state) return "approved_scheduled";
+  if (["DRAFT", "REVIEWED"].includes(row.status) && row.judge_score === 3 && row.judge_gate === "human-review") return "ready_for_owner";
+  if (row.status === "ERROR") return "generation_error";
+  return "draft_needs_work";
+}
 type FallbackHookDefinition = {
   key: string;
   label: string;
@@ -2154,6 +2162,12 @@ export function GeneratedContentAdminDashboard() {
           const without = current.filter((row) => row.id !== saved.id);
           return [saved, ...without];
         });
+        setSkyReviewHorizon((current) => current ? {
+          ...current,
+          occurrences: current.occurrences.map((occurrence) => occurrence.row?.id === saved.id
+            ? { ...occurrence, row: saved, reviewStatus: skyReviewStatusForRow(saved) }
+            : occurrence)
+        } : current);
         setSelectedRowId(saved.id);
         setDraft(draftFromRow(saved));
       }
@@ -2695,6 +2709,7 @@ export function GeneratedContentAdminDashboard() {
 
         {activePage === "reviewQueue" && (
           <section className="admin-template-page">
+            {renderEditor()}
             <section className="admin-content-toolbar admin-review-queue-hero" aria-label="Review queue progress">
               <div>
                 <p className="admin-eyebrow">Editorial workflow</p>

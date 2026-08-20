@@ -10,6 +10,13 @@ function slug(value) {
     .replace(/^-+|-+$/gu, "");
 }
 
+function titleWords(value) {
+  return String(value ?? "")
+    .trim()
+    .replace(/[-_]+/gu, " ")
+    .replace(/\b\w/gu, (letter) => letter.toUpperCase());
+}
+
 function dateOnly(value) {
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) throw new Error("Sky horizon dates must be valid.");
@@ -87,11 +94,13 @@ function buildSkyReviewHorizon(snapshots) {
     for (const aspect of Array.isArray(snapshot.aspects) ? snapshot.aspects : []) {
       const contentKey = skyAspectContentKey(aspect, positions);
       if (!contentKey) continue;
+      const first = positions.find((position) => position.planet === aspect.from);
+      const second = positions.find((position) => position.planet === aspect.to);
       appendOccurrence(aspects, {
         kind: "aspect",
         contentKey,
         date,
-        label: `${aspect.from} ${aspect.type} ${aspect.to}`,
+        label: `${titleWords(aspect.from)} in ${titleWords(first.sign)} ${slug(aspect.type).replace(/-/gu, " ")} ${titleWords(aspect.to)} in ${titleWords(second.sign)}`,
         facts: {
           a: skyAspectPointSlug(aspect.from),
           b: skyAspectPointSlug(aspect.to),
@@ -109,7 +118,7 @@ function buildSkyReviewHorizon(snapshots) {
         kind: "placement",
         contentKey,
         date,
-        label: `${position.planet} in ${position.sign}`,
+        label: `${titleWords(position.planet)} in ${titleWords(position.sign)}`,
         facts: { planet: slug(position.planet), sign: slug(position.sign) }
       });
     }

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createServer } from "vite";
 import horizonModule from "../src/astro-writing/skyReviewHorizon.cjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -33,11 +34,16 @@ assert.equal(horizon.calculationMethod, "daily-active-sky-snapshot");
 
 const aspect = horizon.occurrences.find((entry) => entry.contentKey === "sky.aspect.mercury.opposition.saturn.virgo.pisces");
 assert.ok(aspect, "Expected the reusable Mercury-Saturn aspect candidate.");
+assert.equal(aspect.label, "Mercury in Virgo opposition Saturn in Pisces");
 assert.deepEqual(aspect.activeDates, ["2026-08-20", "2026-08-21", "2026-08-24"]);
 assert.deepEqual(aspect.windows, [
   { startDate: "2026-08-20", endDate: "2026-08-21" },
   { startDate: "2026-08-24", endDate: "2026-08-24" }
 ]);
+assert.equal(
+  horizon.occurrences.find((entry) => entry.contentKey === "sky.placement.base.mercury.virgo")?.label,
+  "Mercury in Virgo"
+);
 
 const joined = joinSkyReviewRows(horizon, [
   {
@@ -78,6 +84,19 @@ assert.match(endpoint, /status:\s*"authorization_required"/u);
 assert.match(endpoint, /minimumSuccessfulCalls:\s*missingDrafts\.length \* 2/u);
 assert.doesNotMatch(endpoint, /generateCard|providerCall|OPENAI_API_KEY|GEMINI_API_KEY/u);
 
+const adminVite = await createServer({
+  configFile: path.join(repoRoot, "apps/admin/vite.config.ts"),
+  server: { middlewareMode: true },
+  appType: "custom",
+  logLevel: "silent"
+});
+try {
+  const route = await adminVite.ssrLoadModule(path.join(repoRoot, "api/admin/sky-review-horizon.ts"));
+  assert.equal(typeof route.default, "function", "The local Admin SSR loader must load the Sky horizon route.");
+} finally {
+  await adminVite.close();
+}
+
 const adminApi = fs.readFileSync(path.join(repoRoot, "api/admin/generated-content.ts"), "utf8");
 assert.match(adminApi, /ownerAction\?: "approve-and-schedule"/u);
 assert.match(adminApi, /assertCanPublishGeneratedContent/u);
@@ -87,6 +106,7 @@ assert.match(adminApi, /\["sky_aspect", "sky_placement"\]\.includes\(existing\?\
 const dashboard = fs.readFileSync(path.join(repoRoot, "apps/admin/src/GeneratedContentAdminDashboard.tsx"), "utf8");
 assert.match(dashboard, /Upcoming 90 days/u);
 assert.match(dashboard, /Approve &amp; schedule/u);
+assert.match(dashboard, /activePage === "reviewQueue"[\s\S]*?\{renderEditor\(\)\}/u);
 assert.match(dashboard, /\["DRAFT", "REVIEWED"\]\.includes\(row\.status\)/u);
 assert.match(dashboard, /This view is inventory and review status only/u);
 
