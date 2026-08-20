@@ -71,6 +71,7 @@ import {
   transitV3AuthoredCardForContentKey,
   transitV3SameBeatKeyForContentKey
 } from "./content/fallbackArchitectureV3Runtime";
+import { natalPlacementReaderSectionCopy } from "./content/natalPlacementReaderSections";
 import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "./content/readerSafety";
 import type { ContentBundle } from "./content/types";
 import {
@@ -14340,7 +14341,10 @@ function natalPlacementV3NormalizedSections(
     });
     const rawParts = Array.isArray(rendered.parts) ? rendered.parts : [rendered.body];
     const parts = rawParts
-      .map((part: unknown) => firstReaderFacingCopy([typeof part === "string" ? part : ""]))
+      .map((part: unknown, index: number) => natalPlacementReaderSectionCopy(
+        typeof part === "string" ? part : "",
+        rendered.partKeys?.[index]
+      ))
       .filter((part: string | null): part is string => Boolean(part));
 
     if (parts.length === 0) {
@@ -14367,7 +14371,8 @@ function natalPlacementV3NormalizedSections(
 
     if (position.house && parts[1]) {
       const housePartKey = rendered.partKeys?.[1];
-      const isExactHouseCopy = housePartKey?.startsWith("fallback-hook/placement-house-lived/")
+      const isExactHouseCopy = housePartKey?.startsWith("fallback-hook/natal-you-placement-house-final/")
+        || housePartKey?.startsWith("fallback-hook/placement-house-lived/")
         || housePartKey?.startsWith("fallback-hook/house-lived/");
       sections.push({
         slot: "house",
