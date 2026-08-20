@@ -1,13 +1,16 @@
 import {
-  calculateSkyAspects,
+  calculateNatalAspects,
   canonicalizeNodeAxisAspects,
-  SKY_ASPECT_POINT_ORDER
+  NATAL_ASPECT_POINT_ORDER
 } from "@tldr/astro-knowledge/sky-aspect-engine";
 import type { PlanetPosition, SkySnapshot } from "../types";
 
-type NatalAspectSnapshot = Pick<SkySnapshot, "positions" | "aspects">;
+type NatalAspectSnapshot = Pick<
+  SkySnapshot,
+  "positions" | "aspects" | "ascendantLongitude" | "midheavenLongitude"
+>;
 
-const canonicalNatalPoints = new Set<string>(SKY_ASPECT_POINT_ORDER);
+const canonicalNatalPoints = new Set<string>(NATAL_ASPECT_POINT_ORDER);
 const natalZodiacSigns = [
   "Aries",
   "Taurus",
@@ -42,8 +45,8 @@ function fixedNatalLongitude(position: PlanetPosition) {
   return signIndex * 30 + position.degree;
 }
 
-function canonicalNatalPositions(positions: readonly PlanetPosition[]) {
-  return positions.flatMap((position) => {
+function canonicalNatalPositions(snapshot: NatalAspectSnapshot) {
+  const positions = snapshot.positions.flatMap((position) => {
     const longitude = fixedNatalLongitude(position);
 
     if (!canonicalNatalPoints.has(position.planet) || longitude === null) {
@@ -56,6 +59,17 @@ function canonicalNatalPositions(positions: readonly PlanetPosition[]) {
       speed: position.speed
     }];
   });
+
+  const anglePositions = [
+    { planet: "Ascendant", longitude: snapshot.ascendantLongitude },
+    { planet: "Midheaven", longitude: snapshot.midheavenLongitude }
+  ].filter((position): position is { planet: string; longitude: number } => (
+    typeof position.longitude === "number"
+    && Number.isFinite(position.longitude)
+    && !positions.some((candidate) => candidate.planet === position.planet)
+  ));
+
+  return [...positions, ...anglePositions];
 }
 
 /**
@@ -71,6 +85,6 @@ export function canonicalNatalAspectsForSnapshot(
 ): SkySnapshot["aspects"] {
   if (!snapshot) return [];
 
-  const calculated = calculateSkyAspects(canonicalNatalPositions(snapshot.positions));
+  const calculated = calculateNatalAspects(canonicalNatalPositions(snapshot));
   return canonicalizeNodeAxisAspects(calculated);
 }
