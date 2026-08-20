@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.trine.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "be79d28b551d911af66736bce0964146d3a95f84c379f78e87e4eadcf3286fe8",
+  "payload": {
+    "summary": "Authority may finally move to the person who has already been doing the work without the title.",
+    "body": "Authority may finally move to the person who has already been doing the work without the title. Sun trine Saturn can make recognition easier to formalize when the hours, decisions, and track record are already there. This is the point where the title, pay, access, and responsibility should catch up with the role someone has been carrying in practice. Make the change official. Recognition means more when it changes what the person can decide, what they are paid, and what work no longer has to be done without authority."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

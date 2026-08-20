@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.square.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "74d740c5d8cd0125b6315603b1d2721dc0135c72d41739946d880974e022c9fb",
+  "payload": {
+    "summary": "A last-minute schedule change triggers a sharp conflict over who actually gets to make the call.",
+    "body": "A last-minute schedule change triggers a sharp conflict over who actually gets to make the call. Moon square Pluto can turn an immediate emotional reaction into a direct challenge to the person using rank, contract, policy, or money to shut the discussion down. The original decision may still stand, but the conflict exposes where authority becomes control. Before escalating, identify the rule being enforced and who can actually change it. Do not spend the whole argument on the person enforcing a rule they have no authority to revise."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

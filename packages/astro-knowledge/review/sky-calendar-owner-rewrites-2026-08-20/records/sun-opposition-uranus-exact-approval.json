@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.opposition.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "d936d8467618027c347cb79fe2407870c5f9f7e8bd439f490310cb088902f58b",
+  "payload": {
+    "summary": "Leadership may insist the plan is still intact while a public departure proves that something inside it has already broken.",
+    "body": "Leadership may insist the plan is still intact while a public departure proves that something inside it has already broken. Sun opposite Uranus can put the official story directly against the person naming the rules, restrictions, or decisions that made staying untenable. The departure may look sudden from the outside and still have a long history behind it. Read the reason for the exit before replacing the person. If the same condition remains, continuity only guarantees that the next conflict will arrive under a different name."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.sextile.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "3ceddeb4f0d436290b54a4da79b4b09e216c9e60bc9403c14f6d597aef86a9b5",
+  "payload": {
+    "summary": "A stalled agreement may move once somebody makes a direct offer the other side can actually answer.",
+    "body": "A stalled agreement may move once somebody makes a direct offer the other side can actually answer. Venus sextile Mars can turn vague interest into a price, date, role, boundary, or next step without making the whole exchange confrontational. Do not make the other person guess what action would keep the deal alive. Say what is being offered and what response is needed. One specific move is enough to test if the interest is mutual before anyone spends more time negotiating with a possibility."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

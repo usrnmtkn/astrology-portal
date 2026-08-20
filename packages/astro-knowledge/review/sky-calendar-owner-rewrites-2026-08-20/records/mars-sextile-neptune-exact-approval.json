@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.sextile.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "6e934efa064b4662a6bcf48282996114bbfbac8f342205e257aaf9773a9d5f65",
+  "payload": {
+    "summary": "A strong feeling finds one concrete action before it scatters into frustration.",
+    "body": "A strong feeling finds one concrete action before it scatters into frustration. Mars sextile Neptune can turn grief, outrage, hope, or creative urgency into a fundraiser, volunteer shift, performance, or direct request that gives people somewhere useful to put their energy. The action does not have to solve the entire problem to matter. It needs a clear purpose and a person who can receive the help. Choose the next task people can actually complete, then let the larger feeling stay larger than the assignment."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

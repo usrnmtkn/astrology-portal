@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.trine.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "97a30c8d0abd713032c1394913998026561e42298a4dfbef7409a0e061e9c91f",
+  "payload": {
+    "summary": "Long-standing emotional baggage comes into the open without the conversation becoming a fight.",
+    "body": "Long-standing emotional baggage comes into the open without the conversation becoming a fight. Moon trine Pluto can make grief, anxiety, or an old family loyalty easier to name without forcing anyone to reveal more than they are ready to share. Honesty has enough room to move here without turning vulnerability into a weapon. Let the conversation change the understanding of the past. The truth can matter even when one conversation does not resolve every old hurt."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

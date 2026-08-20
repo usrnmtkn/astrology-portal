@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.square.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "9263349795a8cc953cf874ccca91a67b6431abab10023f4c85b10fb14a88288e",
+  "payload": {
+    "summary": "A bold play for power creates a showdown over who controls the outcome.",
+    "body": "A bold play for power creates a showdown over who controls the outcome. Mars square Pluto can turn a public move into a fight over rank, contracts, money, trust, or access the moment someone feels their authority is being tested. Pushing harder often gives the other side a reason to tighten the grip. The original issue can disappear inside the power struggle. Before escalating, identify the one decision that actually needs to change and the person with the authority to change it. Do not make the entire relationship the battlefield if one term is the problem."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

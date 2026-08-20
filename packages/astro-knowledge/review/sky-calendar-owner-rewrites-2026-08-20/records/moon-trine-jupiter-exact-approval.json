@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.trine.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "2d283c708cfb7b8ac38470066e2c5b182f4b9be6d510c30ea8922361fc05f5d7",
+  "payload": {
+    "summary": "A private need receives a much larger response than expected.",
+    "body": "A private need receives a much larger response than expected. Moon trine Jupiter can bring meals, money, childcare, space, or forgiveness without making the person receiving help explain every detail first. The relief can feel almost immediate because people are willing to give more than the minimum. Let the help be easy to receive. Then make sure somebody is still showing up after the first wave of urgency passes, because the need may last longer than the attention around it."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

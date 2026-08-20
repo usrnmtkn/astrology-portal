@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.conjunction.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "deb4c59d0e9b773ce7b284979bd5350be37c400f66b43d97d6e8cc043a173dfa",
+  "payload": {
+    "summary": "The meeting ends with a sentence no one can later pretend they misunderstood.",
+    "body": "The meeting ends with a sentence no one can later pretend they misunderstood. Mercury conjunct Saturn can make the wording and the consequence part of the same official fact, especially in a signed statement, formal warning, binding promise, or documented refusal. The clarity may feel strict, but it protects everyone from a later version of what was supposedly meant. Put the condition, date, responsibility, and consequence in writing. If the answer matters, it should survive being read again next month."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

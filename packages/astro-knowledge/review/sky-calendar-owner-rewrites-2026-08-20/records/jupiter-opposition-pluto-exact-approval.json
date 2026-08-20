@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.opposition.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "a61a7d4082b037dc1fb53c2e83bcf50b271992e37755f19dfd3f95671b1310fe",
+  "payload": {
+    "summary": "The institution promising broader opportunity faces the people documenting how the expansion narrowed their choices.",
+    "body": "The institution promising broader opportunity faces the people documenting how the expansion narrowed their choices. Jupiter opposite Pluto makes the contradiction hard to smooth over with totals: investment may rise while ownership consolidates, prices climb, or access moves into fewer hands. One side can point to growth; the other can point to who now controls the door. Both facts matter. Compare the new reach with the new concentration of power before accepting the expansion as proof of progress."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

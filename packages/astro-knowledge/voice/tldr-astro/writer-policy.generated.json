@@ -4,7 +4,7 @@
   "generatedBy": "scripts/compile-satori-editorial-decisions.js",
   "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
   "decisionSourceId": "satori-editorial-decisions-v1",
-  "decisionSourceSha256": "c15f6146d4825cdf990a86e937ae208025d0fbf41ccc87feff63c418ab025d80",
+  "decisionSourceSha256": "b00fe9e687d4f0795f2008450e6da0957bfdad6ff1633a20a2b0a9c9afdb8c02",
   "architecture": [
     "Verified astrology supplies meaning.",
     "Sol writes one original draft.",
@@ -57,7 +57,7 @@
           "sky-aspect-calendar"
         ]
       },
-      "rule": "Calendar Sky aspect copy never uses you, your, yours, yourself, or yourselves; Sky placement copy may address the reader directly."
+      "rule": "Calendar Sky aspect copy remains collective in subject, but may use you or your when it directly addresses the reader with practical guidance. Direct address must not become a natal standing-pattern claim."
     },
     {
       "id": "ED-004",
@@ -103,7 +103,7 @@
           "all-reader-copy"
         ]
       },
-      "rule": "Room is allowed for a literal physical room. Prohibit stock audience or hierarchy phrases such as the loudest person in the room or the smartest voice in the room."
+      "rule": "Room language is allowed sparingly when it names an actual setting or power dynamic. Prohibit stock audience or hierarchy phrases such as the loudest person in the room or the smartest voice in the room."
     },
     {
       "id": "CF-005",

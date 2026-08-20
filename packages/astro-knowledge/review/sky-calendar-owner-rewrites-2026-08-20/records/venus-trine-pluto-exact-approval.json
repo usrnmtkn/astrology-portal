@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.trine.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "1e23040fd7ff5fc4acecec3f9a1cab4213abc40f35ef8567347c1047a723cce2",
+  "payload": {
+    "summary": "Shared money, credit, or authority may be redistributed in a way that actually improves the relationship.",
+    "body": "Shared money, credit, or authority may be redistributed in a way that actually improves the relationship. Venus trine Pluto can help a contract, inheritance, business arrangement, or private agreement become more transparent about who owns what, who can decide, and how either side can leave. Fairness is stronger when it reaches the structure instead of stopping at a reassuring conversation. Make the change visible in the account, contract, access, or signature rights. Trust grows faster when nobody has to guess how much leverage the other person still holds."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

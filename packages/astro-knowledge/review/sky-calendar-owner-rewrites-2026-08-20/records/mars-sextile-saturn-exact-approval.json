@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.sextile.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "e316a79072841d1163b1a90072fad409e197300f4d5433aacf1fa05b504ff7e8",
+  "payload": {
+    "summary": "An urgent job receives the permit, crew, or equipment needed for one safe stage to begin.",
+    "body": "An urgent job receives the permit, crew, or equipment needed for one safe stage to begin. Mars sextile Saturn can create a practical route through a restriction by narrowing the task, adjusting the sequence, or putting the right supervisor in place. One approved step may be enough to restart momentum even if the rest has to wait. Use the permission already granted. Finish the stage that is actually ready instead of turning a limited approval into another argument about everything still blocked."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

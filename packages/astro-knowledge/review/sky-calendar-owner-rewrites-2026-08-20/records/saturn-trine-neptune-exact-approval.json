@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.saturn.trine.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "30b9eb5f35aa709eb725ef85799f95b9baaff41d6ef8eb4dbf9ca801dec3b362",
+  "payload": {
+    "summary": "An institution creates a durable response to a need it once handled through temporary goodwill.",
+    "body": "An institution creates a durable response to a need it once handled through temporary goodwill. Saturn trine Neptune can turn volunteers and emergency exceptions into long-term funding, trained staff, private space, and clear access without losing sight of the human reason the program exists. Care becomes dependable because someone accepted that compassion needs a budget after the emotional moment passes. Protect that continuity. Build the plan so the service still works on an ordinary Tuesday when nobody is watching."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

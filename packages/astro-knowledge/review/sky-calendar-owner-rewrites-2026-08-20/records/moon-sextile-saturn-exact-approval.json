@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.sextile.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "18faa664aa10fe20228edcc103c600fed16eb7788c8a473ed01994a92ff17c17",
+  "payload": {
+    "summary": "A care plan becomes workable after one person names the limit everyone else was avoiding.",
+    "body": "A care plan becomes workable after one person names the limit everyone else was avoiding. Moon sextile Saturn can make a smaller schedule, arranged payment, or moved deadline enough to keep the responsibility from falling apart. The help becomes more reliable because time and energy are finally being treated as finite. Make the adjustment official. Name who owns the next step, when the arrangement ends, and what happens if the need lasts longer than expected."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

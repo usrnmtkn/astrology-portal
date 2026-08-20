@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.trine.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "d28b4c379959bf9b4e39235bb81967aa5c978c3a10ee06260bc87e453f11ed57",
+  "payload": {
+    "summary": "A plan that has been waiting on money or logistics may finally become possible once the full cost is on paper.",
+    "body": "A plan that has been waiting on money or logistics may finally become possible once the full cost is on paper. Venus trine Saturn can help value and commitment support each other, so the budget, schedule, deposit, and long-term responsibility make the agreement more secure instead of less appealing. This is the useful kind of restraint. Confirm the numbers before celebrating the approval, then fund the part that keeps the plan working after the first good day. What is worth building should be able to survive its ordinary costs."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

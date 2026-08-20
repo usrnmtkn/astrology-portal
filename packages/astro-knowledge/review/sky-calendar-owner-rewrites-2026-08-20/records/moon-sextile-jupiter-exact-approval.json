@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.sextile.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "59f5a66bf10e55b6960ce1a6b9564149fcea4e064b24e81d13f85074c99b1889",
+  "payload": {
+    "summary": "A private need reaches a wider circle and receives more help than one household could provide.",
+    "body": "A private need reaches a wider circle and receives more help than one household could provide. Moon sextile Jupiter can open a fund, bring in a community group, or connect the request to people with more time or resources before the original caregiver runs out of both. The important shift is that the burden stops sitting with the same exhausted few. Share the request clearly and name what would actually help. A wider network is useful when each person knows where their contribution belongs."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

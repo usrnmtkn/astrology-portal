@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.square.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "c7459e7d316b297f798a77c711a5211004125904ebf3a11ce0a5ef855d4637f6",
+  "payload": {
+    "summary": "A dramatic response begins before anyone can define the goal, authority, or measure of success.",
+    "body": "A dramatic response begins before anyone can define the goal, authority, or measure of success. Mars square Neptune can scatter urgent energy across several different versions of the problem, so people rush to donate, confront, rescue, or publish without knowing who is coordinating the result. The effort looks powerful from the outside while money and responsibility disappear into confusion. Do not add more force to a blurry target. Decide what the immediate job is, who has authority to direct it, and what everyone else can stop doing."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

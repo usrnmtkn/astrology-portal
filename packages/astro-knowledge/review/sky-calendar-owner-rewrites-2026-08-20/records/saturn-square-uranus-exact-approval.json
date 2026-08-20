@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.saturn.square.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "b706d690fcc37db9956ae5a97b7fe9c2cab977951117b93433e1713bc31f49f9",
+  "payload": {
+    "summary": "A rigid institution keeps enforcing a process that technology, staff, or public need has already made obsolete.",
+    "body": "A rigid institution keeps enforcing a process that technology, staff, or public need has already made obsolete. Saturn square Uranus can make workers build unofficial workarounds while leadership tightens the same rules causing the delay. Every workaround becomes another argument about who is authorized to change the system. Stop treating the workaround as misconduct if it is the only thing keeping the work moving. Document where the official process fails and escalate the specific rule blocking a replacement."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

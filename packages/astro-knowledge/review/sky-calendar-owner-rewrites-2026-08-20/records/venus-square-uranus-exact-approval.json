@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.square.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "368edc1ce92d67caf8138f7d32b47d05a8d50a0d937f3616f074ff35ca00be69",
+  "payload": {
+    "summary": "A sudden change in price, availability, or commitment can break an agreement people expected to rely on.",
+    "body": "A sudden change in price, availability, or commitment can break an agreement people expected to rely on. Venus square Uranus can make one person's necessary change become everybody else's immediate problem when the new terms arrive without warning or room to respond. Freedom does not erase responsibility for the disruption. Give people notice, alternatives, or a transition when the change affects their money, schedule, housing, work, or relationship. The new terms may still stand. Goodwill is much easier to preserve when nobody is forced to discover them through the consequences."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

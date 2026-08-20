@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.opposition.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "f133516432a837dc58c12fadbac7cfb219dc1165372d6d48905b14a16dd46ffa",
+  "payload": {
+    "summary": "The simple success story meets the report full of limits, exceptions, and mixed results.",
+    "body": "The simple success story meets the report full of limits, exceptions, and mixed results. Mercury opposite Jupiter can put the headline directly across from the fuller explanation, especially when one side wants the message to inspire and the other needs the numbers to remain accurate. The disagreement is not about being positive or negative. It is about how much the claim can carry. Publish the context that materially changes the conclusion, even if it makes the story less impressive."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

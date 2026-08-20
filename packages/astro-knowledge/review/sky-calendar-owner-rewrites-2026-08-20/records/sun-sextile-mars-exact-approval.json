@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.sextile.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "aed7eff0b2653492d2b20e5f4c631a51b55cb7924e02a8f5d27a330f44a24a58",
+  "payload": {
+    "summary": "One person takes the first task and another claims the next, dividing the work without an argument.",
+    "body": "One person takes the first task and another claims the next, dividing the work without an argument. Sun sextile Mars can make a partial plan useful once somebody has enough authority to start the first concrete piece. The early result gives the rest of the project something to build around. Name the first two owners and let them move. Clear handoffs and decision rights matter more than having every detail final before the work begins."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

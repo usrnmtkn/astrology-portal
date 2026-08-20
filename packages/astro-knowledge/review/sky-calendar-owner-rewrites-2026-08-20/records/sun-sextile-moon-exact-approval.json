@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.sextile.moon",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "7cc5ed56df2c231e373c5886b9cda227a7c5c58b4f7aee961f07f44d0823c3ba",
+  "payload": {
+    "summary": "A policy change is announced early enough for someone to catch the detail that would have created a much bigger problem later.",
+    "body": "A policy change is announced early enough for someone to catch the detail that would have created a much bigger problem later. The sextile between the Sun and Moon can create room for an official decision to adjust to the people who actually have to live with it. A grace period, transit option, childcare plan, or revised start date may be enough to keep one rule from derailing an entire week. Use the lead time. Ask who will have to rearrange the most before the policy is locked, then fix the preventable problem while the plan can still move."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

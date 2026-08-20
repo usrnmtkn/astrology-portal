@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.sextile.venus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "a1aa1e8a2120de4d05c35f893341925f7a0e0b2247c36d633687b5aa05c3ad6c",
+  "payload": {
+    "summary": "A small budget adjustment makes a difficult week easier to carry.",
+    "body": "A small budget adjustment makes a difficult week easier to carry. Moon sextile Venus can turn a flexible fund, extra meal, open room, or changed reservation into enough support to keep a need from falling through. The help matters because it arrives before embarrassment or exhaustion forces someone to ask twice. Offer what is actually available. A modest adjustment can be more useful than a bigger gesture that creates another promise nobody can maintain."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

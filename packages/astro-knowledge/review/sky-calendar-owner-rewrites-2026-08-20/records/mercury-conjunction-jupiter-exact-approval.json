@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.conjunction.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "cf693fe891f41c37052d8a404e2c0964364d424e7f7a7861871d48645bc45268",
+  "payload": {
+    "summary": "One announcement turns a local idea into a much larger promise.",
+    "body": "One announcement turns a local idea into a much larger promise. Mercury conjunct Jupiter can make the message grow with the audience, so a course, campaign, legal decision, or travel plan reaches more people at the exact moment its wording becomes harder to revise. The opportunity may be genuine, but every overstatement now travels farther too. Say what is confirmed and what is still aspirational. A big audience can forgive a limit more easily than it can forgive discovering later that the limit was hidden."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

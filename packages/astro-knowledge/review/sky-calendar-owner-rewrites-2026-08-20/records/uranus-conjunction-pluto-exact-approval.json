@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.uranus.conjunction.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "c6269e0aab7924b16588b3adff8f7759a68cdfe846a18c49f60c19b80c539cfe",
+  "payload": {
+    "summary": "A platform collapse, ownership fight, market seizure, or technical break can move authority at the same moment the old structure fails.",
+    "body": "A platform collapse, ownership fight, market seizure, or technical break can move authority at the same moment the old structure fails. Uranus conjunct Pluto can make disruption and a transfer of power happen so quickly that everyone is focused on what ended before noticing who now controls the replacement. Breaking the gate does not guarantee open access. Follow the data, ownership, pricing, and enforcement into the new system. If the same concentration of power appears under a different interface, the replacement changed the route more than the power structure."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

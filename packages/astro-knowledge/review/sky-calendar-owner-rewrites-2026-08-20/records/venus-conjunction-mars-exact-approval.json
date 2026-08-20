@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.conjunction.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "e63d98f7742fd0d635602b2530674342144855185bdadddfee8c692383539d1e",
+  "payload": {
+    "summary": "An offer and the move to claim it can happen in the same moment.",
+    "body": "An offer and the move to claim it can happen in the same moment. Venus conjunct Mars can make attraction, money, creativity, or agreement move from interest to action before either side has time to hide behind polite ambiguity. A bid gets placed. An invitation is accepted. A private attraction becomes a public choice. The spark is not the whole agreement. After the first move, confirm that both sides still want the same price, pace, role, or outcome before momentum starts deciding the terms on their behalf."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

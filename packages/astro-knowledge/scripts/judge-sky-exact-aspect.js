@@ -72,7 +72,7 @@ function buildJudgePrompt(entry, options = {}) {
       : []),
     `- It is quotable and immediately clear. The memorable line comes from a precise observation, not a manufactured catchphrase. At least one line is unmistakably specific to this pair; swapping the planet names would break the piece.`,
     `- The entry is direct, natural, and specific. It does not read like generic horoscope copy, a strategy brief, or a template with nouns swapped.`,
-    `- It stays collective or third-person and evergreen: no second person, signs, dates, degrees, houses, natal framing, or relationship compatibility framing.`,
+    `- It stays collective and temporary. Direct you/your guidance is allowed after the shared condition is clear, but natal standing-pattern claims, signs, dates, degrees, houses, natal framing, and relationship compatibility framing are not.`,
     `- It preserves nuance: soft aspects are not automatically good, hard aspects are not automatically bad, and the node axis is not treated as fate.`,
     `- It does not reproduce CC/SD/AC phrasing constructions from voice/banned-constructions.json. AC timing devices may be adapted structurally, but theatrical titles and dense stacked metaphor stay out. Shared astrological knowledge and terminology are never flagged: Dragon's Head/Tail, decans, dignities, cazimi, and the tradition's vocabulary are common to astrologers. Owner-verbatim text is exempt.`,
     ...ownerWarmthJudgePolicyLines(options).map((rule) => `- ${rule}`),

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.square.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "b06f066a428930a06d73fc828797e44cb5e55979223096f9aad3814929b35991",
+  "payload": {
+    "summary": "The crew is ready to move, but a permit, staffing limit, safety rule, or locked deadline blocks the next step.",
+    "body": "The crew is ready to move, but a permit, staffing limit, safety rule, or locked deadline blocks the next step. Mars square Saturn can make every delay feel more personal because the need is urgent and the barrier keeps refusing to move. The frustration is useful information, but the restriction still has to be examined on its own merits, especially if following it keeps creating damage. Find the exact requirement holding the work back. Meet it, change it, or escalate it to the person who can instead of burning hours fighting everyone required to enforce it."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

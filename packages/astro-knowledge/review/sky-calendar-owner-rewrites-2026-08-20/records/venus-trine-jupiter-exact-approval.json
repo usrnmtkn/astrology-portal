@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.trine.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "cd1ba9c8f4091081611f401fb10861f96674046f3a4ec8db49be45dd67504c22",
+  "payload": {
+    "summary": "Money, goodwill, and public support can arrive around something people are genuinely glad to back.",
+    "body": "Money, goodwill, and public support can arrive around something people are genuinely glad to back. Venus trine Jupiter can make generosity easier to receive and easier to extend, especially when a fundraiser clears its goal, a celebration includes the people who built it, or a partnership grows without reducing anyone's share to make room. Let the good response be good. Then protect what made it worth supporting. Pay the contributors, keep the terms fair, and use the extra resources to widen the benefit rather than decorate the success."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

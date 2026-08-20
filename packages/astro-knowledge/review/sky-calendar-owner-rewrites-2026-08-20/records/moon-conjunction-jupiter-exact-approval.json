@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.conjunction.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "46aba94872a0df6f9772b18034b1e81ea99f8b1fd908e95ba992b6438e72e450",
+  "payload": {
+    "summary": "A private need becomes a much larger public response overnight.",
+    "body": "A private need becomes a much larger public response overnight. Moon conjunct Jupiter can make donations, visitors, media attention, or family involvement arrive faster than the person at the center can decide what kind of help they actually want. More care is still more to manage when privacy disappears with it. Ask what support is useful before adding another offer, visitor, or public update. The person receiving the help should not become the coordinator of everyone else's generosity."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

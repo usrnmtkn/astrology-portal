@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.opposition.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "e325351a6d07851bde7709ad0a1afd73b418d76276b3158b1e035fe8a82f5d8c",
+  "payload": {
+    "summary": "A generous public offer may be impossible to extend to everyone under the same terms.",
+    "body": "A generous public offer may be impossible to extend to everyone under the same terms. Venus opposite Jupiter can put the desire to include more people directly against the budget, inventory, or prior agreements that already determine who gets what. Expanding the benefit can be worthwhile. It should not happen by quietly taking from the people who were promised a share first. Put the cost of the larger offer on the table. If growth requires someone else's portion to shrink, say that before calling the change generosity."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

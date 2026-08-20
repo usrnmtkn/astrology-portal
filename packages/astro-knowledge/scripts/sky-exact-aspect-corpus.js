@@ -181,8 +181,9 @@ function lintExactEntry(entry) {
     if (paragraphs.length !== 2) findings.push({ severity: "fail", field: "body", reason: `expected two paragraphs; found ${paragraphs.length}` });
     if (sentences < 5 || sentences > 10) findings.push({ severity: "fail", field: "body", reason: `expected 5-10 sentences; found ${sentences}` });
     if (words < 90 || words > 180) findings.push({ severity: "fail", field: "body", reason: `expected 90-180 words; found ${words}` });
-    if (!/\b(we|our|us)\b/i.test(body)) findings.push({ severity: "fail", field: "body", reason: "missing collective we/our/us voice" });
-    if (/(^|[^-])\b(you|your|yours|yourself)\b/i.test(body)) findings.push({ severity: "fail", field: "body", reason: "second person" });
+    if (/\b(?:you tend to|you always|you usually|you have always|your personality)\b/i.test(body)) {
+      findings.push({ severity: "fail", field: "body", reason: "natal standing-pattern language on a collective Calendar surface" });
+    }
     if (/—/.test(body)) findings.push({ severity: "fail", field: "body", reason: "em dash" });
     if (/\b(Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capricorn|Aquarius|Pisces)\b/.test(body)) {
       findings.push({ severity: "fail", field: "body", reason: "sign-specific language in evergreen source" });

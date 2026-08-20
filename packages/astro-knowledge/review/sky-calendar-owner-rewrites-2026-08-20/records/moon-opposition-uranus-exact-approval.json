@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.opposition.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "7325b15b4ad5508b80cb2945892c2ebbf9d56948263a86e2cd22ceb78470c036",
+  "payload": {
+    "summary": "One group fights to preserve a familiar routine while another insists the arrangement has to change now.",
+    "body": "One group fights to preserve a familiar routine while another insists the arrangement has to change now. Moon opposite Uranus can put continuity directly across from reform, especially when the old system has been reliable for some people and restrictive for others. Improvement can still carry grief. Build the transition around the people with the least flexibility. A better system is harder to defend if the people who depended on the old one are simply told to adjust on their own."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

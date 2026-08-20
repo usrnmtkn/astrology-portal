@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.trine.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "b340401626214dee76984e167c0bcb846f22e37ac22bae216fad24d0c52d6867",
+  "payload": {
+    "summary": "Interest and effort may finally move in the same direction without turning the exchange into a chase.",
+    "body": "Interest and effort may finally move in the same direction without turning the exchange into a chase. Venus trine Mars can help payment clear, an invitation land, or a creative partnership begin with both sides contributing what they said they would. The ease comes from reciprocity, not passivity. Keep it that way. Let each person carry a visible part of the work, cost, or initiative so nobody has to keep proving that the agreement matters by doing more than their share."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

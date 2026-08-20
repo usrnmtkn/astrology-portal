@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.neptune.trine.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "4a5d64143ff6cbbfb685493c453e187f1773c1dff3314584cbc67b81bcfa9a73",
+  "payload": {
+    "summary": "A work of art, testimony, or sustained investigation brings hidden suffering into public view without reducing it to a spectacle.",
+    "body": "A work of art, testimony, or sustained investigation brings hidden suffering into public view without reducing it to a spectacle. Neptune trine Pluto can let emotional truth and difficult evidence reinforce each other, so the story names the systems, money, and private decisions shaping the harm while preserving the humanity of the people living through it. That depth is the point. Let the public response grow around the facts, not around a simplified symbol that makes the pain easier to consume."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

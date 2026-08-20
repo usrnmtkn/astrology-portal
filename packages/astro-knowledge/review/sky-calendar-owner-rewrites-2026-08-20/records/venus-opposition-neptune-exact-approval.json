@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.opposition.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "d96100b02a75cf545a92bbeb1c78497cfdbad18b729492274b5c677ee88d25a5",
+  "payload": {
+    "summary": "Fast chemistry or easy enthusiasm may start sounding like a firm commitment before anyone has confirmed the cost or terms.",
+    "body": "Fast chemistry or easy enthusiasm may start sounding like a firm commitment before anyone has confirmed the cost or terms. Venus opposite Neptune can put the irresistible version of an offer directly across from the details that were never discussed. A trip, joint venture, social plan, or relationship can gather momentum while each side is imagining a different promise. Ask the boring questions early. Who is paying, what is confirmed, what remains optional, and what happens if the ideal version never materializes? Clarity protects the part that is actually worth wanting."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}
