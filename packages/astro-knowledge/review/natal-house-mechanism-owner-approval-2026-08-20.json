@@ -1,0 +1,1037 @@
+{
+  "schema": "tldr-natal-house-mechanism-owner-approval/v1",
+  "createdAt": "2026-08-20",
+  "authority": {
+    "source": "owner chat ruling",
+    "rulingDate": "2026-08-20",
+    "verbatim": "I approve all 156 SUPPORTED AstrologySupport mechanisms exactly as currently hashed, and retain the 12 Lilith rows as SOURCE_GAP. This approves internal mechanisms only—not reader copy, serving changes, auto-publishing, or Friend derivation."
+  },
+  "governance": {
+    "internalMechanismsOnly": true,
+    "readerCopyApproved": false,
+    "servingChangesAuthorized": false,
+    "autoPublish": false,
+    "writerPromotion": false,
+    "friendDerivationAuthorized": false,
+    "partOfFortuneInScope": false
+  },
+  "sourceArtifacts": [
+    "packages/astro-knowledge/review/natal-placement-canonical-mechanisms-review-2026-08-17.json",
+    "packages/astro-knowledge/review/natal-house-canonical-mechanisms-review-wave-2-2026-08-17.json"
+  ],
+  "counts": {
+    "total": 168,
+    "approvedSupported": 156,
+    "retainedSourceGap": 12
+  },
+  "decisions": [
+    {
+      "runtimeKey": "chiron|10th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5e0070ad77ca7956a46876e8db22642403b5c1ebc5e24923cbcb64dbdd236b6f",
+      "sourceEvidenceSha256": "6da3be14bf16b55f4bdddb27d765e0fd5fca0e735b06c3c4a0e052452524b9ac"
+    },
+    {
+      "runtimeKey": "chiron|11th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "83d48c18d9c4127f2a6649ac0ea42f36f6b56bc61a23032990adc5e43029584c",
+      "sourceEvidenceSha256": "6da3be14bf16b55f4bdddb27d765e0fd5fca0e735b06c3c4a0e052452524b9ac"
+    },
+    {
+      "runtimeKey": "chiron|12th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "4463b50ba5721c59fec2db22623d10b6502991feb09bc76c961171cc1e5d5c04",
+      "sourceEvidenceSha256": "6da3be14bf16b55f4bdddb27d765e0fd5fca0e735b06c3c4a0e052452524b9ac"
+    },
+    {
+      "runtimeKey": "chiron|1st house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "09628d7780bc91342cd57e56d4770a9a59fbade4acd41993b42e43011d7e64d9",
+      "sourceEvidenceSha256": "b257244e1a738ef00da8986ce54949eed362430028a1f2fa5a6ac984b7b719a0"
+    },
+    {
+      "runtimeKey": "chiron|2nd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "78e95fde0941a3a6bba6fa1fadaf39c77f77fc1245176ea2f19c342c6a5f3bd9",
+      "sourceEvidenceSha256": "b257244e1a738ef00da8986ce54949eed362430028a1f2fa5a6ac984b7b719a0"
+    },
+    {
+      "runtimeKey": "chiron|3rd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "7e9ab97d0f1008fbf264931fbfd409a35ec81238301ae268e577ab8bdb62f232",
+      "sourceEvidenceSha256": "b257244e1a738ef00da8986ce54949eed362430028a1f2fa5a6ac984b7b719a0"
+    },
+    {
+      "runtimeKey": "chiron|4th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "42aaac73e34757fb243ac9d5c6b9eb23faefe231ceb0e9f601a356c897fe4dd2",
+      "sourceEvidenceSha256": "c63c23a492c507a8d221466fb1bed2ce99fee46ac4957d5b5c75108a8ca9d3ab"
+    },
+    {
+      "runtimeKey": "chiron|5th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "d0dece45b9049282b1a18ea05f9699f37e90548ada696dd2c882a73d61ff0763",
+      "sourceEvidenceSha256": "c63c23a492c507a8d221466fb1bed2ce99fee46ac4957d5b5c75108a8ca9d3ab"
+    },
+    {
+      "runtimeKey": "chiron|6th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "ddba9e8f5a2b23de7aa955fcaaf5741d7b4a0ab3053047c22cfd0e46dd6aaa3f",
+      "sourceEvidenceSha256": "c63c23a492c507a8d221466fb1bed2ce99fee46ac4957d5b5c75108a8ca9d3ab"
+    },
+    {
+      "runtimeKey": "chiron|7th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "23e8d686cfd3f20ab46371b9c78e6aba92c091a9d48ccc2a56ccb9ba2b2a963d",
+      "sourceEvidenceSha256": "c63c23a492c507a8d221466fb1bed2ce99fee46ac4957d5b5c75108a8ca9d3ab"
+    },
+    {
+      "runtimeKey": "chiron|8th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5b65e15e239661b260c70653bf3f6ea67d2fd3224029293e5bdf1b34a282061c",
+      "sourceEvidenceSha256": "c63c23a492c507a8d221466fb1bed2ce99fee46ac4957d5b5c75108a8ca9d3ab"
+    },
+    {
+      "runtimeKey": "chiron|9th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "9be1045392b7901bd32ebadf34b4dc47873b3a721c08c28702ff15003f3843d0",
+      "sourceEvidenceSha256": "6da3be14bf16b55f4bdddb27d765e0fd5fca0e735b06c3c4a0e052452524b9ac"
+    },
+    {
+      "runtimeKey": "jupiter|10th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "d8a6512ed2abd3ddbf7a42e9bd9c055f2ca2db3bd3f7767873b6c663dbffe9cd",
+      "sourceEvidenceSha256": "41bbc9fe927eb192fe3326295bd1b3f35efd919be711eafaa3d193153a196b4c"
+    },
+    {
+      "runtimeKey": "jupiter|11th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "b7fba8601927a75d694ab79ad4b112037f3042da6275d271c2df6ec68a039efc",
+      "sourceEvidenceSha256": "41bbc9fe927eb192fe3326295bd1b3f35efd919be711eafaa3d193153a196b4c"
+    },
+    {
+      "runtimeKey": "jupiter|12th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "a38c371d0296ce47b9f95204d8df761901ad8890ddcab5b9990b3349c5767e6e",
+      "sourceEvidenceSha256": "41bbc9fe927eb192fe3326295bd1b3f35efd919be711eafaa3d193153a196b4c"
+    },
+    {
+      "runtimeKey": "jupiter|1st house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "218d793954d10d6439456c69bba126fca94d0494dc4323f99f371908ac64c594",
+      "sourceEvidenceSha256": "42b02641f5584a330ad962e9639ca664e2f122c95621ab36e620a15e585d3d25"
+    },
+    {
+      "runtimeKey": "jupiter|2nd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "1ce7cd2416b8f63b1a8fea45137fa79134fb8ff61e6c5904c434bfe40b6e1753",
+      "sourceEvidenceSha256": "35b877060a154d7b0635b2269eda561e77cb66e66e4bd3e79fc3aa7aa43ac5e4"
+    },
+    {
+      "runtimeKey": "jupiter|3rd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "cbcc26490aff97041f036587dc24170b504e1b69a94adb7f6336914c0b117c8e",
+      "sourceEvidenceSha256": "42b02641f5584a330ad962e9639ca664e2f122c95621ab36e620a15e585d3d25"
+    },
+    {
+      "runtimeKey": "jupiter|4th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "949c7539bc7e3260243e2b988089b36bbd432379137eece4c5d52ab4d3d02e73",
+      "sourceEvidenceSha256": "42b02641f5584a330ad962e9639ca664e2f122c95621ab36e620a15e585d3d25"
+    },
+    {
+      "runtimeKey": "jupiter|5th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "f411967e8b2b72b53fce635c05920bfaa7b95e4ae471ed0287a417e017ded634",
+      "sourceEvidenceSha256": "42b02641f5584a330ad962e9639ca664e2f122c95621ab36e620a15e585d3d25"
+    },
+    {
+      "runtimeKey": "jupiter|6th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "c956229ae22ea7817c69a75f3b4b520d693274ecb7ac9a0567899e18bddf3377",
+      "sourceEvidenceSha256": "775574a99d295f96d623f15f112e8a3c86e61feea153e15640398f7f66fb5b56"
+    },
+    {
+      "runtimeKey": "jupiter|7th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "87d84aafbbd9f75ef8887198204d489ecb6925b691b2ec36f11f49e558f78e8c",
+      "sourceEvidenceSha256": "775574a99d295f96d623f15f112e8a3c86e61feea153e15640398f7f66fb5b56"
+    },
+    {
+      "runtimeKey": "jupiter|8th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "fef5ba872ba300798eb964b390150dfe5415a52f0f28d61784a25ba0e452acd8",
+      "sourceEvidenceSha256": "775574a99d295f96d623f15f112e8a3c86e61feea153e15640398f7f66fb5b56"
+    },
+    {
+      "runtimeKey": "jupiter|9th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5884d1c3e3bf1ab8924f0570950a6bda309e852f0cd58253aafa686d1b2abc55",
+      "sourceEvidenceSha256": "41bbc9fe927eb192fe3326295bd1b3f35efd919be711eafaa3d193153a196b4c"
+    },
+    {
+      "runtimeKey": "lilith|10th house",
+      "decision": "retain_source_gap",
+      "proposedAstrologySupportSha256": "",
+      "sourceEvidenceSha256": "6999b1f070053617f8bb869707e5583de07cf15017491ec210a8138b27c3c53f"
+    },
+    {
+      "runtimeKey": "lilith|11th house",
+      "decision": "retain_source_gap",
+      "proposedAstrologySupportSha256": "",
+      "sourceEvidenceSha256": "6999b1f070053617f8bb869707e5583de07cf15017491ec210a8138b27c3c53f"
+    },
+    {
+      "runtimeKey": "lilith|12th house",
+      "decision": "retain_source_gap",
+      "proposedAstrologySupportSha256": "",
+      "sourceEvidenceSha256": "6999b1f070053617f8bb869707e5583de07cf15017491ec210a8138b27c3c53f"
+    },
+    {
+      "runtimeKey": "lilith|1st house",
+      "decision": "retain_source_gap",
+      "proposedAstrologySupportSha256": "",
+      "sourceEvidenceSha256": "6999b1f070053617f8bb869707e5583de07cf15017491ec210a8138b27c3c53f"
+    },
+    {
+      "runtimeKey": "lilith|2nd house",
+      "decision": "retain_source_gap",
+      "proposedAstrologySupportSha256": "",
+      "sourceEvidenceSha256": "6999b1f070053617f8bb869707e5583de07cf15017491ec210a8138b27c3c53f"
+    },
+    {
+      "runtimeKey": "lilith|3rd house",
+      "decision": "retain_source_gap",
+      "proposedAstrologySupportSha256": "",
+      "sourceEvidenceSha256": "6999b1f070053617f8bb869707e5583de07cf15017491ec210a8138b27c3c53f"
+    },
+    {
+      "runtimeKey": "lilith|4th house",
+      "decision": "retain_source_gap",
+      "proposedAstrologySupportSha256": "",
+      "sourceEvidenceSha256": "6999b1f070053617f8bb869707e5583de07cf15017491ec210a8138b27c3c53f"
+    },
+    {
+      "runtimeKey": "lilith|5th house",
+      "decision": "retain_source_gap",
+      "proposedAstrologySupportSha256": "",
+      "sourceEvidenceSha256": "6999b1f070053617f8bb869707e5583de07cf15017491ec210a8138b27c3c53f"
+    },
+    {
+      "runtimeKey": "lilith|6th house",
+      "decision": "retain_source_gap",
+      "proposedAstrologySupportSha256": "",
+      "sourceEvidenceSha256": "6999b1f070053617f8bb869707e5583de07cf15017491ec210a8138b27c3c53f"
+    },
+    {
+      "runtimeKey": "lilith|7th house",
+      "decision": "retain_source_gap",
+      "proposedAstrologySupportSha256": "",
+      "sourceEvidenceSha256": "6999b1f070053617f8bb869707e5583de07cf15017491ec210a8138b27c3c53f"
+    },
+    {
+      "runtimeKey": "lilith|8th house",
+      "decision": "retain_source_gap",
+      "proposedAstrologySupportSha256": "",
+      "sourceEvidenceSha256": "6999b1f070053617f8bb869707e5583de07cf15017491ec210a8138b27c3c53f"
+    },
+    {
+      "runtimeKey": "lilith|9th house",
+      "decision": "retain_source_gap",
+      "proposedAstrologySupportSha256": "",
+      "sourceEvidenceSha256": "6999b1f070053617f8bb869707e5583de07cf15017491ec210a8138b27c3c53f"
+    },
+    {
+      "runtimeKey": "mars|10th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "170db1f8fd5a10ed41ca07f2b92b0cef28c71cec5236dc9e140fb8f353fd49ec",
+      "sourceEvidenceSha256": "4d87c60f65abd66a2d386281dd9d8c8f681ff06b0b5b35be7f9d96ab4282d5a3"
+    },
+    {
+      "runtimeKey": "mars|11th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "1aeb25af330477c55c8d133a3bd60420981ffa3c7e2da4a61f8a9f465c5b299c",
+      "sourceEvidenceSha256": "e26bc2c462306c41d6c8cd11b24287862216b20f129de8dbd3d095eb584b47f7"
+    },
+    {
+      "runtimeKey": "mars|12th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "f315753d399d8d9b30a7bdddc873c9dd449590f387498a429e6b6af04e8aee16",
+      "sourceEvidenceSha256": "4bf141dcbf3e7e27260b76d61e3ce14987e6f2db5080a5c747e0c120f79a29c9"
+    },
+    {
+      "runtimeKey": "mars|1st house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "783713eeda90a5053289aa09bf1a483c8ead8b4b65d941b94eeda2040c0c5e09",
+      "sourceEvidenceSha256": "f4fa4b2b388748e838659340c4c59fc96e17bff7b6c400e0dfbc4606be10c35c"
+    },
+    {
+      "runtimeKey": "mars|2nd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "79beedfed1bcc8619fbceb499e1839425f5d5f92e61fe3a549dcc40b9e6736dc",
+      "sourceEvidenceSha256": "f4fa4b2b388748e838659340c4c59fc96e17bff7b6c400e0dfbc4606be10c35c"
+    },
+    {
+      "runtimeKey": "mars|3rd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "30ef55fbfee6be977d984d8539dc2a7ef9c8ab47adc1fe6a07d678a7acda1c0a",
+      "sourceEvidenceSha256": "f4fa4b2b388748e838659340c4c59fc96e17bff7b6c400e0dfbc4606be10c35c"
+    },
+    {
+      "runtimeKey": "mars|4th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "20f0c09fe29ee6f6c6f301895034bee611b9d307cf18325960ad15e534d18bf7",
+      "sourceEvidenceSha256": "f4fa4b2b388748e838659340c4c59fc96e17bff7b6c400e0dfbc4606be10c35c"
+    },
+    {
+      "runtimeKey": "mars|5th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5379eea4820140f4ea47e82c28269ca1b9b1378a73e32c585835cb5f4ea47043",
+      "sourceEvidenceSha256": "f4fa4b2b388748e838659340c4c59fc96e17bff7b6c400e0dfbc4606be10c35c"
+    },
+    {
+      "runtimeKey": "mars|6th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "c28c4a79ccab499a48a86da77c8bc4ae80c43b3c3d8b564b9e333cf0be514c82",
+      "sourceEvidenceSha256": "4d87c60f65abd66a2d386281dd9d8c8f681ff06b0b5b35be7f9d96ab4282d5a3"
+    },
+    {
+      "runtimeKey": "mars|7th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5f8a37892605b73b31cadc717ef7d25f06b5be5de59529b40ce3830cb4dc6cdd",
+      "sourceEvidenceSha256": "e26bc2c462306c41d6c8cd11b24287862216b20f129de8dbd3d095eb584b47f7"
+    },
+    {
+      "runtimeKey": "mars|8th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "df48e79321547f258663e403fa9655caec1a03fdf2c5e24e3dc5fffa034de75b",
+      "sourceEvidenceSha256": "e26bc2c462306c41d6c8cd11b24287862216b20f129de8dbd3d095eb584b47f7"
+    },
+    {
+      "runtimeKey": "mars|9th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5f88cda7b538b87dd80a5c3fa247048c9447e00b5986d64e43380de70886c33d",
+      "sourceEvidenceSha256": "e26bc2c462306c41d6c8cd11b24287862216b20f129de8dbd3d095eb584b47f7"
+    },
+    {
+      "runtimeKey": "mercury|10th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "ae0410b9b66f843a9247aea796cda56e2169515720a2692ebaa2aa6ea8e8deda",
+      "sourceEvidenceSha256": "785444b7edd9acec8560899eec270597945fed17254aaa57c05038a27d6b80c8"
+    },
+    {
+      "runtimeKey": "mercury|11th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "9b396882328468e96588ecf793cc4aa57a03f7333f05089ffe6b8226b6e6a362",
+      "sourceEvidenceSha256": "079573975de6dbe59885bc48822fe8d71fedd08473a7e3ab134ecefe875ad918"
+    },
+    {
+      "runtimeKey": "mercury|12th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "cdc687c45fca077bab5ac77e5a9add8a5c528a5ba58e806e863dfb3ef7c8584d",
+      "sourceEvidenceSha256": "079573975de6dbe59885bc48822fe8d71fedd08473a7e3ab134ecefe875ad918"
+    },
+    {
+      "runtimeKey": "mercury|1st house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "ea9acb82ea4f41ad5400867500fde90cea62bb685381f203b24e8a0fe87a741e",
+      "sourceEvidenceSha256": "6d9438dc4579a679c5837513dc805f18b42848d94e49cb2fcc959ba36b606fff"
+    },
+    {
+      "runtimeKey": "mercury|2nd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "6e23ea1bb864b04e4a292f2246179f4adea5ccd076275bb7d788f2e3e4da0a7a",
+      "sourceEvidenceSha256": "6d9438dc4579a679c5837513dc805f18b42848d94e49cb2fcc959ba36b606fff"
+    },
+    {
+      "runtimeKey": "mercury|3rd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "53228976cc9f137428a2a541b3c3c5c5a65c8c73dee75ca6616f9a648c0ca882",
+      "sourceEvidenceSha256": "6d9438dc4579a679c5837513dc805f18b42848d94e49cb2fcc959ba36b606fff"
+    },
+    {
+      "runtimeKey": "mercury|4th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "b45d9b97c952b5c8717a5c2188cba2912848b52e7430b159f213e5bd618b17bc",
+      "sourceEvidenceSha256": "785444b7edd9acec8560899eec270597945fed17254aaa57c05038a27d6b80c8"
+    },
+    {
+      "runtimeKey": "mercury|5th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "d8aac93f08e0b43262f44fc9fc93ed3c406f47234cd7798103f208388178a1e9",
+      "sourceEvidenceSha256": "785444b7edd9acec8560899eec270597945fed17254aaa57c05038a27d6b80c8"
+    },
+    {
+      "runtimeKey": "mercury|6th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "57eb0f261b7d8285b4c795e2568d5aba091e3d92f9a1adcdc275ce59619b93c9",
+      "sourceEvidenceSha256": "9789aad5d20e65f5fdba89d856952a3a840c994dbed174484d041b9921a8618f"
+    },
+    {
+      "runtimeKey": "mercury|7th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "6f6c372b03d89b987b0a77cf8d65d287dd6e1a8cbc521278264990d1837de2cd",
+      "sourceEvidenceSha256": "785444b7edd9acec8560899eec270597945fed17254aaa57c05038a27d6b80c8"
+    },
+    {
+      "runtimeKey": "mercury|8th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "2a3fe28695bbd50f6cb9bb3b76663f1e568f4673b4bd976fa80867a262acffe9",
+      "sourceEvidenceSha256": "785444b7edd9acec8560899eec270597945fed17254aaa57c05038a27d6b80c8"
+    },
+    {
+      "runtimeKey": "mercury|9th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "162be0f2cb576e7d4e6714baa126a859ed76dc43834b0cfcb5836d10e7280a70",
+      "sourceEvidenceSha256": "785444b7edd9acec8560899eec270597945fed17254aaa57c05038a27d6b80c8"
+    },
+    {
+      "runtimeKey": "moon|10th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "d4f0a110371321c2c53f0ec88140e2aa131341d5477a7d8ca7770f2ff30b23d4",
+      "sourceEvidenceSha256": "5fcb4b27a3d96677f73b2b2e1df69e683cfc0b689d76501f5a4ff7d7385e1a40"
+    },
+    {
+      "runtimeKey": "moon|11th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "699a60f4985239df7723cc012e10172c04ad6edfa207e099fe1972219e31296b",
+      "sourceEvidenceSha256": "54a3375cd4eb9f5df6b4d39c6a33e0d8f2af76f3f0de8e5f66e10c64c0057198"
+    },
+    {
+      "runtimeKey": "moon|12th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "8354d597294387e6ad913a92e60f77f66483df2b4e4ce20119f0a80b4a323ecf",
+      "sourceEvidenceSha256": "54a3375cd4eb9f5df6b4d39c6a33e0d8f2af76f3f0de8e5f66e10c64c0057198"
+    },
+    {
+      "runtimeKey": "moon|1st house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "ff71a691ba6e0f116b05e1981904c3c505069ac326596a6e7bd92c9ca4087356",
+      "sourceEvidenceSha256": "51d2df6da0d89769209df8a6126bb055b25f3fab55e3dfca2bb0df4c10186556"
+    },
+    {
+      "runtimeKey": "moon|2nd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "44215c7ba3a6597666564ae266b600fe5358ca92feefdccf7fdb8f0f2f514471",
+      "sourceEvidenceSha256": "51d2df6da0d89769209df8a6126bb055b25f3fab55e3dfca2bb0df4c10186556"
+    },
+    {
+      "runtimeKey": "moon|3rd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "285eab9ddf6b9a84bc873ba9330162bea7ce2237fac8edfc5621d0d3d6e5b43c",
+      "sourceEvidenceSha256": "2154fcdac305c4d0c6ce4dc9f125c87e36c1ac8b4481090959dda17bb0065df5"
+    },
+    {
+      "runtimeKey": "moon|4th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "18814fda64aa44c65cc95d19838bf44c7ee3ee7c8b0c101be89e99605ddaad03",
+      "sourceEvidenceSha256": "2154fcdac305c4d0c6ce4dc9f125c87e36c1ac8b4481090959dda17bb0065df5"
+    },
+    {
+      "runtimeKey": "moon|5th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "4a353356064dbc88cbd1d7f57497036be1c2b92a60499be493557a1302049afc",
+      "sourceEvidenceSha256": "5fcb4b27a3d96677f73b2b2e1df69e683cfc0b689d76501f5a4ff7d7385e1a40"
+    },
+    {
+      "runtimeKey": "moon|6th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5b7b014cc6cc3183b387665102365e7c2c3a71890154b9e2594d853337ba7df1",
+      "sourceEvidenceSha256": "5fcb4b27a3d96677f73b2b2e1df69e683cfc0b689d76501f5a4ff7d7385e1a40"
+    },
+    {
+      "runtimeKey": "moon|7th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "c8fd5c6c877d2878c7a9f50a74c8db3a12b58e0e0fed61a97c23b5e6119a1a70",
+      "sourceEvidenceSha256": "2154fcdac305c4d0c6ce4dc9f125c87e36c1ac8b4481090959dda17bb0065df5"
+    },
+    {
+      "runtimeKey": "moon|8th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "897f7ad7d4c202e07c26839a85d107e34a1cb6f62adf57737ae92d01b400464c",
+      "sourceEvidenceSha256": "2154fcdac305c4d0c6ce4dc9f125c87e36c1ac8b4481090959dda17bb0065df5"
+    },
+    {
+      "runtimeKey": "moon|9th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "9c43768d1bc401519a0c4cc675fe5d629b2a3b0c8f34b2acbc220f02b66d489c",
+      "sourceEvidenceSha256": "5fcb4b27a3d96677f73b2b2e1df69e683cfc0b689d76501f5a4ff7d7385e1a40"
+    },
+    {
+      "runtimeKey": "neptune|10th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "a0c44bddcedc4081d361840b0b8e6e62bc532c64ad4a128d361f119ecd1b5531",
+      "sourceEvidenceSha256": "9a04d450da3ac80043f4131a3e30ab9e20143f318f31ce062023eaf83a56f936"
+    },
+    {
+      "runtimeKey": "neptune|11th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "f3b36c569db42dd17cc3e6b028a10201f8931ab5d11fb1c84dd7e8e13f11d25d",
+      "sourceEvidenceSha256": "cb5833a16b04b28a953bfdcbacdd1c998c37da15385b4be10453b5db16441f6d"
+    },
+    {
+      "runtimeKey": "neptune|12th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5d66382c6e4de1bf59519583b961053106d23737ec9f466a1c71674d6ed195d1",
+      "sourceEvidenceSha256": "cb5833a16b04b28a953bfdcbacdd1c998c37da15385b4be10453b5db16441f6d"
+    },
+    {
+      "runtimeKey": "neptune|1st house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "872e6e3c00119b0385a6816f56d603ecdaa9a90c641c0d8341227b7d3f1caf4d",
+      "sourceEvidenceSha256": "06c1c05aa8cb9406e8acfbf0edfa3f9c25ebef81fe722e32be0564fcc3ee3649"
+    },
+    {
+      "runtimeKey": "neptune|2nd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "d91bf686159a5ec7f03a6f0ec604615e63d0fea61cd2432b9e8df935abcf350d",
+      "sourceEvidenceSha256": "3830d8630fdefa0575793582ea88eccd38f1f234fda8d80335c5ba05327c07c0"
+    },
+    {
+      "runtimeKey": "neptune|3rd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "1cb5fa2615849f5b3778ab831479fe5de184275215fd906ea5db6610ef37a7ae",
+      "sourceEvidenceSha256": "8d91955864f637c973b0279b1b6e6bceae83cde70d8f7c2424077a1e715ed44b"
+    },
+    {
+      "runtimeKey": "neptune|4th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "3b9155dabef2d7e4e1d1ed101ada049d390ca25e732a770dc7c59ac1483b60aa",
+      "sourceEvidenceSha256": "8d91955864f637c973b0279b1b6e6bceae83cde70d8f7c2424077a1e715ed44b"
+    },
+    {
+      "runtimeKey": "neptune|5th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "9f410dde4f6678293046247d9a689dda18c884ac9a49cdbb17d6f359843a537c",
+      "sourceEvidenceSha256": "fc2054a7beafae875e7c08ec1c4be5b27d46685d798922e463cf6c5cd0e82017"
+    },
+    {
+      "runtimeKey": "neptune|6th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5a36d0776a806bcf4e0478a9580b35f4a3d8eeea73b29ddb56adbf35bb23257e",
+      "sourceEvidenceSha256": "8d91955864f637c973b0279b1b6e6bceae83cde70d8f7c2424077a1e715ed44b"
+    },
+    {
+      "runtimeKey": "neptune|7th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "4e8359010aeb4bdacb4df801f4bcb7e1d31832d866b3121e49f18fb0aeae2cc7",
+      "sourceEvidenceSha256": "9a04d450da3ac80043f4131a3e30ab9e20143f318f31ce062023eaf83a56f936"
+    },
+    {
+      "runtimeKey": "neptune|8th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "b3bca4ad7e92ddadcf94983f870a26629426b2e7f99316a452312d1f89c586be",
+      "sourceEvidenceSha256": "83ba866392dd1e8ac1f68091d633a9f0d13a22ad45eb3d84b8b2edb84aab15eb"
+    },
+    {
+      "runtimeKey": "neptune|9th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "dbe20d8d0d876e92c09d8cd7bd3187dd6ba06955cfa66a136eaf5764992b91e5",
+      "sourceEvidenceSha256": "83ba866392dd1e8ac1f68091d633a9f0d13a22ad45eb3d84b8b2edb84aab15eb"
+    },
+    {
+      "runtimeKey": "north-node|10th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "a49ae7177d5506ad362a97634ad39953d6e6857c994db53f6068d9acaa29b46c",
+      "sourceEvidenceSha256": "019f2d1d1c97eae61fbc2cd12ffd7c21ff35bfcd5f159f6cf7cdd9cef4722e51"
+    },
+    {
+      "runtimeKey": "north-node|11th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "def75b446f1351affb2330da3977abce7af8f7b1609b7e48027dfb77ceab4f0d",
+      "sourceEvidenceSha256": "8de9feb6b24e89f62ddf01c0585f4d66a9385a0a41c1006a0b78e4d5284f68cc"
+    },
+    {
+      "runtimeKey": "north-node|12th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "a349cd7ef1bdfb4cc79628fd52c67bc3a2b4ab7b0aa87b3fa55f67d8f5506e4c",
+      "sourceEvidenceSha256": "cdd4c5aa782acf5a8554216e31d1d744acd98dfb960879058ae571283b197571"
+    },
+    {
+      "runtimeKey": "north-node|1st house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "1dc8f693b34cdc24ab6bb3e5bb099a2916b1773b15fa94621ba2e9fbba705d5d",
+      "sourceEvidenceSha256": "bc6cd5a9a961cdc9fcaa63ba419aaaf32496ab8c7f52dfa582922b6f052722f8"
+    },
+    {
+      "runtimeKey": "north-node|2nd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5bb3a287a54aafd72bb886d2fb5691c7d7bd3827d6470fc89f63d7e873f24e7f",
+      "sourceEvidenceSha256": "68dec930ab82fa660020a4ea095d8ada98ce3f7a3ffdcb05937cd8751f87291e"
+    },
+    {
+      "runtimeKey": "north-node|3rd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "b06b1878a85b1c6029184dfb784a24d388627e54f1248a111af82680bfcd7f54",
+      "sourceEvidenceSha256": "1ed31be6fdb5a2d3ab98e587f7b7cfcb1b71c5af6f96d7a5b898175d15254cb0"
+    },
+    {
+      "runtimeKey": "north-node|4th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "4d627372e974f191041fdf52b54804d8cb190345d73b16bc7eece09b4bb0a9bf",
+      "sourceEvidenceSha256": "3b19825ffea5738a250808a06385de6f47ff39c0411ca7f24fda6634e9410fcb"
+    },
+    {
+      "runtimeKey": "north-node|5th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "51d19fe7b831f7f7587d1b35e98b10db3608d55299ebdb7583b4bb683b99e8ca",
+      "sourceEvidenceSha256": "8af0d23901b37838555a036609d5beed618280e9998bf8db90ca8da664d3d29d"
+    },
+    {
+      "runtimeKey": "north-node|6th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "316d267f66f2747cb54f5097722d464e266d77b8f2002e774ff0908ff364f692",
+      "sourceEvidenceSha256": "cdd4c5aa782acf5a8554216e31d1d744acd98dfb960879058ae571283b197571"
+    },
+    {
+      "runtimeKey": "north-node|7th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "fb3118e661f1624fd96c0aca79541adc9d8db3a8af7cd793c20ef34b996dea3f",
+      "sourceEvidenceSha256": "312b912aaaf5a1fc436a48ccfa61c3c6a888f5dbfc4750ab1f2e28e17602591f"
+    },
+    {
+      "runtimeKey": "north-node|8th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "7160545907eba10415a6d0c7ed3004a91a051557ccda56f4d0f2653ee2f49532",
+      "sourceEvidenceSha256": "b32c1787089f351a83d955599c0c181878ea1a771104618673aafe2767c25395"
+    },
+    {
+      "runtimeKey": "north-node|9th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "339350d9fa06bc08e5513147e20c1f1d3c03ccf5127f61ac5e6b2f9ca635b9c9",
+      "sourceEvidenceSha256": "1ed31be6fdb5a2d3ab98e587f7b7cfcb1b71c5af6f96d7a5b898175d15254cb0"
+    },
+    {
+      "runtimeKey": "pluto|10th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "6dec75137b6363cf120004b7f2ce2138cd2d56e5e0247961e326cbf4f511da09",
+      "sourceEvidenceSha256": "9e2b39537ff0aacd22681068469ac666f36fb8757148f68b1f3581be2bf4a484"
+    },
+    {
+      "runtimeKey": "pluto|11th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5393cb0b4b5beb6ed84ebbdef36a502ecd80cbcb455d47b236f9a7a0fabca579",
+      "sourceEvidenceSha256": "f1a14c9693f534114b2087207d389df6f670ca698f5bfbceb28f843bef20dc79"
+    },
+    {
+      "runtimeKey": "pluto|12th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "b8d9f56f9759a5cc970990edd5405e92bffe3d2d5e918592b241e86b2011b559",
+      "sourceEvidenceSha256": "9d021a0ad6b0043236ac487e95eebb322d6b8ff1427102f3e40493a9c186834c"
+    },
+    {
+      "runtimeKey": "pluto|1st house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "4e30f155092eab86bb51233725ddf488d843e003b3add825dd25b903e7a1a0f3",
+      "sourceEvidenceSha256": "ae29f9822a109d805eb603f3fb3efc84ff87b21b193bb1cee971fee7594c70df"
+    },
+    {
+      "runtimeKey": "pluto|2nd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5377b480dd2b8d0110c6b4fe81252064c1bc6fab68d91e68e57103aa42719f48",
+      "sourceEvidenceSha256": "ae29f9822a109d805eb603f3fb3efc84ff87b21b193bb1cee971fee7594c70df"
+    },
+    {
+      "runtimeKey": "pluto|3rd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "31bfd7f470e92fc9d3950103d5fb0cbc3e83f05ae4181f05fc4ae8e86573b465",
+      "sourceEvidenceSha256": "51db0b5712db5dc2336a95e0c688ae7456b7a579045c805a8eff0e3e1ada76a6"
+    },
+    {
+      "runtimeKey": "pluto|4th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "a40ecfcb415b44f5b174d25e44e9eb7e82b7af4f248658910c6effbb896eaa53",
+      "sourceEvidenceSha256": "ae29f9822a109d805eb603f3fb3efc84ff87b21b193bb1cee971fee7594c70df"
+    },
+    {
+      "runtimeKey": "pluto|5th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5ba02dc7b68c24d70e0dd55e928a8d4c84dd4edc042a0b07fa8ad04fe5694655",
+      "sourceEvidenceSha256": "51db0b5712db5dc2336a95e0c688ae7456b7a579045c805a8eff0e3e1ada76a6"
+    },
+    {
+      "runtimeKey": "pluto|6th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "3ef706a153c6371638faebf1740f63bac64b9c0f21f7e3ab7979b56ae24ae58a",
+      "sourceEvidenceSha256": "c3773b164d2433f00574bc86230c0b2fe83392f45f888f435f29f440c5c4369a"
+    },
+    {
+      "runtimeKey": "pluto|7th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "8750eb408a0556ce8557a4c1feb334b52ccf76ecdd0161075fabff840b34b4e5",
+      "sourceEvidenceSha256": "c3773b164d2433f00574bc86230c0b2fe83392f45f888f435f29f440c5c4369a"
+    },
+    {
+      "runtimeKey": "pluto|8th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "361be4f05a1d3f5fc70ea05b0a294ae67e4c58dec3650f1f6dd853ca33b8b755",
+      "sourceEvidenceSha256": "9e2b39537ff0aacd22681068469ac666f36fb8757148f68b1f3581be2bf4a484"
+    },
+    {
+      "runtimeKey": "pluto|9th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "43397c6c8c925af692c80b67e6d3ae0de1e49162e0d0c5c3e2e17bbb801b0133",
+      "sourceEvidenceSha256": "c3773b164d2433f00574bc86230c0b2fe83392f45f888f435f29f440c5c4369a"
+    },
+    {
+      "runtimeKey": "saturn|10th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "16e6083109d2e6046a5b4c927d1f3e768107618ffaba99104980ea6b49d66ef6",
+      "sourceEvidenceSha256": "3924ea45c966f50567a403b3c7662f571bb420f70bdd8530dcb06bafb9ec3e91"
+    },
+    {
+      "runtimeKey": "saturn|11th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "e22a14023d8341ab64b4bbdf1662092852b88264dd89d3d9b36a462730bb668b",
+      "sourceEvidenceSha256": "3924ea45c966f50567a403b3c7662f571bb420f70bdd8530dcb06bafb9ec3e91"
+    },
+    {
+      "runtimeKey": "saturn|12th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "79416cae838ae39d91fa262fb1f9d26d3f008cc735685fc527c6b415813b522b",
+      "sourceEvidenceSha256": "5bee0807e1c459e0902f22fcd9c49e555d7de779e5487386c9c90ba9421b4af6"
+    },
+    {
+      "runtimeKey": "saturn|1st house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "a460e7d1a31c88c8eac2c48d0f101efe257ee76963d4221313fd2f588b408353",
+      "sourceEvidenceSha256": "f5917911cf9f8e7d34970f98dea9337229863bd00698d16d3d687f12e40daccf"
+    },
+    {
+      "runtimeKey": "saturn|2nd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "163960113e272328aa2302fbbbf98b4f2503b22626ff0b884890c8386688fe92",
+      "sourceEvidenceSha256": "77256b4e8a91a2b170deab605397ed033fafb503a24f28bac5e2ac2a4b50fe6a"
+    },
+    {
+      "runtimeKey": "saturn|3rd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "7a2b4333575ccf57970e2b13e79c8bb63366db89a1862ed4d152b6d663b2d1de",
+      "sourceEvidenceSha256": "e1755749a276ec167fa263cf1a7d914b9b8890f60ad587aef38ce82ec75e6384"
+    },
+    {
+      "runtimeKey": "saturn|4th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "a31d7e9394da827388b5b70a3add5208a560f5deffb486fb5033fc1a85525343",
+      "sourceEvidenceSha256": "77256b4e8a91a2b170deab605397ed033fafb503a24f28bac5e2ac2a4b50fe6a"
+    },
+    {
+      "runtimeKey": "saturn|5th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "8929f2b89bfb85c663d737421df75247b52f6814a8f08a65099543f68984064c",
+      "sourceEvidenceSha256": "77256b4e8a91a2b170deab605397ed033fafb503a24f28bac5e2ac2a4b50fe6a"
+    },
+    {
+      "runtimeKey": "saturn|6th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "2bcaf917d520de33ecb93a630f639f6a5e716b7dab73088d0247b21164ec0fda",
+      "sourceEvidenceSha256": "e1755749a276ec167fa263cf1a7d914b9b8890f60ad587aef38ce82ec75e6384"
+    },
+    {
+      "runtimeKey": "saturn|7th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "9ffda2a0d90e061f15c6b1101c282054ddd8bf7c84c6b9412c3f0f14f0fbd04b",
+      "sourceEvidenceSha256": "3924ea45c966f50567a403b3c7662f571bb420f70bdd8530dcb06bafb9ec3e91"
+    },
+    {
+      "runtimeKey": "saturn|8th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "784d3e1d0aea0c245a5a4bd7bed1f8bc76ee1f46e5a747e7003b055f6f97fda5",
+      "sourceEvidenceSha256": "2e70f151cc44f6ee79c6d2a55ee7afaa914db02d4da3e650f1f17013d7eca377"
+    },
+    {
+      "runtimeKey": "saturn|9th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "eec46f76c76f660def82f715c54552f1902fe9c92413e272bc18d675f0aec355",
+      "sourceEvidenceSha256": "3924ea45c966f50567a403b3c7662f571bb420f70bdd8530dcb06bafb9ec3e91"
+    },
+    {
+      "runtimeKey": "south-node|10th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "93597e89dbca06d6fd500e1e83567782ea9b10f2dbf87851e8935d6ac85747a6",
+      "sourceEvidenceSha256": "7569cd54b3602c48eb9cb528a8a352a0a16ca7452d308f1b3f18d75f061ded5d"
+    },
+    {
+      "runtimeKey": "south-node|11th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "a012b63872e7d134e00be02bbab54c89da9fedbe2fb6b9448fb97adb60ce15fc",
+      "sourceEvidenceSha256": "8de9feb6b24e89f62ddf01c0585f4d66a9385a0a41c1006a0b78e4d5284f68cc"
+    },
+    {
+      "runtimeKey": "south-node|12th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "2ac34d3054b6402b4547b3e1ba62f432d7d99a03f9edb489665af84dc34c83fe",
+      "sourceEvidenceSha256": "613bc8b8c80eecca72ffbeac70aa0763328019712cc4691af9e108e4a26da323"
+    },
+    {
+      "runtimeKey": "south-node|1st house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "848a3c8cbf5c5dad2f310af5335d0113c4c0d4578f14601a2ed8dd1ff543745c",
+      "sourceEvidenceSha256": "bc6cd5a9a961cdc9fcaa63ba419aaaf32496ab8c7f52dfa582922b6f052722f8"
+    },
+    {
+      "runtimeKey": "south-node|2nd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "8c97690d8d85680250cb3faedc87be0b5585a909b42749133932c33f3fe51cad",
+      "sourceEvidenceSha256": "68dec930ab82fa660020a4ea095d8ada98ce3f7a3ffdcb05937cd8751f87291e"
+    },
+    {
+      "runtimeKey": "south-node|3rd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5b28762a0b8accde92c85d52781e591a45fccc6a3cb4580c52d256b8c9d8d7c7",
+      "sourceEvidenceSha256": "5d7e20ae4be375eeb19d8267eec626213e32a0fe3968244ac453559045fb0aac"
+    },
+    {
+      "runtimeKey": "south-node|4th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "edd99c7e020f9b11680ec6a21af6dcff326c8543a52d3415f70f261a4056c5f0",
+      "sourceEvidenceSha256": "3b19825ffea5738a250808a06385de6f47ff39c0411ca7f24fda6634e9410fcb"
+    },
+    {
+      "runtimeKey": "south-node|5th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5ce94483110bf819a4c863742cad10c678ee4e7982252ed8b21eade307c9d216",
+      "sourceEvidenceSha256": "8af0d23901b37838555a036609d5beed618280e9998bf8db90ca8da664d3d29d"
+    },
+    {
+      "runtimeKey": "south-node|6th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "e60e63af702267334d67514861ab91ae4a34c2cf5d7c5db39882772c439af0d2",
+      "sourceEvidenceSha256": "30c2e9cb74197cf17c5b6717e839bb0fa65de437277c6767acf638818bffceaf"
+    },
+    {
+      "runtimeKey": "south-node|7th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "21dd4b744e5002cb1f04dbfd1d70d846e9056bb80f1503afcff018f572c246ef",
+      "sourceEvidenceSha256": "312b912aaaf5a1fc436a48ccfa61c3c6a888f5dbfc4750ab1f2e28e17602591f"
+    },
+    {
+      "runtimeKey": "south-node|8th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "d74fd4d52257152a86187000d908d49280eb440f332a1f3f2f30b56d69e3f024",
+      "sourceEvidenceSha256": "b32c1787089f351a83d955599c0c181878ea1a771104618673aafe2767c25395"
+    },
+    {
+      "runtimeKey": "south-node|9th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "4a3de9ec615caff8bc5642caff01800ea93cbc3caf0938f61fea11c701885d40",
+      "sourceEvidenceSha256": "c4e77b09e61fa20a8ae0d6c2f0183519dcc600d5a6dd0e3bcf2c5beb71ad024e"
+    },
+    {
+      "runtimeKey": "sun|10th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "864b7256e529b4ec4b9b4afde34192449f889a00bb95f87eb1518a9adc0c2cdf",
+      "sourceEvidenceSha256": "6992f79b0c2bf78fa0947230f2b0746764f2fd276ed4a5b6d634d18f476aa419"
+    },
+    {
+      "runtimeKey": "sun|11th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "a5758708a6a07233ed05496fa61d25e758c295828f46a8e952720fdaa62ecd27",
+      "sourceEvidenceSha256": "6992f79b0c2bf78fa0947230f2b0746764f2fd276ed4a5b6d634d18f476aa419"
+    },
+    {
+      "runtimeKey": "sun|12th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "32f27145ef6fbd115a002e9b6dd6d9bd8ebed7a9ac3c401ac466b87350c5cd92",
+      "sourceEvidenceSha256": "6992f79b0c2bf78fa0947230f2b0746764f2fd276ed4a5b6d634d18f476aa419"
+    },
+    {
+      "runtimeKey": "sun|1st house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "9bc232ec8c3b9e8058d7a0b3b56df8d212359575a4012f7746495b1ef0f047a8",
+      "sourceEvidenceSha256": "522eeadc08fa1c915fe3a850bfd8406ba41d6b7b33fb4aaa2b269860e5f614da"
+    },
+    {
+      "runtimeKey": "sun|2nd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "3ba977c15ee4a7c528d667f300b998d75874cc7c3b95ef3ff47f7530bf48718c",
+      "sourceEvidenceSha256": "522eeadc08fa1c915fe3a850bfd8406ba41d6b7b33fb4aaa2b269860e5f614da"
+    },
+    {
+      "runtimeKey": "sun|3rd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "18dd55c7da04b13719f67e4a51c357af538a643649a0bd6fac8ab03ba604d91e",
+      "sourceEvidenceSha256": "522eeadc08fa1c915fe3a850bfd8406ba41d6b7b33fb4aaa2b269860e5f614da"
+    },
+    {
+      "runtimeKey": "sun|4th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "218c6dc186fa9e8c9d1168a5c33d10ec7c91f7dc1809c710529695a2b58d6305",
+      "sourceEvidenceSha256": "4078021601c6e7d6691f86d10838d47e2abf0cbd7a6d2672b76d3ae55b827819"
+    },
+    {
+      "runtimeKey": "sun|5th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "17bb4cec130f177d5207f88b0596aa4a3c257684ff9dbaa1dbf0fb203d432616",
+      "sourceEvidenceSha256": "ec014c2566218422d7df877e3b1d822bf8c04427fdc9e8ba2f513714d099a367"
+    },
+    {
+      "runtimeKey": "sun|6th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "e52cac270853de6d91c83f63e764fe6a87a071cf25c2bd0014c5132bc4975785",
+      "sourceEvidenceSha256": "4078021601c6e7d6691f86d10838d47e2abf0cbd7a6d2672b76d3ae55b827819"
+    },
+    {
+      "runtimeKey": "sun|7th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "651d3f8e5e42d123bb115eaae8e1e2c38850c9f013f6b80c2d2beac1e29d21ae",
+      "sourceEvidenceSha256": "4078021601c6e7d6691f86d10838d47e2abf0cbd7a6d2672b76d3ae55b827819"
+    },
+    {
+      "runtimeKey": "sun|8th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "c86e07d9af3033afd408cb1458b36b474433e620cb42d95a9f277c292d9e612d",
+      "sourceEvidenceSha256": "ec014c2566218422d7df877e3b1d822bf8c04427fdc9e8ba2f513714d099a367"
+    },
+    {
+      "runtimeKey": "sun|9th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "75a29ba7736abd82192bb5acabca0a24a0d008686d5e1bce4a41e4b4f2994783",
+      "sourceEvidenceSha256": "6992f79b0c2bf78fa0947230f2b0746764f2fd276ed4a5b6d634d18f476aa419"
+    },
+    {
+      "runtimeKey": "uranus|10th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "d55fe383c0a4b6d47db989c64e87697a1ef02cb27d4826e0a93d528043176fff",
+      "sourceEvidenceSha256": "76b8578fe00a144821233e9f9e276cd6b72d1fc462caed599ecb6cec40b00d17"
+    },
+    {
+      "runtimeKey": "uranus|11th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "fd2a3e060b590fa4a950a4dec34e6fe7db179bca1f65416ddecf8b1578c0c702",
+      "sourceEvidenceSha256": "4276dccd0abecbeefdd5eefa7b8c2e24e2a091383502919e237461828c4fe191"
+    },
+    {
+      "runtimeKey": "uranus|12th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "bc309ff147adfe0509608db51d11225349ed727875ea2be6709c04481a9599ac",
+      "sourceEvidenceSha256": "4276dccd0abecbeefdd5eefa7b8c2e24e2a091383502919e237461828c4fe191"
+    },
+    {
+      "runtimeKey": "uranus|1st house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5c1f407bf251207dffe47f230b36f6d731594e5df28262289f8a9730c0834a90",
+      "sourceEvidenceSha256": "cb6d6ab5532b1e38d5ff8ba1c318a2fad406e858219432d4fb01d17ad71567be"
+    },
+    {
+      "runtimeKey": "uranus|2nd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "4daaccbe9351f0ffa967a891fb6626f09a5e7dc886f7b926747e0394f7958844",
+      "sourceEvidenceSha256": "cb6d6ab5532b1e38d5ff8ba1c318a2fad406e858219432d4fb01d17ad71567be"
+    },
+    {
+      "runtimeKey": "uranus|3rd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "c033b43c130e276281aff3582e590677035b4924ef74efa560c20a029a15d334",
+      "sourceEvidenceSha256": "56bb0ddd25274a48db7d698ee7402dd3df0e68b5ea83f64922474c3ca3f9be34"
+    },
+    {
+      "runtimeKey": "uranus|4th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "3c9f68c54b3798f97ecdc37699d22c9d9584e177fdba77e975cd3c2630197410",
+      "sourceEvidenceSha256": "56bb0ddd25274a48db7d698ee7402dd3df0e68b5ea83f64922474c3ca3f9be34"
+    },
+    {
+      "runtimeKey": "uranus|5th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "be1bc501d2d9623f4ac3fc62fec6a917b4e11b5408903e595360f0d3bf74cd59",
+      "sourceEvidenceSha256": "56bb0ddd25274a48db7d698ee7402dd3df0e68b5ea83f64922474c3ca3f9be34"
+    },
+    {
+      "runtimeKey": "uranus|6th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "7a8acd4d3a73c601efc8b331981fc9dca4bdd8b53cc55026e033957f8d22a70c",
+      "sourceEvidenceSha256": "56bb0ddd25274a48db7d698ee7402dd3df0e68b5ea83f64922474c3ca3f9be34"
+    },
+    {
+      "runtimeKey": "uranus|7th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "111ea2faa87ec0e8de6c1a50fe385d16b99490417340116c7ba9601cb9618509",
+      "sourceEvidenceSha256": "4276dccd0abecbeefdd5eefa7b8c2e24e2a091383502919e237461828c4fe191"
+    },
+    {
+      "runtimeKey": "uranus|8th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "85761ade620a1e27193e7162646cf36cc4315ee744fce2f9cf55853d74595bc9",
+      "sourceEvidenceSha256": "4276dccd0abecbeefdd5eefa7b8c2e24e2a091383502919e237461828c4fe191"
+    },
+    {
+      "runtimeKey": "uranus|9th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "8bc5e82b1e321725cc82ee1adef74fccd51d18f521ee78c284c9cb59b23944b4",
+      "sourceEvidenceSha256": "4276dccd0abecbeefdd5eefa7b8c2e24e2a091383502919e237461828c4fe191"
+    },
+    {
+      "runtimeKey": "venus|10th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "87fe6aae733edf4716dc0e68cced1b40dcc84fc41bd303f9520509d01228305b",
+      "sourceEvidenceSha256": "ab9f1762184066630e33063af296724bfca711394dd209253c735f3e6a3afab1"
+    },
+    {
+      "runtimeKey": "venus|11th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "197bd1a99d36c466f50302fc5ca09939c275daace5fb4e7e3904fa19d6efa0ea",
+      "sourceEvidenceSha256": "15f9af9d93e802943d1941f79c3a520b0b823f49ce4da85f9586585cc153811f"
+    },
+    {
+      "runtimeKey": "venus|12th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "af97947201ebc98462add04f84f772e71b05da2b673f5c221e59c4838b6746de",
+      "sourceEvidenceSha256": "15f9af9d93e802943d1941f79c3a520b0b823f49ce4da85f9586585cc153811f"
+    },
+    {
+      "runtimeKey": "venus|1st house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5cf7ee449f767f0adffb3e5cc33e22b92f07bdd1997afcb19ff76147844c293e",
+      "sourceEvidenceSha256": "d786594a611b183f252754f2e4d7a91a7bb4c4b6b7d4197a8c4d3bc995caa449"
+    },
+    {
+      "runtimeKey": "venus|2nd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "10821124b9f6af7d78cffd79281a607771772e814c1caa0be8e890ac9867c805",
+      "sourceEvidenceSha256": "f894d888151a399e71228586a1c371389352cd978c1cb4af40554f817c11c245"
+    },
+    {
+      "runtimeKey": "venus|3rd house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "3c65f6c414c8ada9eb8b1e53cb5721252b4d37273a73cebcf76f8e7964ea0ebf",
+      "sourceEvidenceSha256": "f894d888151a399e71228586a1c371389352cd978c1cb4af40554f817c11c245"
+    },
+    {
+      "runtimeKey": "venus|4th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "5acea40a7b0e192c9a12c174a54f31e1dcfd7ac91da307139f69f12124f6ef43",
+      "sourceEvidenceSha256": "ab9f1762184066630e33063af296724bfca711394dd209253c735f3e6a3afab1"
+    },
+    {
+      "runtimeKey": "venus|5th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "773471eff843fc32c9dc4e3a9da037ffdd7ddec605fcae253cda80f4ed6cd0f9",
+      "sourceEvidenceSha256": "15f9af9d93e802943d1941f79c3a520b0b823f49ce4da85f9586585cc153811f"
+    },
+    {
+      "runtimeKey": "venus|6th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "708acf6d26a0e1be0bc48aa83f4acd6bbd55f8e1585188624f18cdac30cff924",
+      "sourceEvidenceSha256": "ab9f1762184066630e33063af296724bfca711394dd209253c735f3e6a3afab1"
+    },
+    {
+      "runtimeKey": "venus|7th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "62ba13a58fa5390925ad1eb4507e0994c3e4c209197f38ac4b038d6aafeb0ad6",
+      "sourceEvidenceSha256": "15f9af9d93e802943d1941f79c3a520b0b823f49ce4da85f9586585cc153811f"
+    },
+    {
+      "runtimeKey": "venus|8th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "003fd0a33279d288e0cb4bbc350792fc6371d1e2f7273166e045d653b4988b5a",
+      "sourceEvidenceSha256": "ab9f1762184066630e33063af296724bfca711394dd209253c735f3e6a3afab1"
+    },
+    {
+      "runtimeKey": "venus|9th house",
+      "decision": "approve_internal_mechanism",
+      "proposedAstrologySupportSha256": "d221daed672092ab4d0d457b9b50cd6712c18d31760df61058ace07a97a17c93",
+      "sourceEvidenceSha256": "ab9f1762184066630e33063af296724bfca711394dd209253c735f3e6a3afab1"
+    }
+  ]
+}
