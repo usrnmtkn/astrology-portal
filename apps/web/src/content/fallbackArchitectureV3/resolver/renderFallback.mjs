@@ -157,14 +157,26 @@ export function renderNatalPlacement(facts, opts = {}) {
   const { planet, sign, house } = facts;
   const allowUnreviewed = opts.allowUnreviewed ?? false;
   const voice = facts.voice === "you" ? "you" : "they";
+  // Resolution order for each part is narrowest first:
+  //   1. the placement-specific authored lived row (names the planet)
+  //   2. the composed template (names the planet through its slots)
+  //   3. the generic sign/house lived row (does NOT name the planet)
+  //   4. SOURCE_GAP
+  // The generic row is a floor, not a preference. Keeping it on the same `??`
+  // chain as the placement-specific row let it outrank the template, so 187 of
+  // the 360 natal sections rendered sign- or house-only copy that never named
+  // the planet, and the dignity/retrograde modifiers were silently dropped with
+  // it. It is now consulted only when the template cannot render.
   const exactHouseLived = house
     ? getReaderLivedRow(`fallback-hook/natal-you-placement-house-final/${planet}/${house}`, voice, { allowUnreviewed })
       ?? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, { allowUnreviewed })
-      ?? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, { allowUnreviewed })
+    : null;
+  const genericHouseLived = house
+    ? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, { allowUnreviewed })
     : null;
   const exactSignLived = getReaderLivedRow(`fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, voice, { allowUnreviewed })
-    ?? getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, { allowUnreviewed })
-    ?? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, { allowUnreviewed });
+    ?? getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, { allowUnreviewed });
+  const genericSignLived = getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, { allowUnreviewed });
 
   const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
   const possessive = facts.voice === "you" ? "Your" : `${facts.voice}'s`;
@@ -220,8 +232,19 @@ export function renderNatalPlacement(facts, opts = {}) {
   }
   const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, { allowUnreviewed })
     ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
-  parts.push(exactSignLived?.body ?? renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
-  partKeys.push(exactSignLived?.contentKey ?? signTemplate.contentKey);
+  if (exactSignLived) {
+    parts.push(exactSignLived.body);
+    partKeys.push(exactSignLived.contentKey);
+  } else {
+    try {
+      parts.push(renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
+      partKeys.push(signTemplate.contentKey);
+    } catch (err) {
+      if (!(err instanceof SourceGapError) || !genericSignLived) throw err;
+      parts.push(genericSignLived.body);
+      partKeys.push(genericSignLived.contentKey);
+    }
+  }
 
   let headlineTemplate = signTemplate;
   if (house) {
@@ -237,8 +260,14 @@ export function renderNatalPlacement(facts, opts = {}) {
         placementHouseSentences: getHook(`fallback-hook/placement-house-sentence/${planet}/${house}`, voice, { allowUnreviewed }),
         modifierSentences: mods,
       };
-      parts.push(renderTemplate(houseTemplate, houseCtx, gapLabel, voice));
-      partKeys.push(houseTemplate.contentKey);
+      try {
+        parts.push(renderTemplate(houseTemplate, houseCtx, gapLabel, voice));
+        partKeys.push(houseTemplate.contentKey);
+      } catch (err) {
+        if (!(err instanceof SourceGapError) || !genericHouseLived) throw err;
+        parts.push(genericHouseLived.body);
+        partKeys.push(genericHouseLived.contentKey);
+      }
       headlineTemplate = houseTemplate;
       ctx.houseOrdinal = houseCtx.houseOrdinal;
     }
@@ -299,8 +328,12 @@ export function renderNatalAspect(facts, opts = {}) {
     ? getHook(`fallback-hook/aspect-pair/${planetA}/${planetB}/${group}`, voice, { allowUnreviewed })
       ?? getHook(`fallback-hook/aspect-pair/${planetB}/${planetA}/${group}`, voice, { allowUnreviewed })
     : null;
-  if (!group) throw new SourceGapError(`SOURCE_GAP: natal aspect ${planetA}-${aspect}-${planetB}`);
-  if (!pair) throw new SourceGapError(`SOURCE_GAP: natal aspect pair ${planetA}-${aspect}-${planetB}`);
+  if (!group) {
+    throw new SourceGapError(`SOURCE_GAP: natal aspect ${planetA}-${aspect}-${planetB}`);
+  }
+  if (!pair) {
+    throw new SourceGapError(`SOURCE_GAP: natal aspect pair ${planetA}-${aspect}-${planetB}`);
+  }
   const ctx = {
     possessive: facts.voice === "you" ? "Your" : `${facts.voice}'s`,
     planetATitle: title(planetA),

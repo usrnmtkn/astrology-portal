@@ -67,6 +67,30 @@ function sourceValue(sourceId) {
   return null;
 }
 
+const ownerApprovedServingSubstitutions = new Map([
+  [
+    `${fallbackPath}#fallback-hook/planet-lived/moon`,
+    ["what unsettles you", "what puts you on edge"],
+  ],
+  [
+    `${fallbackPath}#fallback-hook/planet-lived/pluto`,
+    ["the old leverage is gone", "the old advantage is gone"],
+  ],
+]);
+
+function ownerVoiceProvenanceValue(sourceId) {
+  const value = sourceValue(sourceId);
+  const substitution = ownerApprovedServingSubstitutions.get(sourceId);
+  if (!value || !substitution) return value;
+  const [historical, serving] = substitution;
+  assert.equal(
+    value.body.split(serving).length - 1,
+    1,
+    `${sourceId}: authorized serving substitution must occur exactly once`,
+  );
+  return { ...value, body: value.body.replace(serving, historical) };
+}
+
 assert.equal(registry.schema, "tldrastro.sky-calendar-meaning-components.v2");
 assert.equal(registry.status, SKY_COMPONENT_APPROVAL_STATUS);
 assert.deepEqual(registry.counts, {
@@ -305,7 +329,7 @@ for (const row of registry.signUnits) {
   assert.ok(Array.isArray(row.owner_voice_source_ids) && row.owner_voice_source_ids.length > 0);
   assert.equal(row.owner_voice_source_ids.length, row.owner_voice_source_hashes.length);
   row.owner_voice_source_ids.forEach((sourceId, index) => {
-    const value = sourceValue(sourceId);
+    const value = ownerVoiceProvenanceValue(sourceId);
     assert.ok(value, `${row.key} missing owner-voice source ${sourceId}`);
     assert.equal(row.owner_voice_source_hashes[index], sha256(JSON.stringify(value)), `${row.key} owner-voice source hash ${sourceId}`);
   });
