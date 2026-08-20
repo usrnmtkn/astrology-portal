@@ -7419,6 +7419,29 @@ body,
   color: var(--admin-muted);
 }
 
+.admin-sky-horizon-summary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--admin-border);
+  border-radius: 14px;
+  background: var(--admin-surface, #fff);
+}
+
+.admin-sky-horizon-summary h3,
+.admin-sky-horizon-summary p {
+  margin: 0.25rem 0 0;
+}
+
+.admin-sky-horizon-summary button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
 .admin-sky-voice-card {
   display: grid;
   gap: var(--admin-space-xl);

@@ -83,7 +83,34 @@ type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "m
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
 type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
-type SkyVoiceQueueView = "all" | "needs-review" | "audit";
+type SkyVoiceQueueView = "all" | "upcoming" | "needs-review" | "audit";
+type SkyReviewHorizonOccurrence = {
+  kind: "aspect" | "placement";
+  contentKey: string;
+  label: string;
+  activeDates: string[];
+  windows: Array<{ startDate: string; endDate: string }>;
+  reviewStatus: "missing_draft" | "ready_for_owner" | "approved_scheduled" | "rejected" | "generation_error" | "draft_needs_work";
+  row: AdminGeneratedContentRow | null;
+};
+type SkyReviewHorizon = {
+  startDate: string;
+  endDate: string;
+  snapshotCount: number;
+  calculationMethod: string;
+  counts: { occurrences: number; aspectCandidates: number; placementCandidates: number; activeWindows: number };
+  reviewCounts: Record<string, number>;
+  generationPlan: {
+    status: "authorization_required";
+    reusableCandidatesMissingDrafts: number;
+    writerCalls: number;
+    reviewerCalls: number;
+    minimumSuccessfulCalls: number;
+    contentKeys: string[];
+    note: string;
+  };
+  occurrences: SkyReviewHorizonOccurrence[];
+};
 type FallbackHookDefinition = {
   key: string;
   label: string;
@@ -1527,6 +1554,8 @@ export function GeneratedContentAdminDashboard() {
   const [contentStatusFilter, setContentStatusFilter] = useState<GeneratedContentStatus | "all">("all");
   const [reviewStatusFilter, setReviewStatusFilter] = useState<GeneratedContentStatus | "all">("all");
   const [skyVoiceQueueView, setSkyVoiceQueueView] = useState<SkyVoiceQueueView>("all");
+  const [skyReviewHorizon, setSkyReviewHorizon] = useState<SkyReviewHorizon | null>(null);
+  const [skyReviewHorizonError, setSkyReviewHorizonError] = useState<string | null>(null);
   const [contentClassFilter, setContentClassFilter] = useState<AdminContentClassFilter>("all");
   const [tierFilter, setTierFilter] = useState<AdminPhrasebankTierFilter>("all");
   const [categoryFilter, setCategoryFilter] = useState<AdminContentCategoryFilter>("all");
@@ -1707,7 +1736,9 @@ export function GeneratedContentAdminDashboard() {
   const skyVoiceNeedsReviewRows = useMemo(
     () => visibleRows.filter((row) => (
       ["sky_aspect", "sky_placement"].includes(row.block_type ?? "")
+      && ["DRAFT", "REVIEWED"].includes(row.status)
       && row.judge_gate === "human-review"
+      && Boolean(row.review_state)
       && row.review_state !== "sky-placement-topper-inactive"
     )),
     [visibleRows]
@@ -2020,6 +2051,55 @@ export function GeneratedContentAdminDashboard() {
       setLoadError(nextMessage);
       setLoadDiagnostics(error instanceof AdminRequestError ? `${error.method} ${error.path} -> HTTP ${error.status}${error.details ? ` (${error.details})` : ""}` : null);
       setMessage(nextMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function loadSkyReviewHorizon() {
+    if (!secret.trim()) {
+      setSkyReviewHorizonError("Admin access is required before the 90-day inventory can load.");
+      return;
+    }
+    setIsLoading(true);
+    setSkyReviewHorizonError(null);
+    try {
+      const payload = await adminJsonRequest<{ ok: boolean; horizon: SkyReviewHorizon }>(
+        "/api/admin/sky-review-horizon?days=91",
+        secret
+      );
+      setSkyReviewHorizon(payload.horizon);
+      setMessage(`Calculated ${payload.horizon.counts.occurrences} reusable Sky candidates across ${payload.horizon.snapshotCount} days. No model calls were made.`);
+    } catch (error) {
+      const nextMessage = error instanceof Error ? error.message : "Could not calculate the 90-day Sky inventory.";
+      setSkyReviewHorizonError(nextMessage);
+      setMessage(nextMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function approveAndScheduleSkyRow(row: AdminGeneratedContentRow) {
+    setIsLoading(true);
+    try {
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
+        method: "PATCH",
+        body: JSON.stringify({ id: row.id, ownerAction: "approve-and-schedule" })
+      });
+      const saved = payload.rows?.[0];
+      if (saved) {
+        setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
+        if (selectedRowId === saved.id) setDraft(draftFromRow(saved));
+        setSkyReviewHorizon((current) => current ? {
+          ...current,
+          occurrences: current.occurrences.map((occurrence) => occurrence.row?.id === saved.id
+            ? { ...occurrence, row: saved, reviewStatus: "approved_scheduled" }
+            : occurrence)
+        } : current);
+      }
+      setMessage(`${row.content_key} approved. It is eligible only when current calculated Sky facts select this reusable configuration.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not approve and schedule the Sky row.");
     } finally {
       setIsLoading(false);
     }
@@ -2636,6 +2716,10 @@ export function GeneratedContentAdminDashboard() {
               <button type="button" className={skyVoiceQueueView === "all" ? "active" : ""} onClick={() => setSkyVoiceQueueView("all")}>
                 All review
               </button>
+              <button type="button" className={skyVoiceQueueView === "upcoming" ? "active" : ""} onClick={() => { setSkyVoiceQueueView("upcoming"); if (!skyReviewHorizon) void loadSkyReviewHorizon(); }}>
+                Upcoming 90 days
+                {skyReviewHorizon ? <strong>{skyReviewHorizon.counts.occurrences}</strong> : null}
+              </button>
               <button type="button" className={skyVoiceQueueView === "needs-review" ? "active" : ""} onClick={() => setSkyVoiceQueueView("needs-review")}>
                 Sky voice: needs review
                 <strong>{skyVoiceNeedsReviewRows.length}</strong>
@@ -2685,6 +2769,7 @@ export function GeneratedContentAdminDashboard() {
             </section>}
             {skyVoiceQueueView === "all" && renderBulkBar()}
             {skyVoiceQueueView === "all" && renderReviewTable(filteredReviewRows)}
+            {skyVoiceQueueView === "upcoming" && renderSkyReviewHorizon()}
             {skyVoiceQueueView === "needs-review" && renderSkyVoiceQueue(skyVoiceNeedsReviewRows, "Cards held by the judge for a fast editorial decision.")}
             {skyVoiceQueueView === "audit" && renderSkyVoiceQueue(skyVoiceAuditRows, "Random auto-publish sample for periodic voice auditing. Refresh to draw another sample.")}
           </section>
@@ -3611,11 +3696,83 @@ export function GeneratedContentAdminDashboard() {
                 </div>
                 <div className="admin-review-queue-actions">
                   <button type="button" onClick={() => openRow(row)}>Edit</button>
+                  {row.judge_score === 3 && row.judge_gate === "human-review" && row.status !== "LIVE"
+                    ? <button type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>Approve &amp; schedule</button>
+                    : null}
                 </div>
               </article>
             );
           })}
           {tableRows.length === 0 && <p className="admin-empty">No sky voice cards are in this view.</p>}
+        </div>
+      </section>
+    );
+  }
+
+  function renderSkyReviewHorizon() {
+    if (skyReviewHorizonError) {
+      return (
+        <section className="admin-sky-voice-queue">
+          <p className="admin-empty">{skyReviewHorizonError}</p>
+          <button type="button" onClick={() => void loadSkyReviewHorizon()} disabled={isLoading}>Try again</button>
+        </section>
+      );
+    }
+    if (!skyReviewHorizon) {
+      return <section className="admin-sky-voice-queue"><p className="admin-empty">Calculating 91 daily Sky snapshots. This makes no model calls.</p></section>;
+    }
+    const statusLabels: Record<SkyReviewHorizonOccurrence["reviewStatus"], string> = {
+      missing_draft: "Missing generated draft",
+      ready_for_owner: "Ready for owner",
+      approved_scheduled: "Approved for matching Sky",
+      rejected: "Rejected / archived",
+      generation_error: "Generation error",
+      draft_needs_work: "Draft needs work"
+    };
+    return (
+      <section className="admin-sky-voice-queue" aria-label="Upcoming 90-day Sky review inventory">
+        <div className="admin-sky-horizon-summary">
+          <div>
+            <p className="admin-eyebrow">Calculated occurrence inventory</p>
+            <h3>{skyReviewHorizon.startDate} through {skyReviewHorizon.endDate}</h3>
+            <p>{skyReviewHorizon.counts.aspectCandidates} aspect cards and {skyReviewHorizon.counts.placementCandidates} placement cards are reused across {skyReviewHorizon.counts.activeWindows} active windows. Dates come from calculated daily Sky snapshots; copy is never duplicated per day.</p>
+            <p><strong>{skyReviewHorizon.generationPlan.reusableCandidatesMissingDrafts} generated sign-specific drafts are missing.</strong> This is not the same as a reader-facing source gap because approved exact-aspect and phrasebook fallbacks may still cover the event. A complete first-pass generation run would require at least {skyReviewHorizon.generationPlan.writerCalls} writer and {skyReviewHorizon.generationPlan.reviewerCalls} reviewer calls. This screen does not start them.</p>
+          </div>
+          <button type="button" onClick={() => void loadSkyReviewHorizon()} disabled={isLoading}>
+            <RefreshCw size={16} aria-hidden="true" /> Recalculate
+          </button>
+        </div>
+        <p className="admin-sky-voice-description">This view is inventory and review status only. Loading it makes zero writer or reviewer calls and changes no approval or serving state.</p>
+        <div className="admin-sky-voice-cards">
+          {skyReviewHorizon.occurrences.map((occurrence) => {
+            const row = occurrence.row;
+            const canApprove = row?.judge_score === 3 && row.judge_gate === "human-review" && row.status !== "LIVE";
+            return (
+              <article key={occurrence.contentKey} className="admin-sky-voice-card">
+                <header>
+                  <div>
+                    <h3>{occurrence.label}</h3>
+                    <code>{occurrence.contentKey}</code>
+                  </div>
+                  <div className="admin-review-queue-meta-strip">
+                    <span className="ui-pill admin-status">{statusLabels[occurrence.reviewStatus]}</span>
+                    <span className="ui-pill admin-status">{occurrence.kind}</span>
+                  </div>
+                </header>
+                <dl className="admin-sky-voice-facts">
+                  <div><dt>First active</dt><dd>{occurrence.windows[0]?.startDate ?? "Not calculated"}</dd></div>
+                  <div><dt>Last active</dt><dd>{occurrence.windows.at(-1)?.endDate ?? "Not calculated"}</dd></div>
+                  <div><dt>Active days</dt><dd>{occurrence.activeDates.length}</dd></div>
+                  <div><dt>Windows</dt><dd>{occurrence.windows.length}</dd></div>
+                </dl>
+                <div className="admin-sky-voice-body">{row?.body || "No generated draft exists yet. A separately authorized generation run is required before there is writing to review."}</div>
+                <div className="admin-review-queue-actions">
+                  {row ? <button type="button" onClick={() => openRow(row)}>Edit</button> : null}
+                  {canApprove ? <button type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>Approve &amp; schedule</button> : null}
+                </div>
+              </article>
+            );
+          })}
         </div>
       </section>
     );
@@ -3634,6 +3791,13 @@ export function GeneratedContentAdminDashboard() {
     const isFallbackHookDraft = draftIsFallbackHook(currentDraft);
     const isTemplateDraft = draftIsTemplate(currentDraft);
     const isPackageDraft = draftIsFallbackArchitectureV3(currentDraft);
+    const isGovernedSkyDraft = ["sky_aspect", "sky_placement"].includes(currentDraft.blockType);
+    const skyDraftHasUnsavedCopy = Boolean(selectedRow && isGovernedSkyDraft && (
+      currentDraft.headline !== (selectedRow.headline ?? "")
+      || currentDraft.summary !== (selectedRow.summary ?? "")
+      || currentDraft.body !== (selectedRow.body ?? "")
+      || JSON.stringify(currentDraft.sections ?? {}) !== JSON.stringify(selectedRow.sections ?? {})
+    ));
     const isNewDraft = !currentDraft.id;
     const vocabularySection = vocabularySectionFromKey(currentDraft.contentKey);
     const rawContentRole = contentRoleForDraft(currentDraft);
@@ -3960,10 +4124,17 @@ export function GeneratedContentAdminDashboard() {
                   <Check size={16} aria-hidden="true" />
                   Reviewed
                 </button>
-                <button type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading}>
-                  <Check size={16} aria-hidden="true" />
-                  Sign Off
-                </button>
+                {isGovernedSkyDraft && selectedRow ? (
+                  <button type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : "Approve this reusable card for calculated matching Sky configurations."}>
+                    <Check size={16} aria-hidden="true" />
+                    Approve &amp; schedule
+                  </button>
+                ) : (
+                  <button type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading}>
+                    <Check size={16} aria-hidden="true" />
+                    Sign Off
+                  </button>
+                )}
               </>
             )}
           </div>
