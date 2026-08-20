@@ -249,6 +249,21 @@ function assertSamples(samples: TimedSample[], budgetMs: number, maximumBudgetMs
   expect.soft(maximum, `${samples[0]?.label} maximum should remain within ${maximumBudgetMs}ms`).toBeLessThanOrEqual(maximumBudgetMs);
 }
 
+function assertMaximumSamples(samples: TimedSample[], maximumBudgetMs: number) {
+  const maximum = Math.max(...samples.map(({ elapsedMs }) => elapsedMs));
+  const ordered = [...samples].sort((first, second) => first.elapsedMs - second.elapsedMs);
+  const median = ordered[Math.floor(ordered.length / 2)]?.elapsedMs ?? 0;
+
+  console.log(JSON.stringify({
+    scenario: samples[0]?.label,
+    samplesMs: samples.map(({ elapsedMs }) => elapsedMs),
+    medianMs: median,
+    maximumMs: maximum,
+    budgetMs: maximumBudgetMs
+  }));
+  expect.soft(maximum, `${samples[0]?.label} maximum should remain within ${maximumBudgetMs}ms`).toBeLessThanOrEqual(maximumBudgetMs);
+}
+
 test.describe("Friends loading performance matrix", () => {
   test("repeated cold loads paint cached chart rows within budget", async ({ browser }) => {
     const samples: TimedSample[] = [];
@@ -384,7 +399,8 @@ test.describe("Friends loading performance matrix", () => {
 
   test("repeated cold calculations show relationship loading state within budget", async ({ browser }) => {
     test.setTimeout(45_000);
-    const samples: TimedSample[] = [];
+    const loadingSamples: TimedSample[] = [];
+    const contentSamples: TimedSample[] = [];
 
     for (let sample = 0; sample < FRIENDS_LOADING_SAMPLE_COUNT; sample += 1) {
       await withContext(browser, {}, async (context, page) => {
@@ -411,17 +427,25 @@ test.describe("Friends loading performance matrix", () => {
           .then(() => Math.round(performance.now() - startedAt));
 
         await page.getByRole("button", { name: `Open ${fixtureFriendName}` }).click();
-        samples.push({
+        loadingSamples.push({
           label: "slow-network relationship loading state",
           elapsedMs: await loadingStateReady
         });
         await expect(page.locator(".compatibility-card").first()).toBeVisible({
-          timeout: friendsLoadingPerformanceMaximums.slowNetworkRelationshipReadyMs + 5_000
+          timeout: friendsLoadingPerformanceMaximums.slowNetworkColdRelationshipReadyMs + 5_000
+        });
+        contentSamples.push({
+          label: "slow-network cold relationship content ceiling",
+          elapsedMs: Math.round(performance.now() - startedAt)
         });
       });
     }
 
-    assertSamples(samples, friendsLoadingPerformanceBudgets.slowNetworkRelationshipLoadingReadyMs);
+    assertSamples(loadingSamples, friendsLoadingPerformanceBudgets.slowNetworkRelationshipLoadingReadyMs);
+    assertMaximumSamples(
+      contentSamples,
+      friendsLoadingPerformanceMaximums.slowNetworkColdRelationshipReadyMs
+    );
   });
 
   test("repeated slow relationship loads never block list or detail shell", async ({ browser }) => {
@@ -442,6 +466,17 @@ test.describe("Friends loading performance matrix", () => {
           prepared.delayedRelationshipRequests(),
           "The Friends list must not eagerly request relationship payloads."
         ).toBe(0);
+        await expect.poll(
+          () => page.evaluate(() => (
+            Object.keys(window.localStorage).some((key) => (
+              key.startsWith("tldrastro:verifiedSky:v2:natal-")
+            ))
+          )),
+          {
+            message: "The normal relationship-content timer must start after natal calculation is ready.",
+            timeout: friendsLoadingPerformanceMaximums.slowNetworkColdRelationshipReadyMs + 5_000
+          }
+        ).toBe(true);
 
         const networkSession = await context.newCDPSession(page);
         await networkSession.send("Network.enable");
@@ -489,11 +524,7 @@ test.describe("Friends loading performance matrix", () => {
 
     assertSamples(listSamples, friendsLoadingPerformanceBudgets.slowNetworkListReadyMs);
     assertSamples(shellSamples, friendsLoadingPerformanceBudgets.slowNetworkDetailShellReadyMs);
-    assertSamples(
-      relationshipSamples,
-      friendsLoadingPerformanceBudgets.slowNetworkRelationshipReadyMs,
-      friendsLoadingPerformanceMaximums.slowNetworkRelationshipReadyMs
-    );
+    assertSamples(relationshipSamples, friendsLoadingPerformanceBudgets.slowNetworkRelationshipReadyMs);
     assertSamples(relationshipEnhancedSamples, friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs);
   });
 });
