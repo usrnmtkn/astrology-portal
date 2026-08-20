@@ -10,7 +10,7 @@ export const SKY_ASPECT_DEFINITIONS = Object.freeze([
 export const NATAL_ASPECT_DEFINITIONS = Object.freeze([
   Object.freeze({ type: "conjunction", exactAngle: 0, maxOrb: 8, luminaryModifier: 2 }),
   Object.freeze({ type: "sextile", exactAngle: 60, maxOrb: 5, luminaryModifier: 2 }),
-  Object.freeze({ type: "square", exactAngle: 90, maxOrb: 7, luminaryModifier: 2 }),
+  Object.freeze({ type: "square", exactAngle: 90, maxOrb: 7, luminaryModifier: 5 }),
   Object.freeze({ type: "trine", exactAngle: 120, maxOrb: 7, luminaryModifier: 2 }),
   Object.freeze({ type: "quincunx", exactAngle: 150, maxOrb: 3, luminaryModifier: 0 }),
   Object.freeze({ type: "opposition", exactAngle: 180, maxOrb: 8, luminaryModifier: 2 })

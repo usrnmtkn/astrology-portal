@@ -221,7 +221,11 @@ import {
   type AspectGiftLessonGroup as GiftLessonGroup
 } from "./services/aspectGiftLesson";
 import { loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
-import { uniqueDisplayableNatalAspects as uniqueNatalAspectRows } from "./services/natalAspectDisplay";
+import {
+  completeNatalAspectsForPlacement,
+  natalAspectCounterpartGroup,
+  uniqueDisplayableNatalAspects as uniqueNatalAspectRows
+} from "./services/natalAspectDisplay";
 import { loadPlanetTopicVocabulary, planetTopicPhrase, signNeedPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
 import { canonicalNatalAspectsForSnapshot } from "./services/natalAspectFacts";
 import { interpolateTemplateString, type TemplateSlotValues } from "./services/templateInterpolation";
@@ -648,6 +652,7 @@ export type YouTransitArticle = {
   }>;
   relatedAspects?: {
     heading: string;
+    grouping?: "tone" | "counterpart";
     rows: Array<ReactNode | SkyDetailRelatedAspectRow>;
   };
   historicalLookback?: SkyHistoricalLookback | null;
@@ -5372,11 +5377,14 @@ function relatedAspectRowsForPlacement({
   pointName: string;
   positions?: PlanetPosition[];
 }): Array<SkyDetailRelatedAspectRow | null> {
-  return aspects
-    .filter((aspect) => aspect.from === pointName || aspect.to === pointName)
-    .filter((aspect, index, matchingAspects) => uniqueNatalAspectRows(matchingAspects).includes(aspect))
-    .slice()
-    .sort((first, second) => first.orb - second.orb)
+  const matchingAspects = mode === "natal"
+    ? completeNatalAspectsForPlacement(aspects, pointName)
+    : aspects
+        .filter((aspect) => aspect.from === pointName || aspect.to === pointName)
+        .filter((aspect, index, candidates) => uniqueNatalAspectRows(candidates).includes(aspect))
+        .slice()
+        .sort((first, second) => first.orb - second.orb);
+  const rows = matchingAspects
     .map((aspect) => {
       const normalizedSkySurface = mode === "sky" && generatedAt
         ? normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt)
@@ -5389,6 +5397,9 @@ function relatedAspectRowsForPlacement({
         : normalizedSurfacePreview(normalizeNatalAspectSurface(aspect, ownerContext));
       const displaySummary = rowSummary;
       const key = `${mode}-${pointName}-${aspect.from}-${aspect.type}-${aspect.to}`;
+      const rowGroup = mode === "natal"
+        ? natalAspectCounterpartGroup(aspect, pointName) ?? "points"
+        : normalizedAspectToneBucket(aspect.type);
       const rowContent = (
         <>
           <AspectGlyphs from={pointName} aspect={aspect.type} to={otherPoint} />
@@ -5407,7 +5418,7 @@ function relatedAspectRowsForPlacement({
         return {
           key,
           aspectType: aspect.type,
-          group: normalizedAspectToneBucket(aspect.type),
+          group: rowGroup,
           node: (
           <button
             aria-label={`Read more about ${title}`}
@@ -5425,7 +5436,7 @@ function relatedAspectRowsForPlacement({
         return {
           key,
           aspectType: aspect.type,
-          group: normalizedAspectToneBucket(aspect.type),
+          group: rowGroup,
           node: (
           <button
             aria-label={`Read more about ${title}`}
@@ -5442,7 +5453,7 @@ function relatedAspectRowsForPlacement({
       return {
         key,
         aspectType: aspect.type,
-        group: normalizedAspectToneBucket(aspect.type),
+        group: rowGroup,
         node: (
         <div
           className="article-related-aspect-row aspect-row aspect-row-static"
@@ -5452,8 +5463,9 @@ function relatedAspectRowsForPlacement({
         )
       };
     })
-    .filter(Boolean)
-    .slice(0, mode === "sky" ? 2 : 4);
+    .filter(Boolean);
+
+  return mode === "sky" ? rows.slice(0, 2) : rows;
 }
 
 function isElevatedSlowTransit(transitPlanet: string, natalPoint: string, orbValue: number) {
@@ -14533,6 +14545,7 @@ function natalPlacementDetailArticle(
     relatedAspects: relatedAspectRows.length > 0
       ? {
           heading: "Natal aspects",
+          grouping: "counterpart",
           rows: relatedAspectRows
         }
       : undefined,
@@ -15981,8 +15994,7 @@ function ProfileView({
     .filter((house) => !occupiedNatalHouses.has(house));
   const natalAspectRows = uniqueNatalAspectRows(canonicalNatalAspectsForSnapshot(natalSky))
     .slice()
-    .sort((first, second) => first.orb - second.orb)
-    .slice(0, 8);
+    .sort((first, second) => first.orb - second.orb);
   const natalAspectPatternItems = showNatalAspectPatterns
     ? natalAspectPatternReaderItems(natalSky)
     : [];
