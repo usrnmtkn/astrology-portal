@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "north-node-12",
+  "canonicalId": "transit-house/north_node/12",
+  "kind": "house",
+  "transiting": "north-node",
+  "house": 12,
+  "headline": "Making room for an ending",
+  "body": "With the North Node moving through your 12th house, rest, privacy, processing grief, and letting things end take priority over a packed calendar. You might need to step down from a role, get more sleep, go back to therapy, or sit with a loss you never fully processed. Progress here is hard to measure because it happens quietly behind the scenes.\n\nAcross the axis, the 6th house offers the familiar distraction of constant work and keeping busy. Useful routines keep life running, but this transit shows where staying busy has just been an excuse to avoid dealing with feelings that need your attention.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "North Node — 12H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

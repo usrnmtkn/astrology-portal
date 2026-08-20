@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "chiron-12",
+  "canonicalId": "transit-house/chiron/12",
+  "kind": "house",
+  "transiting": "chiron",
+  "house": 12,
+  "headline": "Grief without a deadline",
+  "body": "Chiron in your 12th house brings quiet grief, old anxieties, and unspoken losses back to the surface. You might feel drained for no obvious reason, dream about past chapters of your life, or feel the weight of family sadness that was swept under the rug. Not having a neat explanation does not make what you feel any less real.\n\nThis transit asks for quiet time, therapy, journaling, or just stepping away from constant demands. Inner work is not meant to replace your active life; it helps you return to the world without wasting energy keeping old pain locked away.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Chiron — 12H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

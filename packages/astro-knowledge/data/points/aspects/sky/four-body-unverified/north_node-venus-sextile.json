@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.sextile.north-node",
+  "canonicalId": "sky-aspect/north_node/venus/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "venus",
+  "aspect": "sextile",
+  "humanMoment": "The existing relationships are offering to help with the new life instead of resenting it.",
+  "developmentDetail": "An old friend makes the introduction, a partner adjusts the schedule, and the people from the established chapter put real goodwill behind the unfamiliar project.",
+  "planetaryDynamic": "With Venus sextile the North Node, people can draw on the bonds they already built to sponsor the direction they are moving toward, though the friends can only help if someone actually asks them.",
+  "aspectMechanic": "Someone still has to say the ask out loud.",
+  "conditionalConsequence": "The offer may lapse unclaimed, but people who invite their bonds into the next chapter tend to keep them, and people who leave the bonds outside it tend not to.",
+  "body": "The existing relationships are offering to help with the new life instead of resenting it.\n\nAn old friend makes the introduction, a partner adjusts the schedule, and the people from the established chapter put real goodwill behind the unfamiliar project.\n\nWith Venus sextile the North Node, people can draw on the bonds they already built to sponsor the direction they are moving toward, though the friends can only help if someone actually asks them.\n\nSomeone still has to say the ask out loud.\n\nThe offer may lapse unclaimed, but people who invite their bonds into the next chapter tend to keep them, and people who leave the bonds outside it tend not to.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.venus.sextile.north-node",
+    "sourceHeading": "Venus sextile North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

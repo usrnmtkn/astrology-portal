@@ -2,13 +2,23 @@
 
 const fs = require("fs");
 const path = require("path");
-const { validateAll, listJsonFiles, listDirectJsonFiles, readJson } = require("./validate");
+const {
+  validateAll,
+  listJsonFiles,
+  listLegacyPackageJsonFiles,
+  listDirectJsonFiles,
+  readJson
+} = require("./validate");
 
 const root = path.resolve(__dirname, "..");
 const dataRoot = path.join(root, "data");
 const distRoot = path.join(root, "dist");
 const entriesRoot = path.join(distRoot, "entries");
 const packageJson = readJson(path.join(root, "package.json"));
+const SERVER_ONLY_GENERATED_ARTIFACTS = new Set([
+  "generated/knowledge-index.json",
+  "generated/phrase-index.json"
+]);
 
 function ensureCleanDist() {
   fs.mkdirSync(distRoot, { recursive: true });
@@ -34,7 +44,7 @@ function loadPrimitiveCollections() {
 }
 
 function loadEntries(dir) {
-  return listJsonFiles(path.join(dataRoot, dir)).map((filePath) => readJson(filePath));
+  return listLegacyPackageJsonFiles(path.join(dataRoot, dir)).map((filePath) => readJson(filePath));
 }
 
 function loadDirectEntries(dir) {
@@ -88,6 +98,10 @@ function loadVoiceProfiles() {
 
 function isRewriteCorpusEntry(entry) {
   return entry.path?.startsWith("generated/tldr-astro/rewrite-corpora/");
+}
+
+function isServerOnlyGeneratedArtifact(entry) {
+  return SERVER_ONLY_GENERATED_ARTIFACTS.has(entry.path);
 }
 
 function safeCategory(category) {
@@ -382,7 +396,9 @@ function build() {
   const voiceProfiles = loadVoiceProfiles();
   const generatedContent = loadJsonTree("generated");
   const rewriteCorpora = generatedContent.filter(isRewriteCorpusEntry);
-  const voiceContent = generatedContent.filter((entry) => !isRewriteCorpusEntry(entry));
+  const voiceContent = generatedContent.filter(
+    (entry) => !isRewriteCorpusEntry(entry) && !isServerOnlyGeneratedArtifact(entry)
+  );
 
   const generatedAt = new Date().toISOString();
   const knowledge = withBundleMetadata(packageJson, generatedAt, {

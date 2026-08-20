@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mercury.quincunx.north-node",
+  "canonicalId": "sky-aspect/mercury/north_node/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "mercury",
+  "bodyB": "north_node",
+  "aspect": "quincunx",
+  "humanMoment": "People keep finding their words one register off from the conversation they need.",
+  "developmentDetail": "Someone explains their expertise in the old field's terms, the new field's people listen in different ones, and both sides lose something in every exchange.",
+  "planetaryDynamic": "With Mercury quincunx the North Node, people keep adjusting the dialect and never quite landing it, because the language they practiced and the language the direction speaks refuse to line up on request.",
+  "aspectMechanic": "Someone competent keeps sounding confused in the new room.",
+  "conditionalConsequence": "The awkwardness may last a while, but people mid-translation sound different from people who are lost, and the ones listening closely can usually hear which is which.",
+  "body": "People keep finding their words one register off from the conversation they need.\n\nSomeone explains their expertise in the old field's terms, the new field's people listen in different ones, and both sides lose something in every exchange.\n\nWith Mercury quincunx the North Node, people keep adjusting the dialect and never quite landing it, because the language they practiced and the language the direction speaks refuse to line up on request.\n\nSomeone competent keeps sounding confused in the new room.\n\nThe awkwardness may last a while, but people mid-translation sound different from people who are lost, and the ones listening closely can usually hear which is which.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.mercury.quincunx.north-node",
+    "sourceHeading": "Mercury quincunx North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

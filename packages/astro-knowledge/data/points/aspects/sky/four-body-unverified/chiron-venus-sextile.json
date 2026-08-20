@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.sextile.chiron",
+  "canonicalId": "sky-aspect/chiron/venus/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "venus",
+  "aspect": "sextile",
+  "humanMoment": "Someone lets one compliment land undisputed, and it turns out to be possible.",
+  "developmentDetail": "They say the thanks without deflecting it, watch the giver visibly relax, and feel something small reset in the exchange.",
+  "planetaryDynamic": "With Venus sextile Chiron, people are being offered affection while the old machinery that returns it to sender idles for a moment.",
+  "aspectMechanic": "The compliment still has to be accepted on purpose.",
+  "conditionalConsequence": "The moment may look tiny, but people who let affection land tend to find more of it arriving, and people who bat it away tend to keep proving they had to.",
+  "body": "Someone lets one compliment land undisputed, and it turns out to be possible.\n\nThey say the thanks without deflecting it, watch the giver visibly relax, and feel something small reset in the exchange.\n\nWith Venus sextile Chiron, people are being offered affection while the old machinery that returns it to sender idles for a moment.\n\nThe compliment still has to be accepted on purpose.\n\nThe moment may look tiny, but people who let affection land tend to find more of it arriving, and people who bat it away tend to keep proving they had to.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.venus.sextile.chiron",
+    "sourceHeading": "Venus sextile Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

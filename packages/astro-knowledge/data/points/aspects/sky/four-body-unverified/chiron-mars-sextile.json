@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.sextile.chiron",
+  "canonicalId": "sky-aspect/chiron/mars/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "mars",
+  "aspect": "sextile",
+  "humanMoment": "Someone makes the direct ask once, plainly, and it works.",
+  "developmentDetail": "They request the raise, the seat, the help without the long preamble of justification, and the answer comes back faster than years of silence ever predicted.",
+  "planetaryDynamic": "With Mars sextile Chiron, people have the nerve on hand and the full memory of what asking used to cost.",
+  "aspectMechanic": "The moment favors whoever actually speaks up.",
+  "conditionalConsequence": "The request may still feel dangerous, but the people who make it directly tend to find it costs less than the years of not asking already did.",
+  "body": "Someone makes the direct ask once, plainly, and it works.\n\nThey request the raise, the seat, the help without the long preamble of justification, and the answer comes back faster than years of silence ever predicted.\n\nWith Mars sextile Chiron, people have the nerve on hand and the full memory of what asking used to cost.\n\nThe moment favors whoever actually speaks up.\n\nThe request may still feel dangerous, but the people who make it directly tend to find it costs less than the years of not asking already did.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.mars.sextile.chiron",
+    "sourceHeading": "Mars sextile Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -51,6 +51,7 @@ import {
   REVIEW_SCHEMA,
   REVIEW_FIELDS,
   reviewDraft,
+  resolveSurfaceStrategy,
   runWritingPipeline,
   samePlanetSignHouseCoreScenes,
   sceneEvidenceForTarget,
@@ -232,11 +233,13 @@ for (const fixture of corrections) {
     context: { examples: [], corrections: [fixture] },
     family: fixture.family,
     register: fixture.family === "house-horoscope-core" ? "second_person" : "collective",
+    surfaceStrategy: resolveSurfaceStrategy({ explicitStrategy: "sky-placement" }),
     requiredFields: ["body"]
   });
   assert.equal(review.decision, "REVISE", `Known bad fixture must be rejected: ${fixture.category}`);
   assert.ok(review.violations.some((violation) => violation.category === fixture.category), `Fixture must retain category ${fixture.category}.`);
   const correctedLint = validateCopy(fixture.corrected, {
+    validationProfile: "shared-only",
     family: fixture.family,
     register: fixture.family === "house-horoscope-core" ? "second_person" : "collective",
     ownerCorrections: [fixture]
@@ -529,18 +532,26 @@ assert.ok(Object.values(emptyHouseV14HarnessChecks).every((result) => result.fai
 
 for (const [sign, nouns] of Object.entries(HOUSE_BLEED_NOUNS)) {
   const legitimateExample = validateCopy(`One example involves ${nouns[0]}.`, {
+    validationProfile: "sky-placement",
     plan: { sign, house: null }
   });
   assert.ok(!legitimateExample.violations.some((entry) => entry.category === "sign_house_separation"), `${sign} must allow one legitimate domain example.`);
   const cluster = validateCopy(`${nouns.slice(0, HOUSE_BLEED_CLUSTER_MIN_DISTINCT_NOUNS).join(", ")} keep defining the whole passage.`, {
+    validationProfile: "sky-placement",
     plan: { sign, house: null }
   });
   assert.ok(cluster.violations.some((entry) => entry.category === "sign_house_separation"), `${sign} must reject a domain-noun cluster.`);
 }
 
 const protectedOwnerLine = "Compassion that was really self-erasure starts coming with limits attached.";
-assert.equal(validateCopy(protectedOwnerLine, { protectedOwnerLines: [protectedOwnerLine] }).passed, true);
-const unprotectedEditorialReview = validateCopy(protectedOwnerLine);
+assert.equal(
+  validateCopy(protectedOwnerLine, {
+    validationProfile: "shared-only",
+    protectedOwnerLines: [protectedOwnerLine]
+  }).passed,
+  true
+);
+const unprotectedEditorialReview = validateCopy(protectedOwnerLine, { validationProfile: "shared-only" });
 assert.equal(unprotectedEditorialReview.passed, true, "Editorial-review vocabulary must not hard-fail copy.");
 assert.ok(
   unprotectedEditorialReview.advisories.some((entry) => entry.category === "editorial_word_policy" && entry.detail === "self-erasure"),
@@ -592,6 +603,7 @@ assert.ok(plan.prohibitedDomainAssumptions.includes("travel/education/legal"));
 assert.ok(plan.DO_NOT_ASSUME.includes("a house or life domain that was not supplied"));
 
 assert.ok(validateCopy({ body: "Someone checks the source before repeating the claim.", DO_NOT_ASSUME: plan.DO_NOT_ASSUME }, {
+  validationProfile: "shared-only",
   plan,
   requiredFields: ["body"]
 }).passed, "Internal guard fields must not be treated as reader copy.");
@@ -600,7 +612,7 @@ for (const leaked of [
   "This transit does not necessarily mean a specific event will happen.",
   "A specific event, motive, relationship type, or biography not present in governed facts."
 ]) {
-  const result = validateCopy(leaked, { plan });
+  const result = validateCopy(leaked, { validationProfile: "shared-only", plan });
   assert.ok(result.violations.some((entry) => entry.category === "shared_ban"), `Reader-facing guard leakage must fail: ${leaked}`);
 }
 
@@ -1238,6 +1250,7 @@ const inconsistentReviewer = await reviewDraft({
   },
   plan,
   context: { examples: [], corrections: [] },
+  surfaceStrategy: resolveSurfaceStrategy({ explicitStrategy: "sky-placement" }),
   modelClient: async ({ stage, input }) => {
     if (stage === "cold-review") {
       assert.deepEqual(Object.keys(JSON.parse(input)), ["rendered_copy"]);
@@ -1269,6 +1282,7 @@ const coldFailureReview = await reviewDraft({
   },
   plan,
   context: { examples: [], corrections: [] },
+  surfaceStrategy: resolveSurfaceStrategy({ explicitStrategy: "sky-placement" }),
   modelClient: async ({ stage, input }) => {
     if (stage === "cold-review") {
       assert.deepEqual(Object.keys(JSON.parse(input)), ["rendered_copy"]);
@@ -1351,6 +1365,7 @@ const negatives = jsonl("data/writing/negative-regression-fixtures.jsonl");
 for (const fixture of gold) {
   const draft = Object.fromEntries(["tagline", "hook", "lived", "turn"].map((field) => [field, fixture[field]]));
   const lint = validateCopy(draft, {
+    validationProfile: "sky-placement",
     family: fixture.content_family,
     register: "collective",
     plan: { sign: fixture.astrology_context.sign, house: null },
@@ -1362,6 +1377,7 @@ for (const fixture of gold) {
 }
 const negativeCapricorn = negatives.find((fixture) => fixture.fixture_id === "neg-capricorn-career");
 const negativeCapricornLint = validateCopy(negativeCapricorn.bad_text, {
+  validationProfile: "sky-placement",
   family: negativeCapricorn.content_family,
   register: "collective",
   plan: { sign: "capricorn", house: null }

@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/schemas/friends-transit-scene-licenses-v3.schema.json",
+  "title": "Friends transit source-supported house-license proposals v3",
+  "type": "object",
+  "required": ["schemaVersion", "surface", "policy", "authoritySources", "closedVocabulary", "ambiguityGuards", "licenses"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 3 },
+    "surface": { "const": "friends-transit" },
+    "policy": {
+      "type": "object",
+      "required": ["sourceVocabularyStatus", "sourceRowApprovalTransfers", "keywordMatchGrantsPermission", "causalStructureRequired", "unknownConcreteTerm"],
+      "properties": {
+        "sourceVocabularyStatus": { "const": "matrix-supported/source-supported-pending-owner-approval" },
+        "sourceRowApprovalTransfers": { "const": false },
+        "keywordMatchGrantsPermission": { "const": false },
+        "causalStructureRequired": { "const": true },
+        "unknownConcreteTerm": { "const": "block" }
+      }
+    },
+    "authoritySources": { "type": "array", "minItems": 1 },
+    "closedVocabulary": {
+      "type": "object",
+      "required": ["domains", "manifestations", "sceneNouns", "behaviors"],
+      "additionalProperties": false,
+      "properties": {
+        "domains": { "type": "object" },
+        "manifestations": { "type": "object" },
+        "sceneNouns": { "type": "object" },
+        "behaviors": { "type": "object" }
+      }
+    },
+    "ambiguityGuards": { "type": "array", "minItems": 8 },
+    "licenses": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["licenseId", "scope", "causalStructure", "sourceApprovalSummary", "sourceIds", "evidence", "normalizedMeaning", "provenance", "approval"],
+        "properties": {
+          "licenseId": { "type": "string", "pattern": "^scene-license/friends-transit/transit-house/(?:[1-9]|1[0-2])/v3$" },
+          "causalStructure": {
+            "type": "object",
+            "required": ["requiredMeaning", "keywordMatchSufficient"],
+            "properties": {
+              "requiredMeaning": { "type": "string", "minLength": 1 },
+              "keywordMatchSufficient": { "const": false }
+            }
+          },
+          "normalizedMeaning": {
+            "type": "object",
+            "required": ["domains", "manifestations", "sceneNouns", "behaviors"],
+            "additionalProperties": false
+          },
+          "approval": {
+            "type": "object",
+            "required": ["status", "inheritsSourceApproval", "ownerApproved", "writerEligible", "renderEligible"],
+            "properties": {
+              "status": { "const": "review_needed" },
+              "inheritsSourceApproval": { "const": false },
+              "ownerApproved": { "const": false },
+              "writerEligible": { "const": false },
+              "renderEligible": { "const": false }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.venus.opposition.chiron",
+  "canonicalId": "sky-aspect/chiron/venus/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "venus",
+  "aspect": "opposition",
+  "humanMoment": "The one who adores and the one who cannot believe it face each other again.",
+  "developmentDetail": "One asks for reassurance, the other gives it, and the asker disqualifies it within the hour, leaving both of them tired without either being wrong.",
+  "planetaryDynamic": "With Venus opposite Chiron, one person holds out the love while the other holds the history that keeps voiding the receipt.",
+  "aspectMechanic": "They are sharing an exhaustion that used to be one person's private doubt.",
+  "conditionalConsequence": "The cycle may pause on its own, but it tends to end only when both people treat the disbelief as history to be handled rather than as the partner's failure.",
+  "body": "The one who adores and the one who cannot believe it face each other again.\n\nOne asks for reassurance, the other gives it, and the asker disqualifies it within the hour, leaving both of them tired without either being wrong.\n\nWith Venus opposite Chiron, one person holds out the love while the other holds the history that keeps voiding the receipt.\n\nThey are sharing an exhaustion that used to be one person's private doubt.\n\nThe cycle may pause on its own, but it tends to end only when both people treat the disbelief as history to be handled rather than as the partner's failure.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.venus.opposition.chiron",
+    "sourceHeading": "Venus opposition Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.neptune.opposition.north-node",
+  "canonicalId": "sky-aspect/neptune/north_node/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "neptune",
+  "bodyB": "north_node",
+  "aspect": "opposition",
+  "humanMoment": "People are watching the past get its cinematography back.",
+  "developmentDetail": "Someone remembers the old job without the Sundays, the old love without the arguments, the old city without the reasons for leaving, all of it color-corrected.",
+  "planetaryDynamic": "With Neptune opposite the North Node, people see the familiar side of life lit in golden hour while the new direction sits in unedited daylight, so the most beautiful thing anyone can see is a memory with the difficult scenes deleted.",
+  "aspectMechanic": "Everyone in the montage looks happier than they were.",
+  "conditionalConsequence": "The montage may be lovely, but people who make decisions against edited footage tend to appeal them later, once the deleted scenes resurface.",
+  "body": "People are watching the past get its cinematography back.\n\nSomeone remembers the old job without the Sundays, the old love without the arguments, the old city without the reasons for leaving, all of it color-corrected.\n\nWith Neptune opposite the North Node, people see the familiar side of life lit in golden hour while the new direction sits in unedited daylight, so the most beautiful thing anyone can see is a memory with the difficult scenes deleted.\n\nEveryone in the montage looks happier than they were.\n\nThe montage may be lovely, but people who make decisions against edited footage tend to appeal them later, once the deleted scenes resurface.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.neptune.opposition.north-node",
+    "sourceHeading": "Neptune opposition North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.conjunction.north-node",
+  "canonicalId": "sky-aspect/mars/north_node/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "mars",
+  "bodyB": "north_node",
+  "aspect": "conjunction",
+  "humanMoment": "The drive finally has an address, and people can feel it.",
+  "developmentDetail": "Someone whose restless energy used to spray across errands and arguments organizes it around one buildable thing, and everyone around them can see the difference in output within days.",
+  "planetaryDynamic": "With Mars conjunct the North Node, people find their effort and their direction sharing a to-do list, so the work they most want to do and the work the chapter needs done briefly coincide, and the old battles lose their audience.",
+  "aspectMechanic": "Someone finally knows where to put the push.",
+  "conditionalConsequence": "The momentum may not last forever, but people accumulate differently when they work on the direction than when they work on the backlog, and this week they get to watch the difference.",
+  "body": "The drive finally has an address, and people can feel it.\n\nSomeone whose restless energy used to spray across errands and arguments organizes it around one buildable thing, and everyone around them can see the difference in output within days.\n\nWith Mars conjunct the North Node, people find their effort and their direction sharing a to-do list, so the work they most want to do and the work the chapter needs done briefly coincide, and the old battles lose their audience.\n\nSomeone finally knows where to put the push.\n\nThe momentum may not last forever, but people accumulate differently when they work on the direction than when they work on the backlog, and this week they get to watch the difference.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.mars.conjunction.north-node",
+    "sourceHeading": "Mars conjunction North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

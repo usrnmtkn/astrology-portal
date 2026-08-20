@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.saturn.square.chiron",
+  "canonicalId": "sky-aspect/chiron/saturn/square",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "saturn",
+  "aspect": "square",
+  "humanMoment": "The feedback is accurate, and it still lands on someone like an old sentence.",
+  "developmentDetail": "The review says what reviews say, but the recipient hears the original authority reading it aloud, and spends the meeting answering two documents at once.",
+  "planetaryDynamic": "With Saturn square Chiron, people receive a current assessment while replaying the first assessor, and the two versions grind against each other.",
+  "aspectMechanic": "The useful correction arrives with an echo attached.",
+  "conditionalConsequence": "The critique may be usable once someone subtracts the echo, and for the person holding the review, subtracting the echo tends to be the actual assignment.",
+  "body": "The feedback is accurate, and it still lands on someone like an old sentence.\n\nThe review says what reviews say, but the recipient hears the original authority reading it aloud, and spends the meeting answering two documents at once.\n\nWith Saturn square Chiron, people receive a current assessment while replaying the first assessor, and the two versions grind against each other.\n\nThe useful correction arrives with an echo attached.\n\nThe critique may be usable once someone subtracts the echo, and for the person holding the review, subtracting the echo tends to be the actual assignment.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.saturn.square.chiron",
+    "sourceHeading": "Saturn square Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

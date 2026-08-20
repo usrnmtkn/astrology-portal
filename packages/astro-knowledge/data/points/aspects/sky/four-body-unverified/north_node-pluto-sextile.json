@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.sextile.north-node",
+  "canonicalId": "sky-aspect/north_node/pluto/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "pluto",
+  "aspect": "sextile",
+  "humanMoment": "People are being invited to surface a capability they buried.",
+  "developmentDetail": "Someone gets offered the role that requires the strength everyone pretended they did not have, the decisiveness, the authority, the capacity to end things, and the invitation makes using it legitimate.",
+  "planetaryDynamic": "With Pluto sextile the North Node, people can bring the put-away power up to serve the new direction, and the old habits cooperate with the reclamation, though someone still has to claim it out loud.",
+  "aspectMechanic": "Somebody has to say yes where others can hear it.",
+  "conditionalConsequence": "The invitation may expire politely, and people who surface power by invitation tend to integrate it better than people who have to surface it by crisis.",
+  "body": "People are being invited to surface a capability they buried.\n\nSomeone gets offered the role that requires the strength everyone pretended they did not have, the decisiveness, the authority, the capacity to end things, and the invitation makes using it legitimate.\n\nWith Pluto sextile the North Node, people can bring the put-away power up to serve the new direction, and the old habits cooperate with the reclamation, though someone still has to claim it out loud.\n\nSomebody has to say yes where others can hear it.\n\nThe invitation may expire politely, and people who surface power by invitation tend to integrate it better than people who have to surface it by crisis.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.pluto.sextile.north-node",
+    "sourceHeading": "Pluto sextile North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.trine.north-node",
+  "canonicalId": "sky-aspect/moon/north_node/trine",
+  "kind": "sky-aspect",
+  "bodyA": "moon",
+  "bodyB": "north_node",
+  "aspect": "trine",
+  "humanMoment": "The new life is developing its own gravity without anyone forcing it.",
+  "developmentDetail": "Someone notices the check-in texts now come from the new people, the calendar fills from the new commitments, and the week's emotional center has quietly moved addresses.",
+  "planetaryDynamic": "With the Moon trine the North Node, people settle wherever they are actually cared for, and care has started happening along the new direction while the old crowd offers support instead of protest.",
+  "aspectMechanic": "The old crowd is waving them on rather than calling them back.",
+  "conditionalConsequence": "The move may complete without a single announcement, and one ordinary evening people simply notice it is already true.",
+  "body": "The new life is developing its own gravity without anyone forcing it.\n\nSomeone notices the check-in texts now come from the new people, the calendar fills from the new commitments, and the week's emotional center has quietly moved addresses.\n\nWith the Moon trine the North Node, people settle wherever they are actually cared for, and care has started happening along the new direction while the old crowd offers support instead of protest.\n\nThe old crowd is waving them on rather than calling them back.\n\nThe move may complete without a single announcement, and one ordinary evening people simply notice it is already true.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.moon.trine.north-node",
+    "sourceHeading": "Moon trine North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

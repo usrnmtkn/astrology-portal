@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.neptune.sextile.chiron",
+  "canonicalId": "sky-aspect/chiron/neptune/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "neptune",
+  "aspect": "sextile",
+  "humanMoment": "Helping someone with the familiar pain settles both people.",
+  "developmentDetail": "Someone takes the volunteer shift or the call with the friend in the old tunnel, and the service gives the ache a use without demanding a cure first.",
+  "planetaryDynamic": "With Neptune sextile Chiron, people carry the compassion and the firsthand knowledge that makes it useful in the same pair of hands.",
+  "aspectMechanic": "Somebody still has to sign up for the shift.",
+  "conditionalConsequence": "The opportunity may pass quietly, but pain with a job tends to age better than pain with a screen, and the people who give theirs one can tell the difference.",
+  "body": "Helping someone with the familiar pain settles both people.\n\nSomeone takes the volunteer shift or the call with the friend in the old tunnel, and the service gives the ache a use without demanding a cure first.\n\nWith Neptune sextile Chiron, people carry the compassion and the firsthand knowledge that makes it useful in the same pair of hands.\n\nSomebody still has to sign up for the shift.\n\nThe opportunity may pass quietly, but pain with a job tends to age better than pain with a screen, and the people who give theirs one can tell the difference.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.neptune.sextile.chiron",
+    "sourceHeading": "Neptune sextile Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

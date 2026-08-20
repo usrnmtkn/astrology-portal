@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.moon.square.north-node",
+  "canonicalId": "sky-aspect/moon/north_node/square",
+  "kind": "sky-aspect",
+  "bodyA": "moon",
+  "bodyB": "north_node",
+  "aspect": "square",
+  "humanMoment": "A hard week is sending people straight back to the old habit.",
+  "developmentDetail": "Someone under stress calls the person from the finished chapter, reruns the outgrown routine, reaches for the coping that soothes by rewinding, while the new practice sits unused exactly when they needed it.",
+  "planetaryDynamic": "With the Moon square the North Node, people get squeezed from both ends at once: they have outgrown the old comfort and never built the new one, and learning to be soothed in new territory is the step they keep skipping.",
+  "aspectMechanic": "Nobody ever installed comfort in the new place.",
+  "conditionalConsequence": "The regression may be forgivable and even useful once, but uncomfortable and wrong are different readings, and people who can tell them apart give the new territory a fair hearing.",
+  "body": "A hard week is sending people straight back to the old habit.\n\nSomeone under stress calls the person from the finished chapter, reruns the outgrown routine, reaches for the coping that soothes by rewinding, while the new practice sits unused exactly when they needed it.\n\nWith the Moon square the North Node, people get squeezed from both ends at once: they have outgrown the old comfort and never built the new one, and learning to be soothed in new territory is the step they keep skipping.\n\nNobody ever installed comfort in the new place.\n\nThe regression may be forgivable and even useful once, but uncomfortable and wrong are different readings, and people who can tell them apart give the new territory a fair hearing.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.moon.square.north-node",
+    "sourceHeading": "Moon square North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

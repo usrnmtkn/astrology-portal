@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.pluto.trine.north-node",
+  "canonicalId": "sky-aspect/north_node/pluto/trine",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "pluto",
+  "aspect": "trine",
+  "humanMoment": "People are reclaiming authority because the path requires it.",
+  "developmentDetail": "Someone who deferred for years starts making the calls the direction needs made, and the new decisiveness reads as natural because it finally has a purpose.",
+  "planetaryDynamic": "With Pluto trine the North Node, people find their deep reserves and the new construction backing each other up, so the power surfaces without a crisis demanding it.",
+  "aspectMechanic": "Someone is making the calls, and making them well.",
+  "conditionalConsequence": "The change may unsettle people who preferred the deferential version, and the direction tends to settle the argument by needing exactly what the new version provides.",
+  "body": "People are reclaiming authority because the path requires it.\n\nSomeone who deferred for years starts making the calls the direction needs made, and the new decisiveness reads as natural because it finally has a purpose.\n\nWith Pluto trine the North Node, people find their deep reserves and the new construction backing each other up, so the power surfaces without a crisis demanding it.\n\nSomeone is making the calls, and making them well.\n\nThe change may unsettle people who preferred the deferential version, and the direction tends to settle the argument by needing exactly what the new version provides.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.pluto.trine.north-node",
+    "sourceHeading": "Pluto trine North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

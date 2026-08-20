@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.jupiter.sextile.lilith",
+  "canonicalId": "sky-aspect/jupiter/lilith/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "jupiter",
+  "bodyB": "lilith",
+  "aspect": "sextile",
+  "humanMoment": "Someone finally has the honest conversation about wanting more, and it goes better than expected.",
+  "developmentDetail": "They request the raise, confess the ambition, name the bigger life, and a mentor or ally answers with a why not.",
+  "planetaryDynamic": "With Jupiter sextile Lilith, the people with sponsorship and reach meet the want that never had a sponsor.",
+  "aspectMechanic": "Somebody still has to make the introduction while both are in the room.",
+  "conditionalConsequence": "The moment may pass unused, but a want that people sponsor stops being a transgression and starts being a plan.",
+  "body": "Someone finally has the honest conversation about wanting more, and it goes better than expected.\n\nThey request the raise, confess the ambition, name the bigger life, and a mentor or ally answers with a why not.\n\nWith Jupiter sextile Lilith, the people with sponsorship and reach meet the want that never had a sponsor.\n\nSomebody still has to make the introduction while both are in the room.\n\nThe moment may pass unused, but a want that people sponsor stops being a transgression and starts being a plan.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.jupiter.sextile.lilith",
+    "sourceHeading": "Jupiter sextile Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

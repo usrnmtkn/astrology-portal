@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.opposition.lilith",
+  "canonicalId": "sky-aspect/lilith/sun/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "sun",
+  "aspect": "opposition",
+  "humanMoment": "The official spokesperson and the person who says the quiet part end up on the same panel.",
+  "developmentDetail": "One defends the institution's account, the other keeps naming what the account leaves out, and the audience starts keeping score.",
+  "planetaryDynamic": "With the Sun opposite Lilith, one speaker holds the authorized story while the other holds the part that was cut to make it authorized.",
+  "aspectMechanic": "What most people carry as a private tension gets argued out loud by two speakers with microphones.",
+  "conditionalConsequence": "The debate may never settle, but afterward anyone staying neutral reads as choosing the official side.",
+  "body": "The official spokesperson and the person who says the quiet part end up on the same panel.\n\nOne defends the institution's account, the other keeps naming what the account leaves out, and the audience starts keeping score.\n\nWith the Sun opposite Lilith, one speaker holds the authorized story while the other holds the part that was cut to make it authorized.\n\nWhat most people carry as a private tension gets argued out loud by two speakers with microphones.\n\nThe debate may never settle, but afterward anyone staying neutral reads as choosing the official side.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.sun.opposition.lilith",
+    "sourceHeading": "Sun opposition Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

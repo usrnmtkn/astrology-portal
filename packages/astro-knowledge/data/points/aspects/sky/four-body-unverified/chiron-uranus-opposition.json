@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.uranus.opposition.chiron",
+  "canonicalId": "sky-aspect/chiron/uranus/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "uranus",
+  "aspect": "opposition",
+  "humanMoment": "The one demanding change and the one guarding the wound end up opposite each other.",
+  "developmentDetail": "One says move fast, the other says this is load-bearing, and underneath the slogans they are really arguing about which pain is preferable.",
+  "planetaryDynamic": "With Uranus opposite Chiron, one person speaks for the rupture while the other speaks for what the rupture will land on.",
+  "aspectMechanic": "Neither has said which pain they are choosing.",
+  "conditionalConsequence": "Either speed may be survivable, but the choice tends to go better when both people name their pains out loud instead of trading slogans across the table.",
+  "body": "The one demanding change and the one guarding the wound end up opposite each other.\n\nOne says move fast, the other says this is load-bearing, and underneath the slogans they are really arguing about which pain is preferable.\n\nWith Uranus opposite Chiron, one person speaks for the rupture while the other speaks for what the rupture will land on.\n\nNeither has said which pain they are choosing.\n\nEither speed may be survivable, but the choice tends to go better when both people name their pains out loud instead of trading slogans across the table.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.uranus.opposition.chiron",
+    "sourceHeading": "Uranus opposition Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

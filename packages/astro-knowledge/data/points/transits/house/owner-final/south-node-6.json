@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "south-node-6",
+  "canonicalId": "transit-house/south_node/6",
+  "kind": "house",
+  "transiting": "south-node",
+  "house": 6,
+  "headline": "Useful until exhausted",
+  "body": "The South Node in your 6th house makes overworking look normal because you already know how to be helpful. You might keep tweaking your schedule, taking on extra tasks, or solving small problems just to keep your days packed. Competence keeps chaos at bay, but it can also keep you too busy to notice what the work costs your body and your personal life.\n\nThe 12th house across the chart calls for rest, solitude, and time to process feelings without needing a productive result. Your work may be important, but check if staying busy has become your main way of avoiding quiet moments.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "South Node — 6H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

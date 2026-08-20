@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.conjunction.chiron",
+  "canonicalId": "sky-aspect/chiron/mars/conjunction",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "mars",
+  "aspect": "conjunction",
+  "humanMoment": "Someone states the boundary and immediately apologizes for it.",
+  "developmentDetail": "They wrap the no in three cushions, watch the request come back anyway, and blame the no instead of the wrapping.",
+  "planetaryDynamic": "With Mars conjunct Chiron, people want to act and claim space while carrying the old lesson that force was never allowed.",
+  "aspectMechanic": "Every push they make goes out pre-softened.",
+  "conditionalConsequence": "The apology may be pure reflex, but the person who lets one no stand unwrapped tends to teach the room faster, and to pay less than the eventual explosion would have cost.",
+  "body": "Someone states the boundary and immediately apologizes for it.\n\nThey wrap the no in three cushions, watch the request come back anyway, and blame the no instead of the wrapping.\n\nWith Mars conjunct Chiron, people want to act and claim space while carrying the old lesson that force was never allowed.\n\nEvery push they make goes out pre-softened.\n\nThe apology may be pure reflex, but the person who lets one no stand unwrapped tends to teach the room faster, and to pay less than the eventual explosion would have cost.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.mars.conjunction.chiron",
+    "sourceHeading": "Mars conjunction Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

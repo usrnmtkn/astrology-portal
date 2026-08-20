@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.trine.chiron",
+  "canonicalId": "sky-aspect/chiron/sun/trine",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "sun",
+  "aspect": "trine",
+  "humanMoment": "People are telling the story of their worst year and finding out it counts as a credential.",
+  "developmentDetail": "Someone describes the bad stretch without flinching, and a listener earlier in the same tunnel sits up, because the teller has clearly walked out the far end.",
+  "planetaryDynamic": "With the Sun trine Chiron, people get the platform and the hard material that earns it in the same week, and the telling costs less than it used to.",
+  "aspectMechanic": "The listener needed the story more than the teller needed to protect it.",
+  "conditionalConsequence": "The telling may cost almost nothing today, and that ease is the opening: a story people can share this cheaply tends to stop being an injury and start being equipment.",
+  "body": "People are telling the story of their worst year and finding out it counts as a credential.\n\nSomeone describes the bad stretch without flinching, and a listener earlier in the same tunnel sits up, because the teller has clearly walked out the far end.\n\nWith the Sun trine Chiron, people get the platform and the hard material that earns it in the same week, and the telling costs less than it used to.\n\nThe listener needed the story more than the teller needed to protect it.\n\nThe telling may cost almost nothing today, and that ease is the opening: a story people can share this cheaply tends to stop being an injury and start being equipment.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.sun.trine.chiron",
+    "sourceHeading": "Sun trine Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

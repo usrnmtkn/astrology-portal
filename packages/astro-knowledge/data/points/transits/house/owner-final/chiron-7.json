@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "chiron-7",
+  "canonicalId": "transit-house/chiron/7",
+  "kind": "house",
+  "transiting": "chiron",
+  "house": 7,
+  "headline": "What closeness brings back",
+  "body": "Chiron in your 7th house triggers old fears of rejection, dependency, or feeling unlovable whenever you get close to someone. You might catch yourself running for the exit first, picking emotionally unavailable partners, or treating a simple disagreement like a past relationship disaster. The person in front of you is not automatically going to hurt you, even if your body reacts like they will.\n\nThis transit lets you name the anxieties you usually hide behind emotional distance. That does not mean staying in bad situations or trusting blindly, but it does mean catching yourself when old fear calls the shots before a current relationship even has a chance.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "Chiron — 7H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

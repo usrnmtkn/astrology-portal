@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.mars.opposition.chiron",
+  "canonicalId": "sky-aspect/chiron/mars/opposition",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "mars",
+  "aspect": "opposition",
+  "humanMoment": "The pushy one and the deferential one keep casting each other.",
+  "developmentDetail": "One escalates because the other yields, the other yields because the first escalates, and both are managing the same old lesson from opposite ends.",
+  "planetaryDynamic": "With Mars opposite Chiron, one person plays the force that was never checked while the other plays the check that was never allowed force.",
+  "aspectMechanic": "Either one of them could break the script.",
+  "conditionalConsequence": "The roles may feel permanent, but if either party breaks script once, the push withheld or the no delivered, the scene tends to get rewritten for both of them.",
+  "body": "The pushy one and the deferential one keep casting each other.\n\nOne escalates because the other yields, the other yields because the first escalates, and both are managing the same old lesson from opposite ends.\n\nWith Mars opposite Chiron, one person plays the force that was never checked while the other plays the check that was never allowed force.\n\nEither one of them could break the script.\n\nThe roles may feel permanent, but if either party breaks script once, the push withheld or the no delivered, the scene tends to get rewritten for both of them.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.mars.opposition.chiron",
+    "sourceHeading": "Mars opposition Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

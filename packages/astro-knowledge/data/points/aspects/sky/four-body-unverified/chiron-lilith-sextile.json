@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.chiron.sextile.lilith",
+  "canonicalId": "sky-aspect/chiron/lilith/sextile",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "lilith",
+  "aspect": "sextile",
+  "humanMoment": "Someone admits the forbidden want, and a repair that had stalled comes unstuck.",
+  "developmentDetail": "The plateau breaks when they name what they actually want, not what the recovery plan was supposed to want for them.",
+  "planetaryDynamic": "With Chiron sextile Lilith, the people supervising the repair finally hear from the appetite the repair was politely ignoring.",
+  "aspectMechanic": "The route between the two is open, but somebody has to make the admission out loud to use it.",
+  "conditionalConsequence": "The admission may feel like a detour, but people who include the appetite build repair that holds, and people who exclude it quietly relapse.",
+  "body": "Someone admits the forbidden want, and a repair that had stalled comes unstuck.\n\nThe plateau breaks when they name what they actually want, not what the recovery plan was supposed to want for them.\n\nWith Chiron sextile Lilith, the people supervising the repair finally hear from the appetite the repair was politely ignoring.\n\nThe route between the two is open, but somebody has to make the admission out loud to use it.\n\nThe admission may feel like a detour, but people who include the appetite build repair that holds, and people who exclude it quietly relapse.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.chiron.sextile.lilith",
+    "sourceHeading": "Chiron sextile Lilith",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

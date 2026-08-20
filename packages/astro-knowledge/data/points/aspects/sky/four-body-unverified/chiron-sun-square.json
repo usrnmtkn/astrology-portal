@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.square.chiron",
+  "canonicalId": "sky-aspect/chiron/sun/square",
+  "kind": "sky-aspect",
+  "bodyA": "chiron",
+  "bodyB": "sun",
+  "aspect": "square",
+  "humanMoment": "Compliments are landing badly this week.",
+  "developmentDetail": "Someone gets praised for good work and cannot take it in: they brush it off, change the subject, and go work twice as hard, as if the kind words were an advance they now have to pay back.",
+  "planetaryDynamic": "With the Sun square Chiron, people are being seen and recognized in the exact place where, once, praise only came with conditions.",
+  "aspectMechanic": "The old lesson says approval has a catch.",
+  "conditionalConsequence": "If the discomfort feels bigger than the moment, that is the old lesson talking, not the current room, and the people who can tell the difference get to keep the compliment.",
+  "body": "Compliments are landing badly this week.\n\nSomeone gets praised for good work and cannot take it in: they brush it off, change the subject, and go work twice as hard, as if the kind words were an advance they now have to pay back.\n\nWith the Sun square Chiron, people are being seen and recognized in the exact place where, once, praise only came with conditions.\n\nThe old lesson says approval has a catch.\n\nIf the discomfort feels bigger than the moment, that is the old lesson talking, not the current room, and the people who can tell the difference get to keep the compliment.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Chiron-Exact-Aspects-V1.md",
+    "sourceSha256": "61326495ccdca14dbef020b22578ea9f0987a9ea8320ce850dd4eabfdbe47250",
+    "sourceKey": "sky.sun.square.chiron",
+    "sourceHeading": "Sun square Chiron",
+    "sourceSet": "CHIRON_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

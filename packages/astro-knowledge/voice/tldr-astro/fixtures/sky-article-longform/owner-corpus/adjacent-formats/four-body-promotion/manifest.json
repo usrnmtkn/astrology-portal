@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "status": "indexed-fail-closed-no-surface-permission",
+  "sourceOfTruth": "The four Markdown files are authoritative; this manifest is generated.",
+  "policy": "Voice evidence only, never astrological fact or serving copy. REVIEW in a filename does not grant approval.",
+  "expectedEntries": 4,
+  "entries": [
+    {
+      "filename": "TLDR-Article-Edition-Chiron-Aries-REVIEW.md",
+      "subjects": [
+        "chiron"
+      ],
+      "canonicalIds": [
+        "placement-sign/chiron/aries"
+      ],
+      "format": "article-edition",
+      "byteCount": 11963,
+      "wordCount": 1921,
+      "sourceSha256": "0b1a751fa6b15dca1d0c72cfef646633165e1adfa3eaae763a1738808317f02f",
+      "authorityClass": "voice-exemplar",
+      "governanceState": "needs-owner-decision",
+      "surfacePermission": [
+        "doctrine-only"
+      ],
+      "usage": "register-example",
+      "retrievable": false,
+      "writerEligible": false,
+      "renderEligible": false,
+      "approvalMarker": "REVIEW_FILENAME_AUDIT_MARKER_ONLY"
+    },
+    {
+      "filename": "TLDR-Article-Nodes-Aquarius-Leo-REVIEW.md",
+      "subjects": [
+        "north_node",
+        "south_node"
+      ],
+      "canonicalIds": [
+        "placement-sign/north_node/aquarius",
+        "placement-sign/south_node/leo"
+      ],
+      "format": "article-edition",
+      "byteCount": 16794,
+      "wordCount": 2744,
+      "sourceSha256": "fdb86f70814948f84d1e4a80ffec4e105830fa8a2eef2b9f85af3cca9f1c400a",
+      "authorityClass": "voice-exemplar",
+      "governanceState": "needs-owner-decision",
+      "surfacePermission": [
+        "doctrine-only"
+      ],
+      "usage": "register-example",
+      "retrievable": false,
+      "writerEligible": false,
+      "renderEligible": false,
+      "approvalMarker": "REVIEW_FILENAME_AUDIT_MARKER_ONLY"
+    },
+    {
+      "filename": "TLDR-Article-Template-Chiron-Ingress-REVIEW.md",
+      "subjects": [
+        "chiron"
+      ],
+      "canonicalIds": [],
+      "format": "article-template",
+      "byteCount": 4461,
+      "wordCount": 697,
+      "sourceSha256": "b571b0f2261a6b267e0ebcd55f7de860149dd27832fe99116e7cbb5b45e1fd93",
+      "authorityClass": "voice-exemplar",
+      "governanceState": "needs-owner-decision",
+      "surfacePermission": [
+        "doctrine-only"
+      ],
+      "usage": "register-example",
+      "retrievable": false,
+      "writerEligible": false,
+      "renderEligible": false,
+      "approvalMarker": "REVIEW_FILENAME_AUDIT_MARKER_ONLY"
+    },
+    {
+      "filename": "TLDR-Article-Template-Nodes-REVIEW.md",
+      "subjects": [
+        "north_node",
+        "south_node"
+      ],
+      "canonicalIds": [],
+      "format": "article-template",
+      "byteCount": 9124,
+      "wordCount": 1361,
+      "sourceSha256": "98c5dd23a4a03ab10af0f614c8df9a28b45c6f38c3f47afac299fb33026eeea5",
+      "authorityClass": "voice-exemplar",
+      "governanceState": "needs-owner-decision",
+      "surfacePermission": [
+        "doctrine-only"
+      ],
+      "usage": "register-example",
+      "retrievable": false,
+      "writerEligible": false,
+      "renderEligible": false,
+      "approvalMarker": "REVIEW_FILENAME_AUDIT_MARKER_ONLY"
+    }
+  ]
+}

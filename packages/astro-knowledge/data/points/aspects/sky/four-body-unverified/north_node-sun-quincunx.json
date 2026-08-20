@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.sun.quincunx.north-node",
+  "canonicalId": "sky-aspect/north_node/sun/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "north_node",
+  "bodyB": "sun",
+  "aspect": "quincunx",
+  "humanMoment": "People keep needing two different versions of themselves this week.",
+  "developmentDetail": "Someone shows up polished in the established rooms and finds the same polish reads wrong in the new ones, so every venue change comes with a costume change nobody budgeted for.",
+  "planetaryDynamic": "With the Sun quincunx the North Node, people keep adjusting who they appear to be, because the self that works on the familiar route and the self the new direction keeps requesting refuse to merge on command.",
+  "aspectMechanic": "Each room gets its fit by making the other room a misfit.",
+  "conditionalConsequence": "The double wardrobe may hold for a while, but people who keep alternating costumes tend to end up building one integrated self, and that is construction, not a quick change.",
+  "body": "People keep needing two different versions of themselves this week.\n\nSomeone shows up polished in the established rooms and finds the same polish reads wrong in the new ones, so every venue change comes with a costume change nobody budgeted for.\n\nWith the Sun quincunx the North Node, people keep adjusting who they appear to be, because the self that works on the familiar route and the self the new direction keeps requesting refuse to merge on command.\n\nEach room gets its fit by making the other room a misfit.\n\nThe double wardrobe may hold for a while, but people who keep alternating costumes tend to end up building one integrated self, and that is construction, not a quick change.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Node-Axis-Exact-Aspects-V1.md",
+    "sourceSha256": "f31297df7561f960131d078ccbe17e6805a87443d7bc31a282112f92ab0d560d",
+    "sourceKey": "sky.sun.quincunx.north-node",
+    "sourceHeading": "Sun quincunx North Node",
+    "sourceSet": "NODE_AXIS_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}

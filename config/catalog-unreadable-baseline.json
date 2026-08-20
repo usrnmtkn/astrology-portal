@@ -1,0 +1,4149 @@
+{
+  "schemaVersion": 1,
+  "note": "Objects that yield no readable prose. Some are correct (citation indexes, licences); some are defects waiting to be found. Shrink-only: an object that becomes readable must be removed, and a newly unreadable object fails the build.",
+  "generatedBy": "scripts/test-catalog-reachability.mjs --write-baseline",
+  "count": 690,
+  "entries": [
+    {
+      "id": "composite-aspect/jupiter/mars/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/jupiter/mercury/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/jupiter/moon/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/jupiter/neptune/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/jupiter/pluto/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/jupiter/saturn/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/jupiter/saturn/sextile",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/jupiter/sun/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/jupiter/uranus/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/jupiter/venus/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mars/mercury/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mars/neptune/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mars/sun/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mars/uranus/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mercury/moon/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mercury/neptune/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mercury/pluto/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mercury/saturn/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mercury/sun/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mercury/sun/sextile",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mercury/sun/square",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mercury/sun/trine",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mercury/uranus/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mercury/venus/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mercury/venus/square",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/mercury/venus/trine",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/moon/neptune/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/moon/sun/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/moon/uranus/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/neptune/saturn/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/neptune/sun/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/neptune/venus/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/pluto/sun/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/saturn/sun/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/saturn/uranus/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/sun/uranus/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/sun/venus/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/sun/venus/sextile",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/sun/venus/square",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/sun/venus/trine",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "composite-aspect/uranus/venus/opposition",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mars_1",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mars_10",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mars_11",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mars_12",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mars_2",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mars_3",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mars_4",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mars_5",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mars_6",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mars_7",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mars_8",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mars_9",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mercury_1",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mercury_10",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mercury_11",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mercury_12",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mercury_2",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mercury_3",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mercury_4",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mercury_5",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mercury_6",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mercury_7",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mercury_8",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_mercury_9",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_moon_1",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_moon_10",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_moon_11",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_moon_12",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_moon_2",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_moon_3",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_moon_4",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_moon_5",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_moon_6",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_moon_7",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_moon_8",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_moon_9",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_sun_1",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_sun_10",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_sun_11",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_sun_12",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_sun_2",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_sun_3",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_sun_4",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_sun_5",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_sun_6",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_sun_7",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_sun_8",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_sun_9",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_venus_1",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_venus_10",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_venus_11",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_venus_12",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_venus_2",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_venus_3",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_venus_4",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_venus_5",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_venus_6",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_venus_7",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_venus_8",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_horoscope_venus_9",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_intercepted_sign_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_intercepted_sign_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_intercepted_sign_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_intercepted_sign_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_intercepted_sign_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_intercepted_sign_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_intercepted_sign_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_intercepted_sign_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_intercepted_sign_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_intercepted_sign_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_intercepted_sign_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_intercepted_sign_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_full_moon_taurus_aquarius_rising",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_full_moon_taurus_capricorn_rising",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_full_moon_taurus_leo_rising",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_full_moon_taurus_libra_rising",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_full_moon_taurus_pisces_rising",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_full_moon_taurus_sagittarius_rising",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_full_moon_taurus_scorpio_rising",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_full_moon_taurus_virgo_rising",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_new_moon_cancer_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_new_moon_cancer_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_new_moon_cancer_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_new_moon_cancer_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_new_moon_cancer_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_new_moon_cancer_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_new_moon_cancer_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_new_moon_cancer_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_new_moon_cancer_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_new_moon_cancer_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_new_moon_cancer_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_lunation_new_moon_cancer_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_natal_retrograde_chiron",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_natal_retrograde_jupiter",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_natal_retrograde_mars",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_natal_retrograde_mercury",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_natal_retrograde_neptune",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_natal_retrograde_pluto",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_natal_retrograde_saturn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_natal_retrograde_uranus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_natal_retrograde_venus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_jupiter_in_10th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_jupiter_in_11th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_jupiter_in_12th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_jupiter_in_1st_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_jupiter_in_2nd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_jupiter_in_3rd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_jupiter_in_4th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_jupiter_in_5th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_jupiter_in_6th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_jupiter_in_7th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_jupiter_in_8th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_jupiter_in_9th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mars_in_10th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mars_in_11th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mars_in_12th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mars_in_1st_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mars_in_2nd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mars_in_3rd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mars_in_4th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mars_in_5th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mars_in_6th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mars_in_7th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mars_in_8th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mars_in_9th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mercury_in_10th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mercury_in_11th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mercury_in_12th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mercury_in_1st_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mercury_in_2nd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mercury_in_3rd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mercury_in_4th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mercury_in_5th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mercury_in_6th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mercury_in_7th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mercury_in_8th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_mercury_in_9th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_moon_in_10th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_moon_in_11th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_moon_in_12th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_moon_in_1st_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_moon_in_2nd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_moon_in_3rd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_moon_in_4th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_moon_in_5th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_moon_in_6th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_moon_in_7th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_moon_in_8th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_moon_in_9th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_neptune_in_10th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_neptune_in_11th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_neptune_in_12th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_neptune_in_1st_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_neptune_in_2nd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_neptune_in_3rd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_neptune_in_4th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_neptune_in_5th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_neptune_in_6th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_neptune_in_7th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_neptune_in_8th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_neptune_in_9th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_pluto_in_10th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_pluto_in_11th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_pluto_in_12th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_pluto_in_1st_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_pluto_in_2nd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_pluto_in_3rd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_pluto_in_4th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_pluto_in_5th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_pluto_in_6th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_pluto_in_7th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_pluto_in_8th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_pluto_in_9th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_saturn_in_10th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_saturn_in_11th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_saturn_in_12th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_saturn_in_1st_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_saturn_in_2nd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_saturn_in_3rd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_saturn_in_4th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_saturn_in_5th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_saturn_in_6th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_saturn_in_7th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_saturn_in_8th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_saturn_in_9th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_sun_in_10th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_sun_in_11th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_sun_in_12th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_sun_in_1st_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_sun_in_2nd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_sun_in_3rd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_sun_in_4th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_sun_in_5th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_sun_in_6th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_sun_in_7th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_sun_in_8th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_sun_in_9th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_uranus_in_10th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_uranus_in_11th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_uranus_in_12th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_uranus_in_1st_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_uranus_in_2nd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_uranus_in_3rd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_uranus_in_4th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_uranus_in_5th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_uranus_in_6th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_uranus_in_7th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_uranus_in_8th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_uranus_in_9th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_venus_in_10th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_venus_in_11th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_venus_in_12th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_venus_in_1st_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_venus_in_2nd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_venus_in_3rd_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_venus_in_4th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_venus_in_5th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_venus_in_6th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_venus_in_7th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_venus_in_8th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_house_venus_in_9th_house",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_jupiter_in_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_jupiter_in_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_jupiter_in_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_jupiter_in_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_jupiter_in_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_jupiter_in_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_jupiter_in_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_jupiter_in_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_jupiter_in_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_jupiter_in_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_jupiter_in_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_jupiter_in_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mars_in_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mars_in_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mars_in_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mars_in_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mars_in_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mars_in_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mars_in_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mars_in_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mars_in_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mars_in_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mars_in_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mars_in_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mercury_in_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mercury_in_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mercury_in_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mercury_in_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mercury_in_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mercury_in_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mercury_in_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mercury_in_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mercury_in_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mercury_in_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mercury_in_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_mercury_in_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_moon_in_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_moon_in_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_moon_in_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_moon_in_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_moon_in_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_moon_in_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_moon_in_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_moon_in_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_moon_in_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_moon_in_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_moon_in_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_moon_in_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_neptune_in_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_neptune_in_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_neptune_in_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_neptune_in_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_neptune_in_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_neptune_in_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_neptune_in_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_neptune_in_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_neptune_in_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_neptune_in_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_neptune_in_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_neptune_in_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_pluto_in_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_pluto_in_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_pluto_in_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_pluto_in_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_pluto_in_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_pluto_in_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_pluto_in_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_pluto_in_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_pluto_in_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_pluto_in_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_pluto_in_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_pluto_in_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_saturn_in_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_saturn_in_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_saturn_in_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_saturn_in_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_saturn_in_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_saturn_in_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_saturn_in_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_saturn_in_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_saturn_in_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_saturn_in_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_saturn_in_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_saturn_in_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_sun_in_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_sun_in_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_sun_in_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_sun_in_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_sun_in_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_sun_in_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_sun_in_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_sun_in_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_sun_in_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_sun_in_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_sun_in_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_sun_in_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_uranus_in_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_uranus_in_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_uranus_in_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_uranus_in_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_uranus_in_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_uranus_in_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_uranus_in_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_uranus_in_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_uranus_in_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_uranus_in_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_uranus_in_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_uranus_in_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_venus_in_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_venus_in_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_venus_in_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_venus_in_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_venus_in_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_venus_in_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_venus_in_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_venus_in_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_venus_in_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_venus_in_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_venus_in_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_planet_in_sign_venus_in_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_chiron_in_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_chiron_in_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_chiron_in_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_chiron_in_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_chiron_in_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_chiron_in_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_chiron_in_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_chiron_in_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_chiron_in_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_chiron_in_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_chiron_in_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_chiron_in_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_lilith_in_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_lilith_in_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_lilith_in_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_lilith_in_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_lilith_in_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_lilith_in_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_lilith_in_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_lilith_in_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_lilith_in_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_lilith_in_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_lilith_in_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_lilith_in_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_north_node_in_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_north_node_in_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_north_node_in_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_north_node_in_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_north_node_in_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_north_node_in_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_north_node_in_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_north_node_in_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_north_node_in_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_north_node_in_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_north_node_in_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_north_node_in_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_south_node_in_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_south_node_in_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_south_node_in_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_south_node_in_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_south_node_in_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_south_node_in_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_south_node_in_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_south_node_in_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_south_node_in_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_south_node_in_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_south_node_in_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_sky_point_south_node_in_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_house_1",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_house_10",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_house_11",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_house_12",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_house_2",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_house_3",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_house_4",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_house_5",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_house_6",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_house_7",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_house_8",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_house_9",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_sign_aquarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_sign_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_sign_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_sign_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_sign_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_sign_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_sign_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_sign_pisces",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_sign_sagittarius",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_sign_scorpio",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_sign_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/cc_stellium_in_sign_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/owner_reference_report_gaps_v1",
+      "stores": [
+        "astro-knowledge/data"
+      ]
+    },
+    {
+      "id": "doc/sky_card_chiron_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_full_moon_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_jupiter_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_jupiter_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_libra_season",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_lunar_eclipse_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_mars_enters_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_mars_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_mars_square_saturn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_mercury_retrograde_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_mercury_station_direct_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_moon_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_new_moon_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_saturn_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_saturn_station_retrograde_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_solar_eclipse_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_sun_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_sun_conjunct_mercury_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_uranus_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_venus_trine_jupiter",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_card_venus_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_chiron_taurus",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_full_moon_capricorn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_jupiter_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_jupiter_leo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_libra_season",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_lunar_eclipse_libra",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_mars_enters_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_mars_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_mars_square_saturn",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_mercury_retrograde_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_mercury_station_direct_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_moon_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_new_moon_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_saturn_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_saturn_station_retrograde_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_solar_eclipse_aries",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_sun_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_sun_conjunct_mercury_cancer",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_uranus_gemini",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_venus_trine_jupiter",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sky_detail_venus_virgo",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/sr_overlay_manifestation_sets_v1",
+      "stores": [
+        "astro-knowledge/data"
+      ]
+    },
+    {
+      "id": "doc/timing_event_sources_v9",
+      "stores": [
+        "astro-knowledge/data"
+      ]
+    },
+    {
+      "id": "doc/transit_mars_conjunction_ascendant_short",
+      "stores": [
+        "phrasebank"
+      ]
+    },
+    {
+      "id": "doc/year_ahead_manifestation_sets_v1",
+      "stores": [
+        "astro-knowledge/data"
+      ]
+    },
+    {
+      "id": "license/friends-transit/house/1",
+      "stores": [
+        "scene-licenses"
+      ]
+    },
+    {
+      "id": "license/friends-transit/house/10",
+      "stores": [
+        "scene-licenses"
+      ]
+    },
+    {
+      "id": "license/friends-transit/house/11",
+      "stores": [
+        "scene-licenses"
+      ]
+    },
+    {
+      "id": "license/friends-transit/house/12",
+      "stores": [
+        "scene-licenses"
+      ]
+    },
+    {
+      "id": "license/friends-transit/house/2",
+      "stores": [
+        "scene-licenses"
+      ]
+    },
+    {
+      "id": "license/friends-transit/house/3",
+      "stores": [
+        "scene-licenses"
+      ]
+    },
+    {
+      "id": "license/friends-transit/house/4",
+      "stores": [
+        "scene-licenses"
+      ]
+    },
+    {
+      "id": "license/friends-transit/house/5",
+      "stores": [
+        "scene-licenses"
+      ]
+    },
+    {
+      "id": "license/friends-transit/house/6",
+      "stores": [
+        "scene-licenses"
+      ]
+    },
+    {
+      "id": "license/friends-transit/house/7",
+      "stores": [
+        "scene-licenses"
+      ]
+    },
+    {
+      "id": "license/friends-transit/house/8",
+      "stores": [
+        "scene-licenses"
+      ]
+    },
+    {
+      "id": "license/friends-transit/house/9",
+      "stores": [
+        "scene-licenses"
+      ]
+    },
+    {
+      "id": "placement-sign-house/aries/2",
+      "stores": [
+        "authored-placements"
+      ]
+    },
+    {
+      "id": "placement-sign-house/pisces/6",
+      "stores": [
+        "authored-placements"
+      ]
+    },
+    {
+      "id": "placement-sign-house/sagittarius/6",
+      "stores": [
+        "authored-placements"
+      ]
+    },
+    {
+      "id": "placement-sign-house/taurus/7",
+      "stores": [
+        "authored-placements"
+      ]
+    },
+    {
+      "id": "placement-sign-house/virgo/1",
+      "stores": [
+        "authored-placements",
+        "book-ms-ca"
+      ]
+    },
+    {
+      "id": "reference/ac/2010_horoscopes_free",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/2012_astrology_horoscopes",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/2019_yearly_the_road_we_travel",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/april_2017_venus_mercury_retrograde",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/aquarius_2019_of_masks_and_mirrors",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/aspects_connecting_the_dots",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_2014",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_2017",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_2020_the_bridge",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_222_228_the_body_of_life",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_229_36_water_pressure",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_25th_31st_chrysalis_discomfort",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_26_212_foreshadowing",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_321_327_balance_power",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_44_410_battered_crown",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_516_522_arrows_path",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_523_529_syncopated_transition",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_59_515_testimony_stone",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_620_626_polarized_light",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_711_717_divine_artist",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_725_731_big_top_show",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_74_710_philosophers_womb",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_apr_10_19_aries_iii_light_from_an_egg_new_moon_aries",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_apr_20_29_taurus_i_full_moon_scorpio",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_apr_30_may_10_taurus_ii_the_key",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_aug_23rd_sep_1st_virgo_i_beneath_tree",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_aug_2nd_11th_leo_2_lunar_eclipse",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_dec_21_30_capricorn_1_sight_feet",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_dec_31_jan_9_capricorn_2_building_year",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_feb_18_27_i_quiet_flood",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_feb_28_mar_10_pisces_ii_subtle_buffet_full_moon_virgo",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_feb_9_18_aquarius_iii_solar_eclipse",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_feb_fire_monkey_the_monkey_crown",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_feb_sunbeam",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_february_2017",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_full_moon_pisces_virgo_2",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_gemini_i_sagittarius_full_moon",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_jan_18th_24th_hellmouth",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_jan_19_29_aquarius_1_beyond_wall",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_jan_30_feb_7_aquarius_2_leo_lunar_eclipse",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_jan_9th_19th_capricorn_3_authoring_edict",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_jan410_blueprint",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_january_11th_17th_master_of_the_maze",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_january_16th_22nd_blessing_relentlessness",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_january_extracting_the_stone",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_july_1_10_ii_strange_brew",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_july_11th_21st_iii_2017",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_july_22nd_aug_1st_i",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_june_11_20_gemini_iii_the_way_divides",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_june_21_30_cancer_i_mars_retrograde_new_moon",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_june_21st_30th_river",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_libra_1_equinox",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_libra_3_2017",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_mar_10_19_pisces_iii_beginning_new_moon",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_mar_20_30_aries_i_the_divide_mercury_retrograde",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_mar_31_apr_9_aries_ii_heavy_is_the_head",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_march_2017",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_march_7th_13th_solar_eclipse",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_mars_direct_june_2016",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_mars_saturn",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_may_31_june_10_gemini_ii",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_mercury_retrograde_taurus",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_new_moon_libra",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_new_moon_scorpio_2016",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_nov_22nd_dec_1st_sagittarius_i_obstacle_cartography",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_november_2nd_12th_scorpio_2_full_moon",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_oct_23rd_nov_1st_scorpio_1_use_hunger",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_oct_3rd_12th_libra_ii_pacta_sunt_servanda",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_of_2018_lay_land",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_sagittarius_2_full_moon",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_sagittarius_3_new_moon",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_september_2016_lunar_eclipse",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_start_from_the_beginning",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_taurus_iii_new_moon_uranus_taurus_mars_aquarius",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_threads",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/astrology_virgo_3",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/august_2016_charge",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/august_2017_total_solar_eclipse",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/breakfast_with_pluto",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/capricorn_2018_dec_21_jan_19_the_alchemy_of_lead",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/cardinal_climax_cross_saturn_uranus_pluto_t_square",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/december_2016_wild_cards",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/december_mercury_retrograde",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/dire_tidings_first",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/equinox_2016",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/equinox_churn",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/equinox_september_2009",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/free_2011_astrology_horoscopes",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/full_moon_aquarius",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/full_moon_aries",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/halloween_horoscopes_astrology_horror",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/horoscopes_october_venus_retrograde",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/january_2017_astrology",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/july_2016_fire_water",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/july_2017_fire_ceremony",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/june_2016",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/june_2017_astrology",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/jupiter_aquarius_horoscopes",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/jupiter_chiron_neptune_aquarius_conjunction",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/jupiter_growth",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/jupiter_in_aries_2011_horoscopes",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/jupiter_in_cancer",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/jupiter_in_capricorn_of_dark_wings_and_magic_rings",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/jupiter_in_gemini",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/jupiter_in_leo_going_nova",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/jupiter_in_libra_2016_2017",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/jupiter_in_taurus_free_astrology_horoscopes",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/jupiter_in_virgo",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/jupiter_pisces_part_1",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/jupiter_pisces_part_2",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/jupiter_scorpio_oct_10th_2017_nov_8th_2018",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/lunar_eclipse_in_gemini",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/mars_cancer",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/mars_in_leo_retrograde",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/mars_in_scorpio_despicable_daring",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/mars_in_virgo_retrograde",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/mars_leo_astrology",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/mars_retrograde_2016",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/mars_retrograde_enter_the_dragon",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/mars_retrograde_in_libra",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/may_2016_fixed_volatile",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/may_2017_astrology",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/mercury_in_leo_retrograde",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/mercury_in_pisces_the_whales_song",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/mercury_retrograde_aquarius",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/mercury_transmission",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/neptune_pisces",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/november_12th_21st_scorpio_3_new_moon_scorpio",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/november_2016_sorting_stories",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/october_2016_cloud_stone",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/ongoing_influences",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/planets_our_little_system",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/pluto_in_capricorn_free_horoscopes",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/pluto_transformation",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/pop_archetypes_venus_in_libra",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/pop_culture_mercury_libra_nick_civitello",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/retrograde_motion",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/sagittarius_2018_nov_21_dec_21_an_arrows_intent",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/saturn_direct_station",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/saturn_in_capricorn",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/saturn_in_libra_1",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/saturn_in_sagittarius",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/saturn_uranus_oppositions_libra_aries_virgo_pisces",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/saturninscorpio",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/scorpio_2018_oct_23_nov_21_ordeal_and_ascent",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/scorpio_full_moon",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/september_2016_astrology",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/solar_eclipse_mercury_retrograde_september",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/strategy_zodiac",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/thanksgiving_heathen_conspiracy",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/the_astrology_of_2013",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/the_astrology_of_2015_interregnum",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/the_moon_luna_manifestation",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/the_nodes_in_aries_and_libra",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/the_rennovating_intelligence",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/the_sun_sol_vitality_vision",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/the_uranus_pluto_squares",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/valentines_astrology_horoscope",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/venus_desire",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/venus_in_aries",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/venus_in_scorpio_rx_2018_the_black_honey_of_venus_cloacina",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/venus_leo_astrology",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/venus_mars_tantra_astrology_conjunction",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/venus_retrograde_basics",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/venus_retrograde_gemini",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/venus_retrograde_in_capricorn",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/venus_retrograde_in_leo_return_of_the_queen",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/venus_retrograde_scorpio_free_horoscopes",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/venus_scorpio_retrograde_station",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/virgo_porno",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/when_you_wish_upon_a_star_algol_rape_and_the_imf",
+      "stores": [
+        "ac-reference"
+      ]
+    },
+    {
+      "id": "reference/ac/zodiacnews",
+      "stores": [
+        "ac-reference"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "south-node-3",
+  "canonicalId": "transit-house/south_node/3",
+  "kind": "house",
+  "transiting": "south-node",
+  "house": 3,
+  "headline": "The same conversations",
+  "body": "With the South Node moving through your 3rd house, familiar opinions and repetitive conversations keep coming up. You might stay busy with texts, errands, group chats, and small talk to avoid the bigger questions that take real time to answer. Staying informed is not the same thing as letting what you learn change your mind.\n\nThe 9th house on the other side calls for something deeper than a quick reply. It asks for genuine perspective gained through experience, study, or travel. The easy answer comes fast, but a conviction takes time to figure out.",
+  "authorityClass": "owner-approved-prose",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "primary",
+  "framingAllowed": true,
+  "approvalMarker": "exact_owner_approved",
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
+    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceHeading": "South Node — 3H",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "AUTHOR_FINAL"
+}

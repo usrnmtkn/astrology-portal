@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "sky.lilith.quincunx.north-node",
+  "canonicalId": "sky-aspect/lilith/north_node/quincunx",
+  "kind": "sky-aspect",
+  "bodyA": "lilith",
+  "bodyB": "north_node",
+  "aspect": "quincunx",
+  "humanMoment": "Someone keeps dressing the want and the direction in different disguises.",
+  "developmentDetail": "The path asks them for patience and practice in the open, the want asks for now and privacy, and every schedule they draft serves one at the other's expense.",
+  "planetaryDynamic": "With Lilith quincunx the North Node, people demand the appetite be honored whole while the path offers it in installments the appetite does not recognize.",
+  "aspectMechanic": "So each accommodation they make solves last week's version of the problem.",
+  "conditionalConsequence": "The adjustments may continue for a season, but the mismatch is asking for a redesign, not another compromise, and somebody eventually has to draw one.",
+  "body": "Someone keeps dressing the want and the direction in different disguises.\n\nThe path asks them for patience and practice in the open, the want asks for now and privacy, and every schedule they draft serves one at the other's expense.\n\nWith Lilith quincunx the North Node, people demand the appetite be honored whole while the path offers it in installments the appetite does not recognize.\n\nSo each accommodation they make solves last week's version of the problem.\n\nThe adjustments may continue for a season, but the mismatch is asking for a redesign, not another compromise, and somebody eventually has to draw one.",
+  "authorityClass": "unverified",
+  "governanceState": "needs-owner-decision",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "mechanism-reference",
+  "framingAllowed": false,
+  "provenance": {
+    "sourcePath": "packages/astro-knowledge/sources/authored/four-body/sky-aspects/TLDR-Sky-Lilith-Exact-Aspects-V1.md",
+    "sourceSha256": "52ba52119800380bf4ddd740eee9c920a7741ad82b773a5e5468d68c2cdd0e9b",
+    "sourceKey": "sky.lilith.quincunx.north-node",
+    "sourceHeading": "Lilith quincunx North Node",
+    "sourceSet": "LILITH_SKY_ASPECTS",
+    "generation": "deterministic-markdown-parse"
+  },
+  "status": "NEEDS_OWNER_DECISION"
+}
