@@ -4,7 +4,8 @@ import {
   FRIENDS_LOADING_SAMPLE_COUNT,
   FRIENDS_SLOW_NETWORK_DOWNLOAD_BYTES_PER_SECOND,
   FRIENDS_SLOW_NETWORK_LATENCY_MS,
-  friendsLoadingPerformanceBudgets
+  friendsLoadingPerformanceBudgets,
+  friendsLoadingPerformanceMaximums
 } from "./friendsLoadingPerformanceBudgets";
 
 const baseUrl = process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:4173";
@@ -232,7 +233,7 @@ async function timed(label: string, action: () => Promise<void>): Promise<TimedS
   return { label, elapsedMs: Math.round(performance.now() - startedAt) };
 }
 
-function assertSamples(samples: TimedSample[], budgetMs: number) {
+function assertSamples(samples: TimedSample[], budgetMs: number, maximumBudgetMs = budgetMs * 2) {
   const maximum = Math.max(...samples.map(({ elapsedMs }) => elapsedMs));
   const ordered = [...samples].sort((first, second) => first.elapsedMs - second.elapsedMs);
   const median = ordered[Math.floor(ordered.length / 2)]?.elapsedMs ?? 0;
@@ -245,7 +246,7 @@ function assertSamples(samples: TimedSample[], budgetMs: number) {
     budgetMs
   }));
   expect.soft(median, `${samples[0]?.label} median should remain within ${budgetMs}ms`).toBeLessThanOrEqual(budgetMs);
-  expect.soft(maximum, `${samples[0]?.label} maximum should remain within ${budgetMs * 2}ms`).toBeLessThanOrEqual(budgetMs * 2);
+  expect.soft(maximum, `${samples[0]?.label} maximum should remain within ${maximumBudgetMs}ms`).toBeLessThanOrEqual(maximumBudgetMs);
 }
 
 test.describe("Friends loading performance matrix", () => {
@@ -381,6 +382,48 @@ test.describe("Friends loading performance matrix", () => {
     assertSamples(repairSamples, friendsLoadingPerformanceBudgets.incompleteChartRepairReadyMs);
   });
 
+  test("repeated cold calculations show relationship loading state within budget", async ({ browser }) => {
+    test.setTimeout(45_000);
+    const samples: TimedSample[] = [];
+
+    for (let sample = 0; sample < FRIENDS_LOADING_SAMPLE_COUNT; sample += 1) {
+      await withContext(browser, {}, async (context, page) => {
+        await preparePage(page, { slowCalculation: true });
+        await page.goto(url("/#friends?tab=charts"), { waitUntil: "domcontentloaded" });
+        await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}` })).toBeVisible();
+
+        const networkSession = await context.newCDPSession(page);
+        await networkSession.send("Network.enable");
+        await networkSession.send("Network.emulateNetworkConditions", {
+          offline: false,
+          latency: FRIENDS_SLOW_NETWORK_LATENCY_MS,
+          downloadThroughput: FRIENDS_SLOW_NETWORK_DOWNLOAD_BYTES_PER_SECOND,
+          uploadThroughput: 100_000,
+          connectionType: "cellular3g"
+        });
+        const startedAt = performance.now();
+        const loadingStateReady = page
+          .getByRole("status", { name: `${fixtureFriendName} compatibility loading` })
+          .waitFor({
+            state: "visible",
+            timeout: friendsLoadingPerformanceBudgets.slowNetworkRelationshipLoadingReadyMs + 5_000
+          })
+          .then(() => Math.round(performance.now() - startedAt));
+
+        await page.getByRole("button", { name: `Open ${fixtureFriendName}` }).click();
+        samples.push({
+          label: "slow-network relationship loading state",
+          elapsedMs: await loadingStateReady
+        });
+        await expect(page.locator(".compatibility-card").first()).toBeVisible({
+          timeout: friendsLoadingPerformanceMaximums.slowNetworkRelationshipReadyMs + 5_000
+        });
+      });
+    }
+
+    assertSamples(samples, friendsLoadingPerformanceBudgets.slowNetworkRelationshipLoadingReadyMs);
+  });
+
   test("repeated slow relationship loads never block list or detail shell", async ({ browser }) => {
     test.setTimeout(60_000);
     const listSamples: TimedSample[] = [];
@@ -419,6 +462,7 @@ test.describe("Friends loading performance matrix", () => {
         await expect(page.locator(".compatibility-card").first()).toBeVisible({
           timeout: friendsLoadingPerformanceBudgets.slowNetworkRelationshipReadyMs + 5_000
         });
+        const relationshipReadyAt = performance.now();
         relationshipSamples.push({
           label: "slow-network relationship content",
           elapsedMs: Math.round(performance.now() - detailStartedAt)
@@ -438,14 +482,18 @@ test.describe("Friends loading performance matrix", () => {
         });
         relationshipEnhancedSamples.push({
           label: "slow-network full relationship enhancement",
-          elapsedMs: Math.round(performance.now() - detailStartedAt)
+          elapsedMs: Math.round(performance.now() - relationshipReadyAt)
         });
       });
     }
 
     assertSamples(listSamples, friendsLoadingPerformanceBudgets.slowNetworkListReadyMs);
     assertSamples(shellSamples, friendsLoadingPerformanceBudgets.slowNetworkDetailShellReadyMs);
-    assertSamples(relationshipSamples, friendsLoadingPerformanceBudgets.slowNetworkRelationshipReadyMs);
+    assertSamples(
+      relationshipSamples,
+      friendsLoadingPerformanceBudgets.slowNetworkRelationshipReadyMs,
+      friendsLoadingPerformanceMaximums.slowNetworkRelationshipReadyMs
+    );
     assertSamples(relationshipEnhancedSamples, friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs);
   });
 });

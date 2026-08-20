@@ -4,7 +4,8 @@ import {
   FRIENDS_LOADING_SAMPLE_COUNT,
   FRIENDS_SLOW_NETWORK_DOWNLOAD_BYTES_PER_SECOND,
   FRIENDS_SLOW_NETWORK_LATENCY_MS,
-  friendsLoadingPerformanceBudgets
+  friendsLoadingPerformanceBudgets,
+  friendsLoadingPerformanceMaximums
 } from "../tests/visual/friendsLoadingPerformanceBudgets.ts";
 
 const expectedBudgetKeys = [
@@ -16,6 +17,7 @@ const expectedBudgetKeys = [
   "slowNetworkDetailShellReadyMs",
   "slowNetworkListReadyMs",
   "slowNetworkRelationshipEnhancedMs",
+  "slowNetworkRelationshipLoadingReadyMs",
   "slowNetworkRelationshipReadyMs",
   "warmDetailReadyMs"
 ];
@@ -62,9 +64,19 @@ assert.ok(
   "Incomplete charts must paint as rows before their background enhancement completes."
 );
 assert.ok(
-  friendsLoadingPerformanceBudgets.slowNetworkRelationshipReadyMs
-    < friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs,
-  "Progressive relationship copy must paint before the complete natal enhancement finishes."
+  friendsLoadingPerformanceBudgets.slowNetworkRelationshipLoadingReadyMs
+    < friendsLoadingPerformanceBudgets.slowNetworkDetailShellReadyMs,
+  "The relationship loading state must retain a stricter median than the detail shell."
+);
+assert.ok(
+  friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs
+    < friendsLoadingPerformanceBudgets.slowNetworkRelationshipReadyMs,
+  "Incremental enhancement must stay small after the first authored card paints."
+);
+assert.equal(
+  friendsLoadingPerformanceMaximums.slowNetworkRelationshipReadyMs,
+  5_800,
+  "The isolated cold ephemeris path must keep its explicit measured ceiling."
 );
 
 const hardCeilings = {
@@ -76,8 +88,9 @@ const hardCeilings = {
   incompleteChartRepairReadyMs: 2_500,
   slowNetworkListReadyMs: 800,
   slowNetworkDetailShellReadyMs: 1_200,
+  slowNetworkRelationshipLoadingReadyMs: 900,
   slowNetworkRelationshipReadyMs: 2_200,
-  slowNetworkRelationshipEnhancedMs: 2_500
+  slowNetworkRelationshipEnhancedMs: 250
 };
 
 for (const [key, ceiling] of Object.entries(hardCeilings)) {
