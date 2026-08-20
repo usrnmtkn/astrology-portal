@@ -12,6 +12,11 @@ export const friendsLoadingPerformanceBudgets = {
   incompleteChartRepairReadyMs: 2_500,
   slowNetworkListReadyMs: 800,
   slowNetworkDetailShellReadyMs: 1_200,
+  slowNetworkRelationshipLoadingReadyMs: 900,
   slowNetworkRelationshipReadyMs: 2_200,
-  slowNetworkRelationshipEnhancedMs: 2_500
+  slowNetworkRelationshipEnhancedMs: 250
+} as const;
+
+export const friendsLoadingPerformanceMaximums = {
+  slowNetworkRelationshipReadyMs: 5_800
 } as const;
