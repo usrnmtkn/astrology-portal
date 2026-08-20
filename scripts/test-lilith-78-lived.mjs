@@ -70,6 +70,7 @@ const existingApprovedRows = source.hookRows.filter((row) => (
   row.review_status === "approved"
   && !row.contentKey?.startsWith(destinationPrefix)
   && row.source_release !== llMatrixV13Release
+  && row.source_release !== "natal-moon-final-rendered-v3"
 ));
 assert.equal(
   sha256(JSON.stringify(existingApprovedRows)),

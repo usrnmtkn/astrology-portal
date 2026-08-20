@@ -99,8 +99,8 @@ function createFallbackRenderer(templatesFile, rowsFile) {
   function renderNatalPlacement(facts, opts2 = {}) {
     const { planet, sign, house } = facts;
     const voice = facts.voice === "you" ? "you" : "they";
-    const exactHouseLived = house ? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, opts2) : null;
-    const exactSignLived = getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, opts2);
+    const exactHouseLived = house ? getReaderLivedRow(`fallback-hook/natal-you-placement-house-final/${planet}/${house}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, opts2) : null;
+    const exactSignLived = getReaderLivedRow(`fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, opts2);
     const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
     const possessive = facts.voice === "you" ? "Your" : `${facts.voice}'s`;
     const ctx = {
@@ -2608,7 +2608,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-20a";
+var PACKAGE_VERSION = "v3-2026-08-20b";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
