@@ -49,6 +49,7 @@ Each of these binds on its surface and postdates the standard.
 
 - `TLDR-REGISTER-PER-SURFACE-RULING-OWNER.md` (2026-08-09) — which register applies where. Resolve the rendered surface before choosing a voice.
 - `TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md` (2026-08-10) — astrology sentence to lived consequence, plus its four dated amendments: the announcement clarification, `real` as generator filler, and the translation-required ruling with the Mars in Aries exemplar.
+- `TLDR-HUMAN-PATTERN-AND-RELATIONSHIP-COPY-RULING-OWNER.md` (2026-08-21) — Friends relationship causality, usable Do/Don't grammar, proportional psychological certainty, and the human-pattern-first architecture. It is active for drafting and review but does not approve or promote any candidate reader wording.
 
 **Natal**
 
@@ -56,6 +57,13 @@ Each of these binds on its surface and postdates the standard.
 - `TLDR-NATAL-PLACEMENT-DELINEATION-STANDARD-OWNER.md` (2026-08-10) — the five beats and the Capricorn empty-10th benchmark. Scope is placements: sign-on-house, empty houses, ruler placements.
 - Natal aspects are a different shape from placements (owner, 2026-08-17). A placement is the person in an arena; an aspect is two parts of the person meeting. Aspect argument shapes are in `CLAUDE.md`.
 - Naming the astrology openly is permitted, and archetype framing is permitted, provided the passage cashes it into recognizable life material (owner, 2026-08-17).
+- Full placement detail follows placement function → sign mechanism → lived evidence → consequence → complication → mature expression. Short natal-pattern cards put the human pattern first and keep astrology taxonomy secondary. The complete rule is in `TLDR-HUMAN-PATTERN-AND-RELATIONSHIP-COPY-RULING-OWNER.md` (2026-08-21).
+
+**Friends and relationship copy**
+
+- Relationship prose stays directional: one person acts, the other responds, and a pattern develops. Astrology may explain why the pattern is easy to enter but may never excuse the observable behavior.
+- Use `connection`, not `room`, when the noun is a metaphorical container for the relationship. Literal rooms and spatial `room to ...` uses are unaffected.
+- Do/Don't columns remain semantically separate and grammatically parallel; a transitive instruction names its object. See `TLDR-HUMAN-PATTERN-AND-RELATIONSHIP-COPY-RULING-OWNER.md` (2026-08-21).
 
 **Report**
 

@@ -125,7 +125,7 @@ function violationRecord(copy, category, reason, instruction, location = locatio
 }
 
 function canonicalCategory(category) {
-  if (["required_fields", "placeholder_integrity", "owner_line_integrity", "compressed_prose", "vagueness", "natural_language"].includes(category)) {
+  if (["required_fields", "placeholder_integrity", "owner_line_integrity", "compressed_prose", "vagueness", "vague_action_object", "natural_language", "relationship_container_metaphor"].includes(category)) {
     return "literal_first_read_clarity";
   }
   if (category === "banned_language" || category === "em_dash") return "register_consistency";
