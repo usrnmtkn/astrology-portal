@@ -51,6 +51,8 @@ stale.
 
 ### Editorial writing and review
 
+Any reader-facing astrology copy written in chat must use the owner’s writing rules, phrase bank, corpus, voice, tone, and prior editorial decisions. Semantic components determine meaning; the owner’s writing determines how that meaning is expressed.
+
 For any request to write, rewrite, refine, compare, or approve TLDR Astro
 reader copy, load the canonical repository skill at
 `skills/tldr-astro-writer/SKILL.md` before drafting. Do not write from general
