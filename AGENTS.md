@@ -1,5 +1,39 @@
 # TLDR Astro agent instructions
 
+## Repository identity and worktree provenance
+
+Before trusting or reporting on any worktree, refresh the remote-tracking refs
+with `git fetch --prune origin` when network access is available, then run
+`git remote -v`, `git log -1`, and
+`git rev-list --left-right --count origin/main...HEAD`. State the branch and
+how far it is from `origin/main` in any status report. A path existing is not
+evidence that it is current. Do not use the directory name as proof that an
+agent is in the intended clone or worktree. If the fetch cannot be run, state
+that the comparison uses unrefreshed remote-tracking refs and may be stale.
+
+If the remote, branch, or divergence does not match the task, stop drawing
+repository-wide conclusions and locate the current worktree first. Do not turn
+findings from an obsolete clone into pending work, restoration instructions, or
+permanent architecture documentation.
+
+Before reporting that content, a template, or a pipeline does or does not
+exist, check the current source, any relevant generated knowledge artifact, and
+the runtime consumer separately. Say "not present in this worktree" when that
+is all the evidence supports. For writing-engine behavior, inspect
+`api/_lib/content-generation.ts` and the relevant symbol directly; do not rely
+on a prose description of its current prompt assembly.
+
+The voice-corpus / voice-evidence subsystem built against an obsolete June 2026
+clone was deliberately discarded. Do not rebuild it; use the canonical writer
+and governed retrieval instructions below.
+
+## Worktree safety
+
+Assume uncommitted and untracked files may be owner work. Inspect the worktree
+before git operations. Never run `git stash`, `git clean`,
+`git checkout -- .`, or `git reset --hard`. Do not discard unrelated changes
+or commit without the owner's request.
+
 ## Content changes
 
 Before changing reader-facing astrology content, review state, resolver
