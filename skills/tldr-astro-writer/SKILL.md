@@ -7,6 +7,35 @@ description: Canonical TLDR Astro argument-gated drafting and deterministic vali
 
 Use this skill for every astrology-writing task in this repository.
 
+## Global owner-vocabulary rule
+
+This rule applies to every reader-facing astrology draft, rewrite, revision,
+example, and chat response on every surface. Semantic sources determine what
+the astrology means. Owner-authored writing determines the vocabulary,
+sentence movement, examples, and tone.
+
+Before writing, retrieve the closest owner-authored passages for the exact
+topic and register and use the owner corpus as the positive language source,
+not merely as inspiration or a final style check. Do not draft directly from
+semantic components, compact operations, doctrine labels, or internal planning
+language.
+
+Before showing prose to the owner:
+
+- flag content words that are absent from or unusually rare in the owner
+  corpus, except necessary astrology terms and ordinary function words;
+- replace unsupported wording with plainer corpus-supported language, or flag
+  the unresolved choice for owner review instead of guessing;
+- apply the durable correction ledger so a rejected word, construction, or
+  substitution is not repeated in a later draft; and
+- run the surface register, phrase-bank, do-not-use, and owner-correction
+  checks.
+
+An invented synonym is not a correction. When the owner rejects a word or
+construction, record the correction with its context and use the owner’s
+documented replacement or the plainest supported wording. Do not deliver prose
+that is known to fail this rule.
+
 Before drafting or editing, read these files completely:
 
 1. `../../docs/writing/ASTROLOGY_CONTRACT.md`
