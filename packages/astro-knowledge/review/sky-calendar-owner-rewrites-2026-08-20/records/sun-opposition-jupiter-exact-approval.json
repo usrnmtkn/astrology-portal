@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.opposition.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "8362ca056fafc488848920d603f1b7d533c570613029f0739739e1c2e4606890",
+  "payload": {
+    "summary": "The announcement promises access on a much larger scale than the current system can deliver.",
+    "body": "The announcement promises access on a much larger scale than the current system can deliver. Sun opposite Jupiter can put the inspiring headline directly across from waitlists, staffing limits, and costs that have already exceeded the original plan. Leadership may be right that demand is there. Operators may be right that the system cannot support it yet. Close the gap before another public promise widens it. Publish the limits, expand what can be delivered, or narrow the claim."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

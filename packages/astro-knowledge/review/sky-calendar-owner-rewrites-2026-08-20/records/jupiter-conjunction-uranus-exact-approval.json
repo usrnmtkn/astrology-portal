@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.conjunction.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "7938c2690f17c1fbc5b0bf5f616cb2cdcf48c59ab959b52d92b32ed261510bd3",
+  "payload": {
+    "summary": "A sudden shift in pricing, technology, or markets opens a much larger opportunity than anyone expected.",
+    "body": "A sudden shift in pricing, technology, or markets opens a much larger opportunity than anyone expected. Jupiter conjunct Uranus can make the breakthrough and the rush to expand happen almost at the same time, which is exciting right up until supply, staffing, or regulation falls behind. Early access can feel like proof that the new model has no downside. It does not. Move fast enough to use the opening, but keep a backup for the people who will be stranded if the first version fails."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

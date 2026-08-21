@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.square.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "18a1fabad5df3426c7e284a1ed30acc39b5836c03193b13a8c2cf7d8fee463cd",
+  "payload": {
+    "summary": "A sudden closure, outage, or schedule reversal knocks out the routine people were relying on.",
+    "body": "A sudden closure, outage, or schedule reversal knocks out the routine people were relying on. Moon square Uranus can turn an unavoidable change into a much larger crisis when families, staff, or residents are left scrambling for care, transportation, supplies, and information at the same time. The people with the least flexibility absorb the chaos first. Give them the replacement plan before the explanation. Then explain what changed, how long it may last, and who is responsible for the next update."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

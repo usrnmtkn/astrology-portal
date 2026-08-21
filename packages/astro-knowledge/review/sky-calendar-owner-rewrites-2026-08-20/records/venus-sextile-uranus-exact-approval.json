@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.sextile.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "8dca9c4bfa436913aaa625e37561e46f5d885ad9625f6eeb76a9c8b60e8e4dd0",
+  "payload": {
+    "summary": "One proposed change may give a strained agreement enough room to keep going.",
+    "body": "One proposed change may give a strained agreement enough room to keep going. Venus sextile Uranus can make a moved payment date, revised guest list, different schedule, or updated relationship rule easier to propose once someone names the exact part that no longer works. The opening is small, which is useful. Change one term and see what it fixes before renegotiating everything else. The arrangement has a better chance when people can ask for more room directly instead of waiting until the only available move is to walk away."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

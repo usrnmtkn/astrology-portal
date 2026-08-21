@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.opposition.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "15aededd6b70edd2dc704d042f0d234a2a77cdf672d5ca987367ebfef21c725b",
+  "payload": {
+    "summary": "The institution points to the size of its relief effort while recipients and workers describe help that is late, uneven, or impossible to access.",
+    "body": "The institution points to the size of its relief effort while recipients and workers describe help that is late, uneven, or impossible to access. Jupiter opposite Neptune puts the public promise directly across from the experience of the people who were supposed to benefit from it. One side cites money raised and people reached; the other points to requests that disappeared inside those totals. Large numbers cannot answer a delivery problem. Pull the records and compare what was promised with what actually reached people."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

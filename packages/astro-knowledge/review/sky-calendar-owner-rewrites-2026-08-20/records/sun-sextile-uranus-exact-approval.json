@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.sextile.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "7bebe0ce30003d114d9d3e803187b94dd4ab2df0873eaaf63890c0572342a068",
+  "payload": {
+    "summary": "New software or one procedural change may clear a bottleneck the old workflow kept reproducing.",
+    "body": "New software or one procedural change may clear a bottleneck the old workflow kept reproducing. Sun sextile Uranus can give an experiment enough authority to be tested inside the live system without requiring everyone to abandon the current process first. Start with the failure everyone can already see. Give one team the tool, track the result, and keep the old route available until the replacement has handled ordinary use. The change earns support when people can point to the delay it removed."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

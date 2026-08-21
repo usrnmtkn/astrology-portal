@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.square.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "4e0f8a23a67af7f48984d40676148255b06ac5586894775aafe6d9bd2a81a4b0",
+  "payload": {
+    "summary": "A blunt message turns a solvable problem into a personal confrontation.",
+    "body": "A blunt message turns a solvable problem into a personal confrontation. Mercury square Mars can make every sentence sound like a challenge that requires an immediate reply, so the original question gets buried under arguments about tone, respect, and who started it. The deadline may still be there after the fight, along with damage the task never required. Slow the exchange before sending the next response. State the problem, the answer required, and the deadline, then leave the insult out of the logistics."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -91,10 +91,11 @@ Match how the sentences move, not just the word list. From the source:
 Em dashes. One-sentence paragraphs. "Real"/"true" as vague intensifiers. "Settle," "settles,"
 "steady," "steadiness," "comfort," "warmth" (as standalone abstractions — say the concrete thing:
 food on the table, a routine that holds, being touched, someone checking in). This ban overrides the
-source phrasebank: if her own line uses a banned word, replace it. **The "room" metaphor** — "in the
-room," "a room's mood," "the smartest in the room," "no one in the room," "read the room." Say who or
-what plainly (the people around you, whoever's with you). ("Room to breathe / room to roam" is fine —
-that's space, not a setting.) "The catch" (use "the challenge"). "The upside?" / "The catch?" "On the
+source phrasebank: if her own line uses a banned word, replace it. **Room language is allowed sparingly**
+when it names an actual group setting or power dynamic. "The balance of power in the room" is approved.
+Avoid stock uses such as "read the room," "a room's mood," "the smartest in the room," or adding "in the
+room" as generic scene filler. ("Room to breathe / room to roam" is also fine — that's space, not a
+setting.) "The catch" (use "the challenge"). "The upside?" / "The catch?" "On the
 one hand / on the other hand." "The danger is…"
 "This is about…" "This placement becomes…" "This part of the chart…" "The connection asks you to…"
 "Alignment," "activation," "holding space," "navigating," "leaning into," "your journey," "a version of

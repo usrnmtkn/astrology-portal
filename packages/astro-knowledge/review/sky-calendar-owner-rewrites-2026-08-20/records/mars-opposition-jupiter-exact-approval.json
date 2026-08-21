@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.opposition.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "d61fad2b77faa6ac474ad8d0b4b72c139735739cbaa9e39b084324284ac2e5d1",
+  "payload": {
+    "summary": "The person pushing for immediate expansion faces the people responsible for managing the risk.",
+    "body": "The person pushing for immediate expansion faces the people responsible for managing the risk. Mars opposite Jupiter makes the cost of moving fast impossible to leave in the background: one side sees momentum and a closing window, while the other sees permits, staffing, money, and consequences that will remain after the rush is over. Neither side is automatically wrong. Put the opportunity and the risk on the same page. Decide what can move now without making the delivery team inherit promises they never approved."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

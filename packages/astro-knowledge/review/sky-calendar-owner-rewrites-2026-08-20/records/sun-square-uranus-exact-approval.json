@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.square.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "878c14cf593d913365deae341a3269214cc8cafbbedeeceee7d076bfdbe51342",
+  "payload": {
+    "summary": "An abrupt resignation can void dates and promises that were already given to clients, staff, or partners.",
+    "body": "An abrupt resignation can void dates and promises that were already given to clients, staff, or partners. Sun square Uranus can turn one person's break from the arrangement into immediate instability for everyone who built plans around their authority. The argument about who owns the project can wait long enough to protect the people depending on it. Confirm who can make decisions now, which commitments still stand, and what needs to be postponed. The first job is not restoring appearances. It is keeping the sudden break from creating avoidable damage downstream."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

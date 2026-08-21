@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.sextile.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "446a70ab21a91d063d60d4e164c1a6d84e6e0c2effa5037f6f8d3758ff3d97b4",
+  "payload": {
+    "summary": "One unusual suggestion gives a stalled process a faster way forward.",
+    "body": "One unusual suggestion gives a stalled process a faster way forward. Mercury sextile Uranus can help a staff member test a shortcut, alternate platform, or revised form after noticing that the official route keeps creating the same error. The idea earns support because it fixes the delay without throwing out the information the system still needs. Try it on one task first. If the result holds, show the time saved and the problem removed before asking everyone else to change their workflow."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

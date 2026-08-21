@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.square.venus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "825def8910c34a8e602a5f22c802c0fc37ee3f59ead9bd08688c4c91c7e2d8dd",
+  "payload": {
+    "summary": "A celebration built to look generous leaves the people doing the care work overwhelmed and unpaid.",
+    "body": "A celebration built to look generous leaves the people doing the care work overwhelmed and unpaid. Moon square Venus can make childcare, cleanup, accessibility, food restrictions, and other practical needs impossible to hide once the event starts failing the people expected to make it look effortless. The room can be beautiful and the workload still be unfair. Count the work and money before adding another detail for appearances. If the event depends on invisible work, make that work visible in the plan and the budget."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

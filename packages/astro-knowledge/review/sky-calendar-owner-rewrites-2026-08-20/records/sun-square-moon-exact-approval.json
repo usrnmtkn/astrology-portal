@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.square.moon",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "a647a26c1e5651a40317f61c151676c87fa0d445614114873866f72ed4de70fc",
+  "payload": {
+    "summary": "The email goes out before the meeting, and everyone starts rearranging care, transportation, and work before leadership has explained what changed.",
+    "body": "The email goes out before the meeting, and everyone starts rearranging care, transportation, and work before leadership has explained what changed. Sun square Moon can turn a decision made at the top into immediate disruption for the people expected to live with it. The policy may survive the pushback, but trust will not recover just because the calendar does. Explain the change before asking people to reorganize their day around it. If there is no way to avoid the disruption, give people enough time and information to plan for the part that lands on them."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.square.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "2ac0bca9b7bb47af09cd3faef204ad6784f28d36e04ab22cb30c4a97ee2d43a1",
+  "payload": {
+    "summary": "A confident team doubles the bet before anyone checks if the staff, budget, or permit can survive it.",
+    "body": "A confident team doubles the bet before anyone checks if the staff, budget, or permit can survive it. Mars square Jupiter can turn one success into a reason to take the next risk too quickly, especially when the people making the promise are not the ones responsible for delivering it. The launch expands, the trip gets booked, or faster results are announced while basic questions are still open. Momentum is useful until it starts writing checks other people have to cover. Recalculate the commitment before increasing it again."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

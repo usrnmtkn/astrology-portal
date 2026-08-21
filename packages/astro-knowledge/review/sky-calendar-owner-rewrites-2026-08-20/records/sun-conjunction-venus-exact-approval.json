@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.conjunction.venus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "a6f34c3c024ea4313b958d9b5520dd9004b421fdd80cd716aa672563bfd1e822",
+  "payload": {
+    "summary": "Turnout, applause, or a polished public response can become the whole scorecard even when the original goal was harder to measure.",
+    "body": "Turnout, applause, or a polished public response can become the whole scorecard even when the original goal was harder to measure. Sun conjunct Venus can make being liked and being effective look like the same thing, especially when sponsors, leaders, or organizers want visible enthusiasm to stand in for value. Count the quieter result too. Who was paid, who benefited, what changed, and what did the attention actually produce? Approval matters, but it should not be the only evidence that the work succeeded."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

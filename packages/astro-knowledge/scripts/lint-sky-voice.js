@@ -125,13 +125,13 @@ function lintCard(text, { mode = "collective-aspect-card" } = {}) {
     }
   }
 
-  if (mode !== PLACEMENT_TOPPER_MODE && !/\b(?:we|our|us)\b/i.test(text)) {
+  if (mode !== PLACEMENT_TOPPER_MODE && /\b(?:you tend to|you always|you usually|you have always|your personality)\b/i.test(text)) {
     findings.push({
       severity: "fail",
       source: "reader-boundary",
-      term: "collective person",
-      match: "",
-      reason: "Collective sky cards must use first-person plural (we/our/us)."
+      term: "standing-pattern second person",
+      match: text.match(/\b(?:you tend to|you always|you usually|you have always|your personality)\b/i)?.[0] || "",
+      reason: "Calendar may address the reader directly, but it must not turn a temporary collective event into a natal standing pattern."
     });
   }
 

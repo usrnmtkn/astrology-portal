@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.opposition.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "f45d7345ca8d6ff6ac6592e7f0dc25228551965904ad331d98cfa85d3aa80bf9",
+  "payload": {
+    "summary": "The person with the title may discover that someone else still controls the money, records, or access required to make the title matter.",
+    "body": "The person with the title may discover that someone else still controls the money, records, or access required to make the title matter. Sun opposite Pluto can expose the difference between public authority and private leverage when one side can announce the decision and the other can quietly delay or disable it. That is not a personality clash. It is a problem in how power is divided. Put the decision rights on paper. If the person responsible for the outcome cannot access the resources needed to act, fix the structure before blaming either side for the stalemate."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.conjunction.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "89e2f05c897c5e3cff821122e96a118768b74e6b5b7565e31c5c952bb6585719",
+  "payload": {
+    "summary": "One offer is presented as a relief plan, moral cause, investment, and rescue mission all at once.",
+    "body": "One offer is presented as a relief plan, moral cause, investment, and rescue mission all at once. Jupiter conjunct Neptune can make the promise feel bigger and more convincing before anyone has agreed on what the promise actually includes. Money and attention arrive quickly, but the scope stays loose enough for different people to hear different guarantees. Good intentions do not fix that mismatch. Pin down the deliverables, budget, and person responsible for the result before committing more resources to the vision."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

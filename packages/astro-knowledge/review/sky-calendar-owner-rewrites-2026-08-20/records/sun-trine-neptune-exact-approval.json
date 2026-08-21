@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.trine.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "a072923fe23b354883781695d3bcf5fa6d44c132232da4550be628ff376015d3",
+  "payload": {
+    "summary": "A memorial, film, benefit, or public statement may give a shared feeling exactly enough form for people to respond to it.",
+    "body": "A memorial, film, benefit, or public statement may give a shared feeling exactly enough form for people to respond to it. Sun trine Neptune can help a visible person or project carry grief, compassion, or imagination without forcing the message into something colder than the experience itself. The strongest version does not need to exaggerate the pain. It gives people a place to put their attention, money, or support while keeping the people at the center human. Let the work be moving. Keep the facts, permissions, and purpose intact while it moves people."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

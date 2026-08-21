@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.sextile.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "5ac177e3f9eea0f47fdc0655481b33d4b999beb01709ebf37cfa75ad81d0a1c0",
+  "payload": {
+    "summary": "One meeting may be enough to expose who has sign-off power and who is expected to absorb the consequences of the decision.",
+    "body": "One meeting may be enough to expose who has sign-off power and who is expected to absorb the consequences of the decision. Sun sextile Pluto can create an opening for an audit request, disclosure, or contract review to reach the part of the system where authority actually sits. Use the meeting for more than acknowledgment. Name who can approve the change, who controls the records or money, and what happens if the same problem returns. Accountability becomes useful when the next decision is harder to hide behind an unclear chain of command."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

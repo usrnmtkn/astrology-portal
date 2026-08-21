@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.saturn.square.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "b1f9303ba04aecb374e5f2e4682d404d38a491cfaef488b046bbe0763b5285ac",
+  "payload": {
+    "summary": "Patience runs thin for rules, expectations, or responsibilities that have demanded too much for too long.",
+    "body": "Patience runs thin for rules, expectations, or responsibilities that have demanded too much for too long. Saturn square Lilith can make the weak point in an agreement or system impossible to keep covering with endurance. Shortcuts stop working, and the person who has been absorbing the extra burden may finally refuse to do it again. Do not confuse that refusal with irresponsibility. Name the demand that has become unsustainable and renegotiate who carries it before the whole arrangement breaks under the same pressure."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

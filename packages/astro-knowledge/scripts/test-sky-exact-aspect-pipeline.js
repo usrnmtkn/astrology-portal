@@ -113,6 +113,19 @@ const stylePilot = {
   collectiveLeadEligible: false
 };
 assert.strictEqual(lintExactEntry(stylePilot).fails, 0, JSON.stringify(lintExactEntry(stylePilot).findings));
+const directAddressPilot = {
+  ...stylePilot,
+  body: stylePilot.body.replace("The urge is real. The timing is not.", "Name the actual deadline before you accept another shift. The timing still matters.")
+};
+assert.strictEqual(lintExactEntry(directAddressPilot).fails, 0, JSON.stringify(lintExactEntry(directAddressPilot).findings));
+const standingPatternPilot = {
+  ...stylePilot,
+  body: stylePilot.body.replace("The urge is real. The timing is not.", "You tend to accept every extra shift. The timing is not.")
+};
+assert.ok(
+  lintExactEntry(standingPatternPilot).findings.some((finding) => finding.reason.includes("standing-pattern")),
+  "Calendar direct address must not become a natal standing-pattern claim"
+);
 const missingHumanMoment = lintExactEntry({
   aspect: "square",
   humanMoment: "",

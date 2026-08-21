@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.neptune.square.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "ea44bd34a3757e82d82a6eabb5b23a3d68994575dd35bc8d8cd201a0f4c970de",
+  "payload": {
+    "summary": "A public story emphasizes care while hiding the operational mess underneath.",
+    "body": "A public story emphasizes care while hiding the operational mess underneath. Neptune square Pluto can make an idealized campaign protect the same power structure shifting money, cleanup, and work onto the people with the least control. The more inspiring the story becomes, the easier it is to treat practical scrutiny as cynicism. Follow the contracts, work, and money far enough to see who is carrying the cost. Compassion is more credible when the people cleaning up afterward are included in the story and the budget."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

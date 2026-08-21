@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.conjunction.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "b0da4e110281a14467ee6dceb5388d61c646ba442d7e8219f400886c0f721f63",
+  "payload": {
+    "summary": "A strong feeling becomes an action before anyone has time to translate it.",
+    "body": "A strong feeling becomes an action before anyone has time to translate it. Moon conjunct Mars can turn anger into a departure, fear into an urgent call, or protectiveness into an intervention while the conflict is still unfolding. The response may be necessary, but it also makes the emotion public and harder to take back. Act on the part that protects someone or solves the immediate problem. Do not let the first surge of feeling decide every consequence that comes after it."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

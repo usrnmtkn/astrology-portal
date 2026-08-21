@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.trine.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "e02aaf8884e7e5aa1cc2d8c21b97a3683f611fac9f4f12996aced8fff3fee75f",
+  "payload": {
+    "summary": "Public support arrives at the exact point a proven project is ready to expand.",
+    "body": "Public support arrives at the exact point a proven project is ready to expand. Sun trine Jupiter can bring funding, press, or institutional backing to work that already has a team, a record, and a clear next stage. The opportunity feels earned because the larger audience can see what its support is helping continue. This is a good time to grow the part that already works. Keep the expansion tied to the method, people, and purpose that produced the result in the first place."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.sextile.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "0cdc06fa1be6ddfeb447ab94e37511ce1c64e743a117f38475af330bc73cb65e",
+  "payload": {
+    "summary": "Someone notices the need behind a vague request and finds one concrete way to help.",
+    "body": "Someone notices the need behind a vague request and finds one concrete way to help. Moon sextile Neptune can turn a quiet check-in into a meal, ride, room, referral, or payment before the person struggling has to make a private crisis public. Sensitivity matters most when it becomes useful. Offer the specific thing that is actually available and leave room for the answer to be no. Help should reduce the person's work, not create another conversation they have to manage."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.square.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "d2bdb2a12b9c7b1c0b13d9dd0181d453f006874d8efd78cc21d77546d2dbc02c",
+  "payload": {
+    "summary": "A rumor travels faster than anyone can check the facts.",
+    "body": "A rumor travels faster than anyone can check the facts. Mercury square Neptune can make a convincing screenshot, repost, or partial quote feel complete long before anyone verifies the source, time, or missing context. The correction usually arrives with less drama than the wrong version, which means accuracy has to be deliberate. Read twice. Check the original source and the date before forwarding anything that could change what people do next."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

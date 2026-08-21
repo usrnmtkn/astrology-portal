@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.conjunction.venus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "67bea54e8fe77bc84df813f77e46428c731cff99c1aaea9cd5c23b182ba2c3d6",
+  "payload": {
+    "summary": "An act of care becomes the main social story of the day.",
+    "body": "An act of care becomes the main social story of the day. Moon conjunct Venus can make a meal, gift, fundraiser, family decision, or public gesture turn affection into something visible and shared. The care is genuine, but the exchange also reveals who is welcomed easily and who is still expected to make do. Notice who received the support and who quietly provided it. Appreciation is more convincing when the people doing the work are included in the generosity."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

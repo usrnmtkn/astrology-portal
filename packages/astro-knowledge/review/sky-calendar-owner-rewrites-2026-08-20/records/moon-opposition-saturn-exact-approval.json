@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.opposition.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "c0d877a08abe26482abde5963d8e8571c62ecb7716540b7e45cf0f14f2aa38ae",
+  "payload": {
+    "summary": "A human crisis collides with an unyielding institutional timeline.",
+    "body": "A human crisis collides with an unyielding institutional timeline. Moon opposite Saturn can put a request for family leave, rent relief, or a deadline shift directly across from the contract, budget, or duty someone else is authorized to enforce. The rules may be applied correctly and still leave one person carrying the heaviest consequence alone. Ask what exception process exists, who can authorize it, and what documentation is required. Do not stop at the first person whose job is only to repeat the limit."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

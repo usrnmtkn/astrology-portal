@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.square.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "b8db171c9ef3e08632e58cb111e5804093439de476e74a1176ba108d607f2e82",
+  "payload": {
+    "summary": "A confident statement outruns the evidence needed to defend it.",
+    "body": "A confident statement outruns the evidence needed to defend it. Mercury square Jupiter can turn a useful idea into an overpromise once the wording gets broader than the facts underneath it. One estimate becomes a guarantee, one promising result becomes a trend, or one enthusiastic reply becomes proof that everyone agrees. The sentence may travel farther than the correction. Tighten the claim before someone else has to. State exactly what the evidence shows and stop there."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

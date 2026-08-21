@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.conjunction.venus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "3bf9a96d5707244befc64ebdb23aa05471ba1e803c3703f3b8e2ea00e882a15a",
+  "payload": {
+    "summary": "A public announcement turns a private agreement into a social fact.",
+    "body": "A public announcement turns a private agreement into a social fact. Mercury conjunct Venus can make the wording part of the agreement itself, especially when a partnership, payment, invitation, creative deal, or change in status is being named for other people. The language now shapes how the relationship will be understood. Be precise about the terms before the announcement travels farther than the conversation that created them. If the public version and the private agreement do not match, fix that before asking everyone else to celebrate."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

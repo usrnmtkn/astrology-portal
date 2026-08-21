@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.opposition.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "d82586c4bccef4691c55622f209c688bb4313da1e00aa7cbcc211d2616cbf4ce",
+  "payload": {
+    "summary": "The person announcing the plan stands across from the people expected to execute it.",
+    "body": "The person announcing the plan stands across from the people expected to execute it. Sun opposite Mars can put strategy and urgency directly against safety, hours, and the work that cannot be completed on command. Issuing the order is not the same as having the people to fulfill it. Bring the operators into the decision before the deadline becomes a test of obedience. A plan is stronger when the people doing the work can say what it will actually take."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

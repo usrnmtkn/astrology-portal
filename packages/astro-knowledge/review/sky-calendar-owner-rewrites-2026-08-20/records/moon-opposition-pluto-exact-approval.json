@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.opposition.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "eb2328b71d4c4d68abd21be8dd606b6a3eecaf356766f5aea544945cccabb216",
+  "payload": {
+    "summary": "A private need is brought before the person who controls the money, access, housing, or family decision.",
+    "body": "A private need is brought before the person who controls the money, access, housing, or family decision. Moon opposite Pluto makes vulnerability face material power directly, especially when one person can say no and remove every practical option at once. The request deserves more than sympathy if the decision affects someone's safety or care. Put the terms on the table. Ask what can change, what cannot, and who else has authority if the person holding the leverage refuses to move."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

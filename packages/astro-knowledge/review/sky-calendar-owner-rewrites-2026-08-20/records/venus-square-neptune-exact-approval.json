@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.square.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "c1a6fd2bf06033a7dfef981ddd506f540efd92e4cd9f3d78a7de382907a4c3d1",
+  "payload": {
+    "summary": "A polished offer may feel much more secure than the agreement underneath it.",
+    "body": "A polished offer may feel much more secure than the agreement underneath it. Venus square Neptune can make beautiful images, warm assurances, or fast chemistry carry a decision while price, availability, ownership, or commitment is still unresolved. The missing terms do not become kinder because everyone likes the idea. Put the vague part in writing before paying, booking, signing, or promising more. If two people cannot describe the same outcome in ordinary language, they are not agreeing to the same thing yet."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.opposition.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "08f08c893299a581b0e37a4efa060e88c44b6d2e84178b46d8d82e2233150d5a",
+  "payload": {
+    "summary": "A human request for funding, flexibility, or recognition may run into an institution determined to hold the line.",
+    "body": "A human request for funding, flexibility, or recognition may run into an institution determined to hold the line. Venus opposite Saturn can put the value of someone's work or relationship directly across from a budget, policy, or obligation with more authority than sympathy. The refusal may follow every rule and still leave the same person carrying the cost. Ask what the rule protects and who it leaves paying for the decision. If an exception is impossible, the institution should still be able to explain what support, credit, or alternative is actually available."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

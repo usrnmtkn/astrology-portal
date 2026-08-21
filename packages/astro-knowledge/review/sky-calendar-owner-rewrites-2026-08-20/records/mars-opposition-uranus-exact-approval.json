@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.opposition.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "648e8c6c8517a15c29987c6a3b01353147b86ef37e37c9961fa0792cdd18a1a1",
+  "payload": {
+    "summary": "The person demanding an immediate break faces the people trying to keep a volatile system from collapsing.",
+    "body": "The person demanding an immediate break faces the people trying to keep a volatile system from collapsing. Mars opposite Uranus can turn a needed change into a standoff over timing, especially when one side sees every delay as complicity and the other sees every abrupt move as another source of damage. The old arrangement may be failing, but the replacement still needs somewhere to land. Name what has to stop now and what must stay functional during the transition. Freedom is easier to defend when the exit plan does not create a second emergency."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

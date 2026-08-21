@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.sextile.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "ad77a2592ecfb7789e5c70e45166ba60130c9e28e544745dbd3988aa57cab43c",
+  "payload": {
+    "summary": "A direct conversation clears a logistical bottleneck that has held up the work.",
+    "body": "A direct conversation clears a logistical bottleneck that has held up the work. Mercury sextile Mars can turn one practical question about money, scheduling, supplies, or responsibility into the answer needed to begin. The relief comes from specificity, not from having a longer discussion. Make the call. Ask the question that decides the next move, confirm the answer, and act on it before the conversation expands into every other frustration around the project."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

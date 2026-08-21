@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.opposition.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "5d2f8a3917a66dcf11abe62faf7dd717e836ebd8a7a7f76ee5896fe205b1d60a",
+  "payload": {
+    "summary": "The verified account faces a story people prefer because it explains the fear, hope, or outrage more cleanly.",
+    "body": "The verified account faces a story people prefer because it explains the fear, hope, or outrage more cleanly. Mercury opposite Neptune can put checkable facts directly against a narrative that already feels emotionally true to the people repeating it. Evidence may be stronger and still lose attention to the better story. Do not answer belief with contempt. Show the source, the date, and the detail that materially changes the claim, then be clear about what the record does not prove."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.trine.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "1dcb74aa277be762f39f33656764a00fd5896f50e7c6578670221373f978e073",
+  "payload": {
+    "summary": "A bold move receives the backing required to become more than a lucky break.",
+    "body": "A bold move receives the backing required to become more than a lucky break. Mars trine Jupiter can line up effort with opportunity, so staff, money, permits, or public support arrive behind a plan that is already prepared to use them. The work can grow quickly without becoming reckless because the people doing it know where the extra resources belong. This is a good time to scale what has already proven itself. Keep the next step tied to the team and systems that made the first result possible."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

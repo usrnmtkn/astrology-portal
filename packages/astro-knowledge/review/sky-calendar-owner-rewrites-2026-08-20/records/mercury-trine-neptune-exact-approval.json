@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.trine.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "831cdad8e8749ac033e6af13a45497adc72c17b98005265b0a8424e7b0fb0bbf",
+  "payload": {
+    "summary": "A difficult story can be told with enough clarity to move people without exploiting the person at its center.",
+    "body": "A difficult story can be told with enough clarity to move people without exploiting the person at its center. Mercury trine Neptune helps fact and feeling support each other, so testimony, reporting, art, or a private conversation can carry grief and meaning while keeping dates, names, and responsibilities intact. The emotional force does not need exaggeration to matter. Preserve the details that can be verified. Let the feeling come from what happened, not from making the story harder than it already is."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

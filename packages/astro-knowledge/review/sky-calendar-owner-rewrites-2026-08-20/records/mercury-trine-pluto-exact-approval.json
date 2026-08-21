@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.trine.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "14d3a6aeb26b58dbd243955b5405db5884ec2f2b44d6de3cc1085020ea40f8b7",
+  "payload": {
+    "summary": "A careful investigation connects a private decision to a public result without losing the evidence in drama.",
+    "body": "A careful investigation connects a private decision to a public result without losing the evidence in drama. Mercury trine Pluto helps documents, interviews, and timelines reveal who knew, who approved, and where the hidden leverage sat. The strongest conclusion is the one the record can actually support. Follow the proof farther than the headline, but do not outrun it. A precise finding carries more weight than a larger accusation the evidence cannot substantiate."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.opposition.venus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "efdf9b99bd64ba56b5e93c93836f5ae093b1b7c4a9931571015e61a652ec9078",
+  "payload": {
+    "summary": "One side wants to preserve the relationship and the pleasant plan while the other can no longer ignore what the arrangement costs at home.",
+    "body": "One side wants to preserve the relationship and the pleasant plan while the other can no longer ignore what the arrangement costs at home. Moon opposite Venus can put affection directly across from the time, money, or care the same person keeps giving up to preserve the plan. A trip, purchase, party, or recurring favor can be enjoyable and still be unfair. Put the private cost into the conversation. A compromise only works if the burden stops being the price of keeping everyone else happy."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

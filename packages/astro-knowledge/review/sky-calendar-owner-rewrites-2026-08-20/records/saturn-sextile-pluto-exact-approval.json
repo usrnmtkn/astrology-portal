@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.saturn.sextile.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "89acb0bee12aba666f18d38f34d3cfa26891c7b198a2a0a5e8549e6ea608357e",
+  "payload": {
+    "summary": "A serious review reaches the rule, contract, or chain of authority protecting a long-standing abuse of power.",
+    "body": "A serious review reaches the rule, contract, or chain of authority protecting a long-standing abuse of power. Saturn sextile Pluto can give an audit, legal opening, leadership change, or documented complaint enough force to alter the structure instead of disciplining another disposable person. Use the opening against the system that enabled the behavior. Change the approval path, reporting line, or consequence so the same power cannot simply regroup around a new name."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

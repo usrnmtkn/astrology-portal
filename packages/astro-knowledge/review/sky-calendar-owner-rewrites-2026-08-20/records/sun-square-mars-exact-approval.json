@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.square.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "586dd7a96eb7d65980d7a4baf37befe4de0da01f938d4a5a78add5dc94819797",
+  "payload": {
+    "summary": "A director moves the date up and the team pushes back in the same email thread.",
+    "body": "A director moves the date up and the team pushes back in the same email thread. Sun square Mars can turn the schedule into a direct fight over authority when management treats the order as final and the people responsible for delivery are still naming missing staff, unfinished work, and prior commitments. The date may hold and the mistakes will still count. Recalculate the workload before demanding faster execution. Pressure does not create extra hours just because leadership needs them."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

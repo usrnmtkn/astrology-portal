@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.trine.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "86a9a73c9631a8b6e0d4371f0c728b3b960525ef21d54ca109f931c586b4462b",
+  "payload": {
+    "summary": "A new arrangement makes daily life easier almost immediately.",
+    "body": "A new arrangement makes daily life easier almost immediately. Moon trine Uranus can make flexible hours, shared transport, accessible technology, or a changed household role solve a problem people had started treating as permanent. The relief is the evidence. Keep what makes the day easier and do not rebuild the old restriction just because it is familiar. A good change should reduce strain without asking everyone to live in constant instability."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

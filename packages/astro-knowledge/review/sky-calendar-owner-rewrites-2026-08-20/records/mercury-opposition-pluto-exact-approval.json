@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.opposition.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "e8fd493c22366cd5363cde5bb10b50bb79cf8349f55493f0782278e8c594e611",
+  "payload": {
+    "summary": "The person asking for the full record faces the institution determined to limit what can be seen.",
+    "body": "The person asking for the full record faces the institution determined to limit what can be seen. Mercury opposite Pluto makes the power behind information impossible to ignore: one side keeps the questions specific while the other controls the files, access, and consequences attached to releasing them. The argument is not only about truth. It is about who gets to decide which truth becomes available. Narrow the request to the document, date, or decision that matters most, and put every refusal in writing."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -14,6 +14,7 @@ const transitRows = readJson("../apps/web/src/content/fallbackArchitectureV3/sou
 const templates = readJson("../apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json");
 const canonicalMatrix = readJson("../docs/content-review/sky-aspects/2026-07-31/canonical-noon-matrix.json");
 const approvedJupiterNeptune = readJson("../packages/astro-knowledge/data/transits/jupiter-trine-neptune.json");
+const ownerRewriteSource = readJson("../packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-owner-rewrites-payloads.json");
 const ownerAspectSource = readJson("../packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json");
 const skyAspectVoice = readJson("../packages/astro-knowledge/voice/tldr-astro/sky-aspect.json");
 const transitDirectory = new URL("../packages/astro-knowledge/data/transits/", import.meta.url);
@@ -36,7 +37,10 @@ assert.equal(phrasebook.hookRows.filter((row) => row.contentKey.startsWith("fall
 assert.equal(phrasebook.hookRows.filter((row) => row.contentKey.startsWith("fallback-hook/sky-aspect-sign/")).length, 78);
 
 assert.equal(approvedJupiterNeptune.status, "LIVE");
-assert.match(approvedJupiterNeptune.readerCopy?.body ?? "", /^Hope has somewhere to go\./u);
+assert.equal(
+  approvedJupiterNeptune.readerCopy?.body,
+  ownerRewriteSource.payloads["sky.jupiter.trine.neptune"].payload.body,
+);
 assert.equal(Object.keys(ownerAspectSource).length, 225);
 assert.equal(exactTransitRecords.length, 215);
 assert.ok(exactTransitRecords.every((record) => record.status === "LIVE"));
@@ -45,18 +49,13 @@ assert.equal(
   skyAspectVoice.lockedPrinciple,
   "The astrology should explain why the event unfolds the way it does, while the prose shows what that looks like in ordinary life. The best version does both."
 );
-assert.match(
-  exactTransitRecords.find((record) => record.id === "neptune-sextile-pluto")?.readerCopy?.body ?? "",
-  /^A compelling public story creates an opening/u
-);
-assert.match(
-  exactTransitRecords.find((record) => record.id === "uranus-sextile-neptune")?.readerCopy?.body ?? "",
-  /^A new platform gives a neglected need/u
-);
-assert.match(
-  exactTransitRecords.find((record) => record.id === "uranus-trine-pluto")?.readerCopy?.body ?? "",
-  /^A quiet overhaul of everyday infrastructure/u
-);
+for (const id of ["neptune-sextile-pluto", "uranus-sextile-neptune", "uranus-trine-pluto"]) {
+  const [transiting, aspect, other] = id.split("-");
+  assert.equal(
+    exactTransitRecords.find((record) => record.id === id)?.readerCopy?.body,
+    ownerRewriteSource.payloads[`sky.${transiting}.${aspect}.${other}`].payload.body,
+  );
+}
 
 const cases = [
   {

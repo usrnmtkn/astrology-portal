@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.saturn.trine.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "70c37d760aef9f42c638662ceacae3459d83ae9cc704b9eff31cc43f8740bbf2",
+  "payload": {
+    "summary": "A major system changes without forcing the people who rely on it to survive a chaotic transition.",
+    "body": "A major system changes without forcing the people who rely on it to survive a chaotic transition. Saturn trine Uranus can let the old and new processes overlap long enough for records, payments, staff, and public access to move safely between them. Reform does not need disruption to prove it is reform. Keep the backup live until the replacement has handled ordinary use, not just a launch test. People trust change faster when the familiar route disappears after the new one is already working."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

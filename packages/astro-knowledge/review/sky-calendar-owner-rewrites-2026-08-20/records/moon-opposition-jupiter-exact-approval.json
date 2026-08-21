@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.opposition.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "63ff4a458d6a421a578f325e96bed52dbcf2688bfb7717d22eda1a9f9c6581b0",
+  "payload": {
+    "summary": "The public appeal says there is enough support to go around while the people distributing it describe shortages and impossible choices.",
+    "body": "The public appeal says there is enough support to go around while the people distributing it describe shortages and impossible choices. Moon opposite Jupiter puts the headline total directly against rent, food, beds, time, and the daily limits of care. Money raised is not the same as help delivered. Follow the resources all the way to the people using them. If local workers are still deciding whose need can be met first, the campaign is not finished just because the fundraising goal was reached."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}
