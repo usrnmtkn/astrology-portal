@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.sextile.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "8c0cc0180f041a7278dcf45fc4feae5f71c458f1f33788982776e28bbc68e9ed",
+  "payload": {
+    "summary": "A promotion, license, or approval may clear once the record shows the hours, budget, and responsibility behind the achievement.",
+    "body": "A promotion, license, or approval may clear once the record shows the hours, budget, and responsibility behind the achievement. Sun sextile Saturn can create a practical opening for work that has already survived scrutiny to receive formal recognition. The opportunity is not the same as the paperwork finishing itself. Submit the missing proof, confirm the condition, and get the decision in writing. Credit carries more weight when it comes with the authority or status that the documented work was supposed to earn."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

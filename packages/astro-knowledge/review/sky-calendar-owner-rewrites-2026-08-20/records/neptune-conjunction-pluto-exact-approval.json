@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.neptune.conjunction.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "1e35508d9fc5804f97727aaf8d8ed0e501e149956d9782afc5cf12bd3f68b5e8",
+  "payload": {
+    "summary": "A collective fear or hope becomes inseparable from the hidden power shaping the response.",
+    "body": "A collective fear or hope becomes inseparable from the hidden power shaping the response. Neptune conjunct Pluto can make a crisis, spiritual movement, media campaign, or public grief feel deeply meaningful while money, secrecy, and institutional interests decide which version reaches the audience. That combination deserves scrutiny precisely because the feeling is sincere. Follow the resources and the decision-making. Ask who benefits from the story, who controls what remains hidden, and what the public is being encouraged not to question."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.opposition.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "066eceaf62122f78bd572b6195846a566ce10c48a598519c62f76ecb22332214",
+  "payload": {
+    "summary": "The person making the move faces the person who can block access, funding, or permission with one decision.",
+    "body": "The person making the move faces the person who can block access, funding, or permission with one decision. Mars opposite Pluto exposes the difference between visible action and private leverage, especially when one side can make resistance expensive without ever raising its voice. The conflict may look like a debate about timing, but the deeper question is who controls the consequence. Put that power on the table. A workable agreement has to name what each side can block, what each side needs, and what happens if neither one gives way."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.conjunction.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "c2f0030bb252b7aeb1529aed324ea8071a7b8734eea2de00b35d3fe3dbaa8d22",
+  "payload": {
+    "summary": "A major milestone or expanding movement arrives with a heavier stack of rules.",
+    "body": "A major milestone or expanding movement arrives with a heavier stack of rules. Jupiter conjunct Saturn can make the opportunity and the obligation part of the same package: more reach, more authority, and more people to serve also mean more compliance, oversight, and responsibility. The growth may be worth it, but the fine print is not separate from the opportunity. Read the duties with the same attention given to the opportunity itself. The staff, budget, and authority still have to match what the larger role now requires."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.saturn.sextile.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "b48a47e5db048d4d33d4a37670d14fe546bc2453230af117e67c8faafc7024aa",
+  "payload": {
+    "summary": "An overdue system upgrade fixes a pipeline that was quietly failing the people who needed it most.",
+    "body": "An overdue system upgrade fixes a pipeline that was quietly failing the people who needed it most. Saturn sextile Uranus can turn one approved change in booking, inventory, payouts, or processing into a much faster route through a stubborn bottleneck. The improvement may be technical, but the result is human: fewer missed appointments, delayed payments, or people turned away. Finish the unglamorous implementation. A good reform is the one that reaches the front door with less delay."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

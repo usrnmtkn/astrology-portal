@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.saturn.conjunction.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "4f9a3f5889675cf3ca95b853f06ea517a2ed09740663a164f5b9037dbdc01031",
+  "payload": {
+    "summary": "A hard restructuring concentrates authority around survival, control, and consequences.",
+    "body": "A hard restructuring concentrates authority around survival, control, and consequences. Saturn conjunct Pluto can make budget cuts, department closures, tighter contracts, or emergency powers feel unavoidable while the same response also reduces freedom and review. Necessity is powerful language because it can end an argument before the terms are examined. Ask what control is being made permanent in the name of the crisis. If an emergency measure changes who can decide, put a date and review process on that power before it becomes ordinary."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -4,7 +4,7 @@
   "generatedBy": "scripts/compile-satori-editorial-decisions.js",
   "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
   "decisionSourceId": "satori-editorial-decisions-v1",
-  "decisionSourceSha256": "c15f6146d4825cdf990a86e937ae208025d0fbf41ccc87feff63c418ab025d80",
+  "decisionSourceSha256": "b00fe9e687d4f0795f2008450e6da0957bfdad6ff1633a20a2b0a9c9afdb8c02",
   "cases": [
     {
       "id": "natural-english-abstract-personification",
@@ -37,11 +37,21 @@
       "active": false
     },
     {
-      "id": "sky-aspect-calendar-second-person",
+      "id": "sky-aspect-calendar-reader-address-allowed",
       "surface": "sky-aspect-calendar",
-      "kind": "linter",
-      "text": "You already know what changed.",
-      "expected": "fail",
+      "kind": "judge",
+      "text": "The deadline is still there while the work is being divided. Name what each person is responsible for before taking on another task.",
+      "expected": "accept",
+      "decisionId": "ED-028",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "sky-aspect-calendar-standing-pattern-rejected",
+      "surface": "sky-aspect-calendar",
+      "kind": "judge",
+      "text": "You tend to take on more responsibility than everyone else.",
+      "expected": "reject",
       "decisionId": "ED-028",
       "decisionStatus": "approved",
       "active": true
@@ -121,6 +131,16 @@
       "surface": "sky-placement",
       "kind": "linter",
       "text": "A guest room turns into an office.",
+      "expected": "pass",
+      "decisionId": "CF-004",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "power-room-dynamic-allowed",
+      "surface": "sky-aspect-calendar",
+      "kind": "linter",
+      "text": "The disclosure changes the balance of power in the room.",
       "expected": "pass",
       "decisionId": "CF-004",
       "decisionStatus": "approved",
@@ -732,6 +752,6 @@
       "active": true
     }
   ],
-  "activeCaseCount": 70,
+  "activeCaseCount": 72,
   "unresolvedCaseCount": 0
 }

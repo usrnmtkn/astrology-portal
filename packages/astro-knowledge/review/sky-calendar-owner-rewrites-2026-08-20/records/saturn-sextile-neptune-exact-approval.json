@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.saturn.sextile.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "09ccf09310493b813277d9cbc296cf8ce33c9d0b6905ea12077f28ea5c4ecac1",
+  "payload": {
+    "summary": "A broad promise receives enough structure to support one practical piece of help.",
+    "body": "A broad promise receives enough structure to support one practical piece of help. Saturn sextile Neptune can turn compassion into a shelter bed, recovery program, arts fund, or protected leave policy once the budget, eligibility, staffing, and deadline are defined. The whole ideal does not need to fit inside one program. It needs a named owner and funding or staff attached to it. Build the part that can be delivered now, then let the larger vision grow from something people can already access."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

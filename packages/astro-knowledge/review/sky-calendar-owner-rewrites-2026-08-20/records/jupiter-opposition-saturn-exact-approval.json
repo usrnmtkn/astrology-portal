@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.opposition.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "a9c949e1c8904d1dd586584263e908c6bd9060654e6e777b06d0daa8cc7c11ff",
+  "payload": {
+    "summary": "An organization advertises sweeping opportunity while the fine print tells a much narrower story.",
+    "body": "An organization advertises sweeping opportunity while the fine print tells a much narrower story. Jupiter opposite Saturn puts the promise of more directly against the limits deciding who can actually receive it. Eligibility rules, debt, staffing, or legal obligations may exclude the same people the headline appears to invite. The contradiction is not solved by repeating the mission statement. Compare the public promise with the requirements people must meet in practice before calling the program accessible."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

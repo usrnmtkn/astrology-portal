@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.trine.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "0edf7724dfd1c0827e648f47ed4a7bfb34f7235269ab6965d9e2a80d220f8e59",
+  "payload": {
+    "summary": "A creative risk or ambitious idea that felt too intimidating last week suddenly seems possible enough to begin.",
+    "body": "A creative risk or ambitious idea that felt too intimidating last week suddenly seems possible enough to begin. Jupiter trine Neptune makes it easier to trust the vision and move before doubt drains the momentum. That can be exactly what a brave idea needs, but inspiration still has to survive a calendar, a budget, and the ordinary work of finishing it. Write down the core premise while it is clear. Then build the schedule and responsibilities that can carry it."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.conjunction.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "170e08462fadd6a859b00c1c495d65e23e288096bdc8613e70037516a3fc5f88",
+  "payload": {
+    "summary": "A wave of attention puts a leader or passion project center stage.",
+    "body": "A wave of attention puts a leader or passion project center stage. Sun conjunct Jupiter can make visibility and expansion feed each other so quickly that public backing becomes a new level of responsibility before the person at the center has had time to adjust. More attention creates more expectation. Decide what the larger audience can actually receive now. A bigger platform is useful when the promise grows with the work, not faster than it."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

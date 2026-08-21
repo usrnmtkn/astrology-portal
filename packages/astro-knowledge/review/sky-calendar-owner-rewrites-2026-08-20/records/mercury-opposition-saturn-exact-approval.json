@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.opposition.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "bb790488085ec4b19c3c5a3e52512e218ac20ea99c760967b46282f85ca8b608",
+  "payload": {
+    "summary": "The person requesting an answer faces the official responsible for making every word survive review.",
+    "body": "The person requesting an answer faces the official responsible for making every word survive review. Mercury opposite Saturn can put urgency and prior conversations directly against missing proof, limited authority, and the exact language on file. A technically correct answer may still expose how little the earlier reassurance was worth. Ask for the rule behind the refusal and the evidence required to change it. Do not keep negotiating with a promise that never made it into the record."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

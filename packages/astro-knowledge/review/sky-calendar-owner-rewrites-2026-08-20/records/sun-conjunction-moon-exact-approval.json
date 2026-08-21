@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.conjunction.moon",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "8d6f9251e7177f5e6f01f09c6c7bd2c9cb92bb4c5c219deef5497445f2dbdeeb",
+  "payload": {
+    "summary": "A single deadline puts equal heat on the boss who set it and the team doing the work.",
+    "body": "A single deadline puts equal heat on the boss who set it and the team doing the work. Sun conjunct Moon can make the official direction and the human reaction to it part of the same story, especially when late nights, missed care, or unfinished tasks are the cost of keeping the date. The work may still get done. That does not mean the deadline was well planned. Count the hours and tradeoffs before repeating the same timeline next time."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

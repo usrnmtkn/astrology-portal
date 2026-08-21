@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.trine.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "6904ed5ca48ff3c829f6c24490e91fb5fa8cfdc00e463a294340452e589fcac1",
+  "payload": {
+    "summary": "The response team reaches the problem with the right supplies and enough authority to use them.",
+    "body": "The response team reaches the problem with the right supplies and enough authority to use them. Moon trine Mars can help caregivers, neighbors, staff, or family members act on what people actually need instead of following a plan that no longer fits the situation. Instinct and action support each other here. Keep the team close to the people affected. The fastest response is useful when it can adjust without losing the purpose of the work."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

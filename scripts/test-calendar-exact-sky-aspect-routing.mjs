@@ -7,6 +7,8 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { build } from "esbuild";
 
+await import("./test-sky-calendar-owner-rewrites.mjs");
+
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const transitDirectory = path.join(repoRoot, "packages/astro-knowledge/data/transits");
 const bundleFile = path.join(os.tmpdir(), "tldrastro-calendar-exact-sky-aspect-routing.bundle.mjs");
@@ -14,15 +16,15 @@ const registryBundleFile = path.join(os.tmpdir(), "tldrastro-approved-exact-sky-
 const readJson = (filePath) => JSON.parse(fs.readFileSync(filePath, "utf8"));
 const canonicalPayloadPath = path.join(
   repoRoot,
-  "packages/astro-knowledge/review/sky-aspect-owner-refinements-2026-08-11/sky-aspect-owner-refinements-payloads.json"
+  "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-owner-rewrites-payloads.json"
 );
 const canonicalPayloadBytes = fs.readFileSync(canonicalPayloadPath);
-const ownerRefinements = JSON.parse(canonicalPayloadBytes.toString("utf8"));
+const ownerRewrites = JSON.parse(canonicalPayloadBytes.toString("utf8"));
 
 assert.equal(
   crypto.createHash("sha256").update(canonicalPayloadBytes).digest("hex"),
-  "88dba60e4a198298b9aad2c5989efd08a5c47b2be5d2b7d82bc3f599e6084299",
-  "The canonical owner-refinement payload file changed."
+  "7c72ab549cf74c460a5fe8ed08dede1e657b36f1f2ebeb4c10a2f853ee6f3bbe",
+  "The canonical owner-rewrite payload file changed."
 );
 
 const exactRecords = fs.readdirSync(transitDirectory)
@@ -36,7 +38,7 @@ const exactRecords = fs.readdirSync(transitDirectory)
 
 assert.equal(exactRecords.length, 215, "The pinned reader-eligible exact Sky corpus changed.");
 
-for (const [key, entry] of Object.entries(ownerRefinements.payloads)) {
+for (const [key, entry] of Object.entries(ownerRewrites.payloads)) {
   const payloadHash = crypto.createHash("sha256").update(JSON.stringify(entry.payload)).digest("hex");
   assert.equal(payloadHash, entry.sha256, `${key}: approved payload hash drifted.`);
 }
@@ -86,6 +88,14 @@ function aspectEvent({ first, second, aspect, fromSign, toSign, id }) {
 let routedDirections = 0;
 
 for (const record of exactRecords) {
+  const contentKey = `sky.${record.transiting}.${record.aspect}.${record.other}`;
+  const approvedPayload = ownerRewrites.payloads[contentKey]?.payload;
+  assert.ok(approvedPayload, `${contentKey}: missing owner-approved payload.`);
+  assert.deepEqual(
+    { summary: record.readerCopy.summary, body: record.readerCopy.body },
+    approvedPayload,
+    `${contentKey}: stored copy drifted from the owner-approved payload.`,
+  );
   for (const [first, second] of [
     [record.transiting, record.other],
     [record.other, record.transiting]
@@ -165,17 +175,9 @@ const screenshotCases = [
   }
 ];
 
-const saturnCalendarLeadIn = "On Tuesday, August 11, Saturn in Aries squares Lilith in Capricorn, and on a collective level, ";
-const saturnOwnerText = ownerRefinements.payloads["sky.saturn.square.lilith"].payload.ownerText;
-assert.ok(
-  saturnOwnerText.startsWith(saturnCalendarLeadIn),
-  "The canonical Saturn-Lilith payload no longer matches the approved composed lead-in boundary."
-);
-const saturnStoredBody = saturnOwnerText.slice(saturnCalendarLeadIn.length);
-
 for (const { event, ownerKey, sourceId } of screenshotCases) {
   const record = exactRecords.find(({ id }) => id === sourceId);
-  const ownerText = ownerRefinements.payloads[ownerKey].payload.ownerText;
+  const ownerText = ownerRewrites.payloads[ownerKey].payload.body;
   const normalized = normalizeCalendarEventSurface(
     event,
     null,
@@ -189,26 +191,8 @@ for (const { event, ownerKey, sourceId } of screenshotCases) {
   assert.equal(selected?.body, ownerText, `${ownerKey}: Calendar Exact today output drifted from owner text.`);
   assert.doesNotMatch(selected?.body ?? "", /untamed side|soften at the edges/iu);
 
-  if (ownerKey === "sky.saturn.square.lilith") {
-    assert.equal(
-      record.readerCopy.body,
-      saturnStoredBody,
-      "Saturn-Lilith stored body must be the byte-identical canonical payload remainder after the composed lead-in."
-    );
-    assert.equal(record.base, saturnStoredBody, "Saturn-Lilith base must not introduce prose outside the canonical payload.");
-    for (const field of ["business", "shadow", "arcApplying", "arcSeparating"]) {
-      assert.ok(
-        saturnStoredBody.includes(record[field]),
-        `Saturn-Lilith ${field} must be an exact sentence from the canonical payload.`
-      );
-    }
-    assert.equal(record.traditional, undefined);
-    assert.equal(record.modern, undefined);
-    assert.equal(record.cyclic, undefined);
-    assert.equal(record.readerCopy.calendarLeadIn, "date-placements-collective-level");
-  } else {
-    assert.equal(record.readerCopy.body, ownerText, `${ownerKey}: stored body must be byte-identical to owner text.`);
-  }
+  assert.equal(record.readerCopy.body, ownerText, `${ownerKey}: stored body must be byte-identical to owner text.`);
+  assert.equal(Object.hasOwn(record.readerCopy, "calendarLeadIn"), false, `${ownerKey}: obsolete lead-in metadata remains.`);
 }
 
 const signSpecificOverride = normalizeCalendarEventSurface(

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.square.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "8c3f006ebfe30022a28c9aa22eabfd351f3b76467c600e055a7bdf1daa125c9f",
+  "payload": {
+    "summary": "A celebrated expansion concentrates more money and influence inside the institutions already strong enough to set the terms.",
+    "body": "A celebrated expansion concentrates more money and influence inside the institutions already strong enough to set the terms. Jupiter square Pluto can turn each new win into another increase in bargaining power, making it harder for workers, competitors, or smaller participants to negotiate from the outside. The numbers may look impressive while the structure becomes less contestable. That is the pressure point. Track who lost access, leverage, or alternatives as the organization grew, not only how much the organization gained."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

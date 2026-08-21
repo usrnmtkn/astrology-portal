@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.saturn.opposition.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "4bc2f01637f4f101b2cb5b6d7e7da09d74df2db8976839dd21234f22416423e2",
+  "payload": {
+    "summary": "The officials responsible for continuity face the people demanding a complete break from the existing system.",
+    "body": "The officials responsible for continuity face the people demanding a complete break from the existing system. Saturn opposite Uranus can put safety, law, records, and services directly across from exclusion, failure, and a structure that has used stability to protect itself. Both sides are naming a risk. The replacement plan should show whose stability matters and who was previously expected to absorb the disruption. Reform is stronger when it protects essential continuity without using continuity as an excuse to preserve the failure."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.conjunction.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "731d7b94e77d216f77c06cd89243168cc0b90be401800dbb12a8225a775dc864",
+  "payload": {
+    "summary": "A comfortable routine is disrupted overnight by a price hike, property shift, or forced technology upgrade.",
+    "body": "A comfortable routine is disrupted overnight by a price hike, property shift, or forced technology upgrade. Moon conjunct Uranus can make the emotional shock and the practical change arrive at the same time, leaving people to replace something they depended on before they have processed losing it. The new system may offer more freedom to some and create chaos for others. Deal with the immediate replacement first. People adapt faster when they know where they are sleeping, paying, logging in, or getting the service tomorrow morning."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

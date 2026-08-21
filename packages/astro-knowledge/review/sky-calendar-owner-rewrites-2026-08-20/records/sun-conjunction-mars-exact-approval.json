@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.conjunction.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "38aae1ab134bac25e0c3ff5e1adbf90f92eb10788cff36afb83b6daa0cbc7fa0",
+  "payload": {
+    "summary": "The plan and the first move happen in the same meeting.",
+    "body": "The plan and the first move happen in the same meeting. Sun conjunct Mars can remove nearly all distance between deciding and doing, so a vote is followed by a filing, launch, dismissal, or transfer before anyone outside the meeting can prepare. That speed gives leadership power and responsibility at the same time. The person setting the direction also owns the consequences of the first move. Fast execution is not an excuse to pretend the overlooked fallout belongs to somebody else."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

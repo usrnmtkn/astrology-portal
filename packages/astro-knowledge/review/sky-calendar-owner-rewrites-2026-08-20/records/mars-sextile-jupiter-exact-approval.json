@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.sextile.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "fb660c1da4694c73389d0134272eb47301947e65b0c3ef7d26fc6ef1467daaee",
+  "payload": {
+    "summary": "A quick pitch catches fire and reaches a much larger audience than expected.",
+    "body": "A quick pitch catches fire and reaches a much larger audience than expected. Mars sextile Jupiter can help one direct move open a bigger opportunity, especially when a short video, sharp headline, introduction, or application reaches the right person at the right time. Attention is useful, but it creates expectations immediately. Make sure somebody is ready to answer the replies, fulfill the orders, or follow the lead. The opportunity gets better when the team can actually support the visibility it asked for."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

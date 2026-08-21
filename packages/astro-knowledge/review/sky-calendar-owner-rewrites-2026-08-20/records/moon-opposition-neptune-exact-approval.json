@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.opposition.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "e7c76524083bf14804f69fb29e9abc6a56a57a408b42c89ab4f6fc4ea2eda95e",
+  "payload": {
+    "summary": "The public story describes a moving rescue while the people living through it describe uncertainty, missing support, and needs that do not fit the narrative.",
+    "body": "The public story describes a moving rescue while the people living through it describe uncertainty, missing support, and needs that do not fit the narrative. Moon opposite Neptune can put genuine empathy directly against the fantasy that empathy already solved the problem. Attention may bring donations and still leave families or caregivers doing the unglamorous work after the cameras move on. Ask what remains unfinished. The story is more honest when the need is allowed to continue after the inspiring part ends."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

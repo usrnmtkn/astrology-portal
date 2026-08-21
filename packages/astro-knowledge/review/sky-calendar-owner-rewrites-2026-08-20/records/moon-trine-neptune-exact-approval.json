@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.trine.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "7de04bc916f87ed5a7a822166c869c13cb97fc9603be160279e0a615d4532bda",
+  "payload": {
+    "summary": "A collective loss is met with care that feels personal rather than procedural.",
+    "body": "A collective loss is met with care that feels personal rather than procedural. Moon trine Neptune can bring meals, vigils, art, childcare, or quiet places to gather without forcing mourners to organize the support themselves. The response does not need to erase the loss to be meaningful. Keep showing up in ways that reduce the practical burden. Grief is easier to carry when care is visible in the food, rides, hours, and space people actually receive."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}
