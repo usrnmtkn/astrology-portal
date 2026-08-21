@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldr-astro.local/schema/canonical-content-unit-v1.json",
+  "title": "TLDR Astro global canonical content unit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["identity", "resolution", "content", "mechanism", "evidence", "governance", "lineage", "revisions", "candidates", "reconciliation"],
+  "properties": {
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unitId", "surface", "kind", "register", "supportedPerspectives"],
+      "properties": {
+        "unitId": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*(?:/[a-z0-9]+(?:-[a-z0-9]+)*){2,}$" },
+        "surface": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "kind": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "register": { "type": "string", "minLength": 1 },
+        "supportedPerspectives": { "type": "array", "uniqueItems": true, "minItems": 1, "items": { "enum": ["you", "they"] } }
+      }
+    },
+    "resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Canonical resolution is perspective-scoped. A unit may be authored for You while remaining composed or gapped for Friends; the aggregate mode must not erase that asymmetry.",
+      "required": ["mode", "canonicalRevisionId", "recipeId", "canonicalSlotIds", "perspectiveModes"],
+      "properties": {
+        "mode": { "enum": ["authored", "composed", "gap"] },
+        "canonicalRevisionId": { "type": ["string", "null"] },
+        "recipeId": { "type": ["string", "null"] },
+        "canonicalSlotIds": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "perspectiveModes": {
+          "type": "object",
+          "description": "First-class, queryable authority mode for each reader perspective.",
+          "additionalProperties": false,
+          "required": ["you", "they"],
+          "properties": {
+            "you": { "enum": ["authored", "composed", "gap"] },
+            "they": { "enum": ["authored", "composed", "gap"] }
+          }
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "required": ["contentRef", "renderEligible", "contentSha256"],
+      "properties": {
+        "contentRef": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+        "renderEligible": { "type": "boolean" },
+        "contentSha256": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "mechanism": { "type": "object" },
+    "evidence": { "type": "array", "items": { "type": "object" } },
+    "governance": { "type": "object", "required": ["authorityClass", "approvalState", "approvalMetadata"], "properties": { "authorityClass": { "type": "string" }, "approvalState": { "type": "string" }, "approvalMetadata": { "type": "object" } } },
+    "lineage": { "type": "object", "required": ["supersedes", "supersededBy", "legacyKeys", "migrationOrigin"], "properties": { "supersedes": { "type": "array" }, "supersededBy": { "type": "array" }, "legacyKeys": { "type": "array" }, "migrationOrigin": { "type": "string" } } },
+    "revisions": { "type": "array", "items": { "type": "object", "required": ["revisionId", "timestamp", "actor", "reason", "provenance", "contentSha256", "supersedesRevisionId", "contentRef"], "properties": { "revisionId": { "type": "string" }, "timestamp": { "type": "string" }, "actor": { "type": "string" }, "reason": { "type": "string" }, "provenance": { "type": "array" }, "contentSha256": { "type": ["string", "null"] }, "supersedesRevisionId": { "type": ["string", "null"] }, "contentRef": { "type": ["string", "null"] } } } },
+    "candidates": { "type": "array", "items": { "type": "object", "required": ["candidateId", "state", "renderEligible", "content"], "properties": { "candidateId": { "type": "string" }, "state": { "enum": ["pending_owner_review", "owner_approved", "owner_reviewed", "rejected", "superseded"] }, "renderEligible": { "const": false }, "content": { "type": "object" } } } },
+    "reconciliation": { "type": "object", "required": ["bucket", "candidateSources", "currentRenderedResult"], "properties": { "bucket": { "enum": ["AUTO_MERGE_EXACT", "AUTO_MERGE_NORMALIZED", "AUTHORITY_RESOLVED", "OWNER_DECISION_REQUIRED", "SINGLE_SOURCE", "COMPOSED_ONLY", "SOURCE_GAP"] }, "candidateSources": { "type": "array" }, "currentRenderedResult": { "type": "object" } } }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "tldr-astro-canonical-content-source-allowlist/v1",
+  "version": "global-foundation-natal-wave-1-repair",
+  "entries": [
+    {
+      "entryType": "source-row",
+      "sourceKey": "fallback-hook/natal-moon-phase-lived/balsamic",
+      "disposition": "outside-natal-placement-aspect-empty-house-wave-1",
+      "evidence": "The Phase-1 unit kinds are natal placement, natal aspect, natal angle-sign, and natal empty-house. The new-moon phase reader is a separately routed lunation surface."
+    },
+    {
+      "entryType": "semantic-unit-family",
+      "semanticIdentity": "natal/angle-sign/descendant/*",
+      "expectedUnitCount": 12,
+      "disposition": "intentionally-uncovered-runtime-object",
+      "evidence": "apps/web/src/content/fallbackArchitectureV3Runtime.ts:610-613 states that the package covers Ascendant and Midheaven while Descendant remains intentionally uncovered."
+    },
+    {
+      "entryType": "semantic-unit-family",
+      "semanticIdentity": "natal/angle-sign/imum-coeli/*",
+      "expectedUnitCount": 12,
+      "disposition": "intentionally-uncovered-runtime-object",
+      "evidence": "apps/web/src/content/fallbackArchitectureV3Runtime.ts:610-613 states that the package covers Ascendant and Midheaven while IC remains intentionally uncovered."
+    }
+  ]
+}

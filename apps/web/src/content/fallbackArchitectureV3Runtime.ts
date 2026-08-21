@@ -14,6 +14,11 @@ import { createFallbackRenderer, createPackageManifest, createTransitSynastryRen
 
 export { normalizeAspect, SourceGapError };
 export {
+  CANONICAL_NATAL_CONTENT_FLAG,
+  canonicalNatalContentEnabled,
+  createCanonicalNatalAdapter
+} from "./canonicalContent/natalAdapter";
+export {
   KNOWLEDGE_MATRIX_V9_BASE_PATH,
   KNOWLEDGE_MATRIX_V9_VERSION,
   loadKnowledgeMatrixV9Runtime,

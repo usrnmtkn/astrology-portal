@@ -1,0 +1,38 @@
+{
+  "schema": "tldr-astro-fallback-architecture-known-failures/v1",
+  "authority": {
+    "aspectRouting": "PR #180 / commit 4e77b436: natal aspects may use exact or pair-specific copy only; missing pair support fails closed instead of serving a generic aspect paragraph.",
+    "moonReaderOnlyRows": "PR #283 / owner approval record packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json: reader_only full_copy rows are valid You-only authored rows."
+  },
+  "maximumFailureCount": 846,
+  "expectedFailureCount": 245,
+  "failureMultisetSha256": "29f762f1248b64da40a69f6c3e0d2b6185ff693406a624ffe649cd6d7cbff6d5",
+  "bannedNonEverydayWordFailures": 0,
+  "expectedNatalAspectSourceGaps": [
+    "chiron|conjunction|north-node",
+    "chiron|opposition|north-node",
+    "chiron|square|north-node",
+    "chiron|trine|north-node",
+    "chiron|sextile|north-node",
+    "chiron|conjunction|south-node",
+    "chiron|opposition|south-node",
+    "chiron|square|south-node",
+    "chiron|trine|south-node",
+    "chiron|sextile|south-node",
+    "mercury|opposition|venus",
+    "mercury|square|venus",
+    "north-node|conjunction|south-node",
+    "north-node|opposition|south-node",
+    "north-node|square|south-node",
+    "north-node|trine|south-node",
+    "north-node|sextile|south-node",
+    "sun|opposition|mercury",
+    "sun|square|mercury",
+    "sun|trine|mercury",
+    "sun|sextile|mercury",
+    "sun|opposition|venus",
+    "sun|square|venus",
+    "sun|trine|venus",
+    "sun|sextile|venus"
+  ]
+}
