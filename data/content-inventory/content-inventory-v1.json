@@ -1,12 +1,12 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "f59d221e3928832b8bb1a829c721c2fe88d0ac16",
+  "sourceCommit": "c99e1286293fb3820479ccc05d5a51b83f011367",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "ebadf518e31c258e30858d307254cb66eb91f4cda233689e8f6cea59b7b16d4f",
-  "recordCount": 9563,
+  "contentFingerprint": "921b470fe0b3177b24592b2b2ff8612bcc1b3453d40cb10da5918e279ab9a479",
+  "recordCount": 9564,
   "statusCounts": {
-    "owner-approved": 9563
+    "owner-approved": 9564
   },
   "familyCounts": {
     "approved/calendar-weekly-overview": 1,
@@ -17,7 +17,7 @@
     "authored/career-transit-house": 1,
     "authored/point-explainer": 2,
     "authored/station": 18,
-    "authored/transit-aspect": 377,
+    "authored/transit-aspect": 378,
     "authored/transit-aspect-insert": 2,
     "authored/transit-event": 1,
     "authored/transit-house": 108,
@@ -33685,6 +33685,36 @@
         "objects": [
           "jupiter",
           "chiron"
+        ],
+        "signs": [],
+        "aspects": [
+          "trine"
+        ],
+        "events": [
+          "trine"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/transit-aspect/jupiter/descendant/trine",
+      "contentFamily": "authored/transit-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json",
+      "runtimeBucket": "authored",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/jupiter-descendant-trine-owner-approval-2026-08-21.json",
+      "approvalVersionDate": "2026-08-21",
+      "contentHash": "9281a5430dcb4c195158cfa3601a4617b0bdbff9aaf1896c35f5d3416d9bf419",
+      "wording": {
+        "headline": "Jupiter trine your Descendant",
+        "body_you": "Until {{untilDate}}, other people can make a project or plan much easier to move forward.\n\nJupiter in Leo is trining your natal Descendant, opening up practical opportunities through partnerships, collaborators, clients, and people who are actually willing to meet you halfway. Someone makes the introduction, agrees to the meeting, offers real support, or finally wants to talk about what comes next. You do not have to push every door open by yourself right now.\n\nPay attention to the connections where effort goes both ways and there is genuine room for both of you to benefit. Say yes when an opportunity is worth pursuing, but take a look at the actual terms and timeline before you commit. A good offer should still make sense after the initial excitement calms down."
+      },
+      "astrology": {
+        "objects": [
+          "jupiter"
         ],
         "signs": [],
         "aspects": [
