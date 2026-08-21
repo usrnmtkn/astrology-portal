@@ -1081,7 +1081,7 @@ test.describe("client-facing user flow case studies", () => {
 
     await seedClientState(page, {
       profile: true,
-      now: "2026-08-21T03:59:50.000Z"
+      now: "2026-08-20T23:59:50"
     });
     await expectClientRouteLoads(page, "/?date=2026-08-20#you");
 
@@ -1089,7 +1089,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(dateTrigger).toContainText("Today");
 
     await page.evaluate(() => {
-      (window as any).__tldrSetQaNow("2026-08-21T04:00:05.000Z");
+      (window as any).__tldrSetQaNow("2026-08-21T00:00:05");
       window.dispatchEvent(new Event("focus"));
     });
 
@@ -1102,7 +1102,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(dateTrigger).toContainText("Aug 20");
 
     await page.evaluate(() => {
-      (window as any).__tldrSetQaNow("2026-08-22T04:00:05.000Z");
+      (window as any).__tldrSetQaNow("2026-08-22T00:00:05");
       window.dispatchEvent(new Event("focus"));
     });
 
