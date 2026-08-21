@@ -4014,8 +4014,8 @@ export function GeneratedContentAdminDashboard() {
             )}
           </section>
           {skyWriteupContext && selectedRow && (
-            <section className="admin-sky-related-editor" aria-label="Related reader horoscope passages">
-              <header className="admin-sky-related-heading">
+            <section className="admin-sky-related-editor admin-fallback-diagnostic-panel" aria-label="Related reader horoscope passages">
+              <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
                 <div>
                   <p className="admin-eyebrow">Reader horoscope passages</p>
                   <h3>Review the personalized copy from this Sky write-up</h3>
@@ -4024,14 +4024,14 @@ export function GeneratedContentAdminDashboard() {
                     Editing a passage here opens its canonical saved row.
                   </p>
                 </div>
-                <dl>
+                <dl className="admin-hook-pattern-list">
                   <div><dt>Placement</dt><dd>{titleFromKey(skyWriteupContext.planet)}{skyWriteupContext.sign ? ` in ${titleFromKey(skyWriteupContext.sign)}` : ""}</dd></div>
                   <div><dt>House coverage</dt><dd>{populatedSkyHouses}/12</dd></div>
                   <div><dt>Aspect passages</dt><dd>{skyAspectPassages.length}</dd></div>
                 </dl>
               </header>
 
-              <details className="admin-sky-related-group" open>
+              <details className="admin-sky-related-group admin-diagnostics-details" open>
                 <summary>
                   <span>House horoscopes</span>
                   <strong>{populatedSkyHouses}/12 houses</strong>
@@ -4039,17 +4039,17 @@ export function GeneratedContentAdminDashboard() {
                 <p className="admin-sky-related-help">
                   A house can have more than one row when the reader passage is assembled from an introduction, a sign-specific passage, or an approved complete horoscope.
                 </p>
-                <div className="admin-sky-house-grid">
+                <div className="admin-sky-house-grid admin-lunar-coverage-row-list">
                   {Array.from({ length: 12 }, (_, index) => index + 1).map((house) => {
                     const passages = skyHousePassages.filter((passage) => passage.house === house);
                     return (
-                      <article key={house} className={passages.length ? "has-passage" : "is-missing"}>
-                        <header>
+                      <article key={house} className={`admin-hook-detail-section ${passages.length ? "has-passage" : "is-missing"}`}>
+                        <header className="admin-fallback-diagnostic-heading">
                           <strong>{ordinalLabel(house)} House</strong>
                           <span>{passages.length ? `${passages.length} field${passages.length === 1 ? "" : "s"}` : "Not saved"}</span>
                         </header>
                         {passages.map((passage) => (
-                          <div className="admin-sky-related-row" key={passage.row.id}>
+                          <div className="admin-sky-related-row admin-hook-detail-section" key={passage.row.id}>
                             <div>
                               <span>{passage.kind}</span>
                               <code>{passage.row.content_key}</code>
@@ -4067,7 +4067,7 @@ export function GeneratedContentAdminDashboard() {
                 </div>
               </details>
 
-              <details className="admin-sky-related-group">
+              <details className="admin-sky-related-group admin-diagnostics-details">
                 <summary>
                   <span>Aspect passages</span>
                   <strong>{skyAspectPassages.length} rows</strong>
@@ -4087,9 +4087,9 @@ export function GeneratedContentAdminDashboard() {
                     />
                   </div>
                 </label>
-                <div className="admin-sky-aspect-list">
+                <div className="admin-sky-aspect-list admin-lunar-coverage-row-list">
                   {filteredSkyAspectPassages.map((row) => (
-                    <article className="admin-sky-related-row" key={row.id}>
+                    <article className="admin-sky-related-row admin-hook-detail-section" key={row.id}>
                       <div>
                         <strong>{rowTitle(row)}</strong>
                         <code>{row.content_key}</code>
