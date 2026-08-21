@@ -48,6 +48,27 @@ const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex"
 const lockedBytes = fs.readFileSync(lockedPath);
 const publicBytes = fs.readFileSync(publicPath);
 const locked = JSON.parse(lockedBytes.toString("utf8"));
+const ownerApprovedServingSubstitutions = new Map([
+  [
+    "fallback-hook/planet-lived/moon",
+    ["what unsettles you", "what puts you on edge"],
+  ],
+  [
+    "fallback-hook/planet-lived/pluto",
+    ["the old leverage is gone", "the old advantage is gone"],
+  ],
+]);
+const expectedServingBody = (row) => {
+  const substitution = ownerApprovedServingSubstitutions.get(row.contentKey);
+  if (!substitution) return row.copy;
+  const [before, after] = substitution;
+  assert.equal(
+    row.copy.split(before).length - 1,
+    1,
+    `${row.contentKey}: authorized serving substitution source must occur exactly once.`,
+  );
+  return row.copy.replace(before, after);
+};
 
 assert.deepEqual(publicBytes, lockedBytes, "public and governed locked V13 JSON must be byte-identical");
 assert.equal(sha256(lockedBytes), manifest.lockedRowsSha256);
@@ -91,6 +112,7 @@ const sourceByReleaseKey = new Map(
 );
 assert.equal(sourceByReleaseKey.size, 301);
 assert.equal(manifest.rows.length, 301);
+const observedServingSubstitutions = new Set();
 for (const row of locked.rows) {
   const workbookRow = workbookRows.get(`${row.sheet}\u0000${row.workbookRow}`);
   assert.ok(workbookRow, `${row.sheet}/${row.workbookRow}: workbook provenance missing`);
@@ -105,7 +127,9 @@ for (const row of locked.rows) {
 
   const servingRow = sourceByReleaseKey.get(row.contentKey);
   assert.ok(servingRow, `${row.contentKey}: V13 serving row missing`);
-  assert.equal(servingRow.body, row.copy);
+  const expectedBody = expectedServingBody(row);
+  assert.equal(servingRow.body, expectedBody);
+  if (expectedBody !== row.copy) observedServingSubstitutions.add(row.contentKey);
   assert.equal(servingRow.review_status, "approved");
   assert.equal(servingRow.reader_only, true);
   assert.equal(servingRow.render_policy, "reader-only-exact-lived-v1");
@@ -115,6 +139,11 @@ for (const row of locked.rows) {
   assert.equal(servingRow.source_workbook_row, row.workbookRow);
   assert.equal(servingRow.source_workbook_sha256, locked.sourceWorkbookSha256);
 }
+assert.deepEqual(
+  [...observedServingSubstitutions].sort(),
+  [...ownerApprovedServingSubstitutions.keys()].sort(),
+  "Only the two enumerated owner-approved serving substitutions may differ from locked V13 history.",
+);
 
 const servingApprovedReviews = new Set(["approved", "approved_reuse", "reviewed"]);
 // This fingerprint is the frozen pre-V13 baseline. Later owner-approved releases
@@ -191,7 +220,11 @@ try {
   assert.equal(v13Rows.filter(Boolean).length, 301);
   for (const [index, row] of v13Rows.entries()) {
     const lockedRow = locked.rows[index];
-    assert.equal(row.body, lockedRow.copy, `${lockedRow.contentKey}: Supabase body must remain exact.`);
+    assert.equal(
+      row.body,
+      expectedServingBody(lockedRow),
+      `${lockedRow.contentKey}: Supabase body must match locked history except enumerated owner-approved substitutions.`,
+    );
     assert.equal(row.status, "LIVE", `${lockedRow.contentKey}: serving status must be LIVE.`);
     assert.equal(row.lane, "serving", `${lockedRow.contentKey}: serving lane must be explicit.`);
     assert.equal(row.review_state, null, `${lockedRow.contentKey}: reader guard must be clear.`);

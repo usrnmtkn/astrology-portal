@@ -26,14 +26,10 @@ const expectedHouseBody = rows.hookRows.find(
 const expectedMercurySignBody = rows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/placement-sign-lived/mercury/pisces"
 )?.body;
-const expectedTenthHouseBody = rows.hookRows.find(
-  (row) => row.contentKey === "fallback-hook/house-lived/10"
-)?.body;
 
 assert.ok(expectedSignBody, "Moon-in-Scorpio approved sign copy must exist.");
 assert.ok(expectedHouseBody, "Moon-in-6th-house approved house copy must exist.");
 assert.ok(expectedMercurySignBody, "Mercury-in-Pisces approved sign copy must exist.");
-assert.ok(expectedTenthHouseBody, "Approved 10th-house copy must exist.");
 
 for (const [rendererName, renderPlacement] of [
   ["Node", renderNodePlacement],
@@ -64,14 +60,12 @@ for (const [rendererName, renderPlacement] of [
   assert.doesNotMatch(friend.body, /\byou(?:r|rs|self)?\b/iu, `${rendererName} Friend placement must not leak second person.`);
 
   const mercuryYou = renderPlacement({ planet: "mercury", sign: "pisces", house: 10, voice: "you" });
-  assert.deepEqual(
-    mercuryYou.parts,
-    [expectedMercurySignBody, expectedTenthHouseBody],
-    `${rendererName} Mercury-in-Pisces placement must preserve sign copy before the shared 10th-house copy.`
-  );
+  assert.equal(mercuryYou.parts[0], expectedMercurySignBody);
+  assert.match(mercuryYou.parts[1], /\bCommunicating\b/u, `${rendererName} composed house copy must retain Mercury-specific manifestation text.`);
+  assert.match(mercuryYou.parts[1], /\b10th house\b/u, `${rendererName} composed house copy must name the 10th house.`);
   assert.deepEqual(
     mercuryYou.partKeys,
-    ["fallback-hook/placement-sign-lived/mercury/pisces", "fallback-hook/house-lived/10"],
+    ["fallback-hook/placement-sign-lived/mercury/pisces", "fallback-template/natal.house-context"],
     `${rendererName} Mercury-in-Pisces placement must expose exact per-section provenance.`
   );
 }
@@ -95,4 +89,4 @@ assert.match(
   "The app must classify the final Moon house row as exact house copy."
 );
 
-console.log("natal placement sign + house composition: ok (Moon and Mercury You routes; Friend composed rows)");
+console.log("natal placement sign + house composition: ok (exact rows and composed named-house precedence)");
