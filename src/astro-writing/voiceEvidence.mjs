@@ -17,6 +17,8 @@ export function resolveVoiceEvidence({
 }) {
   assertSurfaceStrategy(strategy);
   const ownerContext = retrieveOwnerContext(plan, {
+    relevantOwnerPassagesAvailableCount: 0,
+    ownerPassageRelevanceTier: "none",
     examples,
     corrections,
     contentFamily: family,
