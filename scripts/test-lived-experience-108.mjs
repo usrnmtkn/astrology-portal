@@ -228,16 +228,16 @@ for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
     ["browser", browser.renderNatalPlacement],
   ]) {
     const result = render({ planet: "jupiter", sign: "sagittarius", voice: "you" });
-    const genericSign = llMatrixV13ByContentKey.get("fallback-hook/sign-lived/sagittarius")?.body;
-    if (genericSign) {
-      assert.equal(result.parts[0], genericSign, `${label}:${workbookKey}: V13 generic sign must supersede the earlier planet fallback`);
-    } else {
-      const expectedBody = llMatrixV13ByContentKey.get(mappedKey(workbookKey))?.body ?? entry.payload.body;
-      assert.ok(
-        result.parts[0].replace(/\s+/gu, " ").includes(expectedBody.replace(/\s+/gu, " ")),
-        `${label}:${workbookKey}: planet-lived body not selected`,
-      );
-    }
+    const expectedBody = llMatrixV13ByContentKey.get(mappedKey(workbookKey))?.body ?? entry.payload.body;
+    assert.ok(
+      result.parts[0].replace(/\s+/gu, " ").includes(expectedBody.replace(/\s+/gu, " ")),
+      `${label}:${workbookKey}: governed planet-lived body must remain in the complete planet-specific composition`,
+    );
+    assert.match(
+      result.parts[0],
+      /Your Jupiter is in Sagittarius/u,
+      `${label}:${workbookKey}: generic sign copy must not replace the planet-specific composition`,
+    );
   }
 }
 

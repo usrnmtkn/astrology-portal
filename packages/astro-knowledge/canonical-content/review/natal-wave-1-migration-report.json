@@ -1,0 +1,233 @@
+{
+  "authoredStoreInventory": {
+    "careerNatalAdjacent": {
+      "count": 15,
+      "disposition": "career-education-only-not-natal",
+      "evidence": "apps/web/src/content/fallbackArchitectureV3/admin/CODEX-TRANSIT-HANDOFF.md:42"
+    },
+    "countsByDeclaredSurface": {
+      "career-vertical": 54,
+      "compat-deep": 288,
+      "compat-pair": 719,
+      "point-explainer": 2,
+      "sky-placement": 1,
+      "sky-placement-archive": 1,
+      "transit-aspect": 377,
+      "transit-aspect-insert": 2,
+      "transit-event": 1,
+      "transit-house": 108,
+      "transit-return": 8,
+      "undeclared": 87,
+      "weekly-opener": 6,
+      "weekly-station": 18,
+      "you|friends": 1092
+    },
+    "countsByInventorySurface": {
+      "calendar": 36,
+      "career-vertical": 54,
+      "compat-deep": 288,
+      "compat-pair": 720,
+      "point-explainer": 2,
+      "sky-lunation": 50,
+      "sky-placement": 1,
+      "sky-placement-archive": 1,
+      "transit-aspect": 377,
+      "transit-aspect-insert": 2,
+      "transit-event": 1,
+      "transit-house": 108,
+      "transit-return": 8,
+      "weekly-opener": 6,
+      "weekly-station": 18,
+      "you|friends": 1092
+    },
+    "displayCountExplained": 2766,
+    "distinctKeys": 2764,
+    "duplicateSkyArticleDisplayEntries": 2,
+    "migratedInWave1": 0,
+    "pointExplainers": {
+      "count": 2,
+      "disposition": "personal-transit-only-not-natal",
+      "evidence": "apps/web/src/App.tsx:7444"
+    }
+  },
+  "compositionSlots": {
+    "authorityResolved": 7,
+    "authorityResolvedSlotIds": [
+      "canonical-slot/natal/planet-intro/jupiter",
+      "canonical-slot/natal/planet-intro/mars",
+      "canonical-slot/natal/planet-intro/moon",
+      "canonical-slot/natal/planet-intro/neptune",
+      "canonical-slot/natal/planet-intro/pluto",
+      "canonical-slot/natal/planet-intro/saturn",
+      "canonical-slot/natal/planet-intro/uranus"
+    ],
+    "conflicts": 0,
+    "total": 1428
+  },
+  "counts": {
+    "byBucket": {
+      "AUTHORITY_RESOLVED": 364,
+      "AUTO_MERGE_EXACT": 0,
+      "AUTO_MERGE_NORMALIZED": 0,
+      "COMPOSED_ONLY": 2147,
+      "OWNER_DECISION_REQUIRED": 0,
+      "SINGLE_SOURCE": 0,
+      "SOURCE_GAP": 395
+    },
+    "byKind": {
+      "angle-sign": 24,
+      "aspect": 938,
+      "empty-house": 1584,
+      "placement-house": 180,
+      "placement-sign": 180
+    },
+    "byMode": {
+      "authored": 0,
+      "composed": 2511,
+      "gap": 395
+    },
+    "byPerspectiveMode": {
+      "they": {
+        "authored": 0,
+        "composed": 2359,
+        "gap": 547
+      },
+      "you": {
+        "authored": 364,
+        "composed": 2147,
+        "gap": 395
+      }
+    },
+    "total": 2906
+  },
+  "intentionalRuntimeExclusions": [
+    {
+      "disposition": "intentionally-uncovered-runtime-object",
+      "entryType": "semantic-unit-family",
+      "evidence": "apps/web/src/content/fallbackArchitectureV3Runtime.ts:610-613 states that the package covers Ascendant and Midheaven while Descendant remains intentionally uncovered.",
+      "expectedUnitCount": 12,
+      "semanticIdentity": "natal/angle-sign/descendant/*"
+    },
+    {
+      "disposition": "intentionally-uncovered-runtime-object",
+      "entryType": "semantic-unit-family",
+      "evidence": "apps/web/src/content/fallbackArchitectureV3Runtime.ts:610-613 states that the package covers Ascendant and Midheaven while IC remains intentionally uncovered.",
+      "expectedUnitCount": 12,
+      "semanticIdentity": "natal/angle-sign/imum-coeli/*"
+    }
+  ],
+  "mechanisms": {
+    "wave1": {
+      "conflicting": 0,
+      "expected": 111,
+      "mapped": 111,
+      "missing": 0,
+      "notInUnitUniverse": 0,
+      "notInUnitUniverseSourceIds": [],
+      "pendingReview": 0
+    },
+    "wave2": {
+      "conflicting": 0,
+      "expected": 120,
+      "mapped": 108,
+      "mappedBodies": [
+        "sun",
+        "moon",
+        "mercury",
+        "venus",
+        "mars",
+        "jupiter",
+        "saturn",
+        "uranus",
+        "neptune"
+      ],
+      "missing": 0,
+      "pendingReview": 0,
+      "sourceGapBody": "lilith",
+      "sourceGaps": 12
+    }
+  },
+  "ownerDecisionRequired": 0,
+  "parity": {
+    "bugs": 0,
+    "exactParity": 2906,
+    "intentionalAuthorityCorrection": 0,
+    "unresolvedOwnerDecision": 0
+  },
+  "perspectiveResolution": {
+    "they": {
+      "authored": 0,
+      "composed": 2359,
+      "gap": 547
+    },
+    "you": {
+      "authored": 364,
+      "composed": 2147,
+      "gap": 395
+    }
+  },
+  "preservedBaselineSubstitutions": [
+    {
+      "authority": "owner-approved in the Phase-1 implementation directive",
+      "legacyPayloadHashStatus": "STALE_AFTER_OWNER_APPROVED_SUBSTITUTION",
+      "legacyPayloadHashUsedToAutoResolve": false,
+      "sourceKey": "fallback-hook/planet-lived/moon",
+      "substitution": "what unsettles you -> what puts you on edge"
+    },
+    {
+      "authority": "owner-approved in the Phase-1 implementation directive",
+      "legacyPayloadHashStatus": "STALE_AFTER_OWNER_APPROVED_SUBSTITUTION",
+      "legacyPayloadHashUsedToAutoResolve": false,
+      "sourceKey": "fallback-hook/planet-lived/pluto",
+      "substitution": "the old leverage is gone -> the old advantage is gone"
+    }
+  ],
+  "preservedEditorialFlags": [
+    {
+      "action": "preserved byte-for-byte; later editorial review only",
+      "sourceKey": "fallback-hook/planet-lived/moon",
+      "terms": [
+        "settles",
+        "comfort"
+      ]
+    }
+  ],
+  "provenanceVerification": {
+    "convention": "sha256(JSON.stringify({ body: copy }))",
+    "failed": 0,
+    "failures": [],
+    "total": 111,
+    "unresolved": 0,
+    "verified": 111
+  },
+  "resolverAuthorities": [
+    {
+      "authority": "createFallbackRenderer",
+      "migration": "post-fix shipped output becomes revision zero; future adapter reads canonical units"
+    },
+    {
+      "authority": "createKnowledgeMatrixV13Resolver",
+      "migration": "its exact owner-approved rows are provenance candidates inside canonical units; it is not an independent future precedence path"
+    },
+    {
+      "authority": "createKnowledgeMatrixV9Resolver",
+      "migration": "inventoried; no Wave-1 natal API, so it contributes no natal unit authority"
+    }
+  ],
+  "schema": "tldr-astro-canonical-content-migration-report/v1",
+  "sourceReachability": {
+    "canonicalUnit": 376,
+    "compositionIngredient": 26,
+    "eligibleExactRows": 403,
+    "explicitAllowlist": 1,
+    "failures": 0,
+    "original371": {
+      "canonicalUnit": 352,
+      "compositionIngredient": 19,
+      "explicitAllowlist": 0,
+      "failures": 0,
+      "total": 371
+    }
+  },
+  "version": "global-foundation-natal-wave-1"
+}
