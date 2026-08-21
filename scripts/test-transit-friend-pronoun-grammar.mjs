@@ -26,7 +26,7 @@ const transitAspectRows = transitLibrary.authoredCards.filter((row) => (
 
 assert.equal(
   transitAspectRows.length,
-  377,
+  378,
   "The friend-pronoun gate must cover the complete authored transit-aspect library."
 );
 

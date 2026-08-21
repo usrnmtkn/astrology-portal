@@ -213,6 +213,23 @@ assert.ok(
   voiceContract.replace(/\s+/gu, " ").includes(canonicalAstrologyWritingInstructions.split("\n\n")[0].replace(/\s+/gu, " ")),
   "Canonical API instructions must retain the verbatim owner-designated doctrine."
 );
+const compactCanonicalInstructions = canonicalAstrologyWritingInstructions.replace(/\s+/gu, " ");
+const compactVoiceContract = voiceContract.replace(/\s+/gu, " ");
+for (const instruction of [
+  "Astrology may explain why the pattern is easy to enter, but it may not excuse an observable action",
+  "A transitive instruction names its object.",
+  "The copy becomes more specific after the opening, not more abstract.",
+  "Astrology taxonomy is secondary after the opening"
+]) {
+  assert.ok(
+    compactCanonicalInstructions.includes(instruction),
+    `Canonical API instructions must include the 2026-08-21 human-pattern rule: ${instruction}`
+  );
+  assert.ok(
+    compactVoiceContract.includes(instruction),
+    `Voice contract must include the 2026-08-21 human-pattern rule: ${instruction}`
+  );
+}
 assert.deepEqual(REVIEW_SCHEMA.properties.decision.enum, ["PASS", "REVISE"]);
 assert.deepEqual(COLD_REVIEW_SCHEMA.properties.decision.enum, ["PASS", "REVISE"]);
 assert.deepEqual(COLD_REVIEW_SCHEMA.properties.violations.items.properties.category.enum, ["cold_rendered_prose"]);
@@ -227,12 +244,12 @@ for (const sign of ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libr
 }
 
 const corrections = jsonl("data/writing/owner-corrections.jsonl");
-assert.equal(corrections.length, 32, "All 32 owner correction fixtures must be seeded.");
+assert.equal(corrections.length, 34, "All 34 owner correction fixtures must be seeded.");
 const minedOwnerFeedback = jsonl("data/writing/owner-feedback-corpus.jsonl");
 const allOwnerCorrections = [...new Map(
   [...corrections, ...minedOwnerFeedback].map((entry) => [entry.bad.trim().toLowerCase(), entry])
 ).values()];
-assert.equal(allOwnerCorrections.length, 69, "The pair selector must receive all 69 deduplicated owner corrections.");
+assert.equal(allOwnerCorrections.length, 71, "The pair selector must receive all 71 deduplicated owner corrections.");
 for (const fixture of corrections) {
   for (const field of ["bad", "corrected", "category", "why", "family", "rule"]) assert.ok(fixture[field], `Correction fixture missing ${field}.`);
   const review = await reviewDraft({
@@ -253,6 +270,46 @@ for (const fixture of corrections) {
     ownerCorrections: [fixture]
   });
   assert.ok(!correctedLint.violations.some((violation) => violation.category === fixture.category), `Owner correction must clear its original failure: ${fixture.category}.`);
+}
+
+const incompleteDoItem = validateCopy("Ask for more.", {
+  validationProfile: "shared-only",
+  family: "daily-dodont",
+  register: "second_person"
+});
+assert.ok(
+  incompleteDoItem.violations.some((violation) => violation.category === "vague_action_object"),
+  "A transitive Do item without an object must fail behaviorally."
+);
+const completeDoItem = validateCopy("Ask for more time.", {
+  validationProfile: "shared-only",
+  family: "daily-dodont",
+  register: "second_person"
+});
+assert.ok(
+  !completeDoItem.violations.some((violation) => violation.category === "vague_action_object"),
+  "Naming the governed object must clear the Do-item failure."
+);
+
+const relationshipRoomMetaphor = validateCopy("The obligations are eating the warmth out of the room.", {
+  validationProfile: "shared-only",
+  family: "synastry",
+  register: "second_person"
+});
+assert.ok(
+  relationshipRoomMetaphor.violations.some((violation) => violation.category === "relationship_container_metaphor"),
+  "A relationship quality may not be located inside a metaphorical room."
+);
+for (const literalOrSpatialUse of ["Organize one room.", "Give the connection room to change."]) {
+  const lint = validateCopy(literalOrSpatialUse, {
+    validationProfile: "shared-only",
+    family: "synastry",
+    register: "second_person"
+  });
+  assert.ok(
+    !lint.violations.some((violation) => violation.category === "relationship_container_metaphor"),
+    `Literal or spatial room use must remain valid: ${literalOrSpatialUse}`
+  );
 }
 
 const approvedCollocations = JSON.parse(read("data/writing/collocations/approved-collocations-v1.json"));

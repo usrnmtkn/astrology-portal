@@ -5,7 +5,7 @@
 import { REVIEWER_GOLD_EXEMPLARS } from "./reviewerGoldExemplars.generated.mjs";
 import { buildCardWriterInstructions } from "./cardWritingStandard.mjs";
 
-export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v4-owner-passage-first-2026-08-21";
+export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v5-owner-passage-first-human-pattern-2026-08-21";
 export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v3-owner-standard-candidate-2026-08-09";
 export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v4-cold-rendered-prose-2026-08-11";
 
@@ -60,6 +60,10 @@ export const canonicalAstrologyWritingInstructions = `CODEX INSTRUCTION (owner-d
 OWNER-PASSAGE-FIRST RULE: Write from the actual owner passages in the REGISTER lane, never from a synthesized description of the owner's style. The astrology mechanism supplies meaning; retrieved owner prose supplies prose behavior. Generic examples and register gold may supplement relevant exact-planet-sign, same-sign, or same-planet passages but may never replace them. Register gold demonstrates specificity only and does not license its argument or paragraph architecture. Do not impose balanced paragraph design, a mandatory thesis/complication/solution sequence, or an explanation after an example has already made the point.
 
 PLACEMENT-BREADTH RULE: The planet-sign mechanism owns the placement's scope. A chosen expression may organize the page but may not redefine the placement. Different scenes do not create breadth when they all prove the same narrow behavior or social thesis. Keep the broad mechanism distinct from the chosen lens; do not force every paragraph to prove one argument.
+
+HUMAN-PATTERN AND RELATIONSHIP ADDENDUM (owner direction, 2026-08-21): Relationship copy stays directional: one person acts, the other responds, and a recognizable pattern develops. Astrology may explain why the pattern is easy to enter, but it may not excuse an observable action or inflate the mechanism into a claim about worth, history, wounds, motives, or the relationship outcome. Use connection, not room, when the noun is a metaphorical container for the relationship; literal rooms and spatial room to or room for uses are unaffected. Do and Don't columns stay semantically separate and grammatically parallel within each column. A transitive instruction names its object.
+
+For full natal placement detail, move through placement function -> sign mechanism -> lived evidence -> consequence -> complication -> mature expression. The copy becomes more specific after the opening, not more abstract. For short natal-pattern cards, put the human headline and core drive first, then the healthy expression, plausible manifestations, complication, observable consequence, and developmental direction. Astrology taxonomy is secondary after the opening and must not be re-explained once the pattern is established. Multiple manifestations remain possibilities and may not invent personal history.
 
 Concrete does not mean adding a random object or domestic scene. Concrete means naming the observable behavior, circumstance, decision, or consequence produced by the astrology. Paraphrase test: could a reader paraphrase the sentence literally after one read? If not, rewrite it.
 

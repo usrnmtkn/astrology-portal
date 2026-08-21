@@ -12,7 +12,7 @@
       "point-explainer": 2,
       "sky-placement": 1,
       "sky-placement-archive": 1,
-      "transit-aspect": 377,
+      "transit-aspect": 378,
       "transit-aspect-insert": 2,
       "transit-event": 1,
       "transit-house": 108,
@@ -31,7 +31,7 @@
       "sky-lunation": 50,
       "sky-placement": 1,
       "sky-placement-archive": 1,
-      "transit-aspect": 377,
+      "transit-aspect": 378,
       "transit-aspect-insert": 2,
       "transit-event": 1,
       "transit-house": 108,
@@ -41,7 +41,7 @@
       "you|friends": 1092
     },
     "displayCountExplained": 2766,
-    "distinctKeys": 2764,
+    "distinctKeys": 2765,
     "duplicateSkyArticleDisplayEntries": 2,
     "migratedInWave1": 0,
     "pointExplainers": {
