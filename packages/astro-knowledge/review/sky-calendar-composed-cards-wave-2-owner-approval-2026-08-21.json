@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "recordType": "sky_calendar_composed_card_batch_exact_serving_approval",
+  "approvalId": "sky-calendar-composed-cards-wave-2-owner-approval-2026-08-21",
+  "approvalLevel": "exact_owner_approved",
+  "approvedAt": "2026-08-21",
+  "recordedAt": "2026-08-21",
+  "approvalMarkedBy": "owner",
+  "recordPreparedBy": "Codex",
+  "ownerApprovalStatementSource": {
+    "tool": "Codex Desktop",
+    "turnId": "01a01d6d-cded-7991-ab69-68d50a6c4957",
+    "date": "2026-08-21",
+    "pullRequest": "https://github.com/usrnmtkn/astrology-portal/pull/285",
+    "statement": "I approve the exact wording of all 20 candidates currently in PR #285 and authorize them to serve to readers."
+  },
+  "scope": {
+    "sourcePath": "packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json",
+    "pullRequestNumber": 285,
+    "cardCount": 20,
+    "exactWordingApproved": true,
+    "servingAuthorized": true,
+    "automaticCopyEdits": 0
+  },
+  "payloadHashAlgorithm": "sha256(JSON.stringify({forecast,details}))",
+  "batchPayloadSetHashAlgorithm": "sha256(JSON.stringify(cards.map(({id,payloadSha256}) => ({id,payloadSha256}))))",
+  "batchPayloadSetSha256": "19c0bfb595541b866144afe5e2e5a1b42d51c62661baf242b6166a517c93a3f1",
+  "cards": [
+    { "id": "sky-card/saturn/aries/sextile/pluto/aquarius", "payloadSha256": "05cfad0cbed738adb8e8f0a37297ac96fe6bf2e7b19beb37bfa931050df2a324" },
+    { "id": "sky-card/mars/leo/conjunction/jupiter/leo", "payloadSha256": "ffeec07cd2ed9d2106a20822ec70cf99534edeb34a89cafd9a8410c5263d797e" },
+    { "id": "sky-card/saturn/aries/sextile/uranus/gemini", "payloadSha256": "c5236c933ed3a967b24de436e477c83aefd8ee8293455ef9c0b2a7055dd9ff95" },
+    { "id": "sky-card/mars/leo/trine/saturn/aries", "payloadSha256": "e96237fb6876400d6ec6aba75855f7571d9def8c25c8ef1a1aa066cf79814b4a" },
+    { "id": "sky-card/venus/scorpio/square/pluto/aquarius", "payloadSha256": "700a0334fa935857d96d34743a157acc8d2f5d4b38e2c591b0f88e096048249d" },
+    { "id": "sky-card/venus/libra/sextile/jupiter/leo", "payloadSha256": "cc592ae9651c794d5e70ec363a5aa04ee60a20c0a3f96d846944ddbd073531a3" },
+    { "id": "sky-card/mercury/gemini/sextile/saturn/aries", "payloadSha256": "5c844268d63098f99fa4a44542cb020be9d054164444e045d09e63645d7a0fe5" },
+    { "id": "sky-card/sun/leo/sextile/mars/libra", "payloadSha256": "84a26a5dd77c001dd06cb701ef412c3a33503c6a6c9c14e592480240c65f5f66" },
+    { "id": "sky-card/mercury/gemini/sextile/jupiter/leo", "payloadSha256": "44114e79eea887324fad3c3c3de2e90ec9b6a63764cebd039a0638eb30d3dd3a" },
+    { "id": "sky-card/sun/virgo/sextile/mars/cancer", "payloadSha256": "ef1cb58f6b209b925108ea504b3539fd3d0dbe6387c916dff3a14cd40d4e4bbf" },
+    { "id": "sky-card/venus/libra/sextile/mars/leo", "payloadSha256": "e469a47608222c9adefe6c23af4f77eb579a7ccf2556480f22788f63a24b4add" },
+    { "id": "sky-card/mercury/aquarius/opposition/jupiter/leo", "payloadSha256": "206e295785ec1357309715ba5d9db99a51c21a4f2dedacf46eff57cf6ebc8656" },
+    { "id": "sky-card/sun/leo/conjunction/venus/leo", "payloadSha256": "fe2c67e4223a97ffdc2d22864e407b18b4c356cf190430e05e81f8430992e19d" },
+    { "id": "sky-card/mercury/scorpio/square/pluto/aquarius", "payloadSha256": "1de05adf7b2bc56b39e65d665ccbe243c26e947ef78d92ccca8d5c85d0a7b1ab" },
+    { "id": "sky-card/mercury/scorpio/square/jupiter/leo", "payloadSha256": "eade2185864fc338e414d1028cd019cc029a2c0b1e7fae1ff9a68df012970272" },
+    { "id": "sky-card/mercury/scorpio/square/mars/leo", "payloadSha256": "5fe4c2ba35f5b233764236b6aa22912bc9275538b2d6dae1c15deefb60071ed8" },
+    { "id": "sky-card/mars/leo/sextile/uranus/gemini", "payloadSha256": "d2182c137235591f8fb4052880456ccef4c544a471411eb118f7fd6a358d5c8c" },
+    { "id": "sky-card/venus/scorpio/sextile/mars/virgo", "payloadSha256": "23370d0f6630db2f33c65d7cbf1604ad99df57787648bcff0dd96d34a4ace880" },
+    { "id": "sky-card/mercury/aquarius/sextile/venus/sagittarius", "payloadSha256": "5d3e4a0a2dde8634288104093731ec1477ee72a6caba21429f6319d0a09c6779" },
+    { "id": "sky-card/mars/libra/trine/pluto/aquarius", "payloadSha256": "cd03241ac2c696803206d01d3feac1efcab7212fd2dea8b1a0afceb875081b90" }
+  ]
+}
