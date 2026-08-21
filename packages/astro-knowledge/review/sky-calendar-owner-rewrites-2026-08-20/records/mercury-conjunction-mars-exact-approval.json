@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.conjunction.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "7352cfbee3a631161f04521135aa893826d5b5ae8ad1f9a3a9868c7bff934bad",
+  "payload": {
+    "summary": "One sentence sets the entire response in motion.",
+    "body": "One sentence sets the entire response in motion. Mercury conjunct Mars can make the message and the action arrive together, so a warning, accusation, instruction, or post triggers a filing, walkout, purchase, confrontation, or emergency call before anyone has time to soften the language. That speed can cut through delay, but careless wording now travels with consequences that are harder to reverse. Say exactly what needs to happen and why. If the sentence is going to start the action, make sure it names the right target."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

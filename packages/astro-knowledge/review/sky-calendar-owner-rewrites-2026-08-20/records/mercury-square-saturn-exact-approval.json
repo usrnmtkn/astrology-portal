@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.square.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "e9ce49d1646b1dd51b904ea798779cdc7e1ec381fb3038773a8627360234ad43",
+  "payload": {
+    "summary": "A promised answer arrives late and covers far less than what was originally discussed.",
+    "body": "A promised answer arrives late and covers far less than what was originally discussed. Mercury square Saturn can turn one request into a chain of revisions, signatures, and formal sign-offs until the response is reduced to the minimum someone is willing to put in writing. The email may satisfy policy while leaving the people who planned around the earlier conversation absorbing the fallout. Read the answer twice. Separate what was approved, denied, and sent back, then ask one direct question about the part that still changes the next move."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

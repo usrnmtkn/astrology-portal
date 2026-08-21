@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.uranus.conjunction.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "34e2a83ddb6c54a1c86afd2bd67416aef2d1fa2bd4b3845ba488168380ad700e",
+  "payload": {
+    "summary": "A technological or cultural breakthrough can arrive already carrying a story about how everyone will live once it spreads.",
+    "body": "A technological or cultural breakthrough can arrive already carrying a story about how everyone will live once it spreads. Uranus conjunct Neptune can make innovation and idealism rise together, so a new platform, medium, or movement feels like proof of the future before ownership, limits, or consequences are clear. The excitement may be deserved. The projection can be just as strong. Ask who controls the tool, what it actually changes, and what happens if the promise does not hold. A new interface is not the same thing as a new distribution of power."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

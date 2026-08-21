@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.square.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "2e9a86ff8d70073fdf4b645cd949d2b4d9ca21271a6b8a4823d6ba3684628e30",
+  "payload": {
+    "summary": "The event, purchase, or promise may get more expensive every time someone adds one more good idea.",
+    "body": "The event, purchase, or promise may get more expensive every time someone adds one more good idea. Venus square Jupiter can make upgrades, guests, gifts, and expectations pile onto a budget that still belongs to the smaller plan. The result can look generous while one person is carrying the overage in money, hours, or cleanup. Stop adding before the pleasure becomes another obligation nobody agreed to fund. Compare the current price and workload with the original yes, then decide what still belongs in the plan."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.sextile.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "2183a5edc82641e832906277141922de886395fbc1d67018775bdbec4ae99495",
+  "payload": {
+    "summary": "A grant clears and a partner signs, funding the exact piece that needed support right as momentum stalled.",
+    "body": "A grant clears and a partner signs, funding the exact piece that needed support right as momentum stalled. Sun sextile Jupiter can open a larger door without forcing the project to become something else. Hire the missing person, reserve the space, secure the permit, or solve the specific problem that stopped the next stage. Use the support where it was actually needed. A larger opportunity stays useful when it is attached to a defined job instead of another oversized promise."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

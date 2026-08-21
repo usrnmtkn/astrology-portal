@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.uranus.square.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "09fb77b58028d7388fabfb643ad0ada652920e27e2689ec6bfa757bfc2e82a7b",
+  "payload": {
+    "summary": "A viral solution may collect believers before anyone has had time to test if it works.",
+    "body": "A viral solution may collect believers before anyone has had time to test if it works. Uranus square Neptune can make new platforms, anonymous funds, artificial images, or unverified tools spread through a crisis while hope fills the gaps in evidence. The first failure can become an excuse to chase the next version instead of asking what the experiment already proved. Slow the repeat cycle. Verify the source, ownership, results, and people carrying the downside before another round of attention or money turns the same uncertainty into a larger problem."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

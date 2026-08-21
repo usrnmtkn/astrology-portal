@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.trine.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "d35f3b6911987ccdb6a075788b65f4da4bbf4b4808675418dfbd1b23c2010469",
+  "payload": {
+    "summary": "Leadership may finally approve the change people have been asking for before the old process creates another crisis.",
+    "body": "Leadership may finally approve the change people have been asking for before the old process creates another crisis. Sun trine Uranus can make reform easier to implement when the person with authority is willing to put their name behind a better system instead of defending the familiar one. The new platform, reporting line, or policy still has to work on an ordinary Tuesday. Roll it out with enough support to prove that. A bold change earns trust when daily work gets easier after the announcement, not just more exciting on launch day."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

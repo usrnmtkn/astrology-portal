@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.uranus.sextile.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "69d8c9c6870a831adfc552ab8d775ba99dd4f219196184f65ee1c483cec7e902",
+  "payload": {
+    "summary": "A new platform may give a neglected need a route around the institutions that kept missing it.",
+    "body": "A new platform may give a neglected need a route around the institutions that kept missing it. Uranus sextile Neptune can open an unconventional channel between people who need support and people willing to provide it, especially through unfamiliar technology, creative formats, or decentralized networks. Attention alone is not the result. Build enough trust for people to use the route safely, and make the next step obvious once they arrive. The innovation matters because it connects someone to money, information, care, or access they could not reach before."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.trine.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "2e054e9c50bc6e07320334ddc2454fbff4c1691ce7ae119c3d35676d4c29e23a",
+  "payload": {
+    "summary": "Funding and final authority move toward the people a reform claims it was built to serve.",
+    "body": "Funding and final authority move toward the people a reform claims it was built to serve. Jupiter trine Pluto can help institutional backing reach the deeper structure of a problem, so budgets change, records open, or ownership shifts instead of stopping at symbolic inclusion. The result matters because the people named as beneficiaries can influence the outcome. This is where scale becomes useful. Put the transfer in contracts, budgets, and decision rights so the change survives the people currently willing to support it."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.moon.square.mercury",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "55c86c1ab12e37a7d6959b055ba9b7bf25a11507ce71547dd614d9272d05b63d",
+  "payload": {
+    "summary": "A technically correct message lands as dismissive because its tone ignores what the room is already carrying.",
+    "body": "A technically correct message lands as dismissive because its tone ignores what the room is already carrying. Moon square Mercury can make an automated reply, short email, or carefully worded statement answer the question and still lose the trust required for the answer to be heard. Accuracy is not the whole job when grief, fear, anger, or exhaustion is obvious. Keep the facts, change the delivery. Acknowledge the impact before repeating the policy."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

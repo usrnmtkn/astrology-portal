@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.saturn.square.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "9fffffae75b972c8c11dd123b76642b46831634eaf5746cf19150610cca6059e",
+  "payload": {
+    "summary": "A sweeping promise hits a hard wall of practical limits.",
+    "body": "A sweeping promise hits a hard wall of practical limits. Saturn square Neptune can make a community project, care plan, or creative institution keep running on belief until the budget, legal backing, or staffing finally refuses to cooperate. Inspiration cannot cover a missing structure forever. The shutdown may be quick, but the cleanup is not. Name what failed before replacing the dream with another promise. Fix the funding, authority, or staffing gap that made delivery impossible in the first place."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.conjunction.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "624d139a67081b61ad1bd17889d521770e9caa49dcae4c124fe122715622e5c6",
+  "payload": {
+    "summary": "One message changes the direction of the entire conversation before anyone can prepare a response.",
+    "body": "One message changes the direction of the entire conversation before anyone can prepare a response. Mercury conjunct Uranus can make a leak, alert, resignation note, discovery, or technical breakthrough invalidate the older explanation almost instantly. The information and the break from the old plan arrive together. Speed matters, but everyone still needs to know which facts are confirmed. Share the update, mark what is still changing, and stop pretending the previous plan can remain intact if the new information has already made it obsolete."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

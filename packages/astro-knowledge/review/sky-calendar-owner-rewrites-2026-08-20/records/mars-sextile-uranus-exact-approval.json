@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.sextile.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "06dabcd26be7024679f127e2db7f705082091caf8e3a528646ea5d8e457edbf6",
+  "payload": {
+    "summary": "An outdated rule or process opens just enough for someone to try a faster route.",
+    "body": "An outdated rule or process opens just enough for someone to try a faster route. Mars sextile Uranus can turn a narrow exception into a practical test, especially when the official method keeps wasting time or creating the same error. One alternate platform, revised form, or temporary workaround may be all the evidence needed to prove there is a better way. Try the change where the cost of failure is manageable. If it works, document the result before the old process closes back around it."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

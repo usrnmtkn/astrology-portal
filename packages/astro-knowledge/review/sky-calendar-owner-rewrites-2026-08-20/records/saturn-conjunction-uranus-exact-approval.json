@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.saturn.conjunction.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "9bca8b56b46d851ab08fa6bcbb55ca5f9d5d2b3054db01224aa808b23c4749d9",
+  "payload": {
+    "summary": "A new system becomes mandatory at the same moment the old one is shut down.",
+    "body": "A new system becomes mandatory at the same moment the old one is shut down. Saturn conjunct Uranus can make reform and enforcement arrive together, leaving staff, residents, or users to learn new rules and tools while still meeting every obligation the former process handled. The upgrade may solve a specific problem and still be badly timed. Keep a working bridge between the two systems long enough for records, payments, and people to move. A transition is not complete because leadership declared the old version over."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

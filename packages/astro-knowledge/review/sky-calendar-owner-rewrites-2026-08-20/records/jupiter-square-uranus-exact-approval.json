@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.square.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "ba813a59ec8909a240f9f10b8b54bf1dfb3d26f0046856a03d9458a78a242f95",
+  "payload": {
+    "summary": "A popular new market sends prices and demand moving faster than housing, staffing, supply, or regulation can follow.",
+    "body": "A popular new market sends prices and demand moving faster than housing, staffing, supply, or regulation can follow. Jupiter square Uranus can make every breakthrough create a second problem the existing structure was not built to absorb. Early users gain options while everyone arriving later meets shortages, new fees, or rules written after the rush began. Growth does not erase instability; it can amplify it. Slow the next expansion long enough to fix the shortage everyone is already paying for."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

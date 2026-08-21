@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.sextile.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "1725aade68b15b33021979e7b4e5813fefb4fa90b06461947b68f4a7deec37fc",
+  "payload": {
+    "summary": "A reform receives enough backing to change who controls a meaningful part of the system.",
+    "body": "A reform receives enough backing to change who controls a meaningful part of the system. Jupiter sextile Pluto can give a practical proposal the funding, legal authority, or public pressure needed to move power rather than simply announce better intentions. One opened record, changed approval process, or transfer of ownership can make the first result visible. Do not let the opportunity end at access to the meeting. Use it to change who has the final word."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

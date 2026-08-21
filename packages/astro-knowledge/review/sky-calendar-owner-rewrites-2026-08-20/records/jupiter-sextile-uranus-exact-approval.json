@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.sextile.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "2a5aea0d841a515739ec0142b86fe0bf73e27d22bd53a59cb606d7028372319a",
+  "payload": {
+    "summary": "A revised rule or technology update lowers a barrier that kept people out.",
+    "body": "A revised rule or technology update lowers a barrier that kept people out. Jupiter sextile Uranus can turn one practical change into broader access without requiring the entire system to be rebuilt first. A new distribution route, approval process, or platform feature may be enough to bring a neglected group into the program. The opening only matters if someone actually uses it. Put the new route into practice now and measure who gets through the door that was previously closed."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.uranus.square.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "5244c0ffcb15329f57e3c6901f0d57e68462805277791d12c5d7d0594c64f355",
+  "payload": {
+    "summary": "A disruptive technology can break one gatekeeping system and immediately create a new fight over who owns the replacement.",
+    "body": "A disruptive technology can break one gatekeeping system and immediately create a new fight over who owns the replacement. Uranus square Pluto can make access expand faster than rules around data, pricing, enforcement, or ownership can catch up, leaving a smaller group with more control than the people celebrating the breakthrough expected. Do not mistake a broken gate for the end of gatekeeping. Check who can change the terms, raise the price, remove access, or keep the data. The new system deserves the same scrutiny the old one eventually received."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

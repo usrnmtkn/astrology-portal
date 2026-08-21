@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.conjunction.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "8b06af3ac32f8ff8ea62d6d83eda9c1e56498b87a516e77cc044fb3af1a05122",
+  "payload": {
+    "summary": "A relationship or financial agreement can become official at the same moment its obligations become concrete.",
+    "body": "A relationship or financial agreement can become official at the same moment its obligations become concrete. Venus conjunct Saturn can turn affection, money, and responsibility into dates, duties, recurring costs, and consequences that are harder to treat casually once the contract is signed. That can create stability. It can also reveal how much each person expected the other to carry without saying so. Read the obligation as closely as the promise. Put the money, time, and ongoing work into the agreement before commitment becomes the reason nobody feels allowed to renegotiate it."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

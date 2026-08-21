@@ -4,7 +4,7 @@
   "mode": "collective-aspect-card",
   "purpose": "Output-level voice contract for the collective current-sky aspect cards. These rules apply to RENDERED card copy, not to source meaning in data/, so they are stricter than voice/banned-words.json (which the build enforces against data). Enforced by scripts/lint-sky-voice.mjs.",
 
-  "voiceDescription": "Direct, grounded, and modern, like advice from the reader's smartest, most honest friend. Names what is actually happening before it explains any astrology. Collective and third-person (never 'you'), felt but never corporate or mystical. Short, quotable sentences; ends on a plain truth.",
+  "voiceDescription": "Direct, grounded, and modern, like advice from the reader's smartest, most honest friend. Names what is actually happening before it explains any astrology. Collective in subject; direct you/your guidance is allowed after the shared condition is clear, but standing personality claims are not. Felt but never corporate or mystical. Short, quotable sentences; ends on a plain truth.",
 
   "lockedPrinciple": "The astrology should explain why the event unfolds the way it does, while the prose shows what that looks like in ordinary life. The best version does both.",
 
@@ -91,7 +91,6 @@
 
   "outputBans": {
     "fail": [
-      {"term": "(?<!-)\\byou\\b|(?<!-)\\byour\\b", "reason": "no second person on the collective sky surface (hyphenated 'thank-you' is exempt)"},
       {"term": "roam", "reason": "weird word choice (owner flag)"},
       {"term": "leverage", "reason": "owner ban; use hold, pull, advantage"},
       {"term": "facilitat", "reason": "owner ban; use make the most of, help along"},

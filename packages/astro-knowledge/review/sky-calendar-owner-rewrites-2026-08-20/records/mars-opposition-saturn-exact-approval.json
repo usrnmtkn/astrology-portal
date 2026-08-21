@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.opposition.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "0ae4e70f6fde0eb4ba673d983b9e608bc3bdbaf6a9195761492b1f4de0d2031b",
+  "payload": {
+    "summary": "The people prepared to act face the official authorized to stop them.",
+    "body": "The people prepared to act face the official authorized to stop them. Mars opposite Saturn can make urgency collide with law, staffing, safety, or a limit that will still matter after the immediate crisis is over. One side sees the cost of waiting; the other sees the cost of acting without support. Both costs need to be named. Separate the delay that protects people from the delay that protects procedure, then decide which part of the plan can move without asking the system to pretend the limit is not there."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

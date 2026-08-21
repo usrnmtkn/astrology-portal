@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.sextile.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "714db3dff2f8a21e07a392a54feb256d42df7395b888ec33260109af85ad2c06",
+  "payload": {
+    "summary": "A compassionate idea reaches the person or institution capable of funding a first practical response.",
+    "body": "A compassionate idea reaches the person or institution capable of funding a first practical response. Jupiter sextile Neptune can connect a larger vision with the money, audience, or support needed to give it form. A grant, shelter plan, relief payment, or public appeal works because the beneficiary and immediate use are clear. Hope becomes more credible when it has an address and a person responsible for delivery. Use the opening to fund one defined need instead of trying to solve everything at once."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

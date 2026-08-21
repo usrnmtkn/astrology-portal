@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.sextile.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "e5925c97621801d3572fe41f8930ecae44556ade9953f624e4c5e78a23098ec8",
+  "payload": {
+    "summary": "A delayed answer moves after someone supplies the missing proof in exactly the required form.",
+    "body": "A delayed answer moves after someone supplies the missing proof in exactly the required form. Mercury sextile Saturn can turn one corrected line, signature, document, or responsible contact into the condition that releases part of the request. The result may be smaller than originally hoped for, but the portion that clears is solid enough to rely on. Give the reviewer the exact evidence being requested. Once that piece is accepted, build from the answer already on the page instead of reopening the entire case."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

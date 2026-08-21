@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.trine.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "4113eb8d482f59c8d93ad792f2c32f1c69cdea4f76beba065505c1ccbb84ae71",
+  "payload": {
+    "summary": "Art, care, and generosity can support each other without turning emotion into a sales tactic.",
+    "body": "Art, care, and generosity can support each other without turning emotion into a sales tactic. Venus trine Neptune can make a performance fund relief, a gift honor a loss, or a gathering create room for tenderness while the purpose remains clear. The beauty is part of why people respond, but it does not have to hide the cost or the need. Let the experience move people. Make sure the money, credit, and practical help still reach the place the event said it was supporting after the room empties."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

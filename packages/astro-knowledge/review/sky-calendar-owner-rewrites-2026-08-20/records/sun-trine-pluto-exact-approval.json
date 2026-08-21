@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.trine.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "22da79cfffd1131e32344bb682114545a5c48109bf724220e6aa586d209365b1",
+  "payload": {
+    "summary": "A transfer of authority works better when the budget, access, conflicts, and review process move with the title instead of being negotiated afterward.",
+    "body": "A transfer of authority works better when the budget, access, conflicts, and review process move with the title instead of being negotiated afterward. Sun trine Pluto can make leadership and deeper structural power support the same transition, which gives the new person enough leverage to do the job while making that leverage visible. Open the records and disclose the conflicts before the handoff is finished. The transition gains credibility when nobody has to pretend the title is separate from the money and control attached to it."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

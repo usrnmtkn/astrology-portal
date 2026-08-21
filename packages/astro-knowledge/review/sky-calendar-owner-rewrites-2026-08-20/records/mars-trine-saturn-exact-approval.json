@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.trine.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "362122b3c966c20492fdd7d905ceb60eca952646a5d7ee0a355218142e5cb1e8",
+  "payload": {
+    "summary": "The repair gets finished because the crew, materials, and deadline finally match the size of the job.",
+    "body": "The repair gets finished because the crew, materials, and deadline finally match the size of the job. Mars trine Saturn can turn pressure into disciplined work, so shifts are clear, safety steps stay intact, and nobody has to do three jobs just to keep the schedule alive. The result lasts because the pace is built around what people can actually carry. Protect that structure when the next urgent request arrives. A faster finish is not an improvement if it depends on exhausting the same people who have to maintain it afterward."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

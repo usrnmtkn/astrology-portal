@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.jupiter.square.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "69d0688ef7f2a9024b1dae02b0da51ac20087188c5dad596a92cd63a9743fc85",
+  "payload": {
+    "summary": "A major expansion is announced before the institution resolves the debts, rules, or staffing limits already slowing the work.",
+    "body": "A major expansion is announced before the institution resolves the debts, rules, or staffing limits already slowing the work. Jupiter square Saturn can make the desire to grow collide with the structure that has to support every new promise. More locations, users, or responsibilities do not fix an old bottleneck; they usually make it more expensive. The deadline is not proof that the organization can carry another layer. Resolve the limit that keeps repeating before adding more volume to the system."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

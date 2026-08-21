@@ -1,0 +1,1527 @@
+{
+  "schemaVersion": 2,
+  "name": "sky-calendar-owner-rewrites-2026-08-21-batch-approval",
+  "approvedAt": "2026-08-21",
+  "approvalAuthority": "Owner exact-wording batch approval in Codex desktop task 019fc997-4b31-79f2-9a53-b363197a6ee2 (WIP: Aspects), 2026-08-21; preserved in OWNER-APPROVAL.md.",
+  "exactWordingApproved": true,
+  "mergeAuthorized": false,
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "sourcePayloadManifestSha256": "d7e87571deb181d142e4415265867f0e4b505283ffa4646ff37a16975399fa63",
+  "hashAlgorithm": "sha256(JSON.stringify({summary,body}))",
+  "setHashAlgorithm": "sha256(JSON.stringify(sorted([{contentKey,payloadSha256}])))",
+  "payloadSetSha256": "2bd51aa2797c9e9159f77a57e6fec37eb23a63caec11b9c69656e4a63657b95c",
+  "rowCount": 215,
+  "decisionCounts": {
+    "include": 215,
+    "revise": 0,
+    "reject": 0
+  },
+  "payloads": {
+    "sky.jupiter.conjunction.neptune": {
+      "payload": {
+        "summary": "One offer is presented as a relief plan, moral cause, investment, and rescue mission all at once.",
+        "body": "One offer is presented as a relief plan, moral cause, investment, and rescue mission all at once. Jupiter conjunct Neptune can make the promise feel bigger and more convincing before anyone has agreed on what the promise actually includes. Money and attention arrive quickly, but the scope stays loose enough for different people to hear different guarantees. Good intentions do not fix that mismatch. Pin down the deliverables, budget, and person responsible for the result before committing more resources to the vision."
+      },
+      "sha256": "89e2f05c897c5e3cff821122e96a118768b74e6b5b7565e31c5c952bb6585719"
+    },
+    "sky.jupiter.conjunction.pluto": {
+      "payload": {
+        "summary": "A major acquisition puts more money, data, and decision-making power under one roof overnight.",
+        "body": "A major acquisition puts more money, data, and decision-making power under one roof overnight. Jupiter conjunct Pluto can expand an institution at the same time it concentrates control over prices, access, or the choices available across an entire field. The deal may create new resources, but it also makes the alternatives outside the larger structure easier to see. Growth is not neutral when the same move decides who gets to participate. Read the new terms closely and identify who gained authority before assuming bigger means better."
+      },
+      "sha256": "6ec548dae6e16c80a94893dd05179b86d06842598d409e55d55ddeb2de541dce"
+    },
+    "sky.jupiter.conjunction.saturn": {
+      "payload": {
+        "summary": "A major milestone or expanding movement arrives with a heavier stack of rules.",
+        "body": "A major milestone or expanding movement arrives with a heavier stack of rules. Jupiter conjunct Saturn can make the opportunity and the obligation part of the same package: more reach, more authority, and more people to serve also mean more compliance, oversight, and responsibility. The growth may be worth it, but the fine print is not separate from the opportunity. Read the duties with the same attention given to the opportunity itself. The staff, budget, and authority still have to match what the larger role now requires."
+      },
+      "sha256": "c2f0030bb252b7aeb1529aed324ea8071a7b8734eea2de00b35d3fe3dbaa8d22"
+    },
+    "sky.jupiter.conjunction.uranus": {
+      "payload": {
+        "summary": "A sudden shift in pricing, technology, or markets opens a much larger opportunity than anyone expected.",
+        "body": "A sudden shift in pricing, technology, or markets opens a much larger opportunity than anyone expected. Jupiter conjunct Uranus can make the breakthrough and the rush to expand happen almost at the same time, which is exciting right up until supply, staffing, or regulation falls behind. Early access can feel like proof that the new model has no downside. It does not. Move fast enough to use the opening, but keep a backup for the people who will be stranded if the first version fails."
+      },
+      "sha256": "7938c2690f17c1fbc5b0bf5f616cb2cdcf48c59ab959b52d92b32ed261510bd3"
+    },
+    "sky.jupiter.opposition.neptune": {
+      "payload": {
+        "summary": "The institution points to the size of its relief effort while recipients and workers describe help that is late, uneven, or impossible to access.",
+        "body": "The institution points to the size of its relief effort while recipients and workers describe help that is late, uneven, or impossible to access. Jupiter opposite Neptune puts the public promise directly across from the experience of the people who were supposed to benefit from it. One side cites money raised and people reached; the other points to requests that disappeared inside those totals. Large numbers cannot answer a delivery problem. Pull the records and compare what was promised with what actually reached people."
+      },
+      "sha256": "15aededd6b70edd2dc704d042f0d234a2a77cdf672d5ca987367ebfef21c725b"
+    },
+    "sky.jupiter.opposition.pluto": {
+      "payload": {
+        "summary": "The institution promising broader opportunity faces the people documenting how the expansion narrowed their choices.",
+        "body": "The institution promising broader opportunity faces the people documenting how the expansion narrowed their choices. Jupiter opposite Pluto makes the contradiction hard to smooth over with totals: investment may rise while ownership consolidates, prices climb, or access moves into fewer hands. One side can point to growth; the other can point to who now controls the door. Both facts matter. Compare the new reach with the new concentration of power before accepting the expansion as proof of progress."
+      },
+      "sha256": "a61a7d4082b037dc1fb53c2e83bcf50b271992e37755f19dfd3f95671b1310fe"
+    },
+    "sky.jupiter.opposition.saturn": {
+      "payload": {
+        "summary": "An organization advertises sweeping opportunity while the fine print tells a much narrower story.",
+        "body": "An organization advertises sweeping opportunity while the fine print tells a much narrower story. Jupiter opposite Saturn puts the promise of more directly against the limits deciding who can actually receive it. Eligibility rules, debt, staffing, or legal obligations may exclude the same people the headline appears to invite. The contradiction is not solved by repeating the mission statement. Compare the public promise with the requirements people must meet in practice before calling the program accessible."
+      },
+      "sha256": "a9c949e1c8904d1dd586584263e908c6bd9060654e6e777b06d0daa8cc7c11ff"
+    },
+    "sky.jupiter.opposition.uranus": {
+      "payload": {
+        "summary": "The people celebrating rapid innovation face the communities dealing with its cost.",
+        "body": "The people celebrating rapid innovation face the communities dealing with its cost. Jupiter opposite Uranus can put the promise of a better future directly across from higher prices, displacement, unstable work, or services that no longer fit the people who depended on the older system. Both sides may be describing the same change accurately. The question is who gets the benefit first and who is expected to adjust. Count the disruption as part of the result before expanding the model again."
+      },
+      "sha256": "748bd55cd466a6293a7095ec33ff45b536c621e7da4b06b2847664c612f52286"
+    },
+    "sky.jupiter.sextile.neptune": {
+      "payload": {
+        "summary": "A compassionate idea reaches the person or institution capable of funding a first practical response.",
+        "body": "A compassionate idea reaches the person or institution capable of funding a first practical response. Jupiter sextile Neptune can connect a larger vision with the money, audience, or support needed to give it form. A grant, shelter plan, relief payment, or public appeal works because the beneficiary and immediate use are clear. Hope becomes more credible when it has an address and a person responsible for delivery. Use the opening to fund one defined need instead of trying to solve everything at once."
+      },
+      "sha256": "714db3dff2f8a21e07a392a54feb256d42df7395b888ec33260109af85ad2c06"
+    },
+    "sky.jupiter.sextile.pluto": {
+      "payload": {
+        "summary": "A reform receives enough backing to change who controls a meaningful part of the system.",
+        "body": "A reform receives enough backing to change who controls a meaningful part of the system. Jupiter sextile Pluto can give a practical proposal the funding, legal authority, or public pressure needed to move power rather than simply announce better intentions. One opened record, changed approval process, or transfer of ownership can make the first result visible. Do not let the opportunity end at access to the meeting. Use it to change who has the final word."
+      },
+      "sha256": "1725aade68b15b33021979e7b4e5813fefb4fa90b06461947b68f4a7deec37fc"
+    },
+    "sky.jupiter.sextile.saturn": {
+      "payload": {
+        "summary": "A promising program receives conditional backing that can turn it into something lasting.",
+        "body": "A promising program receives conditional backing that can turn it into something lasting. Jupiter sextile Saturn gives the expansion a workable route through the rules: revise the budget, meet the reporting requirement, narrow the scope, or secure the person responsible for delivery. The opportunity comes with proof requirements because the structure has to carry what is being promised. Treat those conditions as design information. Meet the requirement that matters and leave the parts that do not need to grow alone."
+      },
+      "sha256": "66465caf035d7e266617125c5ac56346d4af297391f8a8698e9154f96336df2a"
+    },
+    "sky.jupiter.sextile.uranus": {
+      "payload": {
+        "summary": "A revised rule or technology update lowers a barrier that kept people out.",
+        "body": "A revised rule or technology update lowers a barrier that kept people out. Jupiter sextile Uranus can turn one practical change into broader access without requiring the entire system to be rebuilt first. A new distribution route, approval process, or platform feature may be enough to bring a neglected group into the program. The opening only matters if someone actually uses it. Put the new route into practice now and measure who gets through the door that was previously closed."
+      },
+      "sha256": "2a5aea0d841a515739ec0142b86fe0bf73e27d22bd53a59cb606d7028372319a"
+    },
+    "sky.jupiter.square.neptune": {
+      "payload": {
+        "summary": "An inspiring campaign attracts donors and investors before anyone can explain the budget or measure the result.",
+        "body": "An inspiring campaign attracts donors and investors before anyone can explain the budget or measure the result. Jupiter square Neptune can make optimism fill every blank the plan has not answered yet, especially once basic questions start sounding like criticism of the cause itself. Cost, eligibility, delivery, and responsibility may still be open to several readings while support keeps growing. Excitement is not a substitute for structure. Require clear terms, timelines, and numbers before backing the next phase."
+      },
+      "sha256": "5ea459b713f076670c3cf694fd030fda84e77d78e7e49328233c527a45ab32ad"
+    },
+    "sky.jupiter.square.pluto": {
+      "payload": {
+        "summary": "A celebrated expansion concentrates more money and influence inside the institutions already strong enough to set the terms.",
+        "body": "A celebrated expansion concentrates more money and influence inside the institutions already strong enough to set the terms. Jupiter square Pluto can turn each new win into another increase in bargaining power, making it harder for workers, competitors, or smaller participants to negotiate from the outside. The numbers may look impressive while the structure becomes less contestable. That is the pressure point. Track who lost access, leverage, or alternatives as the organization grew, not only how much the organization gained."
+      },
+      "sha256": "8c3f006ebfe30022a28c9aa22eabfd351f3b76467c600e055a7bdf1daa125c9f"
+    },
+    "sky.jupiter.square.saturn": {
+      "payload": {
+        "summary": "A major expansion is announced before the institution resolves the debts, rules, or staffing limits already slowing the work.",
+        "body": "A major expansion is announced before the institution resolves the debts, rules, or staffing limits already slowing the work. Jupiter square Saturn can make the desire to grow collide with the structure that has to support every new promise. More locations, users, or responsibilities do not fix an old bottleneck; they usually make it more expensive. The deadline is not proof that the organization can carry another layer. Resolve the limit that keeps repeating before adding more volume to the system."
+      },
+      "sha256": "69d0688ef7f2a9024b1dae02b0da51ac20087188c5dad596a92cd63a9743fc85"
+    },
+    "sky.jupiter.square.uranus": {
+      "payload": {
+        "summary": "A popular new market sends prices and demand moving faster than housing, staffing, supply, or regulation can follow.",
+        "body": "A popular new market sends prices and demand moving faster than housing, staffing, supply, or regulation can follow. Jupiter square Uranus can make every breakthrough create a second problem the existing structure was not built to absorb. Early users gain options while everyone arriving later meets shortages, new fees, or rules written after the rush began. Growth does not erase instability; it can amplify it. Slow the next expansion long enough to fix the shortage everyone is already paying for."
+      },
+      "sha256": "ba813a59ec8909a240f9f10b8b54bf1dfb3d26f0046856a03d9458a78a242f95"
+    },
+    "sky.jupiter.trine.neptune": {
+      "payload": {
+        "summary": "A creative risk or ambitious idea that felt too intimidating last week suddenly seems possible enough to begin.",
+        "body": "A creative risk or ambitious idea that felt too intimidating last week suddenly seems possible enough to begin. Jupiter trine Neptune makes it easier to trust the vision and move before doubt drains the momentum. That can be exactly what a brave idea needs, but inspiration still has to survive a calendar, a budget, and the ordinary work of finishing it. Write down the core premise while it is clear. Then build the schedule and responsibilities that can carry it."
+      },
+      "sha256": "0edf7724dfd1c0827e648f47ed4a7bfb34f7235269ab6965d9e2a80d220f8e59"
+    },
+    "sky.jupiter.trine.pluto": {
+      "payload": {
+        "summary": "Funding and final authority move toward the people a reform claims it was built to serve.",
+        "body": "Funding and final authority move toward the people a reform claims it was built to serve. Jupiter trine Pluto can help institutional backing reach the deeper structure of a problem, so budgets change, records open, or ownership shifts instead of stopping at symbolic inclusion. The result matters because the people named as beneficiaries can influence the outcome. This is where scale becomes useful. Put the transfer in contracts, budgets, and decision rights so the change survives the people currently willing to support it."
+      },
+      "sha256": "2e054e9c50bc6e07320334ddc2454fbff4c1691ce7ae119c3d35676d4c29e23a"
+    },
+    "sky.jupiter.trine.saturn": {
+      "payload": {
+        "summary": "The grant covers staff and operating costs, giving a new program a life beyond the launch announcement.",
+        "body": "The grant covers staff and operating costs, giving a new program a life beyond the launch announcement. Jupiter trine Saturn can make growth easier to sustain because the opportunity arrives with enough structure to support it. Hiring, schedules, reporting, and long-term funding are what keep the idea from disappearing after the first wave of attention. Use the support to build those ordinary systems now. A program lasts because somebody planned for month six as carefully as opening day."
+      },
+      "sha256": "c52c61d9469a01749a838f9ccb3c3309443fcfe3cef7c942a00fc8fee0af7c18"
+    },
+    "sky.jupiter.trine.uranus": {
+      "payload": {
+        "summary": "A new model expands access faster than the older system ever managed.",
+        "body": "A new model expands access faster than the older system ever managed. Jupiter trine Uranus can help innovation scale without forcing every improvement through the gatekeepers that kept participation narrow in the first place. Applications move, prices fall, services reach new areas, or people gain access that once depended on location or status. This is useful disruption because the result is visible in who can participate. Protect the route before success gives someone a reason to close it again."
+      },
+      "sha256": "cf7bb4e644bbbf9f7bb8da72ce64de0cd7515e209c27409742efc9f8c160739e"
+    },
+    "sky.mars.conjunction.jupiter": {
+      "payload": {
+        "summary": "One bold move turns into a full-scale campaign before anyone calls for a pause.",
+        "body": "One bold move turns into a full-scale campaign before anyone calls for a pause. Mars conjunct Jupiter can make confidence feed momentum so quickly that the next commitment is made while the last one is still being absorbed. Spending rises, the audience grows, and caution starts to sound like disloyalty. Big energy can produce a big result, but it can also turn enthusiasm into a promise nobody planned to keep. Check the staff, budget, and actual limit before saying yes to the next expansion."
+      },
+      "sha256": "19a220f9c900939104e00e6b75aef2fb3264d56799da3949ff3159ec78ca154f"
+    },
+    "sky.mars.conjunction.neptune": {
+      "payload": {
+        "summary": "A campaign gathers volunteers, money, and urgency before anyone can give the goal the same name.",
+        "body": "A campaign gathers volunteers, money, and urgency before anyone can give the goal the same name. Mars conjunct Neptune can make conviction feel like enough direction, so people start donating, confronting, publishing, or organizing while roles and measures of success are still fuzzy. The energy is sincere, but sincerity does not decide where the money or work belongs. Someone has to translate the feeling into a job. Name the objective, who owns it, and what a finished result looks like before the response gets any larger."
+      },
+      "sha256": "5d072e14f972f681b8bbf68a365466497f8af98d1038dffa6aac13aed68c3d61"
+    },
+    "sky.mars.conjunction.pluto": {
+      "payload": {
+        "summary": "A shutdown, ultimatum, or takeover makes the next move a test of who can force the outcome.",
+        "body": "A shutdown, ultimatum, or takeover makes the next move a test of who can force the outcome. Mars conjunct Pluto can concentrate action around the exact pressure point everyone is afraid to release: the money, platform, building, records, or final approval. Once force and leverage merge, cooperation can start looking like surrender. Winning the immediate contest may cost more than either side expected. Identify the thing everyone is threatening to withhold and decide what must remain usable after the confrontation is over."
+      },
+      "sha256": "edcb47ec9f2cbf6551f81491fddd4a35c9f89678ba97b47188e33b935e4b0805"
+    },
+    "sky.mars.conjunction.saturn": {
+      "payload": {
+        "summary": "A high-stakes operation allows force, but only through a strict chain of command.",
+        "body": "A high-stakes operation allows force, but only through a strict chain of command. Mars conjunct Saturn can make action and restriction part of the same job, especially during an urgent repair, controlled shutdown, or disciplinary decision where timing and authority cannot be improvised. The structure may be frustrating, but it is also what keeps the pressure from creating a second problem. Follow the sequence that protects the work. Then review where the chain of command slowed the response for reasons that had nothing to do with safety."
+      },
+      "sha256": "11ec9550f0462231e0cc918d463cf25b1a05e35312f3da9a5f06fa903be4401b"
+    },
+    "sky.mars.conjunction.uranus": {
+      "payload": {
+        "summary": "A sudden break forces people to act before a replacement plan exists.",
+        "body": "A sudden break forces people to act before a replacement plan exists. Mars conjunct Uranus can make the disruption and the response happen in the same instant: a system goes down, somebody walks out, a rule is ignored, or a risky workaround becomes the only available option. Speed may be necessary, but improvisation creates its own consequences. Stabilize the immediate problem first. Then make sure the temporary fix does not quietly become the new system just because everyone survived the first hour."
+      },
+      "sha256": "d9cb5333951a4c302488d492c7163f77ac724069e2dd78c6199ce2a3140255fa"
+    },
+    "sky.mars.opposition.jupiter": {
+      "payload": {
+        "summary": "The person pushing for immediate expansion faces the people responsible for managing the risk.",
+        "body": "The person pushing for immediate expansion faces the people responsible for managing the risk. Mars opposite Jupiter makes the cost of moving fast impossible to leave in the background: one side sees momentum and a closing window, while the other sees permits, staffing, money, and consequences that will remain after the rush is over. Neither side is automatically wrong. Put the opportunity and the risk on the same page. Decide what can move now without making the delivery team inherit promises they never approved."
+      },
+      "sha256": "d61fad2b77faa6ac474ad8d0b4b72c139735739cbaa9e39b084324284ac2e5d1"
+    },
+    "sky.mars.opposition.neptune": {
+      "payload": {
+        "summary": "The people demanding direct action face the people invested in preserving an inspiring but unclear vision.",
+        "body": "The people demanding direct action face the people invested in preserving an inspiring but unclear vision. Mars opposite Neptune can turn that difference into a fight between measurable results and the larger purpose nobody wants reduced to a spreadsheet. One side points to deadlines and harm; the other points to compassion, faith, or the parts of the work that are harder to count. The vision should be able to survive a practical question. Ask who is responsible for carrying it, what action is required now, and what result would show that the response is working."
+      },
+      "sha256": "bda68f2cf1212c6459b4a7f3312dae0170ec050a857fe49daf2751f434b08eb4"
+    },
+    "sky.mars.opposition.pluto": {
+      "payload": {
+        "summary": "The person making the move faces the person who can block access, funding, or permission with one decision.",
+        "body": "The person making the move faces the person who can block access, funding, or permission with one decision. Mars opposite Pluto exposes the difference between visible action and private leverage, especially when one side can make resistance expensive without ever raising its voice. The conflict may look like a debate about timing, but the deeper question is who controls the consequence. Put that power on the table. A workable agreement has to name what each side can block, what each side needs, and what happens if neither one gives way."
+      },
+      "sha256": "066eceaf62122f78bd572b6195846a566ce10c48a598519c62f76ecb22332214"
+    },
+    "sky.mars.opposition.saturn": {
+      "payload": {
+        "summary": "The people prepared to act face the official authorized to stop them.",
+        "body": "The people prepared to act face the official authorized to stop them. Mars opposite Saturn can make urgency collide with law, staffing, safety, or a limit that will still matter after the immediate crisis is over. One side sees the cost of waiting; the other sees the cost of acting without support. Both costs need to be named. Separate the delay that protects people from the delay that protects procedure, then decide which part of the plan can move without asking the system to pretend the limit is not there."
+      },
+      "sha256": "0ae4e70f6fde0eb4ba673d983b9e608bc3bdbaf6a9195761492b1f4de0d2031b"
+    },
+    "sky.mars.opposition.uranus": {
+      "payload": {
+        "summary": "The person demanding an immediate break faces the people trying to keep a volatile system from collapsing.",
+        "body": "The person demanding an immediate break faces the people trying to keep a volatile system from collapsing. Mars opposite Uranus can turn a needed change into a standoff over timing, especially when one side sees every delay as complicity and the other sees every abrupt move as another source of damage. The old arrangement may be failing, but the replacement still needs somewhere to land. Name what has to stop now and what must stay functional during the transition. Freedom is easier to defend when the exit plan does not create a second emergency."
+      },
+      "sha256": "648e8c6c8517a15c29987c6a3b01353147b86ef37e37c9961fa0792cdd18a1a1"
+    },
+    "sky.mars.sextile.jupiter": {
+      "payload": {
+        "summary": "A quick pitch catches fire and reaches a much larger audience than expected.",
+        "body": "A quick pitch catches fire and reaches a much larger audience than expected. Mars sextile Jupiter can help one direct move open a bigger opportunity, especially when a short video, sharp headline, introduction, or application reaches the right person at the right time. Attention is useful, but it creates expectations immediately. Make sure somebody is ready to answer the replies, fulfill the orders, or follow the lead. The opportunity gets better when the team can actually support the visibility it asked for."
+      },
+      "sha256": "fb660c1da4694c73389d0134272eb47301947e65b0c3ef7d26fc6ef1467daaee"
+    },
+    "sky.mars.sextile.neptune": {
+      "payload": {
+        "summary": "A strong feeling finds one concrete action before it scatters into frustration.",
+        "body": "A strong feeling finds one concrete action before it scatters into frustration. Mars sextile Neptune can turn grief, outrage, hope, or creative urgency into a fundraiser, volunteer shift, performance, or direct request that gives people somewhere useful to put their energy. The action does not have to solve the entire problem to matter. It needs a clear purpose and a person who can receive the help. Choose the next task people can actually complete, then let the larger feeling stay larger than the assignment."
+      },
+      "sha256": "6e934efa064b4662a6bcf48282996114bbfbac8f342205e257aaf9773a9d5f65"
+    },
+    "sky.mars.sextile.pluto": {
+      "payload": {
+        "summary": "A direct challenge finally reaches the person holding the money, access, or final signature.",
+        "body": "A direct challenge finally reaches the person holding the money, access, or final signature. Mars sextile Pluto can make pressure useful once it stops circling the symptom and reaches the source of control. A clause gets reopened, a gatekeeper answers publicly, or withheld access is restored because the conversation is finally happening with the person who can change the outcome. Use that opening carefully. Keep the request to the exact change required, document the answer, and do not spend the moment arguing about every grievance that led there."
+      },
+      "sha256": "153d724daa88c99db05d6decdfa2c0c5d5891240759f7c5dede683bf2427f6bf"
+    },
+    "sky.mars.sextile.saturn": {
+      "payload": {
+        "summary": "An urgent job receives the permit, crew, or equipment needed for one safe stage to begin.",
+        "body": "An urgent job receives the permit, crew, or equipment needed for one safe stage to begin. Mars sextile Saturn can create a practical route through a restriction by narrowing the task, adjusting the sequence, or putting the right supervisor in place. One approved step may be enough to restart momentum even if the rest has to wait. Use the permission already granted. Finish the stage that is actually ready instead of turning a limited approval into another argument about everything still blocked."
+      },
+      "sha256": "e316a79072841d1163b1a90072fad409e197300f4d5433aacf1fa05b504ff7e8"
+    },
+    "sky.mars.sextile.uranus": {
+      "payload": {
+        "summary": "An outdated rule or process opens just enough for someone to try a faster route.",
+        "body": "An outdated rule or process opens just enough for someone to try a faster route. Mars sextile Uranus can turn a narrow exception into a practical test, especially when the official method keeps wasting time or creating the same error. One alternate platform, revised form, or temporary workaround may be all the evidence needed to prove there is a better way. Try the change where the cost of failure is manageable. If it works, document the result before the old process closes back around it."
+      },
+      "sha256": "06dabcd26be7024679f127e2db7f705082091caf8e3a528646ea5d8e457edbf6"
+    },
+    "sky.mars.square.jupiter": {
+      "payload": {
+        "summary": "A confident team doubles the bet before anyone checks if the staff, budget, or permit can survive it.",
+        "body": "A confident team doubles the bet before anyone checks if the staff, budget, or permit can survive it. Mars square Jupiter can turn one success into a reason to take the next risk too quickly, especially when the people making the promise are not the ones responsible for delivering it. The launch expands, the trip gets booked, or faster results are announced while basic questions are still open. Momentum is useful until it starts writing checks other people have to cover. Recalculate the commitment before increasing it again."
+      },
+      "sha256": "2ac0bca9b7bb47af09cd3faef204ad6784f28d36e04ab22cb30c4a97ee2d43a1"
+    },
+    "sky.mars.square.neptune": {
+      "payload": {
+        "summary": "A dramatic response begins before anyone can define the goal, authority, or measure of success.",
+        "body": "A dramatic response begins before anyone can define the goal, authority, or measure of success. Mars square Neptune can scatter urgent energy across several different versions of the problem, so people rush to donate, confront, rescue, or publish without knowing who is coordinating the result. The effort looks powerful from the outside while money and responsibility disappear into confusion. Do not add more force to a blurry target. Decide what the immediate job is, who has authority to direct it, and what everyone else can stop doing."
+      },
+      "sha256": "c7459e7d316b297f798a77c711a5211004125904ebf3a11ce0a5ef855d4637f6"
+    },
+    "sky.mars.square.pluto": {
+      "payload": {
+        "summary": "A bold play for power creates a showdown over who controls the outcome.",
+        "body": "A bold play for power creates a showdown over who controls the outcome. Mars square Pluto can turn a public move into a fight over rank, contracts, money, trust, or access the moment someone feels their authority is being tested. Pushing harder often gives the other side a reason to tighten the grip. The original issue can disappear inside the power struggle. Before escalating, identify the one decision that actually needs to change and the person with the authority to change it. Do not make the entire relationship the battlefield if one term is the problem."
+      },
+      "sha256": "9263349795a8cc953cf874ccca91a67b6431abab10023f4c85b10fb14a88288e"
+    },
+    "sky.mars.square.saturn": {
+      "payload": {
+        "summary": "The crew is ready to move, but a permit, staffing limit, safety rule, or locked deadline blocks the next step.",
+        "body": "The crew is ready to move, but a permit, staffing limit, safety rule, or locked deadline blocks the next step. Mars square Saturn can make every delay feel more personal because the need is urgent and the barrier keeps refusing to move. The frustration is useful information, but the restriction still has to be examined on its own merits, especially if following it keeps creating damage. Find the exact requirement holding the work back. Meet it, change it, or escalate it to the person who can instead of burning hours fighting everyone required to enforce it."
+      },
+      "sha256": "b06f066a428930a06d73fc828797e44cb5e55979223096f9aad3814929b35991"
+    },
+    "sky.mars.square.uranus": {
+      "payload": {
+        "summary": "One abrupt move triggers a chain reaction before anyone agrees on what should replace the old plan.",
+        "body": "One abrupt move triggers a chain reaction before anyone agrees on what should replace the old plan. Mars square Uranus can make disruption outrun coordination, so a walkout, shutdown, technical change, or public confrontation creates new problems faster than the original one can be solved. The impulse to break the pattern may be right. The timing can still be reckless. Contain the fallout, identify what absolutely has to change, and test the replacement on the smallest scale that still produces useful information."
+      },
+      "sha256": "005f6790c1ef101fbeb106b743b494e3b8f2ef909ad27f3f14c380d3ba8970c5"
+    },
+    "sky.mars.trine.jupiter": {
+      "payload": {
+        "summary": "A bold move receives the backing required to become more than a lucky break.",
+        "body": "A bold move receives the backing required to become more than a lucky break. Mars trine Jupiter can line up effort with opportunity, so staff, money, permits, or public support arrive behind a plan that is already prepared to use them. The work can grow quickly without becoming reckless because the people doing it know where the extra resources belong. This is a good time to scale what has already proven itself. Keep the next step tied to the team and systems that made the first result possible."
+      },
+      "sha256": "1dcb74aa277be762f39f33656764a00fd5896f50e7c6578670221373f978e073"
+    },
+    "sky.mars.trine.neptune": {
+      "payload": {
+        "summary": "A rescue, creative effort, or public action moves because people understand both the need and the reason they are showing up.",
+        "body": "A rescue, creative effort, or public action moves because people understand both the need and the reason they are showing up. Mars trine Neptune can keep practical effort connected to compassion without letting the emotional charge replace the work itself. Volunteers know their roles, organizers can explain the goal, and the story behind the effort still matters after the first burst of urgency. That combination is worth protecting. Keep the purpose visible, but make sure every new person knows exactly what they are responsible for carrying."
+      },
+      "sha256": "e19443d74b690a75c64eefce29bc69eaf9422d59d480912c1c39a9d6fcb1a1b4"
+    },
+    "sky.mars.trine.pluto": {
+      "payload": {
+        "summary": "Decisive action reaches the exact pressure point keeping a larger problem in place.",
+        "body": "Decisive action reaches the exact pressure point keeping a larger problem in place. Mars trine Pluto can help an investigation secure the records, a legal move freeze the money, or organized resistance reach the gatekeeper instead of scattering energy across symbolic fights. The force works because it is aimed at the part of the system that controls the result. This is not about being louder. It is about knowing which door matters. Put the effort where the leverage is and leave the weaker targets alone."
+      },
+      "sha256": "718435db863fce58c3bbca1274028e0f23761db3e2804e9b2049682fc3a61b65"
+    },
+    "sky.mars.trine.saturn": {
+      "payload": {
+        "summary": "The repair gets finished because the crew, materials, and deadline finally match the size of the job.",
+        "body": "The repair gets finished because the crew, materials, and deadline finally match the size of the job. Mars trine Saturn can turn pressure into disciplined work, so shifts are clear, safety steps stay intact, and nobody has to do three jobs just to keep the schedule alive. The result lasts because the pace is built around what people can actually carry. Protect that structure when the next urgent request arrives. A faster finish is not an improvement if it depends on exhausting the same people who have to maintain it afterward."
+      },
+      "sha256": "362122b3c966c20492fdd7d905ceb60eca952646a5d7ee0a355218142e5cb1e8"
+    },
+    "sky.mars.trine.uranus": {
+      "payload": {
+        "summary": "A faster method solves the immediate problem without creating a second emergency.",
+        "body": "A faster method solves the immediate problem without creating a second emergency. Mars trine Uranus can make quick action and innovation work together when the team already understands the risk and has enough freedom to change the method. A shortcut, alternate tool, or new route gets used because it actually improves the result, not because disruption looks exciting. Keep the experiment tied to the problem it solved. The useful change is the one people can repeat after the adrenaline is gone."
+      },
+      "sha256": "36b83b95805c01ea283d89473ad11d028c4ec42a6801c7460dfb7468d7dbbcd4"
+    },
+    "sky.mercury.conjunction.jupiter": {
+      "payload": {
+        "summary": "One announcement turns a local idea into a much larger promise.",
+        "body": "One announcement turns a local idea into a much larger promise. Mercury conjunct Jupiter can make the message grow with the audience, so a course, campaign, legal decision, or travel plan reaches more people at the exact moment its wording becomes harder to revise. The opportunity may be genuine, but every overstatement now travels farther too. Say what is confirmed and what is still aspirational. A big audience can forgive a limit more easily than it can forgive discovering later that the limit was hidden."
+      },
+      "sha256": "cf693fe891f41c37052d8a404e2c0964364d424e7f7a7861871d48645bc45268"
+    },
+    "sky.mercury.conjunction.mars": {
+      "payload": {
+        "summary": "One sentence sets the entire response in motion.",
+        "body": "One sentence sets the entire response in motion. Mercury conjunct Mars can make the message and the action arrive together, so a warning, accusation, instruction, or post triggers a filing, walkout, purchase, confrontation, or emergency call before anyone has time to soften the language. That speed can cut through delay, but careless wording now travels with consequences that are harder to reverse. Say exactly what needs to happen and why. If the sentence is going to start the action, make sure it names the right target."
+      },
+      "sha256": "7352cfbee3a631161f04521135aa893826d5b5ae8ad1f9a3a9868c7bff934bad"
+    },
+    "sky.mercury.conjunction.neptune": {
+      "payload": {
+        "summary": "A message becomes more powerful because nobody can agree on exactly what it promises.",
+        "body": "A message becomes more powerful because nobody can agree on exactly what it promises. Mercury conjunct Neptune can make a speech, post, artistic statement, or private assurance feel meaningful while leaving enough room for each listener to hear the future they want. That ambiguity can build a large audience and a larger disappointment. The problem is not imagination; it is letting imagination stand in for terms. Put the promise into plain language and name what is not guaranteed before people begin planning around different versions of the same message."
+      },
+      "sha256": "84cbdf214fbaf939d6982d35c46fdff23430b34151141b3bf6e3109d221fe030"
+    },
+    "sky.mercury.conjunction.pluto": {
+      "payload": {
+        "summary": "One private conversation changes who is trusted with the plan.",
+        "body": "One private conversation changes who is trusted with the plan. Mercury conjunct Pluto can bring missing money, withheld information, or an undisclosed agreement into the same moment as the decision about what happens next. Once the hidden arrangement is named, access and loyalty are no longer abstract questions. Preserve the record before the conversation gets rewritten afterward. Ask who knew, who approved, and who had something to gain from keeping the information private."
+      },
+      "sha256": "f97fad9e85eba00de9ac0fadf88dc3072dcb06a68db301f5527f6b925010d205"
+    },
+    "sky.mercury.conjunction.saturn": {
+      "payload": {
+        "summary": "The meeting ends with a sentence no one can later pretend they misunderstood.",
+        "body": "The meeting ends with a sentence no one can later pretend they misunderstood. Mercury conjunct Saturn can make the wording and the consequence part of the same official fact, especially in a signed statement, formal warning, binding promise, or documented refusal. The clarity may feel strict, but it protects everyone from a later version of what was supposedly meant. Put the condition, date, responsibility, and consequence in writing. If the answer matters, it should survive being read again next month."
+      },
+      "sha256": "deb4c59d0e9b773ce7b284979bd5350be37c400f66b43d97d6e8cc043a173dfa"
+    },
+    "sky.mercury.conjunction.uranus": {
+      "payload": {
+        "summary": "One message changes the direction of the entire conversation before anyone can prepare a response.",
+        "body": "One message changes the direction of the entire conversation before anyone can prepare a response. Mercury conjunct Uranus can make a leak, alert, resignation note, discovery, or technical breakthrough invalidate the older explanation almost instantly. The information and the break from the old plan arrive together. Speed matters, but everyone still needs to know which facts are confirmed. Share the update, mark what is still changing, and stop pretending the previous plan can remain intact if the new information has already made it obsolete."
+      },
+      "sha256": "624d139a67081b61ad1bd17889d521770e9caa49dcae4c124fe122715622e5c6"
+    },
+    "sky.mercury.conjunction.venus": {
+      "payload": {
+        "summary": "A public announcement turns a private agreement into a social fact.",
+        "body": "A public announcement turns a private agreement into a social fact. Mercury conjunct Venus can make the wording part of the agreement itself, especially when a partnership, payment, invitation, creative deal, or change in status is being named for other people. The language now shapes how the relationship will be understood. Be precise about the terms before the announcement travels farther than the conversation that created them. If the public version and the private agreement do not match, fix that before asking everyone else to celebrate."
+      },
+      "sha256": "3bf9a96d5707244befc64ebdb23aa05471ba1e803c3703f3b8e2ea00e882a15a"
+    },
+    "sky.mercury.opposition.jupiter": {
+      "payload": {
+        "summary": "The simple success story meets the report full of limits, exceptions, and mixed results.",
+        "body": "The simple success story meets the report full of limits, exceptions, and mixed results. Mercury opposite Jupiter can put the headline directly across from the fuller explanation, especially when one side wants the message to inspire and the other needs the numbers to remain accurate. The disagreement is not about being positive or negative. It is about how much the claim can carry. Publish the context that materially changes the conclusion, even if it makes the story less impressive."
+      },
+      "sha256": "f133516432a837dc58c12fadbac7cfb219dc1165372d6d48905b14a16dd46ffa"
+    },
+    "sky.mercury.opposition.mars": {
+      "payload": {
+        "summary": "One side keeps asking questions while the other treats every question as a delay.",
+        "body": "One side keeps asking questions while the other treats every question as a delay. Mercury opposite Mars can turn missing information into a fight about timing, especially when the planner sees changing terms and the operator sees a clock that is already running out. Explanation and execution both matter here. The team needs enough information to know what it is doing and a point where discussion ends. Decide which unanswered question could materially change the move, answer that one, and stop using the rest to postpone a decision."
+      },
+      "sha256": "2c17d42c4f1fda9e4d63016b0e4f2cdf96b9cddb6c51df4fde7407c8fe09f895"
+    },
+    "sky.mercury.opposition.neptune": {
+      "payload": {
+        "summary": "The verified account faces a story people prefer because it explains the fear, hope, or outrage more cleanly.",
+        "body": "The verified account faces a story people prefer because it explains the fear, hope, or outrage more cleanly. Mercury opposite Neptune can put checkable facts directly against a narrative that already feels emotionally true to the people repeating it. Evidence may be stronger and still lose attention to the better story. Do not answer belief with contempt. Show the source, the date, and the detail that materially changes the claim, then be clear about what the record does not prove."
+      },
+      "sha256": "5d2f8a3917a66dcf11abe62faf7dd717e836ebd8a7a7f76ee5896fe205b1d60a"
+    },
+    "sky.mercury.opposition.pluto": {
+      "payload": {
+        "summary": "The person asking for the full record faces the institution determined to limit what can be seen.",
+        "body": "The person asking for the full record faces the institution determined to limit what can be seen. Mercury opposite Pluto makes the power behind information impossible to ignore: one side keeps the questions specific while the other controls the files, access, and consequences attached to releasing them. The argument is not only about truth. It is about who gets to decide which truth becomes available. Narrow the request to the document, date, or decision that matters most, and put every refusal in writing."
+      },
+      "sha256": "e8fd493c22366cd5363cde5bb10b50bb79cf8349f55493f0782278e8c594e611"
+    },
+    "sky.mercury.opposition.saturn": {
+      "payload": {
+        "summary": "The person requesting an answer faces the official responsible for making every word survive review.",
+        "body": "The person requesting an answer faces the official responsible for making every word survive review. Mercury opposite Saturn can put urgency and prior conversations directly against missing proof, limited authority, and the exact language on file. A technically correct answer may still expose how little the earlier reassurance was worth. Ask for the rule behind the refusal and the evidence required to change it. Do not keep negotiating with a promise that never made it into the record."
+      },
+      "sha256": "bb790488085ec4b19c3c5a3e52512e218ac20ea99c760967b46282f85ca8b608"
+    },
+    "sky.mercury.opposition.uranus": {
+      "payload": {
+        "summary": "The official update says the system is under control while users, staff, or residents document a completely different failure.",
+        "body": "The official update says the system is under control while users, staff, or residents document a completely different failure. Mercury opposite Uranus puts the approved explanation directly against the live record of outages, errors, and workarounds happening now. Credibility depends on acknowledging the mismatch before somebody outside the institution does. Compare the official timeline with the reports coming from the people using the system. Update the statement when the public has better information than the people writing it."
+      },
+      "sha256": "a102d5388f32a04e699979a4585a7601025d849b9e64093f5f9d726a220160ae"
+    },
+    "sky.mercury.sextile.jupiter": {
+      "payload": {
+        "summary": "A strong idea finds the person who can help it travel farther.",
+        "body": "A strong idea finds the person who can help it travel farther. Mercury sextile Jupiter can connect a clear explanation with funding, publication, enrollment, an introduction, or a larger audience. The opportunity grows because the proposal is attached to a specific ask people can answer. Do not bury the request inside a long explanation. Name what is needed, why it matters, and the next step the other person can actually take."
+      },
+      "sha256": "fd46b1509cd57bf03d15e050226345d7a1c64e080b48dfa249089e939a23bb19"
+    },
+    "sky.mercury.sextile.mars": {
+      "payload": {
+        "summary": "A direct conversation clears a logistical bottleneck that has held up the work.",
+        "body": "A direct conversation clears a logistical bottleneck that has held up the work. Mercury sextile Mars can turn one practical question about money, scheduling, supplies, or responsibility into the answer needed to begin. The relief comes from specificity, not from having a longer discussion. Make the call. Ask the question that decides the next move, confirm the answer, and act on it before the conversation expands into every other frustration around the project."
+      },
+      "sha256": "ad77a2592ecfb7789e5c70e45166ba60130c9e28e544745dbd3988aa57cab43c"
+    },
+    "sky.mercury.sextile.neptune": {
+      "payload": {
+        "summary": "A confusing concern becomes understandable after someone finds the image, example, or gentler language that fits it.",
+        "body": "A confusing concern becomes understandable after someone finds the image, example, or gentler language that fits it. Mercury sextile Neptune can help a vague fear become a specific request another person can actually answer. The goal is not to flatten the feeling into bullet points; it is to give the feeling enough language to move. Try the example that makes the problem concrete. If the other person understands what happened and what needs to happen next, the translation has done its job."
+      },
+      "sha256": "54f9b963eaa239dad2ab817af015943337cfef1d20b7815f0281e6c9e6ca3844"
+    },
+    "sky.mercury.sextile.pluto": {
+      "payload": {
+        "summary": "One precise question reaches the record everyone else was willing to leave closed.",
+        "body": "One precise question reaches the record everyone else was willing to leave closed. Mercury sextile Pluto can turn a discrepancy in a budget, contract, timeline, or access log into enough leverage to request the missing document. This is where specificity matters. Do not argue with the official summary if one detail can test it. Ask for the source behind the claim, follow the first refusal, and keep the request narrow enough that an evasive answer becomes obvious."
+      },
+      "sha256": "cd610b8cffceecf0549888aab2b1cc770298802d694b4c75d049fb6fd17017fd"
+    },
+    "sky.mercury.sextile.saturn": {
+      "payload": {
+        "summary": "A delayed answer moves after someone supplies the missing proof in exactly the required form.",
+        "body": "A delayed answer moves after someone supplies the missing proof in exactly the required form. Mercury sextile Saturn can turn one corrected line, signature, document, or responsible contact into the condition that releases part of the request. The result may be smaller than originally hoped for, but the portion that clears is solid enough to rely on. Give the reviewer the exact evidence being requested. Once that piece is accepted, build from the answer already on the page instead of reopening the entire case."
+      },
+      "sha256": "e5925c97621801d3572fe41f8930ecae44556ade9953f624e4c5e78a23098ec8"
+    },
+    "sky.mercury.sextile.uranus": {
+      "payload": {
+        "summary": "One unusual suggestion gives a stalled process a faster way forward.",
+        "body": "One unusual suggestion gives a stalled process a faster way forward. Mercury sextile Uranus can help a staff member test a shortcut, alternate platform, or revised form after noticing that the official route keeps creating the same error. The idea earns support because it fixes the delay without throwing out the information the system still needs. Try it on one task first. If the result holds, show the time saved and the problem removed before asking everyone else to change their workflow."
+      },
+      "sha256": "446a70ab21a91d063d60d4e164c1a6d84e6e0c2effa5037f6f8d3758ff3d97b4"
+    },
+    "sky.mercury.sextile.venus": {
+      "payload": {
+        "summary": "One carefully worded message gives an agreement a chance to survive a difficult correction.",
+        "body": "One carefully worded message gives an agreement a chance to survive a difficult correction. Mercury sextile Venus can help someone clarify the price, change the date, or name missing credit without turning the whole exchange into a public complaint. The relationship matters, but politeness cannot carry a correction nobody is willing to make. Send the honest version. State what changed, what needs to be fixed, and what would make the agreement workable again."
+      },
+      "sha256": "a740f5e0658b2f67eeb1cd8d0c73e12673fcf0653b04b690b9c8b6bbc8328986"
+    },
+    "sky.mercury.square.jupiter": {
+      "payload": {
+        "summary": "A confident statement outruns the evidence needed to defend it.",
+        "body": "A confident statement outruns the evidence needed to defend it. Mercury square Jupiter can turn a useful idea into an overpromise once the wording gets broader than the facts underneath it. One estimate becomes a guarantee, one promising result becomes a trend, or one enthusiastic reply becomes proof that everyone agrees. The sentence may travel farther than the correction. Tighten the claim before someone else has to. State exactly what the evidence shows and stop there."
+      },
+      "sha256": "b8db171c9ef3e08632e58cb111e5804093439de476e74a1176ba108d607f2e82"
+    },
+    "sky.mercury.square.mars": {
+      "payload": {
+        "summary": "A blunt message turns a solvable problem into a personal confrontation.",
+        "body": "A blunt message turns a solvable problem into a personal confrontation. Mercury square Mars can make every sentence sound like a challenge that requires an immediate reply, so the original question gets buried under arguments about tone, respect, and who started it. The deadline may still be there after the fight, along with damage the task never required. Slow the exchange before sending the next response. State the problem, the answer required, and the deadline, then leave the insult out of the logistics."
+      },
+      "sha256": "4e0f8a23a67af7f48984d40676148255b06ac5586894775aafe6d9bd2a81a4b0"
+    },
+    "sky.mercury.square.neptune": {
+      "payload": {
+        "summary": "A rumor travels faster than anyone can check the facts.",
+        "body": "A rumor travels faster than anyone can check the facts. Mercury square Neptune can make a convincing screenshot, repost, or partial quote feel complete long before anyone verifies the source, time, or missing context. The correction usually arrives with less drama than the wrong version, which means accuracy has to be deliberate. Read twice. Check the original source and the date before forwarding anything that could change what people do next."
+      },
+      "sha256": "d2bdb2a12b9c7b1c0b13d9dd0181d453f006874d8efd78cc21d77546d2dbc02c"
+    },
+    "sky.mercury.square.pluto": {
+      "payload": {
+        "summary": "Two sides use selective leaks and edited messages to control what the public believes happened.",
+        "body": "Two sides use selective leaks and edited messages to control what the public believes happened. Mercury square Pluto can turn communication into a fight over the official history, especially when each release contains enough truth to wound the other side and enough omission to protect its own position. The loudest version is not necessarily the complete one. Save the original records and compare timelines before choosing a side. The missing context is often where the leverage is."
+      },
+      "sha256": "2d7ef3a3ddebf603dacad05469f2c259f03e51af990a9c049ffd4ffacb680ad1"
+    },
+    "sky.mercury.square.saturn": {
+      "payload": {
+        "summary": "A promised answer arrives late and covers far less than what was originally discussed.",
+        "body": "A promised answer arrives late and covers far less than what was originally discussed. Mercury square Saturn can turn one request into a chain of revisions, signatures, and formal sign-offs until the response is reduced to the minimum someone is willing to put in writing. The email may satisfy policy while leaving the people who planned around the earlier conversation absorbing the fallout. Read the answer twice. Separate what was approved, denied, and sent back, then ask one direct question about the part that still changes the next move."
+      },
+      "sha256": "e9ce49d1646b1dd51b904ea798779cdc7e1ec381fb3038773a8627360234ad43"
+    },
+    "sky.mercury.square.uranus": {
+      "payload": {
+        "summary": "Unexpected news reaches the public before the people responsible for explaining it have the same information.",
+        "body": "Unexpected news reaches the public before the people responsible for explaining it have the same information. Mercury square Uranus can make every correction compete with a newer screenshot, alert, or conflicting instruction, teaching people to trust speed over the source meant to verify it. The answer may change in real time. That is not a reason to guess. State what is confirmed, timestamp the update, and tell people when the next verified answer is coming."
+      },
+      "sha256": "44ee8f5c73e1b84c3b096f8b224a5d942473829bf4fcec2236fe4bb1a7bb2402"
+    },
+    "sky.mercury.trine.jupiter": {
+      "payload": {
+        "summary": "A large idea becomes easier to believe once someone can explain the cost, schedule, and first step.",
+        "body": "A large idea becomes easier to believe once someone can explain the cost, schedule, and first step. Mercury trine Jupiter can help the message carry the scale of the opportunity without losing the details that make it credible. A proposal, application, publication, or teaching plan lands because the big picture and the practical explanation support each other. This is good timing for making the case. Lead with the reason, then give people the information they need to say yes without guessing what they are agreeing to."
+      },
+      "sha256": "1af68bc311d8ad300976f3ba0c1079767c536bc5dea4ff80a1f626199f0e89b2"
+    },
+    "sky.mercury.trine.mars": {
+      "payload": {
+        "summary": "The instructions reach the people doing the work before urgency turns into confusion.",
+        "body": "The instructions reach the people doing the work before urgency turns into confusion. Mercury trine Mars can make speaking and acting reinforce each other, especially when tasks are named, responsibilities are divided, and nobody has to translate a vague order while the deadline keeps closing in. This is useful speed because the message is precise enough to move on. Keep the directions short. Name who owns the first action, what done looks like, and when the next handoff happens."
+      },
+      "sha256": "44ff384639950e6c5635d4a1f88b52a84994db6cf5a1549c46859965deec4b3a"
+    },
+    "sky.mercury.trine.neptune": {
+      "payload": {
+        "summary": "A difficult story can be told with enough clarity to move people without exploiting the person at its center.",
+        "body": "A difficult story can be told with enough clarity to move people without exploiting the person at its center. Mercury trine Neptune helps fact and feeling support each other, so testimony, reporting, art, or a private conversation can carry grief and meaning while keeping dates, names, and responsibilities intact. The emotional force does not need exaggeration to matter. Preserve the details that can be verified. Let the feeling come from what happened, not from making the story harder than it already is."
+      },
+      "sha256": "831cdad8e8749ac033e6af13a45497adc72c17b98005265b0a8424e7b0fb0bbf"
+    },
+    "sky.mercury.trine.pluto": {
+      "payload": {
+        "summary": "A careful investigation connects a private decision to a public result without losing the evidence in drama.",
+        "body": "A careful investigation connects a private decision to a public result without losing the evidence in drama. Mercury trine Pluto helps documents, interviews, and timelines reveal who knew, who approved, and where the hidden leverage sat. The strongest conclusion is the one the record can actually support. Follow the proof farther than the headline, but do not outrun it. A precise finding carries more weight than a larger accusation the evidence cannot substantiate."
+      },
+      "sha256": "14d3a6aeb26b58dbd243955b5405db5884ec2f2b44d6de3cc1085020ea40f8b7"
+    },
+    "sky.mercury.trine.saturn": {
+      "payload": {
+        "summary": "The final answer arrives with every condition, date, and responsibility clearly stated.",
+        "body": "The final answer arrives with every condition, date, and responsibility clearly stated. Mercury trine Saturn makes the message useful because the language matches the rule it is meant to enforce, so an approval, refusal, contract, or warning can be followed without another call. Strict is easier to work with than vague. Put the important dates somewhere visible and plan from what is actually written, not from the more generous version everyone hoped the answer would become."
+      },
+      "sha256": "a672d2d54391c411aea7eb0c03ff9812e7722d4ccab39e8b3290a99b3411234c"
+    },
+    "sky.mercury.trine.uranus": {
+      "payload": {
+        "summary": "Spotting one detail everyone else glossed over fixes a problem that has been costing time and money.",
+        "body": "Spotting one detail everyone else glossed over fixes a problem that has been costing time and money. Mercury trine Uranus can make a small correction travel through the system quickly, especially when an outdated form, setting, or process is the thing causing the larger blockage. The fix may look minor on paper while the workflow gets dramatically easier. Make the change and document why it worked. The useful insight is the one the next person does not have to rediscover from scratch."
+      },
+      "sha256": "ec579bbfca363de78451e658ec2cfce4a4551c013bb87a4e7d8c11611bc2a831"
+    },
+    "sky.moon.conjunction.jupiter": {
+      "payload": {
+        "summary": "A private need becomes a much larger public response overnight.",
+        "body": "A private need becomes a much larger public response overnight. Moon conjunct Jupiter can make donations, visitors, media attention, or family involvement arrive faster than the person at the center can decide what kind of help they actually want. More care is still more to manage when privacy disappears with it. Ask what support is useful before adding another offer, visitor, or public update. The person receiving the help should not become the coordinator of everyone else's generosity."
+      },
+      "sha256": "46aba94872a0df6f9772b18034b1e81ea99f8b1fd908e95ba992b6438e72e450"
+    },
+    "sky.moon.conjunction.mars": {
+      "payload": {
+        "summary": "A strong feeling becomes an action before anyone has time to translate it.",
+        "body": "A strong feeling becomes an action before anyone has time to translate it. Moon conjunct Mars can turn anger into a departure, fear into an urgent call, or protectiveness into an intervention while the conflict is still unfolding. The response may be necessary, but it also makes the emotion public and harder to take back. Act on the part that protects someone or solves the immediate problem. Do not let the first surge of feeling decide every consequence that comes after it."
+      },
+      "sha256": "b0da4e110281a14467ee6dceb5388d61c646ba442d7e8219f400886c0f721f63"
+    },
+    "sky.moon.conjunction.mercury": {
+      "payload": {
+        "summary": "A private admission changes the tone and direction of the entire conversation.",
+        "body": "A private admission changes the tone and direction of the entire conversation. Moon conjunct Mercury can make news about a family problem, health concern, housing loss, or old hurt become part of the decision at the same moment it is finally spoken. The room cannot go back to the easier version of the conversation after that. Listen for what changed in the facts as well as the mood. Respond to the information that was disclosed instead of treating the emotion around it as a distraction."
+      },
+      "sha256": "40390b356d3fd8029efe2c09c2baf1afed627d472e01c9a9cef4c3d6e5096c2b"
+    },
+    "sky.moon.conjunction.neptune": {
+      "payload": {
+        "summary": "A shared feeling moves through a family, crowd, or community before anyone can say exactly what happened.",
+        "body": "A shared feeling moves through a family, crowd, or community before anyone can say exactly what happened. Moon conjunct Neptune can make grief, hope, fear, or relief shape the decision while the facts are still incomplete, and one person's emotion can quickly become the atmosphere everyone is responding to. The tenderness can be genuine. So can the confusion. Slow the decision enough to separate what is known from what the room is feeling before the mood starts speaking for everyone."
+      },
+      "sha256": "7815d1dafddedd47b4e50484cbb8dc866a801bfe5d6fa74df3bc37554c4f77f2"
+    },
+    "sky.moon.conjunction.pluto": {
+      "payload": {
+        "summary": "A feeling contained for years changes the terms of the entire conversation.",
+        "body": "A feeling contained for years changes the terms of the entire conversation. Moon conjunct Pluto can bring grief, resentment, fear, or a family secret into a decision that can no longer proceed as though the history were irrelevant. The disclosure changes both the emotional record and the balance of power between the people involved. Do not rush to make everyone comfortable again. Name what the new information changes, who now needs access or protection, and what can no longer be handled the old way."
+      },
+      "sha256": "743d5995ff43ed9c5bdb8596fe4d96d0067b1d1da5c7937936c015212bad1c8d"
+    },
+    "sky.moon.conjunction.saturn": {
+      "payload": {
+        "summary": "A private responsibility becomes the condition attached to every other decision.",
+        "body": "A private responsibility becomes the condition attached to every other decision. Moon conjunct Saturn can make caregiving, grief, housing, or family duty feel less like one task and more like the structure the entire schedule has to move around. The arrangement may be necessary and still narrow the life of the person expected to maintain it. Name what the responsibility actually requires each week. If the plan only works because one person never gets to be unavailable, the plan needs more support."
+      },
+      "sha256": "e166a8674ef96167c13e24bd64b5aca2ea51804250e7adef8d0e4fcffd06a3f7"
+    },
+    "sky.moon.conjunction.uranus": {
+      "payload": {
+        "summary": "A comfortable routine is disrupted overnight by a price hike, property shift, or forced technology upgrade.",
+        "body": "A comfortable routine is disrupted overnight by a price hike, property shift, or forced technology upgrade. Moon conjunct Uranus can make the emotional shock and the practical change arrive at the same time, leaving people to replace something they depended on before they have processed losing it. The new system may offer more freedom to some and create chaos for others. Deal with the immediate replacement first. People adapt faster when they know where they are sleeping, paying, logging in, or getting the service tomorrow morning."
+      },
+      "sha256": "731d7b94e77d216f77c06cd89243168cc0b90be401800dbb12a8225a775dc864"
+    },
+    "sky.moon.conjunction.venus": {
+      "payload": {
+        "summary": "An act of care becomes the main social story of the day.",
+        "body": "An act of care becomes the main social story of the day. Moon conjunct Venus can make a meal, gift, fundraiser, family decision, or public gesture turn affection into something visible and shared. The care is genuine, but the exchange also reveals who is welcomed easily and who is still expected to make do. Notice who received the support and who quietly provided it. Appreciation is more convincing when the people doing the work are included in the generosity."
+      },
+      "sha256": "67bea54e8fe77bc84df813f77e46428c731cff99c1aaea9cd5c23b182ba2c3d6"
+    },
+    "sky.moon.opposition.jupiter": {
+      "payload": {
+        "summary": "The public appeal says there is enough support to go around while the people distributing it describe shortages and impossible choices.",
+        "body": "The public appeal says there is enough support to go around while the people distributing it describe shortages and impossible choices. Moon opposite Jupiter puts the headline total directly against rent, food, beds, time, and the daily limits of care. Money raised is not the same as help delivered. Follow the resources all the way to the people using them. If local workers are still deciding whose need can be met first, the campaign is not finished just because the fundraising goal was reached."
+      },
+      "sha256": "63ff4a458d6a421a578f325e96bed52dbcf2688bfb7717d22eda1a9f9c6581b0"
+    },
+    "sky.moon.opposition.mars": {
+      "payload": {
+        "summary": "The people trying to protect a routine face the person insisting that disruption is necessary now.",
+        "body": "The people trying to protect a routine face the person insisting that disruption is necessary now. Moon opposite Mars can make one side defend children, health, housing, or the need for calm while the other points to danger, urgency, or work that cannot wait. The decision may still need to happen quickly. That does not make the cost of disruption imaginary. Name who needs protection during the change and build that into the plan before asking them to absorb the consequences for everyone else."
+      },
+      "sha256": "85df5b18ddcc0721624aef07c90b5102206507c46e32b1ff8730f4769cf06001"
+    },
+    "sky.moon.opposition.mercury": {
+      "payload": {
+        "summary": "The written account describes a routine decision while the person affected describes the moment their life became harder.",
+        "body": "The written account describes a routine decision while the person affected describes the moment their life became harder. Moon opposite Mercury can put dates, policy, and the language on file directly across from missed care, panic, or a conversation nobody documented. The record matters, but so does what the record failed to capture. Correct the file if something material is missing. An official version loses credibility when it requires the human consequence to count as less evidence than the paperwork."
+      },
+      "sha256": "c32c41622971b3f240f9341f538214960313916816f9f40093839ea509fbe4ce"
+    },
+    "sky.moon.opposition.neptune": {
+      "payload": {
+        "summary": "The public story describes a moving rescue while the people living through it describe uncertainty, missing support, and needs that do not fit the narrative.",
+        "body": "The public story describes a moving rescue while the people living through it describe uncertainty, missing support, and needs that do not fit the narrative. Moon opposite Neptune can put genuine empathy directly against the fantasy that empathy already solved the problem. Attention may bring donations and still leave families or caregivers doing the unglamorous work after the cameras move on. Ask what remains unfinished. The story is more honest when the need is allowed to continue after the inspiring part ends."
+      },
+      "sha256": "e7c76524083bf14804f69fb29e9abc6a56a57a408b42c89ab4f6fc4ea2eda95e"
+    },
+    "sky.moon.opposition.pluto": {
+      "payload": {
+        "summary": "A private need is brought before the person who controls the money, access, housing, or family decision.",
+        "body": "A private need is brought before the person who controls the money, access, housing, or family decision. Moon opposite Pluto makes vulnerability face material power directly, especially when one person can say no and remove every practical option at once. The request deserves more than sympathy if the decision affects someone's safety or care. Put the terms on the table. Ask what can change, what cannot, and who else has authority if the person holding the leverage refuses to move."
+      },
+      "sha256": "eb2328b71d4c4d68abd21be8dd606b6a3eecaf356766f5aea544945cccabb216"
+    },
+    "sky.moon.opposition.saturn": {
+      "payload": {
+        "summary": "A human crisis collides with an unyielding institutional timeline.",
+        "body": "A human crisis collides with an unyielding institutional timeline. Moon opposite Saturn can put a request for family leave, rent relief, or a deadline shift directly across from the contract, budget, or duty someone else is authorized to enforce. The rules may be applied correctly and still leave one person carrying the heaviest consequence alone. Ask what exception process exists, who can authorize it, and what documentation is required. Do not stop at the first person whose job is only to repeat the limit."
+      },
+      "sha256": "c0d877a08abe26482abde5963d8e8571c62ecb7716540b7e45cf0f14f2aa38ae"
+    },
+    "sky.moon.opposition.uranus": {
+      "payload": {
+        "summary": "One group fights to preserve a familiar routine while another insists the arrangement has to change now.",
+        "body": "One group fights to preserve a familiar routine while another insists the arrangement has to change now. Moon opposite Uranus can put continuity directly across from reform, especially when the old system has been reliable for some people and restrictive for others. Improvement can still carry grief. Build the transition around the people with the least flexibility. A better system is harder to defend if the people who depended on the old one are simply told to adjust on their own."
+      },
+      "sha256": "7325b15b4ad5508b80cb2945892c2ebbf9d56948263a86e2cd22ceb78470c036"
+    },
+    "sky.moon.opposition.venus": {
+      "payload": {
+        "summary": "One side wants to preserve the relationship and the pleasant plan while the other can no longer ignore what the arrangement costs at home.",
+        "body": "One side wants to preserve the relationship and the pleasant plan while the other can no longer ignore what the arrangement costs at home. Moon opposite Venus can put affection directly across from the time, money, or care the same person keeps giving up to preserve the plan. A trip, purchase, party, or recurring favor can be enjoyable and still be unfair. Put the private cost into the conversation. A compromise only works if the burden stops being the price of keeping everyone else happy."
+      },
+      "sha256": "efdf9b99bd64ba56b5e93c93836f5ae093b1b7c4a9931571015e61a652ec9078"
+    },
+    "sky.moon.sextile.jupiter": {
+      "payload": {
+        "summary": "A private need reaches a wider circle and receives more help than one household could provide.",
+        "body": "A private need reaches a wider circle and receives more help than one household could provide. Moon sextile Jupiter can open a fund, bring in a community group, or connect the request to people with more time or resources before the original caregiver runs out of both. The important shift is that the burden stops sitting with the same exhausted few. Share the request clearly and name what would actually help. A wider network is useful when each person knows where their contribution belongs."
+      },
+      "sha256": "59f5a66bf10e55b6960ce1a6b9564149fcea4e064b24e81d13f85074c99b1889"
+    },
+    "sky.moon.sextile.mars": {
+      "payload": {
+        "summary": "Someone notices the immediate need and acts before the situation becomes an emergency.",
+        "body": "Someone notices the immediate need and acts before the situation becomes an emergency. Moon sextile Mars can turn concern into a ride, meal, repaired lock, covered shift, or other small action that changes the day right away. It does not need a committee to matter. Handle the part that can actually be handled now. If the need is larger than one person can carry, use the first action to buy enough time to bring in more help."
+      },
+      "sha256": "b93cde2fdc6e376d9d0c31248aaa4a35c86c49d6ec81e9ba6cffe9b2b376c917"
+    },
+    "sky.moon.sextile.mercury": {
+      "payload": {
+        "summary": "A private concern reaches the right person before it becomes a public problem.",
+        "body": "A private concern reaches the right person before it becomes a public problem. Moon sextile Mercury can turn a message about childcare, medication, housing, or a schedule change into enough information for a coordinator to intervene before the day falls apart. Send the message while the problem is still small. Include the time, the practical need, and the answer required. One clear note can save someone from explaining the same problem after the damage is already done."
+      },
+      "sha256": "dfffae478bf92c42129b9eae841aa3dc73b1b97c4cb3a218bb1dbe016906ebbd"
+    },
+    "sky.moon.sextile.neptune": {
+      "payload": {
+        "summary": "Someone notices the need behind a vague request and finds one concrete way to help.",
+        "body": "Someone notices the need behind a vague request and finds one concrete way to help. Moon sextile Neptune can turn a quiet check-in into a meal, ride, room, referral, or payment before the person struggling has to make a private crisis public. Sensitivity matters most when it becomes useful. Offer the specific thing that is actually available and leave room for the answer to be no. Help should reduce the person's work, not create another conversation they have to manage."
+      },
+      "sha256": "0cdc06fa1be6ddfeb447ab94e37511ce1c64e743a117f38475af330bc73cb65e"
+    },
+    "sky.moon.sextile.pluto": {
+      "payload": {
+        "summary": "A difficult family or care conversation reaches the person with enough authority to change the arrangement.",
+        "body": "A difficult family or care conversation reaches the person with enough authority to change the arrangement. Moon sextile Pluto can turn one disclosure about money, safety, resentment, or an old loyalty into a chance to correct the problem before silence hardens around it again. The useful part is that the actual source of fear is finally being named. Ask for the change that would reduce the pressure now. Do not waste the opening on hints everyone has already learned to ignore."
+      },
+      "sha256": "176351812b2086ff37578e980ddabda83e0cb78dfe34d270bd66b417790235bd"
+    },
+    "sky.moon.sextile.saturn": {
+      "payload": {
+        "summary": "A care plan becomes workable after one person names the limit everyone else was avoiding.",
+        "body": "A care plan becomes workable after one person names the limit everyone else was avoiding. Moon sextile Saturn can make a smaller schedule, arranged payment, or moved deadline enough to keep the responsibility from falling apart. The help becomes more reliable because time and energy are finally being treated as finite. Make the adjustment official. Name who owns the next step, when the arrangement ends, and what happens if the need lasts longer than expected."
+      },
+      "sha256": "18faa664aa10fe20228edcc103c600fed16eb7788c8a473ed01994a92ff17c17"
+    },
+    "sky.moon.sextile.uranus": {
+      "payload": {
+        "summary": "A small change in routine gives a household or team breathing room it did not know it had.",
+        "body": "A small change in routine gives a household or team breathing room it did not know it had. Moon sextile Uranus can make a different schedule, tool, transport option, or care arrangement useful before the existing system fails completely. The adjustment works because it removes one actual source of strain without demanding that everything else change too. Try it long enough to see the effect. If the day gets easier, keep the part that helped and stop defending the rule that caused the problem."
+      },
+      "sha256": "7d5d7483ac5fa2c5eed917394cdf0ed7cfeaf6aed3109ed0819af590f9d9cc50"
+    },
+    "sky.moon.sextile.venus": {
+      "payload": {
+        "summary": "A small budget adjustment makes a difficult week easier to carry.",
+        "body": "A small budget adjustment makes a difficult week easier to carry. Moon sextile Venus can turn a flexible fund, extra meal, open room, or changed reservation into enough support to keep a need from falling through. The help matters because it arrives before embarrassment or exhaustion forces someone to ask twice. Offer what is actually available. A modest adjustment can be more useful than a bigger gesture that creates another promise nobody can maintain."
+      },
+      "sha256": "a1aa1e8a2120de4d05c35f893341925f7a0e0b2247c36d633687b5aa05c3ad6c"
+    },
+    "sky.moon.square.jupiter": {
+      "payload": {
+        "summary": "A generous promise creates more emotional and practical responsibility than anyone planned to carry.",
+        "body": "A generous promise creates more emotional and practical responsibility than anyone planned to carry. Moon square Jupiter can make the guest list, family commitment, or relief effort keep expanding while the same people continue providing meals, rides, beds, and reassurance. Goodwill can become an invisible staffing plan. Count the hours and work required before saying yes to the next person. Support is more generous when the caregivers are not treated as the part of the budget that never runs out."
+      },
+      "sha256": "d74251144705e4e1a78a05da472d679a4bb02fc4d382d689e35bfcd46f0c4ba2"
+    },
+    "sky.moon.square.mars": {
+      "payload": {
+        "summary": "A last-minute demand turns an already strained household or team into a fight.",
+        "body": "A last-minute demand turns an already strained household or team into a fight. Moon square Mars can make an urgent request collide with exhaustion, care responsibilities, or private stress that was already close to the limit. Someone may still get the task done and carry the anger home afterward. Treat that anger as information about the workload, not just the tone of the response. Give the job a realistic timeline and stop treating one person's availability as proof that their plans can wait."
+      },
+      "sha256": "175cc924139a324a18188818b97feec66745922352b817940ba91f583fe56442"
+    },
+    "sky.moon.square.mercury": {
+      "payload": {
+        "summary": "A technically correct message lands as dismissive because its tone ignores what the room is already carrying.",
+        "body": "A technically correct message lands as dismissive because its tone ignores what the room is already carrying. Moon square Mercury can make an automated reply, short email, or carefully worded statement answer the question and still lose the trust required for the answer to be heard. Accuracy is not the whole job when grief, fear, anger, or exhaustion is obvious. Keep the facts, change the delivery. Acknowledge the impact before repeating the policy."
+      },
+      "sha256": "55c86c1ab12e37a7d6959b055ba9b7bf25a11507ce71547dd614d9272d05b63d"
+    },
+    "sky.moon.square.neptune": {
+      "payload": {
+        "summary": "A family or community rallies around a crisis before anyone confirms what kind of help is actually needed.",
+        "body": "A family or community rallies around a crisis before anyone confirms what kind of help is actually needed. Moon square Neptune can flood the situation with money, advice, visitors, and promises while the same exhausted person is still making every hard decision. Sympathy is not automatically useful support. Ask what would make the next twelve hours easier. Bring the meal, cover the shift, pay the bill, or give the person space instead of making them manage everyone else's concern."
+      },
+      "sha256": "82973a65f37b509b07848d0c6a4dbcdd7f16019ea30bb6e16d2eeef2164dc4f1"
+    },
+    "sky.moon.square.pluto": {
+      "payload": {
+        "summary": "A last-minute schedule change triggers a sharp conflict over who actually gets to make the call.",
+        "body": "A last-minute schedule change triggers a sharp conflict over who actually gets to make the call. Moon square Pluto can turn an immediate emotional reaction into a direct challenge to the person using rank, contract, policy, or money to shut the discussion down. The original decision may still stand, but the conflict exposes where authority becomes control. Before escalating, identify the rule being enforced and who can actually change it. Do not spend the whole argument on the person enforcing a rule they have no authority to revise."
+      },
+      "sha256": "74d740c5d8cd0125b6315603b1d2721dc0135c72d41739946d880974e022c9fb"
+    },
+    "sky.moon.square.saturn": {
+      "payload": {
+        "summary": "A family, housing, or care need runs into a deadline that will not move.",
+        "body": "A family, housing, or care need runs into a deadline that will not move. Moon square Saturn can make an employer, landlord, lender, or agency keep returning to policy while the person living through the crisis keeps absorbing the cost. The rule may be technically correct and still create a preventable hardship. Get the deadline, policy, and escalation path in writing. Then focus on the part that can still be negotiated instead of spending the day arguing with a limit the person enforcing it has no authority to change."
+      },
+      "sha256": "53f8a3f810d8d4fd33297ab86de75ff353e4727a4568659fa5e7bb8047fa27a6"
+    },
+    "sky.moon.square.uranus": {
+      "payload": {
+        "summary": "A sudden closure, outage, or schedule reversal knocks out the routine people were relying on.",
+        "body": "A sudden closure, outage, or schedule reversal knocks out the routine people were relying on. Moon square Uranus can turn an unavoidable change into a much larger crisis when families, staff, or residents are left scrambling for care, transportation, supplies, and information at the same time. The people with the least flexibility absorb the chaos first. Give them the replacement plan before the explanation. Then explain what changed, how long it may last, and who is responsible for the next update."
+      },
+      "sha256": "18a1fabad5df3426c7e284a1ed30acc39b5836c03193b13a8c2cf7d8fee463cd"
+    },
+    "sky.moon.square.venus": {
+      "payload": {
+        "summary": "A celebration built to look generous leaves the people doing the care work overwhelmed and unpaid.",
+        "body": "A celebration built to look generous leaves the people doing the care work overwhelmed and unpaid. Moon square Venus can make childcare, cleanup, accessibility, food restrictions, and other practical needs impossible to hide once the event starts failing the people expected to make it look effortless. The room can be beautiful and the workload still be unfair. Count the work and money before adding another detail for appearances. If the event depends on invisible work, make that work visible in the plan and the budget."
+      },
+      "sha256": "825def8910c34a8e602a5f22c802c0fc37ee3f59ead9bd08688c4c91c7e2d8dd"
+    },
+    "sky.moon.trine.jupiter": {
+      "payload": {
+        "summary": "A private need receives a much larger response than expected.",
+        "body": "A private need receives a much larger response than expected. Moon trine Jupiter can bring meals, money, childcare, space, or forgiveness without making the person receiving help explain every detail first. The relief can feel almost immediate because people are willing to give more than the minimum. Let the help be easy to receive. Then make sure somebody is still showing up after the first wave of urgency passes, because the need may last longer than the attention around it."
+      },
+      "sha256": "2d283c708cfb7b8ac38470066e2c5b182f4b9be6d510c30ea8922361fc05f5d7"
+    },
+    "sky.moon.trine.mars": {
+      "payload": {
+        "summary": "The response team reaches the problem with the right supplies and enough authority to use them.",
+        "body": "The response team reaches the problem with the right supplies and enough authority to use them. Moon trine Mars can help caregivers, neighbors, staff, or family members act on what people actually need instead of following a plan that no longer fits the situation. Instinct and action support each other here. Keep the team close to the people affected. The fastest response is useful when it can adjust without losing the purpose of the work."
+      },
+      "sha256": "6904ed5ca48ff3c829f6c24490e91fb5fa8cfdc00e463a294340452e589fcac1"
+    },
+    "sky.moon.trine.mercury": {
+      "payload": {
+        "summary": "The conversation finally reaches the reason someone was upset in the first place.",
+        "body": "The conversation finally reaches the reason someone was upset in the first place. Moon trine Mercury can make a voice note, private meeting, or direct reply clear enough to name what hurt, what changed, and what answer is needed next without starting another argument. Say the part that matters. The goal is not to explain every feeling perfectly; it is to give the other person enough information to respond to the actual problem instead of guessing at the reaction."
+      },
+      "sha256": "b2afe99d17aae450d8e4f54af9299a7aa74102dfc23eb95442398b3d4f4d1a00"
+    },
+    "sky.moon.trine.neptune": {
+      "payload": {
+        "summary": "A collective loss is met with care that feels personal rather than procedural.",
+        "body": "A collective loss is met with care that feels personal rather than procedural. Moon trine Neptune can bring meals, vigils, art, childcare, or quiet places to gather without forcing mourners to organize the support themselves. The response does not need to erase the loss to be meaningful. Keep showing up in ways that reduce the practical burden. Grief is easier to carry when care is visible in the food, rides, hours, and space people actually receive."
+      },
+      "sha256": "7de04bc916f87ed5a7a822166c869c13cb97fc9603be160279e0a615d4532bda"
+    },
+    "sky.moon.trine.pluto": {
+      "payload": {
+        "summary": "Long-standing emotional baggage comes into the open without the conversation becoming a fight.",
+        "body": "Long-standing emotional baggage comes into the open without the conversation becoming a fight. Moon trine Pluto can make grief, anxiety, or an old family loyalty easier to name without forcing anyone to reveal more than they are ready to share. Honesty has enough room to move here without turning vulnerability into a weapon. Let the conversation change the understanding of the past. The truth can matter even when one conversation does not resolve every old hurt."
+      },
+      "sha256": "97a30c8d0abd713032c1394913998026561e42298a4dfbef7409a0e061e9c91f"
+    },
+    "sky.moon.trine.saturn": {
+      "payload": {
+        "summary": "The caregiver schedule, budget, and backup plan are confirmed before the need becomes urgent.",
+        "body": "The caregiver schedule, budget, and backup plan are confirmed before the need becomes urgent. Moon trine Saturn can make compassion more reliable because everybody knows who is covering each shift, what the money pays for, and when the arrangement will be reviewed. Care feels less cold when the structure protects both the person receiving it and the people providing it. Keep the backup current. A good plan should survive one person getting sick, needing a day off, or simply reaching their limit."
+      },
+      "sha256": "3bec36104c16ba989f5f4f900dc558714b5a27937342fe6a1e70a61b24340da5"
+    },
+    "sky.moon.trine.uranus": {
+      "payload": {
+        "summary": "A new arrangement makes daily life easier almost immediately.",
+        "body": "A new arrangement makes daily life easier almost immediately. Moon trine Uranus can make flexible hours, shared transport, accessible technology, or a changed household role solve a problem people had started treating as permanent. The relief is the evidence. Keep what makes the day easier and do not rebuild the old restriction just because it is familiar. A good change should reduce strain without asking everyone to live in constant instability."
+      },
+      "sha256": "86a9a73c9631a8b6e0d4371f0c728b3b960525ef21d54ca109f931c586b4462b"
+    },
+    "sky.moon.trine.venus": {
+      "payload": {
+        "summary": "Care arrives in a form that feels thoughtful because someone remembered the details.",
+        "body": "Care arrives in a form that feels thoughtful because someone remembered the details. Moon trine Venus can make affection show up as the right food, a prepared room, a quietly handled payment, or an accommodation that does not turn someone's need into a spectacle. The gesture feels good because it reduces work instead of creating another obligation. Keep doing the practical thing that made the person more comfortable. Thoughtfulness is usually easier to recognize in what somebody remembered than in what they said."
+      },
+      "sha256": "aaad7a653622de14bf1614734bd77e984a36f05b2987e7c205d1f10a5a9b4403"
+    },
+    "sky.neptune.conjunction.pluto": {
+      "payload": {
+        "summary": "A collective fear or hope becomes inseparable from the hidden power shaping the response.",
+        "body": "A collective fear or hope becomes inseparable from the hidden power shaping the response. Neptune conjunct Pluto can make a crisis, spiritual movement, media campaign, or public grief feel deeply meaningful while money, secrecy, and institutional interests decide which version reaches the audience. That combination deserves scrutiny precisely because the feeling is sincere. Follow the resources and the decision-making. Ask who benefits from the story, who controls what remains hidden, and what the public is being encouraged not to question."
+      },
+      "sha256": "1e35508d9fc5804f97727aaf8d8ed0e501e149956d9782afc5cf12bd3f68b5e8"
+    },
+    "sky.neptune.opposition.pluto": {
+      "payload": {
+        "summary": "The humanitarian narrative faces the workers and communities documenting what the campaign left out.",
+        "body": "The humanitarian narrative faces the workers and communities documenting what the campaign left out. Neptune opposite Pluto can put genuine compassion directly across from private contracts, controlled access, or cleanup assigned to people with no authority. The cause may still be worthy while the institution speaking for it loses credibility. Separate the need from the organization claiming to represent it. Support the people doing the work, and inspect who is controlling the money and the story around them."
+      },
+      "sha256": "5a655169d7793a5b89e1a7a07916037580e0b634124dd23e9019c8428481555f"
+    },
+    "sky.neptune.sextile.pluto": {
+      "payload": {
+        "summary": "A compelling public story creates an opening to investigate the power hidden underneath the crisis.",
+        "body": "A compelling public story creates an opening to investigate the power hidden underneath the crisis. Neptune sextile Pluto can turn empathy into deeper scrutiny if someone follows the donations, contracts, images, or private decisions before attention moves on. The story becomes harder to exploit once care is linked to a record of who benefited and who carried the loss. Use the attention to ask the question the campaign would rather leave emotional. Where did the money go, and who had the authority to decide?"
+      },
+      "sha256": "2402b5fde477dc98885f49ed4d1ab6e3a220d9c78dfefc2f84931b92a2c8380b"
+    },
+    "sky.neptune.square.pluto": {
+      "payload": {
+        "summary": "A public story emphasizes care while hiding the operational mess underneath.",
+        "body": "A public story emphasizes care while hiding the operational mess underneath. Neptune square Pluto can make an idealized campaign protect the same power structure shifting money, cleanup, and work onto the people with the least control. The more inspiring the story becomes, the easier it is to treat practical scrutiny as cynicism. Follow the contracts, work, and money far enough to see who is carrying the cost. Compassion is more credible when the people cleaning up afterward are included in the story and the budget."
+      },
+      "sha256": "ea44bd34a3757e82d82a6eabb5b23a3d68994575dd35bc8d8cd201a0f4c970de"
+    },
+    "sky.neptune.trine.pluto": {
+      "payload": {
+        "summary": "A work of art, testimony, or sustained investigation brings hidden suffering into public view without reducing it to a spectacle.",
+        "body": "A work of art, testimony, or sustained investigation brings hidden suffering into public view without reducing it to a spectacle. Neptune trine Pluto can let emotional truth and difficult evidence reinforce each other, so the story names the systems, money, and private decisions shaping the harm while preserving the humanity of the people living through it. That depth is the point. Let the public response grow around the facts, not around a simplified symbol that makes the pain easier to consume."
+      },
+      "sha256": "4a5d64143ff6cbbfb685493c453e187f1773c1dff3314584cbc67b81bcfa9a73"
+    },
+    "sky.saturn.conjunction.neptune": {
+      "payload": {
+        "summary": "A dream is placed inside a structure that will determine if it can survive ordinary life.",
+        "body": "A dream is placed inside a structure that will determine if it can survive ordinary life. Saturn conjunct Neptune can make a care program, creative institution, spiritual community, or recovery plan receive rules, funding limits, leadership, and formal responsibility all at once. Structure can protect the purpose and distort it when one office starts deciding who deserves access to the care. Keep the mission close to the paperwork. Review the eligibility, budget, and decision-making before administration quietly becomes the thing the project serves."
+      },
+      "sha256": "1460817c639bac3515d5e3187d2791c519a57c4a1a626d371ff6cee8d68bbee6"
+    },
+    "sky.saturn.conjunction.pluto": {
+      "payload": {
+        "summary": "A hard restructuring concentrates authority around survival, control, and consequences.",
+        "body": "A hard restructuring concentrates authority around survival, control, and consequences. Saturn conjunct Pluto can make budget cuts, department closures, tighter contracts, or emergency powers feel unavoidable while the same response also reduces freedom and review. Necessity is powerful language because it can end an argument before the terms are examined. Ask what control is being made permanent in the name of the crisis. If an emergency measure changes who can decide, put a date and review process on that power before it becomes ordinary."
+      },
+      "sha256": "4f9a3f5889675cf3ca95b853f06ea517a2ed09740663a164f5b9037dbdc01031"
+    },
+    "sky.saturn.conjunction.uranus": {
+      "payload": {
+        "summary": "A new system becomes mandatory at the same moment the old one is shut down.",
+        "body": "A new system becomes mandatory at the same moment the old one is shut down. Saturn conjunct Uranus can make reform and enforcement arrive together, leaving staff, residents, or users to learn new rules and tools while still meeting every obligation the former process handled. The upgrade may solve a specific problem and still be badly timed. Keep a working bridge between the two systems long enough for records, payments, and people to move. A transition is not complete because leadership declared the old version over."
+      },
+      "sha256": "9bca8b56b46d851ab08fa6bcbb55ca5f9d5d2b3054db01224aa808b23c4749d9"
+    },
+    "sky.saturn.opposition.neptune": {
+      "payload": {
+        "summary": "The institution responsible for enforcing the limit faces the people who believed its promise of care.",
+        "body": "The institution responsible for enforcing the limit faces the people who believed its promise of care. Saturn opposite Neptune can put law, budget, eligibility, and documentation directly across from prior assurances and the human cost of withdrawing support. A program can survive the review and still lose credibility if compassion only existed while nobody was asking what it cost. Compare the promise with the actual terms people are being held to now. If they changed, say so plainly instead of hiding the reversal inside policy language."
+      },
+      "sha256": "f38f780b67c01e48a97d8f6e407821e2295cb02c8b4a4c599ef6af7cbfcfa6a5"
+    },
+    "sky.saturn.opposition.pluto": {
+      "payload": {
+        "summary": "The official responsible for enforcing the rules faces the person or institution powerful enough to operate around them.",
+        "body": "The official responsible for enforcing the rules faces the person or institution powerful enough to operate around them. Saturn opposite Pluto can expose the difference between formal authority and actual leverage, especially when money, access, or private consequences make enforcement risky. A rule that only applies to people without power is not much of a rule. Put the exemption on the record. The confrontation matters if it produces a limit that applies to the office or institution, not only to the person easiest to punish."
+      },
+      "sha256": "4ee45ebdf2d91ad5db5d24b010a2de523d47e807c2e50dbbcc78c30938c393fa"
+    },
+    "sky.saturn.opposition.uranus": {
+      "payload": {
+        "summary": "The officials responsible for continuity face the people demanding a complete break from the existing system.",
+        "body": "The officials responsible for continuity face the people demanding a complete break from the existing system. Saturn opposite Uranus can put safety, law, records, and services directly across from exclusion, failure, and a structure that has used stability to protect itself. Both sides are naming a risk. The replacement plan should show whose stability matters and who was previously expected to absorb the disruption. Reform is stronger when it protects essential continuity without using continuity as an excuse to preserve the failure."
+      },
+      "sha256": "4bc2f01637f4f101b2cb5b6d7e7da09d74df2db8976839dd21234f22416423e2"
+    },
+    "sky.saturn.sextile.neptune": {
+      "payload": {
+        "summary": "A broad promise receives enough structure to support one practical piece of help.",
+        "body": "A broad promise receives enough structure to support one practical piece of help. Saturn sextile Neptune can turn compassion into a shelter bed, recovery program, arts fund, or protected leave policy once the budget, eligibility, staffing, and deadline are defined. The whole ideal does not need to fit inside one program. It needs a named owner and funding or staff attached to it. Build the part that can be delivered now, then let the larger vision grow from something people can already access."
+      },
+      "sha256": "09ccf09310493b813277d9cbc296cf8ce33c9d0b6905ea12077f28ea5c4ecac1"
+    },
+    "sky.saturn.sextile.pluto": {
+      "payload": {
+        "summary": "A serious review reaches the rule, contract, or chain of authority protecting a long-standing abuse of power.",
+        "body": "A serious review reaches the rule, contract, or chain of authority protecting a long-standing abuse of power. Saturn sextile Pluto can give an audit, legal opening, leadership change, or documented complaint enough force to alter the structure instead of disciplining another disposable person. Use the opening against the system that enabled the behavior. Change the approval path, reporting line, or consequence so the same power cannot simply regroup around a new name."
+      },
+      "sha256": "89acb0bee12aba666f18d38f34d3cfa26891c7b198a2a0a5e8549e6ea608357e"
+    },
+    "sky.saturn.sextile.uranus": {
+      "payload": {
+        "summary": "An overdue system upgrade fixes a pipeline that was quietly failing the people who needed it most.",
+        "body": "An overdue system upgrade fixes a pipeline that was quietly failing the people who needed it most. Saturn sextile Uranus can turn one approved change in booking, inventory, payouts, or processing into a much faster route through a stubborn bottleneck. The improvement may be technical, but the result is human: fewer missed appointments, delayed payments, or people turned away. Finish the unglamorous implementation. A good reform is the one that reaches the front door with less delay."
+      },
+      "sha256": "b48a47e5db048d4d33d4a37670d14fe546bc2453230af117e67c8faafc7024aa"
+    },
+    "sky.saturn.square.lilith": {
+      "payload": {
+        "summary": "Patience runs thin for rules, expectations, or responsibilities that have demanded too much for too long.",
+        "body": "Patience runs thin for rules, expectations, or responsibilities that have demanded too much for too long. Saturn square Lilith can make the weak point in an agreement or system impossible to keep covering with endurance. Shortcuts stop working, and the person who has been absorbing the extra burden may finally refuse to do it again. Do not confuse that refusal with irresponsibility. Name the demand that has become unsustainable and renegotiate who carries it before the whole arrangement breaks under the same pressure."
+      },
+      "sha256": "b1f9303ba04aecb374e5f2e4682d404d38a491cfaef488b046bbe0763b5285ac"
+    },
+    "sky.saturn.square.neptune": {
+      "payload": {
+        "summary": "A sweeping promise hits a hard wall of practical limits.",
+        "body": "A sweeping promise hits a hard wall of practical limits. Saturn square Neptune can make a community project, care plan, or creative institution keep running on belief until the budget, legal backing, or staffing finally refuses to cooperate. Inspiration cannot cover a missing structure forever. The shutdown may be quick, but the cleanup is not. Name what failed before replacing the dream with another promise. Fix the funding, authority, or staffing gap that made delivery impossible in the first place."
+      },
+      "sha256": "9fffffae75b972c8c11dd123b76642b46831634eaf5746cf19150610cca6059e"
+    },
+    "sky.saturn.square.pluto": {
+      "payload": {
+        "summary": "Two centers of authority refuse to give up the rule, money, or access that makes them powerful.",
+        "body": "Two centers of authority refuse to give up the rule, money, or access that makes them powerful. Saturn square Pluto can turn deadlines, records, and ordinary work into leverage while each side tries to force the other into accepting its terms. The people underneath the conflict pay for every withheld decision. Stop treating delay as neutral. Identify which decision is being held hostage, who has the authority to release it, and what consequence exists if neither side moves."
+      },
+      "sha256": "fe2ee7569d860d98a4252df34cf0e8fca11b789e3a2dc18aad5ae8f2c6d7ff79"
+    },
+    "sky.saturn.square.uranus": {
+      "payload": {
+        "summary": "A rigid institution keeps enforcing a process that technology, staff, or public need has already made obsolete.",
+        "body": "A rigid institution keeps enforcing a process that technology, staff, or public need has already made obsolete. Saturn square Uranus can make workers build unofficial workarounds while leadership tightens the same rules causing the delay. Every workaround becomes another argument about who is authorized to change the system. Stop treating the workaround as misconduct if it is the only thing keeping the work moving. Document where the official process fails and escalate the specific rule blocking a replacement."
+      },
+      "sha256": "b706d690fcc37db9956ae5a97b7fe9c2cab977951117b93433e1713bc31f49f9"
+    },
+    "sky.saturn.trine.neptune": {
+      "payload": {
+        "summary": "An institution creates a durable response to a need it once handled through temporary goodwill.",
+        "body": "An institution creates a durable response to a need it once handled through temporary goodwill. Saturn trine Neptune can turn volunteers and emergency exceptions into long-term funding, trained staff, private space, and clear access without losing sight of the human reason the program exists. Care becomes dependable because someone accepted that compassion needs a budget after the emotional moment passes. Protect that continuity. Build the plan so the service still works on an ordinary Tuesday when nobody is watching."
+      },
+      "sha256": "30b9eb5f35aa709eb725ef85799f95b9baaff41d6ef8eb4dbf9ca801dec3b362"
+    },
+    "sky.saturn.trine.pluto": {
+      "payload": {
+        "summary": "An institution rebuilds its authority after opening the records and changing who can exercise power without review.",
+        "body": "An institution rebuilds its authority after opening the records and changing who can exercise power without review. Saturn trine Pluto can make reform reach contracts, reporting lines, budgets, and consequences instead of ending with a symbolic resignation. The change lasts because the structure stops depending on one good leader to behave well. Put the new limits where the old abuse was possible. Trust returns more slowly than policy, but it has a chance when the rule changes for the office itself."
+      },
+      "sha256": "80030631d152d701a60ba9af3a3a491262b3496427f7c5c02b4942e2e084c1a8"
+    },
+    "sky.saturn.trine.uranus": {
+      "payload": {
+        "summary": "A major system changes without forcing the people who rely on it to survive a chaotic transition.",
+        "body": "A major system changes without forcing the people who rely on it to survive a chaotic transition. Saturn trine Uranus can let the old and new processes overlap long enough for records, payments, staff, and public access to move safely between them. Reform does not need disruption to prove it is reform. Keep the backup live until the replacement has handled ordinary use, not just a launch test. People trust change faster when the familiar route disappears after the new one is already working."
+      },
+      "sha256": "70c37d760aef9f42c638662ceacae3459d83ae9cc704b9eff31cc43f8740bbf2"
+    },
+    "sky.sun.conjunction.jupiter": {
+      "payload": {
+        "summary": "A wave of attention puts a leader or passion project center stage.",
+        "body": "A wave of attention puts a leader or passion project center stage. Sun conjunct Jupiter can make visibility and expansion feed each other so quickly that public backing becomes a new level of responsibility before the person at the center has had time to adjust. More attention creates more expectation. Decide what the larger audience can actually receive now. A bigger platform is useful when the promise grows with the work, not faster than it."
+      },
+      "sha256": "170e08462fadd6a859b00c1c495d65e23e288096bdc8613e70037516a3fc5f88"
+    },
+    "sky.sun.conjunction.mars": {
+      "payload": {
+        "summary": "The plan and the first move happen in the same meeting.",
+        "body": "The plan and the first move happen in the same meeting. Sun conjunct Mars can remove nearly all distance between deciding and doing, so a vote is followed by a filing, launch, dismissal, or transfer before anyone outside the meeting can prepare. That speed gives leadership power and responsibility at the same time. The person setting the direction also owns the consequences of the first move. Fast execution is not an excuse to pretend the overlooked fallout belongs to somebody else."
+      },
+      "sha256": "38aae1ab134bac25e0c3ff5e1adbf90f92eb10788cff36afb83b6daa0cbc7fa0"
+    },
+    "sky.sun.conjunction.mercury": {
+      "payload": {
+        "summary": "A closed-door talk exposes who has been pulling the strings.",
+        "body": "A closed-door talk exposes who has been pulling the strings. Sun conjunct Mercury can bring a hidden conflict of interest, secret clause, or unaccounted-for resource into the same conversation as the decision about who is trusted next. The record matters because authority is already involved. Ask for the straight answer and the document behind it. Once the hidden arrangement is named, do not let the room solve the embarrassment faster than it solves the access or accountability problem."
+      },
+      "sha256": "56b7bc6125e5e7db6e158db773f4963b9e4f9c77dc028e61225e31e8f43ff05f"
+    },
+    "sky.sun.conjunction.moon": {
+      "payload": {
+        "summary": "A single deadline puts equal heat on the boss who set it and the team doing the work.",
+        "body": "A single deadline puts equal heat on the boss who set it and the team doing the work. Sun conjunct Moon can make the official direction and the human reaction to it part of the same story, especially when late nights, missed care, or unfinished tasks are the cost of keeping the date. The work may still get done. That does not mean the deadline was well planned. Count the hours and tradeoffs before repeating the same timeline next time."
+      },
+      "sha256": "8d6f9251e7177f5e6f01f09c6c7bd2c9cb92bb4c5c219deef5497445f2dbdeeb"
+    },
+    "sky.sun.conjunction.neptune": {
+      "payload": {
+        "summary": "A founder, candidate, or public figure can become the answer to needs no one person could realistically satisfy.",
+        "body": "A founder, candidate, or public figure can become the answer to needs no one person could realistically satisfy. Sun conjunct Neptune can blur the line between who someone is and what supporters hope they represent, especially when rescue, healing, creativity, or moral certainty has been projected onto the role. The devotion may be sincere, but it becomes fragile when ordinary mistakes are treated like betrayal. Keep the person separate from the promise. Judge the work by what is actually delivered, not by how much hope the public figure has come to carry for everyone else."
+      },
+      "sha256": "9f01b9492e2a09683162c6f182ae46ed2a30436653256a48dce50ea902790a3c"
+    },
+    "sky.sun.conjunction.pluto": {
+      "payload": {
+        "summary": "One signature can move the budget, the public story, and the decision-making power at the same time.",
+        "body": "One signature can move the budget, the public story, and the decision-making power at the same time. Sun conjunct Pluto can concentrate visible authority and the leverage behind it in the same hands, which makes a merger, succession, election, or takeover feel decisive very quickly. The question is what becomes harder to challenge once the change is complete. Follow the title to the money, records, and access that come with it. If one person can make the decision and control the information used to review it, the new structure needs more oversight, not less."
+      },
+      "sha256": "b8dd70377d7a4a41f667812b4f0071d18809e5c04b16d8b9921a1c0e5096d8d8"
+    },
+    "sky.sun.conjunction.saturn": {
+      "payload": {
+        "summary": "A promotion may arrive with the title, scrutiny, and a longer list of problems that now belong to the person being congratulated.",
+        "body": "A promotion may arrive with the title, scrutiny, and a longer list of problems that now belong to the person being congratulated. Sun conjunct Saturn can make recognition and responsibility part of the same offer, so the status looks better from the outside than the workload feels from inside the role. Read the duties as closely as the title. Ask what authority, pay, staff, and time come with the added responsibility. More responsibility should come with something that makes carrying it possible."
+      },
+      "sha256": "05f9e3d451b0aa22e22392118be24a1d9fc0ab7b830a4160a1ee8cca257e9899"
+    },
+    "sky.sun.conjunction.uranus": {
+      "payload": {
+        "summary": "One unexpected resignation, disclosure, or break from the plan can change the public story before leadership has time to prepare the response.",
+        "body": "One unexpected resignation, disclosure, or break from the plan can change the public story before leadership has time to prepare the response. Sun conjunct Uranus can make the disruption itself become the new direction, especially when the person at the center decides the old arrangement is no longer worth protecting. The shock may be useful if it exposes a problem everyone was already avoiding. Do not spend the whole response trying to restore the old script. Name what actually changed and what now has to be rebuilt because the break made the previous plan impossible."
+      },
+      "sha256": "a6273acd442580db2b362f649c581d93b5292c0dbe5cf8de8291bf13721d769b"
+    },
+    "sky.sun.conjunction.venus": {
+      "payload": {
+        "summary": "Turnout, applause, or a polished public response can become the whole scorecard even when the original goal was harder to measure.",
+        "body": "Turnout, applause, or a polished public response can become the whole scorecard even when the original goal was harder to measure. Sun conjunct Venus can make being liked and being effective look like the same thing, especially when sponsors, leaders, or organizers want visible enthusiasm to stand in for value. Count the quieter result too. Who was paid, who benefited, what changed, and what did the attention actually produce? Approval matters, but it should not be the only evidence that the work succeeded."
+      },
+      "sha256": "a6f34c3c024ea4313b958d9b5520dd9004b421fdd80cd716aa672563bfd1e822"
+    },
+    "sky.sun.opposition.jupiter": {
+      "payload": {
+        "summary": "The announcement promises access on a much larger scale than the current system can deliver.",
+        "body": "The announcement promises access on a much larger scale than the current system can deliver. Sun opposite Jupiter can put the inspiring headline directly across from waitlists, staffing limits, and costs that have already exceeded the original plan. Leadership may be right that demand is there. Operators may be right that the system cannot support it yet. Close the gap before another public promise widens it. Publish the limits, expand what can be delivered, or narrow the claim."
+      },
+      "sha256": "8362ca056fafc488848920d603f1b7d533c570613029f0739739e1c2e4606890"
+    },
+    "sky.sun.opposition.mars": {
+      "payload": {
+        "summary": "The person announcing the plan stands across from the people expected to execute it.",
+        "body": "The person announcing the plan stands across from the people expected to execute it. Sun opposite Mars can put strategy and urgency directly against safety, hours, and the work that cannot be completed on command. Issuing the order is not the same as having the people to fulfill it. Bring the operators into the decision before the deadline becomes a test of obedience. A plan is stronger when the people doing the work can say what it will actually take."
+      },
+      "sha256": "d82586c4bccef4691c55622f209c688bb4313da1e00aa7cbcc211d2616cbf4ce"
+    },
+    "sky.sun.opposition.moon": {
+      "payload": {
+        "summary": "Leadership may call a change necessary while the people living with it are losing pay, childcare, transportation, or the routine that made the old plan workable.",
+        "body": "Leadership may call a change necessary while the people living with it are losing pay, childcare, transportation, or the routine that made the old plan workable. The opposition between the Sun and Moon can put the official decision directly across from its human cost, making it difficult to keep one version of the story in charge. A budget can explain why the policy changed without answering who is expected to absorb the disruption. Put that cost into the decision before calling the plan complete. If the same people are always asked to adjust, the compromise is not evenly shared."
+      },
+      "sha256": "39d9028365b9060e60256e663265e943db9756f016c3e5717126f442c6c48c27"
+    },
+    "sky.sun.opposition.neptune": {
+      "payload": {
+        "summary": "The leader onstage describes a rescue while the staff doing the work are still asking where the money, people, and measurable end point are.",
+        "body": "The leader onstage describes a rescue while the staff doing the work are still asking where the money, people, and measurable end point are. Sun opposite Neptune can put an inspiring public story directly against the practical confusion underneath it. Both sides may believe in the cause. The problem is that belief does not tell anyone what was promised or who is responsible for delivering it. Compare the speech with the budget, staffing, and timeline. If those documents describe a smaller plan, the public promise needs to get smaller too."
+      },
+      "sha256": "7f4f14ec88775d0cbb3c2ba25f8bd8d384fb07443aed24d9c0e7f86ceb82b89a"
+    },
+    "sky.sun.opposition.pluto": {
+      "payload": {
+        "summary": "The person with the title may discover that someone else still controls the money, records, or access required to make the title matter.",
+        "body": "The person with the title may discover that someone else still controls the money, records, or access required to make the title matter. Sun opposite Pluto can expose the difference between public authority and private leverage when one side can announce the decision and the other can quietly delay or disable it. That is not a personality clash. It is a problem in how power is divided. Put the decision rights on paper. If the person responsible for the outcome cannot access the resources needed to act, fix the structure before blaming either side for the stalemate."
+      },
+      "sha256": "f45d7345ca8d6ff6ac6592e7f0dc25228551965904ad331d98cfa85d3aa80bf9"
+    },
+    "sky.sun.opposition.saturn": {
+      "payload": {
+        "summary": "Leadership may promise a result that the person responsible for law, budget, staffing, or compliance already knows cannot be delivered as announced.",
+        "body": "Leadership may promise a result that the person responsible for law, budget, staffing, or compliance already knows cannot be delivered as announced. Sun opposite Saturn can force public ambition to face the limit it was trying to talk around. A smaller plan is not automatically a failure if it is the one the structure can actually support. Put the restriction into the public decision instead of leaving operations to explain it later. The promise should match what the people enforcing the limits are authorized and funded to deliver."
+      },
+      "sha256": "ce34f842546b0ea1e67e55688d86a9996ce31cd8d5fb5b68807e6afd86fda181"
+    },
+    "sky.sun.opposition.uranus": {
+      "payload": {
+        "summary": "Leadership may insist the plan is still intact while a public departure proves that something inside it has already broken.",
+        "body": "Leadership may insist the plan is still intact while a public departure proves that something inside it has already broken. Sun opposite Uranus can put the official story directly against the person naming the rules, restrictions, or decisions that made staying untenable. The departure may look sudden from the outside and still have a long history behind it. Read the reason for the exit before replacing the person. If the same condition remains, continuity only guarantees that the next conflict will arrive under a different name."
+      },
+      "sha256": "d936d8467618027c347cb79fe2407870c5f9f7e8bd439f490310cb088902f58b"
+    },
+    "sky.sun.sextile.jupiter": {
+      "payload": {
+        "summary": "A grant clears and a partner signs, funding the exact piece that needed support right as momentum stalled.",
+        "body": "A grant clears and a partner signs, funding the exact piece that needed support right as momentum stalled. Sun sextile Jupiter can open a larger door without forcing the project to become something else. Hire the missing person, reserve the space, secure the permit, or solve the specific problem that stopped the next stage. Use the support where it was actually needed. A larger opportunity stays useful when it is attached to a defined job instead of another oversized promise."
+      },
+      "sha256": "2183a5edc82641e832906277141922de886395fbc1d67018775bdbec4ae99495"
+    },
+    "sky.sun.sextile.mars": {
+      "payload": {
+        "summary": "One person takes the first task and another claims the next, dividing the work without an argument.",
+        "body": "One person takes the first task and another claims the next, dividing the work without an argument. Sun sextile Mars can make a partial plan useful once somebody has enough authority to start the first concrete piece. The early result gives the rest of the project something to build around. Name the first two owners and let them move. Clear handoffs and decision rights matter more than having every detail final before the work begins."
+      },
+      "sha256": "aed7eff0b2653492d2b20e5f4c631a51b55cb7924e02a8f5d27a330f44a24a58"
+    },
+    "sky.sun.sextile.moon": {
+      "payload": {
+        "summary": "A policy change is announced early enough for someone to catch the detail that would have created a much bigger problem later.",
+        "body": "A policy change is announced early enough for someone to catch the detail that would have created a much bigger problem later. The sextile between the Sun and Moon can create room for an official decision to adjust to the people who actually have to live with it. A grace period, transit option, childcare plan, or revised start date may be enough to keep one rule from derailing an entire week. Use the lead time. Ask who will have to rearrange the most before the policy is locked, then fix the preventable problem while the plan can still move."
+      },
+      "sha256": "7cc5ed56df2c231e373c5886b9cda227a7c5c58b4f7aee961f07f44d0823c3ba"
+    },
+    "sky.sun.sextile.neptune": {
+      "payload": {
+        "summary": "A vague hope becomes a campaign people can actually support once it has a name, a budget, and somewhere for the money to go.",
+        "body": "A vague hope becomes a campaign people can actually support once it has a name, a budget, and somewhere for the money to go. Sun sextile Neptune can help a compassionate or creative idea find a public form without requiring the whole vision to be finished first. A donation link, first event, named organizer, or clear beneficiary may be enough to turn concern into useful participation. Make the first promise specific. People should know what they are contributing to, who is responsible for it, and what the first round of support is meant to accomplish."
+      },
+      "sha256": "e4220771051d0cfc1f0717421ac39368b0f0ebed26ff8b94c1b89e0e30fb450b"
+    },
+    "sky.sun.sextile.pluto": {
+      "payload": {
+        "summary": "One meeting may be enough to expose who has sign-off power and who is expected to absorb the consequences of the decision.",
+        "body": "One meeting may be enough to expose who has sign-off power and who is expected to absorb the consequences of the decision. Sun sextile Pluto can create an opening for an audit request, disclosure, or contract review to reach the part of the system where authority actually sits. Use the meeting for more than acknowledgment. Name who can approve the change, who controls the records or money, and what happens if the same problem returns. Accountability becomes useful when the next decision is harder to hide behind an unclear chain of command."
+      },
+      "sha256": "5ac177e3f9eea0f47fdc0655481b33d4b999beb01709ebf37cfa75ad81d0a1c0"
+    },
+    "sky.sun.sextile.saturn": {
+      "payload": {
+        "summary": "A promotion, license, or approval may clear once the record shows the hours, budget, and responsibility behind the achievement.",
+        "body": "A promotion, license, or approval may clear once the record shows the hours, budget, and responsibility behind the achievement. Sun sextile Saturn can create a practical opening for work that has already survived scrutiny to receive formal recognition. The opportunity is not the same as the paperwork finishing itself. Submit the missing proof, confirm the condition, and get the decision in writing. Credit carries more weight when it comes with the authority or status that the documented work was supposed to earn."
+      },
+      "sha256": "8c0cc0180f041a7278dcf45fc4feae5f71c458f1f33788982776e28bbc68e9ed"
+    },
+    "sky.sun.sextile.uranus": {
+      "payload": {
+        "summary": "New software or one procedural change may clear a bottleneck the old workflow kept reproducing.",
+        "body": "New software or one procedural change may clear a bottleneck the old workflow kept reproducing. Sun sextile Uranus can give an experiment enough authority to be tested inside the live system without requiring everyone to abandon the current process first. Start with the failure everyone can already see. Give one team the tool, track the result, and keep the old route available until the replacement has handled ordinary use. The change earns support when people can point to the delay it removed."
+      },
+      "sha256": "7bebe0ce30003d114d9d3e803187b94dd4ab2df0873eaaf63890c0572342a068"
+    },
+    "sky.sun.square.jupiter": {
+      "payload": {
+        "summary": "The launch keeps adding features while the budget and sign-off stay put.",
+        "body": "The launch keeps adding features while the budget and sign-off stay put. Sun square Jupiter can make every new promise sound exciting in public while the staff, time, and legal authority needed to deliver it remain exactly the same. Scope grows because optimism keeps winning the meeting. The team inherits every expectation anyway. Freeze the additions long enough to compare the public promise with the resources underneath it. If the numbers did not grow, the scope cannot keep growing for free."
+      },
+      "sha256": "759271fc426c082e018fe3530f5a28d5ff72f79760d516f4b71e5df3cef56581"
+    },
+    "sky.sun.square.mars": {
+      "payload": {
+        "summary": "A director moves the date up and the team pushes back in the same email thread.",
+        "body": "A director moves the date up and the team pushes back in the same email thread. Sun square Mars can turn the schedule into a direct fight over authority when management treats the order as final and the people responsible for delivery are still naming missing staff, unfinished work, and prior commitments. The date may hold and the mistakes will still count. Recalculate the workload before demanding faster execution. Pressure does not create extra hours just because leadership needs them."
+      },
+      "sha256": "586dd7a96eb7d65980d7a4baf37befe4de0da01f938d4a5a78add5dc94819797"
+    },
+    "sky.sun.square.moon": {
+      "payload": {
+        "summary": "The email goes out before the meeting, and everyone starts rearranging care, transportation, and work before leadership has explained what changed.",
+        "body": "The email goes out before the meeting, and everyone starts rearranging care, transportation, and work before leadership has explained what changed. Sun square Moon can turn a decision made at the top into immediate disruption for the people expected to live with it. The policy may survive the pushback, but trust will not recover just because the calendar does. Explain the change before asking people to reorganize their day around it. If there is no way to avoid the disruption, give people enough time and information to plan for the part that lands on them."
+      },
+      "sha256": "a647a26c1e5651a40317f61c151676c87fa0d445614114873866f72ed4de70fc"
+    },
+    "sky.sun.square.neptune": {
+      "payload": {
+        "summary": "A polished pitch can win the room before anyone reads the numbers closely.",
+        "body": "A polished pitch can win the room before anyone reads the numbers closely. Sun square Neptune can make the image of a person or project more convincing at the exact moment the missing details matter most, especially when a good story makes basic questions feel cynical. The weakness is usually ordinary: money that is not accounted for, results nobody has defined, or a promise that cannot be checked. Read the budget and the terms before voting on the vision. A compelling presentation should survive the same questions as an unglamorous one."
+      },
+      "sha256": "c07f7f1a91f24a6517dabc4719270a451fc28a37f9edc61842dce6734a508ef6"
+    },
+    "sky.sun.square.pluto": {
+      "payload": {
+        "summary": "Two versions of the same decision circulate, each edited to protect its author and make the other side look responsible.",
+        "body": "Two versions of the same decision circulate, each edited to protect its author and make the other side look responsible. Sun square Pluto can turn a dispute over credit or leadership into a fight over the record itself, especially when private access lets someone remove context, withhold documents, or decide which account looks official. A public argument cannot repair a missing paper trail. Preserve the emails, approvals, dates, and original files. When control of the story has become part of the conflict, the record needs to exist somewhere neither side can quietly rewrite it."
+      },
+      "sha256": "b370c1db2cf126d6699f46b006877088a04f0dea68ae7e0daed0f2e0d60411e0"
+    },
+    "sky.sun.square.saturn": {
+      "payload": {
+        "summary": "A popular plan can still hit a deadline, rule, budget, or private obligation that will not move just because everyone wants the project to continue.",
+        "body": "A popular plan can still hit a deadline, rule, budget, or private obligation that will not move just because everyone wants the project to continue. Sun square Saturn can make that limit feel personal, especially when leadership has already promised a result and somebody else is left enforcing the boundary. The deadline is not proof that one person should be doing three jobs at once. Rework the scope, timing, or responsibility before asking the same person to absorb the gap. A hard limit is useful when it forces the plan to become more accurate."
+      },
+      "sha256": "a4c93f69fa308613489b1d2eac05960410da2d3415b2809e53433c870464586c"
+    },
+    "sky.sun.square.uranus": {
+      "payload": {
+        "summary": "An abrupt resignation can void dates and promises that were already given to clients, staff, or partners.",
+        "body": "An abrupt resignation can void dates and promises that were already given to clients, staff, or partners. Sun square Uranus can turn one person's break from the arrangement into immediate instability for everyone who built plans around their authority. The argument about who owns the project can wait long enough to protect the people depending on it. Confirm who can make decisions now, which commitments still stand, and what needs to be postponed. The first job is not restoring appearances. It is keeping the sudden break from creating avoidable damage downstream."
+      },
+      "sha256": "878c14cf593d913365deae341a3269214cc8cafbbedeeceee7d076bfdbe51342"
+    },
+    "sky.sun.trine.jupiter": {
+      "payload": {
+        "summary": "Public support arrives at the exact point a proven project is ready to expand.",
+        "body": "Public support arrives at the exact point a proven project is ready to expand. Sun trine Jupiter can bring funding, press, or institutional backing to work that already has a team, a record, and a clear next stage. The opportunity feels earned because the larger audience can see what its support is helping continue. This is a good time to grow the part that already works. Keep the expansion tied to the method, people, and purpose that produced the result in the first place."
+      },
+      "sha256": "e02aaf8884e7e5aa1cc2d8c21b97a3683f611fac9f4f12996aced8fff3fee75f"
+    },
+    "sky.sun.trine.mars": {
+      "payload": {
+        "summary": "The order is given and the work begins without a second meeting.",
+        "body": "The order is given and the work begins without a second meeting. Sun trine Mars can make authority and action reinforce each other because the staff, tools, and approval were secured before the directive arrived. Nobody has to waste time wondering if they are allowed to proceed. Keep the objective clear and let the people doing the work move. Good leadership is visible in how little avoidable friction remains between the decision and the first useful action."
+      },
+      "sha256": "cdf0bbbb05893bdeec00d1413aec92ddf03d16c7e17916bd9890108f54907c58"
+    },
+    "sky.sun.trine.moon": {
+      "payload": {
+        "summary": "A difficult change is easier to absorb when the explanation arrives with the details people need to plan around it.",
+        "body": "A difficult change is easier to absorb when the explanation arrives with the details people need to plan around it. Sun trine Moon can help leadership and the people affected by a decision move in the same direction because the practical consequences are included from the beginning. Revised hours, direct contacts, childcare, or another small accommodation can prevent a reasonable change from becoming an unnecessary mess. Say what is changing, why it is changing, and what support is already in place. People do not have to like the decision to understand what happens next."
+      },
+      "sha256": "553c0711c32017d9469e7b91b7d739f631922722a9fb861534940c462b7c77fa"
+    },
+    "sky.sun.trine.neptune": {
+      "payload": {
+        "summary": "A memorial, film, benefit, or public statement may give a shared feeling exactly enough form for people to respond to it.",
+        "body": "A memorial, film, benefit, or public statement may give a shared feeling exactly enough form for people to respond to it. Sun trine Neptune can help a visible person or project carry grief, compassion, or imagination without forcing the message into something colder than the experience itself. The strongest version does not need to exaggerate the pain. It gives people a place to put their attention, money, or support while keeping the people at the center human. Let the work be moving. Keep the facts, permissions, and purpose intact while it moves people."
+      },
+      "sha256": "a072923fe23b354883781695d3bcf5fa6d44c132232da4550be628ff376015d3"
+    },
+    "sky.sun.trine.pluto": {
+      "payload": {
+        "summary": "A transfer of authority works better when the budget, access, conflicts, and review process move with the title instead of being negotiated afterward.",
+        "body": "A transfer of authority works better when the budget, access, conflicts, and review process move with the title instead of being negotiated afterward. Sun trine Pluto can make leadership and deeper structural power support the same transition, which gives the new person enough leverage to do the job while making that leverage visible. Open the records and disclose the conflicts before the handoff is finished. The transition gains credibility when nobody has to pretend the title is separate from the money and control attached to it."
+      },
+      "sha256": "22da79cfffd1131e32344bb682114545a5c48109bf724220e6aa586d209365b1"
+    },
+    "sky.sun.trine.saturn": {
+      "payload": {
+        "summary": "Authority may finally move to the person who has already been doing the work without the title.",
+        "body": "Authority may finally move to the person who has already been doing the work without the title. Sun trine Saturn can make recognition easier to formalize when the hours, decisions, and track record are already there. This is the point where the title, pay, access, and responsibility should catch up with the role someone has been carrying in practice. Make the change official. Recognition means more when it changes what the person can decide, what they are paid, and what work no longer has to be done without authority."
+      },
+      "sha256": "be79d28b551d911af66736bce0964146d3a95f84c379f78e87e4eadcf3286fe8"
+    },
+    "sky.sun.trine.uranus": {
+      "payload": {
+        "summary": "Leadership may finally approve the change people have been asking for before the old process creates another crisis.",
+        "body": "Leadership may finally approve the change people have been asking for before the old process creates another crisis. Sun trine Uranus can make reform easier to implement when the person with authority is willing to put their name behind a better system instead of defending the familiar one. The new platform, reporting line, or policy still has to work on an ordinary Tuesday. Roll it out with enough support to prove that. A bold change earns trust when daily work gets easier after the announcement, not just more exciting on launch day."
+      },
+      "sha256": "d35f3b6911987ccdb6a075788b65f4da4bbf4b4808675418dfbd1b23c2010469"
+    },
+    "sky.uranus.conjunction.neptune": {
+      "payload": {
+        "summary": "A technological or cultural breakthrough can arrive already carrying a story about how everyone will live once it spreads.",
+        "body": "A technological or cultural breakthrough can arrive already carrying a story about how everyone will live once it spreads. Uranus conjunct Neptune can make innovation and idealism rise together, so a new platform, medium, or movement feels like proof of the future before ownership, limits, or consequences are clear. The excitement may be deserved. The projection can be just as strong. Ask who controls the tool, what it actually changes, and what happens if the promise does not hold. A new interface is not the same thing as a new distribution of power."
+      },
+      "sha256": "34e2a83ddb6c54a1c86afd2bd67416aef2d1fa2bd4b3845ba488168380ad700e"
+    },
+    "sky.uranus.conjunction.pluto": {
+      "payload": {
+        "summary": "A platform collapse, ownership fight, market seizure, or technical break can move authority at the same moment the old structure fails.",
+        "body": "A platform collapse, ownership fight, market seizure, or technical break can move authority at the same moment the old structure fails. Uranus conjunct Pluto can make disruption and a transfer of power happen so quickly that everyone is focused on what ended before noticing who now controls the replacement. Breaking the gate does not guarantee open access. Follow the data, ownership, pricing, and enforcement into the new system. If the same concentration of power appears under a different interface, the replacement changed the route more than the power structure."
+      },
+      "sha256": "c6269e0aab7924b16588b3adff8f7759a68cdfe846a18c49f60c19b80c539cfe"
+    },
+    "sky.uranus.opposition.neptune": {
+      "payload": {
+        "summary": "The people demanding proof may end up facing a movement that survives because its vision is larger than anything the current system can measure.",
+        "body": "The people demanding proof may end up facing a movement that survives because its vision is larger than anything the current system can measure. Uranus opposite Neptune can put testable reform directly across from a collective ideal, especially when technology is being asked to carry hope, solidarity, or a future nobody can fully describe yet. Do not force the choice into belief versus cynicism. Test what can be tested. Keep the part of the vision that still matters after the tool, platform, or strategy has to answer for its results."
+      },
+      "sha256": "cafaf61914fa3fa9d8a8d87afec6cda84cdc7942d318db3f245b7a34477415ab"
+    },
+    "sky.uranus.opposition.pluto": {
+      "payload": {
+        "summary": "A movement demanding open access may run directly into the institution that still owns the infrastructure underneath it.",
+        "body": "A movement demanding open access may run directly into the institution that still owns the infrastructure underneath it. Uranus opposite Pluto can expose how far decentralization can go when another party controls the servers, money, licensing, data, or legal consequences required to keep the route open. Freedom at the user level can coexist with concentrated power underneath it. Name that dependency before calling the system decentralized. Check who can enter today and who still has the power to close the door tomorrow."
+      },
+      "sha256": "a48b89861fce2bfce54d8edec4966137c5c88627216a99be5fe8212a96082c6f"
+    },
+    "sky.uranus.sextile.neptune": {
+      "payload": {
+        "summary": "A new platform may give a neglected need a route around the institutions that kept missing it.",
+        "body": "A new platform may give a neglected need a route around the institutions that kept missing it. Uranus sextile Neptune can open an unconventional channel between people who need support and people willing to provide it, especially through unfamiliar technology, creative formats, or decentralized networks. Attention alone is not the result. Build enough trust for people to use the route safely, and make the next step obvious once they arrive. The innovation matters because it connects someone to money, information, care, or access they could not reach before."
+      },
+      "sha256": "69d8c9c6870a831adfc552ab8d775ba99dd4f219196184f65ee1c483cec7e902"
+    },
+    "sky.uranus.sextile.pluto": {
+      "payload": {
+        "summary": "One legal opening, technical update, or ownership change may give ordinary users access to tools that used to sit behind a gatekeeper.",
+        "body": "One legal opening, technical update, or ownership change may give ordinary users access to tools that used to sit behind a gatekeeper. Uranus sextile Pluto can create a practical chance to move power closer to the people actually using the system, but the opening is only useful if the access changes with it. Rewrite the permissions, ownership, or decision rights while the route is open. A reform has gone far enough when people can point to what they are now allowed to enter, control, or leave without asking the same authority as before."
+      },
+      "sha256": "3c481129685fac96680d229e77748dc330f7346aa6eff509b47ac11105b5fea0"
+    },
+    "sky.uranus.square.neptune": {
+      "payload": {
+        "summary": "A viral solution may collect believers before anyone has had time to test if it works.",
+        "body": "A viral solution may collect believers before anyone has had time to test if it works. Uranus square Neptune can make new platforms, anonymous funds, artificial images, or unverified tools spread through a crisis while hope fills the gaps in evidence. The first failure can become an excuse to chase the next version instead of asking what the experiment already proved. Slow the repeat cycle. Verify the source, ownership, results, and people carrying the downside before another round of attention or money turns the same uncertainty into a larger problem."
+      },
+      "sha256": "09fb77b58028d7388fabfb643ad0ada652920e27e2689ec6bfa757bfc2e82a7b"
+    },
+    "sky.uranus.square.pluto": {
+      "payload": {
+        "summary": "A disruptive technology can break one gatekeeping system and immediately create a new fight over who owns the replacement.",
+        "body": "A disruptive technology can break one gatekeeping system and immediately create a new fight over who owns the replacement. Uranus square Pluto can make access expand faster than rules around data, pricing, enforcement, or ownership can catch up, leaving a smaller group with more control than the people celebrating the breakthrough expected. Do not mistake a broken gate for the end of gatekeeping. Check who can change the terms, raise the price, remove access, or keep the data. The new system deserves the same scrutiny the old one eventually received."
+      },
+      "sha256": "5244c0ffcb15329f57e3c6901f0d57e68462805277791d12c5d7d0594c64f355"
+    },
+    "sky.uranus.trine.neptune": {
+      "payload": {
+        "summary": "A new tool may make a distant human reality easier to understand without turning the people living through it into content.",
+        "body": "A new tool may make a distant human reality easier to understand without turning the people living through it into content. Uranus trine Neptune can help technology and empathy support each other, especially when artists, organizers, or mutual-aid networks use new formats to share testimony, route money, or coordinate help. The platform works best when it stays in service to the people at the center. Keep consent, attribution, and the practical purpose visible. If the technology becomes the most interesting part of the story, the work has probably drifted from what it was meant to help."
+      },
+      "sha256": "f01befd0494efbdad1dc58f453bcc45fac784421c49106d975ed82e5bfb851aa"
+    },
+    "sky.uranus.trine.pluto": {
+      "payload": {
+        "summary": "A quiet infrastructure overhaul can shift power without forcing everyone through a public crisis first.",
+        "body": "A quiet infrastructure overhaul can shift power without forcing everyone through a public crisis first. Uranus trine Pluto can help technology, ownership, and authority change together when the work has been planned around cost, deadlines, and the people who still need the system to function every day. The strongest reform may look boring from the outside. Let it. Measure the change by who can now access the tool, make a decision, or move without asking the old gatekeeper for permission."
+      },
+      "sha256": "5e0bdc142da734f72d745d6f6c63f374fe4c12eba1a11ba1a9e200f89d80853b"
+    },
+    "sky.venus.conjunction.jupiter": {
+      "payload": {
+        "summary": "Every enthusiastic yes can make the party, purchase, or promise larger than the version anyone originally agreed to pay for.",
+        "body": "Every enthusiastic yes can make the party, purchase, or promise larger than the version anyone originally agreed to pay for. Venus conjunct Jupiter can make pleasure and generosity feed each other until another guest, upgrade, gift, or public promise feels too good to refuse. The problem usually appears on the bill, the schedule, or the person expected to keep the experience feeling abundant. Enjoy the expansion, but name the limit while the choices are still optional. Generosity gets less generous once somebody else is quietly financing it with their money or time."
+      },
+      "sha256": "066ac58d1345f60b8705782ae46b046411915444793b4420f45c6e75b9e532fd"
+    },
+    "sky.venus.conjunction.mars": {
+      "payload": {
+        "summary": "An offer and the move to claim it can happen in the same moment.",
+        "body": "An offer and the move to claim it can happen in the same moment. Venus conjunct Mars can make attraction, money, creativity, or agreement move from interest to action before either side has time to hide behind polite ambiguity. A bid gets placed. An invitation is accepted. A private attraction becomes a public choice. The spark is not the whole agreement. After the first move, confirm that both sides still want the same price, pace, role, or outcome before momentum starts deciding the terms on their behalf."
+      },
+      "sha256": "e63d98f7742fd0d635602b2530674342144855185bdadddfee8c692383539d1e"
+    },
+    "sky.venus.conjunction.neptune": {
+      "payload": {
+        "summary": "An offer can become more powerful because each person sees their own hope reflected inside it.",
+        "body": "An offer can become more powerful because each person sees their own hope reflected inside it. Venus conjunct Neptune can make a creative deal, relationship promise, purchase, or charitable appeal feel unusually meaningful while the exact terms stay soft enough for everyone to imagine a different outcome. Beauty and goodwill are not the problem. Unnamed expectations are. Put the price, commitment, ownership, and timeline into plain language before the fantasy has to survive ordinary life. If naming the terms ruins the appeal, the appeal was carrying too much of the agreement."
+      },
+      "sha256": "875b5d75fadc4af8ca421b9fe22896396d8dbcf10b5fc19d0fcb65e31b824453"
+    },
+    "sky.venus.conjunction.pluto": {
+      "payload": {
+        "summary": "A private agreement can concentrate money, loyalty, and leverage in the same hands.",
+        "body": "A private agreement can concentrate money, loyalty, and leverage in the same hands. Venus conjunct Pluto can make a merger, inheritance, settlement, exclusive contract, or intimate commitment feel deeper at the exact moment leaving it becomes more expensive. The cost of exit is part of the agreement, especially when one person controls something the other cannot easily replace. Put ownership, access, debt, and decision rights on the table before treating the bond as proof that the terms are fair. Closeness should not make the leverage invisible."
+      },
+      "sha256": "8869398c87e8545dd44f31d2752a875284703a1a32f38ba475a6e021be174bee"
+    },
+    "sky.venus.conjunction.saturn": {
+      "payload": {
+        "summary": "A relationship or financial agreement can become official at the same moment its obligations become concrete.",
+        "body": "A relationship or financial agreement can become official at the same moment its obligations become concrete. Venus conjunct Saturn can turn affection, money, and responsibility into dates, duties, recurring costs, and consequences that are harder to treat casually once the contract is signed. That can create stability. It can also reveal how much each person expected the other to carry without saying so. Read the obligation as closely as the promise. Put the money, time, and ongoing work into the agreement before commitment becomes the reason nobody feels allowed to renegotiate it."
+      },
+      "sha256": "8b06af3ac32f8ff8ea62d6d83eda9c1e56498b87a516e77cc044fb3af1a05122"
+    },
+    "sky.venus.conjunction.uranus": {
+      "payload": {
+        "summary": "An unexpected proposal can rewrite a familiar agreement before either side has time to fall back on the old rules.",
+        "body": "An unexpected proposal can rewrite a familiar agreement before either side has time to fall back on the old rules. Venus conjunct Uranus can bring a new price, relationship term, invitation, or creative partnership that feels both freeing and unsettling because the value is still there while the format changes quickly. Do not confuse surprise with incompatibility. Name what the old arrangement stopped making room for and what the new one is asking each person to accept. The change has a better chance when freedom is written into the agreement instead of being taken outside it."
+      },
+      "sha256": "349c7f59b5935bf7657060c0dca05e8be8f2f32b7aa0b4b3d0895be61da0d411"
+    },
+    "sky.venus.opposition.jupiter": {
+      "payload": {
+        "summary": "A generous public offer may be impossible to extend to everyone under the same terms.",
+        "body": "A generous public offer may be impossible to extend to everyone under the same terms. Venus opposite Jupiter can put the desire to include more people directly against the budget, inventory, or prior agreements that already determine who gets what. Expanding the benefit can be worthwhile. It should not happen by quietly taking from the people who were promised a share first. Put the cost of the larger offer on the table. If growth requires someone else's portion to shrink, say that before calling the change generosity."
+      },
+      "sha256": "e325351a6d07851bde7709ad0a1afd73b418d76276b3158b1e035fe8a82f5d8c"
+    },
+    "sky.venus.opposition.mars": {
+      "payload": {
+        "summary": "The person making the offer may face someone who wants different terms and is willing to push for them.",
+        "body": "The person making the offer may face someone who wants different terms and is willing to push for them. Venus opposite Mars can make attraction and conflict share the same negotiation, especially when one side wants cooperation and the other wants a faster answer, a lower price, or more control over the next move. Interest does not erase disagreement. Put the terms where both sides can see them. If the offer only works while one person is chasing and the other is resisting, the chemistry is doing more work than the agreement."
+      },
+      "sha256": "3763f8310437d4c4b28169bd3c6386029957eddc5e10bddcfd42847278a9f81f"
+    },
+    "sky.venus.opposition.neptune": {
+      "payload": {
+        "summary": "Fast chemistry or easy enthusiasm may start sounding like a firm commitment before anyone has confirmed the cost or terms.",
+        "body": "Fast chemistry or easy enthusiasm may start sounding like a firm commitment before anyone has confirmed the cost or terms. Venus opposite Neptune can put the irresistible version of an offer directly across from the details that were never discussed. A trip, joint venture, social plan, or relationship can gather momentum while each side is imagining a different promise. Ask the boring questions early. Who is paying, what is confirmed, what remains optional, and what happens if the ideal version never materializes? Clarity protects the part that is actually worth wanting."
+      },
+      "sha256": "d96100b02a75cf545a92bbeb1c78497cfdbad18b729492274b5c677ee88d25a5"
+    },
+    "sky.venus.opposition.pluto": {
+      "payload": {
+        "summary": "The person asking for fair terms may be negotiating with someone who controls the money, access, or future opportunity attached to the deal.",
+        "body": "The person asking for fair terms may be negotiating with someone who controls the money, access, or future opportunity attached to the deal. Venus opposite Pluto can make a request for recognition or mutual exchange run directly into the leverage that determines how much saying no would cost each side. That imbalance should be named, not hidden behind good manners. Ask who can walk away without losing income, access, credit, or the relationship itself. Fair terms mean more when both sides can refuse them without being punished for it."
+      },
+      "sha256": "8f15af521360654b657248aa9ea52af6ea59bf4adb4b22c6cf739b003b9d034a"
+    },
+    "sky.venus.opposition.saturn": {
+      "payload": {
+        "summary": "A human request for funding, flexibility, or recognition may run into an institution determined to hold the line.",
+        "body": "A human request for funding, flexibility, or recognition may run into an institution determined to hold the line. Venus opposite Saturn can put the value of someone's work or relationship directly across from a budget, policy, or obligation with more authority than sympathy. The refusal may follow every rule and still leave the same person carrying the cost. Ask what the rule protects and who it leaves paying for the decision. If an exception is impossible, the institution should still be able to explain what support, credit, or alternative is actually available."
+      },
+      "sha256": "08f08c893299a581b0e37a4efa060e88c44b6d2e84178b46d8d82e2233150d5a"
+    },
+    "sky.venus.opposition.uranus": {
+      "payload": {
+        "summary": "One side may want to preserve the agreement while the other believes staying requires different terms.",
+        "body": "One side may want to preserve the agreement while the other believes staying requires different terms. Venus opposite Uranus can make belonging and independence impossible to separate, especially when a familiar price, role, schedule, or relationship rule now feels restrictive to the person living under it. The old agreement does not become fair because it used to work. Put both versions on the table and decide what each side needs in order to stay by choice. If the relationship only survives when one person stays quiet, continuity is not the same thing as consent."
+      },
+      "sha256": "0a4a14333422871ca0ea6e9e339feffc03b711069245bd8386892b698af18bc8"
+    },
+    "sky.venus.sextile.jupiter": {
+      "payload": {
+        "summary": "A generous offer may reach the right person just as a smaller plan needs room to grow.",
+        "body": "A generous offer may reach the right person just as a smaller plan needs room to grow. Venus sextile Jupiter can bring an introduction, extra budget, invitation, or public endorsement that opens a larger social or financial door without requiring the whole project to change direction. Use the help on the part that was actually stuck. Secure the space, make the hire, place the order, or follow the introduction while the offer is active. A good opportunity becomes useful when the added support has a specific job."
+      },
+      "sha256": "8eb9347799d70798b2f1edd09349456a66a0442708b4212baa6d5305e2a978fc"
+    },
+    "sky.venus.sextile.mars": {
+      "payload": {
+        "summary": "A stalled agreement may move once somebody makes a direct offer the other side can actually answer.",
+        "body": "A stalled agreement may move once somebody makes a direct offer the other side can actually answer. Venus sextile Mars can turn vague interest into a price, date, role, boundary, or next step without making the whole exchange confrontational. Do not make the other person guess what action would keep the deal alive. Say what is being offered and what response is needed. One specific move is enough to test if the interest is mutual before anyone spends more time negotiating with a possibility."
+      },
+      "sha256": "3ceddeb4f0d436290b54a4da79b4b09e216c9e60bc9403c14f6d597aef86a9b5"
+    },
+    "sky.venus.sextile.neptune": {
+      "payload": {
+        "summary": "A beautiful idea may receive just enough practical support to become an actual event, collaboration, benefit, or act of care.",
+        "body": "A beautiful idea may receive just enough practical support to become an actual event, collaboration, benefit, or act of care. Venus sextile Neptune can help imagination find a room, budget, contact, or agreement without forcing the idea to lose the feeling that made people care in the first place. Secure the concrete piece while support is available. Confirm the space, cost, schedule, and person responsible for the next step. The vision does not become less meaningful because somebody booked the room and checked the invoice."
+      },
+      "sha256": "f4abaf7e4117a8748ed4d44e805e455ce1b1e69cd524e4951badca7db560a60b"
+    },
+    "sky.venus.sextile.pluto": {
+      "payload": {
+        "summary": "A difficult negotiation may finally reach the person who can change the money, access, or terms instead of another person who can only apologize for them.",
+        "body": "A difficult negotiation may finally reach the person who can change the money, access, or terms instead of another person who can only apologize for them. Venus sextile Pluto can create a narrow opening to surface hidden fees, unequal credit, ownership, or private leverage before the agreement becomes final. Use that opening while the terms can still move. Ask the person with actual authority to answer the specific problem. A better deal becomes possible once the cost of saying no is no longer being kept off the page."
+      },
+      "sha256": "31a2ac0325046015570e5c948e4818c282810570fac75dfc4170bd3b04f20694"
+    },
+    "sky.venus.sextile.saturn": {
+      "payload": {
+        "summary": "A plan on hold may receive a conditional approval that makes one next step possible.",
+        "body": "A plan on hold may receive a conditional approval that makes one next step possible. Venus sextile Saturn can open a route through a budget, deposit, schedule, or policy problem without requiring the original goal to be abandoned. The condition matters as much as the yes. Read it. Adjust the numbers or timing, confirm who is responsible for meeting it, and get the next approval in writing. A workable compromise is one the people involved can actually maintain after the relief of finally moving forward wears off."
+      },
+      "sha256": "675302807ceba884861fe78a9d7a925420465b18366b8baff7ba615c4c6f4215"
+    },
+    "sky.venus.sextile.uranus": {
+      "payload": {
+        "summary": "One proposed change may give a strained agreement enough room to keep going.",
+        "body": "One proposed change may give a strained agreement enough room to keep going. Venus sextile Uranus can make a moved payment date, revised guest list, different schedule, or updated relationship rule easier to propose once someone names the exact part that no longer works. The opening is small, which is useful. Change one term and see what it fixes before renegotiating everything else. The arrangement has a better chance when people can ask for more room directly instead of waiting until the only available move is to walk away."
+      },
+      "sha256": "8dca9c4bfa436913aaa625e37561e46f5d885ad9625f6eeb76a9c8b60e8e4dd0"
+    },
+    "sky.venus.square.jupiter": {
+      "payload": {
+        "summary": "The event, purchase, or promise may get more expensive every time someone adds one more good idea.",
+        "body": "The event, purchase, or promise may get more expensive every time someone adds one more good idea. Venus square Jupiter can make upgrades, guests, gifts, and expectations pile onto a budget that still belongs to the smaller plan. The result can look generous while one person is carrying the overage in money, hours, or cleanup. Stop adding before the pleasure becomes another obligation nobody agreed to fund. Compare the current price and workload with the original yes, then decide what still belongs in the plan."
+      },
+      "sha256": "2e9a86ff8d70073fdf4b645cd949d2b4d9ca21271a6b8a4823d6ba3684628e30"
+    },
+    "sky.venus.square.mars": {
+      "payload": {
+        "summary": "A desirable offer can become a fight over who gets to set the pace.",
+        "body": "A desirable offer can become a fight over who gets to set the pace. Venus square Mars can make an immediate commitment, purchase, answer, or public show of support feel like proof of interest, while the person being rushed starts pulling back simply to regain room to choose. Pressure turns the yes into weaker evidence of agreement. Slow down the part that has become a test. Name the price, date, boundary, or decision that actually needs agreement and give the other side enough space to answer it without having to fight for the right to think."
+      },
+      "sha256": "93c5c9225ffd9e4a2faaf70c2ee7c11a5b131ab275dfc93ee4d16cd954de1564"
+    },
+    "sky.venus.square.neptune": {
+      "payload": {
+        "summary": "A polished offer may feel much more secure than the agreement underneath it.",
+        "body": "A polished offer may feel much more secure than the agreement underneath it. Venus square Neptune can make beautiful images, warm assurances, or fast chemistry carry a decision while price, availability, ownership, or commitment is still unresolved. The missing terms do not become kinder because everyone likes the idea. Put the vague part in writing before paying, booking, signing, or promising more. If two people cannot describe the same outcome in ordinary language, they are not agreeing to the same thing yet."
+      },
+      "sha256": "c1a6fd2bf06033a7dfef981ddd506f540efd92e4cd9f3d78a7de382907a4c3d1"
+    },
+    "sky.venus.square.pluto": {
+      "payload": {
+        "summary": "A dispute over money or loyalty can become a fight over who is able to make the other person lose more.",
+        "body": "A dispute over money or loyalty can become a fight over who is able to make the other person lose more. Venus square Pluto can push ordinary negotiation into withholding access, threatening credit, exposing private information, or using affection as leverage once someone stops getting the answer they want. That is no longer a disagreement about value. It is a control problem. Stop negotiating through the hostage. Separate the money, access, or private information from the argument and deal with the actual terms without making one person's vulnerability the price of staying at the table."
+      },
+      "sha256": "73225038fdc2dffb4a96b66ebbff57e296349e3e8a388d46689f4d3762afb129"
+    },
+    "sky.venus.square.saturn": {
+      "payload": {
+        "summary": "The work receives praise, but the request for money, time, or formal recognition is denied.",
+        "body": "The work receives praise, but the request for money, time, or formal recognition is denied. Venus square Saturn can make every compliment feel thinner when appreciation keeps arriving in place of material support. A frozen budget or strict policy may be true. So is the cost of asking someone to keep doing valuable work without anything changing for them. Put the request next to the response. If the answer is still no, stop using praise to make the same terms sound generous and decide what work can realistically continue under them."
+      },
+      "sha256": "6d0aa6c35a07dad910ec4dc6ed28565f1897af5550ee048ba22d14d4c2d9eb24"
+    },
+    "sky.venus.square.uranus": {
+      "payload": {
+        "summary": "A sudden change in price, availability, or commitment can break an agreement people expected to rely on.",
+        "body": "A sudden change in price, availability, or commitment can break an agreement people expected to rely on. Venus square Uranus can make one person's necessary change become everybody else's immediate problem when the new terms arrive without warning or room to respond. Freedom does not erase responsibility for the disruption. Give people notice, alternatives, or a transition when the change affects their money, schedule, housing, work, or relationship. The new terms may still stand. Goodwill is much easier to preserve when nobody is forced to discover them through the consequences."
+      },
+      "sha256": "368edc1ce92d67caf8138f7d32b47d05a8d50a0d937f3616f074ff35ca00be69"
+    },
+    "sky.venus.trine.jupiter": {
+      "payload": {
+        "summary": "Money, goodwill, and public support can arrive around something people are genuinely glad to back.",
+        "body": "Money, goodwill, and public support can arrive around something people are genuinely glad to back. Venus trine Jupiter can make generosity easier to receive and easier to extend, especially when a fundraiser clears its goal, a celebration includes the people who built it, or a partnership grows without reducing anyone's share to make room. Let the good response be good. Then protect what made it worth supporting. Pay the contributors, keep the terms fair, and use the extra resources to widen the benefit rather than decorate the success."
+      },
+      "sha256": "cd1ba9c8f4091081611f401fb10861f96674046f3a4ec8db49be45dd67504c22"
+    },
+    "sky.venus.trine.mars": {
+      "payload": {
+        "summary": "Interest and effort may finally move in the same direction without turning the exchange into a chase.",
+        "body": "Interest and effort may finally move in the same direction without turning the exchange into a chase. Venus trine Mars can help payment clear, an invitation land, or a creative partnership begin with both sides contributing what they said they would. The ease comes from reciprocity, not passivity. Keep it that way. Let each person carry a visible part of the work, cost, or initiative so nobody has to keep proving that the agreement matters by doing more than their share."
+      },
+      "sha256": "b340401626214dee76984e167c0bcb846f22e37ac22bae216fad24d0c52d6867"
+    },
+    "sky.venus.trine.neptune": {
+      "payload": {
+        "summary": "Art, care, and generosity can support each other without turning emotion into a sales tactic.",
+        "body": "Art, care, and generosity can support each other without turning emotion into a sales tactic. Venus trine Neptune can make a performance fund relief, a gift honor a loss, or a gathering create room for tenderness while the purpose remains clear. The beauty is part of why people respond, but it does not have to hide the cost or the need. Let the experience move people. Make sure the money, credit, and practical help still reach the place the event said it was supporting after the room empties."
+      },
+      "sha256": "4113eb8d482f59c8d93ad792f2c32f1c69cdea4f76beba065505c1ccbb84ae71"
+    },
+    "sky.venus.trine.pluto": {
+      "payload": {
+        "summary": "Shared money, credit, or authority may be redistributed in a way that actually improves the relationship.",
+        "body": "Shared money, credit, or authority may be redistributed in a way that actually improves the relationship. Venus trine Pluto can help a contract, inheritance, business arrangement, or private agreement become more transparent about who owns what, who can decide, and how either side can leave. Fairness is stronger when it reaches the structure instead of stopping at a reassuring conversation. Make the change visible in the account, contract, access, or signature rights. Trust grows faster when nobody has to guess how much leverage the other person still holds."
+      },
+      "sha256": "1e23040fd7ff5fc4acecec3f9a1cab4213abc40f35ef8567347c1047a723cce2"
+    },
+    "sky.venus.trine.saturn": {
+      "payload": {
+        "summary": "A plan that has been waiting on money or logistics may finally become possible once the full cost is on paper.",
+        "body": "A plan that has been waiting on money or logistics may finally become possible once the full cost is on paper. Venus trine Saturn can help value and commitment support each other, so the budget, schedule, deposit, and long-term responsibility make the agreement more secure instead of less appealing. This is the useful kind of restraint. Confirm the numbers before celebrating the approval, then fund the part that keeps the plan working after the first good day. What is worth building should be able to survive its ordinary costs."
+      },
+      "sha256": "d28b4c379959bf9b4e39235bb81967aa5c978c3a10ee06260bc87e453f11ed57"
+    },
+    "sky.venus.trine.uranus": {
+      "payload": {
+        "summary": "An agreement that has become too rigid may be easier to revise before the people living with it decide to leave.",
+        "body": "An agreement that has become too rigid may be easier to revise before the people living with it decide to leave. Venus trine Uranus can help a payment plan stretch, a deadline move, or a relationship rule change without turning the adjustment into proof that the whole agreement failed. The goal is not change for its own sake. It is making enough room for the arrangement to keep working. Name the term causing the problem and rewrite that term. A flexible agreement is stronger when people can adapt it before surprise becomes the only route to relief."
+      },
+      "sha256": "f41fb6fb275e7501bc4446404478a37df0f3c18bfb8264e696252d572504e6db"
+    }
+  }
+}

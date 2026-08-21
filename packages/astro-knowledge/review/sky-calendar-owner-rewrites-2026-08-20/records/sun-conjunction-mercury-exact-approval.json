@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.conjunction.mercury",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "56b7bc6125e5e7db6e158db773f4963b9e4f9c77dc028e61225e31e8f43ff05f",
+  "payload": {
+    "summary": "A closed-door talk exposes who has been pulling the strings.",
+    "body": "A closed-door talk exposes who has been pulling the strings. Sun conjunct Mercury can bring a hidden conflict of interest, secret clause, or unaccounted-for resource into the same conversation as the decision about who is trusted next. The record matters because authority is already involved. Ask for the straight answer and the document behind it. Once the hidden arrangement is named, do not let the room solve the embarrassment faster than it solves the access or accountability problem."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

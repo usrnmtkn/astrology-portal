@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.sun.conjunction.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "9f01b9492e2a09683162c6f182ae46ed2a30436653256a48dce50ea902790a3c",
+  "payload": {
+    "summary": "A founder, candidate, or public figure can become the answer to needs no one person could realistically satisfy.",
+    "body": "A founder, candidate, or public figure can become the answer to needs no one person could realistically satisfy. Sun conjunct Neptune can blur the line between who someone is and what supporters hope they represent, especially when rescue, healing, creativity, or moral certainty has been projected onto the role. The devotion may be sincere, but it becomes fragile when ordinary mistakes are treated like betrayal. Keep the person separate from the promise. Judge the work by what is actually delivered, not by how much hope the public figure has come to carry for everyone else."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

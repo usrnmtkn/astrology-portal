@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.saturn.square.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "fe2ee7569d860d98a4252df34cf0e8fca11b789e3a2dc18aad5ae8f2c6d7ff79",
+  "payload": {
+    "summary": "Two centers of authority refuse to give up the rule, money, or access that makes them powerful.",
+    "body": "Two centers of authority refuse to give up the rule, money, or access that makes them powerful. Saturn square Pluto can turn deadlines, records, and ordinary work into leverage while each side tries to force the other into accepting its terms. The people underneath the conflict pay for every withheld decision. Stop treating delay as neutral. Identify which decision is being held hostage, who has the authority to release it, and what consequence exists if neither side moves."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

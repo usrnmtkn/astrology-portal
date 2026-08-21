@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mercury.sextile.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "54f9b963eaa239dad2ab817af015943337cfef1d20b7815f0281e6c9e6ca3844",
+  "payload": {
+    "summary": "A confusing concern becomes understandable after someone finds the image, example, or gentler language that fits it.",
+    "body": "A confusing concern becomes understandable after someone finds the image, example, or gentler language that fits it. Mercury sextile Neptune can help a vague fear become a specific request another person can actually answer. The goal is not to flatten the feeling into bullet points; it is to give the feeling enough language to move. Try the example that makes the problem concrete. If the other person understands what happened and what needs to happen next, the translation has done its job."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

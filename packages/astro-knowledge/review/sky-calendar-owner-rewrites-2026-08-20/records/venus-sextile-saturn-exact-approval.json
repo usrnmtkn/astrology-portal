@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.venus.sextile.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "675302807ceba884861fe78a9d7a925420465b18366b8baff7ba615c4c6f4215",
+  "payload": {
+    "summary": "A plan on hold may receive a conditional approval that makes one next step possible.",
+    "body": "A plan on hold may receive a conditional approval that makes one next step possible. Venus sextile Saturn can open a route through a budget, deposit, schedule, or policy problem without requiring the original goal to be abandoned. The condition matters as much as the yes. Read it. Adjust the numbers or timing, confirm who is responsible for meeting it, and get the next approval in writing. A workable compromise is one the people involved can actually maintain after the relief of finally moving forward wears off."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}

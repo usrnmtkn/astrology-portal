@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentKey": "sky.mars.trine.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "ownerApprovalStatementSource": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/OWNER-APPROVAL.md",
+  "sourceWorkbook": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-all-live-aspects-215-OWNER-APPROVED.xlsx",
+  "sourceWorkbookSha256": "da71eaab080210a6da2eb986dbbd365b94da192b555000b685fcac855a091af4",
+  "payloadSha256": "36b83b95805c01ea283d89473ad11d028c4ec42a6801c7460dfb7468d7dbbcd4",
+  "payload": {
+    "summary": "A faster method solves the immediate problem without creating a second emergency.",
+    "body": "A faster method solves the immediate problem without creating a second emergency. Mars trine Uranus can make quick action and innovation work together when the team already understands the risk and has enough freedom to change the method. A shortcut, alternate tool, or new route gets used because it actually improves the result, not because disruption looks exciting. Keep the experiment tied to the problem it solved. The useful change is the one people can repeat after the adrenaline is gone."
+  },
+  "writerArtifact": null,
+  "judgeArtifact": null
+}
