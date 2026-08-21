@@ -7,6 +7,63 @@ description: Canonical TLDR Astro argument-gated drafting and deterministic vali
 
 Use this skill for every astrology-writing task in this repository.
 
+## Global owner-vocabulary rule
+
+This rule applies to every reader-facing astrology draft, rewrite, revision,
+example, and chat response on every surface. Semantic sources determine what
+the astrology means. Owner-authored writing determines the vocabulary,
+sentence movement, examples, and tone.
+
+Before writing, retrieve the closest owner-authored passages for the exact
+topic and register and use the owner corpus as the positive language source,
+not merely as inspiration or a final style check. Do not draft directly from
+semantic components, compact operations, doctrine labels, or internal planning
+language.
+
+Before showing prose to the owner:
+
+- flag content words that are absent from or unusually rare in the owner
+  corpus, except necessary astrology terms and ordinary function words;
+- replace unsupported wording with plainer corpus-supported language, or flag
+  the unresolved choice for owner review instead of guessing;
+- apply the durable correction ledger so a rejected word, construction, or
+  substitution is not repeated in a later draft; and
+- run the surface register, phrase-bank, do-not-use, and owner-correction
+  checks.
+
+An invented synonym is not a correction. When the owner rejects a word or
+construction, record the correction with its context and use the owner’s
+documented replacement or the plainest supported wording. Do not deliver prose
+that is known to fail this rule.
+
+### Chat-output fail-closed gate
+
+Reader-facing astrology prose written in chat is not exempt from the governed
+pipeline. Before drafting, create an evidence receipt containing:
+
+1. the rendered surface and its register;
+2. the semantic sources used for meaning;
+3. at least three exact owner-authored passages chosen for the same surface or
+   the closest valid register, with their source paths;
+4. the owner-correction pairs relevant to the likely failure modes; and
+5. the active do-not-use list.
+
+Show the selected owner passages to the owner before or immediately alongside
+the draft. A hidden claim that the corpus was checked is not evidence. If the
+receipt cannot be built, return `failed-retrieval` and do not draft.
+
+Vocabulary compliance is necessary but never sufficient. A draft fails when
+it uses corpus words inside generic assistant scaffolding, flattens the owner's
+sentence movement, or paraphrases semantic components directly into prose.
+Before delivery, compare the draft's opening, turns, sentence lengths, and
+ending movement with the selected owner passages. If the comparison cannot
+name the specific owner evidence shaping those choices, do not show the draft.
+
+When the owner says a draft does not sound like her, mark that complete draft
+as rejected evidence. Do not synonym-swap or improvise another version. Return
+to retrieval, show a corrected evidence receipt, and rebuild from the owner's
+actual language and movement.
+
 Before drafting or editing, read these files completely:
 
 1. `../../docs/writing/ASTROLOGY_CONTRACT.md`
