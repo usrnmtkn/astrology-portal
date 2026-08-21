@@ -82,6 +82,20 @@ construction, record the correction with its context and use the owner’s
 documented replacement or the plainest supported wording. Do not deliver prose
 that is known to fail this rule.
 
+### Chat-output fail-closed gate
+
+Before any reader-facing astrology draft appears in chat, show an evidence
+receipt: the rendered surface and register, the meaning sources, at least three
+exact owner-authored passages with source paths, the relevant owner corrections,
+and the active do-not-use list. A hidden retrieval claim is insufficient. If
+the receipt cannot be built, fail closed and do not draft.
+
+Passing a corpus-vocabulary scan is not proof of voice. Generic assistant
+scaffolding made from owner words still fails. Compare the draft's opening,
+turns, sentence movement, and ending with the selected owner passages. If the
+owner says the result does not sound like her, record the complete draft as
+rejected evidence and return to retrieval before attempting another version.
+
 For any request to write, rewrite, refine, compare, or approve TLDR Astro
 reader copy, load the canonical repository skill at
 `skills/tldr-astro-writer/SKILL.md` before drafting. Do not write from general

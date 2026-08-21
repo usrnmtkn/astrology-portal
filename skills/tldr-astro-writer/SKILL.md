@@ -36,6 +36,34 @@ construction, record the correction with its context and use the owner’s
 documented replacement or the plainest supported wording. Do not deliver prose
 that is known to fail this rule.
 
+### Chat-output fail-closed gate
+
+Reader-facing astrology prose written in chat is not exempt from the governed
+pipeline. Before drafting, create an evidence receipt containing:
+
+1. the rendered surface and its register;
+2. the semantic sources used for meaning;
+3. at least three exact owner-authored passages chosen for the same surface or
+   the closest valid register, with their source paths;
+4. the owner-correction pairs relevant to the likely failure modes; and
+5. the active do-not-use list.
+
+Show the selected owner passages to the owner before or immediately alongside
+the draft. A hidden claim that the corpus was checked is not evidence. If the
+receipt cannot be built, return `failed-retrieval` and do not draft.
+
+Vocabulary compliance is necessary but never sufficient. A draft fails when
+it uses corpus words inside generic assistant scaffolding, flattens the owner's
+sentence movement, or paraphrases semantic components directly into prose.
+Before delivery, compare the draft's opening, turns, sentence lengths, and
+ending movement with the selected owner passages. If the comparison cannot
+name the specific owner evidence shaping those choices, do not show the draft.
+
+When the owner says a draft does not sound like her, mark that complete draft
+as rejected evidence. Do not synonym-swap or improvise another version. Return
+to retrieval, show a corrected evidence receipt, and rebuild from the owner's
+actual language and movement.
+
 Before drafting or editing, read these files completely:
 
 1. `../../docs/writing/ASTROLOGY_CONTRACT.md`
