@@ -1,5 +1,6 @@
 import {
   Activity,
+  ArrowLeft,
   Archive,
   BarChart3,
   BookOpenText,
@@ -21,6 +22,11 @@ import {
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
+import {
+  relatedAspectPassages,
+  relatedHousePassages,
+  skyWriteupContextForRow
+} from "./skyWriteupRelations";
 import "./admin.css";
 
 const AspectPatternDiagnostics = lazy(async () => {
@@ -1059,6 +1065,15 @@ function titleFromKey(contentKey: string) {
     || contentKey;
 }
 
+function ordinalLabel(value: number) {
+  const mod100 = value % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${value}th`;
+  if (value % 10 === 1) return `${value}st`;
+  if (value % 10 === 2) return `${value}nd`;
+  if (value % 10 === 3) return `${value}rd`;
+  return `${value}th`;
+}
+
 type AdminHookCatalogLoadState = "idle" | "loading" | "loaded" | "error";
 type AdminHookCatalogIndexPayload = {
   schemaVersion: 1;
@@ -1576,6 +1591,8 @@ export function GeneratedContentAdminDashboard() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [bulkStatus, setBulkStatus] = useState<GeneratedContentStatus>("REVIEWED");
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [skyWriteupParentId, setSkyWriteupParentId] = useState<string | null>(null);
+  const [skyRelatedAspectQuery, setSkyRelatedAspectQuery] = useState("");
   const [draft, setDraft] = useState<AdminDraft | null>(null);
   const [fallbackHookDefinitions, setFallbackHookDefinitions] = useState<FallbackHookDefinition[]>([]);
   const [hookCatalogPackageVersion, setHookCatalogPackageVersion] = useState("loading");
@@ -1952,6 +1969,8 @@ export function GeneratedContentAdminDashboard() {
   function closeEditor() {
     setSelectedRowId(null);
     setDraft(null);
+    setSkyWriteupParentId(null);
+    setSkyRelatedAspectQuery("");
   }
 
   function navigateAdminPage(page: AdminDashboardPage, params?: URLSearchParams, options: { keepEditorOpen?: boolean } = {}) {
@@ -2212,6 +2231,38 @@ export function GeneratedContentAdminDashboard() {
   function openRow(row: AdminGeneratedContentRow) {
     setSelectedRowId(row.id);
     setDraft(draftFromRow(row));
+    setSkyWriteupParentId(null);
+    setSkyRelatedAspectQuery("");
+  }
+
+  function scrollEditorToTop() {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        const editorScroller = editorRef.current?.querySelector<HTMLElement>(".admin-post-editor") ?? editorRef.current;
+        editorScroller?.scrollTo({ top: 0, behavior: "auto" });
+      });
+    });
+  }
+
+  function openRelatedSkyRow(parentId: string, row: AdminGeneratedContentRow) {
+    setSkyWriteupParentId(parentId);
+    setSelectedRowId(row.id);
+    setDraft(draftFromRow(row));
+    scrollEditorToTop();
+  }
+
+  function returnToSkyWriteup() {
+    const parent = rows.find((row) => row.id === skyWriteupParentId);
+    if (!parent) {
+      setMessage("The parent Sky write-up is no longer available in the loaded rows.");
+      setSkyWriteupParentId(null);
+      return;
+    }
+    setSelectedRowId(parent.id);
+    setDraft(draftFromRow(parent));
+    setSkyWriteupParentId(null);
+    setSkyRelatedAspectQuery("");
+    scrollEditorToTop();
   }
 
   async function openHookDraft(item: HookCatalogItem) {
@@ -3812,6 +3863,15 @@ export function GeneratedContentAdminDashboard() {
     const packageRole = typeof packageRecord.content_role === "string" ? packageRecord.content_role : "";
     const showPackageBodyYou = isPackageDraft && ("body_you" in packageRecord || "body_you" in (currentDraft.sections ?? {}));
     const showPackageBodyThey = isPackageDraft && ("body_they" in packageRecord || "body_they" in (currentDraft.sections ?? {}));
+    const skyWriteupParent = skyWriteupParentId ? rows.find((row) => row.id === skyWriteupParentId) ?? null : null;
+    const skyWriteupContext = selectedRow ? skyWriteupContextForRow(selectedRow) : null;
+    const skyHousePassages = skyWriteupContext ? relatedHousePassages(rows, skyWriteupContext) : [];
+    const skyAspectPassages = skyWriteupContext ? relatedAspectPassages(rows, skyWriteupContext) : [];
+    const filteredSkyAspectPassages = skyAspectPassages.filter((row) => matchesAdminSearch(
+      `${row.content_key} ${row.headline ?? ""} ${row.body ?? ""}`,
+      skyRelatedAspectQuery
+    ));
+    const populatedSkyHouses = new Set(skyHousePassages.map((passage) => passage.house)).size;
     const updateVocabularySection = (nextSection: AdminVocabularySection) => {
       setDraft({
         ...currentDraft,
@@ -3894,6 +3954,12 @@ export function GeneratedContentAdminDashboard() {
       <>
       <button type="button" className="admin-editor-backdrop" aria-label="Close editor" onClick={closeEditor} />
       <aside ref={editorRef} className="admin-editor-panel admin-review-detail" role="dialog" aria-modal="true" aria-label="Generated content editor">
+        {skyWriteupParent && (
+          <button type="button" className="admin-sky-writeup-back" onClick={returnToSkyWriteup}>
+            <ArrowLeft size={16} aria-hidden="true" />
+            Back to {rowTitle(skyWriteupParent)}
+          </button>
+        )}
         <div className="admin-editor-toolbar">
           <div>
             <p className="admin-eyebrow">{isVocabularyDraft ? "Phrase editor" : isArticleDraft ? "Article editor" : "Content editor"}</p>
@@ -3947,6 +4013,102 @@ export function GeneratedContentAdminDashboard() {
               <p><strong>Reader rule:</strong> this text can support the fallback system, but it cannot appear as a standalone authored write-up.</p>
             )}
           </section>
+          {skyWriteupContext && selectedRow && (
+            <section className="admin-sky-related-editor admin-fallback-diagnostic-panel" aria-label="Related reader horoscope passages">
+              <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
+                <div>
+                  <p className="admin-eyebrow">Reader horoscope passages</p>
+                  <h3>Review the personalized copy from this Sky write-up</h3>
+                  <p>
+                    These rows are selected after the app knows which house this placement activates and whether it aspects a natal placement.
+                    Editing a passage here opens its canonical saved row.
+                  </p>
+                </div>
+                <dl className="admin-hook-pattern-list">
+                  <div><dt>Placement</dt><dd>{titleFromKey(skyWriteupContext.planet)}{skyWriteupContext.sign ? ` in ${titleFromKey(skyWriteupContext.sign)}` : ""}</dd></div>
+                  <div><dt>House coverage</dt><dd>{populatedSkyHouses}/12</dd></div>
+                  <div><dt>Aspect passages</dt><dd>{skyAspectPassages.length}</dd></div>
+                </dl>
+              </header>
+
+              <details className="admin-sky-related-group admin-diagnostics-details" open>
+                <summary>
+                  <span>House horoscopes</span>
+                  <strong>{populatedSkyHouses}/12 houses</strong>
+                </summary>
+                <p className="admin-sky-related-help">
+                  A house can have more than one row when the reader passage is assembled from an introduction, a sign-specific passage, or an approved complete horoscope.
+                </p>
+                <div className="admin-sky-house-grid admin-lunar-coverage-row-list">
+                  {Array.from({ length: 12 }, (_, index) => index + 1).map((house) => {
+                    const passages = skyHousePassages.filter((passage) => passage.house === house);
+                    return (
+                      <article key={house} className={`admin-hook-detail-section ${passages.length ? "has-passage" : "is-missing"}`}>
+                        <header className="admin-fallback-diagnostic-heading">
+                          <strong>{ordinalLabel(house)} House</strong>
+                          <span>{passages.length ? `${passages.length} field${passages.length === 1 ? "" : "s"}` : "Not saved"}</span>
+                        </header>
+                        {passages.map((passage) => (
+                          <div className="admin-sky-related-row admin-hook-detail-section" key={passage.row.id}>
+                            <div>
+                              <span>{passage.kind}</span>
+                              <code>{passage.row.content_key}</code>
+                              <p>{passage.row.body || "No passage body saved."}</p>
+                            </div>
+                            <button type="button" onClick={() => openRelatedSkyRow(selectedRow.id, passage.row)}>
+                              Edit passage
+                            </button>
+                          </div>
+                        ))}
+                        {!passages.length && <p>No house-horoscope row matches this placement and sign.</p>}
+                      </article>
+                    );
+                  })}
+                </div>
+              </details>
+
+              <details className="admin-sky-related-group admin-diagnostics-details">
+                <summary>
+                  <span>Aspect passages</span>
+                  <strong>{skyAspectPassages.length} rows</strong>
+                </summary>
+                <p className="admin-sky-related-help">
+                  These passages can appear beneath the house horoscope when this transiting placement aspects something in the reader’s natal chart.
+                </p>
+                <label className="admin-sky-related-search">
+                  <span>Find an aspect passage</span>
+                  <div className="admin-search-input-shell">
+                    <Search size={15} aria-hidden="true" />
+                    <input
+                      aria-label="Find an aspect passage"
+                      value={skyRelatedAspectQuery}
+                      onChange={(event) => setSkyRelatedAspectQuery(event.target.value)}
+                      placeholder="Natal planet, aspect, title, or wording"
+                    />
+                  </div>
+                </label>
+                <div className="admin-sky-aspect-list admin-lunar-coverage-row-list">
+                  {filteredSkyAspectPassages.map((row) => (
+                    <article className="admin-sky-related-row admin-hook-detail-section" key={row.id}>
+                      <div>
+                        <strong>{rowTitle(row)}</strong>
+                        <code>{row.content_key}</code>
+                        <p>{row.body || "No aspect passage body saved."}</p>
+                      </div>
+                      <button type="button" onClick={() => openRelatedSkyRow(selectedRow.id, row)}>
+                        Edit passage
+                      </button>
+                    </article>
+                  ))}
+                  {!filteredSkyAspectPassages.length && (
+                    <p className="admin-empty">
+                      {skyAspectPassages.length ? "No aspect passages match this search." : "No natal-aspect passages are saved for this placement."}
+                    </p>
+                  )}
+                </div>
+              </details>
+            </section>
+          )}
           {fallbackDiagnostic && (
             <section className="admin-fallback-diagnostic-panel" aria-label="Fallback composition check">
               <div className="admin-fallback-diagnostic-heading">
