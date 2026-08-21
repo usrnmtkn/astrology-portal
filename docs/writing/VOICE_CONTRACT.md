@@ -112,6 +112,20 @@ construction, record the correction with its context and use the owner's
 documented replacement or the plainest supported wording. Do not deliver prose
 that is known to fail this rule.
 
+### Chat-output fail-closed gate
+
+Before reader-facing astrology prose is drafted in chat, build and show an
+evidence receipt containing the rendered surface and register, the semantic
+sources, at least three exact owner-authored passages with source paths, the
+relevant owner corrections, and the active do-not-use list. If this evidence is
+unavailable, fail closed instead of improvising.
+
+A vocabulary match does not establish voice. The opening, turns, sentence
+movement, and ending must be traceable to the selected owner passages. Generic
+assistant scaffolding remains off-voice even when every individual word occurs
+in the corpus. An owner rejection for voice sends the complete draft back to
+retrieval; it may not be repaired through synonym substitution.
+
 ---
 
 # Marie voice bank (gold-standard reference)
