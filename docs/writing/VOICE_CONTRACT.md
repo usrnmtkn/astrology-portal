@@ -64,6 +64,25 @@ Cold test: could this paragraph sit beside the retrieved owner passages without 
 another writer entered the page? If not, it fails the owner gate even when the astrology is
 correct.
 
+## Human-pattern and relationship addendum (owner-directed, 2026-08-21)
+
+HUMAN-PATTERN AND RELATIONSHIP ADDENDUM (owner direction, 2026-08-21): Relationship copy
+stays directional: one person acts, the other responds, and a recognizable pattern develops.
+Astrology may explain why the pattern is easy to enter, but it may not excuse an observable
+action or inflate the mechanism into a claim about worth, history, wounds, motives, or the
+relationship outcome. Use `connection`, not `room`, when the noun is a metaphorical container
+for the relationship; literal rooms and spatial `room to` or `room for` uses are unaffected.
+Do and Don't columns stay semantically separate and grammatically parallel within each
+column. A transitive instruction names its object.
+
+For full natal placement detail, move through placement function -> sign mechanism -> lived
+evidence -> consequence -> complication -> mature expression. The copy becomes more specific
+after the opening, not more abstract. For short natal-pattern cards, put the human headline
+and core drive first, then the healthy expression, plausible manifestations, complication,
+observable consequence, and developmental direction. Astrology taxonomy is secondary after
+the opening and must not be re-explained once the pattern is established. Multiple
+manifestations remain possibilities and may not invent personal history.
+
 ---
 
 # Marie voice bank (gold-standard reference)
