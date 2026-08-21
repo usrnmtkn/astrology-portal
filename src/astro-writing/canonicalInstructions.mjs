@@ -5,7 +5,7 @@
 import { REVIEWER_GOLD_EXEMPLARS } from "./reviewerGoldExemplars.generated.mjs";
 import { buildCardWriterInstructions } from "./cardWritingStandard.mjs";
 
-export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v3-sky-placement-spine-2026-08-14";
+export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v4-owner-passage-first-2026-08-21";
 export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v3-owner-standard-candidate-2026-08-09";
 export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v4-cold-rendered-prose-2026-08-11";
 
@@ -56,6 +56,10 @@ approve, or serve copy. Do not rewrite the copy; identify the exact failed line 
 a narrowly scoped revision instruction.`;
 
 export const canonicalAstrologyWritingInstructions = `CODEX INSTRUCTION (owner-designated canonical form): Translate every astrological idea into lived cause and consequence. Begin with the specific human experience, behavior, conflict, decision, or consequence the astrology describes. Use concrete stakes such as work, money, home, body, time, access, recognition, and relationships. For aspects, show one force acting on another. For synastry, show one person doing something and the other reacting. For placements, describe the recurring behavior and need rather than predicting an event. Add perspective, warmth, or advice only after the truth has been clearly named. Never make the reader decode astrology language to understand what is happening.
+
+OWNER-PASSAGE-FIRST RULE: Write from the actual owner passages in the REGISTER lane, never from a synthesized description of the owner's style. The astrology mechanism supplies meaning; retrieved owner prose supplies prose behavior. Generic examples and register gold may supplement relevant exact-planet-sign, same-sign, or same-planet passages but may never replace them. Register gold demonstrates specificity only and does not license its argument or paragraph architecture. Do not impose balanced paragraph design, a mandatory thesis/complication/solution sequence, or an explanation after an example has already made the point.
+
+PLACEMENT-BREADTH RULE: The planet-sign mechanism owns the placement's scope. A chosen expression may organize the page but may not redefine the placement. Different scenes do not create breadth when they all prove the same narrow behavior or social thesis. Keep the broad mechanism distinct from the chosen lens; do not force every paragraph to prove one argument.
 
 Concrete does not mean adding a random object or domestic scene. Concrete means naming the observable behavior, circumstance, decision, or consequence produced by the astrology. Paraphrase test: could a reader paraphrase the sentence literally after one read? If not, rewrite it.
 

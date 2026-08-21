@@ -10,6 +10,36 @@ on the others. The 2026-08-13 Venus in Libra failures proved both directions: an
 produced machine phrasing, and a register-only pool produced an invented website scenario while
 the owner's own approved Venus-in-Libra scenes sat unused.
 
+## Owner-passage-first retrieval rule (2026-08-21)
+
+Write from actual owner passages, not from a synthesized description of those passages. For
+REGISTER evidence, published owner prose matching the exact planet-sign is selected first. If
+none exists, published prose for the same sign is selected; if none exists, published prose for
+the same planet is selected. When relevant passages exist, the packet must contain at least
+three, or every available passage when fewer than three exist. Generic same-surface examples
+and register gold may supplement those passages but may never replace them.
+
+The register-gold page demonstrates scene specificity only. It does not license its argument,
+paragraph architecture, cultural thesis, or closing construction for another placement.
+Assistant-generated prose, summaries of owner style, and derived style guidance are never
+REGISTER evidence. A request that omits available relevant owner passages fails retrieval before
+credentials or billing.
+
+## Placement-breadth rule (2026-08-21)
+
+The planet-sign mechanism owns the scope of a placement. One strong expression may organize a
+page, but it may not become the definition of the placement. Before the owner approves an
+argument, the review packet must distinguish the broad mechanism from the chosen expression and
+show at least three materially different valid expressions across the life domains supported by
+the meaning plan. These are scope checks, not prose slots; the writer is not required to mention
+all of them.
+
+If the argument, scenes, and consequences all reduce the placement to one behavior or one social
+thesis, the argument is too narrow even when its examples occur in different settings. Adding
+more examples of the same mechanism does not fix the defect. Broaden the argument before
+drafting. Do not make every paragraph prove a thesis, and do not add an explanation after an
+owner-style observation or example has already made the point.
+
 ## The five roles and where they live
 
 1. **Meaning:** what this planet-sign means. Source: knowledge matrix (`TransitMeanings` keyed
@@ -43,6 +73,8 @@ These fail before credentials are read or billing can begin:
 
 - Empty positive pool.
 - Fewer than three same-family register passages, or missing register gold.
+- Relevant published owner passages exist but the packet contains fewer than three, or omits any
+  when fewer than three exist.
 - Approved same-planet-sign meaning rows exist and none are in the packet.
 - Approved same-planet-sign scene material exists and none is in the packet.
 - A family label with no explicit mapping.

@@ -7,6 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   buildMeaningPlan,
+  buildArgumentOutline,
   approveArgumentOutline,
   ARGUMENT_OUTLINE_FIELDS,
   ARGUMENT_OUTLINE_SPINE_QUALITY_FIELDS,
@@ -44,6 +45,7 @@ import {
   knowledgeMatrixSceneCatalog,
   ownerApprovedMatrixEvidenceForTarget,
   ownerApprovedMatrixRoleEvidenceForTarget,
+  ownerRelevantEvidenceFromVoiceIndex,
   ownerPositiveEvidenceFromSurfaceQualifiedPool,
   generatedApprovalState,
   markPipelineReady,
@@ -52,6 +54,7 @@ import {
   REVIEW_FIELDS,
   reviewDraft,
   resolveSurfaceStrategy,
+  retrieveOwnerContext,
   runWritingPipeline,
   samePlanetSignHouseCoreScenes,
   sceneEvidenceForTarget,
@@ -89,7 +92,12 @@ const SKY_PLACEMENT_TARGET = Object.freeze({
   temporality: "current_sky",
   voiceMode: "current_sky_direct_address"
 });
-const runSkyPlacementWritingPipeline = (options) => runWritingPipeline({ target: SKY_PLACEMENT_TARGET, ...options });
+const runSkyPlacementWritingPipeline = (options) => runWritingPipeline({
+  target: SKY_PLACEMENT_TARGET,
+  relevantOwnerPassagesAvailableCount: 0,
+  ownerPassageRelevanceTier: "none",
+  ...options
+});
 
 assert.deepEqual(
   assertSurfaceRegisterContract(SKY_PLACEMENT_TARGET, { surface: "sky-placement-page", register: "second_person" }),
@@ -297,6 +305,34 @@ const ownerPositiveEvidence = ownerPositiveEvidenceFromSurfaceQualifiedPool(JSON
   "packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json"
 )));
 const writerVoiceIndex = JSON.parse(read("packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json"));
+const sunVirgoRelevantOwnerEvidence = ownerRelevantEvidenceFromVoiceIndex(writerVoiceIndex, { planet: "sun", sign: "virgo" });
+assert.ok(sunVirgoRelevantOwnerEvidence.counts.selected >= 3);
+assert.match(sunVirgoRelevantOwnerEvidence.tier, /same-sign/u);
+assert.ok(sunVirgoRelevantOwnerEvidence.selected.some((entry) => entry.id.includes("virgo-season-2025")));
+assert.ok(sunVirgoRelevantOwnerEvidence.selected.every((entry) => entry.ownerAuthored === true && entry.ownerApproved === true));
+const sunVirgoRetrievalPlan = buildMeaningPlan({
+  object: "sun",
+  sign: "virgo",
+  objectFunction: "identity, vitality, and the part of life asking to be expressed",
+  signMechanics: "notices what can be repaired, clarified, or made more useful",
+  coreTension: "discernment becomes self-surveillance when every improvement becomes proof that the present version is inadequate",
+  likelyObservableBehaviors: ["someone notices the step that keeps creating avoidable work"],
+  likelyConsequences: ["attention moves from fixing everything to changing what actually affects daily life"],
+  risks: ["a standard becomes a moving target"]
+});
+const sunVirgoRetrievalContext = retrieveOwnerContext(sunVirgoRetrievalPlan, {
+  examples: [...ownerPositiveEvidence, ...sunVirgoRelevantOwnerEvidence.selected],
+  contentFamily: "fast-mover-article",
+  register: "second_person",
+  relevantOwnerPassagesAvailableCount: sunVirgoRelevantOwnerEvidence.counts.selected,
+  ownerPassageRelevanceTier: sunVirgoRelevantOwnerEvidence.tier,
+  matrixEvidenceAvailableCount: 0,
+  samePlanetSignSceneAvailableCount: 0,
+  corrections: allOwnerCorrections,
+  phraseEvidence: []
+});
+assert.ok(sunVirgoRetrievalContext.relevantOwnerPassages.length >= 3);
+assert.ok(sunVirgoRetrievalContext.relevantOwnerPassages.some((entry) => entry.id.includes("virgo-season-2025")));
 const matrixEvidenceRows = jsonl("data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl");
 const matrixCoverage = JSON.parse(read("data/writing/matrix-evidence-index/TLDR-Matrix-Coverage-By-Placement.json"));
 const llMatrixV13Rows = JSON.parse(read("packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json")).rows;
@@ -699,6 +735,15 @@ writerClient.model = "gemini-writer-fixture";
 writerClient.thinkingLevel = "high";
 writerClient.billed = false;
 const argumentInput = {
+  scope_breadth: {
+    broad_mechanism: "Jupiter in Sagittarius expands conviction, meaning, exploration, and the confidence to act on a larger view.",
+    chosen_expression: "The page develops certainty outrunning the evidence that supports it.",
+    other_valid_expressions: [
+      "A plan grows because someone can finally see a larger possibility.",
+      "A belief changes after new information complicates the old explanation.",
+      "Confidence makes an unfamiliar choice feel possible before every detail is settled."
+    ]
+  },
   thesis: "Certainty is not evidence.",
   cultural_rule: "A confident claim is treated as a reliable claim.",
   transit_job: "Make beliefs answer to the information they are based on.",
@@ -722,6 +767,28 @@ const argumentInput = {
   older_analogs_quality_intent: "Include only verified, sourced analogs that advance the thesis; otherwise record that the conditional layer does not trigger.",
   collective_lesson_quality_intent: "Name the group-scale lesson and the test the reader can apply."
 };
+assert.throws(
+  () => buildArgumentOutline({ ...argumentInput, scope_breadth: undefined }, {
+    plan,
+    family: "fast-mover-article",
+    surface: "sky-placement-page"
+  }),
+  /ARGUMENT_SCOPE_REQUIRES_THREE_OTHER_VALID_EXPRESSIONS/u
+);
+assert.throws(
+  () => buildArgumentOutline({
+    ...argumentInput,
+    scope_breadth: {
+      ...argumentInput.scope_breadth,
+      chosen_expression: argumentInput.scope_breadth.broad_mechanism
+    }
+  }, {
+    plan,
+    family: "fast-mover-article",
+    surface: "sky-placement-page"
+  }),
+  /ARGUMENT_SCOPE_COLLAPSES_MECHANISM_INTO_EXPRESSION/u
+);
 const argumentSourceFixture = {
   contentKey: "fallback-hook/sky-sign-copy/lilith/sagittarius",
   sourcePath: "apps/web/src/content/fallbackArchitectureV3/source-rows/lilith-placements-v5.json",
@@ -733,10 +800,21 @@ const argumentSourceFixture = {
   close: "Conviction still has to answer to evidence."
 };
 const venusPipelineRequest = JSON.parse(read("packages/astro-knowledge/review/writing-pipeline-v3/venus-libra-v2-rewrite-request-pending.json"));
-const venusPipelineArgumentInput = Object.fromEntries(argumentOutlineFieldsForFamily("slow-mover-article").map((field) => [
+const venusPipelineArgumentInput = {
+  scope_breadth: {
+    broad_mechanism: "Venus in Libra makes agreement, exchange, attraction, and aesthetic judgment easier to coordinate, while ease can hide whose preference or contribution keeps moving.",
+    chosen_expression: "The page develops automatic accommodation inside a shared choice.",
+    other_valid_expressions: [
+      "Creative taste becomes easier to share without requiring identical preferences.",
+      "A price, exchange, or division of responsibility exposes what each side considers fair.",
+      "Attraction changes when politeness and genuine interest stop being treated as the same thing."
+    ]
+  },
+  ...Object.fromEntries(argumentOutlineFieldsForFamily("slow-mover-article").map((field) => [
   field,
   venusPipelineRequest.approvedArgumentOutline[field] ?? argumentInput[field]
-]));
+  ]))
+};
 const pendingPipeline = await runSkyPlacementWritingPipeline({
   meaningInput: venusPipelineRequest.meaningInput,
   examples: ownerPositiveEvidence,
@@ -1096,6 +1174,15 @@ for (const fixture of [
     expectedCode: "OWNER_MATRIX_EVIDENCE_MISSING"
   },
   {
+    label: "relevant published owner passages available but packet contains only generic voice examples",
+    family: "fast-mover-article",
+    examples: sameFamilyOwnerExamples.slice(0, 3),
+    registerGoldExamples: ownerRegisterGold,
+    relevantOwnerPassagesAvailableCount: 3,
+    ownerPassageRelevanceTier: "same-sign-then-same-planet",
+    expectedCode: "OWNER_RELEVANT_PASSAGES_MISSING"
+  },
+  {
     label: "empty positive pool",
     family: "fast-mover-article",
     examples: [],
@@ -1152,6 +1239,8 @@ for (const fixture of [
     examples: fixture.examples,
     matrixExamples: fixture.matrixExamples ?? [],
     matrixEvidenceAvailableCount: fixture.matrixEvidenceAvailableCount ?? 0,
+    relevantOwnerPassagesAvailableCount: fixture.relevantOwnerPassagesAvailableCount ?? 0,
+    ownerPassageRelevanceTier: fixture.ownerPassageRelevanceTier ?? "none",
     sceneExamples: fixture.sceneExamples ?? [],
     samePlanetSignSceneAvailableCount: fixture.samePlanetSignSceneAvailableCount ?? 0,
     registerGoldExamples: fixture.registerGoldExamples,
@@ -1170,6 +1259,8 @@ for (const fixture of [
     examples: fixture.examples,
     matrixExamples: fixture.matrixExamples ?? [],
     matrixEvidenceAvailableCount: fixture.matrixEvidenceAvailableCount ?? 0,
+    relevantOwnerPassagesAvailableCount: fixture.relevantOwnerPassagesAvailableCount ?? 0,
+    ownerPassageRelevanceTier: fixture.ownerPassageRelevanceTier ?? "none",
     sceneExamples: fixture.sceneExamples ?? [],
     samePlanetSignSceneAvailableCount: fixture.samePlanetSignSceneAvailableCount ?? 0,
     registerGoldExamples: fixture.registerGoldExamples,
@@ -1195,7 +1286,7 @@ for (const fixture of [
   assert.equal(failed.report.billedCalls, 0, fixture.label);
   failedRetrievalRuns.push(failed);
 }
-assert.equal(failedRetrievalRuns.length, 9);
+assert.equal(failedRetrievalRuns.length, 10);
 assert.equal(writerCallCount, 2, "Evidence-precondition failures must never reach the writer.");
 const venusFailedRetrievalRecord = JSON.parse(read(
   "packages/astro-knowledge/review/writing-pipeline-v3/venus-libra-v2-failed-retrieval/run-record.json"

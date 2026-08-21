@@ -47,6 +47,23 @@ placements, describe the recurring behavior and need rather than predicting an e
 perspective, warmth, or advice only after the truth has been clearly named. Never make the
 reader decode astrology language to understand what is happening.
 
+## Owner-passage-first voice rule (owner-directed, 2026-08-21)
+
+Write from actual Marie Satori passages, not from a description of Marie Satori passages.
+Mechanism supplies the astrology. Retrieved owner writing supplies prose behavior. No
+assistant-generated wording, synthesized voice summary, or derived style guidance belongs in
+the REGISTER evidence pool.
+
+Match what the published prose actually does: where it enters, how quickly it reaches the
+point, how much it explains, when it uses a short sentence, when repetition earns emphasis, and
+when it stops. Do not impose generic content-design polish, balanced paragraph architecture, or
+a mandatory thesis/complication/solution movement. Do not explain an example after the example
+has already made the point.
+
+Cold test: could this paragraph sit beside the retrieved owner passages without sounding like
+another writer entered the page? If not, it fails the owner gate even when the astrology is
+correct.
+
 ---
 
 # Marie voice bank (gold-standard reference)
