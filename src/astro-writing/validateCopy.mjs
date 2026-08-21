@@ -72,6 +72,30 @@ const VAGUE_OUTCOME_CLAUSE_PATTERNS = Object.freeze([
   })
 ]);
 
+// Owner direction, 2026-08-21: a transitive Do item must name what the
+// reader should ask for. This is intentionally behavioral rather than tied to
+// a content key, so the same incomplete instruction cannot reappear elsewhere.
+const VAGUE_ACTION_OBJECT_PATTERNS = Object.freeze([
+  Object.freeze({
+    id: "ask_for_more_without_object",
+    pattern: /(?:^|[.!?]\s+)ask\s+for\s+more\s*(?=$|[.!?])/giu
+  })
+]);
+
+// Owner direction, 2026-08-21: on relationship surfaces, `room` may not stand
+// in for the connection itself. Literal rooms and spatial `room to/for ...`
+// constructions are not matched by this relationship-container pattern.
+const RELATIONSHIP_ROOM_CONTAINER_PATTERNS = Object.freeze([
+  Object.freeze({
+    id: "relationship_quality_located_in_room",
+    pattern: /\b(?:affection|bond|commitment|connection|relationship|warmth)\b[^.!?\n]{0,100}\b(?:in|inside|out\s+of)\s+the\s+room\b/giu
+  }),
+  Object.freeze({
+    id: "room_contains_relationship_quality",
+    pattern: /\b(?:in|inside|out\s+of)\s+the\s+room\b[^.!?\n]{0,100}\b(?:affection|bond|commitment|connection|relationship|warmth)\b/giu
+  })
+]);
+
 // Owner ruling, 2026-08-13: these are semantic spine labels, not reusable
 // reader-copy templates. A mechanical scan can identify the construction,
 // but only the owner can decide that a particular line earned its place.
@@ -207,6 +231,10 @@ function allowsSecondPerson({ family, surface }) {
   return surface === "sky-placement-page" || family === "house-horoscope-core";
 }
 
+function isRelationshipFamily(family) {
+  return /(?:synastry|compatibility|relationship|bond|pair-daily)/iu.test(String(family ?? ""));
+}
+
 function sentenceUnits(value) {
   return String(value ?? "")
     .match(/[^.!?]+(?:[.!?]+|$)/gu)
@@ -285,6 +313,24 @@ export function validateCopy(copy, {
       detail: occurrence.id,
       text: occurrence.text
     });
+  }
+  const vagueActionObjects = patternOccurrences(text, VAGUE_ACTION_OBJECT_PATTERNS);
+  for (const occurrence of vagueActionObjects) {
+    violations.push({
+      category: "vague_action_object",
+      detail: occurrence.id,
+      text: occurrence.text
+    });
+  }
+  if (isRelationshipFamily(family)) {
+    const relationshipRoomContainers = patternOccurrences(text, RELATIONSHIP_ROOM_CONTAINER_PATTERNS);
+    for (const occurrence of relationshipRoomContainers) {
+      violations.push({
+        category: "relationship_container_metaphor",
+        detail: occurrence.id,
+        text: occurrence.text
+      });
+    }
   }
   if (register === "collective" && !allowsSecondPerson({ family, surface }) && /\b(?:you|your|yours|yourself|yourselves)\b/iu.test(text)) {
     violations.push({ category: "register_consistency", detail: "Collective copy contains second person." });
