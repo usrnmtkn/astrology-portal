@@ -2,6 +2,49 @@
 
 Any reader-facing astrology copy written in chat must use the owner’s writing rules, phrase bank, corpus, voice, tone, and prior editorial decisions. Semantic components determine meaning; the owner’s writing determines how that meaning is expressed.
 
+## Global owner-vocabulary rule
+
+This rule applies to every reader-facing astrology draft, rewrite, revision,
+example, and chat response on every surface. Semantic sources determine what
+the astrology means. Owner-authored writing determines the vocabulary,
+sentence movement, examples, and tone.
+
+Before writing, retrieve the closest owner-authored passages for the exact
+topic and register and use the owner corpus as the positive language source,
+not merely as inspiration or a final style check. Do not draft directly from
+semantic components, compact operations, doctrine labels, or internal planning
+language.
+
+Before showing prose to the owner:
+
+- flag content words that are absent from or unusually rare in the owner
+  corpus, except necessary astrology terms and ordinary function words;
+- replace unsupported wording with plainer corpus-supported language, or flag
+  the unresolved choice for owner review instead of guessing;
+- apply the durable correction ledger so a rejected word, construction, or
+  substitution is not repeated in a later draft; and
+- run the surface register, phrase-bank, do-not-use, and owner-correction
+  checks.
+
+An invented synonym is not a correction. When the owner rejects a word or
+construction, record the correction with its context and use the owner’s
+documented replacement or the plainest supported wording. Do not deliver prose
+that is known to fail this rule.
+
+### Chat-output fail-closed gate
+
+Before any reader-facing astrology draft appears in chat, show an evidence
+receipt: the rendered surface and register, the meaning sources, at least three
+exact owner-authored passages with source paths, the relevant owner corrections,
+and the active do-not-use list. A hidden retrieval claim is insufficient. If
+the receipt cannot be built, fail closed and do not draft.
+
+Passing a corpus-vocabulary scan is not proof of voice. Generic assistant
+scaffolding made from owner words still fails. Compare the draft's opening,
+turns, sentence movement, and ending with the selected owner passages. If the
+owner says the result does not sound like her, record the complete draft as
+rejected evidence and return to retrieval before attempting another version.
+
 ## MANDATORY PRE-FLIGHT before any reader copy (owner directive, 2026-08-17)
 
 Do not draft, rewrite, judge, or dispatch an agent to produce reader-facing

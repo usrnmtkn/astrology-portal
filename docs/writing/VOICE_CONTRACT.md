@@ -83,6 +83,49 @@ observable consequence, and developmental direction. Astrology taxonomy is secon
 the opening and must not be re-explained once the pattern is established. Multiple
 manifestations remain possibilities and may not invent personal history.
 
+## Global owner-vocabulary rule (owner directive, 2026-08-21)
+
+This rule applies to every reader-facing astrology draft, rewrite, revision,
+example, and chat response on every surface. Semantic sources determine what
+the astrology means. Owner-authored writing determines the vocabulary,
+sentence movement, examples, and tone.
+
+Before writing, retrieve the closest owner-authored passages for the exact
+topic and register and use the owner corpus as the positive language source,
+not merely as inspiration or a final style check. Do not draft directly from
+semantic components, compact operations, doctrine labels, or internal planning
+language.
+
+Before showing prose to the owner:
+
+- flag content words that are absent from or unusually rare in the owner
+  corpus, except necessary astrology terms and ordinary function words;
+- replace unsupported wording with plainer corpus-supported language, or flag
+  the unresolved choice for owner review instead of guessing;
+- apply the durable correction ledger so a rejected word, construction, or
+  substitution is not repeated in a later draft; and
+- run the surface register, phrase-bank, do-not-use, and owner-correction
+  checks.
+
+An invented synonym is not a correction. When the owner rejects a word or
+construction, record the correction with its context and use the owner's
+documented replacement or the plainest supported wording. Do not deliver prose
+that is known to fail this rule.
+
+### Chat-output fail-closed gate
+
+Before reader-facing astrology prose is drafted in chat, build and show an
+evidence receipt containing the rendered surface and register, the semantic
+sources, at least three exact owner-authored passages with source paths, the
+relevant owner corrections, and the active do-not-use list. If this evidence is
+unavailable, fail closed instead of improvising.
+
+A vocabulary match does not establish voice. The opening, turns, sentence
+movement, and ending must be traceable to the selected owner passages. Generic
+assistant scaffolding remains off-voice even when every individual word occurs
+in the corpus. An owner rejection for voice sends the complete draft back to
+retrieval; it may not be repaired through synonym substitution.
+
 ---
 
 # Marie voice bank (gold-standard reference)
