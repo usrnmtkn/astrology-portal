@@ -1,5 +1,7 @@
 # TLDR Astro Claude instructions
 
+Any reader-facing astrology copy written in chat must use the owner’s writing rules, phrase bank, corpus, voice, tone, and prior editorial decisions. Semantic components determine meaning; the owner’s writing determines how that meaning is expressed.
+
 ## MANDATORY PRE-FLIGHT before any reader copy (owner directive, 2026-08-17)
 
 Do not draft, rewrite, judge, or dispatch an agent to produce reader-facing
