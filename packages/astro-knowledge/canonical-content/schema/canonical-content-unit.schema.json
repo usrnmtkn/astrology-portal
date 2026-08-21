@@ -20,6 +20,8 @@
     },
     "resolution": {
       "type": "object",
+      "additionalProperties": false,
+      "description": "Canonical resolution is perspective-scoped. A unit may be authored for You while remaining composed or gapped for Friends; the aggregate mode must not erase that asymmetry.",
       "required": ["mode", "canonicalRevisionId", "recipeId", "canonicalSlotIds", "perspectiveModes"],
       "properties": {
         "mode": { "enum": ["authored", "composed", "gap"] },
@@ -28,6 +30,7 @@
         "canonicalSlotIds": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
         "perspectiveModes": {
           "type": "object",
+          "description": "First-class, queryable authority mode for each reader perspective.",
           "additionalProperties": false,
           "required": ["you", "they"],
           "properties": {
