@@ -13,9 +13,13 @@ const record = readJson("packages/astro-knowledge/review/friends-owner-signoff-u
 const wordingFields = ["headline", "body", "body_you", "body_they", "body_sky"];
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 const targetFamilies = Object.keys(record.counts.byFamily);
-const targetRows = source.authoredCards.filter((row) => (
+const familyRows = source.authoredCards.filter((row) => (
   targetFamilies.some((prefix) => row.contentKey.startsWith(prefix))
 ));
+const targetRows = familyRows.filter((row) => (
+  row.approval?.approvedAt === undefined || row.approval.approvedAt <= record.recordedAt
+));
+const postRulingRows = familyRows.filter((row) => row.approval?.approvedAt > record.recordedAt);
 const readerPayload = targetRows.map((row) => [
   row.contentKey,
   Object.fromEntries(wordingFields.filter((field) => row[field] !== undefined).map((field) => [field, row[field]]))
@@ -36,6 +40,14 @@ assert.equal(record.restoration.conditionallyWithheldEnrichmentArticleRows, 288)
 assert.equal(record.restoration.ungatedContributingHookKeys.length, 28);
 assert.equal(targetRows.length, 1589);
 assert.equal(targetRows.filter((row) => row.approval?.approvalLevel === "exact_owner_approved").length, 24);
+assert.ok(
+  postRulingRows.every((row) => (
+    row.approval?.approvalLevel === "exact_owner_approved"
+    && typeof row.approval?.recordPath === "string"
+    && /^[a-f0-9]{64}$/u.test(row.approval?.payloadSha256 ?? "")
+  )),
+  "Transit rows added after the historical ruling must carry independently traceable exact owner approval."
+);
 const untracedRows = targetRows.filter((row) => row.approval?.approvalLevel === "owner_signoff_untraced");
 assert.equal(untracedRows.length, 1565);
 assert.ok(untracedRows.every((row) => row.approval?.evidence === row.approved_via));
