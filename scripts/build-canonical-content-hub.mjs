@@ -5,6 +5,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import {
+  canonicalNatalAngleSignId,
   canonicalNatalAspectId,
   canonicalNatalEmptyHouseId,
   canonicalNatalPlacementHouseId,
@@ -13,6 +14,14 @@ import {
   normalizeCanonicalBody,
   normalizeCanonicalSegment
 } from "../packages/astro-knowledge/canonical-content/src/unit-id.mjs";
+import {
+  isSupportedNatalContentAspectPair,
+  NATAL_CONTENT_ANGLE_POINTS,
+  NATAL_CONTENT_ASPECT_POINTS,
+  NATAL_CONTENT_ASPECT_SOURCE_TYPES,
+  NATAL_CONTENT_PLACEMENT_POINTS,
+  NATAL_CONTENT_SIGNS
+} from "../packages/astro-knowledge/engine/natal-content-support/browser.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const mode = process.argv.includes("--check") ? "check" : process.argv.includes("--write") ? "write" : null;
@@ -27,20 +36,25 @@ const paths = Object.freeze({
   dist: "apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js",
   v13: "apps/web/public/content/knowledge-matrix-v13/v13-direct-language-owner-approved/knowledge-matrix-v13-owner-approved-locked.json",
   placementHouseDirectory: "packages/astro-knowledge/data/placements/house",
+  runtimeSupport: "packages/astro-knowledge/engine/natal-content-support/browser.mjs",
+  authoredRows: "apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json",
+  sourceAllowlist: "packages/astro-knowledge/canonical-content/review/natal-wave-1-source-allowlist.json",
   index: "packages/astro-knowledge/canonical-content/index/canonical-content-index.json",
   ownerReview: "packages/astro-knowledge/canonical-content/review/natal-wave-1-owner-decisions.json",
   report: "packages/astro-knowledge/canonical-content/review/natal-wave-1-migration-report.json"
 });
 
-const BODIES = Object.freeze([
-  "sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn",
-  "uranus", "neptune", "pluto", "chiron", "lilith", "north-node", "south-node"
-]);
-const SIGNS = Object.freeze([
-  "aries", "taurus", "gemini", "cancer", "leo", "virgo",
-  "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"
-]);
-const ASPECTS = Object.freeze(["conjunction", "sextile", "square", "trine", "opposition"]);
+const PLACEMENT_POINTS = Object.freeze(NATAL_CONTENT_PLACEMENT_POINTS.map(normalizeCanonicalBody));
+const ANGLE_POINTS = Object.freeze(NATAL_CONTENT_ANGLE_POINTS.map(normalizeCanonicalBody));
+const ASPECT_POINTS = Object.freeze(NATAL_CONTENT_ASPECT_POINTS.map(normalizeCanonicalBody));
+const SIGNS = Object.freeze(NATAL_CONTENT_SIGNS.map(normalizeCanonicalSegment));
+const ASPECT_SPECS = Object.freeze([...NATAL_CONTENT_ASPECT_SOURCE_TYPES.reduce((byCanonical, spec) => {
+  const canonicalType = normalizeCanonicalAspect(spec.canonicalType);
+  const current = byCanonical.get(canonicalType) ?? { canonicalType, sourceTypes: [] };
+  current.sourceTypes.push(spec.sourceType === "nonagen" ? "nonagen" : normalizeCanonicalAspect(spec.sourceType));
+  byCanonical.set(canonicalType, current);
+  return byCanonical;
+}, new Map()).values()].map((spec) => Object.freeze({ ...spec, sourceTypes: Object.freeze([...new Set(spec.sourceTypes)]) })));
 const MODERN_RULERS = Object.freeze({
   aries: "mars", taurus: "venus", gemini: "mercury", cancer: "moon", leo: "sun", virgo: "mercury",
   libra: "venus", scorpio: "pluto", sagittarius: "jupiter", capricorn: "saturn", aquarius: "uranus", pisces: "neptune"
@@ -126,6 +140,8 @@ const sourceRows = readJson(paths.rows);
 const templatesFile = readJson(paths.templates);
 const interim = readJson(paths.placementInterim);
 const v13File = readJson(paths.v13);
+const authoredFile = readJson(paths.authoredRows);
+const sourceAllowlist = readJson(paths.sourceAllowlist);
 const hookRows = eligibleRowsByKey(sourceRows.hookRows ?? []);
 const vocabularyRows = eligibleRowsByKey([...(sourceRows.vocabularyRows ?? []), ...(interim.vocabularyRows ?? [])]);
 const templateRows = eligibleRowsByKey([...(templatesFile.templates ?? []), ...(interim.templates ?? [])], true);
@@ -189,7 +205,8 @@ function placementSignSlots(body, sign) {
     ["planetVerb", `fallback-vocab/planet-verb/${body}`],
     ["signAdverb", `fallback-vocab/sign-adverb/${sign}`],
     ["planetBest", `fallback-hook/planet-best/${body}`],
-    ["placementSentences", `fallback-hook/placement-sentence/${body}/${sign}`]
+    ["placementSentences", `fallback-hook/placement-sentence/${body}/${sign}`],
+    ["governedFallbackFloor", `fallback-hook/sign-lived/${sign}`]
   ]) addExistingSlot(slots, sourceSlotId(key), key, role);
   for (let index = 0; index < 8; index += 1) {
     const key = `fallback-vocab/placement-gerund/${body}/${sign}/${index}`;
@@ -208,6 +225,7 @@ function placementHouseSlots(body, house) {
   for (const [role, key] of [
     ["houseMeaning", `fallback-hook/house-meaning/${house}`],
     ["placementHouseSentences", `fallback-hook/placement-house-sentence/${body}/${house}`],
+    ["governedFallbackFloor", `fallback-hook/house-lived/${house}`],
     ["template", "fallback-template/natal.house-context"]
   ]) addExistingSlot(slots, sourceSlotId(key), key, role);
   return [...new Set(slots)].sort();
@@ -225,8 +243,21 @@ function aspectSlots(first, second, aspect) {
     ["planetBCore", `fallback-vocab/planet-core/${second}`],
     ["aspectTypeLine", `fallback-hook/aspect-type/${aspect}`],
     ["aspectMotion", `fallback-vocab/aspect-motion/${aspect}`],
+    ["governedFallbackFloor", `fallback-hook/aspect-lived/${aspect}`],
     ["pairSentences", pairKey],
     ["template", "fallback-template/natal.aspect"]
+  ]) addExistingSlot(slots, sourceSlotId(key), key, role);
+  return [...new Set(slots)].sort();
+}
+
+function angleSignSlots(angle, sign) {
+  const slots = [];
+  for (const [role, key] of [
+    ["angleIntro", `fallback-hook/angle-intro/${angle}`],
+    ["angleSignSentences", `fallback-hook/angle-sign/${angle}/${sign}`],
+    ["approvedPlacementSentence", `fallback-hook/placement-sentence/${angle}/${sign}`],
+    ["governedFallbackFloor", `fallback-hook/sign-lived/${sign}`],
+    ["template", "fallback-template/natal.angle-in-sign"]
   ]) addExistingSlot(slots, sourceSlotId(key), key, role);
   return [...new Set(slots)].sort();
 }
@@ -236,17 +267,25 @@ function exactRowForKey(contentKey) {
   return row?.reader_only === true && row?.render_policy === "reader-only-exact-lived-v1" ? row : null;
 }
 
-function exactPlacementSign(body, sign) {
-  return exactRowForKey(`fallback-hook/placement-sign-lived/${body}/${sign}`);
+function exactPlacementSignRows(body, sign) {
+  return [
+    exactRowForKey(`fallback-hook/natal-you-placement-sign-final/${body}/${sign}`),
+    exactRowForKey(`fallback-hook/placement-sign-lived/${body}/${sign}`)
+  ].filter(Boolean);
 }
 
-function exactPlacementHouse(body, house) {
-  return exactRowForKey(`fallback-hook/placement-house-lived/${body}/${house}`);
+function exactPlacementHouseRows(body, house) {
+  return [
+    exactRowForKey(`fallback-hook/natal-you-placement-house-final/${body}/${house}`),
+    exactRowForKey(`fallback-hook/placement-house-lived/${body}/${house}`)
+  ].filter(Boolean);
 }
 
-function exactAspect(first, second, aspect) {
-  return exactRowForKey(`fallback-hook/natal-aspect-lived/${first}/${aspect}/${second}`)
-    ?? exactRowForKey(`fallback-hook/natal-aspect-lived/${second}/${aspect}/${first}`);
+function exactAspectRows(first, second, sourceTypes) {
+  return sourceTypes.flatMap((aspect) => [
+    exactRowForKey(`fallback-hook/natal-aspect-lived/${first}/${aspect}/${second}`),
+    exactRowForKey(`fallback-hook/natal-aspect-lived/${second}/${aspect}/${first}`)
+  ]).filter(Boolean);
 }
 
 function legacyEvidence(row) {
@@ -380,44 +419,51 @@ const contentBlobsByHash = new Map();
 const mechanismWave1Map = [];
 const mechanismWave2Map = [];
 
-for (const body of BODIES) {
+for (const body of PLACEMENT_POINTS) {
   for (const sign of SIGNS) {
     const unitId = canonicalNatalPlacementSignId(body, sign);
-    const exactRow = exactPlacementSign(body, sign);
-    const content = renderByPerspective((voice) => renderer.renderNatalPlacement({ planet: body, sign, voice }));
-    const youResult = renderer.renderNatalPlacement({ planet: body, sign, voice: "you" });
-    const theyResult = renderer.renderNatalPlacement({ planet: body, sign, voice: "CANONICALNAME" });
+    const exactRows = exactPlacementSignRows(body, sign);
+    const exactRow = exactRows[0] ?? null;
+    const youResult = renderOrGap(() => renderer.renderNatalPlacement({ planet: body, sign, voice: "you" }));
+    const theyResult = renderOrGap(() => renderer.renderNatalPlacement({ planet: body, sign, voice: "CANONICALNAME" }));
+    const content = contentByAvailablePerspective(youResult, theyResult);
     const perspectiveModes = {
-      you: exactRow && youResult.partKeys?.[0] === exactRow.contentKey ? "authored" : "composed",
-      they: exactRow && theyResult.partKeys?.[0] === exactRow.contentKey ? "authored" : "composed"
+      you: !youResult ? "gap" : exactRows.some((row) => youResult.partKeys?.[0] === row.contentKey) ? "authored" : "composed",
+      they: !theyResult ? "gap" : exactRows.some((row) => theyResult.partKeys?.[0] === row.contentKey) ? "authored" : "composed"
     };
-    const mode = Object.values(perspectiveModes).every((value) => value === "authored") ? "authored" : "composed";
+    const mode = Object.values(perspectiveModes).every((value) => value === "gap")
+      ? "gap"
+      : Object.values(perspectiveModes).every((value) => value === "authored") ? "authored" : "composed";
     const v13 = v13Resolver.renderContentKey(`fallback-hook/placement-sign-lived/${body}/${sign}`);
     const candidateSources = [
-      ...(exactRow ? [{ sourceId: exactRow.contentKey, copySha256: sha256(exactRow.body), governance: exactRow.governance ?? exactRow.approval?.approvalLevel }] : []),
+      ...exactRows.map((row) => ({ sourceId: row.contentKey, copySha256: sha256(row.body), governance: row.governance ?? row.approval?.approvalLevel })),
       ...(v13 ? [{ sourceId: `knowledge-matrix-v13:${v13.contentKey}`, copySha256: sha256(v13.body), governance: v13.governance }] : [])
     ];
-    contentBlobsByHash.set(contentHash(content), content);
+    if (mode !== "gap") contentBlobsByHash.set(contentHash(content), content);
     const slotIds = mode === "authored" ? [] : placementSignSlots(body, sign);
-    if (exactRow && mode === "composed") addExistingSlot(slotIds, sourceSlotId(exactRow.contentKey), exactRow.contentKey, "perspectiveExact");
     units.push(unitRecord({
       unitId, kind: "placement-sign", mode, perspectiveModes, contentByPerspective: content,
       recipeId: mode === "authored" ? null : "recipe/natal/placement-sign/v1",
       slotIds: [...new Set(slotIds)].sort(), exactRow, candidateSources,
       mechanism: exactRow ? { status: "mapped", sourceId: exactRow.contentKey, evidenceRefs: exactRow.source_keys ?? [] } : { status: "missing", sourceId: null, evidenceRefs: [] }
     }));
-    if (exactRow) mechanismWave1Map.push({ sourceId: exactRow.contentKey, unitId, status: "mapped" });
+    for (const row of exactRows.filter((candidate) => candidate.contentKey.startsWith("fallback-hook/placement-sign-lived/"))) {
+      mechanismWave1Map.push({ sourceId: row.contentKey, unitId, status: "mapped" });
+    }
   }
   for (let house = 1; house <= 12; house += 1) {
     const unitId = canonicalNatalPlacementHouseId(body, house);
-    const exactRow = exactPlacementHouse(body, house);
-    const youResult = renderer.renderNatalPlacement({ planet: body, sign: "aries", house, voice: "you" });
-    const theyResult = renderer.renderNatalPlacement({ planet: body, sign: "aries", house, voice: "CANONICALNAME" });
+    const exactRows = exactPlacementHouseRows(body, house);
+    const exactRow = exactRows[0] ?? null;
+    const youResult = renderOrGap(() => renderer.renderNatalPlacement({ planet: body, sign: "aries", house, voice: "you" }));
+    const theyResult = renderOrGap(() => renderer.renderNatalPlacement({ planet: body, sign: "aries", house, voice: "CANONICALNAME" }));
     const perspectiveModes = {
-      you: exactRow && youResult.partKeys?.[1] === exactRow.contentKey ? "authored" : "composed",
-      they: exactRow && theyResult.partKeys?.[1] === exactRow.contentKey ? "authored" : "composed"
+      you: !youResult ? "gap" : exactRows.some((row) => youResult.partKeys?.[1] === row.contentKey) ? "authored" : "composed",
+      they: !theyResult ? "gap" : exactRows.some((row) => theyResult.partKeys?.[1] === row.contentKey) ? "authored" : "composed"
     };
-    const mode = Object.values(perspectiveModes).every((value) => value === "authored") ? "authored" : "composed";
+    const mode = Object.values(perspectiveModes).every((value) => value === "gap")
+      ? "gap"
+      : Object.values(perspectiveModes).every((value) => value === "authored") ? "authored" : "composed";
     const housePart = (result) => ({
       headline: exactRow
         ? (result.headline ?? "")
@@ -425,14 +471,17 @@ for (const body of BODIES) {
       body: result.parts?.[1] ?? "",
       parts: result.parts?.[1] ? [result.parts[1]] : []
     });
-    const theyHouse = housePart(theyResult);
-    theyHouse.headline = theyHouse.headline.replaceAll("CANONICALNAME", "{{Name}}");
-    theyHouse.body = theyHouse.body.replaceAll("CANONICALNAME", "{{Name}}");
-    theyHouse.parts = theyHouse.parts.map((part) => part.replaceAll("CANONICALNAME", "{{Name}}"));
-    const byPerspective = { you: housePart(youResult), they: theyHouse };
+    const youHouse = youResult ? housePart(youResult) : null;
+    const theyHouse = theyResult ? housePart(theyResult) : null;
+    if (theyHouse) {
+      theyHouse.headline = theyHouse.headline.replaceAll("CANONICALNAME", "{{Name}}");
+      theyHouse.body = theyHouse.body.replaceAll("CANONICALNAME", "{{Name}}");
+      theyHouse.parts = theyHouse.parts.map((part) => part.replaceAll("CANONICALNAME", "{{Name}}"));
+    }
+    const byPerspective = { ...(youHouse ? { you: youHouse } : {}), ...(theyHouse ? { they: theyHouse } : {}) };
     const v13 = v13Resolver.renderContentKey(`fallback-hook/placement-house-lived/${body}/${house}`);
     const candidateSources = [
-      ...(exactRow ? [{ sourceId: exactRow.contentKey, copySha256: sha256(exactRow.body), governance: exactRow.governance ?? exactRow.approval?.approvalLevel }] : []),
+      ...exactRows.map((row) => ({ sourceId: row.contentKey, copySha256: sha256(row.body), governance: row.governance ?? row.approval?.approvalLevel })),
       ...(v13 ? [{ sourceId: `knowledge-matrix-v13:${v13.contentKey}`, copySha256: sha256(v13.body), governance: v13.governance }] : [])
     ];
     const mechanismPath = `packages/astro-knowledge/data/placements/house/${body}-${house}.json`;
@@ -451,52 +500,91 @@ for (const body of BODIES) {
     } else {
       mechanism = { status: "missing", sourceId: null, evidenceRefs: [] };
     }
-    contentBlobsByHash.set(contentHash(byPerspective), byPerspective);
+    if (mode !== "gap") contentBlobsByHash.set(contentHash(byPerspective), byPerspective);
     const slotIds = mode === "authored" ? [] : placementHouseSlots(body, house);
-    if (exactRow && mode === "composed") addExistingSlot(slotIds, sourceSlotId(exactRow.contentKey), exactRow.contentKey, "perspectiveExact");
     units.push(unitRecord({
       unitId, kind: "placement-house", mode, perspectiveModes, contentByPerspective: byPerspective,
       recipeId: mode === "authored" ? null : "recipe/natal/placement-house/v1",
       slotIds: [...new Set(slotIds)].sort(), exactRow, candidateSources, mechanism
     }));
-    if (exactRow) mechanismWave1Map.push({ sourceId: exactRow.contentKey, unitId, status: "mapped" });
+    for (const row of exactRows.filter((candidate) => candidate.contentKey.startsWith("fallback-hook/placement-house-lived/"))) {
+      mechanismWave1Map.push({ sourceId: row.contentKey, unitId, status: "mapped" });
+    }
   }
 }
 
-for (let firstIndex = 0; firstIndex < BODIES.length; firstIndex += 1) {
-  for (let secondIndex = firstIndex + 1; secondIndex < BODIES.length; secondIndex += 1) {
-    const first = BODIES[firstIndex];
-    const second = BODIES[secondIndex];
-    if (new Set([first, second]).size === 2 && [first, second].includes("north-node") && [first, second].includes("south-node")) continue;
-    for (const aspect of ASPECTS) {
+for (const angle of ANGLE_POINTS) {
+  for (const sign of SIGNS) {
+    const unitId = canonicalNatalAngleSignId(angle, sign);
+    const youResult = renderOrGap(() => renderer.renderNatalAngle({ angle, sign, voice: "you" }));
+    const theyResult = renderOrGap(() => renderer.renderNatalAngle({ angle, sign, voice: "CANONICALNAME" }));
+    const content = contentByAvailablePerspective(youResult, theyResult);
+    const perspectiveModes = {
+      you: youResult ? "composed" : "gap",
+      they: theyResult ? "composed" : "gap"
+    };
+    const mode = Object.values(perspectiveModes).every((value) => value === "gap") ? "gap" : "composed";
+    if (mode !== "gap") contentBlobsByHash.set(contentHash(content), content);
+    units.push(unitRecord({
+      unitId,
+      kind: "angle-sign",
+      mode,
+      perspectiveModes,
+      contentByPerspective: content,
+      recipeId: mode === "gap" ? null : "recipe/natal/angle-sign/v1",
+      slotIds: mode === "gap" ? [] : angleSignSlots(angle, sign),
+      candidateSources: [],
+      mechanism: {
+        status: "runtime-supported-angle",
+        sourceId: paths.runtimeSupport,
+        evidenceRefs: [{ path: paths.runtimeSupport, sha256: fileSha256(paths.runtimeSupport) }]
+      }
+    }));
+  }
+}
+
+for (let firstIndex = 0; firstIndex < ASPECT_POINTS.length; firstIndex += 1) {
+  for (let secondIndex = firstIndex + 1; secondIndex < ASPECT_POINTS.length; secondIndex += 1) {
+    const first = ASPECT_POINTS[firstIndex];
+    const second = ASPECT_POINTS[secondIndex];
+    if (!isSupportedNatalContentAspectPair(NATAL_CONTENT_ASPECT_POINTS[firstIndex], NATAL_CONTENT_ASPECT_POINTS[secondIndex])) continue;
+    for (const aspectSpec of ASPECT_SPECS) {
+      const aspect = aspectSpec.canonicalType;
       const unitId = canonicalNatalAspectId(first, second, aspect);
-      const exactRow = exactAspect(first, second, aspect);
-      const youResult = renderOrGap(() => renderer.renderNatalAspect({ planetA: first, planetB: second, aspect, voice: "you" }));
-      const theyResult = renderOrGap(() => renderer.renderNatalAspect({ planetA: first, planetB: second, aspect, voice: "CANONICALNAME" }));
+      const exactRows = exactAspectRows(first, second, aspectSpec.sourceTypes);
+      const exactRow = exactRows[0] ?? null;
+      const renderAspect = exactRows[0]?.contentKey.split("/")[3] ?? aspect;
+      const youResult = renderOrGap(() => renderer.renderNatalAspect({ planetA: first, planetB: second, aspect: renderAspect, voice: "you" }));
+      const theyResult = renderOrGap(() => renderer.renderNatalAspect({ planetA: first, planetB: second, aspect: renderAspect, voice: "CANONICALNAME" }));
       const content = contentByAvailablePerspective(youResult, theyResult);
       const perspectiveModes = {
-        you: !youResult ? "gap" : exactRow && youResult.templateKey === exactRow.contentKey ? "authored" : "composed",
-        they: !theyResult ? "gap" : exactRow && theyResult.templateKey === exactRow.contentKey ? "authored" : "composed"
+        you: !youResult ? "gap" : exactRows.some((row) => youResult.templateKey === row.contentKey) ? "authored" : "composed",
+        they: !theyResult ? "gap" : exactRows.some((row) => theyResult.templateKey === row.contentKey) ? "authored" : "composed"
       };
       const mode = Object.values(perspectiveModes).every((value) => value === "gap")
         ? "gap"
         : Object.values(perspectiveModes).every((value) => value === "authored")
           ? "authored"
           : "composed";
-      const v13 = v13Resolver.renderNatalAspect({ planetA: first, planetB: second, aspect });
+      const v13 = v13Resolver.renderNatalAspect({ planetA: first, planetB: second, aspect: renderAspect });
       const v13IsExact = Boolean(v13?.contentKey.startsWith("fallback-hook/natal-aspect-lived/"));
       const candidateSources = [
-        ...(exactRow ? [{ sourceId: exactRow.contentKey, copySha256: sha256(exactRow.body), governance: exactRow.governance ?? exactRow.approval?.approvalLevel }] : []),
+        ...exactRows.map((row) => ({ sourceId: row.contentKey, copySha256: sha256(row.body), governance: row.governance ?? row.approval?.approvalLevel })),
         ...(v13IsExact ? [{ sourceId: `knowledge-matrix-v13:${v13.contentKey}`, copySha256: sha256(v13.body), governance: v13.governance }] : [])
       ];
       if (mode !== "gap") contentBlobsByHash.set(contentHash(content), content);
       const slotIds = mode === "authored" ? [] : aspectSlots(first, second, aspect);
-      if (exactRow && mode === "composed") addExistingSlot(slotIds, sourceSlotId(exactRow.contentKey), exactRow.contentKey, "perspectiveExact");
       units.push(unitRecord({
         unitId, kind: "aspect", mode, perspectiveModes, contentByPerspective: content,
         recipeId: mode === "authored" ? null : "recipe/natal/aspect/v1",
         slotIds: [...new Set(slotIds)].sort(), exactRow, candidateSources,
-        mechanism: { status: "legacy-composition", sourceId: exactRow?.contentKey ?? null, evidenceRefs: exactRow?.source_keys ?? [] }
+        mechanism: {
+          status: "legacy-composition",
+          sourceId: exactRow?.contentKey ?? null,
+          evidenceRefs: exactRow?.source_keys ?? [],
+          canonicalAspect: aspect,
+          sourceAspectAliases: aspectSpec.sourceTypes
+        }
       }));
     }
   }
@@ -554,6 +642,92 @@ const ownerDecisions = [
   ...units.filter((unit) => unit.reconciliation.bucket === "OWNER_DECISION_REQUIRED").map((unit) => ({ type: "unit", id: unit.identity.unitId, candidates: unit.reconciliation.candidateSources, currentRenderedResult: contentBlobsByHash.get(unit.content.contentRef), reason: "Differing legitimate candidates have no verified governance rule that permits an automatic choice." })),
   ...slots.filter((slot) => slot.reconciliationBucket === "OWNER_DECISION_REQUIRED").map((slot) => ({ type: "slot", id: slot.slotId, candidates: slot.candidates, currentRenderedResult: slot.values, reason: "Differing legitimate slot candidates have no verified governance rule that permits an automatic choice." }))
 ];
+
+function inventorySurfaceForAuthoredRow(row) {
+  if (typeof row.surface === "string" && row.surface.trim()) return row.surface.trim();
+  if (row.contentKey.startsWith("authored/compat-pair/")) return "compat-pair";
+  if (row.contentKey.startsWith("authored/calendar-weekly-moon/")) return "calendar";
+  if (
+    row.contentKey.startsWith("authored/sky-newmoon/")
+    || row.contentKey.startsWith("authored/sky-fullmoon/")
+    || row.contentKey.startsWith("authored/sky-eclipse/")
+    || row.contentKey.startsWith("authored/sky-lunation-macro/")
+  ) return "sky-lunation";
+  return "unclassified";
+}
+
+const authoredInventory = (authoredFile.authoredCards ?? [])
+  .map((row) => ({
+    contentKey: row.contentKey,
+    declaredSurface: typeof row.surface === "string" && row.surface.trim() ? row.surface.trim() : null,
+    inventorySurface: inventorySurfaceForAuthoredRow(row),
+    surfaceDeclaration: typeof row.surface === "string" && row.surface.trim() ? "explicit" : "missing-in-source-row",
+    sourcePath: paths.authoredRows,
+    reviewStatus: row.review_status ?? null,
+    wave1Disposition: "inventory-only-not-migrated"
+  }))
+  .sort((a, b) => a.contentKey.localeCompare(b.contentKey));
+const duplicateAuthoredKeys = authoredInventory
+  .filter((entry, index) => authoredInventory.findIndex((candidate) => candidate.contentKey === entry.contentKey) !== index)
+  .map((entry) => entry.contentKey);
+if (duplicateAuthoredKeys.length) {
+  throw new Error(`AUTHORED_INVENTORY_DUPLICATE_KEY: ${[...new Set(duplicateAuthoredKeys)].join(", ")}`);
+}
+
+const unitTargetsBySource = new Map();
+for (const unit of units) {
+  for (const candidate of unit.reconciliation.candidateSources) {
+    if (!candidate.sourceId?.startsWith("fallback-hook/")) continue;
+    const targets = unitTargetsBySource.get(candidate.sourceId) ?? [];
+    targets.push(unit.identity.unitId);
+    unitTargetsBySource.set(candidate.sourceId, targets);
+  }
+}
+const ingredientTargetsBySource = new Map();
+for (const slot of slots) {
+  for (const candidate of slot.candidates) {
+    const targets = ingredientTargetsBySource.get(candidate.sourceKey) ?? [];
+    targets.push(slot.slotId);
+    ingredientTargetsBySource.set(candidate.sourceKey, targets);
+  }
+}
+const allowlistBySource = new Map(sourceAllowlist.entries
+  .filter((entry) => entry.entryType === "source-row")
+  .map((entry) => [entry.sourceKey, entry]));
+const readerEligibleExactRows = (sourceRows.hookRows ?? []).filter((row) => (
+  row.reader_only === true
+  && row.render_policy === "reader-only-exact-lived-v1"
+  && READER_ELIGIBLE.has(String(row.review_status ?? "").toLowerCase())
+));
+const sourceReachabilityRows = readerEligibleExactRows.map((row) => {
+  const categories = [
+    ...(unitTargetsBySource.has(row.contentKey) ? ["canonical-unit"] : []),
+    ...(ingredientTargetsBySource.has(row.contentKey) ? ["composition-ingredient"] : []),
+    ...(allowlistBySource.has(row.contentKey) ? ["explicit-allowlist"] : [])
+  ];
+  return {
+    sourceKey: row.contentKey,
+    category: categories.length === 1 ? categories[0] : categories.length === 0 ? "UNREFERENCED" : "AMBIGUOUS",
+    targetIds: unitTargetsBySource.get(row.contentKey) ?? ingredientTargetsBySource.get(row.contentKey) ?? [],
+    allowlistEvidence: allowlistBySource.get(row.contentKey)?.evidence ?? null
+  };
+});
+const sourceReachabilityFailures = sourceReachabilityRows.filter((row) => row.category === "UNREFERENCED" || row.category === "AMBIGUOUS");
+if (sourceReachabilityFailures.length) {
+  throw new Error(`SOURCE_TO_UNIT_REACHABILITY_FAILED: ${sourceReachabilityFailures.map((row) => `${row.sourceKey}:${row.category}`).join(", ")}`);
+}
+
+const originalWave1Families = new Set([
+  "fallback-hook/placement-sign-lived",
+  "fallback-hook/placement-house-lived",
+  "fallback-hook/natal-aspect-lived",
+  "fallback-hook/sign-lived",
+  "fallback-hook/house-lived",
+  "fallback-hook/aspect-lived"
+]);
+const originalWave1Reconciliation = sourceReachabilityRows.filter((row) => (
+  originalWave1Families.has(row.sourceKey.split("/").slice(0, 2).join("/"))
+));
 const mappedWave1Sources = new Set(mechanismWave1Map.map((entry) => entry.sourceId));
 const wave1NotInUnitUniverse = v13File.rows
   .filter((row) => ["placement-sign-lived", "placement-house-lived"].includes(row.runtimeFamily))
@@ -563,7 +737,7 @@ const wave1NotInUnitUniverse = v13File.rows
 
 const counts = {
   total: units.length,
-  byKind: Object.fromEntries(["placement-sign", "placement-house", "aspect", "empty-house"].map((kind) => [kind, units.filter((unit) => unit.identity.kind === kind).length])),
+  byKind: Object.fromEntries([...new Set(units.map((unit) => unit.identity.kind))].sort().map((kind) => [kind, units.filter((unit) => unit.identity.kind === kind).length])),
   byMode: Object.fromEntries(["authored", "composed", "gap"].map((resolutionMode) => [resolutionMode, units.filter((unit) => unit.resolution.mode === resolutionMode).length])),
   byPerspectiveMode: Object.fromEntries(["you", "they"].map((perspective) => [
     perspective,
@@ -575,14 +749,50 @@ const counts = {
   byBucket: Object.fromEntries(["AUTO_MERGE_EXACT", "AUTO_MERGE_NORMALIZED", "AUTHORITY_RESOLVED", "OWNER_DECISION_REQUIRED", "SINGLE_SOURCE", "COMPOSED_ONLY", "SOURCE_GAP"].map((bucket) => [bucket, units.filter((unit) => unit.reconciliation.bucket === bucket).length]))
 };
 
-const sourceFiles = [paths.rows, paths.templates, paths.placementInterim, paths.dist, paths.v13].map((sourcePath) => ({ path: sourcePath, sha256: fileSha256(sourcePath) }));
+const authoredCountsByDeclaredSurface = Object.fromEntries([...new Set(authoredInventory.map((entry) => entry.declaredSurface ?? "undeclared"))]
+  .sort()
+  .map((surface) => [surface, authoredInventory.filter((entry) => (entry.declaredSurface ?? "undeclared") === surface).length]));
+const authoredCountsByInventorySurface = Object.fromEntries([...new Set(authoredInventory.map((entry) => entry.inventorySurface))]
+  .sort()
+  .map((surface) => [surface, authoredInventory.filter((entry) => entry.inventorySurface === surface).length]));
+const sourceFiles = [
+  paths.rows,
+  paths.templates,
+  paths.placementInterim,
+  paths.dist,
+  paths.v13,
+  paths.runtimeSupport,
+  paths.authoredRows,
+  paths.sourceAllowlist
+].map((sourcePath) => ({ path: sourcePath, sha256: fileSha256(sourcePath) }));
 const sourceManifest = {
   schema: "tldr-astro-canonical-content-source-manifest/v1",
   version: "global-foundation-natal-wave-1",
   migrationTimestamp: MIGRATION_TIMESTAMP,
   sourceFiles,
   provenanceVerification,
-  mechanismMappings: { wave1: mechanismWave1Map, wave2: mechanismWave2Map }
+  runtimeUnitUniverse: {
+    placementPoints: PLACEMENT_POINTS,
+    anglePoints: ANGLE_POINTS,
+    aspectPoints: ASPECT_POINTS,
+    signs: SIGNS,
+    aspects: ASPECT_SPECS,
+    explicitlyExcludedAngleSignFamilies: sourceAllowlist.entries.filter((entry) => entry.entryType === "semantic-unit-family")
+  },
+  mechanismMappings: { wave1: mechanismWave1Map, wave2: mechanismWave2Map },
+  authoredStoreInventory: {
+    sourcePath: paths.authoredRows,
+    distinctKeys: authoredInventory.length,
+    migratedInWave1: 0,
+    countsByDeclaredSurface: authoredCountsByDeclaredSurface,
+    countsByInventorySurface: authoredCountsByInventorySurface,
+    entries: authoredInventory
+  },
+  sourceReachability: {
+    eligibleExactRows: sourceReachabilityRows.length,
+    failures: sourceReachabilityFailures.length,
+    rows: sourceReachabilityRows
+  }
 };
 const index = {
   schema: "tldr-astro-canonical-content-index/v1",
@@ -622,6 +832,40 @@ const report = {
     }
   ],
   ownerDecisionRequired: ownerDecisions.length,
+  authoredStoreInventory: {
+    distinctKeys: authoredInventory.length,
+    displayCountExplained: 2766,
+    duplicateSkyArticleDisplayEntries: 2,
+    migratedInWave1: 0,
+    countsByDeclaredSurface: authoredCountsByDeclaredSurface,
+    countsByInventorySurface: authoredCountsByInventorySurface,
+    careerNatalAdjacent: {
+      count: authoredInventory.filter((entry) => entry.contentKey.startsWith("authored/career-natal-aspect/") || entry.contentKey.startsWith("authored/career-placement/")).length,
+      disposition: "career-education-only-not-natal",
+      evidence: "apps/web/src/content/fallbackArchitectureV3/admin/CODEX-TRANSIT-HANDOFF.md:42"
+    },
+    pointExplainers: {
+      count: authoredInventory.filter((entry) => entry.contentKey.startsWith("authored/point-explainer/")).length,
+      disposition: "personal-transit-only-not-natal",
+      evidence: "apps/web/src/App.tsx:7444"
+    }
+  },
+  sourceReachability: {
+    eligibleExactRows: sourceReachabilityRows.length,
+    canonicalUnit: sourceReachabilityRows.filter((row) => row.category === "canonical-unit").length,
+    compositionIngredient: sourceReachabilityRows.filter((row) => row.category === "composition-ingredient").length,
+    explicitAllowlist: sourceReachabilityRows.filter((row) => row.category === "explicit-allowlist").length,
+    failures: sourceReachabilityFailures.length,
+    original371: {
+      total: originalWave1Reconciliation.length,
+      canonicalUnit: originalWave1Reconciliation.filter((row) => row.category === "canonical-unit").length,
+      compositionIngredient: originalWave1Reconciliation.filter((row) => row.category === "composition-ingredient").length,
+      explicitAllowlist: originalWave1Reconciliation.filter((row) => row.category === "explicit-allowlist").length,
+      failures: originalWave1Reconciliation.filter((row) => row.category === "UNREFERENCED" || row.category === "AMBIGUOUS").length
+    }
+  },
+  perspectiveResolution: counts.byPerspectiveMode,
+  intentionalRuntimeExclusions: sourceAllowlist.entries.filter((entry) => entry.entryType === "semantic-unit-family"),
   mechanisms: {
     wave1: { expected: 111, mapped: mechanismWave1Map.filter((entry) => entry.status === "mapped").length, notInUnitUniverse: wave1NotInUnitUniverse.length, notInUnitUniverseSourceIds: wave1NotInUnitUniverse, conflicting: 0, pendingReview: 0, missing: 0 },
     wave2: { expected: 120, mapped: mechanismWave2Map.filter((entry) => entry.status === "mapped").length, sourceGaps: mechanismWave2Map.filter((entry) => entry.status === "SOURCE_GAP").length, mappedBodies: ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune"], sourceGapBody: "lilith", conflicting: 0, pendingReview: 0, missing: 0 }

@@ -1,9 +1,9 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "3196ea16627fb7480d7a0cfa9bb79be107549c96",
+  "sourceCommit": "a5c7c069d564a497e2515518052f957cb2361cf9",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "c4fdf26be4c8e18c7e17d6e7cf76c5566d4f5471f8f72a6e8b2a0db63e049fe9",
+  "contentFingerprint": "ebadf518e31c258e30858d307254cb66eb91f4cda233689e8f6cea59b7b16d4f",
   "recordCount": 9563,
   "statusCounts": {
     "owner-approved": 9563
@@ -143427,9 +143427,9 @@
       "sourceAuthor": "composed",
       "approvalRecord": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
       "approvalVersionDate": "2026-08-10",
-      "contentHash": "e1f857bef949cc5e36096a4f292e53bb9ab05f29a6fb93f4ae8f6eafdef9ca4e",
+      "contentHash": "8a2dd637edf5544b8de66ae6f0808f0d394eeec61961a04825ba6c81e7863a1f",
       "wording": {
-        "body": "The Moon is the feeling that reaches the body before the explanation catches up. A familiar kitchen settles you, one tone of voice revives an old argument, exhaustion sends you toward the same comfort, or you know you need distance before you can say why. Habit and memory show up quickly and easily here.\n\nSome of those reflexes carry older emotional patterns. Familiarity can be persuasive, but it is not proof that the present is repeating the past. The Moon shows what soothes you, what unsettles you, and what you reach for before thought takes over."
+        "body": "The Moon is the feeling that reaches the body before the explanation catches up. A familiar kitchen settles you, one tone of voice revives an old argument, exhaustion sends you toward the same comfort, or you know you need distance before you can say why. Habit and memory show up quickly and easily here.\n\nSome of those reflexes carry older emotional patterns. Familiarity can be persuasive, but it is not proof that the present is repeating the past. The Moon shows what soothes you, what puts you on edge, and what you reach for before thought takes over."
       },
       "astrology": {
         "objects": [
@@ -143477,9 +143477,9 @@
       "sourceAuthor": "composed",
       "approvalRecord": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
       "approvalVersionDate": "2026-08-10",
-      "contentHash": "c6ed4c32046c56cb3c37a2b491583ad84d68680088877af0d066dcf10a423993",
+      "contentHash": "15b58ee80016be4b882784f7774cb11d9f7cc692ac89b4456e4a2b59924b39dc",
       "wording": {
-        "body": "Pluto arrives when small changes are no longer enough. A role ends, a power dynamic breaks open, a relationship changes its terms, a source of control disappears, or you realize who you were before cannot handle what comes next. What falls away is usually something that mattered.\n\nThe intensity comes from knowing there is no convincing route back. Pluto describes the pressure to confront what has been buried, dismantle what can no longer hold, and discover what kind of strength remains once the old leverage is gone. Starting over usually comes after a difficult period, not before it."
+        "body": "Pluto arrives when small changes are no longer enough. A role ends, a power dynamic breaks open, a relationship changes its terms, a source of control disappears, or you realize who you were before cannot handle what comes next. What falls away is usually something that mattered.\n\nThe intensity comes from knowing there is no convincing route back. Pluto describes the pressure to confront what has been buried, dismantle what can no longer hold, and discover what kind of strength remains once the old advantage is gone. Starting over usually comes after a difficult period, not before it."
       },
       "astrology": {
         "objects": [

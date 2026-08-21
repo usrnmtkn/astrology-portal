@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import { createCanonicalContentResolver } from "../packages/astro-knowledge/canonical-content/src/resolver.mjs";
 import {
   assertCanonicalUnitId,
+  canonicalNatalAngleSignId,
   canonicalNatalAspectId,
   canonicalNatalEmptyHouseId,
   canonicalNatalPlacementHouseId,
@@ -39,6 +40,7 @@ const contentHash = (value) => sha256(JSON.stringify(stable(value)));
 // Global grammar admits current and future surfaces without adding another authority model.
 assert.equal(canonicalNatalPlacementSignId("Moon", "Taurus"), "natal/placement-sign/moon/taurus");
 assert.equal(canonicalNatalPlacementHouseId("Saturn", "10th"), "natal/placement-house/saturn/10");
+assert.equal(canonicalNatalAngleSignId("Ascendant", "Scorpio"), "natal/angle-sign/ascendant/scorpio");
 assert.equal(canonicalNatalAspectId("Venus", "Moon", "sext"), "natal/aspect/moon/venus/sextile");
 assert.equal(canonicalNatalEmptyHouseId(3, "Libra", "Venus", 7), "natal/empty-house/3/libra/venus-in-7");
 assert.equal(normalizeCanonicalBody("True Node"), "north-node");
@@ -55,17 +57,25 @@ for (const example of [
 ]) assert.equal(assertCanonicalUnitId(example), example);
 
 // ONE_AUTHORITY_PER_UNIT and NO_NEW_READER_FACING_FAMILY.
-assert.equal(index.units.length, 2370);
+assert.equal(index.units.length, 2906);
 assert.equal(new Set(index.units.map((unit) => unit.identity.unitId)).size, index.units.length);
 assert.deepEqual([...new Set(index.units.map((unit) => unit.identity.surface))], ["natal"]);
-assert.deepEqual([...new Set(index.units.map((unit) => unit.identity.kind))].sort(), ["aspect", "empty-house", "placement-house", "placement-sign"]);
+assert.deepEqual([...new Set(index.units.map((unit) => unit.identity.kind))].sort(), ["angle-sign", "aspect", "empty-house", "placement-house", "placement-sign"]);
 for (const perspective of ["you", "they"]) {
   assert.equal(
     Object.values(index.counts.byPerspectiveMode[perspective]).reduce((sum, count) => sum + count, 0),
     index.counts.total
   );
 }
-assert.equal(index.counts.byPerspectiveMode.you.authored, 223);
+assert.equal(index.counts.byPerspectiveMode.you.authored, 364);
+assert.equal(index.counts.byPerspectiveMode.they.authored, 0);
+assert.equal(index.counts.byKind["angle-sign"], 24);
+assert.equal(index.counts.byKind.aspect, 938);
+assert.equal(index.units.some((unit) => unit.identity.unitId === "natal/placement-sign/part-of-fortune/scorpio"), true);
+assert.equal(index.units.some((unit) => unit.identity.unitId === "natal/aspect/neptune/part-of-fortune/semisextile"), true);
+assert.equal(index.units.some((unit) => unit.identity.unitId === "natal/aspect/moon/sun/quincunx"), true);
+assert.equal(index.units.some((unit) => unit.identity.unitId.startsWith("natal/angle-sign/descendant/")), false);
+assert.equal(index.units.some((unit) => unit.identity.unitId.startsWith("natal/angle-sign/imum-coeli/")), false);
 
 // ONE_AUTHORITY_PER_COMPOSITION_SLOT.
 assert.equal(new Set(index.slots.map((slot) => slot.slotId)).size, index.slots.length);
@@ -183,7 +193,7 @@ assert.deepEqual(report.mechanisms.wave2, {
 // NATAL_RENDER_PARITY and INDEX_CHECK_CLEAN are independently reconstructed by the builder.
 const check = spawnSync(process.execPath, ["scripts/build-canonical-content-hub.mjs", "--check"], { cwd: repoRoot, encoding: "utf8" });
 assert.equal(check.status, 0, `${check.stdout}\n${check.stderr}`);
-assert.match(check.stdout, /Canonical content hub check clean: 2370 units/u);
-assert.deepEqual(report.parity, { bugs: 0, exactParity: 2370, intentionalAuthorityCorrection: 0, unresolvedOwnerDecision: 0 });
+assert.match(check.stdout, /Canonical content hub check clean: 2906 units/u);
+assert.deepEqual(report.parity, { bugs: 0, exactParity: 2906, intentionalAuthorityCorrection: 0, unresolvedOwnerDecision: 0 });
 
-console.log("Canonical content hub tests passed: 2370 natal Wave-1 units; global resolver and governance gates are deterministic.");
+console.log("Canonical content hub tests passed: 2906 natal Wave-1 units; global resolver and governance gates are deterministic.");

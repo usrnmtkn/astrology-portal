@@ -37,6 +37,18 @@ The deterministic index is
 Pending candidates are retained under their unit and never render. Candidate
 promotion must create a new revision; it never overwrites revision zero.
 
+The unit universe is imported from the shared natal reader runtime contract in
+`packages/astro-knowledge/engine/natal-content-support/browser.mjs`; the hub
+builder does not carry a separate body, angle, sign, or aspect list. Resolution
+is explicitly perspective-scoped: `resolution.perspectiveModes.you` and
+`resolution.perspectiveModes.they` preserve states such as authored for You and
+composed for Friends without treating the whole unit as authored.
+
+The source manifest inventories all 2,764 distinct `authored/*` keys by their
+declared surface. They remain inventory-only in Wave 1. Source reachability is
+also fail-closed: every eligible exact reader row must resolve to a unit, a
+composition ingredient, or the cited data allowlist.
+
 The natal compatibility adapter is guarded by
 `VITE_CANONICAL_CONTENT_HUB_NATAL`. The repository does not define or enable
 that variable, so the legacy renderer remains the production path by default.

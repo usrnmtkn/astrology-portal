@@ -1,4 +1,55 @@
 {
+  "authoredStoreInventory": {
+    "careerNatalAdjacent": {
+      "count": 15,
+      "disposition": "career-education-only-not-natal",
+      "evidence": "apps/web/src/content/fallbackArchitectureV3/admin/CODEX-TRANSIT-HANDOFF.md:42"
+    },
+    "countsByDeclaredSurface": {
+      "career-vertical": 54,
+      "compat-deep": 288,
+      "compat-pair": 719,
+      "point-explainer": 2,
+      "sky-placement": 1,
+      "sky-placement-archive": 1,
+      "transit-aspect": 377,
+      "transit-aspect-insert": 2,
+      "transit-event": 1,
+      "transit-house": 108,
+      "transit-return": 8,
+      "undeclared": 87,
+      "weekly-opener": 6,
+      "weekly-station": 18,
+      "you|friends": 1092
+    },
+    "countsByInventorySurface": {
+      "calendar": 36,
+      "career-vertical": 54,
+      "compat-deep": 288,
+      "compat-pair": 720,
+      "point-explainer": 2,
+      "sky-lunation": 50,
+      "sky-placement": 1,
+      "sky-placement-archive": 1,
+      "transit-aspect": 377,
+      "transit-aspect-insert": 2,
+      "transit-event": 1,
+      "transit-house": 108,
+      "transit-return": 8,
+      "weekly-opener": 6,
+      "weekly-station": 18,
+      "you|friends": 1092
+    },
+    "displayCountExplained": 2766,
+    "distinctKeys": 2764,
+    "duplicateSkyArticleDisplayEntries": 2,
+    "migratedInWave1": 0,
+    "pointExplainers": {
+      "count": 2,
+      "disposition": "personal-transit-only-not-natal",
+      "evidence": "apps/web/src/App.tsx:7444"
+    }
+  },
   "compositionSlots": {
     "authorityResolved": 7,
     "authorityResolvedSlotIds": [
@@ -11,68 +62,68 @@
       "canonical-slot/natal/planet-intro/uranus"
     ],
     "conflicts": 0,
-    "total": 1579
+    "total": 1428
   },
   "counts": {
     "byBucket": {
-      "AUTHORITY_RESOLVED": 223,
+      "AUTHORITY_RESOLVED": 364,
       "AUTO_MERGE_EXACT": 0,
       "AUTO_MERGE_NORMALIZED": 0,
-      "COMPOSED_ONLY": 2127,
+      "COMPOSED_ONLY": 2147,
       "OWNER_DECISION_REQUIRED": 0,
       "SINGLE_SOURCE": 0,
-      "SOURCE_GAP": 20
+      "SOURCE_GAP": 395
     },
     "byKind": {
-      "aspect": 450,
+      "angle-sign": 24,
+      "aspect": 938,
       "empty-house": 1584,
-      "placement-house": 168,
-      "placement-sign": 168
+      "placement-house": 180,
+      "placement-sign": 180
     },
     "byMode": {
       "authored": 0,
-      "composed": 2350,
-      "gap": 20
+      "composed": 2511,
+      "gap": 395
     },
     "byPerspectiveMode": {
       "they": {
         "authored": 0,
-        "composed": 2335,
-        "gap": 35
+        "composed": 2359,
+        "gap": 547
       },
       "you": {
-        "authored": 223,
-        "composed": 2127,
-        "gap": 20
+        "authored": 364,
+        "composed": 2147,
+        "gap": 395
       }
     },
-    "total": 2370
+    "total": 2906
   },
+  "intentionalRuntimeExclusions": [
+    {
+      "disposition": "intentionally-uncovered-runtime-object",
+      "entryType": "semantic-unit-family",
+      "evidence": "apps/web/src/content/fallbackArchitectureV3Runtime.ts:610-613 states that the package covers Ascendant and Midheaven while Descendant remains intentionally uncovered.",
+      "expectedUnitCount": 12,
+      "semanticIdentity": "natal/angle-sign/descendant/*"
+    },
+    {
+      "disposition": "intentionally-uncovered-runtime-object",
+      "entryType": "semantic-unit-family",
+      "evidence": "apps/web/src/content/fallbackArchitectureV3Runtime.ts:610-613 states that the package covers Ascendant and Midheaven while IC remains intentionally uncovered.",
+      "expectedUnitCount": 12,
+      "semanticIdentity": "natal/angle-sign/imum-coeli/*"
+    }
+  ],
   "mechanisms": {
     "wave1": {
       "conflicting": 0,
       "expected": 111,
-      "mapped": 95,
+      "mapped": 111,
       "missing": 0,
-      "notInUnitUniverse": 16,
-      "notInUnitUniverseSourceIds": [
-        "fallback-hook/placement-house-lived/part-of-fortune/10",
-        "fallback-hook/placement-house-lived/part-of-fortune/4",
-        "fallback-hook/placement-house-lived/part-of-fortune/5",
-        "fallback-hook/placement-house-lived/part-of-fortune/6",
-        "fallback-hook/placement-house-lived/part-of-fortune/7",
-        "fallback-hook/placement-house-lived/part-of-fortune/8",
-        "fallback-hook/placement-house-lived/part-of-fortune/9",
-        "fallback-hook/placement-sign-lived/part-of-fortune/aquarius",
-        "fallback-hook/placement-sign-lived/part-of-fortune/aries",
-        "fallback-hook/placement-sign-lived/part-of-fortune/cancer",
-        "fallback-hook/placement-sign-lived/part-of-fortune/gemini",
-        "fallback-hook/placement-sign-lived/part-of-fortune/leo",
-        "fallback-hook/placement-sign-lived/part-of-fortune/libra",
-        "fallback-hook/placement-sign-lived/part-of-fortune/pisces",
-        "fallback-hook/placement-sign-lived/part-of-fortune/sagittarius",
-        "fallback-hook/placement-sign-lived/part-of-fortune/scorpio"
-      ],
+      "notInUnitUniverse": 0,
+      "notInUnitUniverseSourceIds": [],
       "pendingReview": 0
     },
     "wave2": {
@@ -99,9 +150,21 @@
   "ownerDecisionRequired": 0,
   "parity": {
     "bugs": 0,
-    "exactParity": 2370,
+    "exactParity": 2906,
     "intentionalAuthorityCorrection": 0,
     "unresolvedOwnerDecision": 0
+  },
+  "perspectiveResolution": {
+    "they": {
+      "authored": 0,
+      "composed": 2359,
+      "gap": 547
+    },
+    "you": {
+      "authored": 364,
+      "composed": 2147,
+      "gap": 395
+    }
   },
   "preservedBaselineSubstitutions": [
     {
@@ -152,5 +215,19 @@
     }
   ],
   "schema": "tldr-astro-canonical-content-migration-report/v1",
+  "sourceReachability": {
+    "canonicalUnit": 376,
+    "compositionIngredient": 26,
+    "eligibleExactRows": 403,
+    "explicitAllowlist": 1,
+    "failures": 0,
+    "original371": {
+      "canonicalUnit": 352,
+      "compositionIngredient": 19,
+      "explicitAllowlist": 0,
+      "failures": 0,
+      "total": 371
+    }
+  },
   "version": "global-foundation-natal-wave-1"
 }

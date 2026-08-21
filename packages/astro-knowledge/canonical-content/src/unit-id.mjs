@@ -78,6 +78,10 @@ export function canonicalNatalPlacementHouseId(body, house) {
   return canonicalUnitId("natal", "placement-house", normalizeCanonicalBody(body), normalizeCanonicalHouse(house));
 }
 
+export function canonicalNatalAngleSignId(angle, sign) {
+  return canonicalUnitId("natal", "angle-sign", normalizeCanonicalBody(angle), sign);
+}
+
 export function canonicalNatalAspectId(first, second, aspect) {
   const pair = canonicalAspectPair(first, second);
   return canonicalUnitId("natal", "aspect", pair[0], pair[1], normalizeCanonicalAspect(aspect));
