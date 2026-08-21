@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "recordType": "transit_aspect_serving_exact_approval",
+  "approvalId": "jupiter-descendant-trine-owner-approval-2026-08-21",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-21",
+  "recordedAt": "2026-08-21",
+  "surface": "you",
+  "contentKey": "authored/transit-aspect/jupiter/descendant/trine",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "cae955ad20c123d01e2c0601a16852ecf61078da6e1b9ea789315c35c507ada0",
+  "payload": {
+    "headline": "Jupiter trine your Descendant",
+    "body_you": "Until {{untilDate}}, other people can make a project or plan much easier to move forward.\n\nJupiter in Leo is trining your natal Descendant, opening up practical opportunities through partnerships, collaborators, clients, and people who are actually willing to meet you halfway. Someone makes the introduction, agrees to the meeting, offers real support, or finally wants to talk about what comes next. You do not have to push every door open by yourself right now.\n\nPay attention to the connections where effort goes both ways and there is genuine room for both of you to benefit. Say yes when an opportunity is worth pursuing, but take a look at the actual terms and timeline before you commit. A good offer should still make sense after the initial excitement calms down."
+  },
+  "ownerInstruction": "instead of the screenshot update to read",
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "019fdc94-03bd-7513-8375-550e3593d63a",
+    "date": "2026-08-21",
+    "attachment": "Screenshot 2026-08-21 at 12.16.25 AM.png"
+  },
+  "mechanicalConversion": {
+    "approvedRenderedDate": "September 2",
+    "storedDateSlot": "{{untilDate}}",
+    "reason": "The transit end date is calculation-owned. Rendering the approved event window restores the owner's exact sentence."
+  },
+  "approvalEffect": "exact_wording_approval",
+  "automaticCopyEdits": 0
+}
