@@ -753,6 +753,16 @@ test.describe("content dashboard admin user flow case studies", () => {
     }).toPass({ timeout: routeReadyTimeoutMs });
     await expect(contentSystemPanel.getByText("Content Level", { exact: true })).toHaveCount(0);
     await expect(editor.getByLabel("App display source")).toHaveCount(0);
+    const relatedPassages = editor.getByRole("region", { name: "Related reader horoscope passages" });
+    await expect(relatedPassages).toBeVisible();
+    await expect(relatedPassages).toContainText("House horoscopes");
+    await expect(relatedPassages).toContainText("Aspect passages");
+    await mkdir(adminScreenshotDir, { recursive: true });
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: path.join(adminScreenshotDir, "desktop-sky-related-passages.png")
+    });
     await editor.getByLabel("Headline").fill("Sun in Cancer QA edit");
     await editor.getByLabel("Summary").fill("Updated summary from the visual admin editor.");
     await editor.getByLabel("Body").fill("Updated body from the visual admin editor.");
