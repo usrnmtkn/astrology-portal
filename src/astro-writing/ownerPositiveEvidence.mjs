@@ -4,6 +4,16 @@ const ELIGIBLE_STRUCTURAL_FUNCTIONS = new Set([
   "published article body excerpt"
 ]);
 
+const RELEVANT_PUBLISHED_OWNER_SURFACES = new Set([
+  "sky-article-longform",
+  "sky-article-reference",
+  "sky-season",
+  "sky-lunation",
+  "sky-nodes-longform",
+  "weekly-astrology",
+  "relationship-astrology"
+]);
+
 function inferredRegister(text) {
   return /\b(?:you|your|yours|yourself|yourselves)\b/iu.test(text)
     ? "second_person"
@@ -116,6 +126,70 @@ export function ownerPositiveEvidenceFromVoiceIndex(index) {
       ownerApproved: true,
       useAsPositiveVoiceEvidence: true
     }));
+}
+
+export function ownerRelevantEvidenceFromVoiceIndex(index, { planet, sign } = {}) {
+  const targetPlanet = normalizedToken(planet);
+  const targetSign = normalizedToken(sign);
+  const entries = Array.isArray(index) ? index : index?.entries ?? [];
+  const eligible = entries
+    .filter((entry) => (
+      entry.authorityClass === "owner_authored_final"
+      && entry.ownerAuthored === true
+      && entry.ownerApproved === true
+      && entry.useAsPositiveVoiceEvidence === true
+      && entry.origin === "owner-published-site"
+      && RELEVANT_PUBLISHED_OWNER_SURFACES.has(entry.surface)
+      && ELIGIBLE_STRUCTURAL_FUNCTIONS.has(entry.structuralFunction)
+      && typeof entry.text === "string"
+      && entry.text.trim().length >= 80
+      && !/^\s*(?:jump to horoscopes|horoscopes for)\b/iu.test(entry.text)
+    ))
+    .map((entry) => Object.freeze({
+      id: entry.sourceId,
+      contentKey: entry.sourceId,
+      family: entry.surface,
+      register: inferredRegister(entry.text),
+      text: entry.text,
+      sourcePath: entry.sourcePath,
+      sourceRecordSha256: entry.sourceSha256,
+      planet: entry.planet || null,
+      sign: entry.sign || null,
+      articleBeat: entry.articleBeat || null,
+      structuralFunction: entry.structuralFunction,
+      authorityClass: entry.authorityClass,
+      ownerAuthored: true,
+      ownerApproved: true,
+      useAsPositiveVoiceEvidence: true
+    }));
+  const exactPlanetSign = eligible.filter((entry) => (
+    normalizedToken(entry.planet) === targetPlanet
+    && normalizedToken(entry.sign) === targetSign
+  ));
+  const sameSign = eligible.filter((entry) => normalizedToken(entry.sign) === targetSign);
+  const samePlanet = eligible.filter((entry) => normalizedToken(entry.planet) === targetPlanet);
+  const selectedTier = exactPlanetSign.length
+    ? "exact-planet-sign-then-same-sign-then-same-planet"
+    : sameSign.length
+      ? "same-sign-then-same-planet"
+      : samePlanet.length
+        ? "same-planet"
+        : "none";
+  const selected = [...new Map([
+    ...exactPlanetSign,
+    ...sameSign,
+    ...samePlanet
+  ].map((entry) => [entry.id, entry])).values()];
+  return Object.freeze({
+    tier: selectedTier,
+    selected: Object.freeze(selected),
+    counts: Object.freeze({
+      exactPlanetSign: exactPlanetSign.length,
+      sameSign: sameSign.length,
+      samePlanet: samePlanet.length,
+      selected: selected.length
+    })
+  });
 }
 
 export function ownerPositiveEvidenceFromSurfaceQualifiedPool(pool) {

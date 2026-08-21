@@ -19,9 +19,11 @@ function overlapScore(entry, plan) {
   ].filter(Boolean).join(" "));
   let score = 0;
   for (const token of needles) if (haystack.has(token)) score += 1;
-  if (entry.planet === plan.object) score += 8;
+  if (entry.planet === plan.object && entry.sign === plan.sign) score += 48;
+  else if (entry.sign === plan.sign) score += 24;
+  else if (entry.planet === plan.object) score += 12;
+  if (plan.object === "sun" && entry.sign === plan.sign && entry.family === "sky-season") score += 64;
   if (entry.family && String(entry.family).includes(plan.object)) score += 4;
-  if (entry.sign === plan.sign) score += 4;
   return score;
 }
 
@@ -30,6 +32,8 @@ export function retrieveOwnerContext(plan, {
   matrixExamples = [],
   matrixArgumentCandidates = [],
   matrixEvidenceAvailableCount = null,
+  relevantOwnerPassagesAvailableCount = null,
+  ownerPassageRelevanceTier = "none",
   sceneExamples = [],
   samePlanetSignSceneAvailableCount = null,
   sceneEvidenceInventoryCounts = null,
@@ -47,7 +51,10 @@ export function retrieveOwnerContext(plan, {
 } = {}) {
   const policy = ownerEvidencePolicyFor(contentFamily);
   const excludedKeys = new Set(excludedEvidenceContentKeys);
-  const normalizedExamples = examples.map(normalizeOwnerEvidence);
+  const normalizedExamples = [...new Map(examples.map(normalizeOwnerEvidence).map((entry, index) => [
+    entry.id ?? entry.contentKey ?? `owner-evidence-${index}`,
+    entry
+  ])).values()];
   const normalizedMatrix = matrixExamples.map(normalizeOwnerEvidence);
   const normalizedMatrixArguments = matrixArgumentCandidates.map(normalizeOwnerEvidence);
   const normalizedScenes = sceneExamples.map(normalizeOwnerEvidence);
@@ -74,14 +81,40 @@ export function retrieveOwnerContext(plan, {
   const maximum = maxExamples ?? policy.maximumSameFamilyPassages;
   const selectedSameFamily = [];
   const sourceCounts = new Map();
-  for (const entry of ranked(eligibleExamples)) {
+  const rankedExamples = ranked(eligibleExamples);
+  const targetSign = String(plan.sign ?? "").trim().toLowerCase();
+  const targetPlanet = String(plan.object ?? "").trim().toLowerCase();
+  const relevanceMatches = (entry) => ownerPassageRelevanceTier !== "none"
+    && (
+      String(entry.sign ?? "").trim().toLowerCase() === targetSign
+      || String(entry.planet ?? "").trim().toLowerCase() === targetPlanet
+    );
+  const requiredRelevant = Math.min(
+    policy.minimumRelevantOwnerPassages,
+    relevantOwnerPassagesAvailableCount ?? 0
+  );
+  const add = (entry, sourceLimit) => {
+    if (selectedSameFamily.includes(entry)) return false;
     const sourceKey = entry.sourcePath ?? entry.source ?? entry.contentKey ?? entry.id;
     const sourceCount = sourceCounts.get(sourceKey) ?? 0;
-    if (sourceCount >= 2) continue;
+    if (sourceCount >= sourceLimit) return false;
     selectedSameFamily.push(entry);
     sourceCounts.set(sourceKey, sourceCount + 1);
+    return true;
+  };
+  for (const sourceLimit of [2, Number.POSITIVE_INFINITY]) {
+    for (const entry of rankedExamples.filter(relevanceMatches)) {
+      add(entry, sourceLimit);
+      if (selectedSameFamily.filter(relevanceMatches).length >= requiredRelevant) break;
+    }
+    if (selectedSameFamily.filter(relevanceMatches).length >= requiredRelevant) break;
+  }
+  for (const entry of rankedExamples) {
+    add(entry, 2);
     if (selectedSameFamily.length >= maximum) break;
   }
+  const relevantOwnerPassages = selectedSameFamily.filter(relevanceMatches);
+  const supportingOwnerPassages = selectedSameFamily.filter((entry) => !relevanceMatches(entry));
   const registerGoldById = new Map(normalizedGold.map((entry) => [entry.id, entry]));
   const selectedRegisterGold = policy.registerGoldIds
     .map((id) => registerGoldById.get(id))
@@ -126,6 +159,8 @@ export function retrieveOwnerContext(plan, {
       matchedFamily: entry.family,
       sourcePath: entry.sourcePath ?? entry.source
     })),
+    relevantOwnerPassages,
+    supportingOwnerPassages,
     registerGoldExamples: selectedRegisterGold,
     corrections: selectedCorrections.pairs,
     phraseExamples: phraseSelection.selected,
@@ -137,6 +172,10 @@ export function retrieveOwnerContext(plan, {
       allowedRegisters: policy.allowedRegisters,
       minimumSameFamilyPassages: policy.minimumSameFamilyPassages,
       minimumRegisterGoldPassages: policy.minimumRegisterGoldPassages,
+      minimumRelevantOwnerPassages: policy.minimumRelevantOwnerPassages,
+      relevantOwnerPassagesAvailableCount,
+      relevantOwnerPassagesSelectedCount: relevantOwnerPassages.length,
+      ownerPassageRelevanceTier,
       excludedEvidenceContentKeys: [...excludedKeys],
       preferredEvidenceContentKeys: [...preferredKeys],
       matrixEvidenceAvailableCount,
@@ -152,6 +191,8 @@ export function retrieveOwnerContext(plan, {
       knowledgeMatrixExamples: selectedMatrix.length,
       knowledgeMatrixArgumentCandidates: selectedMatrixArguments.length,
       sameFamilyExamples: selectedSameFamily.length,
+      relevantOwnerPassages: relevantOwnerPassages.length,
+      supportingOwnerPassages: supportingOwnerPassages.length,
       registerGoldExamples: selectedRegisterGold.length,
       sceneExamples: selectedScenes.length,
       primarySceneExamples: selectedScenes.filter((entry) => entry.evidenceRole === "primary_same_planet_sign_house_core_scene").length,
