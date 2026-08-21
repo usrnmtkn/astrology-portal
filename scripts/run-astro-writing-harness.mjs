@@ -10,6 +10,7 @@ import { assertPositiveOwnerEvidenceContext, OwnerEvidencePreconditionError } fr
 import {
   ownerPositiveEvidenceFromSurfaceQualifiedPool,
   ownerApprovedMatrixRoleEvidenceForTarget,
+  ownerRelevantEvidenceFromVoiceIndex,
   ownerPositiveEvidenceFromVoiceIndexBySourceIds
 } from "../src/astro-writing/ownerPositiveEvidence.mjs";
 import { sceneEvidenceForTarget } from "../src/astro-writing/sceneEvidence.mjs";
@@ -120,8 +121,13 @@ const voiceIndex = JSON.parse(fs.readFileSync(
 const approvedExamples = readJsonl(path.resolve("data/writing/OWNER_APPROVED_EXAMPLES.jsonl"));
 const matrixEvidenceRows = readJsonl(path.resolve("data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl"));
 const phraseEvidence = loadPhraseEvidenceIndex(path.resolve("data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl"));
+const relevantOwnerEvidence = ownerRelevantEvidenceFromVoiceIndex(voiceIndex, {
+  planet: request.meaningInput?.object,
+  sign: request.meaningInput?.sign
+});
 const examples = [
   ...ownerPositiveEvidenceFromSurfaceQualifiedPool(surfaceQualifiedPool),
+  ...relevantOwnerEvidence.selected,
   ...ownerPositiveEvidenceFromVoiceIndexBySourceIds(
     voiceIndex,
     request.additionalOwnerEvidenceSourceIds,
@@ -152,6 +158,8 @@ if (willDraft) {
       matrixExamples,
       matrixArgumentCandidates: matrixRoleEvidence.argument_candidate,
       matrixEvidenceAvailableCount: matrixExamples.length,
+      relevantOwnerPassagesAvailableCount: relevantOwnerEvidence.counts.selected,
+      ownerPassageRelevanceTier: relevantOwnerEvidence.tier,
       sceneExamples: sceneEvidence.selected,
       samePlanetSignSceneAvailableCount: sceneEvidence.counts.samePlanetSignSceneAvailable,
       sceneEvidenceInventoryCounts: sceneEvidence.counts,
@@ -203,6 +211,8 @@ const result = await runWritingPipeline({
   matrixExamples,
   matrixArgumentCandidates: matrixRoleEvidence.argument_candidate,
   matrixEvidenceAvailableCount: matrixExamples.length,
+  relevantOwnerPassagesAvailableCount: relevantOwnerEvidence.counts.selected,
+  ownerPassageRelevanceTier: relevantOwnerEvidence.tier,
   sceneExamples: sceneEvidence.selected,
   samePlanetSignSceneAvailableCount: sceneEvidence.counts.samePlanetSignSceneAvailable,
   sceneEvidenceInventoryCounts: sceneEvidence.counts,

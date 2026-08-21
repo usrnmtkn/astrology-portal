@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 
-export const ARGUMENT_OUTLINE_VERSION = "argument-outline-v3-sky-placement-spine-2026-08-14";
+export const ARGUMENT_OUTLINE_VERSION = "argument-outline-v4-placement-breadth-2026-08-21";
 
 export const ARGUMENT_OUTLINE_CORE_FIELDS = Object.freeze([
   "thesis",
@@ -55,13 +55,15 @@ function requiredLine(value, field) {
 
 function stablePayload(outline) {
   const fields = argumentOutlineFieldsForFamily(outline.family);
-  return JSON.stringify({
+  const payload = {
     version: outline.version,
     family: outline.family,
     surface: outline.surface,
     meaningPlanHash: outline.meaningPlanHash,
     ...Object.fromEntries(fields.map((field) => [field, outline[field]]))
-  });
+  };
+  if (outline.version === ARGUMENT_OUTLINE_VERSION) payload.scopeBreadth = outline.scopeBreadth;
+  return JSON.stringify(payload);
 }
 
 function meaningPlanHash(plan) {
@@ -76,6 +78,22 @@ export function buildArgumentOutline(input, { plan, family, surface } = {}) {
   if (!plan) throw new Error("Argument outline requires a governed meaning plan.");
   const fields = argumentOutlineFieldsForFamily(family);
   const outline = Object.fromEntries(fields.map((field) => [field, requiredLine(input?.[field], field)]));
+  const scopeInput = input?.scope_breadth;
+  const otherValidExpressions = Array.isArray(scopeInput?.other_valid_expressions)
+    ? [...new Set(scopeInput.other_valid_expressions.map((value) => requiredLine(value, "scope_breadth.other_valid_expressions")))]
+    : [];
+  if (otherValidExpressions.length < 3) {
+    throw new Error("ARGUMENT_SCOPE_REQUIRES_THREE_OTHER_VALID_EXPRESSIONS");
+  }
+  const scopeBreadth = Object.freeze({
+    broadMechanism: requiredLine(scopeInput?.broad_mechanism, "scope_breadth.broad_mechanism"),
+    chosenExpression: requiredLine(scopeInput?.chosen_expression, "scope_breadth.chosen_expression"),
+    otherValidExpressions: Object.freeze(otherValidExpressions),
+    use: "owner-review scope check only; never a reader-copy template"
+  });
+  if (scopeBreadth.broadMechanism === scopeBreadth.chosenExpression) {
+    throw new Error("ARGUMENT_SCOPE_COLLAPSES_MECHANISM_INTO_EXPRESSION");
+  }
   const value = {
     version: ARGUMENT_OUTLINE_VERSION,
     status: "owner-review-pending",
@@ -85,6 +103,7 @@ export function buildArgumentOutline(input, { plan, family, surface } = {}) {
     meaningPlanObject: plan.object,
     meaningPlanSign: plan.sign,
     meaningPlanHash: meaningPlanHash(plan),
+    scopeBreadth,
     ...outline
   };
   return Object.freeze({ ...value, outlineHash: argumentOutlineHash(value) });

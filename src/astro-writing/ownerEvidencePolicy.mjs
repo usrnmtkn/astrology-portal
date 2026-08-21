@@ -3,16 +3,27 @@ import {
   REQUIRED_CORE_EVIDENCE_ROLES
 } from "./sharedEvidenceIndex.mjs";
 
-export const OWNER_EVIDENCE_POLICY_VERSION = "shared-owner-evidence-v2-2026-08-13";
+export const OWNER_EVIDENCE_POLICY_VERSION = "shared-owner-evidence-v3-owner-passage-first-2026-08-21";
 export const MIN_SAME_FAMILY_OWNER_PASSAGES = 3;
 export const MIN_REGISTER_GOLD_PASSAGES = 1;
+export const MIN_RELEVANT_OWNER_PASSAGES = 3;
 
 const ARTICLE_POLICY = Object.freeze({
-  sameFamilyFamilies: Object.freeze(["sky-placement-current-sky-writer"]),
+  sameFamilyFamilies: Object.freeze([
+    "sky-placement-current-sky-writer",
+    "sky-article-longform",
+    "sky-article-reference",
+    "sky-season",
+    "sky-lunation",
+    "sky-nodes-longform",
+    "weekly-astrology",
+    "relationship-astrology"
+  ]),
   allowedRegisters: Object.freeze(["collective", "second_person"]),
   minimumSameFamilyPassages: MIN_SAME_FAMILY_OWNER_PASSAGES,
   minimumRegisterGoldPassages: MIN_REGISTER_GOLD_PASSAGES,
-  maximumSameFamilyPassages: 4,
+  minimumRelevantOwnerPassages: MIN_RELEVANT_OWNER_PASSAGES,
+  maximumSameFamilyPassages: 6,
   registerGoldIds: Object.freeze(["register-gold:sky-placement:saturn-capricorn-v3"])
 });
 
@@ -51,6 +62,8 @@ export function assertPositiveOwnerEvidenceContext(context, { family } = {}) {
   const policy = ownerEvidencePolicyFor(family);
   const sameFamilyCount = context?.sameFamilyExamples?.length ?? 0;
   const registerGoldCount = context?.registerGoldExamples?.length ?? 0;
+  const relevantAvailableCount = context?.evidencePolicy?.relevantOwnerPassagesAvailableCount ?? 0;
+  const relevantSelectedCount = context?.relevantOwnerPassages?.length ?? 0;
   const matrixAvailableCount = context?.evidencePolicy?.matrixEvidenceAvailableCount ?? 0;
   const matrixSelectedCount = context?.knowledgeMatrixExamples?.length ?? 0;
   const sceneAvailableCount = context?.evidencePolicy?.samePlanetSignSceneAvailableCount ?? 0;
@@ -63,6 +76,24 @@ export function assertPositiveOwnerEvidenceContext(context, { family } = {}) {
       family,
       phraseSelectedCount
     });
+  }
+  if (context?.evidencePolicy?.relevantOwnerPassagesAvailableCount == null) {
+    throw new OwnerEvidencePreconditionError("OWNER_RELEVANT_PASSAGE_LOOKUP_REQUIRED", {
+      family,
+      relevantSelectedCount
+    });
+  }
+  if (relevantAvailableCount > 0) {
+    const required = Math.min(policy.minimumRelevantOwnerPassages, relevantAvailableCount);
+    if (relevantSelectedCount < required) {
+      throw new OwnerEvidencePreconditionError("OWNER_RELEVANT_PASSAGES_MISSING", {
+        family,
+        relevanceTier: context?.evidencePolicy?.ownerPassageRelevanceTier ?? "unknown",
+        relevantAvailableCount,
+        relevantSelectedCount,
+        required
+      });
+    }
   }
   if (context?.evidencePolicy?.matrixEvidenceAvailableCount == null) {
     throw new OwnerEvidencePreconditionError("OWNER_MATRIX_EVIDENCE_LOOKUP_REQUIRED", {

@@ -39,6 +39,15 @@ const meaningInput = {
   allowedLivedDomains: ["relationships", "work", "money", "creative decisions", "access"]
 };
 const argumentInput = {
+  scope_breadth: {
+    broad_mechanism: "Venus in Libra makes agreement, exchange, attraction, and aesthetic judgment easier to coordinate, while ease can hide whose preference or contribution keeps moving.",
+    chosen_expression: "The page develops automatic accommodation inside a shared choice.",
+    other_valid_expressions: [
+      "Creative taste becomes easier to share without requiring identical preferences.",
+      "A price, exchange, or division of responsibility exposes what each side considers fair.",
+      "Attraction changes when politeness and genuine interest stop being treated as the same thing."
+    ]
+  },
   thesis: "Add why the existing imbalance can be hard to notice: Venus works easily in Libra, so smooth agreement can look complete before both preferences are known.",
   cultural_rule: "Do not replace the approved fairness argument; add only the assumption that an easy agreement must be a fair one.",
   transit_job: "Add a condition-based test of Venus in Libra's home-ground skill: can the connection stay easy after both sides state what they actually want?",

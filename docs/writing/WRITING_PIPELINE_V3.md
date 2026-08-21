@@ -49,6 +49,18 @@ Saturn in Capricorn rendered page is the primary register-gold model for scene s
 Article packets must say so explicitly. A lived paragraph must name things a reader can
 picture: the actual decision, the actual cost, and the actual follow-up work.
 
+The owner-passage-first rule supersedes count-only register retrieval. Three generic passages
+from the broad surface no longer satisfy the voice precondition when published owner prose for
+the exact planet-sign, same sign, or same planet is available. Actual relevant passages are the
+primary prose model. Register gold remains a concreteness reference and must not impose its
+argument or architecture on another placement.
+
+The placement-breadth rule applies at the argument gate. The governed meaning plan must remain
+broader than the page's chosen expression. Before approval, the packet distinguishes the broad
+planet-sign mechanism from the chosen lens and lists at least three other valid expressions as
+scope evidence only. Different scenes do not create breadth when they all prove the same narrow
+social thesis. A too-narrow argument returns for owner review before drafting.
+
 Scene evidence is a separate governed lane, not register evidence. For placement articles,
 approved same-planet-sign house-horoscope cores are the primary scene bank when they exist.
 Approved knowledge-matrix rows with at least two distinct recorded scene nouns and approved
@@ -70,7 +82,8 @@ the reader's life.
 3. Stop at `owner-review-pending` until the owner approves the exact outline.
 4. Require a recorded structural spine for the target content family.
 5. Retrieve at least three exact owner-authored passages from the explicitly mapped content
-   family, require the register-gold page, retrieve governed scene evidence in its separate
+   family, prioritizing exact planet-sign, then same-sign, then same-planet published prose;
+   require the register-gold page, retrieve governed scene evidence in its separate
    lane, select five to ten owner-authored AVAILABLE LINES by theme, and select six to ten
    before/after correction pairs by content family and that family's historical failure
    categories.
