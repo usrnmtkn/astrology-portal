@@ -10,6 +10,7 @@ import { retrieveOwnerContext } from "../src/astro-writing/retrieveOwnerContext.
 import {
   ownerApprovedMatrixRoleEvidenceForTarget,
   ownerPositiveEvidenceFromSurfaceQualifiedPool,
+  ownerRelevantEvidenceFromVoiceIndex,
   ownerPositiveEvidenceFromVoiceIndexBySourceIds
 } from "../src/astro-writing/ownerPositiveEvidence.mjs";
 import { sceneEvidenceForTarget } from "../src/astro-writing/sceneEvidence.mjs";
@@ -48,8 +49,13 @@ const matrixRoleEvidence = ownerApprovedMatrixRoleEvidenceForTarget(matrixEviden
   surface: request.surface
 });
 const matrixExamples = matrixRoleEvidence.meaning;
+const relevantOwnerEvidence = ownerRelevantEvidenceFromVoiceIndex(voiceIndex, {
+  planet: plan.object,
+  sign: plan.sign
+});
 const registerExamples = [
   ...ownerPositiveEvidenceFromSurfaceQualifiedPool(surfaceQualifiedPool),
+  ...relevantOwnerEvidence.selected,
   ...ownerPositiveEvidenceFromVoiceIndexBySourceIds(
     voiceIndex,
     request.additionalOwnerEvidenceSourceIds,
@@ -68,6 +74,8 @@ const context = retrieveOwnerContext(plan, {
   matrixExamples,
   matrixArgumentCandidates: matrixRoleEvidence.argument_candidate,
   matrixEvidenceAvailableCount: matrixExamples.length,
+  relevantOwnerPassagesAvailableCount: relevantOwnerEvidence.counts.selected,
+  ownerPassageRelevanceTier: relevantOwnerEvidence.tier,
   sceneExamples: sceneEvidence.selected,
   samePlanetSignSceneAvailableCount: sceneEvidence.counts.samePlanetSignSceneAvailable,
   sceneEvidenceInventoryCounts: sceneEvidence.counts,
