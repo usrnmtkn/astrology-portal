@@ -1170,6 +1170,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const report = await generatePlacementBatch();
     sendJson(res, 200, { ok: true, report });
   } catch (error) {
+    console.error("generate-sky-placements failed", error);
     sendJson(res, 500, {
       ok: false,
       error: error instanceof Error ? error.message : "Unknown sky-placement generation error."
