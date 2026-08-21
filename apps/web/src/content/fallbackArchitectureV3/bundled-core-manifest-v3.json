@@ -1,8 +1,8 @@
 {
   "packageVersion": "v3-2026-08-20b",
-  "contentHash": "ef0a64059ad6bf19a09e2c5f1ee58375",
-  "keyManifestHash": "c5ce86a847e7fabcfe84a03e866a5f38",
-  "keyCount": 7394,
+  "contentHash": "1ae834e8aae6ab7cca11047a2391ce78",
+  "keyManifestHash": "6235eb7885e729bc2e9e8eee41d33848",
+  "keyCount": 7395,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -1210,6 +1210,7 @@
     "authored:authored/transit-aspect/jupiter/chiron/sextile",
     "authored:authored/transit-aspect/jupiter/chiron/square",
     "authored:authored/transit-aspect/jupiter/chiron/trine",
+    "authored:authored/transit-aspect/jupiter/descendant/trine",
     "authored:authored/transit-aspect/jupiter/jupiter/hard",
     "authored:authored/transit-aspect/jupiter/jupiter/soft",
     "authored:authored/transit-aspect/jupiter/lilith/hard",

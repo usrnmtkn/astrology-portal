@@ -1,0 +1,159 @@
+{
+  "schema": "tldrastro-friends-pattern-copy-editorial-review-v1",
+  "version": "2026-08-21",
+  "sourceRecord": "packages/astro-knowledge/review/friends-pattern-copy-editorial-review-2026-08-21.md",
+  "governance": {
+    "reviewState": "needs_review",
+    "ownerApproved": false,
+    "promotionAuthorized": false,
+    "canonical": false,
+    "servingRowsChanged": false,
+    "note": "This packet records editorial direction and candidate wording only. Exact directional runtime payloads require separate owner approval before promotion."
+  },
+  "sourceSnapshots": [
+    {
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-clauses-v1.json",
+      "contentKey": "fallback-hook/pair-daily/bond-clause/hard/saturn",
+      "expectedReviewStatus": "approved",
+      "rowCopySha256": "5b5a6a5cf1e33efd5ad92f77108ce3ab8328d2d6820c9f1c19a67c6ba27da89d",
+      "issue": "Relationship-container room metaphor"
+    },
+    {
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-frames-v1.json",
+      "contentKey": "fallback-hook/pair-daily/close/hard",
+      "expectedReviewStatus": "approved",
+      "rowCopySha256": "805ee9419879c24fbb08a5e22218333e206baf8daa95a13e6a31c30e0a14890e",
+      "issue": "Formal or unnatural plan and flexibility phrasing"
+    },
+    {
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "contentKey": "fallback-hook/bond-effect-square/saturn",
+      "expectedReviewStatus": "approved",
+      "rowCopySha256": "5f33c9973d36a963fbeac135ab8bbcfc83fee295de46bce8f6798ffd48bc4bd5",
+      "issue": "Natural description of transferred work"
+    },
+    {
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "contentKey": "fallback-hook/synastry-pair/mercury/venus/conjunction",
+      "expectedReviewStatus": "approved",
+      "rowCopySha256": "de5d2841ecd6f28280c014073ccef10f5c73e48892b55541b23b75da075ff1d0",
+      "issue": "Psychological certainty exceeds the communication mechanism"
+    },
+    {
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "contentKey": "fallback-hook/synastry-pair/venus/saturn/soft",
+      "expectedReviewStatus": "approved",
+      "rowCopySha256": "724c1a285dd6c7646c3a98e7ff49743d735f6e9b418ca1a2d56fc45bb9c51d09",
+      "issue": "Reliability should not make unexpressed affection sound resolved"
+    },
+    {
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "contentKey": "fallback-hook/synastry-pair/venus/midheaven/soft",
+      "expectedReviewStatus": "reviewed",
+      "rowCopySha256": "8a145ffba26a59ecc77e726080f3f49352401f2c7bd6aa69c04c19522ebdaade",
+      "issue": "Generic career prose loses the directional people"
+    },
+    {
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "contentKey": "fallback-hook/angle-intro/ascendant",
+      "expectedReviewStatus": "approved",
+      "rowCopySha256": "f9ca0990d130ea624b0029f447ce77b7dbf0b0c413845955a458462c4c7fd9d1",
+      "issue": "Definition and adjectives should lead into observable behavior"
+    },
+    {
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "contentKey": "fallback-vocab/dodont-reward/jupiter",
+      "expectedReviewStatus": "approved",
+      "rowCopySha256": "22e76944cc889a23a862b78fe77269d76bfc4ec24ab403c6aa423c7bf5b3365b",
+      "issue": "Do item lacks an object"
+    },
+    {
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "contentKey": "fallback-vocab/dodont-shadow/moon/sagittarius",
+      "expectedReviewStatus": "approved",
+      "rowCopySha256": "fc43b41c4e3f131d8dbaf0488f111da67ba36cfb1af0ad93d72ad817dde1057d",
+      "issue": "Exact verb remains unresolved"
+    },
+    {
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "contentKey": "fallback-vocab/dodont-moon-dont/scorpio",
+      "expectedReviewStatus": "approved",
+      "rowCopySha256": "0606748f2aa5313fa899014e87e7b20e681fb1be72c06171645177978479798f",
+      "issue": "Don't-list grammar must remain parallel"
+    },
+    {
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "contentKey": "fallback-vocab/dodont-friction/moon",
+      "expectedReviewStatus": "approved",
+      "rowCopySha256": "40f26c1970eb1908f9d9453731b00d86f66442b98d24c9e6bd8faf83a4ef1b16",
+      "issue": "Don't-list grammar must remain parallel"
+    }
+  ],
+  "candidates": [
+    {
+      "contentKey": "fallback-hook/pair-daily/bond-clause/hard/saturn",
+      "disposition": "needs_exact_owner_wording",
+      "direction": "Replace room when it is standing in for the relationship connection.",
+      "proposedPayload": null,
+      "ownerApproved": false
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/close/hard",
+      "disposition": "needs_exact_owner_wording",
+      "direction": "Use ordinary plan or schedule language and say being flexible or no big deal rather than flexibility.",
+      "proposedPayload": null,
+      "ownerApproved": false
+    },
+    {
+      "contentKey": "fallback-hook/bond-effect-square/saturn",
+      "disposition": "needs_directional_variant_and_exact_owner_approval",
+      "direction": "Remove the redundant person construction and describe the work that remains with the reader.",
+      "proposedPayload": {
+        "body_you": "The plan with {{holder1}} changes again. The call does not happen, the reservation is still not made, or another responsibility quietly becomes yours. After a while, an explanation does not change the fact that you are still doing the extra work.",
+        "body_they": null
+      },
+      "ownerApproved": false
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/mercury/venus/conjunction",
+      "disposition": "needs_runtime_direction_mapping_and_exact_owner_approval",
+      "direction": "Keep the communication-affection cause chain, but do not infer that worth is being picked apart.",
+      "submittedExample": "Chris's way of talking fits naturally with how you show affection. You may hear their questions, stories, and explanations as a way of reaching for you, and your warmth makes it easy for Chris to keep talking. The problem starts when a conversation goes on long enough that you feel like you have to explain or defend what you wanted in the first place. Chris may keep trying to clarify, while you become more aware that being understood is not the same as having your preference taken seriously.",
+      "ownerApproved": false
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/saturn/soft",
+      "disposition": "needs_runtime_direction_mapping_and_exact_owner_approval",
+      "direction": "Show dependable care, then the risk that reliability makes affection easier to assume than express.",
+      "submittedExample": "There is something dependable about the way you and Chris care for each other. Plans, responsibilities, difficult stretches, and the ordinary work of building a life together do not automatically threaten the relationship. But that reliability can also make affection easier to assume than express. You may both know the commitment is there while still needing more warmth, appreciation, or reassurance to be said out loud.",
+      "ownerApproved": false
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/midheaven/soft",
+      "disposition": "needs_runtime_direction_mapping_and_exact_owner_approval",
+      "direction": "Keep the reader's Venus and the named person's Midheaven visible through observable support.",
+      "submittedExample": "You are naturally supportive of what Chris is trying to build in the world. You notice the wins, encourage the work, and can make success feel worth celebrating instead of immediately turning into the next thing that needs to get done. Chris may feel more confident taking their ambitions seriously because you take them seriously too. The strength here is not that you carry the ambition for them. It is that your affection gives Chris somewhere encouraging to return to while they pursue it.",
+      "ownerApproved": false
+    },
+    {
+      "contentKey": "fallback-hook/angle-intro/ascendant",
+      "disposition": "needs_family_template_and_exact_owner_approval",
+      "direction": "Use a brief placement function, then sign mechanism, lived evidence, consequence, complication, and mature expression. Resolve the remaining room metaphor before review.",
+      "ownerApproved": false
+    },
+    {
+      "contentKey": "fallback-vocab/dodont-reward/jupiter",
+      "disposition": "needs_exact_object_and_owner_approval",
+      "direction": "Name what the reader should ask for.",
+      "proposedPayload": null,
+      "ownerApproved": false
+    },
+    {
+      "contentKey": "fallback-vocab/dodont-shadow/moon/sagittarius",
+      "disposition": "needs_exact_verb_and_owner_approval",
+      "direction": "Owner must choose escaping or avoiding; do not guess.",
+      "proposedPayload": null,
+      "ownerApproved": false
+    }
+  ]
+}
