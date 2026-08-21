@@ -10379,7 +10379,11 @@ export function App() {
   const [dyslexiaFriendlyFont, setDyslexiaFriendlyFont] = useState(getInitialDyslexiaFont);
   const [journalPromptsEnabled, setJournalPromptsEnabled] = useState(getInitialJournalPrompts);
   const [guestHouseSignLabelStyle, setGuestHouseSignLabelStyle] = useState<HouseSignLabelStyle>(getInitialHouseSignLabelStyle);
+  const [currentLocalDate, setCurrentLocalDate] = useState(dateInputValue);
+  const currentLocalDateRef = useRef(currentLocalDate);
   const [skyDate, setSkyDate] = useState(getInitialTransitDate);
+  const skyDateRef = useRef(skyDate);
+  const followsCurrentTransitDateRef = useRef(skyDate === currentLocalDate);
   const [mode, setMode] = useState<PortalMode>(getInitialPortalMode);
   const [location, setLocation] = useState<LocationInput>(initialLocationState.location);
   const [manualLocation, setManualLocation] = useState(initialLocationState.location.label);
@@ -11064,7 +11068,16 @@ export function App() {
   useEffect(() => {
     function handlePortalUrlChange() {
       const urlMode = portalModeFromUrl();
-      setSkyDate(transitDateFromUrl() ?? dateInputValue());
+      const nextCurrentLocalDate = dateInputValue();
+      const nextSkyDate = transitDateFromUrl() ?? nextCurrentLocalDate;
+
+      currentLocalDateRef.current = nextCurrentLocalDate;
+      setCurrentLocalDate(nextCurrentLocalDate);
+      if (nextSkyDate !== skyDateRef.current) {
+        followsCurrentTransitDateRef.current = nextSkyDate === nextCurrentLocalDate;
+      }
+      skyDateRef.current = nextSkyDate;
+      setSkyDate(nextSkyDate);
 
       if (!urlMode) {
         return;
@@ -11097,6 +11110,68 @@ export function App() {
       window.removeEventListener("hashchange", handlePortalUrlChange);
     };
   }, [userProfile]);
+
+  useEffect(() => {
+    let rolloverTimer: number | null = null;
+
+    function scheduleNextLocalDaySync() {
+      if (rolloverTimer !== null) {
+        window.clearTimeout(rolloverTimer);
+      }
+
+      const now = new Date();
+      const nextLocalDay = new Date(now);
+      nextLocalDay.setDate(nextLocalDay.getDate() + 1);
+      nextLocalDay.setHours(0, 0, 0, 50);
+      const delay = Math.max(50, nextLocalDay.getTime() - now.getTime());
+
+      rolloverTimer = window.setTimeout(() => {
+        syncTransitDateWithLocalDay();
+        scheduleNextLocalDaySync();
+      }, delay);
+    }
+
+    function syncTransitDateWithLocalDay() {
+      const nextCurrentLocalDate = dateInputValue();
+
+      if (nextCurrentLocalDate === currentLocalDateRef.current) {
+        return;
+      }
+
+      currentLocalDateRef.current = nextCurrentLocalDate;
+      setCurrentLocalDate(nextCurrentLocalDate);
+
+      if (followsCurrentTransitDateRef.current) {
+        skyDateRef.current = nextCurrentLocalDate;
+        setSkyDate(nextCurrentLocalDate);
+        updateTransitDateUrl(nextCurrentLocalDate, "replace");
+      }
+    }
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "visible") {
+        syncTransitDateWithLocalDay();
+        scheduleNextLocalDaySync();
+      }
+    }
+
+    function handleWindowFocus() {
+      syncTransitDateWithLocalDay();
+      scheduleNextLocalDaySync();
+    }
+
+    scheduleNextLocalDaySync();
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", handleWindowFocus);
+
+    return () => {
+      if (rolloverTimer !== null) {
+        window.clearTimeout(rolloverTimer);
+      }
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", handleWindowFocus);
+    };
+  }, []);
 
   useEffect(() => {
     if (!skyDetailRoutePath?.startsWith("sky/") || !sky) {
@@ -12904,8 +12979,8 @@ export function App() {
   const showTransitDateControls = isTransitDateMode && !selectedSkyDetail;
   const showSkyLocationControl = isTodayMode;
   const needsChartSetup = Boolean(userProfile && !hasCompleteChartSetup(userProfile));
-  const todaySkyDate = dateInputValue();
-  const tomorrowSkyDate = dateInputValue(new Date(localDayStart(new Date()).getTime() + 86_400_000));
+  const todaySkyDate = currentLocalDate;
+  const tomorrowSkyDate = dateInputValue(new Date(dateFromInput(currentLocalDate).getTime() + 86_400_000));
   const transitDateButtonLabel = isPersonalTransitDateMode && skyDate === todaySkyDate
     ? "Today"
     : formatSkyHeaderDateLabel(skyDate);
@@ -12916,6 +12991,9 @@ export function App() {
     if (!isDateInputValue(nextDate)) {
       return;
     }
+
+    followsCurrentTransitDateRef.current = nextDate === currentLocalDateRef.current;
+    skyDateRef.current = nextDate;
 
     if (nextDate !== skyDate) {
       updateTransitDateUrl(nextDate);

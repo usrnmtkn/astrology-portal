@@ -53,6 +53,26 @@ assert.match(
   "The selected transit date must be restorable from the URL."
 );
 assert.match(
+  app,
+  /const followsCurrentTransitDateRef = useRef\(skyDate === currentLocalDate\)/u,
+  "The app must distinguish a live Today selection from an intentionally fixed date."
+);
+assert.match(
+  app,
+  /function syncTransitDateWithLocalDay\(\)[\s\S]*setCurrentLocalDate\(nextCurrentLocalDate\)[\s\S]*if \(followsCurrentTransitDateRef\.current\)[\s\S]*setSkyDate\(nextCurrentLocalDate\)[\s\S]*updateTransitDateUrl\(nextCurrentLocalDate, "replace"\)/u,
+  "A live Today selection must advance the state and URL when the local day changes."
+);
+assert.match(
+  app,
+  /document\.addEventListener\("visibilitychange", handleVisibilityChange\);[\s\S]*window\.addEventListener\("focus", handleWindowFocus\);/u,
+  "The transit date must catch up when a sleeping or backgrounded page becomes active."
+);
+assert.match(
+  app,
+  /followsCurrentTransitDateRef\.current = nextDate === currentLocalDateRef\.current;/u,
+  "Choosing a past or future date must stop automatic Today rollover."
+);
+assert.match(
   friendsPanel,
   /<FriendTransitsTab[\s\S]*dateLabel=\{transitDateLabel\}/u,
   "The Friends transit tab must receive its selected-date label."
@@ -81,5 +101,5 @@ assert.match(
 console.log(JSON.stringify({
   status: "PASS",
   surface: "shared transit date picker",
-  contract: "You and Friends expose date selection and render only matching-date transit facts."
+  contract: "You and Friends expose date selection, follow local-day rollover in Today mode, and render only matching-date transit facts."
 }, null, 2));
