@@ -219,12 +219,12 @@ for (const sign of ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libr
 }
 
 const corrections = jsonl("data/writing/owner-corrections.jsonl");
-assert.equal(corrections.length, 23, "All 23 owner correction fixtures must be seeded.");
+assert.equal(corrections.length, 32, "All 32 owner correction fixtures must be seeded.");
 const minedOwnerFeedback = jsonl("data/writing/owner-feedback-corpus.jsonl");
 const allOwnerCorrections = [...new Map(
   [...corrections, ...minedOwnerFeedback].map((entry) => [entry.bad.trim().toLowerCase(), entry])
 ).values()];
-assert.equal(allOwnerCorrections.length, 60, "The pair selector must receive all 60 deduplicated owner corrections.");
+assert.equal(allOwnerCorrections.length, 69, "The pair selector must receive all 69 deduplicated owner corrections.");
 for (const fixture of corrections) {
   for (const field of ["bad", "corrected", "category", "why", "family", "rule"]) assert.ok(fixture[field], `Correction fixture missing ${field}.`);
   const review = await reviewDraft({
