@@ -104,7 +104,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
 
   await page.addInitScript(({ fixtureLocation, fixtureUserId, fixedNow, options }) => {
     const RealDate = Date;
-    const fixedTime = new RealDate(fixedNow).getTime();
+    let fixedTime = new RealDate(fixedNow).getTime();
 
     class FixedDate extends RealDate {
       constructor(...args: any[]) {
@@ -123,6 +123,9 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
     FixedDate.UTC = RealDate.UTC;
     FixedDate.parse = RealDate.parse;
     window.Date = FixedDate as DateConstructor;
+    (window as any).__tldrSetQaNow = (nextNow: string) => {
+      fixedTime = new RealDate(nextNow).getTime();
+    };
 
     const shouldSeedClientState = !window.localStorage.getItem("tldrastro:qaFlowSeeded");
 
@@ -1070,6 +1073,41 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(page).toHaveURL(/[?&]date=2026-07-12(?:&|#|$)/u);
     await expect(dateTrigger).toContainText("Jul 12");
+    await assertNoClientErrors();
+  });
+
+  test("Today's transit date advances after local midnight while chosen dates stay fixed", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, {
+      profile: true,
+      now: "2026-08-21T03:59:50.000Z"
+    });
+    await expectClientRouteLoads(page, "/?date=2026-08-20#you");
+
+    const dateTrigger = page.locator(".sky-header-date-button");
+    await expect(dateTrigger).toContainText("Today");
+
+    await page.evaluate(() => {
+      (window as any).__tldrSetQaNow("2026-08-21T04:00:05.000Z");
+      window.dispatchEvent(new Event("focus"));
+    });
+
+    await expect(page).toHaveURL(/[?&]date=2026-08-21(?:&|#|$)/u);
+    await expect(dateTrigger).toContainText("Today");
+
+    await dateTrigger.click();
+    await page.getByRole("gridcell", { name: "Thursday, August 20, 2026" }).click();
+    await expect(page).toHaveURL(/[?&]date=2026-08-20(?:&|#|$)/u);
+    await expect(dateTrigger).toContainText("Aug 20");
+
+    await page.evaluate(() => {
+      (window as any).__tldrSetQaNow("2026-08-22T04:00:05.000Z");
+      window.dispatchEvent(new Event("focus"));
+    });
+
+    await expect(page).toHaveURL(/[?&]date=2026-08-20(?:&|#|$)/u);
+    await expect(dateTrigger).toContainText("Aug 20");
     await assertNoClientErrors();
   });
 
