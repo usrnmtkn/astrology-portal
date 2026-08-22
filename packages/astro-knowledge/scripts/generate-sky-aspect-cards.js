@@ -763,12 +763,19 @@ function loadLocalEnv() {
   }
 }
 
-const { resolveActiveRelease, resolveCandidateRelease } = require("./editorial-model-registry.js");
+const {
+  readRegistry,
+  resolveActiveRelease,
+  resolveCandidateRelease,
+  resolveLane
+} = require("./editorial-model-registry.js");
 
 function registeredRelease(role, surface) {
   const roleCandidateKey = role === "judge"
     ? "EDITORIAL_JUDGE_CANDIDATE_RELEASE_ID"
-    : "EDITORIAL_GENERATION_CANDIDATE_RELEASE_ID";
+    : role === "writer"
+      ? "EDITORIAL_WRITER_CANDIDATE_RELEASE_ID"
+      : "EDITORIAL_GENERATION_CANDIDATE_RELEASE_ID";
   const candidateReleaseId = String(
     process.env[roleCandidateKey]
     || process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID
@@ -777,7 +784,9 @@ function registeredRelease(role, surface) {
   if (!candidateReleaseId) return resolveActiveRelease({ role, surface });
   const authorized = role === "judge"
     ? process.env.TLDR_ALLOW_LIVE_LLM_CALIBRATION === "1"
-    : process.env.TLDR_ALLOW_LIVE_LLM_GENERATION_CALIBRATION === "1";
+    : role === "writer"
+      ? process.env.TLDR_ALLOW_LIVE_LLM_WRITER_CALIBRATION === "1"
+      : process.env.TLDR_ALLOW_LIVE_LLM_GENERATION_CALIBRATION === "1";
   if (!authorized) {
     throw new Error(
       `Candidate model selection for ${role} requires an explicitly authorized ${role} calibration.`
@@ -788,12 +797,15 @@ function registeredRelease(role, surface) {
 
 const OPENAI_REASONING_EFFORTS = new Set(["none", "low", "medium", "high", "xhigh", "max"]);
 
-function openAiReasoningEffort({ isJudge, model, release }) {
+function openAiReasoningEffort({ isJudge, isWriter = false, model, release }) {
   const configured = String(
     (isJudge
       ? process.env.OPENAI_JUDGE_REASONING_EFFORT
-      : process.env.OPENAI_GENERATION_REASONING_EFFORT)
-    || process.env.OPENAI_REASONING_EFFORT
+      : isWriter
+        ? (process.env.OPENAI_SKY_PLACEMENT_WRITER_REASONING_EFFORT
+          || process.env.OPENAI_WRITER_REASONING_EFFORT)
+        : process.env.OPENAI_GENERATION_REASONING_EFFORT)
+    || (isWriter ? "" : process.env.OPENAI_REASONING_EFFORT)
     || ""
   ).trim().toLowerCase();
   const registered = release.provider === "openai" && release.model === model
@@ -811,6 +823,7 @@ function openAiReasoningEffort({ isJudge, model, release }) {
 function modelConfig(role = "generation", surface = "default") {
   loadLocalEnv();
   const isJudge = role === "judge";
+  const isWriter = role === "writer";
   const release = registeredRelease(role, surface);
   const requested = (isJudge
     ? (
@@ -820,7 +833,13 @@ function modelConfig(role = "generation", surface = "default") {
         || process.env.CONTENT_GENERATION_PROVIDER
         || release.provider
       )
-    : (
+    : isWriter
+      ? (
+        process.env.CONTENT_WRITER_PROVIDER_SKY_PLACEMENT
+        || process.env.CONTENT_WRITER_PROVIDER
+        || release.provider
+      )
+      : (
         process.env.CONTENT_GENERATION_PROVIDER_SKY_ASPECT
         || process.env.CONTENT_GENERATION_PROVIDER
         || release.provider
@@ -832,7 +851,12 @@ function modelConfig(role = "generation", surface = "default") {
   if (provider === "claude") {
     const configuredModel = isJudge
       ? (process.env.ANTHROPIC_JUDGE_MODEL || process.env.ANTHROPIC_MODEL)
-      : (process.env.ANTHROPIC_GENERATION_MODEL || process.env.ANTHROPIC_MODEL);
+      : isWriter
+        ? (process.env.ANTHROPIC_SKY_PLACEMENT_WRITER_MODEL
+          || process.env.ANTHROPIC_WRITER_MODEL
+          || process.env.ANTHROPIC_GENERATION_MODEL
+          || process.env.ANTHROPIC_MODEL)
+        : (process.env.ANTHROPIC_GENERATION_MODEL || process.env.ANTHROPIC_MODEL);
     return {
       ...release,
       provider,
@@ -851,9 +875,11 @@ function modelConfig(role = "generation", surface = "default") {
   if (provider === "openai") {
     const configuredModel = isJudge
       ? process.env.OPENAI_JUDGE_MODEL
-      : (process.env.OPENAI_GENERATION_MODEL || process.env.OPENAI_MODEL);
+      : isWriter
+        ? (process.env.OPENAI_SKY_PLACEMENT_WRITER_MODEL || process.env.OPENAI_WRITER_MODEL)
+        : (process.env.OPENAI_GENERATION_MODEL || process.env.OPENAI_MODEL);
     const model = configuredModel || registryModel || "gpt-4.1-mini";
-    const reasoningEffort = openAiReasoningEffort({ isJudge, model, release });
+    const reasoningEffort = openAiReasoningEffort({ isJudge, isWriter, model, release });
     return {
       ...release,
       provider,
@@ -871,11 +897,43 @@ function modelConfig(role = "generation", surface = "default") {
     };
   }
 
-  throw new Error(`Unsupported ${isJudge ? "CONTENT_JUDGE_PROVIDER" : "CONTENT_GENERATION_PROVIDER_SKY_ASPECT"} '${requested}'. Use 'openai' or 'claude'.`);
+  const providerSetting = isJudge
+    ? "CONTENT_JUDGE_PROVIDER"
+    : isWriter
+      ? "CONTENT_WRITER_PROVIDER_SKY_PLACEMENT"
+      : "CONTENT_GENERATION_PROVIDER_SKY_ASPECT";
+  throw new Error(`Unsupported ${providerSetting} '${requested}'. Use 'openai' or 'claude'.`);
 }
 
 function generationConfig(surface = "default") {
   return modelConfig("generation", surface);
+}
+
+function writerConfig(surface = "sky-placement") {
+  return modelConfig("writer", surface);
+}
+
+function skyPlacementWriterConfig() {
+  const candidateReleaseId = String(
+    process.env.EDITORIAL_WRITER_CANDIDATE_RELEASE_ID
+    || process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID
+    || ""
+  ).trim();
+  const { laneId, lane } = resolveLane(readRegistry(), "writer", "sky-placement");
+
+  if (candidateReleaseId || lane.active) {
+    return writerConfig("sky-placement");
+  }
+
+  // Preserve the currently deployed generation release until the dedicated
+  // Sol writer has passed its owner-governed calibration and is promoted.
+  // The fallback is explicit in metadata so it cannot be mistaken for an
+  // active writer release.
+  return {
+    ...generationConfig(),
+    writerLaneId: laneId,
+    writerLaneState: "inactive-legacy-generation-fallback"
+  };
 }
 
 function judgeConfig(surface = "sky-aspect") {
@@ -1400,5 +1458,7 @@ module.exports = {
   placementCloseBank,
   repairCard,
   repairPlacementTopper,
+  skyPlacementWriterConfig,
+  writerConfig,
   reviewPairSources
 };

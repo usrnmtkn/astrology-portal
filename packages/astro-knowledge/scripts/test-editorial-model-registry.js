@@ -4,6 +4,7 @@ const assert = require("assert");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const { auditExistingCorpus, markdown: existingCorpusMarkdown } = require("./audit-sky-placement-writer-existing-corpus.js");
 const {
   promoteCandidate,
   readRegistry,
@@ -19,6 +20,7 @@ const {
 
 const originalPromotionAuth = process.env.TLDR_ALLOW_MODEL_PROMOTION;
 const originalJudgeProvider = process.env.CONTENT_JUDGE_PROVIDER;
+const originalGenerationProvider = process.env.CONTENT_GENERATION_PROVIDER_SKY_ASPECT;
 const originalJudgeModel = process.env.OPENAI_JUDGE_MODEL;
 const originalCandidateReleaseId = process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID;
 const originalCalibrationAuth = process.env.TLDR_ALLOW_LIVE_LLM_CALIBRATION;
@@ -26,6 +28,10 @@ const originalJudgeReasoningEffort = process.env.OPENAI_JUDGE_REASONING_EFFORT;
 const originalGenerationModel = process.env.OPENAI_GENERATION_MODEL;
 const originalGenerationReasoningEffort = process.env.OPENAI_GENERATION_REASONING_EFFORT;
 const originalGenerationCalibrationAuth = process.env.TLDR_ALLOW_LIVE_LLM_GENERATION_CALIBRATION;
+const originalWriterCandidateReleaseId = process.env.EDITORIAL_WRITER_CANDIDATE_RELEASE_ID;
+const originalWriterCalibrationAuth = process.env.TLDR_ALLOW_LIVE_LLM_WRITER_CALIBRATION;
+const originalWriterModel = process.env.OPENAI_SKY_PLACEMENT_WRITER_MODEL;
+const originalWriterReasoningEffort = process.env.OPENAI_SKY_PLACEMENT_WRITER_REASONING_EFFORT;
 
 function restoreEnv(name, value) {
   if (value === undefined) delete process.env[name];
@@ -34,11 +40,25 @@ function restoreEnv(name, value) {
 
 try {
   const registry = readRegistry();
+  const writerEvaluation = require("../config/sky-placement-writer-evaluation-v2.json");
   validateRegistry(registry);
   assert.strictEqual(Object.keys(registry.lanes).length, 9);
   assert.strictEqual(registry.lanes["writer:sky-placement"].active, null);
   assert.strictEqual(registry.lanes["writer:sky-placement"].candidate.model, "gpt-5.6-sol");
   assert.strictEqual(registry.lanes["writer:sky-placement"].candidate.reasoningEffort, "xhigh");
+  assert.strictEqual(writerEvaluation.candidateReleaseId, registry.lanes["writer:sky-placement"].candidate.releaseId);
+  const existingWriterCorpus = auditExistingCorpus();
+  const storedExistingWriterCorpus = require("../review/sky-placement-writer-existing-owner-corpus-audit-v2.json");
+  assert.deepStrictEqual(storedExistingWriterCorpus, existingWriterCorpus);
+  assert.strictEqual(
+    fs.readFileSync(path.join(__dirname, "..", "review", "sky-placement-writer-existing-owner-corpus-audit-v2.md"), "utf8"),
+    existingCorpusMarkdown(existingWriterCorpus)
+  );
+  assert.strictEqual(existingWriterCorpus.newOwnerWritingRequired, false);
+  assert.strictEqual(existingWriterCorpus.evaluationSubsetFrozen, false);
+  assert.strictEqual(writerEvaluation.existingOwnerAuthoredSameSurfacePassageCount, existingWriterCorpus.ownerAuthoredSameSurfacePassageCount);
+  assert.strictEqual(writerEvaluation.existingOwnerAuthoredSameSurfacePassagesUnexposedToStoredWriterInputs, existingWriterCorpus.unexposedToStoredWriterInputCount);
+  assert.ok(existingWriterCorpus.unexposedToStoredWriterInputCount >= writerEvaluation.targetHeldoutFixtureCount);
   assert.throws(() => resolveActiveRelease({ role: "writer", surface: "sky-placement", registry }), /no active release/);
 
   const release = resolveActiveRelease({
@@ -194,7 +214,49 @@ try {
   delete process.env.OPENAI_JUDGE_REASONING_EFFORT;
   delete process.env.EDITORIAL_MODEL_CANDIDATE_RELEASE_ID;
   delete process.env.TLDR_ALLOW_LIVE_LLM_CALIBRATION;
-  const { generationConfig, judgeConfig, judgeConfigForOptions, openAiRequestSettings } = require("./generate-sky-aspect-cards.js");
+  const {
+    generationConfig,
+    judgeConfig,
+    judgeConfigForOptions,
+    openAiRequestSettings,
+    skyPlacementWriterConfig,
+    writerConfig
+  } = require("./generate-sky-aspect-cards.js");
+  const exactAspectActive = generationConfig("sky-exact-aspect");
+  assert.strictEqual(exactAspectActive.laneId, "generation:sky-exact-aspect");
+  assert.strictEqual(exactAspectActive.model, "gpt-4.1-mini");
+
+  assert.throws(() => writerConfig("sky-placement"), /no active release/);
+  const placementLegacyFallback = skyPlacementWriterConfig();
+  assert.strictEqual(placementLegacyFallback.laneId, "generation:default");
+  assert.strictEqual(placementLegacyFallback.model, "gpt-4.1-mini");
+  assert.strictEqual(placementLegacyFallback.writerLaneId, "writer:sky-placement");
+  assert.strictEqual(placementLegacyFallback.writerLaneState, "inactive-legacy-generation-fallback");
+
+  process.env.EDITORIAL_WRITER_CANDIDATE_RELEASE_ID = registry.lanes["writer:sky-placement"].candidate.releaseId;
+  delete process.env.TLDR_ALLOW_LIVE_LLM_WRITER_CALIBRATION;
+  assert.throws(
+    () => skyPlacementWriterConfig(),
+    /explicitly authorized writer calibration/
+  );
+  process.env.TLDR_ALLOW_LIVE_LLM_WRITER_CALIBRATION = "1";
+  process.env.CONTENT_GENERATION_PROVIDER_SKY_ASPECT = "claude";
+  process.env.OPENAI_GENERATION_MODEL = "gpt-4.1-mini";
+  const placementWriterCandidate = skyPlacementWriterConfig();
+  assert.strictEqual(placementWriterCandidate.laneId, "writer:sky-placement");
+  assert.strictEqual(placementWriterCandidate.registryState, "candidate");
+  assert.strictEqual(placementWriterCandidate.model, "gpt-5.6-sol");
+  assert.strictEqual(placementWriterCandidate.reasoningEffort, "xhigh");
+  assert.strictEqual(placementWriterCandidate.registryOverride, false);
+  assert.deepStrictEqual(
+    openAiRequestSettings(placementWriterCandidate),
+    { reasoning: { effort: "xhigh" } }
+  );
+  restoreEnv("CONTENT_GENERATION_PROVIDER_SKY_ASPECT", originalGenerationProvider);
+  restoreEnv("OPENAI_GENERATION_MODEL", originalGenerationModel);
+  delete process.env.EDITORIAL_WRITER_CANDIDATE_RELEASE_ID;
+  delete process.env.TLDR_ALLOW_LIVE_LLM_WRITER_CALIBRATION;
+
   const configured = judgeConfig("sky-article-longform");
   assert.strictEqual(configured.laneId, laneId);
   assert.strictEqual(configured.releaseId, release.releaseId);
@@ -261,11 +323,16 @@ try {
 } finally {
   restoreEnv("TLDR_ALLOW_MODEL_PROMOTION", originalPromotionAuth);
   restoreEnv("CONTENT_JUDGE_PROVIDER", originalJudgeProvider);
+  restoreEnv("CONTENT_GENERATION_PROVIDER_SKY_ASPECT", originalGenerationProvider);
   restoreEnv("OPENAI_JUDGE_MODEL", originalJudgeModel);
   restoreEnv("OPENAI_JUDGE_REASONING_EFFORT", originalJudgeReasoningEffort);
   restoreEnv("OPENAI_GENERATION_MODEL", originalGenerationModel);
   restoreEnv("OPENAI_GENERATION_REASONING_EFFORT", originalGenerationReasoningEffort);
   restoreEnv("TLDR_ALLOW_LIVE_LLM_GENERATION_CALIBRATION", originalGenerationCalibrationAuth);
+  restoreEnv("EDITORIAL_WRITER_CANDIDATE_RELEASE_ID", originalWriterCandidateReleaseId);
+  restoreEnv("TLDR_ALLOW_LIVE_LLM_WRITER_CALIBRATION", originalWriterCalibrationAuth);
+  restoreEnv("OPENAI_SKY_PLACEMENT_WRITER_MODEL", originalWriterModel);
+  restoreEnv("OPENAI_SKY_PLACEMENT_WRITER_REASONING_EFFORT", originalWriterReasoningEffort);
   restoreEnv("EDITORIAL_MODEL_CANDIDATE_RELEASE_ID", originalCandidateReleaseId);
   restoreEnv("TLDR_ALLOW_LIVE_LLM_CALIBRATION", originalCalibrationAuth);
 }
