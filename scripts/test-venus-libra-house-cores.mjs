@@ -38,15 +38,12 @@ const normalizedStaged = {
   }))
 };
 
-assert.deepEqual(
-  source,
-  normalizedStaged,
-  "The serving source may differ from the staged owner package only by the globally approved reader-punctuation normalization."
-);
 assert.equal(source.rows.length, 12);
+assert.equal(normalizedStaged.rows.length, 12);
 
 for (const [index, row] of source.rows.entries()) {
   const house = index + 1;
+  const stagedRow = normalizedStaged.rows[index];
   const ownerMatch = ownerPackage.match(new RegExp(`### ${ordinals[index]} house\\n\\n([\\s\\S]*?)\\n\\n_Provenance:`));
   assert.ok(ownerMatch, `The approved owner package must contain the ${ordinals[index]} house body.`);
   assert.equal(
@@ -54,11 +51,28 @@ for (const [index, row] of source.rows.entries()) {
     normalizeReaderPunctuation(ownerMatch[1]),
     `${row.contentKey} must preserve the owner-approved body under the global reader-punctuation normalization.`
   );
+  assert.equal(row.body_you, stagedRow.body_you, `${row.contentKey} must preserve the historical approved wording even after a status change.`);
   assert.equal(row.body_they, row.body_you, `${row.contentKey} must not carry a rewritten reader variant.`);
-  assert.equal(row.review_status, "approved");
   assert.equal(row.content_role, "house_horoscope_core");
   assert.equal(row.grammar_frame, "second_person_block");
 
+  if (house === 5) {
+    assert.equal(row.review_status, "needs_review", "The owner-rejected 5th-house passage must not remain approved.");
+    assert.match(row.approved_via, /revoked by explicit owner correction 2026-08-22/u);
+    assert.throws(
+      () => renderSkyPlacementHouseCore({ planet: "venus", sign: "libra", house }),
+      (error) => error instanceof SourceGapError && /SOURCE_GAP: house horoscope core venus\/libra\/house-5/u.test(error.message),
+      "The rejected 5th-house passage must not render from the reader bundle."
+    );
+    assert.throws(
+      () => browserRenderer.renderSkyPlacementHouseCore({ planet: "venus", sign: "libra", house }),
+      (error) => error instanceof Error && /SOURCE_GAP: house horoscope core venus\/libra\/house-5/u.test(error.message),
+      "The browser resolver must also reject the revoked passage."
+    );
+    continue;
+  }
+
+  assert.equal(row.review_status, "approved");
   const rendered = renderSkyPlacementHouseCore({ planet: "venus", sign: "libra", house });
   assert.equal(rendered.contentKey, row.contentKey);
   assert.equal(rendered.body, row.body_you, `${row.contentKey} must render without truncation or punctuation changes.`);
@@ -80,4 +94,24 @@ assert.throws(
   "A non-approved Libra planet must fail closed."
 );
 
-console.log("Venus in Libra house cores preserve all 12 approved V3 bodies and fail closed outside the approved pair.");
+const genericApprovedRenderer = createTransitSynastryRenderer(
+  { authoredCards: [] },
+  { templates: [] },
+  {
+    hookRows: [{
+      contentKey: "house-horoscope-core/uranus/gemini/house-5",
+      content_role: "house_horoscope_core",
+      grammar_frame: "second_person_block",
+      body_you: "Approved exact test passage.",
+      review_status: "approved"
+    }],
+    vocabularyRows: []
+  }
+);
+assert.equal(
+  genericApprovedRenderer.renderSkyPlacementHouseCore({ planet: "uranus", sign: "gemini", house: 5 }).body,
+  "Approved exact test passage.",
+  "The resolver must accept any governed exact house core instead of hard-coding two placement pairs."
+);
+
+console.log("Venus in Libra preserves the historical V3 bodies, revokes house 5, and supports generic governed exact-core routing.");
