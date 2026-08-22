@@ -995,6 +995,79 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("Sky placement aspect cards show one visible hierarchy label per card", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#sky/placement/north-node/aquarius");
+
+    for (const viewport of [
+      { name: "desktop", width: 1440, height: 1000 },
+      { name: "mobile", width: 390, height: 844 }
+    ] as const) {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+
+      for (const theme of ["light", "dark"] as const) {
+        await page.evaluate((nextTheme) => {
+          window.localStorage.setItem("tldrastro:theme", nextTheme);
+        }, theme);
+        await page.reload();
+        await expect(page.locator("main.app-shell")).toBeVisible({ timeout: routeReadyTimeoutMs });
+        await expect(page.locator(".app-shell")).toHaveClass(new RegExp(`theme-${theme}`));
+
+        const aspectDetailsHeading = page.getByRole("heading", { level: 2, name: "Aspect details" });
+        await expect(aspectDetailsHeading).toHaveClass("sr-only");
+        await expect(page.getByRole("heading", { level: 3, name: "Gifts" })).toBeVisible();
+        await expect(page.getByRole("heading", { level: 3, name: "Lessons" })).toBeVisible();
+
+        const labels = await page.locator(".article-related-aspects__label, #sky-detail-related-aspects-title").evaluateAll((elements) => (
+          elements.map((element) => {
+            const box = element.getBoundingClientRect();
+            const style = window.getComputedStyle(element);
+            return {
+              text: element.textContent?.replace(/\s+/gu, " ").trim() ?? "",
+              visible: box.width > 1 && box.height > 1,
+              fontFamily: style.fontFamily,
+              fontSize: style.fontSize,
+              fontWeight: style.fontWeight,
+              lineHeight: style.lineHeight,
+              letterSpacing: style.letterSpacing,
+              textTransform: style.textTransform
+            };
+          })
+        ));
+        const visibleLabels = labels.filter((label) => label.visible);
+
+        expect(
+          visibleLabels.map((label) => label.text),
+          `${viewport.name} ${theme}: the generic semantic parent stays hidden while each aspect card keeps its approved eyebrow`
+        ).toEqual(["Gifts", "Lessons"]);
+        expect(
+          visibleLabels.map(({ fontFamily, fontSize, fontWeight, lineHeight, letterSpacing, textTransform }) => ({
+            fontFamily,
+            fontSize,
+            fontWeight,
+            lineHeight,
+            letterSpacing,
+            textTransform
+          })),
+          `${viewport.name} ${theme}: all visible group headings use the same established eyebrow typography`
+        ).toEqual(Array.from({ length: visibleLabels.length }, () => ({
+          fontFamily: visibleLabels[0].fontFamily,
+          fontSize: visibleLabels[0].fontSize,
+          fontWeight: visibleLabels[0].fontWeight,
+          lineHeight: visibleLabels[0].lineHeight,
+          letterSpacing: visibleLabels[0].letterSpacing,
+          textTransform: visibleLabels[0].textTransform
+        })));
+        await expectSemanticArticleHeadingOrder(page, `${viewport.name} ${theme} North Node Sky placement detail`);
+        await expectNoHorizontalOverflow(page, `${viewport.name} ${theme} North Node Sky placement detail`);
+      }
+    }
+
+    await assertNoClientErrors();
+  });
+
   test("restored tabs recover if the React shell is blank", async ({ page }) => {
     await seedClientState(page);
     await expectClientRouteLoads(page, "/#sky");
