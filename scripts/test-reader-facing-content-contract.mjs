@@ -61,6 +61,17 @@ const natalAspectPatterns = read("apps/web/src/services/natalAspectPatterns.ts")
 const placementRows = read("apps/web/src/components/charts/PlacementRows.tsx");
 const lunarDayResolver = read("apps/web/src/features/calendar/lunarDayResolver.ts");
 const fallbackHookRows = fallbackSourceRowsV3.hookRows ?? [];
+
+assert.match(
+  generatedContent,
+  /normalizedContentKey\.startsWith\("sky\/article-template\/"\)/u,
+  "Raw Sky article templates must be rejected at the reader-serving boundary."
+);
+assert.match(
+  generatedContent,
+  /hasExactSkyArticleOwnerApproval/u,
+  "Compiled Sky article editions must carry exact owner-approval provenance before they can serve."
+);
 const fullKnowledge = JSON.parse(read("packages/astro-knowledge/dist/knowledge.json"));
 const skyWebKnowledge = JSON.parse(read("packages/astro-knowledge/dist/sky-web.json"));
 const natalWebKnowledge = JSON.parse(read("packages/astro-knowledge/dist/natal-web.json"));

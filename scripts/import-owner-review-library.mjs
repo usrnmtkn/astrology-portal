@@ -227,11 +227,19 @@ function authoredAspectRows() {
 function wholeFileRow(name, priority, contentKey, options = {}) {
   const item = source(name);
   const title = item.text.match(/^# (.+)$/mu)?.[1]?.trim() ?? name;
+  const eventType = options.eventType ?? "sky-article-template";
+  const templateMetadata = eventType === "sky-article-template"
+    ? {
+        contentType: "sky-article-template",
+        templateSchema: "tldrastro-sky-article-template-v1",
+        templateKey: contentKey
+      }
+    : {};
   return row({
     blockType: options.blockType ?? "sky_article",
     body: item.text,
     contentKey,
-    eventType: options.eventType ?? "sky-article-template",
+    eventType,
     file: name,
     headline: title,
     lane: options.lane ?? "reference",
@@ -239,7 +247,7 @@ function wholeFileRow(name, priority, contentKey, options = {}) {
     priority,
     sourceText: item.text,
     status: options.status ?? "DRAFT",
-    metadata: options.metadata ?? {}
+    metadata: { ...templateMetadata, ...(options.metadata ?? {}) }
   });
 }
 
@@ -259,8 +267,8 @@ function articleRows() {
   const editionMarker = "## PART 2 — Current edition fill: Aquarius / Leo (needs_review)";
   const markerIndex = nodes.text.indexOf(editionMarker);
   assert.ok(markerIndex > 0, "Nodes template is missing its current edition marker.");
-  rows.push(row({ blockType: "sky_article", body: nodes.text.slice(0, markerIndex), contentKey: "sky/article-template/nodes", eventType: "sky-article-template", file: nodesName, headline: "The Lunar Nodes Change Signs", mode: "article", priority: 4, sourceText: nodes.text }));
-  rows.push(row({ blockType: "sky_article", body: nodes.text.slice(markerIndex), contentKey: "sky/article-edition/nodes/aquarius-leo", eventType: "sky-article-edition", file: nodesName, headline: "The Nodes in Aquarius and Leo", lane: "serving", mode: "article", priority: 4, sourceText: nodes.text }));
+  rows.push(row({ blockType: "sky_article", body: nodes.text.slice(0, markerIndex), contentKey: "sky/article-template/nodes", eventType: "sky-article-template", file: nodesName, headline: "The Lunar Nodes Change Signs", mode: "article", priority: 4, sourceText: nodes.text, metadata: { contentType: "sky-article-template", templateSchema: "tldrastro-sky-article-template-v1", templateKey: "sky/article-template/nodes" } }));
+  rows.push(row({ blockType: "sky_article", body: nodes.text.slice(markerIndex), contentKey: "sky/article-edition/nodes/aquarius-leo", eventType: "sky-article-edition-source", file: nodesName, headline: "The Nodes in Aquarius and Leo", lane: "reference", mode: "article", priority: 4, sourceText: nodes.text, metadata: { contentType: "sky-article-edition-source", serving: false } }));
 
   rows.push(wholeFileRow("TLDR-Article-Template-SlowMover-Structure-REVIEW.md", 4, "sky/article-template/slow-mover/structure"));
   for (const planet of ["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron"]) {
@@ -276,7 +284,7 @@ function articleRows() {
           ephemerisCheck: "App Swiss Ephemeris: Taurus preview 2026-06-19 to 2026-09-18; Aries retrograde dip 2026-09-18 to 2027-04-14; Taurus resumes 2027-04-14."
         }
       : {};
-    rows.push(wholeFileRow(`TLDR-Article-Edition-${planet}-${sign}-REVIEW.md`, 4, `sky/article-edition/${slug(planet)}/${slug(sign)}`, { eventType: "sky-article-edition", lane: "serving", metadata }));
+    rows.push(wholeFileRow(`TLDR-Article-Edition-${planet}-${sign}-REVIEW.md`, 4, `sky/article-edition/${slug(planet)}/${slug(sign)}`, { eventType: "sky-article-edition-source", lane: "reference", metadata: { contentType: "sky-article-edition-source", serving: false, ...metadata } }));
   }
   assert.equal(rows.length, 62, "Expected 62 article template and edition records.");
   return rows;

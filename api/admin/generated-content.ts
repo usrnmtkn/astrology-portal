@@ -3,6 +3,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { URL } from "node:url";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
+import {
+  assertCompiledSkyArticleEdition,
+  hasExactSkyArticleOwnerApproval,
+  skyArticleEditionRecord
+} from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
 
 loadLocalWebEnv();
 
@@ -37,7 +42,7 @@ type GeneratedContentWriteBody = {
   evergreen?: boolean;
   evergreenAt?: string | null;
   evergreenBy?: string | null;
-  ownerAction?: "approve-and-schedule";
+  ownerAction?: "approve-and-schedule" | "approve-sky-article-edition";
 };
 
 type GeneratedContentRequestBody = GeneratedContentWriteBody & {
@@ -303,12 +308,28 @@ function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWri
   judge_score?: number | null;
   judgeGate?: string | null;
   judge_gate?: string | null;
+  sections?: unknown;
+  eventType?: string | null;
+  event_type?: string | null;
 }) {
   if (isLegacyLiveWritingCandidate(row)) {
     throw new Error("Legacy local/source-grounded generated rows cannot be published LIVE. Use fallback-hook, slot-template, vocab, or newly authored rows instead.");
   }
 
   const skyBlockType = row.blockType ?? row.block_type;
+  const eventType = row.eventType ?? row.event_type;
+  const edition = isRecord(row.sections) ? skyArticleEditionRecord(row.sections.skyArticleEdition) : null;
+  if (eventType === "sky-article-edition" || edition) {
+    const compiled = assertCompiledSkyArticleEdition(edition);
+    const snapshot = (row.sourceSnapshot ?? row.source_snapshot) as Record<string, unknown> | null | undefined;
+    const approval = isRecord(snapshot?.ownerApproval) ? snapshot.ownerApproval : null;
+    if (approval?.approved !== true || approval?.action !== "approve-sky-article-edition" || !hasExactSkyArticleOwnerApproval(compiled, snapshot)) {
+      throw new Error("Compiled Sky article editions require the owner's explicit Approve & publish edition action.");
+    }
+    if (row.contentKey && row.contentKey !== compiled.contentKey) {
+      throw new Error("Compiled Sky article edition content key does not match its immutable compilation record.");
+    }
+  }
   if (skyBlockType === "sky_aspect" || skyBlockType === "sky_placement") {
     const sourceSnapshot = (row.sourceSnapshot ?? row.source_snapshot) as Record<string, unknown> | null | undefined;
     const lint = (skyBlockType === "sky_placement"
@@ -651,6 +672,10 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
   }
 
   if (body.status === "LIVE") {
+    const requestedEdition = isRecord(body.sections) ? skyArticleEditionRecord(body.sections.skyArticleEdition) : null;
+    if (body.eventType === "sky-article-edition" || requestedEdition) {
+      throw new Error("Create compiled Sky article editions as drafts, then use Approve & publish edition.");
+    }
     assertCanPublishGeneratedContent(body);
   }
 
@@ -853,6 +878,42 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.published_at = now;
   }
 
+  if (body.ownerAction === "approve-sky-article-edition") {
+    if (!existing || existing.block_type !== "sky_article" || existing.event_type !== "sky-article-edition") {
+      throw new Error("Approve & publish edition is available only for compiled Sky article editions.");
+    }
+    const unexpectedFields = Object.entries(body)
+      .filter(([key, value]) => !["id", "ownerAction"].includes(key) && value !== undefined)
+      .map(([key]) => key);
+    if (unexpectedFields.length > 0) {
+      throw new Error(`Approve & publish edition cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
+    }
+    const edition = assertCompiledSkyArticleEdition(existing.sections?.skyArticleEdition);
+    if (existing.content_key !== edition.contentKey || existing.headline !== edition.headline || existing.body !== edition.body) {
+      throw new Error("The saved edition no longer matches its compiled record. Recompile it before approval.");
+    }
+    const now = new Date().toISOString();
+    const sourceSnapshot = isRecord(existing.source_snapshot) ? { ...existing.source_snapshot } : {};
+    sourceSnapshot.review_status = "approved";
+    sourceSnapshot.ownerApproval = {
+      approved: true,
+      action: "approve-sky-article-edition",
+      approvedAt: now,
+      source: "content-studio-explicit-action",
+      contentKey: existing.content_key,
+      templateKey: edition.templateKey,
+      templateHash: edition.templateHash,
+      fixedProseHash: edition.fixedProseHash,
+      compiledHash: edition.compiledHash
+    };
+    patch.status = "LIVE";
+    patch.lane = "serving";
+    patch.review_state = null;
+    patch.reviewed_at = now;
+    patch.published_at = now;
+    patch.source_snapshot = sourceSnapshot;
+  }
+
   if (isPackageRow && existing) {
     assertFallbackArchitectureV3StructureLocked(existing, body);
   }
@@ -863,6 +924,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }
 
     if (body.status === "LIVE") {
+      const requestedEdition = isRecord(body.sections) ? skyArticleEditionRecord(body.sections.skyArticleEdition) : null;
+      if (existing?.event_type === "sky-article-edition" || body.eventType === "sky-article-edition" || requestedEdition) {
+        throw new Error("Use Approve & publish edition so the exact compiled Sky article receives an owner approval record.");
+      }
       assertCanPublishGeneratedContent({
         ...existing,
         contentKey: body.contentKey ?? existing?.content_key,
@@ -870,6 +935,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
         promptVersion: body.promptVersion ?? existing?.prompt_version,
         sourceSnapshot: body.sourceSnapshot ?? existing?.source_snapshot,
         blockType: body.blockType ?? existing?.block_type,
+        eventType: body.eventType ?? existing?.event_type,
+        sections: body.sections ?? existing?.sections,
         judgeScore: existing?.judge_score,
         judgeGate: existing?.judge_gate
       });
