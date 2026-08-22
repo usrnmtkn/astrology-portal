@@ -97,7 +97,7 @@
 
 :is(.theme-dark, [data-theme="dark"]) :where(
   .aspect-row-copy strong,
-  .aspect-row-copy h3
+  .aspect-row-copy :is(h3, h4)
 ) {
   color: var(--card-title-color);
 }
