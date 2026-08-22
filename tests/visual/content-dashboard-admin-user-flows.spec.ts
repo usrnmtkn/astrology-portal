@@ -30,6 +30,34 @@ const forbiddenReaderPreviewCopy = /\b(?:Interpretation in review|Notice how thi
 
 const now = "2026-07-16T12:00:00.000Z";
 
+const skyReviewHorizonFixture = {
+  startDate: "2026-08-22",
+  endDate: "2026-11-20",
+  snapshotCount: 91,
+  calculationMethod: "daily-active-sky-snapshot",
+  counts: { occurrences: 1, aspectCandidates: 1, placementCandidates: 0, activeWindows: 1 },
+  reviewCounts: { missing_draft: 1 },
+  generationPlan: {
+    status: "authorization_required",
+    reusableCandidatesMissingDrafts: 1,
+    writerCalls: 1,
+    reviewerCalls: 1,
+    minimumSuccessfulCalls: 2,
+    contentKeys: ["sky.aspect.sun.trine.chiron.leo.taurus"],
+    note: "Fixture generation plan."
+  },
+  occurrences: [{
+    kind: "aspect",
+    contentKey: "sky.aspect.sun.trine.chiron.leo.taurus",
+    label: "Sun trine Chiron",
+    facts: { a: "sun", b: "chiron", aspect: "trine", signA: "leo", signB: "taurus" },
+    activeDates: ["2026-08-22"],
+    windows: [{ startDate: "2026-08-22", endDate: "2026-08-22" }],
+    reviewStatus: "missing_draft",
+    row: null
+  }]
+};
+
 const heldSkyAspectDrafts = [
   {
     id: "sky.sun.trine.chiron",
@@ -397,6 +425,15 @@ async function seedAdminApi(
           rows: reviewRecordRows,
           counts: { total: reviewRecordRows.length, DRAFT: 0, REVIEWED: 1, LIVE: 1, ARCHIVED: 0, ERROR: 0 }
         })
+      });
+      return;
+    }
+
+    if (pathname.endsWith("/sky-review-horizon")) {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ ok: true, horizon: skyReviewHorizonFixture })
       });
       return;
     }
@@ -1116,6 +1153,34 @@ test.describe("content dashboard admin user flow case studies", () => {
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByRole("heading", { name: "Edit article" })).toBeVisible();
     await expect(editor.getByLabel("Content key")).toHaveValue("sky.placement.sun.cancer");
+    await assertNoBrowserErrors();
+  });
+
+  test("missing Sky candidates open a manual draft with their calculated facts", async ({ page }) => {
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page, { onGeneratedContentWrite: (write) => writes.push(write) });
+    await expectAdminRouteLoads(page, "/admin/content#review-queue");
+
+    await page.getByRole("button", { name: /Upcoming 90 days/ }).click();
+    const missingCard = page.locator(".admin-sky-voice-card", { hasText: "Sun trine Chiron" });
+    await expect(missingCard.getByRole("button", { name: "Create draft" })).toBeVisible();
+    await missingCard.getByRole("button", { name: "Create draft" }).click();
+
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByRole("heading", { name: "Author new row" })).toBeVisible();
+    await expect(editor.getByLabel("Content key")).toHaveValue("sky.aspect.sun.trine.chiron.leo.taurus");
+    await expect(editor.getByLabel("Block type")).toHaveValue("sky_aspect");
+    await editor.getByLabel("Body").fill("Owner-authored fixture copy for this exact active Sky aspect.");
+    await editor.getByRole("button", { name: "Save", exact: true }).click();
+
+    await expect.poll(() => writes.length).toBe(1);
+    expect(writes[0].payload).toMatchObject({
+      contentKey: "sky.aspect.sun.trine.chiron.leo.taurus",
+      eventType: "collective-aspect-card",
+      blockType: "sky_aspect",
+      facts: { a: "sun", b: "chiron", aspect: "trine", signA: "leo", signB: "taurus" }
+    });
     await assertNoBrowserErrors();
   });
 
