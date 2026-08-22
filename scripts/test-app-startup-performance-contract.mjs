@@ -239,6 +239,11 @@ assert.match(
   "The Sky Placement route partition must use its generated package slice."
 );
 assert.match(
+  deferredSkyPlacementSource,
+  /bundled-sky-placement-house-rows-v3\.json/u,
+  "Sky Placement house horoscopes must remain in their on-demand package slice."
+);
+assert.match(
   emptyHouseFallbackSource,
   /bundled-empty-house-rows-v3\.json/u,
   "The Empty House route partition must use its generated package slice."
