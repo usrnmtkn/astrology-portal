@@ -8,6 +8,7 @@ import {
   hasExactSkyArticleOwnerApproval,
   skyArticleEditionRecord
 } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
+import { validateCmsTemplate } from "../../apps/web/src/content/cmsTemplateValidation.js";
 
 loadLocalWebEnv();
 
@@ -80,6 +81,35 @@ type SkippedLiveGeneratedContentRow = {
   status: "LIVE";
 };
 
+function assertValidCmsTemplate({
+  contentKey,
+  headline,
+  summary,
+  body,
+  sourceSnapshot
+}: {
+  contentKey?: string | null;
+  headline?: string | null;
+  summary?: string | null;
+  body?: string | null;
+  sourceSnapshot?: unknown;
+}) {
+  const snapshot = isRecord(sourceSnapshot) ? sourceSnapshot : {};
+  if (!contentKey?.startsWith("cms/") && snapshot.contentSystem !== "cms-surface-override") return;
+  const allowedSlots = Array.isArray(snapshot.allowedSlots)
+    ? snapshot.allowedSlots.filter((slot): slot is string => typeof slot === "string")
+    : [];
+  const validation = validateCmsTemplate({
+    allowedSlots,
+    headline: headline ?? "",
+    summary: summary ?? "",
+    body: body ?? ""
+  });
+  if (validation.errors.length > 0) {
+    throw new Error(`CMS template cannot be published: ${validation.errors.join(" ")}`);
+  }
+}
+
 type HeldSkyAspectSourceDraft = {
   id: string;
   canonicalId: string;
@@ -128,6 +158,13 @@ function contentRoleContract() {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));
+}
+
+function isCmsGeneratedContentWriteBody(body: GeneratedContentWriteBody) {
+  return Boolean(
+    body.contentKey?.startsWith("cms/")
+    || (isRecord(body.sourceSnapshot) && body.sourceSnapshot.contentSystem === "cms-surface-override")
+  );
 }
 
 function stringFrom(value: unknown) {
@@ -658,6 +695,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
   }
 
   const blockType = normalizedGeneratedContentBlockType(body.blockType, body.surface, body.mode);
+  const isCmsRow = isCmsGeneratedContentWriteBody(body);
   const row = {
     content_key: body.contentKey.trim(),
     surface: body.surface,
@@ -675,7 +713,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
     evergreen_by: body.evergreen ? body.evergreenBy ?? "admin" : null,
     ...(blockType ? { block_type: blockType } : {}),
     prompt_version: typeof body.promptVersion === "string" && body.promptVersion.trim() ? body.promptVersion.trim() : "manual-admin",
-    provider: "claude",
+    provider: isCmsRow ? "manual-admin" : "claude",
     model: "manual",
     headline: body.headline ?? "",
     summary: body.summary ?? "",
@@ -731,10 +769,18 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
     if (body.eventType === "sky-article-edition" || requestedEdition) {
       throw new Error("Create compiled Sky article editions as drafts, then use Approve & publish edition.");
     }
+    assertValidCmsTemplate({
+      contentKey: body.contentKey,
+      headline: body.headline,
+      summary: body.summary,
+      body: body.body,
+      sourceSnapshot: body.sourceSnapshot
+    });
     assertCanPublishGeneratedContent(body);
   }
 
   const blockType = normalizedGeneratedContentBlockType(body.blockType, body.surface, body.mode);
+  const isCmsRow = isCmsGeneratedContentWriteBody(body);
   return {
     content_key: body.contentKey.trim(),
     surface: body.surface,
@@ -752,7 +798,7 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
     evergreen_by: body.evergreen ? body.evergreenBy ?? "admin" : null,
     ...(blockType ? { block_type: blockType } : {}),
     prompt_version: typeof body.promptVersion === "string" && body.promptVersion.trim() ? body.promptVersion.trim() : "manual-admin",
-    provider: typeof body.provider === "string" && body.provider.trim() ? body.provider.trim() : "claude",
+    provider: typeof body.provider === "string" && body.provider.trim() ? body.provider.trim() : isCmsRow ? "manual-admin" : "claude",
     model: typeof body.model === "string" && body.model.trim() ? body.model.trim() : "manual",
     headline: body.headline ?? "",
     summary: body.summary ?? "",
@@ -983,6 +1029,13 @@ async function updateGeneratedContent(req: IncomingMessage) {
       if (existing?.event_type === "sky-article-edition" || body.eventType === "sky-article-edition" || requestedEdition) {
         throw new Error("Use Approve & publish edition so the exact compiled Sky article receives an owner approval record.");
       }
+      assertValidCmsTemplate({
+        contentKey: body.contentKey ?? existing?.content_key,
+        headline: body.headline ?? existing?.headline,
+        summary: body.summary ?? existing?.summary,
+        body: body.body ?? existing?.body,
+        sourceSnapshot: body.sourceSnapshot ?? existing?.source_snapshot
+      });
       assertCanPublishGeneratedContent({
         ...existing,
         contentKey: body.contentKey ?? existing?.content_key,
