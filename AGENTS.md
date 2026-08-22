@@ -65,6 +65,21 @@ behavior:
 If the source resolvers pass but the shipped artifact or rendered surface does
 not, the task is not complete and must not be reported as deployed.
 
+### Isolated-worktree application-test prerequisite (mandatory)
+
+An isolated worktree created from Git contains the source for
+`@tldr/astro-knowledge`, but not its generated `dist` package. Application
+tests resolve the workspace package through those generated exports. Therefore
+`npm run test:content` must build `@tldr/astro-knowledge` before importing or
+running any application test. This prerequisite belongs in the npm lifecycle;
+do not rely on an agent remembering a separate setup command.
+
+A missing local knowledge build is a prerequisite failure, not an application
+test failure. Do not classify, waive, or report application-test results until
+the prerequisite build succeeds and the suite has been restarted. The
+repository regression must reject any change that removes or moves this build
+behind the first application-test import.
+
 ### Editorial writing and review
 
 Any reader-facing astrology copy written in chat must use the owner’s writing rules, phrase bank, corpus, voice, tone, and prior editorial decisions. Semantic components determine meaning; the owner’s writing determines how that meaning is expressed.
