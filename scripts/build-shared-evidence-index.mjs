@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import {
   buildSharedEvidenceIndex,
   buildExtendedEvidenceCoverage,
+  ownerLockedLilithV5Evidence,
   ownerPositiveEvidenceFromSurfaceQualifiedPool,
   ownerPositiveEvidenceFromVoiceIndex
 } from "../src/astro-writing/index.mjs";
@@ -26,9 +27,12 @@ const llMatrixV13Rows = readJson("packages/astro-knowledge/voice/tldr-astro/sato
 const llMatrixV13ManifestRows = readJson("packages/astro-knowledge/review/ll-matrix-v13-runtime-manifest.json").rows;
 const registerGoldExamples = readJson("data/writing/owner-register-gold.json");
 const phraseExamples = readJsonl("data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl");
+const skyPointMeaningRows = readJson("tldr-astro-phrasebank/phrasebank/cc-sky-points-authored.json").reviewed;
+const lilithV5Rows = readJson("packages/astro-knowledge/review/lilith-placements-v5/lilith-placements-v5-staged-rows.json").rows;
 const registerExamples = [
   ...ownerPositiveEvidenceFromVoiceIndex(voiceIndex),
-  ...ownerPositiveEvidenceFromSurfaceQualifiedPool(surfacePool)
+  ...ownerPositiveEvidenceFromSurfaceQualifiedPool(surfacePool),
+  ...ownerLockedLilithV5Evidence(lilithV5Rows)
 ];
 const dedupedRegister = [...new Map(registerExamples.map((entry) => [entry.id, entry])).values()];
 const index = buildSharedEvidenceIndex({
@@ -38,7 +42,8 @@ const index = buildSharedEvidenceIndex({
   approvedExamples,
   registerExamples: dedupedRegister,
   registerGoldExamples,
-  phraseExamples
+  phraseExamples,
+  skyPointMeaningRows
 });
 const coverage = buildExtendedEvidenceCoverage({ matrixCoverage, index });
 const matrixIndexPath = path.join(repoRoot, "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl");
@@ -80,6 +85,8 @@ const artifact = {
       "data/writing/OWNER_APPROVED_EXAMPLES.jsonl",
       "data/writing/owner-register-gold.json",
       "data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl",
+      "tldr-astro-phrasebank/phrasebank/cc-sky-points-authored.json",
+      "packages/astro-knowledge/review/lilith-placements-v5/lilith-placements-v5-staged-rows.json",
       "tldr-astro-phrasebank/MARIE-VOICE-BANK.md",
       "tldr-astro-phrasebank/WRITING-STANDARD.md"
     ],
@@ -120,9 +127,12 @@ const zodiacSigns = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "lib
 const requiredEvidence = {
   moonCancerMeaning: index.entries.filter((entry) => entry.indexKey === "moon|cancer" && entry.role === "meaning" && entry.sourceKind === "owner-approved-ll-matrix-v13").length,
   moonAquariusMeaning: index.entries.filter((entry) => entry.indexKey === "moon|aquarius" && entry.role === "meaning" && entry.sourceKind === "owner-approved-ll-matrix-v13").length,
-  lilithBySign: Object.fromEntries(zodiacSigns.map((sign) => [sign, index.entries.filter((entry) => entry.indexKey === `lilith|${sign}` && ["scene", "argument"].includes(entry.role)).length]))
+  lilithBySign: Object.fromEntries(zodiacSigns.map((sign) => [sign, {
+    meaning: index.entries.filter((entry) => entry.indexKey === `lilith|${sign}` && entry.role === "meaning").length,
+    sceneOrArgument: index.entries.filter((entry) => entry.indexKey === `lilith|${sign}` && ["scene", "argument"].includes(entry.role)).length
+  }]))
 };
-if (!requiredEvidence.moonCancerMeaning || !requiredEvidence.moonAquariusMeaning || Object.values(requiredEvidence.lilithBySign).some((count) => count === 0)) {
+if (!requiredEvidence.moonCancerMeaning || !requiredEvidence.moonAquariusMeaning || Object.values(requiredEvidence.lilithBySign).some((counts) => counts.meaning === 0 || counts.sceneOrArgument === 0)) {
   throw new Error(`Required placement evidence missing: ${JSON.stringify(requiredEvidence)}`);
 }
 const aliasNormalization = {

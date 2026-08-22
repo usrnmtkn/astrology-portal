@@ -20,8 +20,8 @@ Canonical workbook changed: **no**
 - Approved V13 source rows: **302**
 - Runtime-manifest rows: **301**
 - Rows added to the shared evidence index: **301**
-- Shared-index entries: **4861 → 5831**
-- Meaning entries: **1876 → 2177**
+- Shared-index entries: **4861 → 5927**
+- Meaning entries: **1876 → 2225**
 - Scene entries after education cleanup: **419 → 416**
 - Argument entries after approved four-slot cards were indexed: **510 → 1182**
 
@@ -56,4 +56,5 @@ register-gold page.
 - `owner-approved-register-gold`: meaning 0, register 1, scene 0, argument 0, phrase 0
 - `owner-approved-voice-bank-phrase`: meaning 0, register 0, scene 0, argument 0, phrase 87
 - `owner-confirmed-phrasebank-line`: meaning 0, register 0, scene 0, argument 0, phrase 259
-- `owner-corpus-passage`: meaning 0, register 482, scene 0, argument 0, phrase 0
+- `owner-corpus-passage`: meaning 0, register 530, scene 0, argument 0, phrase 0
+- `reviewed-sky-point-placement-meaning`: meaning 48, register 0, scene 0, argument 0, phrase 0

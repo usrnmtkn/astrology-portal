@@ -1559,6 +1559,7 @@ ${passHook}`;
     "neptune",
     "pluto",
     "chiron",
+    "lilith",
     "north-node",
     "south-node",
     "nodes"
@@ -1945,7 +1946,7 @@ ${passHook}`;
         previousResidencyExitDate
       });
     }
-    if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet)) {
+    if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet) || planet === "lilith" && continuousSignCopy) {
       const standaloneHook = hooks.get(`fallback-hook/sky-placement-sign/${planet}/${sign}`);
       if (!skyPlacementRenderEligible(planet, sign) && standaloneHook?.body_you) {
         const body = standaloneHook.body_you.trim();
@@ -2737,7 +2738,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-21a";
+var PACKAGE_VERSION = "v3-2026-08-21b";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

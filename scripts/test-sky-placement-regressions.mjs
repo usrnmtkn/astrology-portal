@@ -88,6 +88,75 @@ const renderer = createTransitSynastryRenderer(
     vocabularyRows: [...fallbackSourceRows.vocabularyRows, ...skyArticleV1.vocabularyRows]
   }
 );
+const lilithMigrationProbeRow = {
+  contentKey: "fallback-hook/sky-sign-copy/lilith/sagittarius",
+  content_role: "fallback_hook",
+  grammar_frame: "continuous_editorial_unit",
+  render_policy: "sky-placement-continuous-v2",
+  review_status: "approved",
+  fact_line: "Engine fact line.",
+  opening: "Lilith in Sagittarius brings a refusal around belief into view.",
+  tension: "Certainty becomes the problem when a belief no longer has to answer to evidence.",
+  development: "A claim gets repeated until nobody asks what supports it.",
+  close: "A belief has to leave room for the facts that complicate it.",
+  era_layer: {
+    frame: "A public claim gains authority when confidence is allowed to stand in for proof.",
+    handoff: "Lilith moved through {{priorSign}} from {{priorSignEntryDateWithYear}} to {{priorSignExitDateWithYear}}; the focus now moves from guarded information to public belief.",
+    recurrence: "Lilith last moved through Sagittarius from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}.",
+    collective_lesson: "A group can test a belief by checking whether it survives correction."
+  }
+};
+const lilithMigrationProbeRenderer = createTransitSynastryRenderer(
+  {
+    authoredCards: [...transitSynastryRows.authoredCards, ...skyArticleV1.authoredCards]
+  },
+  fallbackTemplates,
+  {
+    ...fallbackSourceRows,
+    hookRows: [
+      ...fallbackSourceRows.hookRows,
+      ...skyArticleV1.hookRows,
+      ...skySignCopySunV1.rows,
+      ...skyPlacementOwnerApprovedFallbacksV1.rows,
+      lilithMigrationProbeRow
+    ],
+    vocabularyRows: [...fallbackSourceRows.vocabularyRows, ...skyArticleV1.vocabularyRows]
+  }
+);
+const lilithMigrationFacts = {
+  planet: "lilith",
+  sign: "sagittarius",
+  entryDate: "October 25, 2025",
+  exitDate: "January 3, 2027",
+  priorSign: "scorpio",
+  priorSignEntryDate: "January 1, 2025",
+  priorSignExitDate: "October 25, 2025",
+  previousResidencyEntryDate: "January 1, 2017",
+  previousResidencyExitDate: "January 1, 2018",
+  events: []
+};
+assert.equal(
+  renderer.renderSkyPlacement(lilithMigrationFacts).templateKey,
+  "fallback-template/sky.placement-article",
+  "Lilith must keep its approved four-slot page until an approved continuous row exists."
+);
+assert.equal(
+  lilithMigrationProbeRenderer.renderSkyPlacement(lilithMigrationFacts).templateKey,
+  "sky-placement-continuous-v2",
+  "An approved Lilith continuous row must select the governed continuous renderer."
+);
+assert.match(
+  lilithMigrationProbeRenderer.renderSkyPlacement(lilithMigrationFacts).body,
+  /Lilith last moved through Sagittarius from January 1, 2017 to January 1, 2018\./u,
+  "A Lilith continuous article must accept and render its complete slow-mover era layer."
+);
+for (const [label, source] of [["Node", nodeTransitRenderer], ["browser", browserTransitRenderer]]) {
+  assert.match(
+    source.slice(source.indexOf("const SKY_PLACEMENT_ERA_PLANETS"), source.indexOf("const RETIRED_SUN_IDENTITY_HOOKS")),
+    /"lilith"/u,
+    `${label} must admit Lilith to the slow-mover era layer.`
+  );
+}
 const sunLeoFacts = {
   planet: "sun",
   sign: "leo",
