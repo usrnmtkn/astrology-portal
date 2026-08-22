@@ -14,6 +14,8 @@ const adminPages = [
   { nav: "Review Queue", title: "Review Queue", breadcrumb: "Admin / Publish / Review queue", hash: "review-queue" },
   { nav: "Content Library", title: "Content Library", breadcrumb: "Admin / Write / Content library", hash: "exact-content" },
   { nav: "Articles", title: "Articles", breadcrumb: "Admin / Write / Articles", hash: "articles" },
+  { nav: "Compatibility", title: "Compatibility", breadcrumb: "Admin / Write / Compatibility", hash: "compatibility" },
+  { nav: "Composite Review", title: "Composite Review", breadcrumb: "Admin / Write / Composite review", hash: "composite-review" },
   { nav: "Templates", title: "Templates", breadcrumb: "Admin / Composition / Templates", hash: "templates" },
   { nav: "Aspect Patterns", title: "Aspect Patterns", breadcrumb: "Admin / Language System / Aspect Patterns", hash: "content/aspect-patterns" }
 ];
@@ -1081,20 +1083,17 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
-  test("compatibility is a saved Content Library view", async ({ page }) => {
+  test("compatibility is a dedicated primary workspace", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
     await expectAdminRouteLoads(page, "/admin/content#compatibility");
 
-    await expectAdminHeader(page, "Content Library", "Admin / Write / Content library");
-    const libraryViews = page.getByRole("tablist", { name: "Content Library saved views" });
-    await expect(libraryViews.getByRole("tab", { name: "Compatibility" })).toHaveAttribute("aria-selected", "true");
+    await expectAdminHeader(page, "Compatibility", "Admin / Write / Compatibility");
+    const compatibilitySections = page.getByRole("tablist", { name: "Compatibility sections" });
+    await expect(compatibilitySections.getByRole("tab", { name: /All compatibility/ })).toHaveAttribute("aria-selected", "true");
     await expect(page.locator(".admin-content-row", { hasText: "compatibility.sun.aries.libra" })).toHaveCount(1);
     await expect(page.locator(".admin-content-row", { hasText: "Moon in Virgo" })).toHaveCount(0);
-    await expect(page.getByRole("button", { name: "Show reference" })).toHaveAttribute("aria-pressed", "false");
-
-    await libraryViews.getByRole("tab", { name: "Editorial content" }).click();
-    await expect(libraryViews.getByRole("tab", { name: "Editorial content" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Compatibility" })).toHaveAttribute("aria-current", "page");
 
     await assertNoBrowserErrors();
   });
