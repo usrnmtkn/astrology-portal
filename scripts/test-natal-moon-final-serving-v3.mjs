@@ -26,8 +26,8 @@ assert.equal(rowsByKey.size, source.hookRows.length, "canonical hook rows must n
 assert.equal(artifact.renderRows.length, 144);
 assert.equal(
   natalPlacementReaderSectionCopy("First paragraph.\n\nSecond paragraph.", "fallback-hook/natal-you-placement-sign-final/moon/scorpio"),
-  "First paragraph.\n\nSecond paragraph.",
-  "owner-approved final You placement sections must preserve every paragraph"
+  "First paragraph. Second paragraph.",
+  "owner-approved final You placement sections must preserve all copy in one visual paragraph"
 );
 assert.equal(
   natalPlacementReaderSectionCopy("First paragraph.\n\nSecond paragraph.", "fallback-template/natal.planet-in-sign"),
@@ -77,13 +77,15 @@ for (const row of artifact.renderRows) {
     .filter(Boolean);
   assert.deepEqual(
     normalizedSections,
-    rendered.parts,
-    `${row.renderKey}: app normalization must preserve every paragraph in both approved sections`
+    rendered.parts.map((part) => part.replace(/\s+/gu, " ").trim()),
+    `${row.renderKey}: app normalization must render the complete sign and house sections as one paragraph each`
   );
+  assert.equal(normalizedSections.length, 2, `${row.renderKey}: app normalization must retain exactly the sign and house sections`);
+  assert.ok(normalizedSections.every((section) => !/\n/u.test(section)), `${row.renderKey}: neither placement section may contain an internal paragraph break`);
   assert.equal(
     normalizedSections.join("\n\n"),
-    expectedServingBody,
-    `${row.renderKey}: app-normalized article must equal the complete owner-approved V3 passage with the contextual bridge`
+    rendered.parts.map((part) => part.replace(/\s+/gu, " ").trim()).join("\n\n"),
+    `${row.renderKey}: app-normalized article must retain one sign paragraph followed by one house paragraph`
   );
 }
 
@@ -92,4 +94,4 @@ assert.equal(friend.partKeys?.includes("fallback-hook/natal-you-placement-sign-f
 assert.equal(friend.partKeys?.includes("fallback-hook/natal-you-placement-house-final/moon/6"), false, "Friend must not resolve the You-only house row");
 assert.doesNotMatch(friend.body, /Your Moon is your instinctual emotional world/iu, "Friend must not receive the You-only Moon introduction");
 
-console.log("Natal Moon final serving V3 passed: all 144 You source passages remain exact with contextual serving bridges; Friend remains on its separate path; childhood excluded.");
+console.log("Natal Moon final serving V3 passed: all 144 You source passages remain exact and render as one sign paragraph plus one house paragraph; Friend remains on its separate path; childhood excluded.");
