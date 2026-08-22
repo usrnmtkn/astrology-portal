@@ -227,7 +227,7 @@ svg {
 :where(
   .placement-table-row__title,
   .planet-placement-row__title,
-  .aspect-row-copy h3,
+  .aspect-row-copy :is(h3, h4),
   .aspect-row-copy strong,
   .updates-aspect-row__title,
   .settings-row-title,
