@@ -22,6 +22,7 @@ import {
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
+import { announceContentUpdate } from "../../web/src/services/contentUpdateSignal";
 import {
   compileSkyArticleEdition,
   skyArticleEditionRecord,
@@ -794,6 +795,10 @@ function contentRoleForRecord(row: AdminGeneratedContentRow | AdminReviewRecord)
   const sourceContentSystem = sourceSnapshotString(sourceSnapshot, "contentSystem").toLowerCase().replace(/_/g, "-");
   const sourceRole = normalizedSourceRole(sourceSnapshot);
 
+  if (sourceContentSystem === "cms-surface-override" || contentKey.startsWith("cms/")) {
+    return "authored-content";
+  }
+
   if (
     contentKey.startsWith("fallback-hook/") ||
     blockType === "fallback_hook" ||
@@ -1395,6 +1400,16 @@ function draftSourceSnapshot(draft: AdminDraft) {
 
   if (draft.blockType === "fallback_template") {
     return fallbackTemplateSourceSnapshot(draft);
+  }
+
+  if (draft.sourceSnapshot?.contentSystem === "cms-surface-override" || draft.contentKey.startsWith("cms/")) {
+    return {
+      ...(draft.sourceSnapshot ?? {}),
+      contentType: "mustache-template",
+      authoringSource: "admin-dashboard",
+      contentSystem: "cms-surface-override",
+      contentLevel: "owner-authored"
+    };
   }
 
   return {
@@ -2313,6 +2328,7 @@ export function GeneratedContentAdminDashboard() {
       if (saved) {
         setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
         if (selectedRowId === saved.id) setDraft(draftFromRow(saved));
+        announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
         setSkyReviewHorizon((current) => current ? {
           ...current,
           occurrences: current.occurrences.map((occurrence) => occurrence.row?.id === saved.id
@@ -2513,6 +2529,7 @@ export function GeneratedContentAdminDashboard() {
       if (!saved) throw new Error("The approved edition was not returned by the content API.");
       setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
       setDraft(draftFromRow(saved));
+      announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
       setMessage(`${saved.content_key} is approved and reader-eligible for its calculated validity window.`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not approve the Sky article edition.");
@@ -2576,8 +2593,9 @@ export function GeneratedContentAdminDashboard() {
         });
         setSelectedRowId(saved.id);
         setDraft(draftFromRow(saved));
+        announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
       }
-      setMessage(`${draftForSave.contentKey} saved as ${contentStatusLabel(status)}.`);
+      setMessage(`${draftForSave.contentKey} saved as ${contentStatusLabel(saved?.status ?? status)}.`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not save row.");
     } finally {
@@ -2598,6 +2616,11 @@ export function GeneratedContentAdminDashboard() {
         })
       })));
       const updatedRows = updates.flatMap((payload) => payload.rows ?? []);
+      updatedRows.forEach((row) => announceContentUpdate({
+        contentKey: row.content_key,
+        published: row.status === "LIVE",
+        updatedAt: row.updated_at ?? new Date().toISOString()
+      }));
       setRows((current) => current.map((row) => updatedRows.find((updated) => updated.id === row.id) ?? row));
       setSelectedIds(new Set());
       setMessage(`Updated ${updatedRows.length} rows to ${contentStatusLabel(bulkStatus)}.`);
@@ -2865,6 +2888,42 @@ export function GeneratedContentAdminDashboard() {
         }
       });
     }
+  }
+
+  function openCmsStarter(
+    surfaceItem: WritingSurfaceMapItem,
+    starter: NonNullable<WritingSurfaceAdminAccess["cmsStarters"]>[number]
+  ) {
+    navigateAdminPage("content", undefined, { keepEditorOpen: true });
+    setSelectedRowId(null);
+    setDraft({
+      id: null,
+      contentKey: starter.contentKey,
+      surface: starter.surface,
+      mode: "card",
+      status: "DRAFT",
+      headline: starter.headline,
+      summary: "",
+      body: "",
+      lane: "serving",
+      reviewState: "EDITORIAL_REVIEW_REQUIRED",
+      blockType: "essay",
+      promptVersion: "cms-surface-template-v1",
+      sections: null,
+      facts: null,
+      reviewerNotes: "",
+      sourceSnapshot: {
+        contentType: "mustache-template",
+        contentSystem: "cms-surface-override",
+        contentLevel: "owner-authored",
+        authoringSource: "admin-dashboard",
+        cmsSurfaceId: surfaceItem.id,
+        readerLocation: writingSurfaceAccess[surfaceItem.id]?.readerLocation ?? "",
+        allowedSlots: starter.allowedSlots
+      }
+    });
+    setMessage(`${starter.label} opened as a non-serving draft. Use only the listed calculated slots, then publish when the wording is approved.`);
+    scrollEditorToTop();
   }
 
   function handleCompatibilityCreateAction(kind: AdminCompatibilityCreateKind) {
@@ -3438,7 +3497,7 @@ export function GeneratedContentAdminDashboard() {
               <div>
                 <p className="admin-eyebrow">Reader surface directory</p>
                 <h2>Surface Map</h2>
-                <p>Start with the place a reader sees the writing, then open the exact dashboard workspace that edits it. Partial means some visible copy is still owned by code and needs runtime wiring.</p>
+                <p>Start with the place a reader sees the writing, then open the exact dashboard workspace that edits it. Surfaces with local reviewed fallbacks include a CMS starter for a LIVE-first prose override.</p>
               </div>
               <span className="ui-pill admin-status">{writingSurfaces.length} mapped surfaces</span>
             </section>
@@ -3464,7 +3523,7 @@ export function GeneratedContentAdminDashboard() {
               {[
                 ["all", "All"],
                 ["complete", "Editable"],
-                ["partial", "Partly editable"],
+                ["partial", "Runtime gaps"],
                 ["missing", "Unmapped"]
               ].map(([key, label]) => (
                 <button key={key} type="button" aria-pressed={surfaceStatusFilter === key} className={surfaceStatusFilter === key ? "active" : ""} onClick={() => navigateSurfaceMapFilters({ status: key as WritingSurfaceStatusFilter })}>
@@ -3499,12 +3558,23 @@ export function GeneratedContentAdminDashboard() {
                           {route.label}
                         </a>
                       ))}
+                      {access?.cmsStarters?.map((starter) => (
+                        <button
+                          key={`${item.id}-${starter.contentKey}`}
+                          type="button"
+                          className="admin-source-action"
+                          onClick={() => openCmsStarter(item, starter)}
+                        >
+                          <Plus size={15} aria-hidden="true" />
+                          {starter.label}
+                        </button>
+                      ))}
                     </div>
                     <details className="admin-surface-sources">
                       <summary>Content sources ({item.sources.length})</summary>
                       <ul>
                         {item.sources.map((source) => (
-                          <li key={`${item.id}-${source.path}`}>
+                          <li key={`${item.id}-${source.role}-${source.path}`}>
                             <span>{writingSurfaceRoleLabels[source.role] ?? source.role}</span>
                             <strong>{source.label}</strong>
                             <code>{source.path}</code>
@@ -4402,6 +4472,10 @@ export function GeneratedContentAdminDashboard() {
     const populatedSkyHouses = new Set(skyHousePassages.map((passage) => passage.house)).size;
     const isSkyArticleTemplate = isSkyArticleTemplateRow(selectedRow);
     const compiledSkyArticleEdition = compiledSkyArticleEditionForDraft(currentDraft);
+    const isCmsSurfaceDraft = currentDraft.sourceSnapshot?.contentSystem === "cms-surface-override";
+    const cmsAllowedSlots = Array.isArray(currentDraft.sourceSnapshot?.allowedSlots)
+      ? currentDraft.sourceSnapshot.allowedSlots.filter((slot): slot is string => typeof slot === "string")
+      : [];
     const skyArticleTemplateFields = isSkyArticleTemplate && selectedRow
       ? skyArticleTemplatePlaceholders(selectedRow.body ?? "").filter((placeholder) => placeholder.name !== "risingBlocks")
       : [];
@@ -4545,6 +4619,14 @@ export function GeneratedContentAdminDashboard() {
             <div className="admin-editor-guidance" aria-label="Template source guidance">
               <strong>Fallback source material</strong>
               <p>Templates and slots assemble fallback language from reviewed source phrases. Edit them as scaffolds, not as final authored reader prose.</p>
+            </div>
+          )}
+          {isCmsSurfaceDraft && (
+            <div className="admin-editor-guidance" aria-label="CMS surface template guidance">
+              <strong>Reader-facing CMS override</strong>
+              <p>A published row replaces prose on the named app surface immediately. Astrology facts remain calculated by the app and can enter this copy only through the allowed slots below.</p>
+              <p><strong>Allowed slots:</strong> {cmsAllowedSlots.length > 0 ? cmsAllowedSlots.map((slot) => `{{${slot}}}`).join(", ") : "This row has no calculated slots."}</p>
+              <p>Save as Draft while editing. Publish only when the exact wording is approved; draft and reviewed rows remain invisible to readers.</p>
             </div>
           )}
           <section className="admin-content-role-panel" aria-label="Content role">
@@ -4947,7 +5029,7 @@ export function GeneratedContentAdminDashboard() {
             </label>
           </fieldset>
           <div className="admin-toolbar-actions">
-            <button className="admin-primary-button" type="button" onClick={() => void saveDraft()} disabled={isLoading || Boolean(compiledSkyArticleEdition)}>
+            <button className="admin-primary-button" type="button" onClick={() => void saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined)} disabled={isLoading || Boolean(compiledSkyArticleEdition)}>
               <Save size={16} aria-hidden="true" />
               Save
             </button>

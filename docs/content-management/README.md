@@ -155,13 +155,27 @@ Friends, Calendar, or Settings), then use the action on that surface to open
 the filtered article, exact-content, compatibility, vocabulary, template, or
 fallback workspace.
 
-The directory distinguishes two states:
+Every mapped reader surface now has a `Dashboard editable` route. Surfaces that
+still use a local reviewed fallback also expose a one-click CMS starter. Those
+rows use the reserved `cms/` namespace and resolve in this order:
 
-- `Dashboard editable`: a saved row or supported authoring flow controls the
-  reader-facing content.
-- `Runtime gap`: some visible copy is still owned by a local component or
-  fallback. The dashboard can locate related rows, but an edit is not claimed
-  to change that local wording until a stored-row override is wired.
+```text
+exact LIVE CMS row
+  -> broader LIVE CMS surface template
+  -> existing reviewed local/package fallback
+```
+
+CMS templates receive only their declared calculated slots. A published row
+can replace prose, but it cannot replace a sign, house, aspect, date, motion,
+or timing fact. Draft, Reviewed, reference-lane, and review-held rows remain
+invisible to readers.
+
+After Content Studio publishes or demotes a row, it announces a same-origin
+content update. Open reader tabs clear their content caches and request current
+LIVE rows again. New page loads always fetch current rows, so a CMS wording
+change does not require a web deployment. Editing a published CMS row with the
+ordinary Save action demotes it to Draft; `Sign Off` is the explicit action
+that makes the revised wording reader-eligible.
 
 Current Sky aspect passages that still have `needs-owner-decision` governance
 appear under App surfaces > Sky Aspect Drafts. That catalog is returned only
