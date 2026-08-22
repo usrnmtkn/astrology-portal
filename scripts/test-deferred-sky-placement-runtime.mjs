@@ -102,6 +102,19 @@ const concurrentLoads = await Promise.all([
 assert.deepEqual(concurrentLoads, [true, true], "Concurrent route requests must share the same placement load.");
 assert.equal(runtime.isSkyPlacementFallbackArchitectureV3BundleLoaded(), true);
 
+for (let house = 1; house <= 12; house += 1) {
+  const renderedHouse = runtime.transitSynastryFallbackRendererV3.renderSkyPlacementHouseCore({
+    planet: "uranus",
+    sign: "gemini",
+    house
+  });
+  assert.match(
+    renderedHouse.body,
+    new RegExp(`Uranus in Gemini moves through your ${house}(?:st|nd|rd|th) house`, "u"),
+    `The deferred reader bundle must preserve the Uranus in Gemini house ${house} runtime contract.`
+  );
+}
+
 const after = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(facts);
 assert.equal(after.templateKey, "sky-placement-continuous-v2");
 assert.equal(after.contentKey, "fallback-hook/sky-sign-copy/sun/leo");
