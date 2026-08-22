@@ -20,11 +20,13 @@ from tldrastro_api.services.aspect_profile import (
     canonicalize_node_axis_aspects,
 )
 from tldrastro_api.services.chart import (
+    BODY_IDS,
     CANONICAL_HOUSE_SYSTEM,
     angle_positions,
     calculate_aspects,
     calculate_positions,
     configure_ephemeris,
+    configured_flags,
     house_cusps,
     house_for_longitude,
     julian_day_for,
@@ -48,6 +50,192 @@ MAJOR_PLANETS = [
 ]
 
 MOON_ASPECT_TARGETS = [0.0, 60.0, 90.0, 120.0, 180.0, 240.0, 270.0, 300.0]
+
+
+def _normalized_point_name(value: str) -> str:
+    return "-".join(value.strip().lower().replace("_", " ").split())
+
+
+def _transit_step_days(point: str) -> float:
+    if point in {"Moon", "Lilith"}:
+        return 0.25
+    if point in {"Sun", "Mercury", "Venus", "Mars"}:
+        return 1.0
+    if point == "Jupiter":
+        return 4.0
+    if point == "Saturn":
+        return 8.0
+    if point == "Uranus":
+        return 16.0
+    return 24.0
+
+
+def _point_calculation(point: str) -> Tuple[int, float]:
+    if point == "South Node":
+        return BODY_IDS["North Node"], 180.0
+    return BODY_IDS[point], 0.0
+
+
+def _point_sign(julian_day: float, body_id: int, flags: int, longitude_offset: float) -> str:
+    result, _ = tracked_calc_ut(swe, julian_day, body_id, flags)
+    longitude = normalize_degrees(result[0] + longitude_offset)
+    return sign_for_longitude(longitude)[1]
+
+
+def _refine_sign_boundary(
+    same_sign_jd: float,
+    different_sign_jd: float,
+    current_sign: str,
+    body_id: int,
+    flags: int,
+    longitude_offset: float,
+) -> float:
+    same = same_sign_jd
+    different = different_sign_jd
+    for _ in range(50):
+        midpoint = (same + different) / 2
+        if _point_sign(midpoint, body_id, flags, longitude_offset) == current_sign:
+            same = midpoint
+        else:
+            different = midpoint
+    return (same + different) / 2
+
+
+def _single_sign_pass(
+    point: str,
+    body_id: int,
+    julian_day: float,
+    current_sign: str,
+    flags: int,
+    longitude_offset: float,
+) -> Optional[Tuple[float, float]]:
+    step_days = _transit_step_days(point)
+    max_iterations = math.ceil((365.25 * 32) / step_days)
+    previous_different = julian_day - step_days
+    next_different = julian_day + step_days
+
+    for _ in range(max_iterations):
+        if _point_sign(previous_different, body_id, flags, longitude_offset) != current_sign:
+            break
+        previous_different -= step_days
+    for _ in range(max_iterations):
+        if _point_sign(next_different, body_id, flags, longitude_offset) != current_sign:
+            break
+        next_different += step_days
+
+    if (
+        _point_sign(previous_different, body_id, flags, longitude_offset) == current_sign
+        or _point_sign(next_different, body_id, flags, longitude_offset) == current_sign
+    ):
+        return None
+
+    return (
+        _refine_sign_boundary(
+            julian_day,
+            previous_different,
+            current_sign,
+            body_id,
+            flags,
+            longitude_offset,
+        ),
+        _refine_sign_boundary(
+            julian_day,
+            next_different,
+            current_sign,
+            body_id,
+            flags,
+            longitude_offset,
+        ),
+    )
+
+
+def _complete_sign_residency(
+    point: str,
+    body_id: int,
+    julian_day: float,
+    current_sign: str,
+    flags: int,
+    longitude_offset: float,
+) -> Optional[Tuple[float, float]]:
+    initial = _single_sign_pass(
+        point,
+        body_id,
+        julian_day,
+        current_sign,
+        flags,
+        longitude_offset,
+    )
+    if initial is None or point in {"Sun", "Moon"}:
+        return initial
+
+    passes = [initial]
+    maximum_gap_days = (
+        45.0
+        if point in {"Lilith", "North Node", "South Node"}
+        else 60.0
+        if point == "Mercury"
+        else 150.0
+        if point == "Venus"
+        else 270.0
+    )
+    step_days = _transit_step_days(point)
+
+    def adjacent_pass(direction: int, boundary: float) -> Optional[Tuple[float, float]]:
+        elapsed = step_days
+        while elapsed <= maximum_gap_days:
+            sample = boundary + direction * elapsed
+            if _point_sign(sample, body_id, flags, longitude_offset) == current_sign:
+                return _single_sign_pass(
+                    point,
+                    body_id,
+                    sample,
+                    current_sign,
+                    flags,
+                    longitude_offset,
+                )
+            elapsed += step_days
+        return None
+
+    for _ in range(48):
+        previous = adjacent_pass(-1, passes[0][0])
+        if previous is None or previous[1] >= passes[0][0]:
+            break
+        passes.insert(0, previous)
+
+    for _ in range(48):
+        following = adjacent_pass(1, passes[-1][1])
+        if following is None or following[0] <= passes[-1][1]:
+            break
+        passes.append(following)
+
+    return passes[0][0], passes[-1][1]
+
+
+def _requested_transit_windows(positions, request: SkyCurrentRequest, julian_day: float):
+    requested = {_normalized_point_name(point) for point in request.transitWindowPoints}
+    if not requested:
+        return {}
+    flags = configured_flags(request.settings)
+    windows = {}
+    for position in positions:
+        if _normalized_point_name(position.point) not in requested:
+            continue
+        body_id, longitude_offset = _point_calculation(position.point)
+        window = _complete_sign_residency(
+            position.point,
+            body_id,
+            julian_day,
+            position.sign,
+            flags,
+            longitude_offset,
+        )
+        if window is None:
+            continue
+        windows[position.point] = {
+            "transitStart": _datetime_from_julian(window[0]).isoformat(),
+            "transitEnd": _datetime_from_julian(window[1]).isoformat(),
+        }
+    return windows
 
 
 def _canonical_sky_positions(positions, cusps):
@@ -279,6 +467,7 @@ def calculate_current_sky(request: SkyCurrentRequest) -> SkyCurrentResponse:
         calculate_positions(julian_day, subject.settings, cusps, warnings),
         cusps,
     )
+    transit_windows = _requested_transit_windows(positions, request, julian_day)
     angles = angle_positions(ascmc, cusps)
     ascendant = angles.get("Ascendant")
     midheaven = angles.get("Midheaven")
@@ -315,5 +504,6 @@ def calculate_current_sky(request: SkyCurrentRequest) -> SkyCurrentResponse:
         moonIllumination=round(illumination, 4),
         moonStatus=_moon_status(julian_day),
         moonEvent=_next_moon_event(julian_day),
+        transitWindows=transit_windows,
         contentFacts=[],
     )

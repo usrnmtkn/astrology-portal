@@ -176,6 +176,12 @@ Then rebuild/redeploy the web app so the browser bundle points at the live API.
 - `POST /timing/profections`
 - `POST /timing/personal`
 
+`POST /sky/current` accepts an optional `transitWindowPoints` array. When a
+caller needs exact sign-residency boundaries, list only those point names; the
+response returns their calculated `transitStart` and `transitEnd` values in
+`transitWindows`. Ordinary Sky requests leave the array empty and do not pay
+the additional ephemeris-search cost.
+
 ## App-Facing Contracts
 
 Timing and relationship responses include an `app` object for the TLDR Astro
