@@ -167,6 +167,130 @@ assert.equal(
   "A reader-copy edit must not discard the friend voice."
 );
 
+const packageVoiceEdit = await invoke({
+  id: "sky-row",
+  headline: "Leo",
+  summary: "",
+  body: packageRow.body,
+  sections: {
+    ...packageRow.sections,
+    body_you: "Updated through the body_you editor.",
+    packageRecord: {
+      ...packageRow.sections.packageRecord,
+      body_you: "Updated through the body_you editor."
+    }
+  },
+  facts: packageRow.facts,
+  sourceSnapshot: packageRow.source_snapshot,
+  reviewStatus: "approved"
+}, packageRow);
+assert.equal(packageVoiceEdit.status, 200);
+assert.equal(packageVoiceEdit.patches[0].body, "Updated through the body_you editor.");
+assert.equal(packageVoiceEdit.patches[0].sections.body_you, "Updated through the body_you editor.");
+assert.equal(packageVoiceEdit.patches[0].sections.packageRecord.body_you, "Updated through the body_you editor.");
+
+const continuousPackageRow = existingRow({
+  content_key: "fallback-hook/sky-sign-copy/jupiter/leo",
+  event_type: "fallback-hook",
+  status: "LIVE",
+  body: "Old opening.\n\nOld tension.\n\nOld development.\n\nOld close.",
+  sections: {
+    body_you: "Old opening.\n\nOld tension.\n\nOld development.\n\nOld close.",
+    packageRecord: {
+      contentKey: "fallback-hook/sky-sign-copy/jupiter/leo",
+      content_role: "fallback_hook",
+      render_policy: "sky-placement-continuous-v2",
+      opening: "Old opening.",
+      tension: "Old tension.",
+      development: "Old development.",
+      close: "Old close.",
+      body_you: "Old opening.\n\nOld tension.\n\nOld development.\n\nOld close.",
+      review_status: "approved"
+    }
+  },
+  facts: { fallbackArchitectureV3: true, review_status: "approved" },
+  provider: "tldrastro-fallback-architecture-v3-sky-placement",
+  source_snapshot: {
+    sourcePackage: "tldrastro-fallback-architecture-v3",
+    content_role: "fallback_hook",
+    review_status: "approved"
+  },
+  block_type: null
+});
+const continuousSections = {
+  ...continuousPackageRow.sections,
+  packageRecord: {
+    ...continuousPackageRow.sections.packageRecord,
+    opening: "New opening.",
+    tension: "New tension.",
+    development: "New development.",
+    close: "New close."
+  }
+};
+const continuousEdit = await invoke({
+  id: "sky-row",
+  headline: "Jupiter in Leo",
+  summary: "",
+  body: continuousPackageRow.body,
+  sections: continuousSections,
+  facts: continuousPackageRow.facts,
+  sourceSnapshot: continuousPackageRow.source_snapshot,
+  reviewStatus: "approved"
+}, continuousPackageRow);
+const expectedContinuousBody = "New opening.\n\nNew tension.\n\nNew development.\n\nNew close.";
+assert.equal(continuousEdit.status, 200);
+assert.equal(continuousEdit.patches[0].body, expectedContinuousBody);
+assert.equal(continuousEdit.patches[0].sections.body_you, expectedContinuousBody);
+assert.equal(continuousEdit.patches[0].sections.packageRecord.body_you, expectedContinuousBody);
+assert.equal(continuousEdit.patches[0].sections.packageRecord.opening, "New opening.");
+
+const blockedContinuousBody = await invoke({
+  id: "sky-row",
+  body: "An unstructured replacement that would lose the four reader sections.",
+  sections: continuousPackageRow.sections,
+  facts: continuousPackageRow.facts,
+  sourceSnapshot: continuousPackageRow.source_snapshot,
+  reviewStatus: "approved"
+}, continuousPackageRow);
+assert.equal(blockedContinuousBody.status, 500);
+assert.equal(blockedContinuousBody.patches.length, 0);
+assert.match(blockedContinuousBody.payload.error, /must be edited in Opening, Tension, Development, and Close/u);
+
+const bodyOnlyPackageRow = existingRow({
+  content_key: "fallback-vocab/sky-planet-function/jupiter",
+  surface: "sky",
+  event_type: "fallback-architecture-v3",
+  status: "LIVE",
+  body: "Original body-only phrase.",
+  sections: {
+    packageRecord: {
+      contentKey: "fallback-vocab/sky-planet-function/jupiter",
+      content_role: "vocabulary",
+      body: "Original body-only phrase.",
+      review_status: "approved"
+    }
+  },
+  facts: { fallbackArchitectureV3: true, review_status: "approved" },
+  provider: "tldrastro-fallback-architecture-v3",
+  source_snapshot: {
+    sourcePackage: "tldrastro-fallback-architecture-v3",
+    content_role: "vocabulary",
+    review_status: "approved"
+  },
+  block_type: null
+});
+const bodyOnlyEdit = await invoke({
+  id: "sky-row",
+  body: "Updated body-only phrase.",
+  sections: bodyOnlyPackageRow.sections,
+  facts: bodyOnlyPackageRow.facts,
+  sourceSnapshot: bodyOnlyPackageRow.source_snapshot,
+  reviewStatus: "approved"
+}, bodyOnlyPackageRow);
+assert.equal(bodyOnlyEdit.status, 200);
+assert.equal(bodyOnlyEdit.patches[0].body, "Updated body-only phrase.");
+assert.equal(bodyOnlyEdit.patches[0].sections.packageRecord.body, "Updated body-only phrase.");
+
 const compiledEdition = await compileSkyArticleEdition({
   templateBody: "# Pluto Enters {{sign}}\n\n{{opener}}\n\n## Horoscopes for Pluto in {{sign}}\n\n{{risingBlocks}}",
   templateKey: "sky/article-template/pluto/ingress",

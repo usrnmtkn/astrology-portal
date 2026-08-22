@@ -272,12 +272,17 @@ function assertFallbackArchitectureV3StructureLocked(row: ExistingGeneratedConte
 }
 
 function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow, body: GeneratedContentRequestBody, patch: Record<string, unknown>) {
-  const sections = isRecord(body.sections) ? body.sections : isRecord(row.sections) ? { ...row.sections } : {};
-  const facts = isRecord(body.facts) ? body.facts : isRecord(row.facts) ? { ...row.facts } : {};
-  const sourceSnapshot = isRecord(body.sourceSnapshot) ? body.sourceSnapshot : isRecord(row.source_snapshot) ? { ...row.source_snapshot } : {};
+  const storedSections = isRecord(row.sections) ? row.sections : {};
+  const sections = { ...storedSections, ...(isRecord(body.sections) ? body.sections : {}) };
+  const facts = { ...(isRecord(row.facts) ? row.facts : {}), ...(isRecord(body.facts) ? body.facts : {}) };
+  const sourceSnapshot = {
+    ...(isRecord(row.source_snapshot) ? row.source_snapshot : {}),
+    ...(isRecord(body.sourceSnapshot) ? body.sourceSnapshot : {})
+  };
   const record = { ...v3PackageRecord(row) };
-  const packageOriginalRecord = isRecord(sections.packageOriginalRecord)
-    ? { ...sections.packageOriginalRecord }
+  const incomingRecord = isRecord(sections.packageRecord) ? sections.packageRecord : {};
+  const packageOriginalRecord = isRecord(storedSections.packageOriginalRecord)
+    ? { ...storedSections.packageOriginalRecord }
     : { ...record };
   const reviewStatus = packageReviewStatus(row, body.reviewStatus || stringFrom(sourceSnapshot.review_status));
 
@@ -286,11 +291,33 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   }
 
   if (body.revertToPackageOriginal) {
+    Object.assign(record, packageOriginalRecord);
     patch.headline = stringFrom(packageOriginalRecord.headline) || row.headline || "";
     patch.summary = stringFrom(packageOriginalRecord.summary) || row.summary || "";
     patch.body = stringFrom(packageOriginalRecord.body ?? packageOriginalRecord.body_you) || row.body || "";
     sections.body_you = packageOriginalRecord.body_you ?? null;
     sections.body_they = packageOriginalRecord.body_they ?? null;
+  }
+
+  // Package records use several prose shapes. Only copy explicitly editable
+  // prose fields from the client; structural and provenance fields stay locked
+  // to the installed package record.
+  if (!body.revertToPackageOriginal) {
+    for (const field of [
+      "headline",
+      "summary",
+      "body",
+      "body_you",
+      "body_they",
+      "opening",
+      "tension",
+      "development",
+      "close"
+    ]) {
+      if (typeof incomingRecord[field] === "string") {
+        record[field] = incomingRecord[field];
+      }
+    }
   }
 
   // Package rows are rendered from sections.packageRecord, not from the
@@ -302,7 +329,15 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   if (typeof patch.summary === "string") {
     record.summary = patch.summary;
   }
-  if (typeof patch.body === "string") {
+  const topLevelBodyChanged = typeof patch.body === "string" && patch.body !== (row.body ?? "");
+  const incomingBodyYouChanged = typeof incomingRecord.body_you === "string"
+    && incomingRecord.body_you !== v3PackageRecord(row).body_you;
+  const sectionBodyYouChanged = typeof sections.body_you === "string"
+    && sections.body_you !== v3PackageRecord(row).body_you;
+  if (topLevelBodyChanged && !incomingBodyYouChanged && !sectionBodyYouChanged) {
+    if (record.render_policy === "sky-placement-continuous-v2") {
+      throw new Error("Continuous Sky write-ups must be edited in Opening, Tension, Development, and Close so the reader structure stays intact.");
+    }
     if (typeof record.body_you === "string") {
       record.body_you = patch.body;
       sections.body_you = patch.body;
@@ -316,6 +351,28 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   if (typeof sections.body_they === "string") {
     record.body_they = sections.body_they;
   }
+
+  if (record.render_policy === "sky-placement-continuous-v2" && typeof record.body_you === "string") {
+    record.body_you = [record.opening, record.tension, record.development, record.close]
+      .filter((part) => typeof part === "string" && part.trim())
+      .join("\n\n");
+  }
+
+  const readerBody = record.render_policy === "sky-placement-continuous-v2" && typeof record.body_you !== "string"
+    ? [
+        record.opening,
+        record.tension,
+        record.development,
+        isRecord(record.era_layer) ? record.era_layer.frame : null,
+        isRecord(record.era_layer) ? record.era_layer.handoff : null,
+        isRecord(record.era_layer) ? record.era_layer.recurrence : null,
+        isRecord(record.era_layer) ? record.era_layer.collective_lesson : null,
+        record.close
+      ].filter((part) => typeof part === "string" && part.trim()).join("\n\n")
+    : stringFrom(record.body_you ?? record.body ?? record.text);
+  patch.body = readerBody;
+  sections.body_you = record.body_you ?? null;
+  sections.body_they = record.body_they ?? null;
 
   record.review_status = reviewStatus;
   if (typeof body.editorialNotes === "string") {
