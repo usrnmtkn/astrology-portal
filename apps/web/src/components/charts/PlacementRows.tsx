@@ -10,6 +10,11 @@ import {
 } from "../../content/fallbackArchitectureV3Runtime";
 import { isReaderFacingCopy } from "../../content/readerSafety";
 import {
+  cmsSurfaceKeys,
+  resolveCmsSurfaceOverride,
+  type CmsGeneratedContentMap
+} from "../../content/cmsSurfaceOverrides";
+import {
   aspectGlyph,
   aspectIconFiles,
   normalizeAspectType,
@@ -333,21 +338,37 @@ export function placementTitleFromParts(planet: string, sign: string, retrograde
 // Friend/event placement description: approved third-person ("they") placement
 // sentence from the v3 source. Ascendant and Midheaven are covered in 23c;
 // Descendant and IC stay empty until their rows are supplied. Never substitutes copy.
-export function friendPlacementDescription(planet: string, sign: string) {
-  const body = fallbackV3PlacementSentence(planet, sign, "they");
+export function friendPlacementDescription(planet: string, sign: string, generatedContent?: CmsGeneratedContentMap) {
+  const override = resolveCmsSurfaceOverride(
+    generatedContent,
+    cmsSurfaceKeys.placementRow(planet),
+    { planet, sign, voice: "they" }
+  );
+  const body = override?.body ?? fallbackV3PlacementSentence(planet, sign, "they");
 
   return isReaderFacingCopy(body) ? body : "";
 }
 
-export function natalPlacementDescription(planet: string, context: PlacementDescriptionContext = "self", ownerName?: string) {
+export function natalPlacementDescription(
+  planet: string,
+  context: PlacementDescriptionContext = "self",
+  ownerName?: string,
+  generatedContent?: CmsGeneratedContentMap,
+  sign = ""
+) {
   const sourceKeys = [`placement.description.${context}.${normalizeSkyBodyName(planet).toLowerCase().replace(/\s+/g, "-")}`];
-  let body = "";
+  const override = resolveCmsSurfaceOverride(
+    generatedContent,
+    cmsSurfaceKeys.placementRow(planet),
+    { planet, sign, voice: context === "self" ? "you" : "they", ownerName: ownerName ?? "" }
+  );
+  let body = override?.body ?? "";
 
-  if (context === "person" && ownerName?.trim()) {
+  if (!body && context === "person" && ownerName?.trim()) {
     body = namedPlacementDescription(planet, ownerName);
-  } else if (context === "chart" || context === "composite") {
+  } else if (!body && (context === "chart" || context === "composite")) {
     body = "";
-  } else {
+  } else if (!body) {
     body = natalCardTagline(planet);
   }
 

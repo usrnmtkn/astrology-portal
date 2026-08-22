@@ -421,6 +421,9 @@ async function seedAdminApi(
           headline: typeof payload.headline === "string" ? payload.headline : generatedContentRows[0].headline,
           summary: typeof payload.summary === "string" ? payload.summary : generatedContentRows[0].summary,
           body: typeof payload.body === "string" ? payload.body : generatedContentRows[0].body,
+          source_snapshot: payload.sourceSnapshot && typeof payload.sourceSnapshot === "object"
+            ? payload.sourceSnapshot
+            : generatedContentRows[0].source_snapshot,
           lane: typeof payload.lane === "string" ? payload.lane : generatedContentRows[0].lane,
           review_state: typeof payload.reviewState === "string" ? payload.reviewState : null,
           block_type: typeof payload.blockType === "string" ? payload.blockType : generatedContentRows[0].block_type,
@@ -926,7 +929,8 @@ test.describe("content dashboard admin user flow case studies", () => {
 
   test("surface map organizes editable content by the reader surface where it appears", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
-    await seedAdminApi(page);
+    let cmsWrite: { method: string; payload: Record<string, unknown> } | null = null;
+    await seedAdminApi(page, { onGeneratedContentWrite: (write) => { cmsWrite = write; } });
     await expectAdminRouteLoads(page, "/admin/content#surface-map");
 
     await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
@@ -934,7 +938,6 @@ test.describe("content dashboard admin user flow case studies", () => {
     const areaFilters = page.getByRole("group", { name: "Filter surfaces by area" });
     const statusFilters = page.getByRole("group", { name: "Filter surfaces by admin editability" });
     const planetCards = page.locator(".admin-surface-card", { hasText: "Friends Compatibility: Planet Comparison Cards" });
-    const highlightCards = page.locator(".admin-surface-card", { hasText: "Friends Compatibility: Highlight Cards" });
     const skyAspect = page.locator(".admin-surface-card", { hasText: "Sky Aspect Detail Pages" });
     const calendarEvents = page.locator(".admin-surface-card", { hasText: "Sky Calendar: Event Cards" });
     const friendsSurfaceLabels = writingSurfaceSourceMap
@@ -949,18 +952,15 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await areaFilters.getByRole("button", { name: "Friends" }).click();
     await expect(planetCards).toHaveCount(1);
-    await expect(highlightCards).toHaveCount(1);
     await expect(skyAspect).toHaveCount(0);
 
     await statusFilters.getByRole("button", { name: "Editable", exact: true }).click();
     await expect(planetCards).toHaveCount(1);
-    await expect(highlightCards).toHaveCount(0);
 
-    await statusFilters.getByRole("button", { name: "Partly editable" }).click();
+    await statusFilters.getByRole("button", { name: "Runtime gaps" }).click();
     await expect(areaFilters.getByRole("button", { name: "Friends" })).toHaveAttribute("aria-pressed", "true");
-    await expect(statusFilters.getByRole("button", { name: "Partly editable" })).toHaveAttribute("aria-pressed", "true");
+    await expect(statusFilters.getByRole("button", { name: "Runtime gaps" })).toHaveAttribute("aria-pressed", "true");
     await expect(planetCards).toHaveCount(0);
-    await expect(highlightCards).toHaveCount(1);
 
     await statusFilters.getByRole("button", { name: "All" }).click();
     await areaFilters.getByRole("button", { name: "Calendar" }).click();
@@ -973,6 +973,27 @@ test.describe("content dashboard admin user flow case studies", () => {
     for (const route of skyAspectAccess.routes) {
       await expect(skyAspect.locator(`a[href='${route.hash}']`)).toHaveCount(1);
     }
+
+    await areaFilters.getByRole("button", { name: "You" }).click();
+    const emptyHouseSurface = page.locator(".admin-surface-card", { hasText: "Empty House Cards And Detail Pages" });
+    await emptyHouseSurface.getByRole("button", { name: "Start empty-house detail template" }).click();
+    const editor = page.locator(".admin-editor-panel");
+    await expect(editor.getByRole("heading", { name: "Author new row" })).toBeVisible();
+    await expect(editor.getByLabel("Content key")).toHaveValue("cms/natal-empty-house/detail/you/template");
+    await expect(editor.getByText("Reader-facing CMS override")).toBeVisible();
+    await expect(editor.locator("p", { hasText: "Allowed slots:" })).toContainText("{{houseOrdinal}}");
+    await fillAdminEditorField(editor, "Body", "Your {{houseOrdinal}} house begins in {{sign}}. Review what you repeat here each month.");
+    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await expect(editor.getByText("Reader-facing CMS override")).toBeVisible();
+    await expect(editor.locator(".admin-editor-toolbar")).toContainText("Draft");
+    expect(cmsWrite?.method).toBe("POST");
+    expect(cmsWrite?.payload.sourceSnapshot).toMatchObject({
+      contentType: "mustache-template",
+      contentSystem: "cms-surface-override",
+      contentLevel: "owner-authored",
+      allowedSlots: expect.arrayContaining(["houseOrdinal", "sign"])
+    });
+    await editor.getByRole("button", { name: "Close" }).click();
 
     await assertNoBrowserErrors();
   });
