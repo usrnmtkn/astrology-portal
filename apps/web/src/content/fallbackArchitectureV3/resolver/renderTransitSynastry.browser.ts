@@ -522,11 +522,7 @@ export function createTransitSynastryRenderer(
     const row = hooks.get(key);
 
     if (
-      !(
-        (normalizedPlanet === "sun" && normalizedSign === "leo")
-        || (normalizedPlanet === "venus" && normalizedSign === "libra")
-      )
-      || !Number.isInteger(normalizedHouse)
+      !Number.isInteger(normalizedHouse)
       || normalizedHouse < 1
       || normalizedHouse > 12
       || !row
@@ -1502,6 +1498,7 @@ export function createTransitSynastryRenderer(
     "neptune",
     "pluto",
     "chiron",
+    "lilith",
     "north-node",
     "south-node",
     "nodes"
@@ -1982,7 +1979,10 @@ export function createTransitSynastryRenderer(
         previousResidencyExitDate
       });
     }
-    if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet)) {
+    // Lilith joins the continuous renderer only when an approved continuous row
+    // exists. Until then, its owner-approved four-slot page remains unchanged.
+    // This makes migration additive instead of blanking a page at cutover time.
+    if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet) || (planet === "lilith" && continuousSignCopy)) {
       const standaloneHook = hooks.get(`fallback-hook/sky-placement-sign/${planet}/${sign}`);
       if (!skyPlacementRenderEligible(planet, sign) && standaloneHook?.body_you) {
         const body = standaloneHook.body_you.trim();

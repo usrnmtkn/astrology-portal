@@ -9090,9 +9090,84 @@ body,
   padding: 12px;
 }
 
+.admin-dashboard .admin-sky-article-editor {
+  border-top: 1px solid var(--admin-ui-border);
+  display: grid;
+  gap: 16px;
+  margin-top: 4px;
+  padding-top: 16px;
+}
+
+.admin-dashboard .admin-sky-article-editor .admin-review-copy-editor textarea {
+  min-height: 132px;
+}
+
+.admin-dashboard .admin-sky-article-editor .admin-sky-house-grid,
+.admin-dashboard .admin-sky-article-editor .admin-sky-aspect-list {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding-top: 12px;
+}
+
+.admin-dashboard .admin-sky-article-editor .admin-review-copy-editor {
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border-soft);
+  border-radius: var(--admin-ui-radius-lg);
+  padding: 12px;
+}
+
+.admin-dashboard .admin-copy-preview {
+  color: var(--admin-ui-text);
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.admin-dashboard .admin-sky-article-sticky-actions {
+  background: color-mix(in srgb, var(--admin-ui-surface-2) 94%, transparent);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-lg);
+  bottom: 12px;
+  justify-content: space-between;
+  padding: 12px;
+  position: sticky;
+  z-index: 3;
+}
+
+.admin-dashboard .admin-sky-article-review {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-dashboard .admin-sky-article-diff {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-dashboard .admin-sky-article-diff > div {
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border-soft);
+  border-radius: var(--admin-ui-radius-md);
+  padding: 12px;
+}
+
+.admin-dashboard .admin-sky-article-diff p {
+  color: var(--admin-ui-text);
+  margin-top: 8px;
+  white-space: pre-wrap;
+}
+
+.admin-dashboard .admin-inline-error {
+  color: #fca5a5 !important;
+}
+
 @media (max-width: 920px) {
   .admin-dashboard .admin-fallback-diagnostic-grid,
-  .admin-dashboard .admin-sky-edition-facts-row {
+  .admin-dashboard .admin-sky-edition-facts-row,
+  .admin-dashboard .admin-sky-article-editor .admin-sky-house-grid,
+  .admin-dashboard .admin-sky-article-editor .admin-sky-aspect-list,
+  .admin-dashboard .admin-sky-article-diff {
     grid-template-columns: 1fr;
   }
 }

@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-08-21a",
-  "contentHash": "06b54a4928f8892db5dbd00bc26f9259",
-  "keyManifestHash": "3f8cf847f68d6c63c053ca29804e7397",
-  "keyCount": 786,
+  "packageVersion": "v3-2026-08-22a",
+  "contentHash": "93cc693e312395f224731550e974f50e",
+  "keyManifestHash": "77120e17d62d57cb27726f8d8a9f1827",
+  "keyCount": 785,
   "keys": [
     "hook:fallback-hook/sky-placement-aspect/sun/jupiter/conjunction",
     "hook:fallback-hook/sky-placement-aspect/sun/moon/opposition/aquarius",
@@ -785,7 +785,6 @@
     "hook:house-horoscope-core/venus/libra/house-2",
     "hook:house-horoscope-core/venus/libra/house-3",
     "hook:house-horoscope-core/venus/libra/house-4",
-    "hook:house-horoscope-core/venus/libra/house-5",
     "hook:house-horoscope-core/venus/libra/house-6",
     "hook:house-horoscope-core/venus/libra/house-7",
     "hook:house-horoscope-core/venus/libra/house-8",

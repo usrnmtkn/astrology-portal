@@ -1,82 +1,82 @@
 {
   "sourceSummary": {
-    "approvedExampleRowsRead": 11388,
+    "approvedExampleRowsRead": 11412,
     "ownerCorpusEntriesRead": 3390,
     "ownerCorpusDocuments": 47,
-    "ownerCorrectionsUsed": 22,
-    "deduplicatedSourcesUsed": 9766,
-    "duplicateTextsRemoved": 1691,
+    "ownerCorrectionsUsed": 76,
+    "deduplicatedSourcesUsed": 9835,
+    "duplicateTextsRemoved": 1700,
     "bySourceType": {
-      "approved_serving": 7822,
-      "knowledge_matrix": 1876,
+      "approved_serving": 7846,
+      "knowledge_matrix": 1875,
       "owner_corpus": 47,
-      "owner_correction": 21
+      "owner_correction": 67
     }
   },
   "tableCounts": {
-    "sources": 9766,
-    "sentences": 49284,
-    "collocationOccurrences": 111878,
-    "uniquePairs": 48375
+    "sources": 9835,
+    "sentences": 49524,
+    "collocationOccurrences": 112456,
+    "uniquePairs": 48517
   },
   "falsePositiveReport": {
     "method": "leave-one-source-out",
     "interpretation": "Every flag on owner-approved held-out copy is counted as a false positive.",
     "totals": {
-      "sourcesEvaluated": 9766,
-      "sourcesFlagged": 5632,
-      "sourceFalsePositiveRate": 0.5766946549252508,
-      "sentencesEvaluated": 49284,
-      "sentencesFlagged": 17516,
-      "sentenceFalsePositiveRate": 0.35540946351757163,
-      "pairOccurrencesEvaluated": 111878,
-      "pairOccurrencesFlagged": 29038,
-      "pairFalsePositiveRate": 0.2595505818838377
+      "sourcesEvaluated": 9835,
+      "sourcesFlagged": 5683,
+      "sourceFalsePositiveRate": 0.5778342653787494,
+      "sentencesEvaluated": 49524,
+      "sentencesFlagged": 17585,
+      "sentenceFalsePositiveRate": 0.35508036507551893,
+      "pairOccurrencesEvaluated": 112456,
+      "pairOccurrencesFlagged": 29124,
+      "pairFalsePositiveRate": 0.2589812904602689
     },
     "bySourceType": {
       "approved_serving": {
-        "sources": 7822,
-        "sourcesFlagged": 5027,
-        "sentences": 30100,
-        "sentencesFlagged": 11128,
-        "pairs": 76361,
-        "pairsFlagged": 18936,
-        "sourceFalsePositiveRate": 0.642674507798517,
-        "sentenceFalsePositiveRate": 0.36970099667774087,
-        "pairFalsePositiveRate": 0.24797998978536165
+        "sources": 7846,
+        "sourcesFlagged": 5052,
+        "sentences": 30298,
+        "sentencesFlagged": 11166,
+        "pairs": 76842,
+        "pairsFlagged": 18972,
+        "sourceFalsePositiveRate": 0.6438949783329085,
+        "sentenceFalsePositiveRate": 0.3685391775034656,
+        "pairFalsePositiveRate": 0.2468962286249707
       },
       "knowledge_matrix": {
-        "sources": 1876,
-        "sourcesFlagged": 558,
-        "sentences": 4770,
-        "sentencesFlagged": 1008,
-        "pairs": 13363,
-        "pairsFlagged": 1618,
-        "sourceFalsePositiveRate": 0.2974413646055437,
-        "sentenceFalsePositiveRate": 0.21132075471698114,
-        "pairFalsePositiveRate": 0.12108059567462397
+        "sources": 1875,
+        "sourcesFlagged": 559,
+        "sentences": 4764,
+        "sentencesFlagged": 1010,
+        "pairs": 13356,
+        "pairsFlagged": 1620,
+        "sourceFalsePositiveRate": 0.2981333333333333,
+        "sentenceFalsePositiveRate": 0.21200671704450041,
+        "pairFalsePositiveRate": 0.12129380053908356
       },
       "owner_corpus": {
         "sources": 47,
         "sourcesFlagged": 46,
         "sentences": 14388,
-        "sentencesFlagged": 5379,
+        "sentencesFlagged": 5382,
         "pairs": 22101,
-        "pairsFlagged": 8483,
+        "pairsFlagged": 8485,
         "sourceFalsePositiveRate": 0.9787234042553191,
-        "sentenceFalsePositiveRate": 0.3738532110091743,
-        "pairFalsePositiveRate": 0.38382878602778153
+        "sentenceFalsePositiveRate": 0.3740617180984153,
+        "pairFalsePositiveRate": 0.38391927967060313
       },
       "owner_correction": {
-        "sources": 21,
-        "sourcesFlagged": 1,
-        "sentences": 26,
-        "sentencesFlagged": 1,
-        "pairs": 53,
-        "pairsFlagged": 1,
-        "sourceFalsePositiveRate": 0.047619047619047616,
-        "sentenceFalsePositiveRate": 0.038461538461538464,
-        "pairFalsePositiveRate": 0.018867924528301886
+        "sources": 67,
+        "sourcesFlagged": 26,
+        "sentences": 74,
+        "sentencesFlagged": 27,
+        "pairs": 157,
+        "pairsFlagged": 47,
+        "sourceFalsePositiveRate": 0.3880597014925373,
+        "sentenceFalsePositiveRate": 0.36486486486486486,
+        "pairFalsePositiveRate": 0.29936305732484075
       }
     },
     "sampleFalsePositives": [
@@ -209,6 +209,16 @@
         "noun": "transit",
         "relation": "subject",
         "sentence": "It stays for just over three months before retrograding back into Pisces on September 1, giving us a first look at a longer transit that will shape the years ahead: February 15, 2026, through April 14, 2028."
+      },
+      {
+        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
+        "sourceType": "owner_corpus",
+        "key": "verb_noun|ask|re",
+        "type": "verb_noun",
+        "modifier": "ask",
+        "noun": "re",
+        "relation": "object",
+        "sentence": "And it’s asking what you’re going to do with it."
       },
       {
         "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
@@ -1068,16 +1078,6 @@
         "modifier": "develop",
         "noun": "strategy",
         "relation": "object",
-        "sentence": "This transit offers you the chance to develop different strategies for security."
-      },
-      {
-        "sourceKey": "corpus:packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/TLDR-Article-Edition-Saturn-Aries-2025-OWNER.md",
-        "sourceType": "owner_corpus",
-        "key": "adjective_noun|different|strategy",
-        "type": "adjective_noun",
-        "modifier": "different",
-        "noun": "strategy",
-        "relation": "attributive",
         "sentence": "This transit offers you the chance to develop different strategies for security."
       }
     ]
