@@ -8,6 +8,7 @@ import skyArticleV1 from "./fallbackArchitectureV3/source-rows/sky-article-v1.js
 import skyAspectPhrasebookV1 from "./fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json";
 import timingEventReaderCopyV2 from "./fallbackArchitectureV3/source-rows/timing-event-reader-copy-v2.json";
 import weeklySourceRowsV1 from "./fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json";
+import { isGovernedReaderEligible } from "./fallbackArchitectureV3/resolver/readerEligibility.browser";
 // The package ships a prebuilt ESM bundle. Keep resolver logic package-owned.
 // @ts-ignore Package bundle is JavaScript-only; app-facing types live below.
 import { createFallbackRenderer, createPackageManifest, createTransitSynastryRenderer, normalizeAspect, PACKAGE_VERSION, SourceGapError } from "./fallbackArchitectureV3/dist/tldr-content.js";
@@ -354,10 +355,8 @@ const snapshotBundle: FallbackArchitectureV3Bundle = {
   }
 };
 
-const readerEligibleReviewStatuses = new Set(["approved", "approved_reuse", "reviewed"]);
-
-function isReaderEligible(row: { review_status?: ReviewStatus | null }) {
-  return readerEligibleReviewStatuses.has(String(row.review_status ?? "").trim().toLowerCase());
+function isReaderEligible(row: { contentKey: string; review_status?: ReviewStatus | null; [key: string]: unknown }) {
+  return isGovernedReaderEligible(row);
 }
 
 function packageRowsWithLatestReaderEligibleOverride<

@@ -49,11 +49,13 @@ Each of these binds on its surface and postdates the standard.
 
 - `TLDR-REGISTER-PER-SURFACE-RULING-OWNER.md` (2026-08-09) — which register applies where. Resolve the rendered surface before choosing a voice.
 - `TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md` (2026-08-10) — astrology sentence to lived consequence, plus its four dated amendments: the announcement clarification, `real` as generator filler, and the translation-required ruling with the Mars in Aries exemplar.
+- `TLDR-AUTHOR-FROM-MECHANISM-RULING-OWNER.md` (2026-08-13) — author from AstrologySupport and source constraints, never by paraphrasing existing candidate or serving prose.
 - `TLDR-HUMAN-PATTERN-AND-RELATIONSHIP-COPY-RULING-OWNER.md` (2026-08-21) — Friends relationship causality, usable Do/Don't grammar, proportional psychological certainty, and the human-pattern-first architecture. It is active for drafting and review but does not approve or promote any candidate reader wording.
 
 **Natal**
 
-- `TLDR-NATAL-PAGE-CONTRACT-OWNER.md` (2026-08-17) — what a finished placement page contains: a sign section and a house section, 120 to 180 words each, with the house topics named in the header. Moon phase, sect, and chart-ruler layers are deferred past first launch. Aspects are owned elsewhere.
+- `TLDR-NATAL-PAGE-CONTRACT-OWNER.md` (2026-08-17, amended through 2026-08-21) — what a finished placement page contains: a sign section and a house section, with the house topics named in the header and the approved reusable house bridge preceding separately governed planet-in-house copy. Moon phase, sect, and chart-ruler layers are deferred past first launch. Aspects are owned elsewhere.
+- `TLDR-NATAL-HOUSE-BRIDGE-RULING-OWNER.md` (2026-08-20) — the You house section opens with the exact approved `fallback-hook/house-meaning/{house}` bridge. New planet-in-house candidates follow in direct reader voice; serving copy stays unchanged until rendered owner approval.
 - `TLDR-NATAL-PLACEMENT-DELINEATION-STANDARD-OWNER.md` (2026-08-10) — the five beats and the Capricorn empty-10th benchmark. Scope is placements: sign-on-house, empty houses, ruler placements.
 - Natal aspects are a different shape from placements (owner, 2026-08-17). A placement is the person in an arena; an aspect is two parts of the person meeting. Aspect argument shapes are in `CLAUDE.md`.
 - Naming the astrology openly is permitted, and archetype framing is permitted, provided the passage cashes it into recognizable life material (owner, 2026-08-17).
@@ -83,7 +85,8 @@ Each of these binds on its surface and postdates the standard.
 **Lilith**
 
 - `TLDR-LILITH-FACT-BOUNDARY-OWNER.md` (2026-08-09) — the source-safe fact boundary. Section 1 is the shared astronomical and astrological doctrine that is safe in any copy. Section 2 is the source's distinctive editorial framing, which is never reused. Section 3 is the approved owner framing: Lilith = refusals, where you stop apologizing, the no you have been swallowing, anger as information about a crossed limit. Compose Lilith copy from Sections 1 and 3 only.
-- Do not confuse this with `packages/astro-knowledge/review/tldr-astro-lilith-fact-boundary.md`, which is a separate engineering record covering the true-versus-mean Lilith calculation and is cited from `apps/web/src/services/ephemeris.ts`. Same short name, different document, different job.
+- `packages/astro-knowledge/review/tldr-astro-lilith-fact-boundary.md` is the separate calculation contract. `packages/astro-knowledge/review/lilith-true-apogee-migration-2026-08-09.md` records the completed True Lilith implementation. Same short name, different document, different job.
+- Exact approved sign-placement wording lives in `packages/astro-knowledge/review/lilith-placements-v5/lilith-placements-v5-owner-package.md`; exact approved house-transit wording lives under `authored/transit-house/lilith/{house}`; the repeat-safe station line lives in Knowledge Matrix v9.
 
 ## 4. Superseded, keep for provenance, do not follow
 
@@ -93,6 +96,7 @@ Version chains where only the highest number is live:
 - Report judge rubric: V2, V3, V3.2, V3.3 are superseded by **V3.4**.
 - Card judge rubric: V3 draft superseded by **V3.1 draft**.
 - Card critique checklist: V3 draft superseded by **V3.1 draft**.
+- `TLDR-LILITH-REWRITE-PACK-V1-NEEDS-REVIEW.md` is a superseded review archive. Its station wording migrated to Knowledge Matrix v9; its remaining candidates did not receive exact-wording approval and must not be used as positive evidence or serving copy.
 
 Anything named `-DRAFT` is not owner-approved and must not be quoted as authority.
 
@@ -100,9 +104,7 @@ Anything named `-DRAFT` is not owner-approved and must not be quoted as authorit
 
 These are source material for meaning and voice evidence. They do not issue rules and should never be read as constraints: the compatibility card sets by planet, the reverse card sets, `ASPECT-MEANINGS-REFERENCE.md`, `PLANET-SUBJECT-LIVED-HARVEST.md`, `PLANET-INTROS.md`, `MARIE-VOICE-BANK.md`, the sign lived-reference files, and the generation prompts for the report domains.
 
-Candidate copy, pending owner exact-wording approval. Listed so it is findable, and marked so it is never mistaken for authority:
-
-- `TLDR-LILITH-REWRITE-PACK-V1-NEEDS-REVIEW.md` — draft units composed from Sections 1 and 3 of the Lilith fact boundary: a base placement line, a station template that must survive monthly repetition under true Lilith, retrograde and direct lines, twelve house-transit paragraphs, and a natal one-liner. No unit is owner-approved. None may be promoted into a serving row until the owner approves the exact wording.
+Historical review material is retained only when its status and successor are explicit. `TLDR-LILITH-REWRITE-PACK-V1-NEEDS-REVIEW.md` is a migration ledger, not a candidate or authority source.
 
 ## 6. Maintenance rule
 

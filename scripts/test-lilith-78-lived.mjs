@@ -39,6 +39,7 @@ const browser = createFallbackRenderer(
 
 const destinationPrefix = "fallback-hook/natal-aspect-lived/lilith/";
 const llMatrixV13Release = "ll-matrix-v13-owner-approved-runtime";
+const incrementalOwnerApprovalRelease = "ll-matrix-v13-incremental-owner-approval-2026-08-17";
 const recordPrefix = `${reviewRoot}/records/`;
 const sha256 = (value) => crypto.createHash("sha256").update(value, "utf8").digest("hex");
 
@@ -70,6 +71,7 @@ const existingApprovedRows = source.hookRows.filter((row) => (
   row.review_status === "approved"
   && !row.contentKey?.startsWith(destinationPrefix)
   && row.source_release !== llMatrixV13Release
+  && row.source_release !== incrementalOwnerApprovalRelease
   && row.source_release !== "natal-moon-final-rendered-v3"
 ));
 assert.equal(
