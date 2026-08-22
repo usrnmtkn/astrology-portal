@@ -1724,6 +1724,11 @@ function titleForDay(day: LunarCalendarDay) {
   return lunation?.title ?? `Moon in ${day.moonSign}`;
 }
 
+function calculatedPhaseTitle(phase: string, sign: string) {
+  const phaseLabel = /\bmoon$/iu.test(phase) ? phase : `${phase} Moon`;
+  return `${phaseLabel} in ${sign}`;
+}
+
 function titleGlyphForDay(day: LunarCalendarDay) {
   const lunation = day.events.find((event) => event.type === "lunation");
 
@@ -2422,6 +2427,7 @@ export function LunarCalendar({
   const selectedDayPhase = selectedDay && calendar
     ? calendarPhaseLabelForDay(selectedDay, calendar.days)
     : null;
+  const selectedDayPhaseSign = selectedPrimaryLunation?.sign ?? selectedDay?.moonSign ?? "";
   const selectedTransitNotes = enableLunarArcContent && selectedLunarDay
     ? selectedLunarDay.editorial.transitNotes
         .map((note) => ({
@@ -2463,7 +2469,7 @@ export function LunarCalendar({
         try {
           const rendered = calendarFallbackRendererV3.renderCalendarPhase({
             phase: calendarPhaseContentKey(selectedDayPhase),
-            sign: slugContentPart(selectedPrimaryLunation?.sign ?? selectedDay.moonSign)
+            sign: slugContentPart(selectedDayPhaseSign)
           }) as ReturnType<typeof calendarFallbackRendererV3.renderCalendarPhase> & { tagline?: string };
 
           return {
@@ -2573,7 +2579,10 @@ export function LunarCalendar({
             {seasonEyebrowForDay(selectedDay, zone, arcEvents)}
           </span>
           <h2>
-            {selectedPackagePhase?.headline ?? titleForDay(selectedDay)}
+            {selectedPackagePhase?.headline
+              ?? (selectedDayPhase
+                ? calculatedPhaseTitle(selectedDayPhase, selectedDayPhaseSign)
+                : titleForDay(selectedDay))}
           </h2>
           {selectedPackagePhase?.tagline && (
             <small className="lunar-selected-card__phase-tagline">{selectedPackagePhase.tagline}</small>
