@@ -6,6 +6,7 @@
     "apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json",
     "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
     "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+    "data/content-inventory/content-inventory-v1.json",
     "apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-placement-serving-manifest-v1.json",
     "data/writing/owner-corrections.jsonl",
     "data/writing/owner-feedback-corpus.jsonl"
@@ -14,6 +15,7 @@
     "scope": "Twelve house passages for every governed long-form or recurring Sky placement route.",
     "copy": "Selected passages are reused byte-for-byte; this materializer never writes or edits prose.",
     "priority": [
+      "Owner-authored Content Studio passage recorded in the governed content inventory.",
       "Owner-approved matrix ingress passage from today/current-sky.",
       "Owner-approved matrix ingress passage from the published archive.",
       "Existing approved transit house/sign passage when the matrix has no eligible passage.",
@@ -24,7 +26,8 @@
   "placementCount": 82,
   "rowCount": 984,
   "selectionCounts": {
-    "matrix": 685,
+    "ownerAuthoredInventory": 6,
+    "matrix": 679,
     "legacyApprovedTransit": 193,
     "approvedTemplateComposition": 106,
     "missing": 0
@@ -362,14 +365,14 @@
       "body_you": "Jupiter moves through Leo in your 7th house, expanding relationships, partnerships, contracts, clients, and the part of your life where another person’s choices have a direct effect on yours. You may meet more people, enter a significant relationship, attract larger clients, formalize a partnership, or discover that an existing connection has reached the point where the two of you need clearer terms because there is more at stake than there used to be. Leo brings warmth and generosity to one-on-one relationships, which can make this a deeply supportive year, but it can also make admiration feel so good that practical incompatibilities are easy to postpone.\n\nSomeone being enthusiastic about you is not the same as being able to build a life, business, or agreement with you. Pay attention to what happens after the chemistry, praise, opportunity, or big promise has had time to become ordinary, because that is when schedules, money, communication, responsibility, and follow-through start telling you what the relationship can actually support. Let people love you loudly this year, but make sure they can also show up when nobody is watching.",
       "review_status": "approved_reuse",
       "source_keys": [
-        "generated_interpretations#authored/transit-house-sign/jupiter/7/leo"
+        "data/content-inventory/content-inventory-v1.json#house-horoscope-core/jupiter/leo/house-7"
       ],
       "approved_via": "Owner-authored verbatim in Content Studio on 2026-08-22.",
       "template_selection": {
-        "selected_from": "owner-authored-content-studio",
+        "selected_from": "owner-authored-content-studio-inventory",
         "candidate_count": 1,
-        "source": "generated_interpretations",
-        "source_row": "authored/transit-house-sign/jupiter/7/leo"
+        "source": "data/content-inventory/content-inventory-v1.json",
+        "source_row": "d7cc3a968cd76d815bf27f800173b8d39f8384e107b0218076599e5896d41150"
       }
     },
     {
@@ -380,14 +383,14 @@
       "body_you": "Jupiter moves through Leo in your 8th house, bringing attention to shared money, debt, taxes, inheritance, investments, intimacy, and the agreements that determine who carries what when resources and responsibilities are combined. You may receive financial support, restructure debt, merge finances, deal with an estate, secure funding, or enter a relationship where the practical questions around trust become impossible to treat as separate from the emotional ones. Leo can make generosity larger here, but it can also make pride interfere with conversations about who owes what, who has access, and who gets to make decisions once money or responsibility is shared.\n\nThis is a good year to improve the terms, not to pretend terms are unnecessary because everybody involved has good intentions. Put the numbers in writing, understand what you are signing, ask who controls the account, and do not confuse somebody’s willingness to spend generously with their willingness to share power. Jupiter can increase what is available to you through other people, but the arrangement works best when nobody has to stay confused in order to keep the peace.",
       "review_status": "approved_reuse",
       "source_keys": [
-        "generated_interpretations#authored/transit-house-sign/jupiter/8/leo"
+        "data/content-inventory/content-inventory-v1.json#house-horoscope-core/jupiter/leo/house-8"
       ],
       "approved_via": "Owner-authored verbatim in Content Studio on 2026-08-22.",
       "template_selection": {
-        "selected_from": "owner-authored-content-studio",
+        "selected_from": "owner-authored-content-studio-inventory",
         "candidate_count": 1,
-        "source": "generated_interpretations",
-        "source_row": "authored/transit-house-sign/jupiter/8/leo"
+        "source": "data/content-inventory/content-inventory-v1.json",
+        "source_row": "0c123875f258f0a4192b907b2f8e821729826d509d67fa7bc6fd83690b72b897"
       }
     },
     {
@@ -398,14 +401,14 @@
       "body_you": "Jupiter, moving through Leo in your 9th house, expands education, travel, publishing, teaching, belief, and the larger questions that change what you think your life could become. You may return to school, travel farther, publish your work, begin teaching, enter a legal or academic process, or become much more serious about an idea that used to live mostly in conversation. Leo gives conviction to this part of the chart, which can help you speak with more confidence about what you know, especially after a period of collecting information without deciding what you actually believe.\n\nThe risk is becoming so attached to the idea that you are right that curiosity starts disappearing from the process. Jupiter likes big explanations and Leo likes confidence, but the strongest argument still has to survive new information, particularly when somebody with less status, fewer credentials, or a different background notices something you missed. Let the world get bigger this year without requiring every new experience to confirm what you already thought.",
       "review_status": "approved_reuse",
       "source_keys": [
-        "generated_interpretations#authored/transit-house-sign/jupiter/9/leo"
+        "data/content-inventory/content-inventory-v1.json#house-horoscope-core/jupiter/leo/house-9"
       ],
       "approved_via": "Owner-authored verbatim in Content Studio on 2026-08-22.",
       "template_selection": {
-        "selected_from": "owner-authored-content-studio",
+        "selected_from": "owner-authored-content-studio-inventory",
         "candidate_count": 1,
-        "source": "generated_interpretations",
-        "source_row": "authored/transit-house-sign/jupiter/9/leo"
+        "source": "data/content-inventory/content-inventory-v1.json",
+        "source_row": "702dfb85998d9d2a6de4768d5891808368edd47e78965c2194449ecfd267d105"
       }
     },
     {
@@ -416,14 +419,14 @@
       "body_you": "Jupiter moves through Leo in your 10th house, bringing growth to career, reputation, leadership, recognition, and the responsibilities attached to being known for what you do. You may receive a promotion, publish something important, take on a more visible role, attract a larger client base, or finally reach the point where people are asking you to make decisions instead of waiting for somebody else to approve yours. Leo adds pride and visibility to this part of your chart, so the desire to be taken seriously can become much stronger, particularly if you have spent years doing work that other people benefited from without giving you the title, money, or credit that should have come with it.\n\nThe danger is accepting every visible opportunity because it looks like progress from the outside. More responsibility is only useful when the authority, compensation, support, and time required to do the job have grown with it, and a title can become expensive very quickly when you are expected to carry problems you were never given the power to solve. Let the year make your work easier to recognize, but make sure recognition changes the terms too.",
       "review_status": "approved_reuse",
       "source_keys": [
-        "generated_interpretations#authored/transit-house-sign/jupiter/10/leo"
+        "data/content-inventory/content-inventory-v1.json#house-horoscope-core/jupiter/leo/house-10"
       ],
       "approved_via": "Owner-authored verbatim in Content Studio on 2026-08-22.",
       "template_selection": {
-        "selected_from": "owner-authored-content-studio",
+        "selected_from": "owner-authored-content-studio-inventory",
         "candidate_count": 1,
-        "source": "generated_interpretations",
-        "source_row": "authored/transit-house-sign/jupiter/10/leo"
+        "source": "data/content-inventory/content-inventory-v1.json",
+        "source_row": "dc8b978178447768b6840fb7a7aba69a2587f56dacbb2d5136ec62fe153fa557"
       }
     },
     {
@@ -434,14 +437,14 @@
       "body_you": "Jupiter moves through Leo in your 11th house, expanding friendships, communities, professional networks, audiences, and the long-term goals that become more possible when the right people know what you are trying to build. You may meet collaborators, find yourself included in rooms that used to feel difficult to enter, receive more invitations, or realize that one introduction has opened a door you would have struggled to reach on your own. Leo makes visibility inside groups more important, which can bring genuine recognition for what you contribute but can also expose how quickly belonging becomes complicated when everybody wants to be the person being noticed.\n\nPay attention to the groups where success is shared and the ones where every opportunity quietly turns into a contest for access, attention, or proximity to whoever has the most influence. Jupiter can give you a larger circle this year, but a larger circle is not automatically a better one, especially if keeping your place requires constant attendance, emotional work, or enthusiasm you no longer feel. Invest in the connections that still make sense when there is nothing useful to gain from being seen together.",
       "review_status": "approved_reuse",
       "source_keys": [
-        "generated_interpretations#authored/transit-house-sign/jupiter/11/leo"
+        "data/content-inventory/content-inventory-v1.json#house-horoscope-core/jupiter/leo/house-11"
       ],
       "approved_via": "Owner-authored verbatim in Content Studio on 2026-08-22.",
       "template_selection": {
-        "selected_from": "owner-authored-content-studio",
+        "selected_from": "owner-authored-content-studio-inventory",
         "candidate_count": 1,
-        "source": "generated_interpretations",
-        "source_row": "authored/transit-house-sign/jupiter/11/leo"
+        "source": "data/content-inventory/content-inventory-v1.json",
+        "source_row": "58d214358ce26d6078fca3920031e9394ef039823dd7558ce63ace953f22f14e"
       }
     },
     {
@@ -452,14 +455,14 @@
       "body_you": "Jupiter moves through Leo in your 12th house, expanding the part of your life that operates privately, including rest, endings, solitude, grief, recovery, and the thoughts that become easier to hear when there is finally less noise around them. A year like this can feel quieter from the outside even when a great deal is changing internally, particularly if you are closing out a long chapter, working on something before it is ready to be public, or realizing how much of your exhaustion has come from treating every open hour as time that should be used productively.\n\nLeo brings pride into a house that usually asks for privacy, which can expose how difficult it is to rest when nobody can see what you accomplished with the day, or how quickly you start explaining yourself when you need time away from people who are accustomed to your availability. You do not need to disappear, but you may need to become much more selective about what deserves access to you while this cycle is clearing space. Some of the most important work you do this year may have nothing impressive to show for it until much later.",
       "review_status": "approved_reuse",
       "source_keys": [
-        "generated_interpretations#authored/transit-house-sign/jupiter/12/leo"
+        "data/content-inventory/content-inventory-v1.json#house-horoscope-core/jupiter/leo/house-12"
       ],
       "approved_via": "Owner-authored verbatim in Content Studio on 2026-08-22.",
       "template_selection": {
-        "selected_from": "owner-authored-content-studio",
+        "selected_from": "owner-authored-content-studio-inventory",
         "candidate_count": 1,
-        "source": "generated_interpretations",
-        "source_row": "authored/transit-house-sign/jupiter/12/leo"
+        "source": "data/content-inventory/content-inventory-v1.json",
+        "source_row": "7503d08a9fa1bfbe0c60e23bf67b072e01c38466265686ceccc3df35639a788b"
       }
     },
     {
