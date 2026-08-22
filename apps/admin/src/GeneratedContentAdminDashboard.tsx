@@ -359,8 +359,6 @@ const adminPageByHashKey = {
   ),
   home: "reviewQueue",
   review: "reviewQueue",
-  compatibility: "content",
-  "composite-review": "reviewQueue",
   "app-behavior": "reviewQueue",
   "release-notes": "reviewQueue",
   "content/aspect-pattern-activation": "aspectPatternActivationCoverage"
@@ -380,6 +378,8 @@ const primaryAdminNavItems: AdminNavItem[] = [
   { page: "reviewQueue", label: "Review Queue", icon: Check },
   { page: "content", label: "Content Library", icon: BookOpenText },
   { page: "articles", label: "Articles", icon: FileText },
+  { page: "compatibility", label: "Compatibility", icon: Users },
+  { page: "compositeByType", label: "Composite Review", icon: Users },
   { page: "templates", label: "Templates", icon: Sparkles },
   { page: "aspectPatternCoverage", label: "Aspect Patterns", icon: BookOpenText }
 ];
