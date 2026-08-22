@@ -152,7 +152,7 @@ const WINDOW_HOUSE = { moon: "For the next couple of days", sun: "This month", m
 const WINDOW_RETRO = { mercury: "For about three weeks", venus: "For about six weeks", mars: "For the next couple of months", jupiter: "For about four months", saturn: "For about four and a half months", uranus: "For about five months", neptune: "For about five months", pluto: "For about five months", chiron: "For about five months" };
 const title = (s) => s.split("-").map((p) => p[0].toUpperCase() + p.slice(1)).join(" ");
 export const TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
-export function skyPlacementKeyDates({ planet, residencyPasses, residencyStations }) {
+export function skyPlacementKeyDates({ planet, sign, residencyPasses, residencyStations }) {
   const passes = (residencyPasses ?? [])
     .filter((pass) => {
       const entry = new Date(pass.entryDate);
@@ -170,6 +170,7 @@ export function skyPlacementKeyDates({ planet, residencyPasses, residencyStation
     label: passes.length > 1 ? `Pass ${index + 1} of ${passes.length}` : "",
     event: "residency-pass"
   }));
+  const stationSign = String(sign ?? "").trim();
   for (const station of residencyStations ?? []) {
     const occursAt = new Date(station.occursAt);
     if (Number.isNaN(occursAt.getTime())) continue;
@@ -177,10 +178,10 @@ export function skyPlacementKeyDates({ planet, residencyPasses, residencyStation
       occursAt.getTime() >= new Date(pass.entryDate).getTime()
       && occursAt.getTime() <= new Date(pass.exitDate).getTime()
     ));
-    if (!isVerifiedInsidePass) continue;
+    if (!isVerifiedInsidePass || !stationSign) continue;
     keyDates.push({
       date: station.occursAt,
-      label: `${title(planet)} stations ${station.direction}`,
+      label: `${title(planet)} stations ${station.direction} in ${title(stationSign)}`,
       event: `station-${station.direction}`
     });
   }
