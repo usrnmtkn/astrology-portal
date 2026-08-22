@@ -20,7 +20,11 @@ try {
     platform: "node",
     format: "esm",
     outfile,
-    external: ["../../packages/astro-knowledge/scripts/generate-sky-aspect-cards.js"],
+    external: [
+      "../../packages/astro-knowledge/scripts/generate-sky-aspect-cards.js",
+      "../../packages/astro-knowledge/scripts/editorial-judge-runtime.js",
+      "../../src/astro-writing/productionPreCallGate.cjs"
+    ],
     banner: {
       js: 'import { createRequire } from "node:module"; const require = createRequire(import.meta.url);'
     },

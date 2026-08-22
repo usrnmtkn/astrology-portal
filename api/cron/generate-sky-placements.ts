@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import skyAspectGenerator from "../../packages/astro-knowledge/scripts/generate-sky-aspect-cards.js";
+import editorialJudgeRuntime from "../../packages/astro-knowledge/scripts/editorial-judge-runtime.js";
 import productionPreCallGate from "../../src/astro-writing/productionPreCallGate.cjs";
 import skyPlacementCachePolicy from "../../src/astro-writing/skyPlacementCachePolicy.cjs";
 import { validateCopy } from "../../src/astro-writing/validateCopy.mjs";
@@ -18,6 +19,9 @@ const { prepareProductionPreCallGate, assertProductionPreCallGate } = production
     gate: unknown,
     options: { role: string; input: Record<string, unknown>; draftValidation: unknown }
   ) => unknown;
+};
+const { assertLiveJudgeAuthorized } = editorialJudgeRuntime as unknown as {
+  assertLiveJudgeAuthorized: () => void;
 };
 const { isLegacyLiveBase, isReusableLiveTopper, requiresBaseRegeneration } = skyPlacementCachePolicy as unknown as {
   isLegacyLiveBase: (existing: ExistingPlacementRow | null) => boolean;
@@ -1155,6 +1159,17 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
   if (!isAuthorized(req)) {
     sendJson(res, 401, { error: "Unauthorized." });
+    return;
+  }
+
+  try {
+    assertLiveJudgeAuthorized();
+  } catch (error) {
+    sendJson(res, 409, {
+      ok: false,
+      code: "LIVE_LLM_JUDGE_NOT_AUTHORIZED",
+      error: error instanceof Error ? error.message : "Live LLM judging is not authorized."
+    });
     return;
   }
 
