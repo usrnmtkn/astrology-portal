@@ -189,14 +189,14 @@ assert.equal(
   "personal-transit and house-transit handlers must refuse heading-only detail articles"
 );
 assert.equal(
-  (friendTransitsTabSource.match(/disabled=\{!.*?\.detailAvailable\}/gu) ?? []).length,
-  2,
-  "personal-transit and house-transit rows must be disabled when no eligible detail section exists"
+  (friendTransitsTabSource.match(/Full interpretation unavailable pending source verification\./gu) ?? []).length,
+  0,
+  "internal source-verification status must never be shown to a Friends reader"
 );
 assert.equal(
-  (friendTransitsTabSource.match(/Full interpretation unavailable pending source verification\./gu) ?? []).length,
+  (friendTransitsTabSource.match(/\.filter\(\(transit\) => transit\.detailAvailable\)/gu) ?? []).length,
   2,
-  "both disabled transit row families must show the factual unavailable state"
+  "personal and house transit lists must omit rows without an eligible full detail section"
 );
 assert.match(
   manualChartsPanelSource,
@@ -209,4 +209,4 @@ assert.match(
   "Friends house-transit details must gate resolver-attributed prose units independently"
 );
 
-console.log("Friends transit detail provenance gate passed: exact and untraced approvals accepted; ungated enrichments withheld independently; heading-only articles blocked.");
+console.log("Friends transit detail provenance gate passed: exact and untraced approvals accepted; ungated enrichments and incomplete reader rows withheld; heading-only articles blocked.");
