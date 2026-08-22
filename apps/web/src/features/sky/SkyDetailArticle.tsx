@@ -701,6 +701,7 @@ export function SkyDetailArticle({
             </span>
             <section
               className="article-card sky-detail-personalized-placement"
+              id="sky-rising-horoscopes"
               aria-label={detail.personalizedPlacement.heading}
             >
               <div className="article-body-card sky-detail-body">
