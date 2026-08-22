@@ -531,6 +531,7 @@ function isGovernedReaderEligible(row, { allowUnreviewed = false } = {}) {
 var TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
 function skyPlacementKeyDates({
   planet,
+  sign,
   residencyPasses,
   residencyStations
 }) {
@@ -546,14 +547,15 @@ function skyPlacementKeyDates({
     label: passes.length > 1 ? `Pass ${index + 1} of ${passes.length}` : "",
     event: "residency-pass"
   }));
+  const stationSign = String(sign ?? "").trim();
   for (const station of residencyStations ?? []) {
     const occursAt = new Date(station.occursAt);
     if (Number.isNaN(occursAt.getTime())) continue;
     const isVerifiedInsidePass = passes.some((pass) => occursAt.getTime() >= new Date(pass.entryDate).getTime() && occursAt.getTime() <= new Date(pass.exitDate).getTime());
-    if (!isVerifiedInsidePass) continue;
+    if (!isVerifiedInsidePass || !stationSign) continue;
     keyDates.push({
       date: station.occursAt,
-      label: `${title2(planet)} stations ${station.direction}`,
+      label: `${title2(planet)} stations ${station.direction} in ${title2(stationSign)}`,
       event: `station-${station.direction}`
     });
   }
@@ -2738,7 +2740,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-22a";
+var PACKAGE_VERSION = "v3-2026-08-22b";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

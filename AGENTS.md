@@ -49,6 +49,22 @@ manifest and summary are generated integrity indexes; never edit them by hand.
 `npm run test:content` must reject source changes whose generated manifest is
 stale.
 
+### Runtime artifact verification (mandatory)
+
+A resolver-source test is not proof that readers receive the change. The web
+app imports `apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js`,
+not the resolver source files directly. After changing fallback resolver
+behavior:
+
+1. rebuild `dist/tldr-content.js` from `resolver/index.browser.ts`;
+2. bump `PACKAGE_VERSION` and refresh every pinned version assertion;
+3. test the Node resolver, browser source resolver, and shipped dist artifact
+   against the same fixture; and
+4. verify the rendered product surface or its exact app-facing payload.
+
+If the source resolvers pass but the shipped artifact or rendered surface does
+not, the task is not complete and must not be reported as deployed.
+
 ### Editorial writing and review
 
 Any reader-facing astrology copy written in chat must use the owner’s writing rules, phrase bank, corpus, voice, tone, and prior editorial decisions. Semantic components determine meaning; the owner’s writing determines how that meaning is expressed.
