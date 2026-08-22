@@ -43,6 +43,7 @@ function verdict(score, { checkId = "direct-lived-register", sentence = cleanArt
 
 async function main() {
   assert.strictEqual(surfaceForContentKey("sky-article-template/jupiter/ingress"), LONGFORM_SURFACE);
+  assert.strictEqual(surfaceForContentKey("sky/article-template/jupiter/ingress"), LONGFORM_SURFACE);
   assert.strictEqual(surfaceForContentKey("sky-article/jupiter/cancer/2026"), LONGFORM_SURFACE);
   assert.strictEqual(surfaceForContentKey("nodes-article/aries-libra/2026"), LONGFORM_SURFACE);
   assert.strictEqual(surfaceForContentKey("fallback-hook/sky-placement-hook/moon/scorpio"), PLACEMENT_SURFACE);

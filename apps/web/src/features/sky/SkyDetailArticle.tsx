@@ -76,7 +76,8 @@ export type SkyDetail = {
   keyDates?: SkyDetailKeyDate[];
   keyDatesIntro?: string | null;
   closingCharge?: string | null;
-  risingHoroscopes?: { risingSign: string; body: string }[];
+  risingHoroscopes?: { risingSign?: string | null; house?: number; body: string; contentKey?: string }[];
+  articleAspectPassages?: { natalPoint: string; aspect: string; body: string; contentKey: string }[];
   subtitle?: string;
   tldr?: string;
   suppressTldr?: boolean;

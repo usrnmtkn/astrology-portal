@@ -73,6 +73,10 @@ import {
 } from "./content/fallbackArchitectureV3Runtime";
 import { natalPlacementReaderSectionCopy } from "./content/natalPlacementReaderSections";
 import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "./content/readerSafety";
+import {
+  selectActiveSkyArticleEdition,
+  skyArticleAspectPassageForTransit
+} from "./content/skyArticleTemplateCompiler";
 import type { ContentBundle } from "./content/types";
 import {
   astrologyDateRangeLabel,
@@ -544,7 +548,8 @@ type NormalizedSkyPlacementSection = NormalizedSurfaceSection<SkyPlacementSlot> 
   keyDatesIntro?: string | null;
   articleWindow?: string | null;
   articleMode?: "current" | "archive" | null;
-  risingHoroscopes?: { risingSign: string; body: string }[];
+  risingHoroscopes?: { risingSign?: string | null; house?: number; body: string; contentKey?: string }[];
+  articleAspectPassages?: { natalPoint: string; aspect: string; body: string; contentKey: string }[];
   articleSections?: { kind: string; heading: string; body: string }[];
 };
 type NormalizedSkyPlacementArticle = {
@@ -5060,6 +5065,36 @@ function skyPlacementWritingSection(
   };
 }
 
+function compiledSkyArticleWritingSection(
+  position: PlanetPosition,
+  generatedContent: GeneratedContentMap,
+  generatedAt: string
+): NormalizedSkyPlacementSection | null {
+  const planet = normalizeContentIdPart(position.planet);
+  const sign = normalizeContentIdPart(position.sign);
+  const selected = selectActiveSkyArticleEdition(generatedContent.values(), { activeInstant: generatedAt, planet, sign });
+  if (!selected) return null;
+
+  return {
+    slot: "meaning",
+    required: true,
+    layer: "authored",
+    tier: "compiled-sky-article-edition-v1",
+    sourceKeys: ["compiled-sky-article-edition-v1", selected.edition.templateKey, selected.content.contentKey],
+    heading: selected.edition.headline,
+    body: selected.edition.body,
+    articleWindow: `${selected.edition.validFrom} - ${selected.edition.validTo}`,
+    articleMode: "current",
+    risingHoroscopes: selected.edition.housePassages,
+    articleAspectPassages: selected.edition.aspectPassages,
+    articleSections: selected.edition.articleSections.map((section) => ({
+      kind: "authored",
+      heading: section.heading,
+      body: section.body
+    }))
+  };
+}
+
 function normalizeSkyPlacementSurface(
   position: PlanetPosition,
   duration?: string | null,
@@ -5077,6 +5112,9 @@ function normalizeSkyPlacementSurface(
   }
 ): NormalizedSkyPlacementArticle {
   const generatedSection = generatedSkyPlacementWritingSection(position, generatedContent);
+  const compiledArticleSection = generatedContent
+    ? compiledSkyArticleWritingSection(position, generatedContent, generatedAt)
+    : null;
   const fallbackSection = skyPlacementWritingSection(position, duration, beats, generatedAt, articleOptions);
   const topper = generatedSection && topperContext
     ? generatedSkyPlacementTopper(
@@ -5095,14 +5133,16 @@ function normalizeSkyPlacementSurface(
       }
     : generatedSection;
   const approvedFallbackSection = fallbackSection?.layer === "authored" ? fallbackSection : null;
-  const sections = approvedFallbackSection
+  const sections = compiledArticleSection
+    ? [compiledArticleSection]
+    : approvedFallbackSection
     ? [approvedFallbackSection]
     : mergedGeneratedSection
       ? [mergedGeneratedSection]
       : fallbackSection
         ? [fallbackSection]
         : [];
-  const hasProductionSection = Boolean(approvedFallbackSection || mergedGeneratedSection);
+  const hasProductionSection = Boolean(compiledArticleSection || approvedFallbackSection || mergedGeneratedSection);
 
   return {
     surface: "sky-placement",
@@ -5162,7 +5202,7 @@ function currentSkyPlacementDetailArticle({
   const normalizedParagraphs = normalized.sections
     .flatMap((section) => taggedSectionParagraphs(section));
   const placementSection = normalized.sections[0];
-  const isRegistryArticle = placementSection?.sourceKeys.includes("sky-article-v1") ?? false;
+  const isRegistryArticle = placementSection?.sourceKeys.some((key) => key === "sky-article-v1" || key === "compiled-sky-article-edition-v1") ?? false;
   const isContinuousFallback = placementSection?.sourceKeys.includes("sky-placement-continuous-v2") ?? false;
   const authoredBody = normalized.sections
     .filter((section) => section.layer === "authored")
@@ -5221,6 +5261,7 @@ function currentSkyPlacementDetailArticle({
     keyDatesIntro: placementSection?.keyDatesIntro ?? null,
     closingCharge: placementSection?.closingCharge,
     risingHoroscopes: placementSection?.risingHoroscopes,
+    articleAspectPassages: placementSection?.articleAspectPassages,
     retrograde: isRetrograde,
     plainBody: articleSections.length === 0
       && normalized.sections.some((section) => section.layer === "authored"),
@@ -5355,7 +5396,11 @@ function personalizedSkyPlacementDetail(
   }
 
   try {
-    const rendered = transitSynastryFallbackRendererV3.renderSkyPlacementHouseCore({
+    const compiledHousePassage = detail.risingHoroscopes?.find((passage) => (
+      passage.house === house
+      || normalizeContentIdPart(passage.risingSign ?? "") === normalizeContentIdPart(risingSign)
+    ));
+    const rendered = compiledHousePassage ? null : transitSynastryFallbackRendererV3.renderSkyPlacementHouseCore({
       planet,
       sign,
       house
@@ -5365,15 +5410,25 @@ function personalizedSkyPlacementDetail(
         normalizeContentIdPart(transit.transitPlanet) === planet
         && normalizeContentIdPart(transit.transitSign ?? "") === sign
       ))
-      .map((transit) => personalTransitPackageSection(transit, generatedAt))
-      .filter((section): section is NormalizedPersonalTransitSection => Boolean(section))
-      .map((section) => section.body);
+      .map((transit) => {
+        const natalPoint = normalizeContentIdPart(transit.natalPoint);
+        const aspect = normalizeContentIdPart(transit.aspect);
+        const compiledAspect = detail.articleAspectPassages
+          ? skyArticleAspectPassageForTransit(detail.articleAspectPassages, {
+              aspect,
+              natalPoint,
+              transitingPlanet: planet
+            })
+          : null;
+        return compiledAspect?.body ?? personalTransitPackageSection(transit, generatedAt)?.body ?? "";
+      })
+      .filter(Boolean);
 
     return {
       ...detail,
       personalizedPlacement: {
-        body: rendered.body,
-        contentKey: rendered.contentKey,
+        body: compiledHousePassage?.body ?? rendered?.body ?? "",
+        contentKey: compiledHousePassage?.contentKey ?? rendered?.contentKey ?? `sky-article-house/${planet}/${sign}/${house}`,
         heading: "Where it lands for you",
         natalAspectLines
       }

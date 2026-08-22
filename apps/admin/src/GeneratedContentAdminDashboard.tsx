@@ -23,6 +23,13 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
 import {
+  compileSkyArticleEdition,
+  skyArticleEditionRecord,
+  skyArticleTemplatePlaceholders,
+  type SkyArticleAspectPassage,
+  type SkyArticleHousePassage
+} from "../../web/src/content/skyArticleTemplateCompiler";
+import {
   relatedAspectPassages,
   relatedHousePassages,
   skyWriteupContextForRow
@@ -221,6 +228,27 @@ type AdminContentFact = {
 type HookCatalogItem =
   { type: "fallback"; key: string; label: string; section: AdminFallbackHookSectionFilter; definition: FallbackHookDefinition };
 type AdminLoadState = "idle" | "loading" | "loaded" | "accessDenied" | "error";
+
+type SkyArticleEditionFacts = {
+  schema: "tldrastro-sky-article-engine-facts-v1";
+  calculationSource: string;
+  generatedAt: string;
+  referenceTimeZone: string;
+  planet: string;
+  sign: string;
+  entryYear: number;
+  validFrom: string;
+  validTo: string;
+  transitStartInstant: string;
+  transitEndInstant: string;
+  slotValues: Record<string, string>;
+};
+
+type SkyArticleEditionForm = {
+  referenceDate: string;
+  facts: SkyArticleEditionFacts | null;
+  slotValues: Record<string, string>;
+};
 
 type AdminDraft = {
   id: string | null;
@@ -1074,6 +1102,56 @@ function ordinalLabel(value: number) {
   return `${value}th`;
 }
 
+const skyArticleSigns = [
+  "aries", "taurus", "gemini", "cancer", "leo", "virgo",
+  "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"
+] as const;
+
+function skyArticleTemplatePlanet(row: Pick<AdminGeneratedContentRow, "content_key" | "headline">) {
+  const keyPlanet = row.content_key.match(/^sky\/article-template\/([a-z-]+)\/(?:ingress|structure)$/u)?.[1]
+    ?? row.content_key.match(/^sky-article-template\/([a-z-]+)\/(?:ingress|structure)$/u)?.[1];
+  if (keyPlanet && keyPlanet !== "slow-mover") return keyPlanet;
+  const headlinePlanet = normalizeText(row.headline).match(/(?:article\s+—\s+)?([A-Za-z-]+)\s+(?:Enters|in)\b/u)?.[1];
+  return headlinePlanet ? headlinePlanet.toLowerCase() : null;
+}
+
+function isSkyArticleTemplateRow(row: AdminGeneratedContentRow | null | undefined) {
+  return Boolean(row && (
+    /^sky\/article-template\//u.test(row.content_key)
+    || /^sky-article-template\//u.test(row.content_key)
+    || row.event_type === "sky-article-template"
+  ) && skyArticleTemplatePlanet(row));
+}
+
+function compiledSkyArticleEditionForDraft(draft: AdminDraft) {
+  return skyArticleEditionRecord(draft.sections?.skyArticleEdition);
+}
+
+function isApprovedSkyRelationRow(row: AdminGeneratedContentRow) {
+  const reviewStatus = sourceSnapshotString(row.source_snapshot, "review_status");
+  return row.status === "LIVE"
+    && (row.lane ?? "serving") === "serving"
+    && !row.review_state
+    && (!reviewStatus || ["approved", "approved_reuse", "reviewed"].includes(reviewStatus));
+}
+
+function risingSignForTransitHouse(sign: string, house: number) {
+  const signIndex = skyArticleSigns.indexOf(sign as typeof skyArticleSigns[number]);
+  if (signIndex < 0 || house < 1 || house > 12) return null;
+  return skyArticleSigns[(signIndex - (house - 1) + 12) % 12];
+}
+
+function skyArticleAspectPassage(row: AdminGeneratedContentRow, planet: string): SkyArticleAspectPassage | null {
+  const match = row.content_key.toLowerCase().match(new RegExp(`^authored/transit-aspect/${planet}/([^/]+)/([^/]+)$`, "u"));
+  if (!match || !row.body?.trim()) return null;
+  return {
+    contentKey: row.content_key,
+    natalPoint: match[1],
+    aspect: match[2],
+    body: row.body.trim()
+  };
+}
+
 type AdminHookCatalogLoadState = "idle" | "loading" | "loaded" | "error";
 type AdminHookCatalogIndexPayload = {
   schemaVersion: 1;
@@ -1593,6 +1671,7 @@ export function GeneratedContentAdminDashboard() {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [skyWriteupParentId, setSkyWriteupParentId] = useState<string | null>(null);
   const [skyRelatedAspectQuery, setSkyRelatedAspectQuery] = useState("");
+  const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
   const [fallbackHookDefinitions, setFallbackHookDefinitions] = useState<FallbackHookDefinition[]>([]);
   const [hookCatalogPackageVersion, setHookCatalogPackageVersion] = useState("loading");
@@ -1971,6 +2050,7 @@ export function GeneratedContentAdminDashboard() {
     setDraft(null);
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
+    setSkyArticleEditionForm(null);
   }
 
   function navigateAdminPage(page: AdminDashboardPage, params?: URLSearchParams, options: { keepEditorOpen?: boolean } = {}) {
@@ -2124,6 +2204,148 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function loadSkyArticleEditionFacts(templateRow: AdminGeneratedContentRow) {
+    const planet = skyArticleTemplatePlanet(templateRow);
+    if (!planet || !skyArticleEditionForm) return;
+    setIsLoading(true);
+    try {
+      const payload = await adminJsonRequest<{ ok: boolean; facts: SkyArticleEditionFacts }>(
+        `/api/admin/sky-article-facts?planet=${encodeURIComponent(planet)}&date=${encodeURIComponent(skyArticleEditionForm.referenceDate)}`,
+        secret
+      );
+      setSkyArticleEditionForm((current) => current ? {
+        ...current,
+        facts: payload.facts,
+        slotValues: { ...current.slotValues, ...payload.facts.slotValues }
+      } : current);
+      setMessage(`Loaded the calculated ${titleFromKey(payload.facts.planet)} in ${titleFromKey(payload.facts.sign)} residency window.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not load calculated Sky article facts.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function createSkyArticleEdition(templateRow: AdminGeneratedContentRow) {
+    const form = skyArticleEditionForm;
+    const facts = form?.facts;
+    if (!form || !facts) {
+      setMessage("Load calculated edition facts before compiling the article.");
+      return;
+    }
+    const context = { planet: facts.planet, sign: facts.sign };
+    const relationRows = relatedHousePassages(rows, context)
+      .filter((passage) => isApprovedSkyRelationRow(passage.row));
+    const housePassages: SkyArticleHousePassage[] = Array.from({ length: 12 }, (_, index) => index + 1)
+      .flatMap((house) => {
+        const passage = relationRows.find((candidate) => candidate.house === house);
+        return passage?.row.body?.trim() ? [{
+          house,
+          risingSign: risingSignForTransitHouse(facts.sign, house),
+          contentKey: passage.row.content_key,
+          body: passage.row.body.trim()
+        }] : [];
+      });
+    const aspectPassages = relatedAspectPassages(rows, context)
+      .filter(isApprovedSkyRelationRow)
+      .map((row) => skyArticleAspectPassage(row, facts.planet))
+      .filter((passage): passage is SkyArticleAspectPassage => Boolean(passage));
+
+    setIsLoading(true);
+    try {
+      const edition = await compileSkyArticleEdition({
+        templateBody: templateRow.body ?? "",
+        templateKey: templateRow.content_key.replace(/^sky-article-template\//u, "sky/article-template/"),
+        planet: facts.planet,
+        sign: facts.sign,
+        entryYear: facts.entryYear,
+        validFrom: facts.validFrom,
+        validTo: facts.validTo,
+        transitStartInstant: facts.transitStartInstant,
+        transitEndInstant: facts.transitEndInstant,
+        slotValues: form.slotValues,
+        housePassages,
+        aspectPassages
+      });
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; skippedLiveRows?: Array<{ contentKey: string }> }>(
+        "/api/admin/generated-content",
+        secret,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            rows: [{
+              contentKey: edition.contentKey,
+              surface: "sky",
+              mode: "article",
+              status: "DRAFT",
+              eventType: "sky-article-edition",
+              headline: edition.headline,
+              summary: edition.articleSections[0]?.body.split(/\n{2,}/u)[0] ?? "",
+              body: edition.body,
+              sections: { skyArticleEdition: edition },
+              facts: {
+                planet: facts.planet,
+                sign: facts.sign,
+                validFrom: facts.validFrom,
+                validTo: facts.validTo,
+                calculationSource: facts.calculationSource,
+                calculationGeneratedAt: facts.generatedAt
+              },
+              sourceSnapshot: {
+                contentType: "compiled-sky-article-edition",
+                content_role: "authored_card",
+                review_status: "needs_review",
+                templateKey: edition.templateKey,
+                templateHash: edition.templateHash,
+                fixedProseHash: edition.fixedProseHash,
+                compiledHash: edition.compiledHash,
+                engineFacts: facts
+              },
+              lane: "reference",
+              reviewState: "owner-review-required",
+              blockType: "sky_article",
+              promptVersion: "sky-article-template-compiler-v1",
+              provider: "owner-compiled-sky-article",
+              model: "deterministic-template-compiler"
+            }]
+          })
+        }
+      );
+      if (payload.skippedLiveRows?.length) {
+        throw new Error(`${edition.contentKey} is already published. Demote the existing edition before replacing it.`);
+      }
+      const saved = payload.rows?.[0];
+      if (!saved) throw new Error("The compiled edition was not returned by the content API.");
+      setRows((current) => [saved, ...current.filter((row) => row.id !== saved.id)]);
+      setSkyArticleEditionForm(null);
+      openRow(saved);
+      setMessage(`${edition.contentKey} compiled as a non-serving draft. Review the exact result before approving it.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not compile the Sky article edition.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function approveSkyArticleEdition(row: AdminGeneratedContentRow) {
+    setIsLoading(true);
+    try {
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
+        method: "PATCH",
+        body: JSON.stringify({ id: row.id, ownerAction: "approve-sky-article-edition" })
+      });
+      const saved = payload.rows?.[0];
+      if (!saved) throw new Error("The approved edition was not returned by the content API.");
+      setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
+      setDraft(draftFromRow(saved));
+      setMessage(`${saved.content_key} is approved and reader-eligible for its calculated validity window.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not approve the Sky article edition.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   async function saveDraft(nextStatus?: GeneratedContentStatus) {
     if (!draft) return;
     setIsLoading(true);
@@ -2233,6 +2455,11 @@ export function GeneratedContentAdminDashboard() {
     setDraft(draftFromRow(row));
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
+    setSkyArticleEditionForm(isSkyArticleTemplateRow(row) ? {
+      referenceDate: new Date().toISOString().slice(0, 10),
+      facts: null,
+      slotValues: {}
+    } : null);
   }
 
   function scrollEditorToTop() {
@@ -3872,6 +4099,22 @@ export function GeneratedContentAdminDashboard() {
       skyRelatedAspectQuery
     ));
     const populatedSkyHouses = new Set(skyHousePassages.map((passage) => passage.house)).size;
+    const isSkyArticleTemplate = isSkyArticleTemplateRow(selectedRow);
+    const compiledSkyArticleEdition = compiledSkyArticleEditionForDraft(currentDraft);
+    const skyArticleTemplateFields = isSkyArticleTemplate && selectedRow
+      ? skyArticleTemplatePlaceholders(selectedRow.body ?? "").filter((placeholder) => placeholder.name !== "risingBlocks")
+      : [];
+    const skyArticleEditionFacts = skyArticleEditionForm?.facts ?? null;
+    const skyArticleEditionContext = skyArticleEditionFacts
+      ? { planet: skyArticleEditionFacts.planet, sign: skyArticleEditionFacts.sign }
+      : null;
+    const skyArticleEditionHouseRows = skyArticleEditionContext
+      ? relatedHousePassages(rows, skyArticleEditionContext).filter((passage) => isApprovedSkyRelationRow(passage.row))
+      : [];
+    const skyArticleEditionHouseCoverage = new Set(skyArticleEditionHouseRows.map((passage) => passage.house)).size;
+    const skyArticleEditionAspectCount = skyArticleEditionContext
+      ? relatedAspectPassages(rows, skyArticleEditionContext).filter(isApprovedSkyRelationRow).length
+      : 0;
     const updateVocabularySection = (nextSection: AdminVocabularySection) => {
       setDraft({
         ...currentDraft,
@@ -4013,6 +4256,107 @@ export function GeneratedContentAdminDashboard() {
               <p><strong>Reader rule:</strong> this text can support the fallback system, but it cannot appear as a standalone authored write-up.</p>
             )}
           </section>
+          {isSkyArticleTemplate && selectedRow && skyArticleEditionForm && (
+            <section className="admin-sky-edition-builder admin-fallback-diagnostic-panel" aria-label="Create an article edition from this template">
+              <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
+                <div>
+                  <p className="admin-eyebrow">Executable article template</p>
+                  <h3>Create a complete edition</h3>
+                  <p>
+                    The template remains non-serving. Content Studio combines its fixed prose with calculated residency facts,
+                    edition-specific fields, twelve approved house horoscopes, and approved natal-aspect passages.
+                  </p>
+                </div>
+                <code>{selectedRow.content_key}</code>
+              </header>
+              <div className="admin-sky-edition-facts-row">
+                <label className="admin-title-field">
+                  <span>Reference date</span>
+                  <input
+                    aria-label="Sky article reference date"
+                    type="date"
+                    value={skyArticleEditionForm.referenceDate}
+                    onChange={(event) => setSkyArticleEditionForm({ ...skyArticleEditionForm, referenceDate: event.target.value, facts: null })}
+                  />
+                  <small className="admin-field-hint">The ephemeris uses this date to identify the active sign and complete residency window.</small>
+                </label>
+                <button type="button" onClick={() => void loadSkyArticleEditionFacts(selectedRow)} disabled={isLoading}>
+                  <RefreshCw size={16} aria-hidden="true" />
+                  Load calculated facts
+                </button>
+              </div>
+              {skyArticleEditionFacts && (
+                <>
+                  <dl className="admin-hook-pattern-list">
+                    <div><dt>Calculated placement</dt><dd>{titleFromKey(skyArticleEditionFacts.planet)} in {titleFromKey(skyArticleEditionFacts.sign)}</dd></div>
+                    <div><dt>Validity window</dt><dd>{skyArticleEditionFacts.validFrom} through {skyArticleEditionFacts.validTo}</dd></div>
+                    <div><dt>House coverage</dt><dd>{skyArticleEditionHouseCoverage}/12 approved</dd></div>
+                    <div><dt>Aspect passages</dt><dd>{skyArticleEditionAspectCount} approved</dd></div>
+                  </dl>
+                  <div className="admin-sky-edition-fields">
+                    {skyArticleTemplateFields.map((placeholder) => {
+                      const engineOwned = Object.prototype.hasOwnProperty.call(skyArticleEditionFacts.slotValues, placeholder.name);
+                      return (
+                        <label className="admin-review-copy-editor" key={placeholder.name}>
+                          <span>{placeholder.name}{engineOwned ? " · calculated" : ""}</span>
+                          <textarea
+                            aria-label={`Template field ${placeholder.name}`}
+                            value={skyArticleEditionForm.slotValues[placeholder.name] ?? ""}
+                            disabled={engineOwned}
+                            onChange={(event) => setSkyArticleEditionForm({
+                              ...skyArticleEditionForm,
+                              slotValues: { ...skyArticleEditionForm.slotValues, [placeholder.name]: event.target.value }
+                            })}
+                            placeholder={placeholder.description || `Write the ${placeholder.name} edition passage.`}
+                          />
+                          {placeholder.description && <small className="admin-field-hint">{placeholder.description}</small>}
+                          {!engineOwned && skyArticleEditionForm.slotValues[placeholder.name] === undefined && (
+                            <button type="button" onClick={() => setSkyArticleEditionForm({
+                              ...skyArticleEditionForm,
+                              slotValues: { ...skyArticleEditionForm.slotValues, [placeholder.name]: "" }
+                            })}>
+                              Deliberately leave this block blank
+                            </button>
+                          )}
+                        </label>
+                      );
+                    })}
+                  </div>
+                  <div className="admin-toolbar-actions">
+                    <button
+                      className="admin-primary-button"
+                      type="button"
+                      onClick={() => void createSkyArticleEdition(selectedRow)}
+                      disabled={isLoading || skyArticleEditionHouseCoverage < 12}
+                      title={skyArticleEditionHouseCoverage < 12 ? "All 12 approved house horoscopes are required before compilation." : "Compile a non-serving edition draft."}
+                    >
+                      <Plus size={16} aria-hidden="true" />
+                      Compile edition draft
+                    </button>
+                  </div>
+                </>
+              )}
+            </section>
+          )}
+          {compiledSkyArticleEdition && (
+            <section className="admin-sky-edition-builder admin-fallback-diagnostic-panel" aria-label="Compiled Sky article edition">
+              <div className="admin-fallback-diagnostic-heading">
+                <div>
+                  <p className="admin-eyebrow">Compiled article edition</p>
+                  <h3>{compiledSkyArticleEdition.planet} in {compiledSkyArticleEdition.sign}</h3>
+                </div>
+                <strong>{compiledSkyArticleEdition.validFrom} through {compiledSkyArticleEdition.validTo}</strong>
+              </div>
+              <p>This saved row contains no unresolved placeholders and includes all twelve house horoscopes. It remains dark until you use the explicit approval action below.</p>
+              <dl className="admin-hook-pattern-list">
+                <div><dt>Template</dt><dd>{compiledSkyArticleEdition.templateKey}</dd></div>
+                <div><dt>Template hash</dt><dd><code>{compiledSkyArticleEdition.templateHash.slice(0, 12)}</code></dd></div>
+                <div><dt>Compiled hash</dt><dd><code>{compiledSkyArticleEdition.compiledHash.slice(0, 12)}</code></dd></div>
+                <div><dt>House horoscopes</dt><dd>{compiledSkyArticleEdition.housePassages.length}/12</dd></div>
+                <div><dt>Aspect passages</dt><dd>{compiledSkyArticleEdition.aspectPassages.length}</dd></div>
+              </dl>
+            </section>
+          )}
           {skyWriteupContext && selectedRow && (
             <section className="admin-sky-related-editor admin-fallback-diagnostic-panel" aria-label="Related reader horoscope passages">
               <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
@@ -4151,7 +4495,7 @@ export function GeneratedContentAdminDashboard() {
           )}
           <label className="admin-title-field">
             <span>{isVocabularyDraft ? "Phrase title" : "Headline"}</span>
-            <input aria-label={isVocabularyDraft ? "Phrase title" : "Headline"} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
+            <input aria-label={isVocabularyDraft ? "Phrase title" : "Headline"} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} disabled={Boolean(compiledSkyArticleEdition)} />
             {isVocabularyDraft && <small className="admin-field-hint">This is the human name editors see in the table. New rows use it to generate the internal key.</small>}
           </label>
           {isPackageDraft && (
@@ -4178,7 +4522,7 @@ export function GeneratedContentAdminDashboard() {
           )}
           <label className="admin-review-copy-editor">
             <span>{isVocabularyDraft ? "Editor note or grouping detail" : "Summary"}</span>
-            <textarea aria-label={isVocabularyDraft ? "Editor note or grouping detail" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : undefined} />
+            <textarea aria-label={isVocabularyDraft ? "Editor note or grouping detail" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : undefined} disabled={Boolean(compiledSkyArticleEdition)} />
           </label>
           {showPackageBodyYou && (
             <label className="admin-review-copy-editor">
@@ -4194,7 +4538,7 @@ export function GeneratedContentAdminDashboard() {
           )}
           <label className="admin-review-copy-editor">
             <span>{isVocabularyDraft ? "Reusable phrase text" : "Body"}</span>
-            <textarea aria-label={isVocabularyDraft ? "Reusable phrase text" : "Body"} value={currentDraft.body} onChange={(event) => setDraft({ ...currentDraft, body: event.target.value })} placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined} />
+            <textarea aria-label={isVocabularyDraft ? "Reusable phrase text" : "Body"} value={currentDraft.body} onChange={(event) => setDraft({ ...currentDraft, body: event.target.value })} placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined} disabled={Boolean(compiledSkyArticleEdition)} />
           </label>
           <details className="admin-advanced admin-editor-key-details" open={!isVocabularyDraft}>
             <summary>{isVocabularyDraft ? "Internal generated key" : "Content key"}</summary>
@@ -4225,7 +4569,7 @@ export function GeneratedContentAdminDashboard() {
           <fieldset className="admin-metadata-fields">
             <label className="admin-metadata-field">
               <span>Status</span>
-              <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={isPackageDraft}>
+              <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={isPackageDraft || Boolean(compiledSkyArticleEdition)}>
                 {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
               </select>
               <small className="admin-field-hint">
@@ -4271,7 +4615,7 @@ export function GeneratedContentAdminDashboard() {
             </label>
           </fieldset>
           <div className="admin-toolbar-actions">
-            <button className="admin-primary-button" type="button" onClick={() => void saveDraft()} disabled={isLoading}>
+            <button className="admin-primary-button" type="button" onClick={() => void saveDraft()} disabled={isLoading || Boolean(compiledSkyArticleEdition)}>
               <Save size={16} aria-hidden="true" />
               Save
             </button>
@@ -4280,7 +4624,17 @@ export function GeneratedContentAdminDashboard() {
                 Revert to package original
               </button>
             )}
-            {!isPackageDraft && (
+            {!isPackageDraft && compiledSkyArticleEdition && selectedRow ? (
+              <button
+                type="button"
+                onClick={() => void approveSkyArticleEdition(selectedRow)}
+                disabled={isLoading || currentDraft.status === "LIVE"}
+                title="Record explicit owner approval for this exact compilation and make it reader-eligible."
+              >
+                <Check size={16} aria-hidden="true" />
+                {currentDraft.status === "LIVE" ? "Edition published" : "Approve & publish edition"}
+              </button>
+            ) : !isPackageDraft && (
               <>
                 <button type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading}>
                   <Check size={16} aria-hidden="true" />
