@@ -80,6 +80,21 @@ type SkippedLiveGeneratedContentRow = {
   status: "LIVE";
 };
 
+type HeldSkyAspectSourceDraft = {
+  id: string;
+  canonicalId: string;
+  bodyA: string;
+  bodyB: string;
+  aspect: string;
+  body: string;
+  authorityClass: "unverified";
+  governanceState: "needs-owner-decision";
+  surfacePermission: string[];
+  status: "NEEDS_OWNER_DECISION";
+  sourcePath: string;
+  provenance: Record<string, unknown> | null;
+};
+
 const allowedStatuses = new Set<ReviewStatus>(["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"]);
 const reviewStatuses: ReviewStatus[] = ["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"];
 const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
@@ -383,6 +398,46 @@ function isAuthorized(req: IncomingMessage) {
   }
 
   return req.headers.authorization === `Bearer ${secret}`;
+}
+
+export function listHeldSkyAspectSourceDrafts(): HeldSkyAspectSourceDraft[] {
+  const sourceRoot = path.join(
+    process.cwd(),
+    "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified"
+  );
+
+  return fs.readdirSync(sourceRoot, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
+    .map((entry) => {
+      const absolutePath = path.join(sourceRoot, entry.name);
+      const source = JSON.parse(fs.readFileSync(absolutePath, "utf8")) as Record<string, unknown>;
+      if (
+        source.kind !== "sky-aspect"
+        || typeof source.id !== "string"
+        || typeof source.canonicalId !== "string"
+        || typeof source.body !== "string"
+        || source.authorityClass !== "unverified"
+        || source.governanceState !== "needs-owner-decision"
+        || source.status !== "NEEDS_OWNER_DECISION"
+      ) {
+        throw new Error(`${path.relative(process.cwd(), absolutePath)} is not a held Current Sky aspect draft.`);
+      }
+      return {
+        id: source.id,
+        canonicalId: source.canonicalId,
+        bodyA: stringFrom(source.bodyA),
+        bodyB: stringFrom(source.bodyB),
+        aspect: stringFrom(source.aspect),
+        body: source.body,
+        authorityClass: "unverified" as const,
+        governanceState: "needs-owner-decision" as const,
+        surfacePermission: Array.isArray(source.surfacePermission) ? source.surfacePermission.filter((value): value is string => typeof value === "string") : [],
+        status: "NEEDS_OWNER_DECISION" as const,
+        sourcePath: path.relative(process.cwd(), absolutePath),
+        provenance: isRecord(source.provenance) ? source.provenance : null
+      };
+    })
+    .sort((first, second) => first.id.localeCompare(second.id));
 }
 
 async function readJsonBody(req: IncomingMessage) {
@@ -1106,6 +1161,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   try {
     if (req.method === "GET") {
       const requestUrl = new URL(req.url ?? "/api/admin/generated-content", "http://localhost");
+      if (requestUrl.searchParams.get("sourceDrafts") === "sky-aspects") {
+        sendJson(res, 200, { ok: true, rows: listHeldSkyAspectSourceDrafts() });
+        return;
+      }
       if (requestUrl.searchParams.get("stats") === "true") {
         sendJson(res, 200, { ok: true, stats: await generatedContentStats(req) });
         return;

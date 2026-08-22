@@ -52,13 +52,17 @@ for (const [key, sourceBody] of sourceBodies) {
   assert.equal(packagedBodies.get(key), sourceBody, `Admin packaging changed approved source bytes for ${key}.`);
 }
 
-for (const fileName of fs.readdirSync(generatedRoot).filter((file) => file.endsWith(".json"))) {
+for (const fileName of fs.readdirSync(generatedRoot).filter((file) => file.startsWith("admin-hook-catalog-") && file.endsWith(".json"))) {
   assert.equal(
     fs.readFileSync(path.join(webGeneratedRoot, fileName), "utf8"),
     fs.readFileSync(path.join(generatedRoot, fileName), "utf8"),
     `${fileName} must remain byte-identical across the web and standalone Admin targets.`
   );
 }
+
+const sourceDraftFileName = "admin-source-draft-catalog-v1.json";
+assert.equal(fs.existsSync(path.join(generatedRoot, sourceDraftFileName)), false, "Held source drafts must not be emitted as public Admin assets.");
+assert.equal(fs.existsSync(path.join(webGeneratedRoot, sourceDraftFileName)), false, "Held source drafts must not be emitted as public reader assets.");
 
 const dashboardSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/GeneratedContentAdminDashboard.tsx"), "utf8");
 assert.doesNotMatch(dashboardSource, /from\s+["'][^"']*bundled-(?:deferred|sky)-core-rows-v3\.json["']/u, "Admin startup must not eagerly import full fallback packages.");
