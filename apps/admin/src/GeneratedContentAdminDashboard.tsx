@@ -248,6 +248,15 @@ type SkyArticleEditionForm = {
   referenceDate: string;
   facts: SkyArticleEditionFacts | null;
   slotValues: Record<string, string>;
+  slotGeneration: {
+    provider: string;
+    model: string;
+    responseId: string | null;
+    generatedAt: string;
+    requestedSlots: string[];
+    generationMetadata?: unknown;
+  } | null;
+  factBlockedSlots: Array<{ name: string; description?: string }>;
 };
 
 type AdminDraft = {
@@ -2226,6 +2235,56 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function generateSkyArticleEditionSlots(templateRow: AdminGeneratedContentRow) {
+    const form = skyArticleEditionForm;
+    if (!form?.facts) {
+      setMessage("Load calculated edition facts before generating unfinished fields.");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const payload = await adminJsonRequest<{
+        ok: boolean;
+        slotValues: Record<string, string>;
+        blockedSlots: Array<{ name: string; description?: string }>;
+        facts: SkyArticleEditionFacts;
+        generation: SkyArticleEditionForm["slotGeneration"];
+        message?: string;
+      }>("/api/admin/sky-article-template-slots", secret, {
+        method: "POST",
+        body: JSON.stringify({
+          templateId: templateRow.id,
+          referenceDate: form.referenceDate,
+          existingSlotValues: form.slotValues
+        })
+      });
+      setSkyArticleEditionForm((current) => {
+        if (!current) return current;
+        const slotValues = { ...current.slotValues };
+        for (const [name, value] of Object.entries(payload.slotValues ?? {})) {
+          if (!Object.prototype.hasOwnProperty.call(slotValues, name)) slotValues[name] = value;
+        }
+        return {
+          ...current,
+          facts: payload.facts,
+          slotValues: { ...slotValues, ...payload.facts.slotValues },
+          slotGeneration: payload.generation,
+          factBlockedSlots: payload.blockedSlots ?? []
+        };
+      });
+      const count = Object.keys(payload.slotValues ?? {}).length;
+      setMessage(payload.message ?? (
+        count > 0
+          ? `Generated ${count} unfinished template field${count === 1 ? "" : "s"} as an owner-review draft.`
+          : "There were no unfinished AI-eligible template fields."
+      ));
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not generate unfinished Sky article fields.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   async function createSkyArticleEdition(templateRow: AdminGeneratedContentRow) {
     const form = skyArticleEditionForm;
     const facts = form?.facts;
@@ -2299,7 +2358,8 @@ export function GeneratedContentAdminDashboard() {
                 templateHash: edition.templateHash,
                 fixedProseHash: edition.fixedProseHash,
                 compiledHash: edition.compiledHash,
-                engineFacts: facts
+                engineFacts: facts,
+                slotGeneration: form.slotGeneration
               },
               lane: "reference",
               reviewState: "owner-review-required",
@@ -2458,7 +2518,9 @@ export function GeneratedContentAdminDashboard() {
     setSkyArticleEditionForm(isSkyArticleTemplateRow(row) ? {
       referenceDate: new Date().toISOString().slice(0, 10),
       facts: null,
-      slotValues: {}
+      slotValues: {},
+      slotGeneration: null,
+      factBlockedSlots: []
     } : null);
   }
 
@@ -4276,7 +4338,14 @@ export function GeneratedContentAdminDashboard() {
                     aria-label="Sky article reference date"
                     type="date"
                     value={skyArticleEditionForm.referenceDate}
-                    onChange={(event) => setSkyArticleEditionForm({ ...skyArticleEditionForm, referenceDate: event.target.value, facts: null })}
+                    onChange={(event) => setSkyArticleEditionForm({
+                      ...skyArticleEditionForm,
+                      referenceDate: event.target.value,
+                      facts: null,
+                      slotValues: {},
+                      slotGeneration: null,
+                      factBlockedSlots: []
+                    })}
                   />
                   <small className="admin-field-hint">The ephemeris uses this date to identify the active sign and complete residency window.</small>
                 </label>
@@ -4293,12 +4362,36 @@ export function GeneratedContentAdminDashboard() {
                     <div><dt>House coverage</dt><dd>{skyArticleEditionHouseCoverage}/12 approved</dd></div>
                     <div><dt>Aspect passages</dt><dd>{skyArticleEditionAspectCount} approved</dd></div>
                   </dl>
+                  <div className="admin-toolbar-actions">
+                    <button
+                      type="button"
+                      onClick={() => void generateSkyArticleEditionSlots(selectedRow)}
+                      disabled={isLoading}
+                    >
+                      <Sparkles size={16} aria-hidden="true" />
+                      Generate unfinished fields
+                    </button>
+                    <small className="admin-field-hint">
+                      Explicit action only. Sends this approved template, calculated facts, and unfinished field names to the configured writing provider. Fixed owner prose is never rewritten.
+                    </small>
+                  </div>
+                  {skyArticleEditionForm.slotGeneration && (
+                    <p className="admin-field-hint">
+                      Drafted {skyArticleEditionForm.slotGeneration.requestedSlots.length} field{skyArticleEditionForm.slotGeneration.requestedSlots.length === 1 ? "" : "s"} with {skyArticleEditionForm.slotGeneration.provider} / {skyArticleEditionForm.slotGeneration.model}. Review every field before compilation.
+                    </p>
+                  )}
+                  {skyArticleEditionForm.factBlockedSlots.length > 0 && (
+                    <p className="admin-field-hint">
+                      Not sent to the model because they require governed dates, aspects, or historical sources: {skyArticleEditionForm.factBlockedSlots.map((slot) => slot.name).join(", ")}.
+                    </p>
+                  )}
                   <div className="admin-sky-edition-fields">
                     {skyArticleTemplateFields.map((placeholder) => {
                       const engineOwned = Object.prototype.hasOwnProperty.call(skyArticleEditionFacts.slotValues, placeholder.name);
+                      const generated = skyArticleEditionForm.slotGeneration?.requestedSlots.includes(placeholder.name) ?? false;
                       return (
                         <label className="admin-review-copy-editor" key={placeholder.name}>
-                          <span>{placeholder.name}{engineOwned ? " · calculated" : ""}</span>
+                          <span>{placeholder.name}{engineOwned ? " · calculated" : generated ? " · AI draft" : ""}</span>
                           <textarea
                             aria-label={`Template field ${placeholder.name}`}
                             value={skyArticleEditionForm.slotValues[placeholder.name] ?? ""}

@@ -22,6 +22,7 @@ import {
   validateReportDraft,
   type ReportGenerationPayload
 } from "./report-generation.js";
+import { validateSkyArticleTemplateSlotValues } from "./sky-article-template-slots.js";
 
 type ContentMode = "feed" | "in_depth" | "article" | "report";
 type Surface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "year_ahead";
@@ -41,6 +42,32 @@ export type GenerateContentInput = {
   voiceNotes?: string;
   allowQualityFallback?: boolean;
   reportPayload?: ReportGenerationPayload;
+};
+
+export type SkyArticleTemplateSlotRequest = {
+  name: string;
+  description?: string;
+};
+
+export type GenerateSkyArticleTemplateSlotsInput = {
+  templateKey: string;
+  templateBody: string;
+  planet: string;
+  sign: string;
+  facts: Record<string, unknown>;
+  requestedSlots: SkyArticleTemplateSlotRequest[];
+  provider?: "openai" | "claude" | "anthropic";
+  voiceNotes?: string;
+};
+
+export type GeneratedSkyArticleTemplateSlots = {
+  slotValues: Record<string, string>;
+  responseId?: string;
+  provider: "openai" | "claude";
+  model: string;
+  generatedAt: string;
+  requestedSlots: string[];
+  generation_metadata?: ReturnType<typeof writeGenerationMetadata>;
 };
 
 export type GeneratedAstrologyDraft = {
@@ -5698,6 +5725,214 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
   }
 
   throw new ContentGenerationQualityError(lastError?.message ?? "Generated content failed quality gates.");
+}
+
+function skyArticleTemplateSlotSchema(requestedSlots: SkyArticleTemplateSlotRequest[]) {
+  return {
+    type: "object",
+    additionalProperties: false,
+    required: ["slotValues"],
+    properties: {
+      slotValues: {
+        type: "object",
+        additionalProperties: false,
+        required: requestedSlots.map((slot) => slot.name),
+        properties: Object.fromEntries(requestedSlots.map((slot) => [slot.name, {
+          type: "string",
+          description: slot.description || `Edition-specific copy for ${slot.name}.`
+        }]))
+      }
+    }
+  } as const;
+}
+
+function skyArticleTemplateSlotPrompt(
+  input: GenerateSkyArticleTemplateSlotsInput,
+  approvedExamples: ApprovedExample[]
+) {
+  return [
+    readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md"),
+    "",
+    "TASK",
+    "Fill only the requested unfinished fields in an owner-authored Sky article template.",
+    "The template's fixed prose is immutable. Do not rewrite it, summarize it, or return it.",
+    "Return one value for every requested field and no other fields.",
+    "Do not invent dates, aspect hits, historical events, quotations, or astronomical facts.",
+    "Use only ASTROLOGY FACTS, GOVERNED KNOWLEDGE EVIDENCE, and the immutable template context.",
+    "The result is an owner-review draft. It is not approved and cannot serve by itself.",
+    "",
+    "BEHAVIOR-FIRST RULE",
+    "Name the behavior before naming the pattern. Do not use a metaphor, idiom, abstract label, or polished summary when you can describe what the person actually does, notices, repeats, avoids, spends, says, changes, or leaves unfinished.",
+    "Write like a person, not a report. Prefer ordinary words such as another thing to fix over formal words such as requirement.",
+    "",
+    metaphorSpecificityRules(),
+    "",
+    bannedPhraseRules(),
+    "",
+    "ASTROLOGY FACTS",
+    JSON.stringify(input.facts, null, 2),
+    "",
+    "REQUESTED TEMPLATE FIELDS",
+    JSON.stringify(input.requestedSlots, null, 2),
+    "",
+    "IMMUTABLE OWNER TEMPLATE CONTEXT",
+    input.templateBody,
+    "",
+    "APPROVED TLDR ASTRO VOICE EXAMPLES",
+    "Use these only for voice, pacing, specificity, and sentence shape. Do not copy their astrology facts.",
+    approvedExamplesPrompt(approvedExamples),
+    "",
+    "EXTRA VOICE NOTES",
+    input.voiceNotes ?? "None."
+  ].join("\n");
+}
+
+function skyArticleSlotGenerationInput(input: GenerateSkyArticleTemplateSlotsInput): GenerateContentInput {
+  return {
+    contentKey: input.templateKey,
+    surface: "sky",
+    mode: "article",
+    eventType: "sky-article-template-slots",
+    provider: input.provider,
+    facts: {
+      ...input.facts,
+      blockType: "sky_article",
+      contentType: "sky_article"
+    },
+    knowledgeIds: [`sky-placement-${input.planet}-${input.sign}`],
+    sourceSnapshot: {
+      contentType: "sky-article-template-slots",
+      templateKey: input.templateKey,
+      immutableTemplate: input.templateBody,
+      requestedSlots: input.requestedSlots
+    },
+    voiceNotes: input.voiceNotes
+  };
+}
+
+export async function generateSkyArticleTemplateSlots(
+  input: GenerateSkyArticleTemplateSlotsInput
+): Promise<GeneratedSkyArticleTemplateSlots> {
+  if (!input.requestedSlots.length) {
+    throw new Error("No unfinished template slots were requested.");
+  }
+
+  const names = input.requestedSlots.map((slot) => slot.name);
+  if (new Set(names).size !== names.length || names.some((name) => !/^[A-Za-z][A-Za-z0-9]*$/u.test(name))) {
+    throw new Error("Template slot names must be unique alphanumeric identifiers.");
+  }
+
+  const generationInput = skyArticleSlotGenerationInput(input);
+  const productionGate = prepareProductionPreCallGate(generationInput);
+  const evidenceShadow = buildProductionEvidenceShadow(generationInput);
+  const approvedExamples = await loadApprovedExamples(generationInput);
+  const prompt = skyArticleTemplateSlotPrompt(input, approvedExamples);
+  const schema = skyArticleTemplateSlotSchema(input.requestedSlots);
+  const provider = contentGenerationProvider({
+    requestedProvider: input.provider,
+    blockType: "sky_article",
+    contentType: "sky_article"
+  });
+  recordLegacyPromptShadow(evidenceShadow, prompt);
+  assertProductionRoleGate(productionGate, "WRITER", generationInput);
+
+  if (provider === "openai") {
+    const apiKey = requireEnv("OPENAI_API_KEY");
+    const model = process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? defaultOpenAiModel;
+    const reasoningEffort = configuredOpenAiReasoningEffort(model);
+    const { response, payload } = await callOpenAIResponses({
+      apiKey,
+      role: "WRITER",
+      request: {
+        model,
+        ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
+        input: productionGate.governedPromptEnabled
+          ? `${prompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`
+          : prompt,
+        text: {
+          format: {
+            type: "json_schema",
+            name: "tldr_astro_sky_article_template_slots",
+            strict: true,
+            schema
+          }
+        }
+      }
+    });
+    const typedPayload = payload as {
+      id?: string;
+      output_text?: string;
+      output?: Array<{ content?: Array<{ text?: string }> }>;
+      error?: { message?: string };
+    };
+    if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI request failed with ${response.status}.`);
+    const outputText = responseOutputText(typedPayload);
+    if (!outputText) throw new Error("OpenAI response did not include template slot values.");
+    const parsed = JSON.parse(outputText) as { slotValues?: unknown };
+    return {
+      slotValues: validateSkyArticleTemplateSlotValues(parsed.slotValues, input.requestedSlots),
+      responseId: typedPayload.id,
+      provider,
+      model,
+      generatedAt: new Date().toISOString(),
+      requestedSlots: names,
+      generation_metadata: writeGenerationMetadata({
+        role: "WRITER",
+        model,
+        reasoningEffort,
+        sourceIds: approvedExamples.map((example) => example.contentKey)
+      })
+    };
+  }
+
+  const apiKey = requireEnv("ANTHROPIC_API_KEY");
+  const model = process.env.ANTHROPIC_MODEL ?? defaultClaudeModel;
+  const governedPrompt = productionGate.governedPromptEnabled
+    ? `${prompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`
+    : prompt;
+  assertProductionRoleGate(productionGate, "WRITER", generationInput);
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 6000,
+      messages: [{ role: "user", content: [{ type: "text", text: governedPrompt }] }],
+      tools: [{
+        name: "tldr_astro_sky_article_template_slots",
+        description: "Return only the requested unfinished Sky article template fields.",
+        input_schema: schema
+      }],
+      tool_choice: { type: "tool", name: "tldr_astro_sky_article_template_slots" }
+    })
+  });
+  const payload = await response.json() as {
+    id?: string;
+    content?: Array<{ type?: string; name?: string; input?: { slotValues?: unknown } }>;
+    error?: { message?: string };
+  };
+  if (!response.ok) throw new Error(payload.error?.message ?? `Claude request failed with ${response.status}.`);
+  const toolInput = payload.content?.find((content) => (
+    content.type === "tool_use" && content.name === "tldr_astro_sky_article_template_slots"
+  ))?.input;
+  if (!toolInput) throw new Error("Claude response did not include template slot values.");
+  return {
+    slotValues: validateSkyArticleTemplateSlotValues(toolInput.slotValues, input.requestedSlots),
+    responseId: payload.id,
+    provider,
+    model,
+    generatedAt: new Date().toISOString(),
+    requestedSlots: names,
+    generation_metadata: writeGenerationMetadata({
+      role: "WRITER",
+      model,
+      sourceIds: approvedExamples.map((example) => example.contentKey)
+    })
+  };
 }
 
 export async function generateContent(input: GenerateContentInput): Promise<StoredGeneratedContent> {
