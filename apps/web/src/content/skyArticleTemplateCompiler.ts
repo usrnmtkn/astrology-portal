@@ -1,6 +1,6 @@
 export const SKY_ARTICLE_TEMPLATE_SCHEMA = "tldrastro-sky-article-template-v1";
-export const SKY_ARTICLE_EDITION_SCHEMA = "tldrastro-sky-article-edition-v1";
-export const SKY_ARTICLE_COMPILER_VERSION = "sky-article-template-compiler-v1";
+export const SKY_ARTICLE_EDITION_SCHEMA = "tldrastro-sky-article-edition-v2";
+export const SKY_ARTICLE_COMPILER_VERSION = "sky-article-template-compiler-v2";
 
 export type SkyArticleTemplatePlaceholder = {
   description: string;
@@ -36,6 +36,7 @@ export type CompileSkyArticleEditionInput = {
   slotValues: Record<string, string>;
   templateBody: string;
   templateKey: string;
+  tldr: string;
   transitEndInstant: string;
   transitStartInstant: string;
   validFrom: string;
@@ -59,6 +60,7 @@ export type CompiledSkyArticleEdition = {
   slotValues: Record<string, string>;
   templateHash: string;
   templateKey: string;
+  tldr: string;
   transitEndInstant: string;
   transitStartInstant: string;
   validFrom: string;
@@ -231,6 +233,9 @@ function assertEditionInput(input: CompileSkyArticleEditionInput) {
   if (!/^sky\/article-template\//u.test(input.templateKey)) {
     throw new Error("Sky article editions must be compiled from a sky/article-template/* row.");
   }
+  if (typeof input.tldr !== "string" || !input.tldr.trim()) {
+    throw new Error("Sky article editions require an explicitly written TL;DR.");
+  }
 
   const houses = new Set(input.housePassages.map((passage) => passage.house));
   const missingHouses = Array.from({ length: 12 }, (_, index) => index + 1).filter((house) => !houses.has(house));
@@ -270,6 +275,16 @@ export async function compileSkyArticleEdition(input: CompileSkyArticleEditionIn
     throw new Error(`Sky article edition is missing template values: ${missingSlots.join(", ")}.`);
   }
 
+  const tldrPlaceholders = balancedMustacheTokens(input.tldr).map((token) => placeholderFromToken(token));
+  const missingTldrSlots = tldrPlaceholders
+    .filter((placeholder) => slotValues[placeholder.name] === undefined)
+    .map((placeholder) => placeholder.name);
+  if (missingTldrSlots.length) {
+    throw new Error(`Sky article TL;DR is missing template values: ${missingTldrSlots.join(", ")}.`);
+  }
+  const tldr = compactBlankLines(replaceTemplateTokens(normalizeNewlines(input.tldr), slotValues));
+  if (!tldr) throw new Error("Sky article editions require an explicitly written TL;DR.");
+
   const compiledMarkdown = compactBlankLines(replaceTemplateTokens(templateBody, slotValues));
   const unresolved = balancedMustacheTokens(compiledMarkdown).map((token) => placeholderFromToken(token).name);
   if (unresolved.length) {
@@ -282,7 +297,7 @@ export async function compileSkyArticleEdition(input: CompileSkyArticleEditionIn
   if (!generalMarkdown) throw new Error("Compiled Sky article edition has no reader-facing article body.");
   const housePassages = uniqueByContentKey(input.housePassages).sort((left, right) => left.house - right.house);
   const aspectPassages = uniqueByContentKey(input.aspectPassages ?? []);
-  const compiledHash = await sha256(JSON.stringify({ compiledMarkdown, housePassages, aspectPassages }));
+  const compiledHash = await sha256(JSON.stringify({ tldr, compiledMarkdown, housePassages, aspectPassages }));
 
   return {
     schema: SKY_ARTICLE_EDITION_SCHEMA,
@@ -299,6 +314,7 @@ export async function compileSkyArticleEdition(input: CompileSkyArticleEditionIn
     transitStartInstant: input.transitStartInstant,
     transitEndInstant: input.transitEndInstant,
     headline,
+    tldr,
     body: generalMarkdown,
     articleSections: markdownSections(generalMarkdown),
     housePassages,
@@ -325,6 +341,7 @@ export function skyArticleEditionRecord(value: unknown): CompiledSkyArticleEditi
     && typeof record.transitStartInstant === "string"
     && typeof record.transitEndInstant === "string"
     && typeof record.headline === "string"
+    && typeof record.tldr === "string"
     && typeof record.body === "string"
     && Array.isArray(record.articleSections)
     && Array.isArray(record.housePassages)
@@ -344,7 +361,10 @@ export function assertCompiledSkyArticleEdition(value: unknown) {
   if (!Number.isFinite(transitStart) || !Number.isFinite(transitEnd) || transitStart >= transitEnd) {
     throw new Error("Sky article edition has an invalid calculated transit window.");
   }
-  if (balancedMustacheTokens([edition.headline, edition.body, edition.compiledMarkdown].join("\n")).length) {
+  if (!edition.tldr.trim()) {
+    throw new Error("Sky article edition is missing its explicitly written TL;DR.");
+  }
+  if (balancedMustacheTokens([edition.headline, edition.tldr, edition.body, edition.compiledMarkdown].join("\n")).length) {
     throw new Error("Sky article edition contains unresolved template placeholders.");
   }
   const houses = new Set(edition.housePassages.map((passage) => passage.house));
