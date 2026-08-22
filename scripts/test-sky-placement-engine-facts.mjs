@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { createServer } from "vite";
 import SwissEph from "swisseph-wasm";
 
@@ -157,6 +157,48 @@ try {
   assert.notEqual(currentSouthNode?.sign, currentSky.positions.find((position) => position.planet === "North Node")?.sign);
   assert.equal(currentJupiter?.transitTimeZone, "America/New_York");
 
+  const { renderSkyPlacement } = await import(
+    `${pathToFileURL(path.join(repoRoot, "apps", "web", "src", "content", "fallbackArchitectureV3", "resolver", "renderTransitSynastry.mjs")).href}?current-sky=${Date.now()}`
+  );
+  const placementBodies = new Set([
+    "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus",
+    "Neptune", "Pluto", "Chiron", "Lilith", "North Node", "South Node"
+  ]);
+  const currentPlacementAudit = currentSky.positions
+    .filter((position) => placementBodies.has(position.planet))
+    .map((position) => {
+      const timeZone = position.transitTimeZone || "America/New_York";
+      const formatDate = (value) => value
+        ? new Intl.DateTimeFormat("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+            timeZone
+          }).format(new Date(value))
+        : null;
+      const finalExit = position.residencyPasses?.at(-1)?.exitDate ?? position.transitEnd;
+      const rendered = renderSkyPlacement({
+        planet: position.planet.toLowerCase().replaceAll(" ", "-"),
+        sign: position.sign.toLowerCase(),
+        entryDate: formatDate(position.transitStart),
+        exitDate: formatDate(finalExit),
+        residencyPasses: position.residencyPasses,
+        residencyStations: position.residencyStations,
+        priorSign: position.priorTransitSign?.toLowerCase() ?? null,
+        priorSignEntryDate: formatDate(position.priorTransitStart),
+        priorSignExitDate: formatDate(position.priorTransitEnd),
+        previousResidencyEntryDate: formatDate(position.previousSignResidencyStart),
+        previousResidencyExitDate: formatDate(position.previousSignResidencyEnd),
+        isRetrograde: position.motion === "retrograde" && !["North Node", "South Node"].includes(position.planet),
+        events: []
+      });
+
+      assert.ok(rendered.body.trim(), `${position.planet}/${position.sign} rendered a blank placement article`);
+      assert.doesNotMatch(rendered.body, /\{\{/u, `${position.planet}/${position.sign} exposed an unresolved placeholder`);
+      return `${position.planet}/${position.sign}:${rendered.templateKey}`;
+    });
+  assert.equal(currentPlacementAudit.length, placementBodies.size, "Every current Sky Placement body must be audited");
+
   const source = fs.readFileSync(path.join(repoRoot, "scripts", "build-sky-placement-engine-facts.mjs"), "utf8");
   const appSource = fs.readFileSync(path.join(repoRoot, "apps", "web", "src", "App.tsx"), "utf8");
   assert.doesNotMatch(source, /America\/Los_Angeles|Pacific\/|\bPT\b/u, "Authoring dates must not hardcode Pacific Time");
@@ -167,7 +209,7 @@ try {
     "Reader placement dates must use the calculated user's time zone instead of a fixed zone"
   );
 
-  console.log("Sky Placement engine facts passed: all slow-mover families expose prior-sign handoffs; Saturn, Uranus, Neptune, Chiron, and both Nodes expose previous same-sign residencies; Pluto-in-Aquarius correctly returns no prior range because its last residency predates the verified 1800 Swiss-data boundary; the Saturn-in-Capricorn 2047-2050 sample and 2017-2020 recurrence are byte-verified.");
+  console.log(`Sky Placement engine facts passed: all slow-mover families expose prior-sign handoffs; Saturn, Uranus, Neptune, Chiron, and both Nodes expose previous same-sign residencies; Pluto-in-Aquarius correctly returns no prior range because its last residency predates the verified 1800 Swiss-data boundary; the Saturn-in-Capricorn 2047-2050 sample and 2017-2020 recurrence are byte-verified; ${currentPlacementAudit.length} current body/sign routes render reader prose from actual ephemeris facts.`);
 } finally {
   await vite.close();
 }
