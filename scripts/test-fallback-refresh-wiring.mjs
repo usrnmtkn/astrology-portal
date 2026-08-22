@@ -931,6 +931,19 @@ try {
     "Dashboard materialization must stamp the exact reader package version, key manifest, and content hash."
   );
 
+  const unsupportedEditableBodyShapes = materialized.rows.filter((row) => {
+    if (!row.body) return false;
+    const record = row.sections?.packageRecord ?? {};
+    return typeof record.body !== "string"
+      && typeof record.body_you !== "string"
+      && record.render_policy !== "sky-placement-continuous-v2";
+  });
+  assert.deepEqual(
+    unsupportedEditableBodyShapes.map((row) => row.content_key),
+    [],
+    "Every package body exposed in Content Studio must use a supported body, body_you, or structured continuous editor shape."
+  );
+
   for (const row of placementInterimRows.vocabularyRows) {
     if (!sourceRows.vocabularyRows.some((sourceRow) => sourceRow.contentKey === row.contentKey)) continue;
     assert.equal(
