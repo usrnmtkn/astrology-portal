@@ -49,8 +49,13 @@ assert.match(
 );
 assert.match(
   app,
-  /url\.searchParams\.set\("date", value\)/u,
-  "The selected transit date must be restorable from the URL."
+  /if \(value === dateInputValue\(\)\) \{[\s\S]*url\.searchParams\.delete\("date"\);[\s\S]*\} else \{[\s\S]*url\.searchParams\.set\("date", value\);/u,
+  "Today must use a timeless URL while fixed transit dates remain restorable."
+);
+assert.match(
+  app,
+  /if \(followsCurrentTransitDateRef\.current\) \{[\s\S]*updateTransitDateUrl\(currentLocalDateRef\.current, "replace"\);/u,
+  "A legacy current-date URL must be canonicalized into timeless Today mode."
 );
 assert.match(
   app,
