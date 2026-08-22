@@ -670,7 +670,7 @@ export function SkyDetailArticle({
         </div>
 
         {hasAspectCard ? (
-          <h2 className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside" id="sky-detail-related-aspects-title">
+          <h2 className="sr-only" id="sky-detail-related-aspects-title">
             {detail.relatedAspects?.heading ?? "Aspects to the planet"}
           </h2>
         ) : null}
