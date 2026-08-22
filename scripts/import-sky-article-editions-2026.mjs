@@ -64,6 +64,9 @@ const editions = manifest.sources.map((source) => {
   assert.equal(sourceBytes.byteLength, source.bytes, `${source.file} byte length changed; refusing import.`);
   assert.equal(sha256(sourceBytes), source.sha256, `${source.file} prose changed; refusing import.`);
   const sourceMarkdown = sourceBytes.toString("utf8");
+  const tldr = typeof source.tldr === "string" && source.tldr.trim()
+    ? source.tldr.trim()
+    : null;
   const engineSlots = Object.fromEntries(Object.entries(source.slots).map(([target, fixturePath]) => {
     const value = valueAtPath(engineFixture.dateSlots, fixturePath);
     assert.notEqual(value, undefined, `Missing engine fixture value: ${fixturePath}`);
@@ -80,6 +83,8 @@ const editions = manifest.sources.map((source) => {
       sha256: source.sha256,
       bytes: source.bytes
     },
+    tldr,
+    tldrStatus: tldr ? "needs_review" : "missing_explicit_copy",
     engineSlots,
     dateRendering: {
       authority: "instantUtc",

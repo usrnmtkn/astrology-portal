@@ -23,6 +23,7 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
 import {
+  SKY_ARTICLE_COMPILER_VERSION,
   compileSkyArticleEdition,
   skyArticleEditionRecord,
   skyArticleTemplatePlaceholders,
@@ -247,6 +248,7 @@ type SkyArticleEditionFacts = {
 type SkyArticleEditionForm = {
   referenceDate: string;
   facts: SkyArticleEditionFacts | null;
+  tldr: string;
   slotValues: Record<string, string>;
   slotGeneration: {
     provider: string;
@@ -2317,6 +2319,7 @@ export function GeneratedContentAdminDashboard() {
         templateKey: templateRow.content_key.replace(/^sky-article-template\//u, "sky/article-template/"),
         planet: facts.planet,
         sign: facts.sign,
+        tldr: form.tldr,
         entryYear: facts.entryYear,
         validFrom: facts.validFrom,
         validTo: facts.validTo,
@@ -2339,7 +2342,7 @@ export function GeneratedContentAdminDashboard() {
               status: "DRAFT",
               eventType: "sky-article-edition",
               headline: edition.headline,
-              summary: edition.articleSections[0]?.body.split(/\n{2,}/u)[0] ?? "",
+              summary: edition.tldr,
               body: edition.body,
               sections: { skyArticleEdition: edition },
               facts: {
@@ -2364,7 +2367,7 @@ export function GeneratedContentAdminDashboard() {
               lane: "reference",
               reviewState: "owner-review-required",
               blockType: "sky_article",
-              promptVersion: "sky-article-template-compiler-v1",
+              promptVersion: SKY_ARTICLE_COMPILER_VERSION,
               provider: "owner-compiled-sky-article",
               model: "deterministic-template-compiler"
             }]
@@ -2518,6 +2521,7 @@ export function GeneratedContentAdminDashboard() {
     setSkyArticleEditionForm(isSkyArticleTemplateRow(row) ? {
       referenceDate: new Date().toISOString().slice(0, 10),
       facts: null,
+      tldr: "",
       slotValues: {},
       slotGeneration: null,
       factBlockedSlots: []
@@ -4342,6 +4346,7 @@ export function GeneratedContentAdminDashboard() {
                       ...skyArticleEditionForm,
                       referenceDate: event.target.value,
                       facts: null,
+                      tldr: "",
                       slotValues: {},
                       slotGeneration: null,
                       factBlockedSlots: []
@@ -4385,6 +4390,21 @@ export function GeneratedContentAdminDashboard() {
                       Not sent to the model because they require governed dates, aspects, or historical sources: {skyArticleEditionForm.factBlockedSlots.map((slot) => slot.name).join(", ")}.
                     </p>
                   )}
+                  <label className="admin-review-copy-editor">
+                    <span>TL;DR · explicit edition copy</span>
+                    <textarea
+                      aria-label="Sky article edition TL;DR"
+                      value={skyArticleEditionForm.tldr}
+                      onChange={(event) => setSkyArticleEditionForm({
+                        ...skyArticleEditionForm,
+                        tldr: event.target.value
+                      })}
+                      placeholder="Write the short TL;DR shown in the Transits list and at the top of the full reading."
+                    />
+                    <small className="admin-field-hint">
+                      This is a separately written part of the same canonical article. The app will not derive it from the opening or generate another card at runtime.
+                    </small>
+                  </label>
                   <div className="admin-sky-edition-fields">
                     {skyArticleTemplateFields.map((placeholder) => {
                       const engineOwned = Object.prototype.hasOwnProperty.call(skyArticleEditionFacts.slotValues, placeholder.name);
@@ -4420,8 +4440,12 @@ export function GeneratedContentAdminDashboard() {
                       className="admin-primary-button"
                       type="button"
                       onClick={() => void createSkyArticleEdition(selectedRow)}
-                      disabled={isLoading || skyArticleEditionHouseCoverage < 12}
-                      title={skyArticleEditionHouseCoverage < 12 ? "All 12 approved house horoscopes are required before compilation." : "Compile a non-serving edition draft."}
+                      disabled={isLoading || skyArticleEditionHouseCoverage < 12 || !skyArticleEditionForm.tldr.trim()}
+                      title={skyArticleEditionHouseCoverage < 12
+                        ? "All 12 approved house horoscopes are required before compilation."
+                        : !skyArticleEditionForm.tldr.trim()
+                          ? "Write the edition TL;DR before compilation."
+                          : "Compile a non-serving edition draft."}
                     >
                       <Plus size={16} aria-hidden="true" />
                       Compile edition draft
@@ -4441,6 +4465,10 @@ export function GeneratedContentAdminDashboard() {
                 <strong>{compiledSkyArticleEdition.validFrom} through {compiledSkyArticleEdition.validTo}</strong>
               </div>
               <p>This saved row contains no unresolved placeholders and includes all twelve house horoscopes. It remains dark until you use the explicit approval action below.</p>
+              <div className="admin-hook-detail-section">
+                <strong>TL;DR</strong>
+                <p>{compiledSkyArticleEdition.tldr}</p>
+              </div>
               <dl className="admin-hook-pattern-list">
                 <div><dt>Template</dt><dd>{compiledSkyArticleEdition.templateKey}</dd></div>
                 <div><dt>Template hash</dt><dd><code>{compiledSkyArticleEdition.templateHash.slice(0, 12)}</code></dd></div>
@@ -4614,8 +4642,8 @@ export function GeneratedContentAdminDashboard() {
             </section>
           )}
           <label className="admin-review-copy-editor">
-            <span>{isVocabularyDraft ? "Editor note or grouping detail" : "Summary"}</span>
-            <textarea aria-label={isVocabularyDraft ? "Editor note or grouping detail" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : undefined} disabled={Boolean(compiledSkyArticleEdition)} />
+            <span>{isVocabularyDraft ? "Editor note or grouping detail" : compiledSkyArticleEdition ? "TL;DR" : "Summary"}</span>
+            <textarea aria-label={isVocabularyDraft ? "Editor note or grouping detail" : compiledSkyArticleEdition ? "TL;DR" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : undefined} disabled={Boolean(compiledSkyArticleEdition)} />
           </label>
           {showPackageBodyYou && (
             <label className="admin-review-copy-editor">

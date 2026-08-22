@@ -889,7 +889,12 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new Error(`Approve & publish edition cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
     }
     const edition = assertCompiledSkyArticleEdition(existing.sections?.skyArticleEdition);
-    if (existing.content_key !== edition.contentKey || existing.headline !== edition.headline || existing.body !== edition.body) {
+    if (
+      existing.content_key !== edition.contentKey
+      || existing.headline !== edition.headline
+      || existing.summary !== edition.tldr
+      || existing.body !== edition.body
+    ) {
       throw new Error("The saved edition no longer matches its compiled record. Recompile it before approval.");
     }
     const now = new Date().toISOString();
