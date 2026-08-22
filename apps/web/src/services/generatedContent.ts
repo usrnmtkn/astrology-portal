@@ -9,6 +9,10 @@ import { generatedContentAliases } from "./generatedContentKeys";
 import { fallbackArchitectureV3DashboardPackageDestination } from "./fallbackArchitectureV3DashboardPackaging";
 import { isReaderFacingCopy } from "../content/readerSafety";
 import {
+  hasExactSkyArticleOwnerApproval,
+  skyArticleEditionRecord
+} from "../content/skyArticleTemplateCompiler";
+import {
   noProseSourceFiles,
   servedFieldInstructionMarkers,
   servedFieldInternalBlacklist,
@@ -1870,6 +1874,17 @@ export function isReaderServableGeneratedContentRow(
     sections?: unknown;
   }
 ) {
+  const normalizedContentKey = row.content_key.trim().toLowerCase();
+  if (normalizedContentKey.startsWith("sky/article-template/") || normalizedContentKey.startsWith("sky-article-template/")) {
+    return false;
+  }
+  const sections = isRecord(row.sections) ? row.sections : null;
+  const skyArticleEdition = skyArticleEditionRecord(sections?.skyArticleEdition);
+  if (skyArticleEdition) {
+    if (row.status !== "LIVE" || row.lane !== "serving" || row.review_state) return false;
+    if (row.content_key !== skyArticleEdition.contentKey) return false;
+    if (!hasExactSkyArticleOwnerApproval(skyArticleEdition, row.source_snapshot)) return false;
+  }
   const facts = row.facts && typeof row.facts === "object" ? row.facts : {};
   const store = facts.tldrStore && typeof facts.tldrStore === "object"
     ? facts.tldrStore as Record<string, unknown>

@@ -11,6 +11,7 @@ const PLACEMENT_SURFACE = "sky-placement";
 
 const LONGFORM_CONTENT_KEY_PATTERNS = [
   /^sky-article-template\//,
+  /^sky\/article-template\//,
   /^sky-article\//,
   /^nodes-article\//,
   /^authored\/sky-nodes\//

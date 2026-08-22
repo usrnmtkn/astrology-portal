@@ -54,8 +54,8 @@ assert.match(app, /&& !source\.placementDerivation/);
 assert.match(app, /const generatedSection = generatedSkyPlacementWritingSection/);
 assert.match(
   app,
-  /const sections = approvedFallbackSection[\s\S]*\? \[approvedFallbackSection\][\s\S]*: mergedGeneratedSection[\s\S]*\? \[mergedGeneratedSection\]/,
-  "Owner-approved package placement rows must precede generated placement cards while generated cards remain available."
+  /const sections = compiledArticleSection[\s\S]*\? \[compiledArticleSection\][\s\S]*: approvedFallbackSection[\s\S]*\? \[approvedFallbackSection\][\s\S]*: mergedGeneratedSection[\s\S]*\? \[mergedGeneratedSection\]/,
+  "Explicitly approved compiled articles must precede owner-approved package rows, which must still precede generated placement cards."
 );
 assert.match(app, /const skyPlacementTopperMaxOrb = 1/);
 assert.match(app, /content\.eventType === "collective-placement-topper"/);

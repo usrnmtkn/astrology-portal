@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
 import {
   relatedAspectPassages,
   relatedHousePassages,
@@ -73,5 +75,18 @@ assert.equal(
   }),
   null
 );
+
+const repoRoot = path.resolve(new URL("..", import.meta.url).pathname);
+const dashboard = fs.readFileSync(path.join(repoRoot, "apps/admin/src/GeneratedContentAdminDashboard.tsx"), "utf8");
+const generatedContentApi = fs.readFileSync(path.join(repoRoot, "api/admin/generated-content.ts"), "utf8");
+const readerApp = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+
+assert.match(dashboard, /Create a complete edition/u, "Template rows must expose the edition compiler in Content Studio.");
+assert.match(dashboard, /All 12 approved house horoscopes are required/u, "Compilation must require complete house coverage.");
+assert.match(dashboard, /Approve & publish edition/u, "Compiled editions need a distinct owner approval action.");
+assert.match(generatedContentApi, /ownerAction === "approve-sky-article-edition"/u, "The API must enforce the explicit owner approval action.");
+assert.match(readerApp, /selectActiveSkyArticleEdition/u, "Sky reader articles must select active compiled editions.");
+assert.match(readerApp, /compiledHousePassage/u, "Reader personalization must use the compiled house passage.");
+assert.match(readerApp, /compiledAspect/u, "Reader personalization must append the compiled natal-aspect passage.");
 
 console.log("Admin Sky write-up relationship checks passed.");

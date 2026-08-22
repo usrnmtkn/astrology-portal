@@ -129,11 +129,11 @@ const bodyYou = sunGold.body.replace(
   "You can feel the change before anyone names it. Warmth, nerve,"
 );
 const bodyYouLint = lintCard(bodyYou, { mode: placementMode });
-assert.equal(bodyYouLint.score, 1);
-assert.ok(bodyYouLint.findings.some((finding) => (
+assert.equal(bodyYouLint.score, 3);
+assert.ok(!bodyYouLint.findings.some((finding) => (
   finding.severity === "fail"
   && finding.term === "(?<!-)\\byou\\b|(?<!-)\\byour\\b"
-)));
+)), "Sky-placement copy may address the reader directly with you/your language.");
 
 const sun = generator.normalizePlacementArgs({ planet: "Sun", sign: "Leo" });
 assert.deepEqual(

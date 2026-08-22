@@ -7,6 +7,7 @@ process.env.SUPABASE_URL = "https://example.invalid";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role";
 
 const { default: handler } = await import("../api/admin/generated-content.ts");
+const { compileSkyArticleEdition } = await import("../apps/web/src/content/skyArticleTemplateCompiler.ts");
 // The handler loads local development configuration during import. Reassert
 // the fixture secret afterward so a developer's .env.local cannot change this
 // test's authorization contract.
@@ -119,4 +120,61 @@ assert.equal(editedPlacement.patches[0].review_state, "sky-voice-needs-review");
 assert.equal(editedPlacement.patches[0].judge_score, null);
 assert.equal(editedPlacement.patches[0].judge_gate, null);
 
-console.log("Sky owner review action checks passed: atomic approval is gated and placement edits invalidate judgment.");
+const compiledEdition = await compileSkyArticleEdition({
+  templateBody: "# Pluto Enters {{sign}}\n\n{{opener}}\n\n## Horoscopes for Pluto in {{sign}}\n\n{{risingBlocks}}",
+  templateKey: "sky/article-template/pluto/ingress",
+  planet: "pluto",
+  sign: "aquarius",
+  entryYear: 2024,
+  validFrom: "2024-11-19",
+  validTo: "2043-03-08",
+  transitStartInstant: "2024-11-19T20:29:00.000Z",
+  transitEndInstant: "2043-03-09T00:00:00.000Z",
+  slotValues: { sign: "Aquarius", opener: "Owner article opening." },
+  housePassages: Array.from({ length: 12 }, (_, index) => ({
+    house: index + 1,
+    risingSign: "aquarius",
+    contentKey: `house-horoscope-core/pluto/aquarius/house-${index + 1}`,
+    body: `Owner house ${index + 1} passage.`
+  }))
+});
+const editionRow = existingRow({
+  content_key: compiledEdition.contentKey,
+  mode: "article",
+  event_type: "sky-article-edition",
+  headline: compiledEdition.headline,
+  summary: "Owner article opening.",
+  body: compiledEdition.body,
+  sections: { skyArticleEdition: compiledEdition },
+  lane: "reference",
+  review_state: "owner-review-required",
+  block_type: "sky_article",
+  provider: "owner-compiled-sky-article",
+  prompt_version: "sky-article-template-compiler-v1",
+  source_snapshot: { review_status: "needs_review" },
+  judge_score: null,
+  judge_verdict: null,
+  judge_gate: null,
+  judge_why: null
+});
+const approvedEdition = await invoke({ id: "sky-row", ownerAction: "approve-sky-article-edition" }, editionRow);
+assert.equal(approvedEdition.status, 200);
+assert.equal(approvedEdition.patches[0].status, "LIVE");
+assert.equal(approvedEdition.patches[0].lane, "serving");
+assert.equal(approvedEdition.patches[0].review_state, null);
+assert.equal(approvedEdition.patches[0].source_snapshot.ownerApproval.compiledHash, compiledEdition.compiledHash);
+
+const genericEditionSignoff = await invoke({ id: "sky-row", status: "LIVE" }, editionRow);
+assert.equal(genericEditionSignoff.status, 500);
+assert.equal(genericEditionSignoff.patches.length, 0);
+assert.match(genericEditionSignoff.payload.error, /Use Approve & publish edition/u);
+
+const changedEdition = await invoke(
+  { id: "sky-row", ownerAction: "approve-sky-article-edition" },
+  { ...editionRow, body: `${editionRow.body}\nChanged outside the compiler.` }
+);
+assert.equal(changedEdition.status, 500);
+assert.equal(changedEdition.patches.length, 0);
+assert.match(changedEdition.payload.error, /no longer matches its compiled record/u);
+
+console.log("Sky owner review action checks passed: cards and exact compiled article editions use separate atomic approval gates.");
