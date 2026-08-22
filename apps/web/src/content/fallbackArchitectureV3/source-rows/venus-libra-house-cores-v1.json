@@ -75,12 +75,12 @@
       "grammar_frame": "second_person_block",
       "body_you": "You may want more of what is actually fun. Venus in Libra is moving through your 5th house of fun and creativity, so dating, flirting, art, food, clothes, parties, hobbies, and whatever makes you forget to check the time can pull you in. You may say yes to the date because you want to go, not because you have already decided what it means. You may pick a project back up because you miss it. You may want somebody to admire what you made. If everybody loves the version of your work you are already bored with, you are still bored.",
       "body_they": "You may want more of what is actually fun. Venus in Libra is moving through your 5th house of fun and creativity, so dating, flirting, art, food, clothes, parties, hobbies, and whatever makes you forget to check the time can pull you in. You may say yes to the date because you want to go, not because you have already decided what it means. You may pick a project back up because you miss it. You may want somebody to admire what you made. If everybody loves the version of your work you are already bored with, you are still bored.",
-      "review_status": "approved",
+      "review_status": "needs_review",
       "source_keys": [
         "packages/astro-knowledge/review/venus-libra-house-cores-v1/venus-libra-house-cores-owner-package.md"
       ],
-      "notes": "Venus in Libra, 5th house core; owner exact-wording approved 2026-08-09 (V3 OWNER FINAL). Settled owner-authored text: no rewriting without a new owner ruling.",
-      "approved_via": "owner exact-wording approval 2026-08-09, verbatim statement 'it's faithful'; recorded in the package approval section"
+      "notes": "Venus in Libra, 5th house core; prior approval revoked by the owner on 2026-08-22. Preserve this text only as rejected historical evidence until the owner supplies or approves a replacement.",
+      "approved_via": "revoked by explicit owner correction 2026-08-22"
     },
     {
       "contentKey": "house-horoscope-core/venus/libra/house-6",

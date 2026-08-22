@@ -4,7 +4,7 @@
   "sidecars": [
     {
       "path": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
-      "rows": 3473,
+      "rows": 3472,
       "sha256": "0b4aa6ad27819edbe3333beff342392fa4ba646b7f6fdcfd8ff899f77b2759d8"
     },
     {
@@ -14,23 +14,23 @@
     }
   ],
   "rawMatrixRoleCounts": {
-    "meaning": 3473,
-    "register": 2254,
+    "meaning": 3472,
+    "register": 2253,
     "scene": 372,
-    "argument_candidate": 788
+    "argument_candidate": 787
   },
   "deduplicatedSharedIndexCounts": {
-    "entries": 5831,
-    "meaning": 2177,
-    "register": 1710,
-    "scene": 416,
-    "argument": 1182,
+    "entries": 5923,
+    "meaning": 2224,
+    "register": 1757,
+    "scene": 415,
+    "argument": 1181,
     "phrase": 346,
     "planetSignKeys": 247
   },
   "roleCountsBySource": {
     "owner-approved-knowledge-matrix-meaning": {
-      "meaning": 1876,
+      "meaning": 1875,
       "register": 0,
       "scene": 0,
       "argument": 0,
@@ -38,7 +38,7 @@
     },
     "owner-approved-knowledge-matrix-register": {
       "meaning": 0,
-      "register": 1227,
+      "register": 1226,
       "scene": 0,
       "argument": 0,
       "phrase": 0
@@ -54,7 +54,7 @@
       "meaning": 0,
       "register": 0,
       "scene": 0,
-      "argument": 454,
+      "argument": 453,
       "phrase": 0
     },
     "owner-approved-ll-matrix-v13": {
@@ -64,9 +64,16 @@
       "argument": 0,
       "phrase": 0
     },
+    "reviewed-sky-point-placement-meaning": {
+      "meaning": 48,
+      "register": 0,
+      "scene": 0,
+      "argument": 0,
+      "phrase": 0
+    },
     "owner-corpus-passage": {
       "meaning": 0,
-      "register": 482,
+      "register": 530,
       "scene": 0,
       "argument": 0,
       "phrase": 0
@@ -81,7 +88,7 @@
     "approved_house_horoscope_core": {
       "meaning": 0,
       "register": 0,
-      "scene": 24,
+      "scene": 23,
       "argument": 0,
       "phrase": 0
     },
@@ -133,7 +140,7 @@
     "matrixZeroScene": 114,
     "extendedZeroScene": 252,
     "extendedZeroSceneWithinMatrixPlacements": 98,
-    "extendedZeroMeaning": 16,
+    "extendedZeroMeaning": 4,
     "extendedZeroArgument": 71
   },
   "beforeCounts": {
@@ -146,11 +153,11 @@
     "planetSignKeys": 190
   },
   "afterCounts": {
-    "entries": 5831,
-    "meaning": 2177,
-    "register": 1710,
-    "scene": 416,
-    "argument": 1182,
+    "entries": 5923,
+    "meaning": 2224,
+    "register": 1757,
+    "scene": 415,
+    "argument": 1181,
     "phrase": 346,
     "planetSignKeys": 247
   },
@@ -175,18 +182,54 @@
     "moonCancerMeaning": 1,
     "moonAquariusMeaning": 1,
     "lilithBySign": {
-      "aries": 4,
-      "taurus": 4,
-      "gemini": 4,
-      "cancer": 4,
-      "leo": 4,
-      "virgo": 4,
-      "libra": 4,
-      "scorpio": 5,
-      "sagittarius": 4,
-      "capricorn": 4,
-      "aquarius": 4,
-      "pisces": 4
+      "aries": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "taurus": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "gemini": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "cancer": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "leo": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "virgo": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "libra": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "scorpio": {
+        "meaning": 1,
+        "sceneOrArgument": 5
+      },
+      "sagittarius": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "capricorn": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "aquarius": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "pisces": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      }
     }
   },
   "deduplication": "within role + exact planet + exact sign + event by copy_sha; governance precedence wins",

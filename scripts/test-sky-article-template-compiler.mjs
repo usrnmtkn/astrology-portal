@@ -5,8 +5,11 @@ import {
   compileSkyArticleEdition,
   extractSkyArticleTemplateBody,
   hasExactSkyArticleOwnerApproval,
+  reviseSkyArticleEdition,
   selectActiveSkyArticleEdition,
   skyArticleAspectPassageForTransit,
+  skyArticleEditableFields,
+  skyArticleEditionFieldChanges,
   skyArticleTemplatePlaceholders
 } from "../apps/web/src/content/skyArticleTemplateCompiler.ts";
 
@@ -94,6 +97,24 @@ assert.equal(compiled.aspectPassages.length, 1);
 assert.doesNotMatch(compiled.body, /Horoscopes|Owner horoscope|\{\{/u);
 assert.match(compiled.compiledMarkdown, /Owner horoscope for house 12/u);
 assert.equal(assertCompiledSkyArticleEdition(compiled), compiled);
+
+const editable = skyArticleEditableFields(compiled);
+editable.tldr = "A revised explicit owner TL;DR.";
+editable.housePassages[3].body = "Revised owner horoscope for house 4.";
+const revised = await reviseSkyArticleEdition(compiled, editable);
+assert.notEqual(revised.compiledHash, compiled.compiledHash);
+assert.equal(revised.revision.baseCompiledHash, compiled.compiledHash);
+assert.deepEqual(revised.revision.changedFieldIds, ["tldr", "house:4"]);
+assert.deepEqual(
+  skyArticleEditionFieldChanges(compiled, skyArticleEditableFields(revised)).map((change) => change.fieldId),
+  ["tldr", "house:4"]
+);
+assert.equal(revised.housePassages[3].contentKey, compiled.housePassages[3].contentKey);
+assert.equal(revised.housePassages[3].risingSign, compiled.housePassages[3].risingSign);
+await assert.rejects(
+  reviseSkyArticleEdition(compiled, { ...skyArticleEditableFields(compiled), housePassages: compiled.housePassages.slice(0, 11) }),
+  /cannot add or remove house passages/u
+);
 assert.equal(
   skyArticleAspectPassageForTransit([{
     contentKey: "authored/transit-aspect/pluto/sun/hard",
@@ -115,6 +136,7 @@ const ownerApproval = {
   compiledHash: compiled.compiledHash
 };
 assert.equal(hasExactSkyArticleOwnerApproval(compiled, { ownerApproval }), true);
+assert.equal(hasExactSkyArticleOwnerApproval(revised, { ownerApproval }), false, "Editing one field must invalidate the prior exact-copy approval.");
 assert.equal(hasExactSkyArticleOwnerApproval(compiled, { ownerApproval: { ...ownerApproval, templateHash: "changed" } }), false);
 assert.notEqual(
   (await compileSkyArticleEdition({
