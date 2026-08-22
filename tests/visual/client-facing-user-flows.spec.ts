@@ -1603,9 +1603,8 @@ test.describe("client-facing user flow case studies", () => {
       has: page.getByRole("heading", { name: "Last Quarter Moon in Taurus" })
     });
     await expect(lastQuarterTaurus).toHaveCount(1);
-    await expect(lastQuarterTaurus.locator(".lunar-weekly-event__body")).toContainText(
-      "Your body is keeping score"
-    );
+    await expect(lastQuarterTaurus.locator(".lunar-weekly-event__body")).toHaveCount(0);
+    await expect(page.locator("#lunar-weekly-2026-08-05 .lunar-weekly-day__guidance")).toBeVisible();
     await expect(lastQuarterTaurus).not.toContainText("The waning Moon carries things out");
     await expect(weeklyEvents.getByRole("heading", { name: "Venus enters Libra" })).toBeVisible();
     await expect(weeklyEvents.getByRole("heading", { name: "Sun trine Saturn" })).toBeVisible();
@@ -1679,9 +1678,9 @@ test.describe("client-facing user flow case studies", () => {
       has: page.getByRole("heading", { name: "First Quarter Moon in Scorpio", exact: true })
     });
     await expect(firstQuarterEvent).toHaveCount(1);
-    await expect(firstQuarterEvent.locator(".lunar-weekly-event__body")).toContainText(
-      "Scorpio Moon doesn't let you hide from what's rotting underneath"
-    );
+    await expect(firstQuarterEvent.locator(".lunar-weekly-event__body")).toHaveCount(0);
+    const firstQuarterDay = page.locator(".lunar-weekly-day").filter({ has: firstQuarterEvent });
+    await expect(firstQuarterDay.locator(".lunar-weekly-day__guidance")).toBeVisible();
     await expect(firstQuarterEvent).not.toContainText(
       "Adjust the plan, not the intention"
     );
