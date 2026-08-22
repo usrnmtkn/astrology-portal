@@ -991,7 +991,7 @@ function YouTransitArticlePage({
               ) : null}
               {displaySummary && !displayArticle.bodyBeforeSections ? (
                 <section className="article-section sky-detail-section">
-                  {displaySummaryHeading ? <h3>{displaySummaryHeading}</h3> : null}
+                  {displaySummaryHeading ? <h2>{displaySummaryHeading}</h2> : null}
                   <p>{displaySummary}</p>
                 </section>
               ) : null}
@@ -1000,7 +1000,7 @@ function YouTransitArticlePage({
 
                 return (
                 <section className="article-section sky-detail-section" key={`${section.heading}-${index}`}>
-                  {section.heading ? <h3>{section.heading}</h3> : null}
+                  {section.heading ? <h2>{section.heading}</h2> : null}
                   {section.sourceTag ? <p>{section.sourceTag}</p> : null}
                   {showTldr ? <p>{section.tldr}</p> : null}
                   {section.bodyParagraphs.map((paragraph, paragraphIndex) => (
@@ -1010,8 +1010,8 @@ function YouTransitArticlePage({
                 );
               })}
               {passKeyDates.length ? (
-                <section className="article-section sky-detail-section sky-placement-key-dates" aria-label="Key dates">
-                  <h3>Key dates</h3>
+                <section className="article-section sky-detail-section sky-placement-key-dates" aria-labelledby="you-transit-key-dates-title">
+                  <h2 id="you-transit-key-dates-title">Key dates</h2>
                   <dl>
                     {passKeyDates.map((row) => (
                       <div key={`${row.label}-${row.value}`}>
@@ -1023,14 +1023,16 @@ function YouTransitArticlePage({
                 </section>
               ) : null}
               {displayArticle.relatedAspects?.rows.length ? (
-                <section className="article-related-aspects" aria-label={displayArticle.relatedAspects.heading}>
-                  <span className="eyebrow section-label article-related-aspects__label">{displayArticle.relatedAspects.heading}</span>
+                <section className="article-related-aspects" aria-labelledby="you-transit-related-aspects-title">
+                  <h2 className="eyebrow section-label article-related-aspects__label" id="you-transit-related-aspects-title">
+                    {displayArticle.relatedAspects.heading}
+                  </h2>
                   {relatedAspectGroups.map((group) => (
                     <div className="article-related-aspects__group" key={group.key}>
                       {group.label ? (
-                        <span className="eyebrow section-label article-related-aspects__label article-related-aspects__group-label">
+                        <h3 className="eyebrow section-label article-related-aspects__label article-related-aspects__group-label">
                           {group.label}
-                        </span>
+                        </h3>
                       ) : null}
                       <div className="article-related-aspects__list aspect-row-list">
                         {group.rows.map((row, index) => (
@@ -1051,8 +1053,16 @@ function YouTransitArticlePage({
 
         {aspectGroups.length ? aspectGroups.map((group) => (
           <Fragment key={group.id}>
-            <span className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside">{group.label}</span>
-            <section className="article-card article-related-aspects article-related-aspects-card" aria-label={group.label}>
+            <h2
+              className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside"
+              id={`you-transit-aspects-${group.id}`}
+            >
+              {group.label}
+            </h2>
+            <section
+              className="article-card article-related-aspects article-related-aspects-card"
+              aria-labelledby={`you-transit-aspects-${group.id}`}
+            >
               <div className="article-related-aspects__group">
                 <div className="article-related-aspects__copy-list">
                   {group.sections.map((section, index) => {

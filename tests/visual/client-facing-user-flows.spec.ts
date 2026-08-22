@@ -335,6 +335,34 @@ async function expectNoDuplicateArticleHeadings(page: Page, label: string) {
   expect(duplicates, `${label} does not repeat page or section headlines`).toEqual([]);
 }
 
+async function expectSemanticArticleHeadingOrder(page: Page, label: string) {
+  const article = page.locator(".article-page");
+  const headings = await article.locator("h1, h2, h3, h4, h5, h6").evaluateAll((elements) => (
+    elements.map((element) => ({
+      level: Number(element.tagName.slice(1)),
+      text: element.textContent?.replace(/\s+/gu, " ").trim() ?? ""
+    })).filter((heading) => heading.text)
+  ));
+  const h1Count = headings.filter((heading) => heading.level === 1).length;
+  const skippedLevels = headings.slice(1).flatMap((heading, index) => {
+    const previous = headings[index];
+    return heading.level > previous.level + 1
+      ? [`${previous.text} (h${previous.level}) → ${heading.text} (h${heading.level})`]
+      : [];
+  });
+  const structuralLabelTags = await article.locator(".article-related-aspects__label").evaluateAll((elements) => (
+    elements.map((element) => element.tagName)
+  ));
+
+  expect(headings[0]?.level, `${label} starts with an h1`).toBe(1);
+  expect(h1Count, `${label} has exactly one h1`).toBe(1);
+  expect(skippedLevels, `${label} does not skip heading levels`).toEqual([]);
+  expect(
+    structuralLabelTags.every((tagName) => tagName === "H2" || tagName === "H3"),
+    `${label} renders structural article labels as headings`
+  ).toBe(true);
+}
+
 async function captureThemeSurface(page: Page, theme: "light" | "dark", surface: string) {
   await mkdir(themeScreenshotDir, { recursive: true });
   await expect(page.locator(".app-shell")).toHaveClass(new RegExp(`theme-${theme}`));
@@ -932,9 +960,38 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("button", { name: "Close detail" })).toBeVisible();
     await expect(page.locator("article, .sky-detail-article").first()).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Sky placement detail");
+    await expectSemanticArticleHeadingOrder(page, "Sky placement detail");
 
     await page.getByRole("button", { name: "Close detail" }).click();
     await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+    await assertNoClientErrors();
+  });
+
+  test("Sky detail titles clear the fixed navigation and keep semantic order across breakpoints", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    for (const viewport of [
+      { name: "desktop", width: 1440, height: 1000 },
+      { name: "mobile", width: 390, height: 844 }
+    ] as const) {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await seedClientState(page, { now: "2026-07-29T16:00:00.000Z" });
+      await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
+
+      const title = page.getByRole("heading", { level: 1, name: "The Sun in Leo" });
+      const titleBox = await title.boundingBox();
+      const topbarBox = await page.locator(".topbar").boundingBox();
+
+      expect(titleBox, `${viewport.name} article title has a rendered box`).not.toBeNull();
+      expect(topbarBox, `${viewport.name} navigation has a rendered box`).not.toBeNull();
+      expect(
+        titleBox!.y,
+        `${viewport.name} article title starts below the fixed navigation`
+      ).toBeGreaterThan(topbarBox!.y + topbarBox!.height);
+      await expectSemanticArticleHeadingOrder(page, `${viewport.name} Sky detail article`);
+      await expectNoHorizontalOverflow(page, `${viewport.name} Sky detail article`);
+    }
+
     await assertNoClientErrors();
   });
 
@@ -2748,7 +2805,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectNoDuplicateArticleHeadings(page, "Sky fallback placement detail");
     await expectReaderFacingCopyExcluding(
       page.locator("article, .sky-detail-article").first(),
-      "[aria-label='Horoscopes by rising sign'], [aria-label='Where it lands for you']",
+      "#sky-rising-horoscopes",
       "Sky placement fallback detail"
     );
     await assertNoClientErrors();
@@ -2780,6 +2837,7 @@ test.describe("client-facing user flow case studies", () => {
     await selectYouNatalTab(page);
     await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
     await expectNoDuplicateArticleHeadings(page, "Hydrated You placement detail");
+    await expectSemanticArticleHeadingOrder(page, "Hydrated You placement detail");
     await expectHydrationKeepsReaderCopyStable(
       page,
       page.getByRole("region", { name: "Sun in Aquarius in the 11th house" }),
@@ -2816,12 +2874,12 @@ test.describe("client-facing user flow case studies", () => {
 
     const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
     await expect(horoscopeSection).toBeVisible();
-    await expect(horoscopeSection.getByRole("heading", { level: 4 })).toHaveCount(12);
+    await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(horoscopeSection.getByRole("heading", { name: "Gemini rising" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveAttribute(
-      "href",
-      "#sky-rising-horoscopes"
-    );
+    await expectSemanticArticleHeadingOrder(page, "Sky placement rising-sign article");
+    await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
+    await expect(page.locator(".sky-detail-id .article-duration")).toHaveText("July 22 to August 22, 2026");
+    await expect(page.getByText("July 22 to August 22, 2026", { exact: true })).toHaveCount(1);
     await assertNoClientErrors();
   });
 
@@ -2837,11 +2895,11 @@ test.describe("client-facing user flow case studies", () => {
     const personalizedSection = page.getByRole("region", { name: "Where it lands for you" });
     await expect(personalizedSection).toBeVisible();
     await expect(personalizedSection).toContainText("3rd house");
+    await expect(page.getByRole("heading", { level: 2, name: "Where it lands for you" })).toBeVisible();
+    await expectSemanticArticleHeadingOrder(page, "Personalized Sky placement article");
     await expect(page.getByRole("region", { name: "Horoscopes by rising sign" })).toHaveCount(0);
-    await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveAttribute(
-      "href",
-      "#sky-rising-horoscopes"
-    );
+    await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
+    await expect(page.locator(".sky-detail-id .article-duration")).toHaveText("July 22 to August 22, 2026");
     await assertNoClientErrors();
   });
 
@@ -2853,8 +2911,10 @@ test.describe("client-facing user flow case studies", () => {
 
     const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
     await expect(horoscopeSection).toBeVisible();
-    await expect(horoscopeSection.getByRole("heading", { level: 4 })).toHaveCount(12);
+    await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(horoscopeSection).toContainText("Venus in Libra is moving through your");
+    await expect(page.locator(".sky-detail-id .article-duration")).not.toBeEmpty();
+    await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
     await assertNoClientErrors();
   });
 
@@ -2868,6 +2928,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("region", { name: "Horoscopes by rising sign" })).toHaveCount(0);
     await expect(page.getByRole("region", { name: "Where it lands for you" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
+    await expect(page.locator(".sky-detail-id .article-duration")).not.toBeEmpty();
     await assertNoClientErrors();
   });
 
