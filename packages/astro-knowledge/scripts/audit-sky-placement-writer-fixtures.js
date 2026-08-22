@@ -67,7 +67,7 @@ function auditRecords() {
 
 function markdown(report) {
   const rows = report.fixtures.map((item) => `| ${item.id} | ${item.validHeldoutFixture ? "valid" : "ineligible"} | ${item.reasons.join("; ") || "all five criteria pass"} |`).join("\n");
-  return `# Sky Placement writer held-out fixture audit\n\nThe 12 existing contrastive records yield **${report.validFixtureCount} valid held-out fixtures**. The exact shortfall from 20 is **${report.exactShortfall}**. No fixtures were fabricated and no billed evaluation was run.\n\n| Record | Result | Reason |\n|---|---|---|\n${rows}\n`;
+  return `# Sky Placement writer held-out fixture audit\n\nThe ${report.sourceRecordCount} existing contrastive records yield **${report.validFixtureCount} valid held-out fixtures**. The exact shortfall from 20 is **${report.exactShortfall}**. No fixtures were fabricated and no billed evaluation was run.\n\n| Record | Result | Reason |\n|---|---|---|\n${rows}\n`;
 }
 
 function main() {

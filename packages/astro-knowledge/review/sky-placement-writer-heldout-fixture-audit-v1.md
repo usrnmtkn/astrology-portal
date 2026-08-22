@@ -1,6 +1,6 @@
 # Sky Placement writer held-out fixture audit
 
-The 12 existing contrastive records yield **6 valid held-out fixtures**. The exact shortfall from 20 is **14**. No fixtures were fabricated and no billed evaluation was run.
+The 33 existing contrastive records yield **6 valid held-out fixtures**. The exact shortfall from 20 is **14**. No fixtures were fabricated and no billed evaluation was run.
 
 | Record | Result | Reason |
 |---|---|---|
@@ -32,5 +32,8 @@ The 12 existing contrastive records yield **6 valid held-out fixtures**. The exa
 | sky-placement-mars-aries-owner-selected-generation-benchmark-v1 | ineligible | record does not prove the replacement was written verbatim by the owner |
 | sky-placement-writer-batch-1-corpus-warmth-revisions-v4-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |
 | sky-placement-writer-batch-2-owner-edited-approved-v1-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |
+| synastry-foundation-manufacturing-confidence-soft-context-rejection | ineligible | record does not prove the replacement was written verbatim by the owner; fragments do not provide enough context for held-out evaluation |
 | sky-placement-writer-batch-4-owner-edited-approved-v1-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |
 | sky-placement-writer-batch-3-owner-edited-approved-v1-exact-approval | ineligible | record does not prove the replacement was written verbatim by the owner |
+| synastry-foundation-ground-beneath-disconnected-closer-rejection | ineligible | record does not prove the replacement was written verbatim by the owner; fragments do not provide enough context for held-out evaluation |
+| synastry-foundation-deeper-work-security-disconnected-closer-rejection | ineligible | record does not prove the replacement was written verbatim by the owner; fragments do not provide enough context for held-out evaluation |

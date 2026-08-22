@@ -48,6 +48,10 @@ assert.match(skyCron, /prepareProductionPreCallGate\(input\)/u);
 assert.match(skyCron, /assertProductionPreCallGate\(gate, \{ role: "WRITER"/u);
 assert.match(skyCron, /assertProductionPreCallGate\(gate, \{ role: "REVIEWER"/u);
 assert.match(skyCron, /judgeBeforeProviderCall/u);
+assert.match(skyCron, /generationConfig\("sky-exact-aspect"\)/u, "Sky aspects must resolve their surface-specific generation lane");
+
+const skyPlacementCron = fs.readFileSync(path.join(root, "api/cron/generate-sky-placements.ts"), "utf8");
+assert.match(skyPlacementCron, /skyPlacementWriterConfig\(\)/u, "Sky placements must resolve the dedicated writer lane or its explicit legacy fallback");
 
 const reportClient = fs.readFileSync(path.join(root, "api/_lib/report-model-client.ts"), "utf8");
 const reportFulfillment = fs.readFileSync(path.join(root, "api/_lib/report-fulfillment.ts"), "utf8");
