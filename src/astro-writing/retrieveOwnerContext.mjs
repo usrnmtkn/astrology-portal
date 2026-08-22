@@ -27,6 +27,17 @@ function overlapScore(entry, plan) {
   return score;
 }
 
+function registerFamilyMatchesTarget(entry, plan) {
+  const family = String(entry?.sourceFamily ?? entry?.family ?? "");
+  const object = String(plan?.object ?? "").toLowerCase();
+  if (family === "sky-lunation") return false;
+  if (family === "sky-season") return object === "sun";
+  if (family === "sky-nodes-longform") return object === "north-node" || object === "south-node" || object === "nodes";
+  if (family === "relationship-astrology") return object === "venus";
+  if (family === "weekly-astrology") return false;
+  return true;
+}
+
 export function retrieveOwnerContext(plan, {
   examples = [],
   matrixExamples = [],
@@ -65,6 +76,7 @@ export function retrieveOwnerContext(plan, {
     && entry.ownerAuthored === true
     && entry.useAsPositiveVoiceEvidence === true
     && policy.sameFamilyFamilies.includes(entry.family)
+    && registerFamilyMatchesTarget(entry, plan)
     && policy.allowedRegisters.includes(entry.register)
     && !excludedKeys.has(entry.contentKey)
     && entry.text.trim()
@@ -95,7 +107,9 @@ export function retrieveOwnerContext(plan, {
   );
   const add = (entry, sourceLimit) => {
     if (selectedSameFamily.includes(entry)) return false;
-    const sourceKey = entry.sourcePath ?? entry.source ?? entry.contentKey ?? entry.id;
+    const sourceKey = entry.sourceFamily === "owner-locked-lilith-v5-placement"
+      ? entry.contentKey
+      : entry.sourcePath ?? entry.source ?? entry.contentKey ?? entry.id;
     const sourceCount = sourceCounts.get(sourceKey) ?? 0;
     if (sourceCount >= sourceLimit) return false;
     selectedSameFamily.push(entry);

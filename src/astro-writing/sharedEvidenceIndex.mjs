@@ -152,6 +152,33 @@ function argumentEntries(approvedExamples) {
     });
 }
 
+function reviewedSkyPointMeaningEntries(skyPointMeaningRows) {
+  return (skyPointMeaningRows ?? [])
+    .filter((entry) => (
+      entry?.status === "REVIEWED_CLAUSE"
+      && typeof entry?.point === "string"
+      && typeof entry?.sign === "string"
+      && typeof entry?.collective_reading === "string"
+      && entry.collective_reading.trim()
+    ))
+    .map((entry) => namedEntry(entry, "meaning", {
+      id: `meaning:${entry.id}`,
+      planet: entry.point,
+      sign: entry.sign,
+      text: entry.collective_reading,
+      sourcePath: "tldr-astro-phrasebank/phrasebank/cc-sky-points-authored.json",
+      contentKey: entry.id,
+      family: "sky-point-placement-meaning",
+      governanceTier: "reviewed-clause",
+      ownerApproved: true,
+      ownerAuthored: false,
+      generated: false,
+      evidenceRole: "sky_point_placement_meaning",
+      sourceKind: "reviewed-sky-point-placement-meaning",
+      eligibleForWriterRegister: false
+    }));
+}
+
 export function buildSharedEvidenceIndex({
   matrixEvidenceRows = [],
   llMatrixV13Rows = [],
@@ -159,7 +186,8 @@ export function buildSharedEvidenceIndex({
   approvedExamples = [],
   registerExamples = [],
   registerGoldExamples = [],
-  phraseExamples = []
+  phraseExamples = [],
+  skyPointMeaningRows = []
 } = {}) {
   const sceneNounLexicon = matrixSceneNounLexicon(matrixEvidenceRows);
   const entries = dedupeEvidence([
@@ -171,6 +199,7 @@ export function buildSharedEvidenceIndex({
       copySha: entry.copySha,
       eligibleForWriterRegister: false
     })),
+    ...reviewedSkyPointMeaningEntries(skyPointMeaningRows),
     ...registerEntries(registerExamples, registerGoldExamples),
     ...sceneEntries(approvedExamples, registerExamples, sceneNounLexicon),
     ...argumentEntries(approvedExamples),
