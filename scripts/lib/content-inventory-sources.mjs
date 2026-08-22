@@ -294,6 +294,7 @@ export function buildCanonicalContentRecords(repoRoot) {
     ...rows("source-rows/sky-placement-inventories-voice-pass-v1.json", "rows"),
     ...skySigns,
     ...rows("source-rows/sky-placement-owner-approved-fallbacks-v1.json", "rows"),
+    ...rows("source-rows/sky-placement-house-templates-v1.json", "rows"),
     ...rows("source-rows/sun-leo-house-cores-v1.json", "rows"),
     ...rows("source-rows/venus-libra-house-cores-v1.json", "rows"),
   ], isDistributionEligible);

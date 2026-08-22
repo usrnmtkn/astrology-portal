@@ -2,14 +2,14 @@
 
 Date: 2026-07-16
 
-Scope: TLDR Astro content dashboard admin, centered on `GeneratedContentAdminDashboard` and the admin navigation model in `contentSystemPlan`.
+Scope: TLDR Astro content dashboard admin, centered on `GeneratedContentAdminDashboard` and its five primary editorial destinations.
 
 QA role: content operations admin who needs to create, review, diagnose, and publish reader-facing astrology copy without leaking fallback scaffolding, internal notes, source-framework language, or directional copy to public surfaces.
 
 ## Main User Flows
 
 1. Admin entry and dashboard shell
-2. Overview workstream triage
+2. Review Queue landing and workstream triage
 3. Write: new article flow
 4. Write: exact content browse and edit flow
 5. Write: reusable phrase or clause flow
@@ -28,8 +28,8 @@ QA role: content operations admin who needs to create, review, diagnose, and pub
 18. Publish: review queue triage flow
 19. Publish: status filter flow for scheduled, published, and archived rows
 20. System: API and connection status flow
-21. System: app behavior flags flow
-22. System: release notes flow
+21. Operations / Advanced disclosure flow
+22. Default reference and retired-row visibility flow
 23. Responsive admin layout flow for desktop and mobile widths
 24. Error, empty, and degraded connection states
 25. Reader-safety regression flow for fallback and directional copy
@@ -44,9 +44,10 @@ Preconditions:
 
 Steps:
 1. Open the content dashboard admin.
-2. Verify the default page is Content Studio.
-3. Confirm the dashboard shows navigation for Write, Composition, App Surfaces, Publish, and System.
-4. Move through the top-level pages: Articles, Exact Content, Composite Review, Templates, Slots, Vocabulary & Phrases, Fallback Hooks, Surface Map, Review Queue, Connection, App Behavior, and Release Notes.
+2. Verify the default page is Review Queue; there is no separate Studio Home page.
+3. Confirm the five primary destinations are Review Queue, Content Library, Articles, Composition, and Aspect Patterns.
+4. Open Composition and move through Templates, Slots, Vocabulary, Fallback Hooks, and Surface Map as workspace tabs.
+5. Expand Operations / Advanced and verify Sky Aspect Drafts, Users, Reports, Connection, and Diagnostics remain reachable.
 
 Expected result:
 - Every page loads without a blank state, runtime error, or broken navigation state.
@@ -59,20 +60,20 @@ Failure examples:
 - A page title does not match its selected admin page.
 - The dashboard shows a loading state forever.
 
-## Flow 2: Overview Workstream Triage
+## Flow 2: Review Queue Landing And Workstream Triage
 
-Goal: Validate that the home dashboard tells an admin where to work next.
+Goal: Validate that opening the dashboard takes an admin directly to actionable editorial work.
 
 Steps:
-1. Open Content Studio.
-2. Review each workstream card.
-3. Confirm workstream states are visible and meaningful.
-4. Use each card action or linked entry point.
+1. Open Content Studio without a hash, or with the legacy `#home` hash.
+2. Confirm Review Queue opens directly.
+3. Review queue counts and filters.
+4. Open the Composite saved view and return to All review.
 
 Expected result:
-- Workstreams cover dashboard authoring map, surface editors, reader safety, Soul/Career renderers, and creation flows.
-- Each workstream has a state, scope, and next action.
-- Linked actions route to the correct admin editor.
+- The landing page contains actionable review records rather than duplicate navigation tiles.
+- Legacy `#home` links resolve to Review Queue.
+- Composite review is a saved Review Queue view, not a separate top-level page.
 
 ## Flow 3: Write: New Article
 
@@ -92,7 +93,7 @@ Expected result:
 - Save feedback is clear.
 - Unsaved changes are protected before leaving.
 
-## Flow 4: Write: Exact Content Browse And Edit
+## Flow 4: Content Library Browse And Edit
 
 Goal: Confirm exact content rows can be found, inspected, edited, and saved without exposing unsafe rows to readers.
 
@@ -134,7 +135,7 @@ Goal: Confirm import entry points route to the right editor and do not silently 
 
 Steps:
 1. Navigate to Write > Import.
-2. Confirm the Exact Content page opens or an import panel is visible.
+2. Confirm the Content Library opens or an import panel is visible.
 3. Import or stage a small test payload.
 4. Verify imported rows are marked Draft or Needs Review.
 5. Confirm the import result lists successful rows, rejected rows, and validation errors.
@@ -369,35 +370,34 @@ Expected result:
 - Failed connection states still allow safe read-only admin review where possible.
 - No save action appears successful when the API is unavailable.
 
-## Flow 21: System: App Behavior Flags
+## Flow 21: Operations / Advanced Disclosure
 
-Goal: Confirm app behavior settings are understandable and safe to modify.
-
-Steps:
-1. Navigate to System > App behavior.
-2. Inspect each behavior flag.
-3. Toggle a test flag in a non-production environment.
-4. Save, reload, and confirm persistence.
-
-Expected result:
-- Each flag has a clear label and current value.
-- Destructive or broad public behavior changes require explicit confirmation.
-- Public surfaces reflect only saved values.
-
-## Flow 22: System: Release Notes
-
-Goal: Confirm internal and public changes can be tracked chronologically.
+Goal: Confirm infrequent operational tools remain available without crowding editorial navigation.
 
 Steps:
-1. Navigate to System > Release notes.
-2. Create or open a release note.
-3. Verify date, title, audience, body, and status fields.
-4. Save and reload.
+1. Expand Operations / Advanced.
+2. Open Sky Aspect Drafts, Users, Reports, Connection, and Diagnostics.
+3. Return to a primary editorial destination.
 
 Expected result:
-- Release notes retain chronological order.
-- Draft release notes do not display as public notes.
-- Notes can distinguish content, product, and admin changes.
+- Advanced destinations are collapsed by default.
+- The disclosure opens automatically when an advanced destination is active.
+- No App Behavior or Release Notes placeholder page is present.
+
+## Flow 22: Default Reference And Retired-Row Visibility
+
+Goal: Confirm engineering/reference material does not overwhelm ordinary editorial work.
+
+Steps:
+1. Open Content Library.
+2. Confirm reference-lane, archived, retired, decommissioned, disabled, and superseded rows are hidden.
+3. Enable Show reference and Show retired independently.
+4. Open Composition and confirm source/reference rows needed by its editors remain available.
+
+Expected result:
+- Reference and retired rows require explicit opt-in in Content Library.
+- Owner-review source records remain visible in Review Queue.
+- Composition continues to expose its required source material.
 
 ## Flow 23: Responsive Admin Layout
 
@@ -426,7 +426,7 @@ Goal: Confirm admins get useful feedback when data is missing or services fail.
 
 Steps:
 1. Open the dashboard without API credentials or with a mocked failed API response.
-2. Visit Exact Content, Review Queue, Vocabulary, Slots, Fallback Hooks, and Connection.
+2. Visit Content Library, Review Queue, each Composition tab, and Connection.
 3. Apply filters that produce no results.
 4. Attempt a save in unavailable mode if the UI allows it.
 
@@ -441,7 +441,7 @@ Expected result:
 Goal: Catch the exact class of content bugs found in prior QA: placeholders, emergency copy, and directional copy leaking to reader-facing previews or public pages.
 
 Steps:
-1. In Exact Content, Review Queue, Fallback Hooks, Templates, and Surface Map, search public preview text for unsafe phrases.
+1. In Content Library, Review Queue, Fallback Hooks, Templates, and Surface Map, search public preview text for unsafe phrases.
 2. Check a sample from Sky, Natal, Transit, Synastry, Composite, Soul's Purpose, and Career.
 3. Compare admin public preview against the live client-facing route where available.
 4. Flag every reader-facing preview that contains unsafe copy.
@@ -498,7 +498,7 @@ Viewport: Desktop | Tablet | Mobile
 
 High-value automated checks:
 - Admin nav smoke test for every `AdminDashboardPage`.
-- Filter smoke test for Exact Content, Review Queue, Vocabulary, Slots, and Fallback Hooks.
+- Filter smoke test for Content Library, Review Queue, and each Composition tab.
 - Reader-safety text scan across admin public preview panels.
 - Responsive screenshot pass for desktop, tablet, and mobile admin layouts.
 - Synastry regression row for Ascendant square Mercury using authored copy before emergency fallback.

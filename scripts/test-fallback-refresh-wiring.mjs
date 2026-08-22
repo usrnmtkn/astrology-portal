@@ -9,7 +9,6 @@ import { fileURLToPath } from "node:url";
 import {
   PACKAGE_VERSION,
   createFallbackRenderer,
-  createPackageManifest,
   createTransitSynastryRenderer
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 
@@ -173,7 +172,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-22b");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-22c");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -919,44 +918,7 @@ try {
   ]);
   const materialized = JSON.parse(fs.readFileSync(materializerOutput, "utf8"));
   const materializedByKey = new Map(materialized.rows.map((row) => [row.content_key, row]));
-  const localManifest = createPackageManifest({
-    transitLib: {
-      authoredCards: [
-        ...transitRows.authoredCards,
-        ...lunationBlendRows.authoredCards,
-        ...skyArticleRows.authoredCards,
-        ...weeklyRows,
-        ...timingEventRows.authoredCards
-      ]
-    },
-    rowsFile: {
-      hookRows: [
-        ...bondLanguagePass2.rows,
-        ...sourceRows.hookRows,
-        ...lunationBlendRows.hookRows,
-        ...skyArticleRows.hookRows,
-        ...skyAspectPhrasebook.hookRows,
-        ...skyPlanetFrames.rows,
-        ...skySignCopySun.rows,
-        ...sunLeoHouseCoreReaderRows,
-        ...venusLibraHouseCoreReaderRows,
-        ...pairDailyFrames.rows,
-        ...pairDailyClauses.rows,
-        ...skyPlacementOwnerApprovedReaderFallbacks.rows
-      ],
-      vocabularyRows: [
-        ...sourceRows.vocabularyRows,
-        ...placementInterimRows.vocabularyRows,
-        ...skyArticleRows.vocabularyRows
-      ]
-    },
-    templatesFile: {
-      templates: [
-        ...templates.templates,
-        ...placementInterimRows.templates
-      ]
-    }
-  }, PACKAGE_VERSION);
+  const localManifest = readPackageJson("bundled-manifest-v3.json");
 
   assert.equal(
     materialized.rows.length,

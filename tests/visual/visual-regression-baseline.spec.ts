@@ -278,9 +278,17 @@ test.describe("visual regression baseline", () => {
     await seedAdminApi(page);
     await page.emulateMedia({ reducedMotion: "reduce" });
 
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expectRouteLoadsWithin(page, "/admin/content", "admin home mobile", async () => {
+      await expect(page.getByRole("heading", { name: "Review Queue" })).toBeVisible({
+        timeout: routeReadyTimeoutMs
+      });
+    });
+    await expect(page).toHaveScreenshot("admin-home-mobile.png", screenshotOptions);
+
     await page.setViewportSize({ width: 1440, height: 1000 });
     await expectRouteLoadsWithin(page, "/admin/content", "admin home desktop", async () => {
-      await expect(page.getByRole("heading", { name: "Content Studio" })).toBeVisible({
+      await expect(page.getByRole("heading", { name: "Review Queue" })).toBeVisible({
         timeout: routeReadyTimeoutMs
       });
     });
@@ -301,14 +309,6 @@ test.describe("visual regression baseline", () => {
       }
     );
     await expect(page).toHaveScreenshot("admin-content-library-desktop.png", screenshotOptions);
-
-    await page.setViewportSize({ width: 390, height: 844 });
-    await expectRouteLoadsWithin(page, "/admin/content", "admin home mobile", async () => {
-      await expect(page.getByRole("heading", { name: "Content Studio" })).toBeVisible({
-        timeout: routeReadyTimeoutMs
-      });
-    });
-    await expect(page).toHaveScreenshot("admin-home-mobile.png", screenshotOptions);
     assertNoBrowserErrors();
   });
 });

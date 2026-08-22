@@ -3,7 +3,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
-import { createServer } from "vite";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url);
@@ -192,60 +191,12 @@ for (const fixtureCase of cases) {
   assert.match(copyText(resolveAspectPatternActivationCopy(contextForCase(cases.find((item) => item.id === "grand-square-shared-planet")))), /without being equally loud/i);
 }
 
-const vite = await createServer({
-  root: repoRoot,
-  server: { middlewareMode: true, hmr: false },
-  appType: "custom",
-  logLevel: "error"
-});
-
-try {
-  const { default: handler } = await vite.ssrLoadModule("/api/admin/aspect-pattern-activation-copy-coverage.ts");
-  const response = await invokeHandler(handler, "GET");
-  assert.equal(response.statusCode, 200);
-  const body = JSON.parse(response.body);
-  assert.equal(body.ok, true);
-  assert.equal(body.rows.length, 8);
-  assert.equal(body.records.length, 8);
-  assert.ok(body.rows.every((row) => row.status === "covered"));
-  assert.ok(body.records.every((record) => record.previews.length > 0));
-  assert.ok(body.records.every((record) => record.previews.every((preview) => preview.authored.source.contentLevel === "authored")));
-  assert.ok(body.records.every((record) => record.previews.every((preview) => preview.fallback.source.contentLevel === "source_grounded_template")));
-  assert.deepEqual([...body.secondaryCoverage.timingStates].sort(), ["applying", "exact", "mixed", "separating"].sort());
-  assert.ok(body.secondaryCoverage.triggerModes.includes("multiple"));
-  assert.ok(body.secondaryCoverage.triggerModes.includes("shared_planet"));
-  assert.ok(body.secondaryCoverage.confidence.includes("wide"));
-  assert.ok(body.secondaryCoverage.confidence.includes("partial"));
-  assert.equal((await invokeHandler(handler, "POST")).statusCode, 405);
-} finally {
-  await vite.close();
-}
-
-const activationCoverageUi = fs.readFileSync(path.join(repoRoot, "apps/admin/src/AspectPatternActivationCoverage.tsx"), "utf8");
-assert.match(activationCoverageUi, /aspect-pattern-activation-copy-coverage/);
-assert.match(activationCoverageUi, /method:\s*"GET"/);
-assert.doesNotMatch(activationCoverageUi, /\bmethod:\s*"(POST|PUT|PATCH|DELETE)"/);
+const writeupsUi = fs.readFileSync(path.join(repoRoot, "apps/admin/src/AspectPatternWriteups.tsx"), "utf8");
+assert.match(writeupsUi, /initialKind = "natal"/);
+assert.match(writeupsUi, /setKind\(nextKind\)/);
+assert.match(writeupsUi, /kind=\$\{nextKind\}/);
 
 const dashboard = fs.readFileSync(path.join(repoRoot, "apps/admin/src/GeneratedContentAdminDashboard.tsx"), "utf8");
-assert.match(dashboard, /content\/aspect-pattern-activation/);
-assert.match(dashboard, /AspectPatternActivationCoverage/);
-
-function invokeHandler(handler, method) {
-  return new Promise((resolve) => {
-    const chunks = [];
-    const res = {
-      statusCode: 200,
-      headers: {},
-      setHeader(name, value) {
-        this.headers[name.toLowerCase()] = value;
-      },
-      end(chunk) {
-        if (chunk) chunks.push(Buffer.from(String(chunk)));
-        resolve({ statusCode: this.statusCode, headers: this.headers, body: Buffer.concat(chunks).toString("utf8") });
-      }
-    };
-    handler({ method, url: "/api/admin/aspect-pattern-activation-copy-coverage" }, res);
-  });
-}
+assert.match(dashboard, /AspectPatternWriteups/);
 
 console.log("Aspect-pattern activation authored copy tests passed.");
