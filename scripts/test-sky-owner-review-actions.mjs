@@ -120,6 +120,53 @@ assert.equal(editedPlacement.patches[0].review_state, "sky-voice-needs-review");
 assert.equal(editedPlacement.patches[0].judge_score, null);
 assert.equal(editedPlacement.patches[0].judge_gate, null);
 
+const packageRow = existingRow({
+  content_key: "authored/transit-house-sign/jupiter/7/leo",
+  surface: "you",
+  event_type: "fallback-architecture-v3",
+  status: "LIVE",
+  body: "Original reader copy.",
+  sections: {
+    body_you: "Original reader copy.",
+    body_they: "Original friend copy for {{Name}}.",
+    packageRecord: {
+      contentKey: "authored/transit-house-sign/jupiter/7/leo",
+      content_role: "full_copy",
+      body_you: "Original reader copy.",
+      body_they: "Original friend copy for {{Name}}.",
+      review_status: "approved"
+    }
+  },
+  facts: { fallbackArchitectureV3: true, review_status: "approved" },
+  provider: "tldrastro-fallback-architecture-v3",
+  source_snapshot: {
+    sourcePackage: "tldrastro-fallback-architecture-v3",
+    content_role: "full_copy",
+    review_status: "approved"
+  },
+  block_type: null
+});
+const packageEdit = await invoke({
+  id: "sky-row",
+  headline: "Leo",
+  summary: "",
+  body: "Updated reader copy.",
+  sections: packageRow.sections,
+  facts: packageRow.facts,
+  sourceSnapshot: packageRow.source_snapshot,
+  reviewStatus: "approved"
+}, packageRow);
+assert.equal(packageEdit.status, 200);
+assert.equal(packageEdit.patches[0].body, "Updated reader copy.");
+assert.equal(packageEdit.patches[0].sections.body_you, "Updated reader copy.");
+assert.equal(packageEdit.patches[0].sections.packageRecord.body_you, "Updated reader copy.");
+assert.equal(packageEdit.patches[0].sections.packageOriginalRecord.body_you, "Original reader copy.");
+assert.equal(
+  packageEdit.patches[0].sections.packageRecord.body_they,
+  "Original friend copy for {{Name}}.",
+  "A reader-copy edit must not discard the friend voice."
+);
+
 const compiledEdition = await compileSkyArticleEdition({
   templateBody: "# Pluto Enters {{sign}}\n\n{{opener}}\n\n## Horoscopes for Pluto in {{sign}}\n\n{{risingBlocks}}",
   templateKey: "sky/article-template/pluto/ingress",
