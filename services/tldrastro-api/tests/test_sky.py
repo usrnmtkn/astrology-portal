@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -78,6 +79,25 @@ def test_sky_current_uses_true_node_after_2026_aquarius_ingress():
     )
     assert north_node["sign"] == "Aquarius"
     assert 329 <= north_node["longitude"] < 330
+
+
+def test_sky_current_returns_requested_complete_sign_residency_only():
+    fixture_path = Path(__file__).parent / "fixtures" / "sky_current_new_york_2026_06_16.json"
+    request = json.loads(fixture_path.read_text())["request"]
+    request["datetime"]["date"] = "2026-08-22"
+    request["datetime"]["utc"] = "2026-08-22T12:00:00.000Z"
+    request["transitWindowPoints"] = ["saturn"]
+
+    response = client.post("/sky/current", json=request)
+
+    assert response.status_code == 200
+    windows = response.json()["transitWindows"]
+    assert set(windows) == {"Saturn"}
+    assert windows["Saturn"]["transitStart"].startswith("2025-05-25T")
+    assert windows["Saturn"]["transitEnd"].startswith("2028-04-13T")
+    assert datetime.fromisoformat(windows["Saturn"]["transitStart"]) < datetime.fromisoformat(
+        "2026-08-22T12:00:00+00:00"
+    ) < datetime.fromisoformat(windows["Saturn"]["transitEnd"])
 
 
 def test_sky_current_uses_canonical_aspect_matrix_and_node_axis():

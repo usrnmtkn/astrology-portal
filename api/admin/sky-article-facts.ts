@@ -39,7 +39,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (!planet) throw new Error("planet is required.");
     if (!/^\d{4}-\d{2}-\d{2}$/u.test(referenceDate)) throw new Error("date must be YYYY-MM-DD.");
     const referenceInstant = new Date(`${referenceDate}T12:00:00.000Z`);
-    const snapshot = await currentSkyFacts(referenceInstant);
+    const snapshot = await currentSkyFacts(referenceInstant, { transitWindowPoints: [planet] });
     sendJson(res, 200, { ok: true, facts: skyArticleEditionFactsFromSnapshot(snapshot, planet) });
   } catch (error) {
     sendJson(res, 500, {
