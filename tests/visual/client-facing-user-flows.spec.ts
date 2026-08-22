@@ -11,6 +11,7 @@ import { resolveSkyAspectGeneratedContent } from "../../apps/web/src/services/sk
 
 type SeedOptions = {
   profile?: boolean;
+  profileBirthDate?: string;
   friends?: boolean;
   theme?: "light" | "dark";
   now?: string;
@@ -201,7 +202,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
         id: "profile-birth-chart",
         name: "Marie Satori",
         type: "Birth chart",
-        birthDate: "1979-02-18",
+        birthDate: options.profileBirthDate ?? "1979-02-18",
         birthTime: "8:24 AM",
         birthCity: fixtureLocation.label,
         birthLocation: fixtureLocation
@@ -2954,8 +2955,9 @@ test.describe("client-facing user flow case studies", () => {
 
     await seedClientState(page, {
       profile: true,
-      // The fixture natal Sun is at the end of Aquarius, so the late-Leo Sun
-      // supplies a deterministic opposition after the natal chart hydrates.
+      // Matching the calendar day makes the fixture's natal and transiting
+      // Suns a deterministic conjunction after the natal chart hydrates.
+      profileBirthDate: "1979-08-22",
       now: "2026-08-22T16:00:00.000Z"
     });
     await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
