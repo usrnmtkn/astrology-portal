@@ -3025,6 +3025,20 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("Pluto retrograde in Aquarius keeps approved placement copy when pre-1800 recurrence facts are unavailable", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#sky/placement/pluto/aquarius");
+
+    await expect(page.getByRole("heading", { name: /Pluto(?: Rx)? in Aquarius/u })).toBeVisible();
+    await expect(page.getByText(/Pluto governs power and transformation/u)).toBeVisible();
+    await expect(page.getByText(/These systems can connect a group quickly/u)).toBeVisible();
+    await expect(page.getByText(/By .*a network that treats agreement as proof of truth/u)).toBeVisible();
+    await expect(page.getByText(/Pluto previously moved through Aquarius/u)).toHaveCount(0);
+    await assertNoClientErrors();
+  });
+
   test("Moon in Sagittarius shows all approved house-template compositions", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
