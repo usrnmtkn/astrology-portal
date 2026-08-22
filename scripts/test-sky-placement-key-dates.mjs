@@ -9,6 +9,11 @@ import {
   skyPlacementKeyDatesIntro as nodeKeyDatesIntro,
   skyPlacementKeyDates as nodeKeyDates
 } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs";
+import {
+  TRUE_LILITH_KEY_DATES_INTRO as shippedTrueLilithKeyDatesIntro,
+  skyPlacementKeyDatesIntro as shippedKeyDatesIntro,
+  skyPlacementKeyDates as shippedKeyDates
+} from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const vite = await createServer({
@@ -92,10 +97,16 @@ try {
     residencyStations: facts.residencyStations
   });
   for (const facts of Object.values(fixtures)) {
+    const expected = nodeKeyDates(keyDateFacts(facts));
     assert.deepEqual(
       browserRenderer.skyPlacementKeyDates(keyDateFacts(facts)),
-      nodeKeyDates(keyDateFacts(facts)),
+      expected,
       `${facts.planet} key-date composition must match in browser and Node renderers.`
+    );
+    assert.deepEqual(
+      shippedKeyDates(keyDateFacts(facts)),
+      expected,
+      `${facts.planet} key-date composition must match in the shipped runtime artifact and source renderers.`
     );
   }
 
@@ -110,10 +121,12 @@ try {
     "The owner-approved true-Lilith Key dates introduction must remain byte-identical."
   );
   assert.equal(browserRenderer.TRUE_LILITH_KEY_DATES_INTRO, TRUE_LILITH_KEY_DATES_INTRO);
+  assert.equal(shippedTrueLilithKeyDatesIntro, TRUE_LILITH_KEY_DATES_INTRO);
   assert.doesNotMatch(TRUE_LILITH_KEY_DATES_INTRO, /\{\{/u, "The true-Lilith introduction must contain no placeholders.");
   const lilithFacts = keyDateFacts(fixtures.lilith);
   assert.equal(nodeKeyDatesIntro(lilithFacts), TRUE_LILITH_KEY_DATES_INTRO);
   assert.equal(browserRenderer.skyPlacementKeyDatesIntro(lilithFacts), TRUE_LILITH_KEY_DATES_INTRO);
+  assert.equal(shippedKeyDatesIntro(lilithFacts), TRUE_LILITH_KEY_DATES_INTRO);
 
   const mercuryDates = nodeKeyDates(keyDateFacts(fixtures.mercury));
   assert.equal(mercuryDates.filter((entry) => entry.event === "residency-pass").length, 1);
