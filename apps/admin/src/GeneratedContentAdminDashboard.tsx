@@ -1,7 +1,5 @@
 import {
-  Activity,
   ArrowLeft,
-  Archive,
   BarChart3,
   BookOpenText,
   Check,
@@ -9,7 +7,6 @@ import {
   FileText,
   Flag,
   KeyRound,
-  LayoutDashboard,
   Plus,
   RefreshCw,
   Save,
@@ -61,14 +58,12 @@ type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERRO
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier" | "friends";
 type GeneratedContentMode = "feed" | "in_depth" | "article" | "card" | string;
 type AdminDashboardPage =
-  | "overview"
   | "articles"
   | "compatibility"
   | "content"
   | "reviewQueue"
   | "compositeByType"
   | "connection"
-  | "appBehavior"
   | "vocabulary"
   | "slotDictionary"
   | "knowledge"
@@ -79,8 +74,7 @@ type AdminDashboardPage =
   | "aspectPatternActivationCoverage"
   | "aspectDiagnostics"
   | "users"
-  | "reportFulfillment"
-  | "releaseNotes";
+  | "reportFulfillment";
 type AdminContentClass = "phrasebank" | "generated" | "fallback-hook" | "vocab" | "reference" | "legacy" | "user-generated" | "other";
 type AdminContentClassFilter = AdminContentClass | "all";
 type AdminContentRole = "authored-content" | "generated-content" | "fallback-output" | "fallback-helper" | "source-material" | "legacy-generated" | "unknown";
@@ -105,7 +99,8 @@ type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "m
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
 type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
-type SkyVoiceQueueView = "all" | "upcoming" | "needs-review" | "audit";
+type SkyVoiceQueueView = "all" | "composite" | "upcoming" | "needs-review" | "audit";
+type ContentLibraryView = "all" | "compatibility";
 type SkyReviewHorizonOccurrence = {
   kind: "aspect" | "placement";
   contentKey: string;
@@ -306,14 +301,12 @@ const vocabularySections: Array<{ key: AdminVocabularySection; label: string; de
 ];
 
 const adminPageHashKeys: Record<AdminDashboardPage, string> = {
-  overview: "home",
   articles: "articles",
   compatibility: "compatibility",
   content: "exact-content",
   reviewQueue: "review-queue",
   compositeByType: "composite-review",
   connection: "connection",
-  appBehavior: "app-behavior",
   vocabulary: "vocabulary",
   slotDictionary: "slots",
   knowledge: "fallback-hooks",
@@ -324,65 +317,50 @@ const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   aspectPatternActivationCoverage: "content/aspect-patterns/activation",
   aspectDiagnostics: "diagnostics/aspect-patterns",
   users: "users",
-  reportFulfillment: "report-fulfillment",
-  releaseNotes: "release-notes"
+  reportFulfillment: "report-fulfillment"
 };
 
 const adminPageByHashKey = {
-  review: "reviewQueue",
-  "content/aspect-pattern-activation": "aspectPatternActivationCoverage",
   ...Object.fromEntries(
     Object.entries(adminPageHashKeys).map(([page, hashKey]) => [hashKey, page])
-  )
+  ),
+  home: "reviewQueue",
+  review: "reviewQueue",
+  compatibility: "content",
+  "composite-review": "reviewQueue",
+  "app-behavior": "reviewQueue",
+  "release-notes": "reviewQueue",
+  "content/aspect-pattern-activation": "aspectPatternActivationCoverage"
 } as Record<string, AdminDashboardPage>;
 
-// Legacy read-only coverage components remain available in the codebase for diagnostics:
-// AspectPatternCoverage and AspectPatternActivationCoverage.
+type AdminNavItem = { page: AdminDashboardPage; label: string; icon: typeof Check };
 
-const adminNavGroups: Array<{
-  label: string;
-  items: Array<{ page: AdminDashboardPage; label: string; icon: typeof LayoutDashboard }>;
-}> = [
-  {
-    label: "Review",
-    items: [
-      { page: "overview", label: "Studio Home", icon: LayoutDashboard },
-      { page: "reviewQueue", label: "Review Queue", icon: Check },
-      { page: "content", label: "Content Library", icon: BookOpenText },
-      { page: "articles", label: "Articles", icon: FileText },
-      { page: "compatibility", label: "Compatibility", icon: Users },
-      { page: "compositeByType", label: "Composite Review", icon: Users },
-      { page: "users", label: "Users", icon: Users }
-    ]
-  },
-  {
-    label: "Composition",
-    items: [
-      { page: "templates", label: "Templates", icon: Sparkles },
-      { page: "slotDictionary", label: "Slots", icon: KeyRound },
-      { page: "vocabulary", label: "Vocabulary & Phrases", icon: BookOpenText },
-      { page: "aspectPatternCoverage", label: "Aspect Patterns", icon: BookOpenText },
-      { page: "knowledge", label: "Fallback Hooks", icon: FileText }
-    ]
-  },
-  {
-    label: "App surfaces",
-    items: [
-      { page: "hooks", label: "Surface Map", icon: Flag },
-      { page: "sourceDrafts", label: "Sky Aspect Drafts", icon: FileText }
-    ]
-  },
-  {
-    label: "System",
-    items: [
-      { page: "connection", label: "Connection", icon: Server },
-      { page: "appBehavior", label: "App Behavior", icon: Activity },
-      { page: "reportFulfillment", label: "Report Fulfillment", icon: BarChart3 },
-      { page: "aspectDiagnostics", label: "Aspect Diagnostics", icon: BarChart3 },
-      { page: "releaseNotes", label: "Release Notes", icon: Archive }
-    ]
-  }
+const compositionPages: AdminDashboardPage[] = ["templates", "slotDictionary", "vocabulary", "knowledge", "hooks"];
+const compositionTabs: AdminNavItem[] = [
+  { page: "templates", label: "Templates", icon: Sparkles },
+  { page: "slotDictionary", label: "Slots", icon: KeyRound },
+  { page: "vocabulary", label: "Vocabulary", icon: BookOpenText },
+  { page: "knowledge", label: "Fallback Hooks", icon: FileText },
+  { page: "hooks", label: "Surface Map", icon: Flag }
 ];
+const primaryAdminNavItems: AdminNavItem[] = [
+  { page: "reviewQueue", label: "Review Queue", icon: Check },
+  { page: "content", label: "Content Library", icon: BookOpenText },
+  { page: "articles", label: "Articles", icon: FileText },
+  { page: "templates", label: "Composition", icon: Sparkles },
+  { page: "aspectPatternCoverage", label: "Aspect Patterns", icon: BookOpenText }
+];
+const advancedAdminNavItems: AdminNavItem[] = [
+  { page: "sourceDrafts", label: "Sky Aspect Drafts", icon: FileText },
+  { page: "users", label: "Users", icon: Users },
+  { page: "reportFulfillment", label: "Reports", icon: BarChart3 },
+  { page: "connection", label: "Connection", icon: Server },
+  { page: "aspectDiagnostics", label: "Diagnostics", icon: BarChart3 }
+];
+
+function isCompositionPage(page: AdminDashboardPage) {
+  return compositionPages.includes(page);
+}
 
 const contentStatuses: GeneratedContentStatus[] = ["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"];
 const fallbackHookReviewStatuses = ["needs_review", "reviewed", "approved", "approved_reuse", "deprecated", "rejected"] as const;
@@ -467,12 +445,15 @@ function adminHashForPage(page: AdminDashboardPage, params?: URLSearchParams) {
 }
 
 function parseAdminHash() {
-  const rawHash = window.location.hash || "#home";
+  const rawHash = window.location.hash || "#review-queue";
   const hashBody = rawHash.replace(/^#/, "");
-  const [key = "home", query = ""] = hashBody.split("?");
+  const [key = "review-queue", query = ""] = hashBody.split("?");
+  const params = new URLSearchParams(query);
+  if (key === "compatibility") params.set("view", "compatibility");
+  if (key === "composite-review") params.set("view", "composite");
   return {
-    page: adminPageByHashKey[key] ?? "overview",
-    params: new URLSearchParams(query)
+    page: adminPageByHashKey[key] ?? "reviewQueue",
+    params
   };
 }
 
@@ -484,7 +465,6 @@ function adminPageTitle(activePage: AdminDashboardPage) {
     case "reviewQueue": return "Review Queue";
     case "compositeByType": return "Composite Review";
     case "connection": return "Connection";
-    case "appBehavior": return "App Behavior";
     case "vocabulary": return "Vocabulary & Phrases";
     case "slotDictionary": return "Slots";
     case "knowledge": return "Fallback Hooks";
@@ -496,7 +476,6 @@ function adminPageTitle(activePage: AdminDashboardPage) {
     case "aspectDiagnostics": return "Aspect Pattern Diagnostics";
     case "users": return "Users";
     case "reportFulfillment": return "Report Fulfillment";
-    case "releaseNotes": return "Release Notes";
     default: return "Content Studio";
   }
 }
@@ -509,19 +488,17 @@ function adminPageBreadcrumb(activePage: AdminDashboardPage) {
     case "reviewQueue": return "Admin / Publish / Review queue";
     case "compositeByType": return "Admin / Write / Composite review";
     case "connection": return "Admin / Connection";
-    case "appBehavior": return "Admin / App behavior";
     case "vocabulary": return "Admin / Composition / Vocabulary & phrases";
     case "slotDictionary": return "Admin / Composition / Slots";
     case "knowledge": return "Admin / Composition / Fallback hooks";
     case "templates": return "Admin / Composition / Templates";
-    case "hooks": return "Admin / App surfaces / Surface map";
+    case "hooks": return "Admin / Composition / Surface map";
     case "sourceDrafts": return "Admin / App surfaces / Sky aspect drafts";
     case "aspectPatternCoverage": return "Admin / Language System / Aspect Patterns";
     case "aspectPatternActivationCoverage": return "Admin / Language System / Aspect Pattern Activation";
     case "aspectDiagnostics": return "Admin / Diagnostics / Aspect patterns";
     case "users": return "Admin / Users";
     case "reportFulfillment": return "Admin / Operations / Report fulfillment";
-    case "releaseNotes": return "Admin / Release notes";
     default: return "Admin / Home";
   }
 }
@@ -674,6 +651,41 @@ function generatedRowNeedsReviewQueue(row: AdminGeneratedContentRow) {
 
   return sourceType === "owner-resource-review"
     || (["DRAFT", "REVIEWED"].includes(row.status) && Boolean(row.review_state));
+}
+
+const retiredReviewStates = new Set([
+  "legacy-natal-aspect-decommissioned",
+  "retired-promoted-emergency-floor",
+  "legacy-dashboard-source-disabled"
+]);
+
+function isRetiredAdminRow(row: AdminGeneratedContentRow) {
+  const packageRecord = rowPackageRecord(row);
+  const packageReviewStatus = sourceSnapshotString(row.source_snapshot, "review_status")
+    || (typeof packageRecord.review_status === "string" ? packageRecord.review_status : "");
+  return row.status === "ARCHIVED"
+    || retiredReviewStates.has(row.review_state ?? "")
+    || packageReviewStatus === "superseded";
+}
+
+function isPassiveReferenceAdminRow(row: AdminGeneratedContentRow) {
+  const sourceType = sourceSnapshotString(row.source_snapshot, "sourceType");
+  const reviewState = (row.review_state ?? "").toLowerCase();
+  const isActiveOwnerReview = sourceType === "owner-resource-review"
+    || reviewState === "owner-review-required"
+    || reviewState === "needs-review"
+    || reviewState === "needs_review";
+  return !isActiveOwnerReview && (
+    row.lane === "reference"
+    || reviewState === "fallback-system-reference"
+    || sourceSnapshotString(row.source_snapshot, "lane") === "reference"
+  );
+}
+
+function isArticleLibraryRow(row: AdminGeneratedContentRow) {
+  return (row.mode === "article" || row.block_type === "sky_article")
+    && row.lane === "serving"
+    && !isRetiredAdminRow(row);
 }
 
 function reviewRecordFromGeneratedRow(row: AdminGeneratedContentRow): AdminReviewRecord {
@@ -1507,8 +1519,8 @@ function sectionsText(value: unknown) {
   }
 }
 
-function isCompositeRelationshipRow(row: AdminGeneratedContentRow) {
-  return row.surface === "composite" || row.content_key.includes("composite") || row.block_type === "composite_aspect";
+function isCompositeRelationshipRow(row: AdminGeneratedContentRow | AdminReviewRecord) {
+  return row.surface === "composite" || rowContentKey(row).includes("composite") || rowBlockType(row) === "composite_aspect";
 }
 
 function relationshipTypeCopy(row: AdminGeneratedContentRow, type: string) {
@@ -1587,13 +1599,13 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
   return payload as T;
 }
 
-async function loadAllGeneratedContentRows(secret: string) {
+async function loadAllGeneratedContentRows(secret: string, visibility: "editorial" | "all" = "editorial") {
   const pageSize = 1000;
   const allRows: AdminGeneratedContentRow[] = [];
 
-  for (let offset = 0; offset < 10000; offset += pageSize) {
+  for (let offset = 0; offset < 50000; offset += pageSize) {
     const result = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-      `/api/admin/generated-content?status=all&limit=${pageSize}&offset=${offset}`,
+      `/api/admin/generated-content?status=all&visibility=${visibility}&limit=${pageSize}&offset=${offset}`,
       secret
     );
     const pageRows = assertRowsPayload(result, "/api/admin/generated-content");
@@ -1714,6 +1726,7 @@ export function GeneratedContentAdminDashboard() {
   const [secret, setSecret] = useSavedSecret();
   const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
+  const [allRowsLoaded, setAllRowsLoaded] = useState(false);
   const [reviewRows, setReviewRows] = useState<AdminReviewRecord[]>([]);
   const [userRows, setUserRows] = useState<AdminUserGeneratedContentRow[]>([]);
   const [facts, setFacts] = useState<AdminContentFact[]>([]);
@@ -1724,6 +1737,7 @@ export function GeneratedContentAdminDashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
   const [contentStatusFilter, setContentStatusFilter] = useState<GeneratedContentStatus | "all">("all");
+  const [contentLibraryView, setContentLibraryView] = useState<ContentLibraryView>("all");
   const [reviewStatusFilter, setReviewStatusFilter] = useState<GeneratedContentStatus | "all">("all");
   const [skyVoiceQueueView, setSkyVoiceQueueView] = useState<SkyVoiceQueueView>("all");
   const [skyReviewHorizon, setSkyReviewHorizon] = useState<SkyReviewHorizon | null>(null);
@@ -1731,12 +1745,14 @@ export function GeneratedContentAdminDashboard() {
   const [contentClassFilter, setContentClassFilter] = useState<AdminContentClassFilter>("all");
   const [tierFilter, setTierFilter] = useState<AdminPhrasebankTierFilter>("all");
   const [categoryFilter, setCategoryFilter] = useState<AdminContentCategoryFilter>("all");
+  const [showReferenceRows, setShowReferenceRows] = useState(false);
+  const [showRetiredRows, setShowRetiredRows] = useState(false);
   const [query, setQuery] = useState("");
   const [fallbackSectionFilter, setFallbackSectionFilter] = useState<AdminFallbackHookSectionFilter>("all");
   const [surfaceAreaFilter, setSurfaceAreaFilter] = useState<WritingSurfaceAreaFilter>("all");
   const [surfaceStatusFilter, setSurfaceStatusFilter] = useState<WritingSurfaceStatusFilter>("all");
   const [vocabularyCategory, setVocabularyCategory] = useState<AdminVocabularyCategoryFilter>("planets");
-  const [articleStatusFilter, setArticleStatusFilter] = useState<GeneratedContentStatus | "all">("all");
+  const [articleStatusFilter, setArticleStatusFilter] = useState<GeneratedContentStatus | "all">("LIVE");
   const [articlePointFilter, setArticlePointFilter] = useState<AdminArticlePointFilter>("all");
   const [articleContentSystemFilter, setArticleContentSystemFilter] = useState<AdminContentSystemFilter>("all");
   const [articleQuery, setArticleQuery] = useState("");
@@ -1768,7 +1784,10 @@ export function GeneratedContentAdminDashboard() {
   const hookBodyPackagesRef = useRef(new Map<GeneratedContentSurface, Map<string, string>>());
   const hookBodyRequestsRef = useRef(new Map<GeneratedContentSurface, Promise<Map<string, string>>>());
 
-  const visibleRows = rows;
+  const visibleRows = useMemo(() => rows.filter((row) => (
+    (showReferenceRows || (showRetiredRows && isRetiredAdminRow(row)) || isCompositionPage(activePage) || !isPassiveReferenceAdminRow(row))
+    && (showRetiredRows || !isRetiredAdminRow(row))
+  )), [rows, activePage, showReferenceRows, showRetiredRows]);
   const savedFallbackRows = useMemo(
     () => visibleRows.filter((row) => contentClassForRow(row) === "fallback-hook"),
     [visibleRows]
@@ -1790,7 +1809,7 @@ export function GeneratedContentAdminDashboard() {
     [visibleRows]
   );
   const articleRows = useMemo(
-    () => visibleRows.filter((row) => row.mode === "article" || row.block_type === "sky_article"),
+    () => visibleRows.filter(isArticleLibraryRow),
     [visibleRows]
   );
   const filteredArticleRows = useMemo(() => articleRows.filter((row) => {
@@ -1891,12 +1910,13 @@ export function GeneratedContentAdminDashboard() {
 
     const search = query.trim().toLowerCase();
 
-    return (contentStatusFilter === "all" || row.status === contentStatusFilter)
+    return (contentLibraryView === "all" || isCompatibilityRow(row))
+      && (contentStatusFilter === "all" || row.status === contentStatusFilter)
       && (contentClassFilter === "all" || rowClass === contentClassFilter)
       && (tierFilter === "all" || rowTier === tierFilter)
       && (categoryFilter === "all" || rowCategory === categoryFilter)
       && matchesAdminSearch(visibleRowSearchText(row), search);
-  }), [visibleRows, contentStatusFilter, contentClassFilter, tierFilter, categoryFilter, query]);
+  }), [visibleRows, contentLibraryView, contentStatusFilter, contentClassFilter, tierFilter, categoryFilter, query]);
   const filteredReviewRows = useMemo(() => reviewQueueRows.filter((row) => {
     const haystack = [row.contentKey, row.title, row.summary, row.body, row.surface, row.mode, row.blockType].join(" ").toLowerCase();
     return (reviewStatusFilter === "all" || row.status === reviewStatusFilter)
@@ -1915,6 +1935,10 @@ export function GeneratedContentAdminDashboard() {
     }
     return 0;
   }), [reviewQueueRows, reviewStatusFilter, contentClassFilter, tierFilter, query]);
+  const filteredCompositeReviewRows = useMemo(
+    () => filteredReviewRows.filter(isCompositeRelationshipRow),
+    [filteredReviewRows]
+  );
   const skyVoiceNeedsReviewRows = useMemo(
     () => visibleRows.filter((row) => (
       ["sky_aspect", "sky_placement"].includes(row.block_type ?? "")
@@ -2096,8 +2120,33 @@ export function GeneratedContentAdminDashboard() {
   }, [activePage]);
 
   useEffect(() => {
+    const needsExtendedInventory = isCompositionPage(activePage) || showReferenceRows || showRetiredRows;
+    if (!needsExtendedInventory || allRowsLoaded || loadState !== "loaded" || !secret.trim()) return;
+    let cancelled = false;
+    setIsLoading(true);
+    void loadAllGeneratedContentRows(secret, "all")
+      .then((allRows) => {
+        if (cancelled) return;
+        setRows(allRows);
+        setAllRowsLoaded(true);
+        setMessage(`Loaded the extended ${allRows.length}-row inventory for Composition and advanced visibility.`);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setMessage(dashboardErrorMessage(error));
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+      setIsLoading(false);
+    };
+  }, [activePage, showReferenceRows, showRetiredRows, allRowsLoaded, loadState, secret]);
+
+  useEffect(() => {
     function applyHash() {
-      const hash = window.location.hash || "#home";
+      const hash = window.location.hash || "#review-queue";
       if (handledHashRef.current === hash) return;
       handledHashRef.current = hash;
       const { page, params } = parseAdminHash();
@@ -2111,11 +2160,14 @@ export function GeneratedContentAdminDashboard() {
       const section = params.get("section") as AdminFallbackHookSectionFilter | null;
       const area = params.get("area") as WritingSurfaceAreaFilter | null;
       const status = params.get("status") as WritingSurfaceStatusFilter | null;
+      const view = params.get("view");
       const compatibilitySection = params.get("section") as AdminCompatibilitySectionFilter | null;
       const compatibilityPlanet = params.get("planet") as AdminArticlePointFilter | null;
       const compatibilitySortParam = params.get("sort") as AdminCompatibilitySort | null;
 
       setCategoryFilter(category && categoryFilters.some((filter) => filter.key === category) ? category : "all");
+      setContentLibraryView(page === "content" && view === "compatibility" ? "compatibility" : "all");
+      setSkyVoiceQueueView(page === "reviewQueue" && view === "composite" ? "composite" : "all");
       setContentClassFilter(source && contentClassFilters.some((filter) => filter.key === source) ? source : "all");
       setQuery(search ?? "");
       setFallbackSectionFilter(section && fallbackSections.some((filter) => filter.key === section) ? section : "all");
@@ -2247,8 +2299,9 @@ export function GeneratedContentAdminDashboard() {
     setSourceDraftError(null);
     setIsLoading(true);
     try {
+      const needsExtendedInventory = isCompositionPage(activePage) || showReferenceRows || showRetiredRows;
       const [generatedResult, reviewResult, usersResult, sourceDraftResult] = await Promise.allSettled([
-        loadAllGeneratedContentRows(secret),
+        loadAllGeneratedContentRows(secret, needsExtendedInventory ? "all" : "editorial"),
         adminJsonRequest<{ ok: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown }>("/api/admin/review-records?surface=upcomingAspects&status=all", secret),
         adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>("/api/admin/user-generated-content?status=all&limit=100", secret),
         loadAdminSourceDraftCatalog(secret)
@@ -2263,6 +2316,7 @@ export function GeneratedContentAdminDashboard() {
       const generatedRows = generatedResult.value;
       const reviewRowsPayload = review.rows ?? review.records ?? [];
       setRows(generatedRows);
+      setAllRowsLoaded(needsExtendedInventory);
       setReviewRows(reviewRowsPayload.map((record: AdminReviewRecord) => {
         const rawGlobalRow = generatedRows.find((row) => row.id === record.id || row.content_key === record.contentKey);
         return { ...record, rawGlobalRow };
@@ -3130,7 +3184,7 @@ export function GeneratedContentAdminDashboard() {
 
   const nav = (
     <aside className="admin-sidebar">
-      <a className="admin-brand" href="#home" onClick={() => navigateAdminPage("overview")}>
+      <a className="admin-brand" href="#review-queue" onClick={() => navigateAdminPage("reviewQueue")}>
         <span className="admin-brand-mark">TL</span>
         <span>
           <strong>Content Studio</strong>
@@ -3138,10 +3192,23 @@ export function GeneratedContentAdminDashboard() {
         </span>
       </a>
       <nav className="admin-nav" aria-label="Content operations">
-        {adminNavGroups.map((group) => (
-          <section key={group.label} className="admin-nav-section" aria-label={group.label}>
-            <p className="admin-eyebrow">{group.label}</p>
-            {group.items.map((item) => {
+        <section className="admin-nav-section" aria-label="Content">
+          <p className="admin-eyebrow">Content</p>
+          {primaryAdminNavItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = item.page === "templates" ? isCompositionPage(activePage) : activePage === item.page;
+            return (
+              <button key={item.page} type="button" onClick={() => navigateAdminPage(item.page)} aria-current={isActive ? "page" : undefined}>
+                <Icon size={16} aria-hidden="true" />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </section>
+        <details className="admin-nav-advanced" open={advancedAdminNavItems.some((item) => item.page === activePage) || undefined}>
+          <summary>Operations / Advanced</summary>
+          <section className="admin-nav-section" aria-label="Operations and advanced tools">
+            {advancedAdminNavItems.map((item) => {
               const Icon = item.icon;
               return (
                 <button key={item.page} type="button" onClick={() => navigateAdminPage(item.page)} aria-current={activePage === item.page ? "page" : undefined}>
@@ -3151,7 +3218,7 @@ export function GeneratedContentAdminDashboard() {
               );
             })}
           </section>
-        ))}
+        </details>
       </nav>
       <section className="admin-sidebar-status" aria-label="Admin status">
         <span className={`ui-pill admin-status ${loadState === "loaded" ? "status-live" : loadState === "accessDenied" || loadState === "error" ? "status-error" : "status-draft"}`}>
@@ -3214,51 +3281,14 @@ export function GeneratedContentAdminDashboard() {
         {hasAccessIssue && activePage !== "connection" && renderAccessGate()}
         {hasLoadFailure && renderLoadFailure()}
 
-        {activePage === "overview" && (
-          <section className="admin-template-page">
-            <div className="admin-status-grid">
-              <article className="admin-status-card">
-                <span>Review queue</span>
-                <strong className="admin-stat-value">{filteredReviewRows.length}</strong>
-                <small>Rows needing editorial attention</small>
-              </article>
-              <article className="admin-status-card">
-                <span>Phrasebank</span>
-                <strong className="admin-stat-value">{phrasebankRows.length}</strong>
-                <small>Primary reader-facing content</small>
-              </article>
-              <article className="admin-status-card">
-                <span>Fallback rows</span>
-                <strong className="admin-stat-value">{savedFallbackRows.length}</strong>
-                <small>Saved rows only</small>
-              </article>
-              <article className="admin-status-card">
-                <span>Hook catalog</span>
-                <strong className="admin-stat-value">{Math.max(0, hookCatalogItems.length - savedHookCatalogCount)}</strong>
-                <small>Routes still local or missing</small>
-              </article>
-            </div>
-            <div className="admin-studio-map">
-              {[
-                { page: "reviewQueue" as const, icon: Check, label: "Review Queue", text: "Bulk sign-off, status changes, evergreen locks, and reader-safety checks." },
-                { page: "content" as const, icon: BookOpenText, label: "Content Library", text: "All editable saved and source rows, with filters for type, status, category, and key." },
-                { page: "compatibility" as const, icon: Users, label: "Compatibility", text: "Compatibility content, fallback hooks, vocab, slots, and templates in one filtered workspace." },
-                { page: "knowledge" as const, icon: Flag, label: "Fallback Rows", text: "Only saved fallback-hook rows. Local placeholders are kept out of this list." },
-                { page: "hooks" as const, icon: KeyRound, label: "Hook Catalog", text: "Every route the runtime can request, with saved coverage and authoring entry points." },
-                { page: "vocabulary" as const, icon: Sparkles, label: "Vocab", text: "Reusable phrase namespaces, natal taglines, relationship context, and style rows." },
-                { page: "compositeByType" as const, icon: Users, label: "Composite by type", text: "Side-by-side relationship variants with romantic vocabulary gated." }
-              ].map((item) => {
-                const Icon = item.icon;
-                return (
-                  <button key={item.label} type="button" onClick={() => navigateAdminPage(item.page)}>
-                    <Icon size={18} aria-hidden="true" />
-                    <span>{item.label}</span>
-                    <small>{item.text}</small>
-                  </button>
-                );
-              })}
-            </div>
-          </section>
+        {isCompositionPage(activePage) && (
+          <nav className="admin-composition-tabs" aria-label="Composition workspace">
+            {compositionTabs.map((item) => (
+              <button key={item.page} type="button" className={activePage === item.page ? "active" : ""} aria-current={activePage === item.page ? "page" : undefined} onClick={() => navigateAdminPage(item.page)}>
+                {item.label}
+              </button>
+            ))}
+          </nav>
         )}
 
         {activePage === "reviewQueue" && (
@@ -3284,6 +3314,10 @@ export function GeneratedContentAdminDashboard() {
               <button type="button" className={skyVoiceQueueView === "all" ? "active" : ""} onClick={() => setSkyVoiceQueueView("all")}>
                 All review
               </button>
+              <button type="button" className={skyVoiceQueueView === "composite" ? "active" : ""} onClick={() => setSkyVoiceQueueView("composite")}>
+                Composite
+                <strong>{filteredCompositeReviewRows.length}</strong>
+              </button>
               <button type="button" className={skyVoiceQueueView === "upcoming" ? "active" : ""} onClick={() => { setSkyVoiceQueueView("upcoming"); if (!skyReviewHorizon) void loadSkyReviewHorizon(); }}>
                 Upcoming 90 days
                 {skyReviewHorizon ? <strong>{skyReviewHorizon.counts.occurrences}</strong> : null}
@@ -3297,7 +3331,7 @@ export function GeneratedContentAdminDashboard() {
                 <strong>{skyVoiceAuditRows.length}</strong>
               </button>
             </nav>
-            {skyVoiceQueueView === "all" && <section className="admin-content-filters admin-review-queue-filters" aria-label="Review queue filters">
+            {(skyVoiceQueueView === "all" || skyVoiceQueueView === "composite") && <section className="admin-content-filters admin-review-queue-filters" aria-label="Review queue filters">
               <div className="admin-review-filter-grid">
                 <label>
                   <span>Status</span>
@@ -3335,8 +3369,9 @@ export function GeneratedContentAdminDashboard() {
                 </label>
               </div>
             </section>}
-            {skyVoiceQueueView === "all" && renderBulkBar()}
+            {(skyVoiceQueueView === "all" || skyVoiceQueueView === "composite") && renderBulkBar()}
             {skyVoiceQueueView === "all" && renderReviewTable(filteredReviewRows)}
+            {skyVoiceQueueView === "composite" && renderReviewTable(filteredCompositeReviewRows)}
             {skyVoiceQueueView === "upcoming" && renderSkyReviewHorizon()}
             {skyVoiceQueueView === "needs-review" && renderSkyVoiceQueue(skyVoiceNeedsReviewRows, "Cards held by the judge for a fast editorial decision.")}
             {skyVoiceQueueView === "audit" && renderSkyVoiceQueue(skyVoiceAuditRows, "Random auto-publish sample for periodic voice auditing. Refresh to draw another sample.")}
@@ -3827,27 +3862,6 @@ export function GeneratedContentAdminDashboard() {
           </section>
         )}
 
-        {activePage === "appBehavior" && (
-          <section className="admin-template-page">
-            <section className="admin-content-toolbar">
-              <div>
-                <p className="admin-eyebrow">Runtime rules</p>
-                <h2>App Behavior</h2>
-                <p>Runtime serving is constrained to Published rows in the serving lane with no review hold.</p>
-              </div>
-            </section>
-            <div className="admin-studio-map">
-              {["LIVE status", "Serving lane", "No review hold", "Reader-safe copy"].map((label) => (
-                <article key={label}>
-                  <Check size={18} aria-hidden="true" />
-                  <span>{label}</span>
-                  <small>Required before any row can be reader-facing.</small>
-                </article>
-              ))}
-            </div>
-          </section>
-        )}
-
         {activePage === "aspectPatternCoverage" && (
           <Suspense fallback={<p className="admin-loading-state" role="status">Loading aspect-pattern tools…</p>}>
             <AspectPatternWriteups initialKind="natal" secret={secret} />
@@ -3915,24 +3929,6 @@ export function GeneratedContentAdminDashboard() {
           </Suspense>
         )}
 
-        {activePage === "releaseNotes" && (
-          <section className="admin-template-page">
-            <section className="admin-content-toolbar">
-              <div>
-                <p className="admin-eyebrow">Release notes</p>
-                <h2>Release Notes</h2>
-                <p>Dashboard IA rebuilt around phrasebank review, saved fallback rows, hook catalog authoring, vocab, and composite by type.</p>
-              </div>
-            </section>
-            <div className="admin-template-card-list">
-              <article className="admin-template-card">
-                <p className="admin-eyebrow">Dashboard</p>
-                <h3>Phrasebank-first rebuild</h3>
-                <p>Legacy generation controls are no longer the main organizing principle. Review, the content library, fallback rows, hook catalog, vocab, composite variants, and users are separated.</p>
-              </article>
-            </div>
-          </section>
-        )}
       </section>
     </main>
   );
@@ -3940,6 +3936,14 @@ export function GeneratedContentAdminDashboard() {
   function renderContentFilters() {
     return (
       <section className="admin-content-filters" aria-label="Content list filters">
+        <div className="admin-template-tabs" role="tablist" aria-label="Content Library saved views">
+          <button type="button" role="tab" aria-selected={contentLibraryView === "all"} className={contentLibraryView === "all" ? "active" : ""} onClick={() => setContentLibraryView("all")}>
+            Editorial content
+          </button>
+          <button type="button" role="tab" aria-selected={contentLibraryView === "compatibility"} className={contentLibraryView === "compatibility" ? "active" : ""} onClick={() => setContentLibraryView("compatibility")}>
+            Compatibility
+          </button>
+        </div>
         <div className="admin-status-pills" role="tablist" aria-label="Status">
           {(["all", ...contentStatuses] as Array<GeneratedContentStatus | "all">).map((status) => (
             <button key={status} type="button" role="tab" aria-selected={contentStatusFilter === status} className={contentStatusFilter === status ? "active" : ""} onClick={() => setContentStatusFilter(status)}>
@@ -3975,13 +3979,22 @@ export function GeneratedContentAdminDashboard() {
             <RefreshCw size={16} aria-hidden="true" />
             Refresh rows
           </button>
+          <button type="button" aria-pressed={showReferenceRows} className={showReferenceRows ? "active" : ""} onClick={() => setShowReferenceRows((current) => !current)}>
+            Show reference
+          </button>
+          <button type="button" aria-pressed={showRetiredRows} className={showRetiredRows ? "active" : ""} onClick={() => setShowRetiredRows((current) => !current)}>
+            Show retired
+          </button>
           <button
             type="button"
             onClick={() => {
               setContentStatusFilter("all");
+              setContentLibraryView("all");
               setCategoryFilter("all");
               setContentClassFilter("all");
               setTierFilter("all");
+              setShowReferenceRows(false);
+              setShowRetiredRows(false);
               setQuery("");
             }}
           >
@@ -4022,7 +4035,7 @@ export function GeneratedContentAdminDashboard() {
           <button
             type="button"
             onClick={() => {
-              setArticleStatusFilter("all");
+              setArticleStatusFilter("LIVE");
               setArticlePointFilter("all");
               setArticleContentSystemFilter("all");
               setArticleQuery("");
