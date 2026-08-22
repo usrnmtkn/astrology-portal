@@ -522,11 +522,7 @@ export function createTransitSynastryRenderer(
     const row = hooks.get(key);
 
     if (
-      !(
-        (normalizedPlanet === "sun" && normalizedSign === "leo")
-        || (normalizedPlanet === "venus" && normalizedSign === "libra")
-      )
-      || !Number.isInteger(normalizedHouse)
+      !Number.isInteger(normalizedHouse)
       || normalizedHouse < 1
       || normalizedHouse > 12
       || !row

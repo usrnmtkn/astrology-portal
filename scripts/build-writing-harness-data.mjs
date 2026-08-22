@@ -3,6 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { ownerRejectedExactTexts } from "../src/astro-writing/ownerEvidenceRejections.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageRoot = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
@@ -12,6 +13,15 @@ const writeJsonl = (relativePath, rows) => fs.writeFileSync(
   path.join(repoRoot, relativePath),
   `${rows.map((row) => JSON.stringify(row)).join("\n")}\n`
 );
+const readJsonl = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8")
+  .trim()
+  .split("\n")
+  .filter(Boolean)
+  .map(JSON.parse);
+const rejectedExactTexts = ownerRejectedExactTexts([
+  ...readJsonl("data/writing/owner-corrections.jsonl"),
+  ...readJsonl("data/writing/owner-feedback-corpus.jsonl")
+]);
 
 function readSkySignRows() {
   return fs.readdirSync(path.join(packageRoot, "source-rows"))
@@ -104,6 +114,7 @@ const servingApproved = allCandidates
   .filter((row) => servingKeys.has(row.contentKey) && (
     !row.contentKey.startsWith(emptyHousePrefix) || row.content_role === "template"
   ))
+  .filter((row) => !rejectedExactTexts.has(String(row.body_you ?? row.body ?? "").trim()))
   .map((row) => ({
     id: `serving:${row.contentKey}`,
     contentKey: row.contentKey,
@@ -161,6 +172,7 @@ const matrix = JSON.parse(fs.readFileSync(path.join(matrixRoot, "knowledge-matri
 const matrixApproved = [];
 for (const entry of matrix.transit_meanings) {
   if (entry.Governance !== "owner-approved" || String(entry.Copy).startsWith("[EXCLUDE FROM FALLBACK]")) continue;
+  if (rejectedExactTexts.has(String(entry.Copy).trim())) continue;
   matrixApproved.push({
     id: `matrix-v9:transit:row-${entry.source_row}`,
     contentKey: entry.Key,
@@ -176,6 +188,7 @@ for (const entry of matrix.transit_meanings) {
 }
 for (const entry of matrix.house_activations) {
   if (entry.Governance !== "owner-approved" || String(entry.Experience).startsWith("[EXCLUDE FROM FALLBACK]")) continue;
+  if (rejectedExactTexts.has(String(entry.Experience).trim())) continue;
   matrixApproved.push({
     id: `matrix-v9:house:row-${entry.source_row}`,
     contentKey: `${entry.Key}|${entry.House ?? ""}`,

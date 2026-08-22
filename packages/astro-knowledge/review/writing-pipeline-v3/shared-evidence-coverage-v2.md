@@ -188,7 +188,7 @@ per role by `copy_sha`.
 | Venus|Capricorn | 62 | 9 | 22 | 5 | 14 | 9 |
 | Venus|Gemini | 58 | 4 | 23 | 5 | 17 | 9 |
 | Venus|Leo | 65 | 4 | 21 | 2 | 14 | 7 |
-| Venus|Libra | 26 | 2 | 22 | 15 | 14 | 19 |
+| Venus|Libra | 26 | 2 | 21 | 14 | 13 | 18 |
 | Venus|Pisces | 63 | 3 | 28 | 1 | 22 | 9 |
 | Venus|Sagittarius | 44 | 0 | 17 | 1 | 13 | 12 |
 | Venus|Scorpio | 23 | 0 | 22 | 0 | 13 | 10 |
@@ -424,7 +424,7 @@ per role by `copy_sha`.
 | venus|capricorn | 0 | 0 | 22 | 5 | 14 | 9 |
 | venus|gemini | 0 | 0 | 23 | 5 | 17 | 9 |
 | venus|leo | 0 | 0 | 21 | 2 | 14 | 7 |
-| venus|libra | 0 | 0 | 22 | 15 | 14 | 19 |
+| venus|libra | 0 | 0 | 21 | 14 | 13 | 18 |
 | venus|pisces | 0 | 0 | 28 | 1 | 22 | 9 |
 | venus|sagittarius | 0 | 0 | 17 | 1 | 13 | 12 |
 | venus|scorpio | 0 | 0 | 22 | 0 | 13 | 10 |

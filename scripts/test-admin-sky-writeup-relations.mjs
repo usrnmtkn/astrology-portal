@@ -43,12 +43,12 @@ const rows = [
 ];
 
 assert.deepEqual(
-  relatedHousePassages(rows, context).map(({ house, kind, row }) => [house, kind, row.id]),
+  relatedHousePassages(rows, context).map(({ house, kind, availability, row }) => [house, kind, availability, row.id]),
   [
-    [2, "Sky house horoscope", "h2"],
-    [2, "House and sign passage", "sign-layer"],
-    [2, "House introduction", "intro"],
-    [10, "Sky house horoscope", "h10"]
+    [2, "Sky house horoscope", "Reader-ready", "h2"],
+    [2, "House and sign passage", "Source candidate", "sign-layer"],
+    [2, "House introduction", "Source candidate", "intro"],
+    [10, "Sky house horoscope", "Reader-ready", "h10"]
   ]
 );
 assert.deepEqual(
@@ -85,6 +85,8 @@ assert.match(dashboard, /Create a complete edition/u, "Template rows must expose
 assert.match(dashboard, /TL;DR · explicit edition copy/u, "Edition compilation must collect an explicit TL;DR in Content Studio.");
 assert.match(dashboard, /summary: edition\.tldr/u, "The saved summary mirror must use the explicit compiled TL;DR.");
 assert.match(dashboard, /All 12 approved house horoscopes are required/u, "Compilation must require complete house coverage.");
+assert.match(dashboard, /Only an approved complete Sky house horoscope can serve/u, "Admin must distinguish reader-ready house horoscopes from source candidates.");
+assert.match(dashboard, /passage\.availability === "Reader-ready"/u, "Edition compilation must not silently promote transit source candidates.");
 assert.match(dashboard, /Approve & publish edition/u, "Compiled editions need a distinct owner approval action.");
 assert.match(generatedContentApi, /ownerAction === "approve-sky-article-edition"/u, "The API must enforce the explicit owner approval action.");
 assert.match(readerApp, /selectActiveSkyArticleEdition/u, "Sky reader articles must select active compiled editions.");

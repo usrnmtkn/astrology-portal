@@ -17,6 +17,7 @@ import { sceneEvidenceForTarget } from "../src/astro-writing/sceneEvidence.mjs";
 import { matrixSceneNounLexicon } from "../src/astro-writing/matrixEvidenceIndex.mjs";
 import { getContentSpine } from "../src/astro-writing/spineRegistry.mjs";
 import { loadPhraseEvidenceIndex } from "../src/astro-writing/phraseEvidence.mjs";
+import { withoutOwnerRejectedEvidence } from "../src/astro-writing/ownerEvidenceRejections.mjs";
 import geminiInteractions from "../src/astro-writing/geminiInteractions.cjs";
 import localProviderKeys from "../src/astro-writing/localProviderKeys.cjs";
 import offlineProviderConfig from "../src/astro-writing/offlineProviderConfig.cjs";
@@ -114,12 +115,23 @@ const surfaceQualifiedPool = JSON.parse(fs.readFileSync(
   path.resolve("packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json"),
   "utf8"
 ));
-const voiceIndex = JSON.parse(fs.readFileSync(
+const rawVoiceIndex = JSON.parse(fs.readFileSync(
   path.resolve("packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json"),
   "utf8"
 ));
-const approvedExamples = readJsonl(path.resolve("data/writing/OWNER_APPROVED_EXAMPLES.jsonl"));
-const matrixEvidenceRows = readJsonl(path.resolve("data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl"));
+const voiceIndex = {
+  ...rawVoiceIndex,
+  entries: withoutOwnerRejectedEvidence(rawVoiceIndex.entries, corrections)
+};
+const approvedExamples = withoutOwnerRejectedEvidence(
+  readJsonl(path.resolve("data/writing/OWNER_APPROVED_EXAMPLES.jsonl")),
+  corrections
+);
+const matrixEvidenceRows = withoutOwnerRejectedEvidence(
+  readJsonl(path.resolve("data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl")),
+  corrections,
+  "copy"
+);
 const phraseEvidence = loadPhraseEvidenceIndex(path.resolve("data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl"));
 const relevantOwnerEvidence = ownerRelevantEvidenceFromVoiceIndex(voiceIndex, {
   planet: request.meaningInput?.object,
