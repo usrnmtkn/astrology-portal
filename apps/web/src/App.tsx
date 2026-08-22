@@ -2735,7 +2735,16 @@ function getInitialTransitDate() {
 function updateTransitDateUrl(value: string, mode: "push" | "replace" = "push") {
   try {
     const url = new URL(window.location.href);
-    url.searchParams.set("date", value);
+    if (value === dateInputValue()) {
+      url.searchParams.delete("date");
+    } else {
+      url.searchParams.set("date", value);
+    }
+
+    if (url.toString() === window.location.href) {
+      return;
+    }
+
     window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
   } catch {
     // URL state is an enhancement; the selected date still works in memory.
@@ -11069,13 +11078,12 @@ export function App() {
     function handlePortalUrlChange() {
       const urlMode = portalModeFromUrl();
       const nextCurrentLocalDate = dateInputValue();
-      const nextSkyDate = transitDateFromUrl() ?? nextCurrentLocalDate;
+      const fixedTransitDate = transitDateFromUrl();
+      const nextSkyDate = fixedTransitDate ?? nextCurrentLocalDate;
 
       currentLocalDateRef.current = nextCurrentLocalDate;
       setCurrentLocalDate(nextCurrentLocalDate);
-      if (nextSkyDate !== skyDateRef.current) {
-        followsCurrentTransitDateRef.current = nextSkyDate === nextCurrentLocalDate;
-      }
+      followsCurrentTransitDateRef.current = fixedTransitDate === null;
       skyDateRef.current = nextSkyDate;
       setSkyDate(nextSkyDate);
 
@@ -11110,6 +11118,12 @@ export function App() {
       window.removeEventListener("hashchange", handlePortalUrlChange);
     };
   }, [userProfile]);
+
+  useEffect(() => {
+    if (followsCurrentTransitDateRef.current) {
+      updateTransitDateUrl(currentLocalDateRef.current, "replace");
+    }
+  }, []);
 
   useEffect(() => {
     let rolloverTimer: number | null = null;
@@ -12995,9 +13009,7 @@ export function App() {
     followsCurrentTransitDateRef.current = nextDate === currentLocalDateRef.current;
     skyDateRef.current = nextDate;
 
-    if (nextDate !== skyDate) {
-      updateTransitDateUrl(nextDate);
-    }
+    updateTransitDateUrl(nextDate);
 
     setSkyDate(nextDate);
     setDatePickerOpen(false);
