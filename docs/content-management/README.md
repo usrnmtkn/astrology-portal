@@ -147,6 +147,27 @@ scripts/
   Import, materialization, contract, regression, and QA tooling
 ```
 
+## Finding content from the reader surface
+
+Open Content Studio > App surfaces > Surface Map. This is the canonical
+reader-to-editor directory. Start with where the copy appears (Sky, You,
+Friends, Calendar, or Settings), then use the action on that surface to open
+the filtered article, exact-content, compatibility, vocabulary, template, or
+fallback workspace.
+
+The directory distinguishes two states:
+
+- `Dashboard editable`: a saved row or supported authoring flow controls the
+  reader-facing content.
+- `Runtime gap`: some visible copy is still owned by a local component or
+  fallback. The dashboard can locate related rows, but an edit is not claimed
+  to change that local wording until a stored-row override is wired.
+
+Current Sky aspect passages that still have `needs-owner-decision` governance
+appear under App surfaces > Sky Aspect Drafts. That catalog is returned only
+through the authenticated Admin API. Opening or saving one creates a held
+draft; the general editor cannot make it reader-serving.
+
 ## Standard content-change workflow
 
 ### 1. Trace the rendered sentence

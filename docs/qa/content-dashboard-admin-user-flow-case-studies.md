@@ -214,14 +214,17 @@ Expected result:
 Goal: Confirm the admin can audit which content systems power each public surface.
 
 Steps:
-1. Navigate to App Surfaces > Surface map.
-2. Open each surface group.
-3. Follow available actions to exact content, vocabulary, slots, templates, or fallback hooks.
+1. Navigate to App surfaces > Surface Map.
+2. Filter by the reader area where the copy appears: Sky, You, Friends, Calendar, or Settings.
+3. Search for a visible feature such as `Sky aspect`, `weekly horoscope`, or `synastry`.
+4. Follow the surface action to exact content, articles, compatibility, vocabulary, slots, templates, source drafts, or fallback hooks.
+5. Filter by Editable and Partly editable and confirm local runtime gaps are labeled instead of being presented as saved content.
 
 Expected result:
 - Each surface maps to the correct content source.
 - Links preserve the intended filter when moving between pages.
-- Missing coverage is visible and actionable.
+- Each card names the reader location where the content appears.
+- Missing runtime editability is visible and actionable.
 
 ## Flow 12: App Surfaces: Sky Content Path
 
@@ -230,13 +233,16 @@ Goal: Confirm Sky rows resolve from exact or authored copy before fallback templ
 Steps:
 1. Navigate to App Surfaces > Sky.
 2. Filter to Sky content.
-3. Open upcoming aspects, lunar calendar, and sky aspect card rows.
-4. Compare admin reader preview against the public Sky surface.
+3. Open upcoming aspects, lunar calendar, placement article rows, and Sky Aspect Drafts.
+4. Search Sky Aspect Drafts for an exact key such as `sky.sun.trine.chiron`.
+5. Confirm held source prose opens in the editor with the reference lane and `NEEDS_OWNER_DECISION` review state.
+6. Compare approved admin reader preview against the public Sky surface.
 
 Expected result:
 - Published Sky rows use approved authored copy.
 - Fallback output is only shown when explicitly marked as fallback and safe.
 - Directional admin copy never appears in public reader preview.
+- The general editor refuses to make a held source draft LIVE.
 
 ## Flow 13: App Surfaces: Natal Content Path
 
