@@ -204,16 +204,16 @@ const generate = (
     generate: (prompt: string, options?: Record<string, unknown>) => Promise<string>;
   }
 ).generate;
-const generationConfig = (
+const skyPlacementWriterConfig = (
   skyAspectGenerator as unknown as {
-    generationConfig: () => {
+    skyPlacementWriterConfig: () => {
       provider: string;
       model: string;
       temperature: number | null;
       reasoningEffort?: string | null;
     };
   }
-).generationConfig;
+).skyPlacementWriterConfig;
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
@@ -328,7 +328,7 @@ function placementKernel(
     knowledgeIds
   };
   const gate = prepareProductionPreCallGate(input);
-  const config = generationConfig();
+  const config = skyPlacementWriterConfig();
   const generationMetadata = {
     provider: config.provider,
     model: config.model,

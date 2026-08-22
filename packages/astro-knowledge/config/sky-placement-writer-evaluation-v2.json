@@ -3,7 +3,7 @@
   "evaluationId": "sky-placement-writer-owner-preference-v2",
   "surface": "sky-placement",
   "status": "fixture-shortfall-no-evaluation-authorized",
-  "candidateReleaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v1",
+  "candidateReleaseId": "sky-placement-writer-openai-gpt-5.6-sol-candidate-v2",
   "candidateModel": "gpt-5.6-sol",
   "candidateReasoningEffort": "xhigh",
   "targetHeldoutFixtureCount": 20,
