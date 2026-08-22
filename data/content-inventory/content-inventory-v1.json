@@ -1,12 +1,12 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "069f0168bfe54ca7a2ca1a06d2a8d2089cdafe17",
+  "sourceCommit": "4f004e6e131cf3d22e40efaff273ed35ea16c858",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "6aba2e92713695cebe3d42bfa5540f1fa5975c0fb745954c9ea9aa5125d78e7f",
-  "recordCount": 10525,
+  "contentFingerprint": "9d5b39780189d0b127b91a5cbfffa9b145663692a79a8ddf23ad809cb8707696",
+  "recordCount": 10526,
   "statusCounts": {
-    "owner-approved": 10525
+    "owner-approved": 10526
   },
   "familyCounts": {
     "approved/calendar-weekly-overview": 1,
@@ -104,7 +104,7 @@
     "house-activation": 1017,
     "house-horoscope-core": 984,
     "lunation": 144,
-    "natal-aspect": 252,
+    "natal-aspect": 253,
     "natal-placement": 252,
     "sky": 26,
     "sky-article/saturn": 2,
@@ -123340,6 +123340,36 @@
         ],
         "events": [
           "sextile"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/square/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/natal-sun-square-ascendant-owner-approval-2026-08-22.json",
+      "approvalVersionDate": "2026-08-22",
+      "contentHash": "53475aba515b86413d77c87552313bf779735f5ea6b5c17f18b65b4a3d8317d5",
+      "wording": {
+        "body": "A plan can make sense on paper, but feel completely off the moment you start living it. You find yourself doing the work, showing up to the meetings, and hitting the milestones, while privately wondering why none of it feels like yours anymore. The person everyone sees managing the role is no longer the person who has to live with the daily routine. When there is a gap between who you are and what you keep projecting, every decision feels like a course correction. Things get simpler once you stop forcing yourself to maintain a reputation, title, or expectation you outgrew six months ago. Align what you do with what you actually want right now, instead of keeping up an appearance for people who only know the older version of you."
+      },
+      "astrology": {
+        "objects": [
+          "sun",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
         ],
         "houses": []
       }

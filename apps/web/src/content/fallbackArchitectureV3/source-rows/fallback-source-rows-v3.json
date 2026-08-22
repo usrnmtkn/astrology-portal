@@ -67930,6 +67930,33 @@
    "distribution_lane": "serving"
   },
   {
+   "contentKey": "fallback-hook/natal-aspect-lived/sun/square/ascendant",
+   "content_role": "full_copy",
+   "grammar_frame": "complete_sentence",
+   "body": "A plan can make sense on paper, but feel completely off the moment you start living it. You find yourself doing the work, showing up to the meetings, and hitting the milestones, while privately wondering why none of it feels like yours anymore. The person everyone sees managing the role is no longer the person who has to live with the daily routine. When there is a gap between who you are and what you keep projecting, every decision feels like a course correction. Things get simpler once you stop forcing yourself to maintain a reputation, title, or expectation you outgrew six months ago. Align what you do with what you actually want right now, instead of keeping up an appearance for people who only know the older version of you.",
+   "reader_only": true,
+   "render_policy": "reader-only-exact-lived-v1",
+   "review_status": "approved",
+   "source_keys": [
+    "packages/astro-knowledge/review/natal-sun-square-ascendant-owner-approval-2026-08-22.json",
+    "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/ll-matrix-v13.json"
+   ],
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/natal-sun-square-ascendant-owner-approval-2026-08-22.json",
+    "payloadSha256": "53475aba515b86413d77c87552313bf779735f5ea6b5c17f18b65b4a3d8317d5",
+    "approvedAt": "2026-08-22"
+   },
+   "source_release": "natal-sun-square-ascendant-owner-approved-runtime",
+   "runtime_family": "natal-aspect-lived",
+   "runtime_key": "sun|square|ascendant",
+   "source_sheet": "AspectMeanings",
+   "governance": "owner-authored-exact-wording-2026-08-22",
+   "owner_approved": true,
+   "precedence": "owner-authored exact wording supersedes the unapproved LL V13 draft on the same runtime key",
+   "distribution_lane": "serving"
+  },
+  {
    "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/ascendant",
    "content_role": "full_copy",
    "grammar_frame": "complete_sentence",
