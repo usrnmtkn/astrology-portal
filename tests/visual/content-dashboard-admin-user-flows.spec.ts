@@ -922,7 +922,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
   test("Sky write-up editor stays single-column and orders aspects before house horoscopes", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
-    await page.setViewportSize({ width: 654, height: 900 });
+    await page.setViewportSize({ width: 1308, height: 900 });
     const packageSkyRow = {
       ...generatedContentRows[0],
       id: "qa-chiron-package-row",
@@ -961,10 +961,13 @@ test.describe("content dashboard admin user flow case studies", () => {
       "House horoscopes"
     ]);
     await expect(relatedPassages.locator("details[open]")).toHaveCount(0);
+    const fallbackDiagnostic = editor.getByRole("region", { name: "Fallback composition check" });
+    await expect(fallbackDiagnostic).toBeVisible();
 
     const layout = await editor.evaluate((panel) => {
       const postEditor = panel.querySelector<HTMLElement>(".admin-post-editor");
       const packagePanel = panel.querySelector<HTMLElement>(".admin-package-edit-panel");
+      const fallbackGrid = panel.querySelector<HTMLElement>(".admin-fallback-diagnostic-grid");
       const headline = panel.querySelector<HTMLElement>('[aria-label="Headline"]')?.closest("label");
       const summary = panel.querySelector<HTMLElement>('[aria-label="Summary"]')?.closest("label");
       const body = panel.querySelector<HTMLElement>('[aria-label="Body"]')?.closest("label");
@@ -974,26 +977,42 @@ test.describe("content dashboard admin user flow case studies", () => {
         const rect = (node as HTMLElement).getBoundingClientRect();
         return { top: rect.top, bottom: rect.bottom };
       }) : [];
+      const fallbackChildren = fallbackGrid ? Array.from(fallbackGrid.children).map((node) => {
+        const rect = (node as HTMLElement).getBoundingClientRect();
+        return { top: rect.top, bottom: rect.bottom };
+      }) : [];
       return {
+        editorWidth: panel.getBoundingClientRect().width,
         editorOverflow: panel.scrollWidth - panel.clientWidth,
         postEditorColumns: postEditor ? getComputedStyle(postEditor).gridTemplateColumns : "",
         packageColumns: packagePanel ? getComputedStyle(packagePanel).gridTemplateColumns : "",
+        fallbackColumns: fallbackGrid ? getComputedStyle(fallbackGrid).gridTemplateColumns : "",
         topPositions,
-        packageChildren
+        packageChildren,
+        fallbackChildren
       };
     });
 
+    expect(layout.editorWidth).toBeLessThanOrEqual(661);
     expect(layout.editorOverflow).toBeLessThanOrEqual(1);
     expect(layout.postEditorColumns.trim().split(/\s+/)).toHaveLength(1);
     expect(layout.packageColumns.trim().split(/\s+/)).toHaveLength(1);
+    expect(layout.fallbackColumns.trim().split(/\s+/)).toHaveLength(1);
     expect(layout.topPositions.every((top, index, positions) => index === 0 || top > positions[index - 1])).toBe(true);
     expect(layout.packageChildren.every((child, index, children) => index === 0 || child.top >= children[index - 1].bottom)).toBe(true);
+    expect(layout.fallbackChildren.every((child, index, children) => index === 0 || child.top >= children[index - 1].bottom)).toBe(true);
     await expectNoHorizontalOverflow(page, "Narrow Sky write-up editor");
     await mkdir(adminScreenshotDir, { recursive: true });
     await page.screenshot({
       animations: "disabled",
       fullPage: true,
       path: path.join(adminScreenshotDir, "narrow-sky-writeup-editor.png")
+    });
+    await fallbackDiagnostic.scrollIntoViewIfNeeded();
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: path.join(adminScreenshotDir, "narrow-sky-fallback-diagnostic.png")
     });
     await assertNoBrowserErrors();
   });
