@@ -313,14 +313,17 @@ assert.throws(
 
 const productionSource = fs.readFileSync(path.join(root, "api/_lib/content-generation.ts"), "utf8");
 const openAiCalls = [...productionSource.matchAll(/callOpenAIResponses\(\{/gu)];
-assert.equal(openAiCalls.length, 5, "all five production OpenAI roles must remain enumerated");
+assert.equal(openAiCalls.length, 6, "all production OpenAI call sites must remain enumerated");
 for (const match of openAiCalls) {
   const prefix = productionSource.slice(Math.max(0, match.index - 900), match.index);
   assert.match(prefix, /assertProductionRoleGate\(/u, "an OpenAI call lacks an immediately preceding production gate");
 }
-const claudeFetch = productionSource.indexOf('fetch("https://api.anthropic.com/v1/messages"');
-assert.ok(claudeFetch > 0);
-assert.match(productionSource.slice(claudeFetch - 700, claudeFetch), /assertProductionRoleGate\(productionGate, "WRITER"/u);
+const claudeCalls = [...productionSource.matchAll(/fetch\("https:\/\/api\.anthropic\.com\/v1\/messages"/gu)];
+assert.equal(claudeCalls.length, 2, "all production Claude call sites must remain enumerated");
+for (const match of claudeCalls) {
+  const prefix = productionSource.slice(Math.max(0, match.index - 1100), match.index);
+  assert.match(prefix, /assertProductionRoleGate\(productionGate, "WRITER"/u, "a Claude call lacks an immediately preceding production gate");
+}
 for (const functionName of ["generateWithOpenAI", "generateWithClaude"]) {
   const start = productionSource.indexOf(`function ${functionName}`);
   const end = productionSource.indexOf("\n}", start);
