@@ -95,7 +95,12 @@ assert.match(dashboard, /Publish changes/u, "Field edits must publish through on
 assert.match(dashboard, /Publication checklist/u, "Incomplete article workspaces must show their remaining blockers.");
 assert.match(dashboard, /sky-article-edition-workspace/u, "Incomplete article fields must persist in a non-serving workspace.");
 assert.match(dashboard, /failed with HTTP \$\{error\.status\}\$\{error\.details \? `: \$\{error\.details\}`/u, "Admin failures must expose the server validation message instead of only the HTTP status.");
+assert.match(dashboard, /isContinuousSkyPackage/u, "Continuous Sky package rows must use their structured editor.");
+assert.match(dashboard, /Continuous Sky \$\{label\}/u, "Continuous Sky package rows must expose Opening, Tension, Development, and Close fields.");
+assert.match(dashboard, /showGenericBody/u, "Package voice and continuous rows must hide the duplicate generic Body editor.");
+assert.match(dashboard, /draftPackageOriginalRecord\(currentDraft\)/u, "Package revert must use the preserved original record rather than the edited record.");
 assert.match(generatedContentApi, /ownerAction === "approve-sky-article-edition"/u, "The API must enforce the explicit owner approval action.");
+assert.match(generatedContentApi, /Continuous Sky write-ups must be edited in Opening, Tension, Development, and Close/u, "The API must reject lossy unstructured edits to continuous write-ups.");
 assert.match(generatedContentApi, /ownerAction === "save-sky-article-edition-revision"/u, "The API must save edits outside the LIVE row.");
 assert.match(generatedContentApi, /ownerAction === "publish-sky-article-edition-revision"/u, "The API must atomically publish a reviewed complete revision.");
 assert.match(readerApp, /selectActiveSkyArticleEdition/u, "Sky reader articles must select active compiled editions.");
