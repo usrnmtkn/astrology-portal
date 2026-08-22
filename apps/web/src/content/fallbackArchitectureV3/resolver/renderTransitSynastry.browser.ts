@@ -1608,8 +1608,13 @@ export function createTransitSynastryRenderer(
     const planetEducation = typeof educationBody === "string" && educationBody.trim()
       ? educationBody
       : null;
-    const collective = [signCopy.opening, signCopy.tension, signCopy.development]
-      .map((part) => fillKeep(part as string, ctx));
+    const hasPreviousResidencyFacts = Boolean(previousResidencyEntryDate && previousResidencyExitDate);
+    const previousResidencyToken = /\{\{previousResidency(?:Entry|Exit)Date(?:WithYear)?\}\}/u;
+    const renderCollectivePart = (part: string) => (
+      !hasPreviousResidencyFacts && previousResidencyToken.test(part)
+        ? null
+        : fillKeep(part, ctx)
+    );
     const eraSource = signCopy.era_layer;
     let eraLayer: string[] = [];
     if (eraSource) {
@@ -1678,19 +1683,29 @@ export function createTransitSynastryRenderer(
       };
     }
 
-    const parts = [factLine, ...(planetEducation ? [planetEducation] : []), ...collective, ...eraLayer, ...aspectParts, close];
+    const opening = renderCollectivePart(signCopy.opening as string);
+    const tension = renderCollectivePart(signCopy.tension as string);
+    const development = renderCollectivePart(signCopy.development as string);
+    const parts = [
+      factLine,
+      ...(planetEducation ? [planetEducation] : []),
+      ...[opening, tension, development].filter((part): part is string => Boolean(part)),
+      ...eraLayer,
+      ...aspectParts,
+      close
+    ];
     const articleSections: SkyArticleRenderedSection[] = rendersArticleMaster
       ? [
           ...(planetEducation ? [{ kind: "planet-education", heading: "", body: planetEducation }] : []),
-          { kind: "collective-read", heading: fillKeep(signCopy.opening_heading as string, ctx), body: [factLine, collective[0]].join("\n\n") },
-          { kind: "collective-read", heading: fillKeep(signCopy.tension_heading as string, ctx), body: collective[1] },
-          { kind: "collective-read", heading: fillKeep(signCopy.development_heading as string, ctx), body: collective[2] },
+          ...(opening ? [{ kind: "collective-read", heading: fillKeep(signCopy.opening_heading as string, ctx), body: [factLine, opening].join("\n\n") }] : []),
+          ...(tension ? [{ kind: "collective-read", heading: fillKeep(signCopy.tension_heading as string, ctx), body: tension }] : []),
+          ...(development ? [{ kind: "collective-read", heading: fillKeep(signCopy.development_heading as string, ctx), body: development }] : []),
           ...(eraLayer.length ? [{ kind: "collective-era", heading: "", body: eraLayer.join("\n\n") }] : []),
           ...(aspectSection ? [aspectSection] : []),
           { kind: "exit-tone-shift", heading: fillKeep(signCopy.close_heading as string, ctx), body: close }
         ]
       : [
-          { kind: "collective-read", heading: "", body: [factLine, ...(planetEducation ? [planetEducation] : []), ...collective].join("\n\n") },
+          { kind: "collective-read", heading: "", body: [factLine, ...(planetEducation ? [planetEducation] : []), ...[opening, tension, development].filter((part): part is string => Boolean(part))].join("\n\n") },
           ...(eraLayer.length ? [{ kind: "collective-era", heading: "", body: eraLayer.join("\n\n") }] : []),
           ...(aspectSection ? [aspectSection] : []),
           { kind: "exit-tone-shift", heading: "", body: close }
