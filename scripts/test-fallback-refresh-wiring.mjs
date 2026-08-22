@@ -173,7 +173,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-21b");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-22a");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -1050,9 +1050,13 @@ try {
 
   for (const row of venusLibraHouseCores.rows) {
     const materializedRow = materializedByKey.get(row.contentKey);
-    assert.ok(materializedRow, `${row.contentKey} must materialize for reader distribution.`);
+    assert.ok(materializedRow, `${row.contentKey} must remain visible in the dashboard package mirror.`);
     assert.equal(materializedRow.body, row.body_you);
-    assert.equal(materializedRow.source_snapshot.review_status, "approved");
+    assert.equal(materializedRow.source_snapshot.review_status, row.review_status);
+    if (row.review_status === "needs_review") {
+      assert.equal(materializedRow.status, "DRAFT");
+      assert.equal(materializedRow.facts.readerServing, false);
+    }
   }
 
   for (const row of skySignCopySun.superseded_rows) {

@@ -709,6 +709,30 @@
         "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/owner-feedback-source.md"
       ],
       "provenance": "rejection: The 'deeper work lies in redefining what makes you feel secure' line is owner-rejected as a card closer when disconnected from the described loop; it appeared twice in this chunk, and future harvest runs must flag foundation-line reuse across shipped or in-flight cards."
+    },
+    {
+      "id": "venus-libra-house-5-owner-rejection-2026-08-22",
+      "surface": "sky-placement-house-horoscope",
+      "planet": "venus",
+      "sign": "libra",
+      "house": "5",
+      "articleBeat": "house-horoscope-core",
+      "before": "You may want more of what is actually fun. Venus in Libra is moving through your 5th house of fun and creativity, so dating, flirting, art, food, clothes, parties, hobbies, and whatever makes you forget to check the time can pull you in. You may say yes to the date because you want to go, not because you have already decided what it means. You may pick a project back up because you miss it. You may want somebody to admire what you made. If everybody loves the version of your work you are already bored with, you are still bored.",
+      "beforeIsRejected": true,
+      "after": "[rejected without replacement]",
+      "whatChanged": "Revoked the passage's reader-serving eligibility and positive-evidence eligibility. No replacement prose was inferred or generated.",
+      "ownerReason": "The owner identified this exact Venus in Libra 5th-house passage as the wrong template and requested a review of the house-horoscope system across all Sky placements.",
+      "reasonSource": "explicit_owner_feedback",
+      "failureTags": [
+        "owner-rejected-as-written",
+        "wrong-house-horoscope-template"
+      ],
+      "approvalLevel": "owner_rejected",
+      "sourcePaths": [
+        "apps/web/src/content/fallbackArchitectureV3/source-rows/venus-libra-house-cores-v1.json",
+        "packages/astro-knowledge/review/venus-libra-house-cores-v1/venus-libra-house-cores-owner-package.md"
+      ],
+      "provenance": "rejection: The owner rejected the exact Venus in Libra 5th-house passage on 2026-08-22. The earlier exact-wording approval is preserved as history but no longer authorizes serving or positive evidence use."
     }
   ]
 }

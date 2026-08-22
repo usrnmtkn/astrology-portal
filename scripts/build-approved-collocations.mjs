@@ -10,6 +10,7 @@ import {
   novelCollocationAdvisories,
   serializeCollocationTable
 } from "../src/astro-writing/collocationAdvisory.mjs";
+import { withoutOwnerRejectedEvidence } from "../src/astro-writing/ownerEvidenceRejections.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
@@ -17,12 +18,18 @@ const jsonl = (relativePath) => read(relativePath).trim().split(/\n/u).filter(Bo
 const sha = (value) => crypto.createHash("sha256").update(value).digest("hex");
 const normalizedText = (value) => String(value ?? "").trim().replace(/\s+/gu, " ");
 
-const approvedExamples = jsonl("data/writing/OWNER_APPROVED_EXAMPLES.jsonl")
-  .filter((entry) => entry.ownerApproved === true && typeof entry.text === "string" && entry.text.trim());
-const ownerCorrections = jsonl("data/writing/owner-corrections.jsonl")
+const allOwnerCorrections = [
+  ...jsonl("data/writing/owner-corrections.jsonl"),
+  ...jsonl("data/writing/owner-feedback-corpus.jsonl")
+];
+const approvedExamples = withoutOwnerRejectedEvidence(
+  jsonl("data/writing/OWNER_APPROVED_EXAMPLES.jsonl"),
+  allOwnerCorrections
+).filter((entry) => entry.ownerApproved === true && typeof entry.text === "string" && entry.text.trim());
+const ownerCorrections = allOwnerCorrections
   .filter((entry) => typeof entry.corrected === "string" && entry.corrected.trim() && !entry.corrected.trim().startsWith("["));
 const voiceIndex = JSON.parse(read("packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json"));
-const ownerCorpus = voiceIndex.entries.filter((entry) => (
+const ownerCorpus = withoutOwnerRejectedEvidence(voiceIndex.entries, allOwnerCorrections).filter((entry) => (
   entry.ownerAuthored === true
   && entry.ownerApproved === true
   && entry.useAsPositiveVoiceEvidence === true

@@ -4,7 +4,7 @@
   "sidecars": [
     {
       "path": "data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl",
-      "rows": 3473,
+      "rows": 3472,
       "sha256": "0b4aa6ad27819edbe3333beff342392fa4ba646b7f6fdcfd8ff899f77b2759d8"
     },
     {
@@ -14,23 +14,23 @@
     }
   ],
   "rawMatrixRoleCounts": {
-    "meaning": 3473,
-    "register": 2254,
+    "meaning": 3472,
+    "register": 2253,
     "scene": 372,
-    "argument_candidate": 788
+    "argument_candidate": 787
   },
   "deduplicatedSharedIndexCounts": {
-    "entries": 5927,
-    "meaning": 2225,
-    "register": 1758,
-    "scene": 416,
-    "argument": 1182,
+    "entries": 5923,
+    "meaning": 2224,
+    "register": 1757,
+    "scene": 415,
+    "argument": 1181,
     "phrase": 346,
     "planetSignKeys": 247
   },
   "roleCountsBySource": {
     "owner-approved-knowledge-matrix-meaning": {
-      "meaning": 1876,
+      "meaning": 1875,
       "register": 0,
       "scene": 0,
       "argument": 0,
@@ -38,7 +38,7 @@
     },
     "owner-approved-knowledge-matrix-register": {
       "meaning": 0,
-      "register": 1227,
+      "register": 1226,
       "scene": 0,
       "argument": 0,
       "phrase": 0
@@ -54,7 +54,7 @@
       "meaning": 0,
       "register": 0,
       "scene": 0,
-      "argument": 454,
+      "argument": 453,
       "phrase": 0
     },
     "owner-approved-ll-matrix-v13": {
@@ -88,7 +88,7 @@
     "approved_house_horoscope_core": {
       "meaning": 0,
       "register": 0,
-      "scene": 24,
+      "scene": 23,
       "argument": 0,
       "phrase": 0
     },
@@ -153,11 +153,11 @@
     "planetSignKeys": 190
   },
   "afterCounts": {
-    "entries": 5927,
-    "meaning": 2225,
-    "register": 1758,
-    "scene": 416,
-    "argument": 1182,
+    "entries": 5923,
+    "meaning": 2224,
+    "register": 1757,
+    "scene": 415,
+    "argument": 1181,
     "phrase": 346,
     "planetSignKeys": 247
   },
