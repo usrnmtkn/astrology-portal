@@ -571,6 +571,16 @@ function packageRowsWithLatestEligibleOverride(rows, allowBlank = false) {
     .filter(Boolean);
 }
 
+function skyPlacementHouseTemplateReaderRows(rows) {
+  return rows.map((row) => ({
+    contentKey: row.contentKey,
+    content_role: row.content_role,
+    grammar_frame: row.grammar_frame,
+    body_you: row.body_you,
+    review_status: row.review_status
+  }));
+}
+
 function readerPackageBundle(sources) {
   return {
     transitLib: {
@@ -595,7 +605,7 @@ function readerPackageBundle(sources) {
         ...sources.skyPlacementVoicePass.rows,
         ...sources.skySignCopy.rows,
         ...sources.skyPlacementOwnerApprovedReaderFallbacks.rows,
-        ...sources.skyPlacementHouseTemplates.rows,
+        ...skyPlacementHouseTemplateReaderRows(sources.skyPlacementHouseTemplates.rows),
         ...sources.sunLeoHouseCores.rows.map(({
           notes: _notes,
           source_keys: _sourceKeys,
