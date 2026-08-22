@@ -57,8 +57,15 @@ for (const houseRow of artifact.houseRows) {
 for (const row of artifact.renderRows) {
   const [, sign, house] = row.renderKey.split("|");
   const rendered = renderer.renderNatalPlacement({ planet: "moon", sign, house: Number(house), voice: "you" });
-  assert.equal(rendered.body, row.rendered, `${row.renderKey}: serving render differs from the owner-approved V3 passage`);
-  assert.equal(sha256(rendered.body), row.renderedSha256, `${row.renderKey}: serving render hash differs from V3`);
+  const expectedServingBody = row.rendered.replace(
+    /It's in your (\d+(?:st|nd|rd|th)) house, meaning/u,
+    "Your Moon is in your $1 house, meaning"
+  );
+  assert.equal(
+    rendered.body,
+    expectedServingBody,
+    `${row.renderKey}: serving render must preserve the owner-approved V3 copy with the contextual Moon bridge`
+  );
   assert.doesNotMatch(rendered.body, /What happened growing up|growing up shaped|childhood/iu, `${row.renderKey}: childhood text leaked into serving copy`);
   assert.deepEqual(rendered.partKeys, [
     `fallback-hook/natal-you-placement-sign-final/moon/${sign}`,
@@ -75,8 +82,8 @@ for (const row of artifact.renderRows) {
   );
   assert.equal(
     normalizedSections.join("\n\n"),
-    row.rendered,
-    `${row.renderKey}: app-normalized article must equal the complete owner-approved V3 passage`
+    expectedServingBody,
+    `${row.renderKey}: app-normalized article must equal the complete owner-approved V3 passage with the contextual bridge`
   );
 }
 
@@ -85,4 +92,4 @@ assert.equal(friend.partKeys?.includes("fallback-hook/natal-you-placement-sign-f
 assert.equal(friend.partKeys?.includes("fallback-hook/natal-you-placement-house-final/moon/6"), false, "Friend must not resolve the You-only house row");
 assert.doesNotMatch(friend.body, /Your Moon is your instinctual emotional world/iu, "Friend must not receive the You-only Moon introduction");
 
-console.log("Natal Moon final serving V3 passed: all 144 You renders are exact; Friend remains on its separate path; childhood excluded.");
+console.log("Natal Moon final serving V3 passed: all 144 You source passages remain exact with contextual serving bridges; Friend remains on its separate path; childhood excluded.");

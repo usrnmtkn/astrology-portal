@@ -1,9 +1,9 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "a37ed9e4c524fd57d846de354f725274be53e666",
+  "sourceCommit": "3e3c75b0be34b108a14424e257ecd5440fc1d05c",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "7896e0c8b51df68e7551c9c712f64457027fafe87424d35e4b1bd6e4315a9b45",
+  "contentFingerprint": "f2675577c45d3b5e938b4b80a43a4a3a37e51d6c49c30800729b15278eb1391e",
   "recordCount": 9565,
   "statusCounts": {
     "owner-approved": 9565
@@ -114155,10 +114155,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner chat review 2026-07-21",
-      "contentHash": "c6d2abb7a38df934211cb39cc823090f977b914db3279a6bf8d6e2735717cdb6",
+      "contentHash": "080aa8d28d4f662085fda9ca824a2afdf3a4ec402ff4e47f89a44e54c743ed5c",
       "wording": {
-        "body_you": "It's in your 1st house, meaning this side of you is right on the surface: it shapes first impressions and how you start things.",
-        "body_they": "It's in their 1st house, meaning this side of them is right on the surface: it shapes first impressions and how they start things."
+        "body_you": "Your {{planetTitle}} is in your 1st house, meaning this side of you is right on the surface: it shapes first impressions and how you start things.",
+        "body_they": "Their {{planetTitle}} is in their 1st house, meaning this side of them is right on the surface: it shapes first impressions and how they start things."
       },
       "astrology": {
         "objects": [],
@@ -114181,10 +114181,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner chat review 2026-07-21",
-      "contentHash": "5fc0448206f3b3390a67ffbdce5ba4f0529bb22eb2a4246170f6827d274da26e",
+      "contentHash": "7a0908e5b4f47ff2e766ed563233605e93ade09752a1a186d399884debc56fb6",
       "wording": {
-        "body_you": "It's in your 10th house, meaning this side of you is on public display: career, reputation, and what you're known for.",
-        "body_they": "It's in their 10th house, meaning this side of them is on public display: career, reputation, and what they're known for."
+        "body_you": "Your {{planetTitle}} is in your 10th house, meaning this side of you is on public display: career, reputation, and what you're known for.",
+        "body_they": "Their {{planetTitle}} is in their 10th house, meaning this side of them is on public display: career, reputation, and what they're known for."
       },
       "astrology": {
         "objects": [],
@@ -114207,10 +114207,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner chat review 2026-07-21",
-      "contentHash": "4e344aad6a32fbb03aeed177768702c92f8e98b65051c4cb6d53975ff2cfb55c",
+      "contentHash": "d6804becbd4fe8034125d5a5c2d891b10f89c6cd66ac1af657561d036533b26f",
       "wording": {
-        "body_you": "It's in your 11th house, meaning friends, groups, and your plans for the future bring this side of you out.",
-        "body_they": "It's in their 11th house, meaning friends, groups, and their plans for the future bring this side of them out."
+        "body_you": "Your {{planetTitle}} is in your 11th house, meaning friends, groups, and your plans for the future bring this side of you out.",
+        "body_they": "Their {{planetTitle}} is in their 11th house, meaning friends, groups, and their plans for the future bring this side of them out."
       },
       "astrology": {
         "objects": [],
@@ -114233,10 +114233,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner chat review 2026-07-21",
-      "contentHash": "4d8a8e0890f7f4e154100243065f42a31b6b897d87bff2ee2cad0fac2379c134",
+      "contentHash": "3cd8323b46f3e368b00b4c83779a2c810d60f7f4472e9460728f20cfd192c6ac",
       "wording": {
-        "body_you": "It's in your 12th house, meaning this side of you works behind the scenes: solitude, privacy, and what you keep to yourself.",
-        "body_they": "It's in their 12th house, meaning this side of them works behind the scenes: solitude, privacy, and what they keep to themselves."
+        "body_you": "Your {{planetTitle}} is in your 12th house, meaning this side of you works behind the scenes: solitude, privacy, and what you keep to yourself.",
+        "body_they": "Their {{planetTitle}} is in their 12th house, meaning this side of them works behind the scenes: solitude, privacy, and what they keep to themselves."
       },
       "astrology": {
         "objects": [],
@@ -114259,10 +114259,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner chat review 2026-07-21",
-      "contentHash": "a79aa98a8cfdaea4e0bcbc530d73b6ab15debd34cef54247b6d701717990513a",
+      "contentHash": "bc6c56884c6a1b3fc0d169f8c0501173ba23ce99a30652914e7661fb24a52f6c",
       "wording": {
-        "body_you": "It's in your 2nd house, meaning this side of you comes out around money, security, and what you own and value.",
-        "body_they": "It's in their 2nd house, meaning this side of them comes out around money, security, and what they own and value."
+        "body_you": "Your {{planetTitle}} is in your 2nd house, meaning this side of you comes out around money, security, and what you own and value.",
+        "body_they": "Their {{planetTitle}} is in their 2nd house, meaning this side of them comes out around money, security, and what they own and value."
       },
       "astrology": {
         "objects": [],
@@ -114285,10 +114285,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner chat review 2026-07-21",
-      "contentHash": "29febaa90c68b6ec77f1c616539b0b31df23b7c38fe81958c9348b1b49eabe4f",
+      "contentHash": "4675d28569d41327874d7a47170eb4e45a8bdf1ef2fc10abaeff73509d1f1b4e",
       "wording": {
-        "body_you": "It's in your 3rd house, meaning this side of you comes out in how you talk, text, learn, and get through an ordinary day.",
-        "body_they": "It's in their 3rd house, meaning this side of them comes out in how they talk, text, learn, and get through an ordinary day."
+        "body_you": "Your {{planetTitle}} is in your 3rd house, meaning this side of you comes out in how you talk, text, learn, and get through an ordinary day.",
+        "body_they": "Their {{planetTitle}} is in their 3rd house, meaning this side of them comes out in how they talk, text, learn, and get through an ordinary day."
       },
       "astrology": {
         "objects": [],
@@ -114311,10 +114311,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner chat review 2026-07-21",
-      "contentHash": "64c351d9a9d6eb29c43162a34c88e8f166844b8de5c04a4c59042c7a62f0fb13",
+      "contentHash": "f6b48dfae9ade2951c73cd65edc69028afa86a733c4ef4ea9e9e44d02e37f02e",
       "wording": {
-        "body_you": "It's in your 4th house, meaning this side of you lives close to home: family, roots, and your private life bring it out.",
-        "body_they": "It's in their 4th house, meaning this side of them lives close to home: family, roots, and their private life bring it out."
+        "body_you": "Your {{planetTitle}} is in your 4th house, meaning this side of you lives close to home: family, roots, and your private life bring it out.",
+        "body_they": "Their {{planetTitle}} is in their 4th house, meaning this side of them lives close to home: family, roots, and their private life bring it out."
       },
       "astrology": {
         "objects": [],
@@ -114337,10 +114337,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner chat review 2026-07-21",
-      "contentHash": "7311a46c8b192395d6f31ddb4120e304be0c988f393f749398d114325ca4f30b",
+      "contentHash": "ca573fb4a77ebc439eaebe726768b671383aab96ddabe007a84b2ccc62312ee9",
       "wording": {
-        "body_you": "It's in your 5th house, meaning this side of you comes out through romance, creativity, and play.",
-        "body_they": "It's in their 5th house, meaning this side of them comes out through romance, creativity, and play."
+        "body_you": "Your {{planetTitle}} is in your 5th house, meaning this side of you comes out through romance, creativity, and play.",
+        "body_they": "Their {{planetTitle}} is in their 5th house, meaning this side of them comes out through romance, creativity, and play."
       },
       "astrology": {
         "objects": [],
@@ -114363,10 +114363,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner chat review 2026-07-21",
-      "contentHash": "6ca613006a5fedf5b039dbba2494a1fab6260695c2efd6906a9c3d499d1c14f1",
+      "contentHash": "6e2ba0ddf4cc9e2f5d4057d9a5628593ad7645ac5dbca1bcd70614e3adbfe675",
       "wording": {
-        "body_you": "It's in your 6th house, meaning this side of you comes out at work, in your health habits, and in your daily routine.",
-        "body_they": "It's in their 6th house, meaning this side of them comes out at work, in their health habits, and in their daily routine."
+        "body_you": "Your {{planetTitle}} is in your 6th house, meaning this side of you comes out at work, in your health habits, and in your daily routine.",
+        "body_they": "Their {{planetTitle}} is in their 6th house, meaning this side of them comes out at work, in their health habits, and in their daily routine."
       },
       "astrology": {
         "objects": [],
@@ -114389,10 +114389,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner chat review 2026-07-21",
-      "contentHash": "df6ab66181c932b107145d2a3c7df7da10ec7b03af76505831b971b8388817fe",
+      "contentHash": "ec0439a7e8613a22fe002d2ed89d43b189c173f09eca031b8d18d6480419a24b",
       "wording": {
-        "body_you": "It's in your 7th house, meaning close relationships bring this side of you out more than anything else.",
-        "body_they": "It's in their 7th house, meaning close relationships bring this side of them out more than anything else."
+        "body_you": "Your {{planetTitle}} is in your 7th house, meaning close relationships bring this side of you out more than anything else.",
+        "body_they": "Their {{planetTitle}} is in their 7th house, meaning close relationships bring this side of them out more than anything else."
       },
       "astrology": {
         "objects": [],
@@ -114415,10 +114415,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner chat review 2026-07-21",
-      "contentHash": "873cc5c4dbef068ad29ab642e352f7eac8600955fb591521406796293f93b339",
+      "contentHash": "dc63a07863fd2ee2bdb2fa91c294a0fe860b2ead468537f83ebe27ca84a1c2bc",
       "wording": {
-        "body_you": "It's in your 8th house, meaning this side of you only fully shows once real trust is on the table: intimacy, shared money, the deep end.",
-        "body_they": "It's in their 8th house, meaning this side of them only fully shows once real trust is on the table: intimacy, shared money, the deep end."
+        "body_you": "Your {{planetTitle}} is in your 8th house, meaning this side of you only fully shows once real trust is on the table: intimacy, shared money, the deep end.",
+        "body_they": "Their {{planetTitle}} is in their 8th house, meaning this side of them only fully shows once real trust is on the table: intimacy, shared money, the deep end."
       },
       "astrology": {
         "objects": [],
@@ -114441,10 +114441,10 @@
       "sourceAuthor": "CC",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "owner chat review 2026-07-21",
-      "contentHash": "5eeaaed6ff3a9b12c4641bcbeeaf75c81636dacf4037e710bafe95c06190ca75",
+      "contentHash": "234abf64d6e7ed4aaf0a24b0a57e9cdab12ce96c5ddd2b6bd5d9ce3477ad7d50",
       "wording": {
-        "body_you": "It's in your 9th house, meaning this side of you comes out through travel, study, belief, and the big questions.",
-        "body_they": "It's in their 9th house, meaning this side of them comes out through travel, study, belief, and the big questions."
+        "body_you": "Your {{planetTitle}} is in your 9th house, meaning this side of you comes out through travel, study, belief, and the big questions.",
+        "body_they": "Their {{planetTitle}} is in their 9th house, meaning this side of them comes out through travel, study, belief, and the big questions."
       },
       "astrology": {
         "objects": [],

@@ -10,18 +10,17 @@ Surface: Friends → natal placement detail
 > Instead of: It's in their 12th house
 > Write: Their moon is in their 12th house.
 
-The ruling applies to the shared Friend natal house bridge. The renderer now names the actual placement in every house: `Their {{planetTitle}} is in their [Nth] house, meaning…`. The existing house-specific explanation continues after that clause. Planet names follow the app's title-case convention.
+The ruling first applied to the shared Friend natal house bridge. The 2026-08-21 serving repair applies the same explicit-subject grammar on You: `Your {{planetTitle}} is in your [Nth] house, meaning…`. The existing house-specific explanation continues after that clause. Planet names follow the app's title-case convention.
 
 ## Scope
 
-- 12 governed `fallback-hook/house-meaning/*` Friend variants updated.
-- The You variants remain byte-identical.
+- 12 governed `fallback-hook/house-meaning/*` variants updated for both You and Friend.
 - Compatibility copy remains unchanged.
 - No Friend passage is derived from a You passage; this is a shared placement-identification bridge only.
-- Source release: `friend-natal-house-bridge-context-v1`.
+- Source release: `natal-house-bridge-context-v2`.
 
 ## Guardrails
 
-The suite renders all 13 supported natal planets through all 12 Friend houses in both the Node and browser resolvers. Every house section must begin `Their [Planet] is in their [Nth] house, meaning…`, must not begin with the antecedent-free `It's in their…`, and must not leak second person.
+The suite covers both Node and browser resolvers. Every You house section begins `Your [Planet] is in your [Nth] house, meaning…`; every Friend house section begins `Their [Planet] is in their [Nth] house, meaning…`. Neither may fall back to an antecedent-free `It's in…` opening.
 
-The canonical 12-row release projection is frozen at SHA-256 `71c795cc694f308cc5f2732f4ab166d3ab820c5b3b1eecee34f2d0c74d71842e`.
+The canonical 12-row release projection is frozen at SHA-256 `d399d24426a57a6ba9b643c0a2d4431d462975511e8944603e9b7a145a8b8c53`.
