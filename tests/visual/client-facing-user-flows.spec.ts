@@ -2939,14 +2939,17 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("Sky placement shows all approved rising horoscopes when the reader has no Rising sign", async ({ page }) => {
+  test("Sky placement offers all approved rising horoscopes on demand when the reader has no Rising sign", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-07-29T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
 
-    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    const horoscopeSection = page.getByRole("region", { name: "All rising-sign horoscopes" });
     await expect(horoscopeSection).toBeVisible();
+    await expect(horoscopeSection.getByText("See all 12 horoscopes", { exact: true })).toBeVisible();
+    await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(0);
+    await horoscopeSection.getByText("See all 12 horoscopes", { exact: true }).click();
     await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(horoscopeSection.getByRole("heading", { name: "Gemini rising" })).toBeVisible();
     await expectSemanticArticleHeadingOrder(page, "Sky placement rising-sign article");
@@ -2956,7 +2959,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("Sky placement shows only the reader's approved house passage when Rising is known", async ({ page }) => {
+  test("Sky placement shows the reader's approved house passage first and offers the complete set", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, {
@@ -2970,7 +2973,12 @@ test.describe("client-facing user flow case studies", () => {
     await expect(personalizedSection).toContainText("3rd house");
     await expect(page.getByRole("heading", { level: 2, name: "Where it lands for you" })).toBeVisible();
     await expectSemanticArticleHeadingOrder(page, "Personalized Sky placement article");
-    await expect(page.getByRole("region", { name: "Horoscopes by rising sign" })).toHaveCount(0);
+    const horoscopeSection = page.getByRole("region", { name: "All rising-sign horoscopes" });
+    await expect(horoscopeSection).toBeVisible();
+    await expect(horoscopeSection.getByText("See all 12 horoscopes", { exact: true })).toBeVisible();
+    await horoscopeSection.getByText("See all 12 horoscopes", { exact: true }).click();
+    await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
+    await expect(horoscopeSection.getByRole("link", { name: "Gemini", exact: true })).toHaveAttribute("aria-current", "true");
     await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).toHaveText("July 22 to August 22, 2026");
     await assertNoClientErrors();
@@ -2983,7 +2991,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#sky/placement/venus/libra");
 
     await expect(page.getByRole("heading", { name: "Venus in Libra" })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Horoscopes by rising sign" })).toHaveCount(0);
+    await expect(page.getByRole("region", { name: "All rising-sign horoscopes" })).toHaveCount(0);
     await expect(page.getByRole("region", { name: "Where it lands for you" })).toHaveCount(0);
     await expect(page.getByText("You may want more of what is actually fun.", { exact: true })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).not.toBeEmpty();
@@ -2998,7 +3006,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#sky/placement/moon/sagittarius");
 
     await expect(page.getByRole("heading", { name: "The Moon in Sagittarius" })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Horoscopes by rising sign" })).toHaveCount(0);
+    await expect(page.getByRole("region", { name: "All rising-sign horoscopes" })).toHaveCount(0);
     await expect(page.getByRole("region", { name: "Where it lands for you" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).not.toBeEmpty();

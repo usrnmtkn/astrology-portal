@@ -16,6 +16,7 @@ const staged = JSON.parse(stagedText);
 const pilot = read("packages/astro-knowledge/review/sun-leo-house-cores-v1/sun-leo-house-cores-v13-pilot.md");
 const app = read("apps/web/src/App.tsx");
 const article = read("apps/web/src/features/sky/SkyDetailArticle.tsx");
+const risingHoroscopes = read("apps/web/src/features/sky/SkyRisingHoroscopes.tsx");
 const ordinals = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"];
 
 assert.equal(sourceText, stagedText, "The serving source must remain byte-identical to the staged owner package JSON.");
@@ -61,5 +62,8 @@ assert.match(
 assert.match(article, /Aspects to the planet[\s\S]*?detail\.personalizedPlacement/u);
 assert.match(article, /Where it lands for you/u);
 assert.match(article, /<p>\{detail\.personalizedPlacement\.body\}<\/p>/u);
+assert.match(article, /<SkyRisingHoroscopes[\s\S]*?entries=\{detail\.risingHoroscopes\}/u);
+assert.match(risingHoroscopes, /entries\.length !== zodiacSigns\.length/u);
+assert.match(risingHoroscopes, /See all 12 horoscopes/u);
 
-console.log("Sun in Leo house cores preserve all 12 approved V13 bodies and fail closed outside the pilot.");
+console.log("Sun in Leo house cores preserve all 12 approved V13 bodies, fail closed outside the pilot, and feed one reusable all-sign disclosure.");

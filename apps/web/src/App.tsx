@@ -5486,7 +5486,9 @@ function personalizedSkyPlacementDetail(
         body: compiledHousePassage?.body ?? rendered?.body ?? "",
         contentKey: compiledHousePassage?.contentKey ?? rendered?.contentKey ?? `sky-article-house/${planet}/${sign}/${house}`,
         heading: "Where it lands for you",
-        natalAspectLines
+        house,
+        natalAspectLines,
+        risingSign: canonicalRisingSign ?? risingSign
       }
     };
   } catch (error) {
