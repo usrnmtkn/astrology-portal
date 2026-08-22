@@ -4935,6 +4935,10 @@ function skyPlacementWritingSection(
 ): NormalizedSkyPlacementSection | null {
   const planet = normalizeContentIdPart(position.planet);
   const sign = normalizeContentIdPart(position.sign);
+  const risingHouseMap = Object.fromEntries(zodiacSigns.map((risingSign) => [
+    normalizeContentIdPart(risingSign),
+    wholeSignHouseForSign(position.sign, risingSign) ?? 0
+  ]));
   const events = beats
     .map((beat) => {
       const aspect = normalizeFallbackV3Aspect(beat.aspect);
@@ -4988,10 +4992,7 @@ function skyPlacementWritingSection(
         ? formatPlacementTransitEndpoint(position, new Date(position.previousSignResidencyEnd), true)
         : null,
       hasPriorIngress: articleOptions?.hasPriorIngress ?? false,
-      risingHouseMap: Object.fromEntries(zodiacSigns.map((risingSign) => [
-        normalizeContentIdPart(risingSign),
-        wholeSignHouseForSign(position.sign, risingSign) ?? 0
-      ])),
+      risingHouseMap,
       egressDate: skyPlacementEgressDateLabel(position, generatedAt),
       isRetrograde: hasRetrogradeGuidance,
       isShadowPhase: !isArchiveArticle && skyPlacementShadowPhaseActive(position, generatedAt)
@@ -5014,6 +5015,9 @@ function skyPlacementWritingSection(
   if (!body || !isReaderFacingCopy(body)) {
     return null;
   }
+  const risingHoroscopes = rendered.risingHoroscopes?.length
+    ? rendered.risingHoroscopes
+    : exactSkyPlacementRisingHoroscopes(planet, sign, risingHouseMap);
 
   const layer = (
     rendered.templateKey === "sky-placement-frame-v3"
@@ -5059,10 +5063,43 @@ function skyPlacementWritingSection(
     keyDatesIntro: rendered.keyDatesIntro ?? null,
     articleWindow: rendered.articleWindow,
     articleMode: rendered.articleMode,
-    risingHoroscopes: rendered.risingHoroscopes,
+    risingHoroscopes,
     articleSections: rendered.articleSections,
     body
   };
+}
+
+function exactSkyPlacementRisingHoroscopes(
+  planet: string,
+  sign: string,
+  risingHouseMap: Record<string, number>
+) {
+  try {
+    return zodiacSigns.map((risingSign) => {
+      const house = risingHouseMap[normalizeContentIdPart(risingSign)];
+      if (!house) {
+        throw new FallbackV3SourceGapError(
+          `SOURCE_GAP: house horoscope core ${planet}/${sign}/house-pending`
+        );
+      }
+      const rendered = transitSynastryFallbackRendererV3.renderSkyPlacementHouseCore({
+        planet,
+        sign,
+        house
+      });
+      return {
+        risingSign,
+        house,
+        body: rendered.body,
+        contentKey: rendered.contentKey
+      };
+    });
+  } catch (error) {
+    if (!(error instanceof FallbackV3SourceGapError)) {
+      throw error;
+    }
+    return undefined;
+  }
 }
 
 function compiledSkyArticleWritingSection(
@@ -5388,7 +5425,15 @@ function personalizedSkyPlacementDetail(
   const [, , routePlanet = "", routeSign = ""] = decodeSkyRouteParts(detail.routePath);
   const planet = normalizeContentIdPart(routePlanet);
   const sign = normalizeContentIdPart(routeSign);
-  const house = wholeSignHouseForSign(sign, risingSign);
+  const canonicalSign = zodiacSigns.find((candidate) => (
+    normalizeContentIdPart(candidate) === sign
+  ));
+  const canonicalRisingSign = zodiacSigns.find((candidate) => (
+    normalizeContentIdPart(candidate) === normalizeContentIdPart(risingSign)
+  ));
+  const house = canonicalSign && canonicalRisingSign
+    ? wholeSignHouseForSign(canonicalSign, canonicalRisingSign)
+    : null;
 
   if (!house) {
     console.warn(`SOURCE_GAP: house horoscope core ${planet}/${sign}/house-pending`);
