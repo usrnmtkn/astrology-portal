@@ -746,6 +746,11 @@ function draftPackageRecord(draft: AdminDraft) {
   return objectRecord(sections?.packageRecord) ?? {};
 }
 
+function draftPackageOriginalRecord(draft: AdminDraft) {
+  const sections = objectRecord(draft.sections);
+  return objectRecord(sections?.packageOriginalRecord) ?? draftPackageRecord(draft);
+}
+
 function rowPackageRecord(row: AdminGeneratedContentRow | AdminReviewRecord) {
   const sections = "content_key" in row ? objectRecord(row.sections) : objectRecord(row.sections);
   return objectRecord(sections?.packageRecord) ?? {};
@@ -789,7 +794,24 @@ function setPackageSectionField(draft: AdminDraft, key: string, value: string): 
     ...draft,
     sections: {
       ...(draft.sections ?? {}),
-      [key]: value
+      [key]: value,
+      packageRecord: {
+        ...draftPackageRecord(draft),
+        [key]: value
+      }
+    }
+  };
+}
+
+function setPackageRecordField(draft: AdminDraft, key: string, value: string): AdminDraft {
+  return {
+    ...draft,
+    sections: {
+      ...(draft.sections ?? {}),
+      packageRecord: {
+        ...draftPackageRecord(draft),
+        [key]: value
+      }
     }
   };
 }
@@ -4764,8 +4786,10 @@ export function GeneratedContentAdminDashboard() {
     const packageReviewStatus = packageReviewStatusForDraft(currentDraft);
     const packageRecord = draftPackageRecord(currentDraft);
     const packageRole = typeof packageRecord.content_role === "string" ? packageRecord.content_role : "";
-    const showPackageBodyYou = isPackageDraft && ("body_you" in packageRecord || "body_you" in (currentDraft.sections ?? {}));
+    const isContinuousSkyPackage = isPackageDraft && packageRecord.render_policy === "sky-placement-continuous-v2";
+    const showPackageBodyYou = isPackageDraft && !isContinuousSkyPackage && ("body_you" in packageRecord || "body_you" in (currentDraft.sections ?? {}));
     const showPackageBodyThey = isPackageDraft && ("body_they" in packageRecord || "body_they" in (currentDraft.sections ?? {}));
+    const showGenericBody = !isPackageDraft || (!showPackageBodyYou && !isContinuousSkyPackage);
     const skyWriteupParent = skyWriteupParentId ? rows.find((row) => row.id === skyWriteupParentId) ?? null : null;
     const skyWriteupContext = selectedRow ? skyWriteupContextForRow(selectedRow) : null;
     const skyHousePassages = skyWriteupContext ? relatedHousePassages(rows, skyWriteupContext) : [];
@@ -4900,7 +4924,7 @@ export function GeneratedContentAdminDashboard() {
       });
     };
     const revertPackageDraft = () => {
-      const original = draftPackageRecord(currentDraft);
+      const original = draftPackageOriginalRecord(currentDraft);
       setDraft({
         ...currentDraft,
         headline: typeof original.headline === "string" ? original.headline : currentDraft.headline,
@@ -5353,13 +5377,28 @@ export function GeneratedContentAdminDashboard() {
               <textarea aria-label="body_you" value={packageFieldString(currentDraft, "body_you")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_you", event.target.value))} />
             </label>
           )}
+          {isContinuousSkyPackage && ([
+            ["opening", "Opening"],
+            ["tension", "Tension"],
+            ["development", "Development"],
+            ["close", "Close"]
+          ] as const).map(([field, label]) => (
+            <label className="admin-review-copy-editor" key={field}>
+              <span>{label}</span>
+              <textarea
+                aria-label={`Continuous Sky ${label}`}
+                value={typeof packageRecord[field] === "string" ? packageRecord[field] as string : ""}
+                onChange={(event) => setDraft(setPackageRecordField(currentDraft, field, event.target.value))}
+              />
+            </label>
+          ))}
           {showPackageBodyThey && (
             <label className="admin-review-copy-editor">
               <span>body_they</span>
               <textarea aria-label="body_they" value={packageFieldString(currentDraft, "body_they")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))} />
             </label>
           )}
-          {!compiledSkyArticleEdition && (
+          {!compiledSkyArticleEdition && showGenericBody && (
             <label className="admin-review-copy-editor">
               <span>{isVocabularyDraft ? "Reusable phrase text" : "Body"}</span>
               <textarea aria-label={isVocabularyDraft ? "Reusable phrase text" : "Body"} value={currentDraft.body} onChange={(event) => setDraft({ ...currentDraft, body: event.target.value })} placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined} />
