@@ -494,6 +494,7 @@ function readPackageSources() {
   const skyAspectPhrasebook = readJson("source-rows/sky-aspect-phrasebook-v1.json");
   const skyPlacementVoicePass = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
   const skyPlacementOwnerApprovedFallbacks = readJson("source-rows/sky-placement-owner-approved-fallbacks-v1.json");
+  const skyPlacementHouseTemplates = readJson("source-rows/sky-placement-house-templates-v1.json");
   const sunLeoHouseCores = readJson("source-rows/sun-leo-house-cores-v1.json");
   const venusLibraHouseCores = readJson("source-rows/venus-libra-house-cores-v1.json");
   const skyPlacementOwnerApprovedReaderFallbacks = readJson("bundled-sky-placement-owner-approved-reader-v1.json");
@@ -526,6 +527,7 @@ function readPackageSources() {
     skyAspectPhrasebook,
     skyPlacementVoicePass,
     skyPlacementOwnerApprovedFallbacks,
+    skyPlacementHouseTemplates,
     sunLeoHouseCores,
     venusLibraHouseCores,
     skyPlacementOwnerApprovedReaderFallbacks,
@@ -569,6 +571,16 @@ function packageRowsWithLatestEligibleOverride(rows, allowBlank = false) {
     .filter(Boolean);
 }
 
+function skyPlacementHouseTemplateReaderRows(rows) {
+  return rows.map((row) => ({
+    contentKey: row.contentKey,
+    content_role: row.content_role,
+    grammar_frame: row.grammar_frame,
+    body_you: row.body_you,
+    review_status: row.review_status
+  }));
+}
+
 function readerPackageBundle(sources) {
   return {
     transitLib: {
@@ -593,6 +605,7 @@ function readerPackageBundle(sources) {
         ...sources.skyPlacementVoicePass.rows,
         ...sources.skySignCopy.rows,
         ...sources.skyPlacementOwnerApprovedReaderFallbacks.rows,
+        ...skyPlacementHouseTemplateReaderRows(sources.skyPlacementHouseTemplates.rows),
         ...sources.sunLeoHouseCores.rows.map(({
           notes: _notes,
           source_keys: _sourceKeys,
@@ -640,6 +653,7 @@ function materializeRows(sources) {
     ...(sources.skySignCopy.superseded_rows ?? []).map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skySignCopy.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyPlacementOwnerApprovedFallbacks.rows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skyPlacementHouseTemplates.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.sunLeoHouseCores.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.venusLibraHouseCores.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.sourceRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),

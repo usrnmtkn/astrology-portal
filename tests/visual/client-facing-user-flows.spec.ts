@@ -7,10 +7,18 @@ import {
   routeReadyTimeoutMs,
   watchBrowserErrors
 } from "./qaRuntimeGuards";
+import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
 import { resolveSkyAspectGeneratedContent } from "../../apps/web/src/services/skyAspectContent";
+import { zonedDateTimeToUtc } from "../../apps/web/src/services/timezones";
+import {
+  natalSkySnapshotCacheKey,
+  VERIFIED_SKY_CACHE_SCHEMA
+} from "../../apps/web/src/services/verifiedSkyCache";
 
 type SeedOptions = {
   profile?: boolean;
+  profileBirthDate?: string;
+  preloadProfileNatalSky?: boolean;
   friends?: boolean;
   theme?: "light" | "dark";
   now?: string;
@@ -77,6 +85,20 @@ async function selectYouNatalTab(page: Page) {
 
 async function seedClientState(page: Page, options: SeedOptions = {}) {
   const requestedNow = options.now ?? fixedNow;
+  const profileBirthDate = options.profileBirthDate ?? "1979-02-18";
+  const profileBirthDateTime = zonedDateTimeToUtc(
+    profileBirthDate,
+    "8:24 AM",
+    fixtureLocation.timeZone
+  );
+  const preloadedNatalCache = options.profile && options.preloadProfileNatalSky
+    ? {
+        schema: VERIFIED_SKY_CACHE_SCHEMA,
+        cacheKey: natalSkySnapshotCacheKey(fixtureLocation, profileBirthDateTime),
+        snapshot: await getAstrodienstSky(fixtureLocation, profileBirthDateTime),
+        verifiedAt: requestedNow
+      }
+    : null;
 
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
     await route.fulfill({
@@ -102,7 +124,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
     });
   });
 
-  await page.addInitScript(({ fixtureLocation, fixtureUserId, fixedNow, options }) => {
+  await page.addInitScript(({ fixtureLocation, fixtureUserId, fixedNow, options, preloadedNatalCache }) => {
     const RealDate = Date;
     const storedQaNow = window.sessionStorage.getItem("tldrastro:qaNow");
     let fixedTime = new RealDate(storedQaNow ?? fixedNow).getTime();
@@ -138,6 +160,9 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       window.localStorage.setItem("tldrastro:sunriseOrb", "true");
       window.localStorage.setItem("tldrastro:dyslexiaFont", "false");
       window.localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(fixtureLocation));
+      if (preloadedNatalCache) {
+        window.localStorage.setItem(preloadedNatalCache.cacheKey, JSON.stringify(preloadedNatalCache));
+      }
     }
 
     if (!options.profile || !shouldSeedClientState) {
@@ -201,7 +226,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
         id: "profile-birth-chart",
         name: "Marie Satori",
         type: "Birth chart",
-        birthDate: "1979-02-18",
+        birthDate: options.profileBirthDate ?? "1979-02-18",
         birthTime: "8:24 AM",
         birthCity: fixtureLocation.label,
         birthLocation: fixtureLocation
@@ -278,7 +303,13 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
         }
       ]));
     }
-  }, { fixtureLocation, fixtureUserId, fixedNow: requestedNow, options });
+  }, {
+    fixtureLocation,
+    fixtureUserId,
+    fixedNow: requestedNow,
+    options,
+    preloadedNatalCache
+  });
 
   await page.emulateMedia({ reducedMotion: "reduce" });
 }
@@ -2961,13 +2992,14 @@ test.describe("client-facing user flow case studies", () => {
 
     await seedClientState(page, {
       profile: true,
+      preloadProfileNatalSky: true,
       now: "2026-07-29T16:00:00.000Z"
     });
     await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
 
     const personalizedSection = page.getByRole("region", { name: "Where it lands for you" });
     await expect(personalizedSection).toBeVisible();
-    await expect(personalizedSection).toContainText("3rd house");
+    await expect(personalizedSection).toContainText("5th house");
     await expect(page.getByRole("heading", { level: 2, name: "Where it lands for you" })).toBeVisible();
     await expectSemanticArticleHeadingOrder(page, "Personalized Sky placement article");
     await expect(page.getByRole("region", { name: "Horoscopes by rising sign" })).toHaveCount(0);
@@ -2976,14 +3008,16 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("Venus in Libra does not expose an incomplete set after an owner rejection", async ({ page }) => {
+  test("Venus in Libra uses a different approved passage after the owner rejection", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/venus/libra");
 
     await expect(page.getByRole("heading", { name: "Venus in Libra" })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Horoscopes by rising sign" })).toHaveCount(0);
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    await expect(horoscopeSection).toBeVisible();
+    await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(page.getByRole("region", { name: "Where it lands for you" })).toHaveCount(0);
     await expect(page.getByText("You may want more of what is actually fun.", { exact: true })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).not.toBeEmpty();
@@ -2991,17 +3025,54 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("Moon in Sagittarius does not substitute unapproved house copy", async ({ page }) => {
+  test("Moon in Sagittarius shows all approved house-template compositions", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/moon/sagittarius");
 
     await expect(page.getByRole("heading", { name: "The Moon in Sagittarius" })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Horoscopes by rising sign" })).toHaveCount(0);
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    await expect(horoscopeSection).toBeVisible();
+    await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(page.getByRole("region", { name: "Where it lands for you" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).not.toBeEmpty();
+    await assertNoClientErrors();
+  });
+
+  test("Uranus in Gemini shows all rising-sign horoscopes", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#sky/placement/uranus/gemini");
+
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    await expect(horoscopeSection).toBeVisible();
+    await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
+    await expect(horoscopeSection).toContainText("Uranus in Gemini moves through your 5th house");
+    await assertNoClientErrors();
+  });
+
+  test("personalized Sky placement keeps applicable natal aspect facts visible", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, {
+      profile: true,
+      // Matching the calendar day makes the fixture's natal and transiting
+      // Suns a deterministic conjunction after the natal chart hydrates.
+      profileBirthDate: "1979-08-22",
+      preloadProfileNatalSky: true,
+      now: "2026-08-22T16:00:00.000Z"
+    });
+    await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
+
+    const personalizedSection = page.getByRole("region", { name: "Where it lands for you" });
+    await expect(personalizedSection).toBeVisible();
+    await expect(
+      personalizedSection.getByRole("heading", { level: 3, name: "Aspects to the natal chart" })
+    ).toBeVisible({ timeout: 20_000 });
+    await expect(personalizedSection.getByRole("heading", { level: 4 }).first()).toBeVisible();
     await assertNoClientErrors();
   });
 

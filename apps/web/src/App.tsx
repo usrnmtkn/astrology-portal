@@ -5461,7 +5461,7 @@ function personalizedSkyPlacementDetail(
       sign,
       house
     });
-    const natalAspectLines = transits
+    const natalAspects = transits
       .filter((transit) => (
         normalizeContentIdPart(transit.transitPlanet) === planet
         && normalizeContentIdPart(transit.transitSign ?? "") === sign
@@ -5476,9 +5476,13 @@ function personalizedSkyPlacementDetail(
               transitingPlanet: planet
             })
           : null;
-        return compiledAspect?.body ?? personalTransitPackageSection(transit, generatedAt)?.body ?? "";
-      })
-      .filter(Boolean);
+        const packageSection = personalTransitPackageSection(transit, generatedAt);
+        return {
+          key: transit.id,
+          heading: packageSection?.heading || personalTransitDisplayTitle(transit),
+          body: compiledAspect?.body ?? packageSection?.body ?? null
+        };
+      });
 
     return {
       ...detail,
@@ -5486,7 +5490,7 @@ function personalizedSkyPlacementDetail(
         body: compiledHousePassage?.body ?? rendered?.body ?? "",
         contentKey: compiledHousePassage?.contentKey ?? rendered?.contentKey ?? `sky-article-house/${planet}/${sign}/${house}`,
         heading: "Where it lands for you",
-        natalAspectLines
+        natalAspects
       }
     };
   } catch (error) {
@@ -10790,6 +10794,27 @@ export function App() {
   const usesFullPageLayout = isProfileMode || isFriendsMode || isCalendarMode;
   const activeSunriseOrbDegrees = DEFAULT_SUNRISE_ORB_DEGREES;
   const primaryProfileChart = userProfile?.charts[0];
+  const primaryProfileBirthDate = validChartBirthDate(primaryProfileChart);
+  const skyPlacementPersonalizationTransits = useMemo(() => {
+    if (!sky || !profileNatalSky || !primaryProfileBirthDate) {
+      return profileTransits;
+    }
+
+    const enrichedById = new Map(profileTransits.map((transit) => [transit.id, transit]));
+
+    return rankedProfileTransits(
+      sky,
+      profileNatalSky,
+      primaryProfileBirthDate,
+      activeSunriseOrbDegrees
+    ).map((transit) => enrichedById.get(transit.id) ?? transit);
+  }, [
+    activeSunriseOrbDegrees,
+    primaryProfileBirthDate,
+    profileNatalSky,
+    profileTransits,
+    sky
+  ]);
   const personalTimingSettings = useMemo(
     () => apiSettingsFromChartSettings(userProfile?.settings),
     [userProfile?.settings]
@@ -10994,7 +11019,7 @@ export function App() {
     setSelectedSkyDetail(personalizedSkyPlacementDetail(
       detail,
       profileNatalSky?.ascendant ?? userProfile?.rising,
-      profileTransits,
+      skyPlacementPersonalizationTransits,
       sky?.generatedAt ?? new Date().toISOString()
     ));
 
@@ -11468,7 +11493,7 @@ export function App() {
 
     const personalizationKey = [
       profileNatalSky?.ascendant ?? userProfile?.rising ?? "",
-      profileTransits.map((transit) => transit.id).join(",")
+      skyPlacementPersonalizationTransits.map((transit) => transit.id).join(",")
     ].join(":");
     const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}:${personalizationKey}`;
 
@@ -11494,10 +11519,10 @@ export function App() {
     setSelectedSkyDetail(personalizedSkyPlacementDetail(
       detail,
       profileNatalSky?.ascendant ?? userProfile?.rising,
-      profileTransits,
+      skyPlacementPersonalizationTransits,
       sky.generatedAt
     ));
-  }, [fallbackArchitectureV3Version, profileNatalSky?.ascendant, profileTransits, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent, userProfile?.rising]);
+  }, [fallbackArchitectureV3Version, profileNatalSky?.ascendant, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent, skyPlacementPersonalizationTransits, userProfile?.rising]);
 
   useEffect(() => {
     if (!selectedSkyDetail) {
@@ -12344,11 +12369,14 @@ export function App() {
 
   useEffect(() => {
     const socialNatalCacheMissing = ownSocialProfile?.hasNatalChart === false;
+    const skyPlacementPersonalizationActive = mode === "member"
+      && Boolean(skyDetailRoutePath?.startsWith("sky/placement/"));
 
     if (
       !userProfile
       || (
         !socialNatalCacheMissing
+        && !skyPlacementPersonalizationActive
         && !shouldRunProfileNatalCalculation(mode, isProfileMode, friendCalculationNeeds)
       )
     ) {
@@ -12523,6 +12551,7 @@ export function App() {
     friendCalculationNeeds,
     isProfileMode,
     mode,
+    skyDetailRoutePath,
     ownSocialProfile?.hasNatalChart,
     showNatalAspectPatterns,
     showNatalAspectPatternActivation

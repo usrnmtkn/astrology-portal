@@ -14,6 +14,7 @@ const skyPlanetFramesV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-
 const skySignCopySunV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-sign-copy-sun-v1.json"), "utf8"));
 const sunLeoHouseCoresV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sun-leo-house-cores-v1.json"), "utf8"));
 const venusLibraHouseCoresV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/venus-libra-house-cores-v1.json"), "utf8"));
+const skyPlacementHouseTemplatesV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-placement-house-templates-v1.json"), "utf8"));
 const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-synastry-rows-v1.json"), "utf8"));
 // [section name, matcher, plain-language "where this goes", optional example builder]
 const SECTIONS = [
@@ -85,6 +86,7 @@ for (const r of skyPlanetFramesV1.rows) place({ key: r.contentKey, you: r.body_y
 for (const r of skyPlacementVoicePassV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
 for (const r of skyPlacementOwnerApprovedFallbacksV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
 for (const r of skySignCopySunV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
+for (const r of skyPlacementHouseTemplatesV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
 for (const r of sunLeoHouseCoresV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
 for (const r of venusLibraHouseCoresV1.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });
 for (const r of rows.vocabularyRows) { if (r.content_role === "vocabulary") place({ key: r.contentKey, you: r.body, they: null, extra: [] }); }
