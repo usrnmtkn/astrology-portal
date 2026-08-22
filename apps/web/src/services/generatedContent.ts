@@ -6,6 +6,7 @@ import {
   type TemplateSlotValues
 } from "./templateInterpolation";
 import { generatedContentAliases } from "./generatedContentKeys";
+import { fallbackArchitectureV3DashboardPackageDestination } from "./fallbackArchitectureV3DashboardPackaging";
 import { isReaderFacingCopy } from "../content/readerSafety";
 import {
   noProseSourceFiles,
@@ -1457,30 +1458,31 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
 
     seen.add(row.content_key);
     const { contentType, role } = fallbackSystemBucket(row);
+    const destination = fallbackArchitectureV3DashboardPackageDestination({
+      contentKey: row.content_key,
+      contentType,
+      role
+    });
 
-    if (contentType === "source-material" || role === "fallback_source" || role === "source_material") {
-      continue;
-    }
-
-    if (contentType === "authored-content" || role === "full_copy") {
+    if (destination === "authored") {
       const card = packageAuthoredCardFromRow(row);
       if (card) authoredCards.push(card);
       continue;
     }
 
-    if (role === "fallback_hook") {
+    if (destination === "hook") {
       const hook = packageHookRowFromRow(row);
       if (hook) hookRows.push(hook);
       continue;
     }
 
-    if (role === "vocabulary") {
+    if (destination === "vocabulary") {
       const vocab = packageVocabRowFromRow(row);
       if (vocab) vocabularyRows.push(vocab);
       continue;
     }
 
-    if (role === "template") {
+    if (destination === "template") {
       const template = packageTemplateRowFromRow(row);
       if (template) templates.push(template);
     }

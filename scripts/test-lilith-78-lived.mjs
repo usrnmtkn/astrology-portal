@@ -76,9 +76,13 @@ const existingApprovedRows = source.hookRows.filter((row) => (
 )).map((row) => {
   // Preserve the frozen historical fingerprint while allowing the later,
   // separately hash-bound Friend house-bridge context release.
-  if (row.source_release !== "friend-natal-house-bridge-context-v1") return row;
+  if (row.source_release !== "natal-house-bridge-context-v2") return row;
   const historicalRow = {
     ...row,
+    body_you: row.body_you.replace(
+      /^Your \{\{planetTitle\}\} is in your/u,
+      "It's in your",
+    ),
     body_they: row.body_they.replace(
       /^Their \{\{planetTitle\}\} is in their/u,
       "It's in their",
