@@ -3619,6 +3619,7 @@ export function GeneratedContentAdminDashboard() {
             {skyVoiceQueueView === "upcoming" && renderSkyReviewHorizon()}
             {skyVoiceQueueView === "needs-review" && renderSkyVoiceQueue(skyVoiceNeedsReviewRows, "Cards held by the judge for a fast editorial decision.")}
             {skyVoiceQueueView === "audit" && renderSkyVoiceQueue(skyVoiceAuditRows, "Random auto-publish sample for periodic voice auditing. Refresh to draw another sample.")}
+            {renderEditor()}
           </section>
         )}
 
