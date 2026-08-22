@@ -346,6 +346,17 @@ function normalizeRelatedAspectRow(row: ReactNode | SkyDetailRelatedAspectRow, i
   };
 }
 
+const skyPlacementDateLinePattern = /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?\s+(?:to|through|[-–])\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}$/iu;
+
+function skyPlacementDateLine(value: ReactNode) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.replace(/\s+/gu, " ").trim();
+  return skyPlacementDateLinePattern.test(normalized) ? normalized : null;
+}
+
 export function SkyDetailArticle({
   detail,
   onClose
@@ -402,16 +413,32 @@ export function SkyDetailArticle({
     ? articleSubCandidate
     : "";
   const articleSubComparable = comparableText(articleSub);
-  const displaySections = contentSections.filter((section, index) => {
+  const rawDisplaySections = contentSections.filter((section, index) => {
     if (index !== 0 || !articleSubComparable || typeof section.body !== "string") {
       return true;
     }
 
     return comparableText(stripLegacySkyArticleScaffoldPrefix(section.body)) !== articleSubComparable;
   });
-  const fallbackParagraphs = paragraphs.filter((paragraph) => (
+  const firstDisplaySectionParagraphs = typeof rawDisplaySections[0]?.body === "string"
+    ? rawDisplaySections[0].body.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean)
+    : [];
+  const leadingSectionDate = skyPlacementDateLine(firstDisplaySectionParagraphs[0]);
+  const displaySections = leadingSectionDate
+    ? rawDisplaySections.map((section, index) => (
+        index === 0
+          ? { ...section, body: firstDisplaySectionParagraphs.slice(1).join("\n\n") }
+          : section
+      )).filter((section) => typeof section.body !== "string" || section.body.trim())
+    : rawDisplaySections;
+  const rawFallbackParagraphs = paragraphs.filter((paragraph) => (
     typeof paragraph !== "string" || comparableText(stripTldrPrefix(paragraph)) !== articleSubComparable
   ));
+  const leadingPlacementDate = skyPlacementDateLine(rawFallbackParagraphs[0]);
+  const fallbackParagraphs = leadingPlacementDate
+    ? rawFallbackParagraphs.slice(1)
+    : rawFallbackParagraphs;
+  const headerDate = leadingSectionDate ?? leadingPlacementDate ?? detail.duration;
   const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
   const eyebrowLabel = articleEyebrowLabel(detail.title, detail.kicker);
   const eyebrowGlyphs = articleEyebrowGlyphs({
@@ -480,11 +507,8 @@ export function SkyDetailArticle({
             {detail.tagline ? (
               <p className="article-sub sky-detail-tagline">{detail.tagline}</p>
             ) : null}
-            {detail.duration ? (
-              <p className="article-duration">{detail.duration}</p>
-            ) : null}
-            {detail.risingHoroscopes?.length ? (
-              <a className="article-duration" href="#sky-rising-horoscopes">Jump to horoscopes</a>
+            {headerDate ? (
+              <p className="article-duration">{headerDate}</p>
             ) : null}
             {articleSub ? (
               <div className="article-tldr">
@@ -529,7 +553,7 @@ export function SkyDetailArticle({
 
                     return (
                       <section className="article-section sky-detail-section" key={`${section.heading || "section"}-${index}`}>
-                        {sectionHeading ? <h3>{sectionHeading}</h3> : null}
+                        {sectionHeading ? <h2>{sectionHeading}</h2> : null}
                         {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
                         {bodyParagraphs.length > 0
                           ? bodyParagraphs.map((paragraph, paragraphIndex) => (
@@ -557,8 +581,8 @@ export function SkyDetailArticle({
                 </>
               )}
               {detail.keyDates?.length ? (
-                <section className="article-section sky-detail-section sky-placement-key-dates" aria-label="Key dates">
-                  <h3>Key dates</h3>
+                <section className="article-section sky-detail-section sky-placement-key-dates" aria-labelledby="sky-detail-key-dates-title">
+                  <h2 id="sky-detail-key-dates-title">Key dates</h2>
                   {detail.keyDatesIntro ? <p>{detail.keyDatesIntro}</p> : null}
                   <dl>
                     {detail.keyDates.map((keyDate) => (
@@ -579,12 +603,12 @@ export function SkyDetailArticle({
                 <section
                   className="article-section sky-detail-section"
                   id="sky-rising-horoscopes"
-                  aria-label="Horoscopes by rising sign"
+                  aria-labelledby="sky-rising-horoscopes-title"
                 >
-                  <h3>Horoscopes by rising sign</h3>
+                  <h2 id="sky-rising-horoscopes-title">Horoscopes by rising sign</h2>
                   {detail.risingHoroscopes.map((entry) => (
                     <div key={entry.risingSign}>
-                      <h4>{entry.risingSign} rising</h4>
+                      <h3 className="sky-rising-horoscope__title">{entry.risingSign} rising</h3>
                       {readerFacingParagraphs([entry.body]).map((paragraph) => (
                         <p key={paragraph}>{paragraph}</p>
                       ))}
@@ -598,8 +622,8 @@ export function SkyDetailArticle({
                 </aside>
               ) : null}
               {detail.mechanicsCaption ? (
-                <aside className="article-section sky-detail-section sky-aspect-mechanics" aria-label="What this looks like in space">
-                  <h3>What this looks like in space</h3>
+                <aside className="article-section sky-detail-section sky-aspect-mechanics" aria-labelledby="sky-aspect-mechanics-title">
+                  <h2 id="sky-aspect-mechanics-title">What this looks like in space</h2>
                   <p>{detail.mechanicsCaption}</p>
                 </aside>
               ) : null}
@@ -627,8 +651,8 @@ export function SkyDetailArticle({
                 </details>
               ) : null}
               {detail.historicalLookback ? (
-                <section className="article-section sky-detail-section sky-detail-historical-lookback" aria-label="Historical context">
-                  <h3>{detail.historicalLookback.heading}</h3>
+                <section className="article-section sky-detail-section sky-detail-historical-lookback" aria-labelledby="sky-detail-historical-title">
+                  <h2 id="sky-detail-historical-title">{detail.historicalLookback.heading}</h2>
                   <p className="sky-detail-historical-lookback__date">{detail.historicalLookback.dateLabel}</p>
                   {detail.historicalLookback.paragraphs.map((paragraph, index) => (
                     <p key={`historical-${index}`}>{paragraph}</p>
@@ -642,15 +666,23 @@ export function SkyDetailArticle({
         </div>
 
         {hasAspectCard ? (
-          <span className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside">
+          <h2 className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside" id="sky-detail-related-aspects-title">
             {detail.relatedAspects?.heading ?? "Aspects to the planet"}
-          </span>
+          </h2>
         ) : null}
 
         {hasAspectCard ? aspectGroups.map((group) => (
           <Fragment key={group.id}>
-            <span className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside">{group.label}</span>
-            <section className="article-card article-related-aspects article-related-aspects-card" aria-label={group.label}>
+            <h3
+              className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside"
+              id={`sky-detail-related-aspects-${group.id}`}
+            >
+              {group.label}
+            </h3>
+            <section
+              className="article-card article-related-aspects article-related-aspects-card"
+              aria-labelledby={`sky-detail-related-aspects-${group.id}`}
+            >
               <div className="article-related-aspects__group">
                 {group.sections.length ? (
                   <div className="article-related-aspects__copy-list">
@@ -668,7 +700,7 @@ export function SkyDetailArticle({
                           {sectionHeading ? (
                             <div className="article-related-aspects__copy-heading">
                               {glyphParts ? <AspectGlyphs from={glyphParts.from} aspect={glyphParts.aspect} to={glyphParts.to} /> : null}
-                              <h3>{sectionHeading}</h3>
+                              <h4>{sectionHeading}</h4>
                             </div>
                           ) : null}
                           {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
@@ -696,13 +728,16 @@ export function SkyDetailArticle({
 
         {detail.personalizedPlacement ? (
           <>
-            <span className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside">
+            <h2
+              className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside"
+              id="sky-detail-personalized-placement-title"
+            >
               {detail.personalizedPlacement.heading}
-            </span>
+            </h2>
             <section
               className="article-card sky-detail-personalized-placement"
               id="sky-rising-horoscopes"
-              aria-label={detail.personalizedPlacement.heading}
+              aria-labelledby="sky-detail-personalized-placement-title"
             >
               <div className="article-body-card sky-detail-body">
                 <div className="article-body-inner">

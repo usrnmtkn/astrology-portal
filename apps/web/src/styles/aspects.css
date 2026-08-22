@@ -88,7 +88,7 @@
 }
 
 .aspect-row-copy strong,
-.aspect-row-copy h3 {
+.aspect-row-copy :is(h3, h4) {
   display: flex;
   align-items: center;
   min-height: 25px;
