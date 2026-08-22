@@ -1,0 +1,3132 @@
+{
+  "schemaVersion": 1,
+  "auditId": "sky-placement-writer-existing-owner-corpus-audit-v2",
+  "surface": "sky-placement",
+  "sourceManifest": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/manifest.json",
+  "sourceManifestSha256": "0bd17efcb9e10404950bf8775b6a2a775db29141f2b4ad7fd0fe42b31c966565",
+  "voiceIndex": "packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json",
+  "voiceIndexSha256": "c6448cdae7d9c07e5a9ce87c27fea8eb598036dd39c24d6e029ac697f089da0e",
+  "storedWriterInputArtifactCount": 98,
+  "storedWriterInputArtifactsSha256": "797a4624334ffddeabd10b3924580bed4e85bbef03405afb485f482a9969e976",
+  "ownerAuthoredSameSurfacePassageCount": 383,
+  "exposedToStoredWriterInputCount": 9,
+  "unexposedToStoredWriterInputCount": 374,
+  "targetEvaluationFixtureCount": 20,
+  "newOwnerWritingRequired": false,
+  "evaluationSubsetFrozen": false,
+  "billedEvaluationsRun": false,
+  "governance": {
+    "conclusion": "The repository already contains enough owner-authored same-surface writing to curate the evaluation set.",
+    "selectionRule": "Existing passages remain candidates until an exact 20-piece subset is frozen under a new evaluation-set version.",
+    "exposureRule": "Absence from stored writer inputs is necessary but does not erase the manifest's whole-article diagnostic-exposure record.",
+    "promotionRule": "This audit grants no model, wording, or serving approval."
+  },
+  "bySourcePath": {
+    "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md": {
+      "candidates": 21,
+      "exposed": 1,
+      "unexposed": 20
+    },
+    "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md": {
+      "candidates": 47,
+      "exposed": 1,
+      "unexposed": 46
+    },
+    "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md": {
+      "candidates": 117,
+      "exposed": 0,
+      "unexposed": 117
+    },
+    "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md": {
+      "candidates": 23,
+      "exposed": 1,
+      "unexposed": 22
+    },
+    "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md": {
+      "candidates": 28,
+      "exposed": 3,
+      "unexposed": 25
+    },
+    "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md": {
+      "candidates": 56,
+      "exposed": 1,
+      "unexposed": 55
+    },
+    "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md": {
+      "candidates": 37,
+      "exposed": 1,
+      "unexposed": 36
+    },
+    "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md": {
+      "candidates": 54,
+      "exposed": 1,
+      "unexposed": 53
+    }
+  },
+  "candidates": [
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p002",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "1b30c2fb2dd5d4e1078baf27b725bf2eb8ce07b5701e1e180d78c5e4b2a90851",
+      "wordCount": 50,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p003",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "360d2c769ecc934bfb0ef70f4514dcf5be9357469ca6c804b6db7ccda0edcbd0",
+      "wordCount": 77,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p004",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "e07fd7b9537f8040338ebbf9edfe2bfad6a5d71cdbab6ab0e8b46a408f569b6b",
+      "wordCount": 76,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p005",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "82f23262dc950a8ed2b804f24127202b85fac5c9df9a6cf9ca7ec2ebb821fca5",
+      "wordCount": 39,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p006",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "728a3c1f9e87d96047c5daa2523978b901411ec5539e3aa0dc79c08fdaba1efe",
+      "wordCount": 42,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p007",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "842446ffb83a1a9df0a923bc9bed88b1524560b83b3875ef7dc323c9403241fe",
+      "wordCount": 74,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p008",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "3ceabecca11ddc06dc767db1cf37e916a514cae5d9316dd6bda6ab514292da40",
+      "wordCount": 65,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p009",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "c62a3f20a38f30530b5fa0464fc308a9f015d575ec01811df4cf0107addf46d1",
+      "wordCount": 55,
+      "exposedToStoredWriterInput": true,
+      "exposureMatch": "source-id"
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p012",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "99f491891a26fcc02fabe15f2ac7759cb748cc1c6092aab4e2432cf068c696a0",
+      "wordCount": 21,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p013",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "3077f50c8174c07126f21729e1ff2e81763f697cf37bf49e5e28e87779bd9376",
+      "wordCount": 102,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p014",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "d6fb495bde0bf95180a7080218f32cef93f8fab8fd6c213355ad8a2b758ba88c",
+      "wordCount": 92,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p015",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "be458537ac5e6a92af6271cc0b237951ee65269ae440481ef6adcd46d2c2d811",
+      "wordCount": 107,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p016",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "118445aebe3d9b9efe71e768c8c39c8b1138cf0c5e162765180e41548d3052a6",
+      "wordCount": 101,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p017",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "c7b217054957a382e4d17837ed14d649cf946696e2f29eecee0242ca4d18d209",
+      "wordCount": 88,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p018",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "b27dc9da16ba09bb75ba564a8263e9238aa43776bd31f6e0969c3f9a7d958e09",
+      "wordCount": 103,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p019",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "6c5f8912958e86fcd691dd5158250ed965f9f168203916ec82cdad3c101d4e5a",
+      "wordCount": 98,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p020",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "a62a14c88d96df58ef6320a2dc99bd527dfc8f20cdeec6efabb9e93fdb0a88cf",
+      "wordCount": 107,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p021",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "a9adff0c040bea5924b8e1af192cca0300c0e4a554c2ab169df5571b64625b01",
+      "wordCount": 108,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p022",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "7180e341fa175d47379580b26af3ab8f2f50d07e0cb4993ec01343032345b9f0",
+      "wordCount": 97,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p023",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "02cb40d31f023e1a1b1d62ccfbdf9bff217a1831664a455b00dc1d2e9ac8719d",
+      "wordCount": 105,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:chiron-retrograde-in-aries:p024",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/chiron-retrograde-in-aries.md",
+      "sourceSha256": "1c5ffaf0df02d2bb01db4158f143311be56ffdafc62b12988ffb9ff3c232b3b6",
+      "wordCount": 92,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p001",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "dad1681d99cd5649a827413cfff44daa1e43c5dcaa30389c1e95f5b02d8dc1f2",
+      "wordCount": 60,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p002",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "ff989b2cbdf262292fa4adccac5258db18428a7fe9697e0277075cf2b9e9cf28",
+      "wordCount": 35,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p003",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "58256abc5f96db9b7206e939d89b5c2f94802e43898b64b40dedb6e4699bee7a",
+      "wordCount": 64,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p004",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "440b8d3ef07969179891b55ad6b0e1364720085d529551a2165ce236b21aba5b",
+      "wordCount": 110,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p005",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "2ba89249e589110cd851c874b87805c3e87e3fcc106f853ca7e3e7fcd1bb130b",
+      "wordCount": 23,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p006",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "892b672b213b74e8596493606f754540dfe438bc7fd85afce452db00fba5b2aa",
+      "wordCount": 59,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p007",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "00e3846cea64d83cb9d6fc24c5a1ac5640c2ed900e25f147b48eac5edd658479",
+      "wordCount": 62,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p008",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "b2e7a939d224f8254c8ad25676aee18877d2fd4ad7724ad328b32f1c1c1e421a",
+      "wordCount": 53,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p009",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "1c002662d81a2dbb8aa1aead1ad56ed1f5259379f3e462f4b18030b39a9bf3f4",
+      "wordCount": 118,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p010",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "3fa4de181e4991bb9f26591cf9b4bd5e69131e644468490d6c4bb29ffe758fc3",
+      "wordCount": 57,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p011",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "629b2708c2d175e82d7aa94d041f73c83573d1139129f7c2c814d35a8a00c859",
+      "wordCount": 60,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p012",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "4f941f061724cb5b061c128a73d27fcfdfbefdb42542fa2f6ee36b1e9c9387c4",
+      "wordCount": 20,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p014",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "a8b697652c9ddedbf2fe5933087159f690e17b451557f3969b73607a46fe4a36",
+      "wordCount": 99,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p015",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "cf77173112a2ec012f767f8eafd5648a89b87372ef873768e72a157aeca5a015",
+      "wordCount": 84,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p016",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "ecd529fdfce7cc1293a516042ab613861c56c8dc656ebb20c5f10026d6c6b4c3",
+      "wordCount": 65,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p018",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "f86fa59a32db26dad72ec1ab5a9dc20f3dddfab9ee84bc6d32f76cb4c46393b7",
+      "wordCount": 102,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p019",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "c6bd3949b47b411fef711222fb611f8564e9cdc8506df4ab0bb5d1d813576fc1",
+      "wordCount": 70,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p021",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "3d6739365cdf6f32cf3b17f48067935e11d696d8b5a9e345c635484931117a4f",
+      "wordCount": 163,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p022",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "828b8fe2af7ddd849104a510fe6a9faac38c9a5b34529bf69f033a4315c4f48d",
+      "wordCount": 60,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p023",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "fbd23b554de886c5257cec400c73c5fd6d7b85e9956167248cb8470f36704178",
+      "wordCount": 31,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p025",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "776d275f080b22eb8193de644e2af4acd8041f80740151dda0af2b97388fc0a8",
+      "wordCount": 120,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p026",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "4c4c0186dfaea0932943566fdc2a85acd5634db16bfed8c5c79fa2ec6f84e574",
+      "wordCount": 143,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p028",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "d76f77bdb856a35d85148628a7fb1bee45648a43f8e5ca2187db94d9a18dbf11",
+      "wordCount": 109,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p029",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "5e745526003079b4d858640920ea19c117ca65b563474e5c9696f676e9cb7576",
+      "wordCount": 57,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p031",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "f483a7b1d9a16225ede9f7530da1428079ea3bc6056ebea17c34e1b22ff5b6be",
+      "wordCount": 153,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p032",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "0b252be3d31e734b86b1bb5b2dd163673dc08abd65a47370f27c95c92167c308",
+      "wordCount": 68,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p034",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "866c86f0060c800296275bb404a4003f90a76619649f6162d5f23206326cf2b6",
+      "wordCount": 77,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p035",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "c4fff4e7c00fcb5662ec06b6edeb17f571ff700756a1cde120755c89d63ae0f4",
+      "wordCount": 144,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p036",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "1cee4b4cfa3c51895eea1f2321a38cb05cd234b487ffd6e35fe32dc6db6579c9",
+      "wordCount": 63,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p038",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "fadb3ed21a675eb2901a3deaef17075cc0222bf3a8164c70f5b3f14a0f9ab604",
+      "wordCount": 68,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p039",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "6364dff32bcc3a6dd0e884039981c4a7d832176e5d7fd96cabfda77685de457b",
+      "wordCount": 163,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p040",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "94ab9a4aef360397826958e638940625fdeadad823d22a6f8148fe4bd3294abd",
+      "wordCount": 41,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p042",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "6bf9b0178c775b5099fb91f5d59a6fd9fb87a1d27a10fd6cd824f0db5ce84d69",
+      "wordCount": 181,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p043",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "75684ae721857cb2256c97f54653e5675780f57a2b2ae9c82cdae9925cec20ce",
+      "wordCount": 122,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p044",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "c706d5b8fd044278adaa4384426f7dcfece2d7b1cdb337606d221f3458d7d95b",
+      "wordCount": 35,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p046",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "8eac7031fdbbe83e89622438b616153a369f138e97eb39878d049deba9e77909",
+      "wordCount": 120,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p047",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "82dbcb5ea9957f5a9d6ca61907970ece8da3286efa955e79d0536e371bd3b14e",
+      "wordCount": 71,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p048",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "0b9633fbdc2c9b64e0be76ebe7cdc607640b0dfd3ade925a7c242584b36f5bcf",
+      "wordCount": 104,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p049",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "44a9643c2965e0bf00849741bc92019ab1dd53349dd6e9f7bd8f3aa648f0031c",
+      "wordCount": 34,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p051",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "d3432080cff8b727fce6aff54b921b6678856eced9d7c6b9fb866724049badb1",
+      "wordCount": 101,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p052",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "b3add5bca5b4b841c93c969e73e66f9f1511e31e9836e4a6b4b01828d2de4f2b",
+      "wordCount": 91,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p053",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "86a06d2d4256ac1ee140a62fbe902a0c0d597f56073a52133b54a734287b3939",
+      "wordCount": 37,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p054",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "9a68de02b240b04edf4bb843147a05683c2330926d07301862c3a3fd9aa07fd7",
+      "wordCount": 82,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p055",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "65726f80ea750e75980453dbb66faeef4cc4e2ca68a9e796d458be8acee16b02",
+      "wordCount": 57,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p057",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "d94189ed2f6e37ad62b43dac2e2c329b852abeef7282900e3fa8e7853fd029cd",
+      "wordCount": 161,
+      "exposedToStoredWriterInput": true,
+      "exposureMatch": "source-id"
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p058",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "e6210b8f1319201d7ce7c24e5553d3c96add37debc05d4bb16cab4e07b91d9e1",
+      "wordCount": 37,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mars-direct-in-cancer:p059",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mars-direct-in-cancer.md",
+      "sourceSha256": "c725075a3e617f96666563413cc2d7361412bb7b49fb31ced40e16d0f19a1a01",
+      "wordCount": 41,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p002",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "fb186ae24992d06194e53efab72cf4b506a822e3c0507f9113d993eccaab0c1e",
+      "wordCount": 38,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p003",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "2065fe153fbde62fb6aa82d16fd5f5db58f5995bfb1385299be833d50511e079",
+      "wordCount": 47,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p004",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "413a07193b23dfa94a9d319020db29005d06d6137fcdfe753631aaa290916dee",
+      "wordCount": 96,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p005",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "7fa87ba2c4b7d7d5b3cf8fae34f0f59e32007af88767a386078bdf85eaf54752",
+      "wordCount": 25,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p006",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "467474185c037801c87e45fa690d2c94dc4703f9d655b7796f0707d8b47f8d52",
+      "wordCount": 44,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p007",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "9c07ce06740f3a7c0a55bd5e483db214afc62ce1ae03b9d10930278a816bbb1b",
+      "wordCount": 67,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p008",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "faf1d44afea5e050d19906f8a29d259bbbca684de004698b3c64323cf96c4b7a",
+      "wordCount": 56,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p009",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "c536e743a3babe41828189d3cac96dd8a60adc5821fdd84fdbb9b8818fb44356",
+      "wordCount": 113,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p010",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "532fb54bf8271590cfc4a78198628e2a5a462ec54b340146a2d675acb831c286",
+      "wordCount": 45,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p011",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "2f9e5a75e67b34c4dbd49fbce239c1e2131bbeac92a2449f200a598cdf8bb9bd",
+      "wordCount": 71,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p012",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "adaa127a2850342450827ae605dce7cfab2a6a02adc7a0891c693c4bda9afb6d",
+      "wordCount": 44,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p013",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "7eaf23c12daa812f0cbc03abc96367074d7d5ba9f3bbffc39c91de5c52f27c6c",
+      "wordCount": 56,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p014",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "6d4dafb9109faba1cd049250f1bdd9c315a04e81a62b3f36a62321ad4b82c5e5",
+      "wordCount": 32,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p015",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "bf96ab9e7bb9c0fac9e0a7a409f279057a59b928d35c7f78309005b58249c747",
+      "wordCount": 34,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p016",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "c5a45f6d32eaa5661040ecd3407077189863ac9277e1493ac7f62d7173f4433e",
+      "wordCount": 53,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p017",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "7afb793c7879e14a4acc086965d9c0db3969116eb5ba3e5991ecf7335715ce12",
+      "wordCount": 50,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p018",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "2b278b66fdc70303691d87896daaa5e6a19b5909130b6f3faefdfb71fce7bee2",
+      "wordCount": 50,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p019",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "796bc6d88a9a58202887307c1894d2422bc933569517d08081b2fc291806bed7",
+      "wordCount": 51,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p020",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "6234c63a1dba4a7126aa2055493d1be0fed8cbc4c4e679fecf0d75680288d7ce",
+      "wordCount": 46,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p021",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "aceea13a6a3a0ecf11f2e4289efc4f6252fba4e719fe378f22f5262c5b57ccd2",
+      "wordCount": 44,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p022",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "54cf57769d572c486c37420c077c698f705b0ee2c228d85031bc36bded5dbb1b",
+      "wordCount": 51,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p023",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "b51e977d8c09a323d6fdb38beea29dede5d027fbc158bef303b7d0a86b5d9158",
+      "wordCount": 43,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p024",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "97936ca3105bd0599f398d6624a9c7d8f98519e744370d51af8c9cef214ac4cf",
+      "wordCount": 34,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p025",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "15a77ef191d417a85855872de38482a7f4a49f9f40890e4373f11a0d2ee798f3",
+      "wordCount": 70,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p026",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "fabceb1082c5c4f182c2c843f4fdb7c829bf104c8cc281e0f923155aa83dff34",
+      "wordCount": 97,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p027",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "dbb6a14d64faf03523c374e9a47342a3ff03df47b576e484fe540d3150750196",
+      "wordCount": 102,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p028",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "f4f73d42cc97a994338b334f791d51bc483f779952af5b808d2f96e7259c6992",
+      "wordCount": 114,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p030",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "12207868ebe2ccd5ba4b935f0524f7dee7d88128d20a43fccabbd08237dbefc6",
+      "wordCount": 45,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p031",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "47f6a176160d8a656e912f014a485c9ff0f81cba7e9942bda25b2a01279e02f8",
+      "wordCount": 30,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p032",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "a83007714a188977aa0d8d4593bd44238fb5c4cf311c5bb58688359490ce0592",
+      "wordCount": 21,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p033",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "07c6ada6386bc531bcec0d1c05df6c99f601a12010881e9ba3e73f4072ff5314",
+      "wordCount": 33,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p034",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "96f014c3875a30b18a2a8fdbb9baa013c89707bce80678a308cd830dd972998d",
+      "wordCount": 81,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p035",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "2b499eb838bc37929195d888220c92191baf7b1fed27c72a1a1158d4593b2ed8",
+      "wordCount": 108,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p036",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "aa381553e4a86326291187d4de1a7d46764947c3701b6ee258163954ae013c70",
+      "wordCount": 72,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p037",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "bb3bf9a329fddc308fbf514da5aa89ca81bd77286469f4ed577ad595bf4201cd",
+      "wordCount": 61,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p039",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "dfe529d25152fdeca927c12ece43011df25b40c20c974a556a2fdefbb86c4099",
+      "wordCount": 41,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p040",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "803d74487f645047ad79602746937eb8cf87d928fe3b6467fba003bf3a986310",
+      "wordCount": 37,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p041",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "0131a2a2c3b081842090d1d2bc995b4987f63cf476620c5dcfa97475efe1eb13",
+      "wordCount": 32,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p042",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "cdcbd532dbca1e392a9a703df36a4ec7dee7e42a29f727687b6e9721c3b53cb3",
+      "wordCount": 42,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p043",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "74cbb86289ae035a4f60fb117ec9dba6b46eccae194b9fb088f8ba4b8557a773",
+      "wordCount": 77,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p044",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "d0cd4cdea73c97793ad6f9ddb6fb5f9171e7a7e11db2d6324a2c7af4dbc154a1",
+      "wordCount": 80,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p045",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "e13158976579274963dd37e69dd8a2bc2c7cf526b9334a80d8f68e4c14742859",
+      "wordCount": 87,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p046",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "f4e26bf66eeb6250c0ba59e156f385c711d560a7c347c7d25f015dff6ba6942a",
+      "wordCount": 53,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p048",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "1426a641f4bd7fe3aede77979aab60bfe0597eb8efb6c61d45ef6f4bfef6bf53",
+      "wordCount": 26,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p049",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "9efa1b9eb50a7f172e1f4412741160f724a64588afc3230ce5d40d54c929ac2b",
+      "wordCount": 33,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p050",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "40291232c591908040a0c9d30d3453c1c52999edbc84c5a2371d66db5f106c3f",
+      "wordCount": 32,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p051",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "b27cbd4b52183c6e701c017c193849201ae79ba268755b2fb67a40f4473679e6",
+      "wordCount": 44,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p052",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "cfd5ee29a1a21d97b877798ccb0a7ac4b847f00366acf80dadf8dfee3ca501de",
+      "wordCount": 64,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p053",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "22a18e4d0b755b1661ab931b5ea004217b6c7ad0af95eeec32400ae9a3aaa0f1",
+      "wordCount": 90,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p054",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "697a1ad0781fbc489317af70e83c4666821d376c1e9c9a9a77fa6b15e41b34be",
+      "wordCount": 64,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p055",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "b6393a93165ba0990d58f4cb2bb23587d660029275ba74f87e6ed860447a77f0",
+      "wordCount": 66,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p057",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "33bb2fc7e1c1634dfd196e87bad2b8f6a18b7ef369ada83203f71b5984771498",
+      "wordCount": 25,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p058",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "dbd552bd9fe40a7b6c02076c9bed2543315f469fe3b67417e64ba5636d5ec39b",
+      "wordCount": 35,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p059",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "885b9f2ad76584cbde259dab6c058e1ec74cd21f1a169f0d703649b3afdf7043",
+      "wordCount": 29,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p060",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "758e527737b3ef76a13b1c23d811d4d5533044ad2df3d7affbfd3a562376ff84",
+      "wordCount": 49,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p061",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "6e6ab2818cbc3c9fa3a655bcd0046f57bdaa2243a22449b0fc52c2eede3c34e8",
+      "wordCount": 62,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p062",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "b7273cf006aafe499c3834bee5437cb7205f5f8330330f8fe2c9cc669177c4d7",
+      "wordCount": 87,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p063",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "892ce899d5fc5d4850299aec8e6783a83f5d591512dd8bca1be85ea6b42afebb",
+      "wordCount": 64,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p064",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "d4518ea4ade5eaa9d137ccf99ca6e77021fc506c2115cc4bac6fbd962b035648",
+      "wordCount": 79,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p066",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "6a063014ac914e71460f612a4ab7fdbc68f97c21ba95efd420dfff4e48850b05",
+      "wordCount": 25,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p067",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "2ef244292bb2dce9db90319e87fcf546b741ff9d0e1d822860a9f2fcea512655",
+      "wordCount": 32,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p068",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "bdf04010dfc30f7914a4c13f6d3811b660c80acd54b21985a1ff48f1267723f0",
+      "wordCount": 33,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p069",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "31c662e7278bfa55f2bfc1b2a4a2a8fbab09b77f928350dba415b7c9a1a54281",
+      "wordCount": 44,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p070",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "ab2e8df658be85e2ff29f0deb02510d6be3b685dd069f99058166d7b0001d0cc",
+      "wordCount": 57,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p071",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "222f7841a8043760060a56199a682a3e3318acc0036bf3a9027e1966dc6d37c2",
+      "wordCount": 74,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p072",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "0f63b7422aaaa7470eb468581a1d3b7768f03deb8eb16150370e993343a38186",
+      "wordCount": 89,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p073",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "16448c4fdd5a516074caf7c74e0a101db71d5b299ec47a58b2d2313e2537fcbb",
+      "wordCount": 69,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p075",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "b1630d61341ab4030f7941ce101f7c4e146456a970effcf6113e0f0920bfecad",
+      "wordCount": 35,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p076",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "2479ffa59d7a7ae651f6ec9b0bbbc37bc6e3408d469e075884656f801a1b10d8",
+      "wordCount": 26,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p077",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "221d23ed87ebb2ef041469b54f85c66e292a53d927fd89d95faaa25c1949ac92",
+      "wordCount": 34,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p078",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "80c547ca2c0e7d82e7c4375b16379cc8c3abcc7b697c73f82ec6186d779daa47",
+      "wordCount": 42,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p079",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "7be1258c77608f8fb91c632d435c0a1591883945dd667f11d0f279c5ffeb5e26",
+      "wordCount": 59,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p080",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "fb4d933761e652e1a551c9a0f83aaf700f60fdd65ecdad11970787a04012dfcd",
+      "wordCount": 69,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p081",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "d707458b936757593aa839f99a3c577ba2bc6e84250463810a2a3903a2093835",
+      "wordCount": 68,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p082",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "1ed00503e28f4526bbf8ed9f2725e2792d3db30866a513ba369347d055773ae5",
+      "wordCount": 70,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p084",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "ec7207320715c9ab0d48fd82c4ebede05eec91dcee3e1a95b362378ecadc5980",
+      "wordCount": 33,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p085",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "75d3c42a3b51b32d7143a8d93774681276270b5759a189ebb47e326caf7da4ce",
+      "wordCount": 32,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p086",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "5138c666be123d61c22495f348a85114b05c03cf831faeeb78e1a1279bc9c3f0",
+      "wordCount": 25,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p087",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "05b2218776571b7962bea6347a38a96789ab694c737dc33b843775686ecd1cfc",
+      "wordCount": 49,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p088",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "6d2112cdfee8ab2a31a1f5740f03821df149f8eb3285ccd6cad952c9d8cff301",
+      "wordCount": 53,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p089",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "8f74e84d2625d317f5f13b9b60b87f8f526033a092ee6aafd30c21c4b367972a",
+      "wordCount": 85,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p090",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "752dbb82c5893c37049a10df91787d1e36c3b9161b57445392cf1541e7981563",
+      "wordCount": 95,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p091",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "b45fd9467b06acb82712a00f61130811927ad3209ae395c85a80e78c4c763db2",
+      "wordCount": 79,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p093",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "c13dd50b16d29602c9c692f48b897b0b3cec40a3f6a980e22415cfaff49bbad3",
+      "wordCount": 24,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p094",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "713a7e60568af54a14466d7ffc88345929a8f622291f62ca9f0fa2763782242c",
+      "wordCount": 27,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p095",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "e0af5d456775c671d04fc2d0330918dfcf846f985d4baae74bcb635f042ddf85",
+      "wordCount": 28,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p096",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "547edb9f303a2219317387bfff171091896b83ec8459eb529322b96514740eb3",
+      "wordCount": 44,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p097",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "b6b6306d8ab31b372bfe2ae1be011605c5801c38a5debc5cda28055e8980f867",
+      "wordCount": 54,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p098",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "83ff092cf28c93b38668cd1a3d5cbb1b6cfa29c6a61956fa7ff13c554974761c",
+      "wordCount": 78,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p099",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "a537c8da288d37e28d522f508b8a4fffe4937f82a3be8ad51381c4c445187b8c",
+      "wordCount": 75,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p100",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "7c19f7ff6fcdf21d559708135cf9015c68b4c1e62ff01f3e2fb2169862b3dec7",
+      "wordCount": 66,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p102",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "2cb002e5a8f524ff8528344b6859ee46846b14b46b508efd9dda195248639095",
+      "wordCount": 29,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p103",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "2110e3dc11b29d2c8d39be9d3de0b9ff4be9cfd81c3142c58cf5998dbfa37dee",
+      "wordCount": 20,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p104",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "e92b5ca9073c00dd0030bd84f038078ed0bf7630b729faa441e5b41b477cc262",
+      "wordCount": 32,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p105",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "4a986c7d2a1780b5a83418bcb4ccfa7231d44a6a85fc4b0d03d5798898c88945",
+      "wordCount": 40,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p106",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "e82a7f26a3836aa9c2737724482d9767487c51bffd63e03e4f7b2c54e7863eef",
+      "wordCount": 52,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p107",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "d00dc1fc08082e488f720c7de2cf439bfc81ff1f3c626173634afe95dc2bbec8",
+      "wordCount": 77,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p108",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "ce5cf442c1e2e9c9b0d8d9cc1adc6961f7659e2bb314efe2639fcb9ba58d9491",
+      "wordCount": 59,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p109",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "f4df7181b2bcde534274fa9cebce40f5e03c99aa9b2ee7daaa508957c25bbb36",
+      "wordCount": 59,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p111",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "9dd270cb9715de8bc1d7f1a20467b6ccc77fa71e6e59e8a198514f5d71366347",
+      "wordCount": 26,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p112",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "2cc6a0a84006c18c71a5bd088161343c6b69f3a29a5ae777dfe0ffa459916749",
+      "wordCount": 25,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p113",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "906cbaf52d83350657da2df5fbd05aca1828f7233566e5ec8419f5733f3fe2f9",
+      "wordCount": 21,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p114",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "0c96ac67160c239ed2e007169803403a39edd88b66d6d574b8162afc6ded3dc8",
+      "wordCount": 33,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p115",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "ec7ef1d86cc04ac0b8d0323f2e482cec506d79b52b42f73540d3822e2b86ef04",
+      "wordCount": 50,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p116",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "7d88c1515333fd562a45ccd4fb8f8f389dfb35aa3b6d2b7a129344075df22691",
+      "wordCount": 95,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p117",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "ed07d4ea8797cf86060d4fda4f365c453ec931362b3deb48932f7eeab3033b37",
+      "wordCount": 89,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p119",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "6f504976955c081b433057faa71b29cd562f87e0e825f573b4aad350502cbc78",
+      "wordCount": 27,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p120",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "83775ac6c756c05e18f2f9be5b0f08ca5b44b7f7ebe86cc2b95d0d4ce0d64c0c",
+      "wordCount": 27,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p121",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "9bea374c37f29ac52803dea17f5e2c80f8298ddfe2eeb867bdcad64aee72acbc",
+      "wordCount": 25,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p122",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "5d1612aa29f2df5347db47c7dd3bba6517c3fd518a03306a15f8d09557f4e01c",
+      "wordCount": 45,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p123",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "114bc6ce584fc8d4b85afce3705e90c9a9b9902cc96e5dfb7a7ef7d9d857b7c2",
+      "wordCount": 72,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p124",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "8f8b56a7563efee8a4a16c3fd42a06802c890538d33eb751b68dbc9f9f1b8dd7",
+      "wordCount": 77,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p125",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "ee4de17e8307670d78b8a4e37a08b08c9b8ed8815e372a459dd18c45dd52e069",
+      "wordCount": 87,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p126",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "bd239ca2344046435d2d929c6511b98a0ffb4dc7556e1d9d2d9f8244ec0d801b",
+      "wordCount": 69,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p128",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "01b811b7f557ed582c4c6b48a82dbd7880cd28e3febd765fba8086a472ad7dee",
+      "wordCount": 30,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p129",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "3c767c9d91654d63e3ff04769ba714fb79c7cc56ac65fae4614195754ab01778",
+      "wordCount": 23,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-taurus-2025:p130",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/mercury-in-taurus-2025.md",
+      "sourceSha256": "1aec1e4068b6d7988b216eaeb256f1ce62135cd50e196d07c789bee7a0ccbf2e",
+      "wordCount": 25,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p001",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "b8e0af7675378ae93bc86d7eda369681a465fa60f6f60487922089956a44d83e",
+      "wordCount": 49,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p002",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "03d954bdea8515d4487b39b78ef5f3a1a69be81a4326525805656307086147e6",
+      "wordCount": 45,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p003",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "0de0769c6bdd4a8393a22f182fa763a7b0b721912bbe3d8f53b848e2febbaa60",
+      "wordCount": 55,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p004",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "f014583047a61e20a127b7e4408c973b1f1d0df7369fd8f17cac223583e40446",
+      "wordCount": 88,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p005",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "d14d78fa3e51b60f071ac451a161607d40fd87dabb87e445df1a0b5bfefa960a",
+      "wordCount": 25,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p006",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "9a096920ad04a8a26b6f7d93ef579f2712644628b96376f72f56ff163561f349",
+      "wordCount": 65,
+      "exposedToStoredWriterInput": true,
+      "exposureMatch": "source-id"
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p007",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "7aa3fe56c1be67a67a1ee511c2b0eb25d1ccb9c3cf8c7aee7730c3a4f90917fd",
+      "wordCount": 48,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p008",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "4a568d6a4dbba8eaf65895be03b65fa4dd26b4800177213e2345d40fb3df0574",
+      "wordCount": 58,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p009",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "80d3f875ff32fafb6cb5f6410710c8894798c0d75ee3d17baa56f27bbfd3931b",
+      "wordCount": 95,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p010",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "75835a12b8624d5a96919025639ced60b9d4543be4401b22d559f042dd1f3a2e",
+      "wordCount": 109,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p011",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "c954dad6605528fc3f443aa51248e304fd1f98e699b515c42017899a102f0634",
+      "wordCount": 49,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p012",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "74a6e1431550a67ab3de230264554cb1f92047c4ad809850c6306f7d28bffe8e",
+      "wordCount": 97,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p013",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "c417abd5910bed6e5cdfc113e793c8571951423914940b461c57a61edebe64dc",
+      "wordCount": 95,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p014",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "551f00c12c593b29cbe33cde5a0f805e17dadcc060f10e5d40f50f486458578e",
+      "wordCount": 103,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p015",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "554887bd666398e2c9a67cab3cc7613ecaab50a9d9829817d39755303f45c82c",
+      "wordCount": 79,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p016",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "23d3e9018b9005a7205b368a22f7519616cf43a6cd618abb8a0c1fa26b9f28b5",
+      "wordCount": 90,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p017",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "fc61b5e76432a03f65c2d399fc7883811f3c0e22efeeb3085c2bdad2d687d3ba",
+      "wordCount": 103,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p018",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "add59d06163d3ef1c07db0ae9c17054eae7cfb5407ced6234fa3618e78cd850b",
+      "wordCount": 73,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p019",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "5a3d1ae74905b9d8d457671834c66d7baa053347e3ce303cffe7a183f53eecfe",
+      "wordCount": 85,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p020",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "693c7a587bc48d7bd6922fdd073104e0a07824020cd3209c8a300d171d555841",
+      "wordCount": 82,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p021",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "fc2777819889c4e6126b9ee857451ae3e9d66a68c82d97d4be3f23022357fcce",
+      "wordCount": 78,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p022",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "05bebef9ba26d294ac27558659da6fd40254bdf3f66886ab67cf85da9532faa7",
+      "wordCount": 70,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-in-virgo-2025:p023",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-in-virgo-2025.md",
+      "sourceSha256": "5b1414bd5da243821cc320b31273560cd876de8d9141d94aab6019b1e10df69c",
+      "wordCount": 85,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p002",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "87fa5e905ca76d43c3ba37c4bf566765b577191e925ab245dbe1443b113c0cd8",
+      "wordCount": 45,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p003",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "8ceb065ac67b00aa5598db891bed4abe04db09bb760c7933e5fbca3cfacd0c51",
+      "wordCount": 46,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p005",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "80ce44c2a2fb31fb951b32a2fa58c877b7b2589d335d988c736ee91cd7cf589e",
+      "wordCount": 75,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p006",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "d28960aa26e53d9ef58693a5e2e6be2550c528742e824fb63ee39847ff72ba38",
+      "wordCount": 52,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p007",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "996104f22ade24e2f738a1764a57d71df043926cbafbc87c243985dc592fa634",
+      "wordCount": 64,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p008",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "5efcdd237edad8b643bc85f06b3f60e67fabb4620d118a84ba8297ff5a8c86c0",
+      "wordCount": 57,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p016",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "1dec45d6bbfa66b9fccacc8fb7c5436e7cda8da68b344a699bd5ffad41211a14",
+      "wordCount": 48,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p017",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "d1cd853bfbdb056c7033a832790475f489f8173c63c33a532f0b6e8abe62a620",
+      "wordCount": 50,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p019",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "2058fbc06d5a0cb5a026bcc6a78100aa06ffacc214c07f1f4b4f4c022963a6c8",
+      "wordCount": 22,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p020",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "94bf62b1542136fdeab8034f226b27130c405ee879f92486b076f33708fc0b3f",
+      "wordCount": 22,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p021",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "2c7f2572e10533717eac3f29351508dc224cf14551985dc214f5bcc7d44af2ad",
+      "wordCount": 21,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p022",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "2031b60bc4560281e536dfe1ee33e80ac3090b81c022b2441149dd5a4df4c5e2",
+      "wordCount": 43,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p023",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "e6a45eaa166a230bb14611e3f3e14ade862b3f755afda3ddfeaeb290706fb3b2",
+      "wordCount": 27,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p024",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "e9dce38e77761d753f3ab8293f944055436968a4a3c9395175d8f61b0254abe7",
+      "wordCount": 88,
+      "exposedToStoredWriterInput": true,
+      "exposureMatch": "source-id"
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p025",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "a3576d4571ef239bf413baf5a219097016df9051f0d89597a868e87f6c2113e4",
+      "wordCount": 47,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p026",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "244816e8098cb9403733de080e43a66ca0dba1b6aaf5101b545ee66cd8da43d1",
+      "wordCount": 58,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p027",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "ae39c04bba681616d6d3d408cbefae4cd3974b8bcb7c79291c11c1621a1c5e62",
+      "wordCount": 106,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p028",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "adb05b041be036bd3a0c2e5d3f60fd52f386fb84204cb0a47b6eaa8ead003632",
+      "wordCount": 145,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p029",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "fa8bab28f0e1a876539669d2c71549b23704547921798196a890d040d71de6f8",
+      "wordCount": 95,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p030",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "5a80939aaca5d17bf674e899d98050041aede2da2621078ab4d2ae543fa7d8d3",
+      "wordCount": 133,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p031",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "648adc6d6e3542f6bc5bf1df0b16a0f9aa0a088f8f2233a8245e1ffa2c1f75a1",
+      "wordCount": 102,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p032",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "f2901c6fdfea1fdb11d9471db21bf491aec016a15c80696a7043d03707a3f543",
+      "wordCount": 133,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p033",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "26e8f75414b79de29217b623740874979ef8238f685c6abb499ee6b7a19efe43",
+      "wordCount": 143,
+      "exposedToStoredWriterInput": true,
+      "exposureMatch": "source-id"
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p034",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "119abcc00ae79e9ea1614522f28bf00f547e05e1c313cc7e4f8bb41d9e62e42b",
+      "wordCount": 106,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p035",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "e175b2d797a67c1fe5f2de4c9495df20e8b2042a0b07267a119d0e22014b4663",
+      "wordCount": 155,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p036",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "4f22f8a5bcf84c334ec778600ddccf9e011a936d5475f154e779439ee43406d9",
+      "wordCount": 167,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p037",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "32a29097f95013b87c0be1ee0be9de106d4851b1c4a2bc14e05739894a202606",
+      "wordCount": 156,
+      "exposedToStoredWriterInput": true,
+      "exposureMatch": "source-id"
+    },
+    {
+      "sourceId": "owner-article:mercury-retrograde-in-leo:p038",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/mercury-retrograde-in-leo.md",
+      "sourceSha256": "c068b6208f8a653b2b75b663cdd028c6fe79c21a331535f876588a4e0db01b41",
+      "wordCount": 185,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p001",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "61275e232ac718659e57a00f235eae6ac5056f43b3bc699ad521a9283a7f752c",
+      "wordCount": 44,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p002",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "ca205b06c2dd5528a7b83335a10aac5ad1f56cb7d04bb1d08dd985cd74c90248",
+      "wordCount": 73,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p003",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "99d7ab8130a2e718dbb97926bb14b5319d604306cdb9ac874cd800262fb308c5",
+      "wordCount": 53,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p004",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "fcd43c618245755a9025aead403d5e14869031a24f63d296d20a48d528d03aa5",
+      "wordCount": 21,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p005",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "de25ce0c4e9166ef32a045e07676f8ddbea3c4536d84390b98191e1335c641f1",
+      "wordCount": 98,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p006",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "8c78b4f86a3c6969351b9bdf686150aace80dcc15c74edae5411e7eb542d8d80",
+      "wordCount": 94,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p007",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "00ab1b83ddb137cb228279a57bb3112cb2c09c706af5a59a17bbbe54c36d12d8",
+      "wordCount": 20,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p008",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "0710765d300128a88deeb937bf78f48cc5e4865282ddb8067869826cb3b09bf2",
+      "wordCount": 45,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p009",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "30411612bdd41f5a4c48de81df871aaefad8e5ddcd08714c4136c12a665a356a",
+      "wordCount": 91,
+      "exposedToStoredWriterInput": true,
+      "exposureMatch": "source-id"
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p010",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "d09668ed8dacc21f26273ed4c53044d06b57c65e5ee2f9560d1538fff2c43b17",
+      "wordCount": 38,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p011",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "cb4a35d46b9f0527d6b990bfa0423f11a6c216b4b6dcd7dbe620e7464ebd1239",
+      "wordCount": 43,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p012",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "7208ba8bf6845c3fe123f4791f545a59934caaf35d16b0c7d414e3e691f03583",
+      "wordCount": 24,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p013",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "c86f38e036ce47a3fa4760ca7328699bbb30ac687cbd2a9a877d77494fb339cd",
+      "wordCount": 44,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p014",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "c84ce7b0482d3feac383bcf023842876a56115b502c9cbfcae1b754876770846",
+      "wordCount": 30,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p015",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "32a0e71b026b07f33eba23b0e3d8f920df8f32302f4d59e747001246358dd916",
+      "wordCount": 43,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p016",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "f9b9309f3af80e51d58291d5c2c00ac10f2598cb3528c9b18cd8e5fcafcf371a",
+      "wordCount": 45,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p017",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "b205cf55d90e927a93b7230e68ee6bda92979d2acbe6f8da41c5ad5cc390cc20",
+      "wordCount": 33,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p018",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "3a14e93b8c6f003f7c661a842d7a96c9cc61d489e6217180dafb15230870a9b1",
+      "wordCount": 67,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p021",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "fda82df0dc3af657a87354913d84cc7410a155529bd26fe40132398d8bf48254",
+      "wordCount": 120,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p022",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "b7f45f61091a9b88cbded03e472558748b627395674f371e8d974287cc41c48a",
+      "wordCount": 90,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p023",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "59998c33256ab8cc7a9208cef3a02e1b701ee12058720af9fab573ea71b85fff",
+      "wordCount": 48,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p024",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "5ecd9a0d9e98bee6bc737c77eeaaf8c481ff26731802797ce32ba3245fce8c4b",
+      "wordCount": 46,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p025",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "2210b4e3f8b63ad8ab98185e79565e7fe765bc0c551624586e4460c5e601e130",
+      "wordCount": 155,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p026",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "0cbb8924161d2160a519ed444876c4408abff05d851c3533359fcf02de0b6b6f",
+      "wordCount": 34,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p027",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "240f11b8ef530e652cc86996ae55f149db74c6ca3f53ea83b3cab3a902e4cb78",
+      "wordCount": 73,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p028",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "05e39ee343ba8db9d1610ec0e8052fbdf6be12cfab04fb4536a71b0fb191f1a2",
+      "wordCount": 146,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p029",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "ea14f6abf9263597fb1b54a53c7697693f0842f59706e81710b11a551e474fa7",
+      "wordCount": 88,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p030",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "7560caef393133a8ebe11798727417e1319b4d5030b1d92f6bafcbbb8ebae1b6",
+      "wordCount": 42,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p031",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "394e36ecbcff131946bcb58317ea88450162e3604afd3afc2ed14735f2df6dfb",
+      "wordCount": 130,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p032",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "8096a3ea1932e09b8505b33f9a52a8d61efbd2a79f952ea6d61a0cb127a0ebdb",
+      "wordCount": 56,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p033",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "6b16f65a5dec43305d139445c62fd23389da91e1487250bb086b5c22a361d782",
+      "wordCount": 56,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p034",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "f44211ddb3e6aff99bd59bbf9927ab86880cc4d9232c8664cbff3a2a62f06260",
+      "wordCount": 103,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p035",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "61aee86e44e95066c503ba0f2045c887c90e5ea41845bd67d57abe389f74e405",
+      "wordCount": 60,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p036",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "61a87f4de2dc88584dc57bf2ec281efd943bc9515bd20b62fc59bc21c9b05395",
+      "wordCount": 51,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p037",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "2f2e1fb1e08d4c667ece0a3ef6bd978947f0b3c0265b58a4a8a7362f021a7d38",
+      "wordCount": 70,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p038",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "c46c293f2f9430903427b1fa82ec6dd7f2e1be0392e1134a947a30a82eed8ad3",
+      "wordCount": 69,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p039",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "dbc70ddf96fb32d8f72ee747ba56c2fc24aae3675f2f9243ce8ad7ad03b95f1b",
+      "wordCount": 38,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p040",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "e7ea213d5119e80bf16e51ec4f11d2d5ad5881960f12feb28a56f2693deade66",
+      "wordCount": 145,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p041",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "0fdc041e27267e35c02a614a9febcd70b3a2005487f1a0df42c36c4219b23cad",
+      "wordCount": 85,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p042",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "bb6eec64a11d0cc2c4aa0a5a6c3cfbb56383687a2b0df053a2215c5fc31b45ac",
+      "wordCount": 40,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p043",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "57111617eccb771771285392a73d10ab7a5c4c76a7db12c9c35a41ac9373cc8b",
+      "wordCount": 110,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p044",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "507872f05b90199802eb36fecac8cac82c413b954e4979a281912465c3aad56a",
+      "wordCount": 47,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p045",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "c5796e9dbfad7b38ec0070b92edf34a9afc4d12a75a19d03a84a78d1bb09c28c",
+      "wordCount": 46,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p046",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "79950c56c264940a16a2a66746c222eb377eb846c0947f21b20f52fbad146cc1",
+      "wordCount": 185,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p047",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "9311d294ab13bc05f8129feb0db8f0e928d003e04e3324497539ce28f9de0b1f",
+      "wordCount": 76,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p048",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "dfb2d2adbaf7acdfff36374d044bf29a88f458568b8021d0b2972c8d0e59fbc9",
+      "wordCount": 39,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p049",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "6a315b637df725af09a95dfb2225359d6461c96733d9fa2065b8c3b87b2f0d24",
+      "wordCount": 112,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p050",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "8b65dba3b8152d0f38c9c029db3cd02afa38fef9c5f646bd0f7ac8d3150e23af",
+      "wordCount": 81,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p051",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "f19f7c80c7df12269b8717054dd49fab18b655eefbe3cc632f2beed27591dbf1",
+      "wordCount": 39,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p052",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "1a4ee3f0503debcec37d74d7006fbde925d9ce23f4e18801987afa21908745db",
+      "wordCount": 123,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p053",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "14fe37b573515d00f442191649451781f466339081f862d79842050fefbfadc8",
+      "wordCount": 57,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p054",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "c7cc0f4fcec594e3de084575becc5a06ce646169427e42fc48c0c0f251a41403",
+      "wordCount": 44,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p055",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "58f6f2247993edf444cb40cbe0ee28b5557ddeb77deba9a0084977de80bb9d5a",
+      "wordCount": 64,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p056",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "854a6edbb6439917c7c85ec129627418101d93f53c29f37b873e7e3a3cc1511e",
+      "wordCount": 52,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p057",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "596d0a10c665d79eb84944aebde8ec074e1c47d9b97b1264ad5d8f2ecda95240",
+      "wordCount": 68,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-cancer:p058",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/calibration-candidates/venus-in-cancer.md",
+      "sourceSha256": "c31087fd562a83bdd91d51aea972f1f8c63a8fbc27afa3cce0d4a87d2dc98616",
+      "wordCount": 42,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p001",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "0f407975bce7416d007edb4561ad35fbe5aa57b5ef5a4f45b050e8a6b2b81ee1",
+      "wordCount": 48,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p002",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "ba0407f9799cd435b232e6b9650bc5636548ba887705478bbd46eef5d38f0d8e",
+      "wordCount": 49,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p003",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "aa5d9149f27389971e21a2a8b36ac2d6325d92f521ad2550dc6d92b6176d39d3",
+      "wordCount": 45,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p004",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "b93e8d884a6918b1ac75d51f0cdda759ce00a1696d843e2c48734591efe2a650",
+      "wordCount": 42,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p005",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "10cabaa61db9c2dc7faba623ee7ab72ca46a6a4808ba081ebe0f8f4317568cef",
+      "wordCount": 53,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p006",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "042cf9f8b22eef0b109c723a648ac6167bad40b9ddd255ab74383acc6b66296a",
+      "wordCount": 48,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p007",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "f43cb370861483da928241328e8dd2aeecbfd6263319a8af03aeee04ecf2804d",
+      "wordCount": 53,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p008",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "8aecc30c393591f828a406174d3403c63f88d40cbb462d55f9788d41be9932ab",
+      "wordCount": 47,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p009",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "40775b9e724d86bb90b483c58c0636216923f5ceb3c1b7dac0a09c7c12adc29c",
+      "wordCount": 48,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p010",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "649e56291176cd9e406aea3bb7698b51b4a34b81bd7736a7fc961ad45c0f3a33",
+      "wordCount": 45,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p011",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "f2fac7b02e470ab391b42ed84dc416d877c023a78b6c576cdc413b7bee891766",
+      "wordCount": 50,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p012",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "2c35bcee6be6210c536b80e6244b6c247e62d3194c6c3fb9ad5860f9406c2ce0",
+      "wordCount": 41,
+      "exposedToStoredWriterInput": true,
+      "exposureMatch": "source-id"
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p013",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "0c3378502a50af84e19c745b61ee74fe50a6f1b832a14bc52460404ed7e531c4",
+      "wordCount": 28,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p018",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "2592f876229202a39f9f77595106c55fa475fd002e278c3d0df63d2a07c7dda1",
+      "wordCount": 31,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p019",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "d73b240eb62831ee7285e6bfe2843e177a4fd978c0b3d845acbc29b69a6dc59b",
+      "wordCount": 51,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p021",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "416887b53feff48ce3aaa953ff1e3406b0dd64a9d5374f138fd9eaa83af1aa64",
+      "wordCount": 53,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p022",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "20e58f1264f78d4ca9b9053f05e37c7de0393df1a30ddc77cb2cf9b3a912ce83",
+      "wordCount": 36,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p023",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "3ab381a45290297a1029c0ab4b0a42c834a3cfe34ce342a8734cb931093f635f",
+      "wordCount": 38,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p024",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "eeb4359a8893b1ef4d3f772340065c854b21d2544c1db58538907dd458bbe4fd",
+      "wordCount": 28,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p025",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "d39986e1c0b14f57fa6952038d80d955397a495734664da195fe88066a4d7158",
+      "wordCount": 33,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p026",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "d3bb49fb11ba7522360d17d49d38442b8c3d9037931b6129c113535e509e95d8",
+      "wordCount": 41,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p027",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "8ee33f47207c7031735886678f524895324103451680a8f73f606c6b939cb13d",
+      "wordCount": 31,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p028",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "517976cd5e6650ea954738b35df3409a1834c238b4898b5c988f7268ada3538a",
+      "wordCount": 40,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p029",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "70699ffca23014870b91dbe6c7e40f041eaf40c952333f4293f36cd6d4796681",
+      "wordCount": 35,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p030",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "c4b8d1e5c618b0da937d1fd5e3afad842373817ac60fc14fe9a58a6f9f7c4fba",
+      "wordCount": 22,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p031",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "abf0169d305336d2bff4a2f30df89fbacba65313c6f710a244060e56f7c8338e",
+      "wordCount": 205,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p032",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "3c72306c7fda3f89bcde56b0c58832250afe9bb3d779e9e68e907a1bf56f62ff",
+      "wordCount": 221,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p033",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "7ae4c959a86cdc3c34d7b866a538b4b5cd144ac98885fda4eca32d70d918ff82",
+      "wordCount": 230,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p034",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "cc611a33e8cdd3c64e11bfffa73d6cc9950b8871f3eb5148208ccd7316cc14c7",
+      "wordCount": 253,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p035",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "883b388ab4582bc7770e474812949ba88b51ad64a67c87af11e0235977c75dc5",
+      "wordCount": 252,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p036",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "a3b04b38b4c778029cee7440d6a45b2b5692e0c87e8dc2e0cfc2ea65735f7c60",
+      "wordCount": 262,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p037",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "4fa60fa9b4ed7ac2081ef220820a636617b87bb5f7fe7b503a1ec37c8772950a",
+      "wordCount": 266,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p038",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "a65712e71aed20e5873bfcf0bf4819bf951f4ce5030e01380ed1318cb11faffc",
+      "wordCount": 269,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p039",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "18fcfa6dfc43b4e491fdc7ce6d4ea223bf0c2cfed4a0a306d7f28d0bbb96b551",
+      "wordCount": 276,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p040",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "0d102adce7c17501cdff237a51fc61101c2f72f0005c9f01a158bf9a85a1d4b0",
+      "wordCount": 269,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p041",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "32f5b17f0f0ccbf0dd209d0a8780fe3e05f82f770f43c9d02e3e6eb278cff157",
+      "wordCount": 260,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-in-virgo-2025:p042",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-in-virgo-2025.md",
+      "sourceSha256": "d0a8df570a85c2d9a26de37de99a2a719fa3211d23cab871daf23692e844f135",
+      "wordCount": 290,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p002",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "a8169e556f71cd20b2f83d9b829fd15e6fc8711a39a33a4427bec2119b5ddf52",
+      "wordCount": 102,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p004",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "7a2f01d32fa921a08125875744041815773bf3bfd69907a493878c731767dcdc",
+      "wordCount": 84,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p005",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "fbf0330d52dec06da425b8a0ba6d16ee07e0a454e61d84c810d5f226121b72ef",
+      "wordCount": 65,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p006",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "e8e546458ea6787afbaa642ae354393891832d275d1abf01bd76eb78ff9541cb",
+      "wordCount": 39,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p007",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "c3011181e002c295a4be6d44e47c406b926bd0148516aab3da88abac892ebde4",
+      "wordCount": 67,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p008",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "4fb395d75d2e054265b5ea14bd76fc2588b5a3a2b2f0a5a5e07412059d1ada6f",
+      "wordCount": 55,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p010",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "14c340eb916bf0ef228562f4915f52860c05fd2d48c2742c6e59b8ec7117b427",
+      "wordCount": 84,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p011",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "a729ededa94ed6eff8bd826a1ea76ad0a3d985179f48e096c6f7efc725fcabb9",
+      "wordCount": 86,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p012",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "e690587de40a1d550bd1e64ce675e15d641a018f5d02e3ae47cc4ced7456844e",
+      "wordCount": 28,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p013",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "c0e0563d5d4d132a3113ac7300c0519d1819ff6924e010c0cff0e0bfe1874a6e",
+      "wordCount": 42,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p014",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "082bcb9f273b64ac9064c47a359b0d5a4c5216bc7ebf978183bc0da72a987c90",
+      "wordCount": 55,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p015",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "33f3bf3d7e079e67ec63d650c87c502e121480d59d687a2088b55390207f69bf",
+      "wordCount": 70,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p016",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "d5e8cb17488941c6dfcaf7c258b6443b69f0e25639397ba3063f1b49724e2066",
+      "wordCount": 62,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p017",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "2fe136b3ce840fe23e92a628c166696ee78e1565a9b98a6a4d526b54a5def40b",
+      "wordCount": 45,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p018",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "0c1ad76df4f25227ed76d4c4805120bee7efa7914269ac5b567a02b828c6f91a",
+      "wordCount": 66,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p020",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "d65f00651e05ce30ce7ed3be38c8b8940e53e96e284618e294e92c7269d8d54e",
+      "wordCount": 82,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p021",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "ce6b026ee547861945e182113f614ab98728ece25c689462dbc88046e2373f06",
+      "wordCount": 130,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p022",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "bec7ae69bf0c96d6873cb5a0d81a9fb4f8117fcc42c6502b96a16d862a32a4df",
+      "wordCount": 44,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p024",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "7359f8e1044081f1c92a40d27d23f8a0f1cf5438ced8e25b14f6f4e50faf4ee2",
+      "wordCount": 50,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p025",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "616f55b2eff8cb54d2658526ae5c7605cbb70721e53b7382636b884ad1bfe65a",
+      "wordCount": 55,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p026",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "bc818171db80de5381fd17d24dc0863e9d2a0fcece8833b6ae879d352d692cc6",
+      "wordCount": 68,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p027",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "9d4f949ffe29eac236fdb4349e409a1dc57957afa3ea5e5920c70cf3e8625734",
+      "wordCount": 31,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p029",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "3b0a57a022ab6fd8497fafa2514116a2fe71db8d6c1068ee7042b9bb75123773",
+      "wordCount": 66,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p030",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "a56fb08ee397c628798de2cf1583ebdf860f564c8e8897e1cf1ad11c8fe0675b",
+      "wordCount": 60,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p031",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "e73f42b2f3f3edff07bda972dc659700f9e664b36f041bf836dafaafdc2f61f2",
+      "wordCount": 52,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p032",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "512911c5afb197af9885ec23dc253097ecc841a9f117c19daeb06d9a248e8a17",
+      "wordCount": 63,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p033",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "f248a05fb93269e013863c5d3288d270e814d95470905289ec8048297181cfb6",
+      "wordCount": 44,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p034",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "07176bcb46c6de84c377f8e49342cd8fa56aa614e4e3d2967b1cd27ba315a3fd",
+      "wordCount": 153,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p035",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "41c24b6631f25dd5be989fde1fd837445ffc028c871f59639cc2be11a3b0eefa",
+      "wordCount": 65,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p036",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "5feb982602c21f88c412d25786213e9abe72072fa0fcbc4830e243b52a0a4fa9",
+      "wordCount": 32,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p037",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "518868778305446c219edd6ed047af74ef6dd0c9fd662ae2f8af85f7e702648f",
+      "wordCount": 28,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p038",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "16f76ccc33c99005633b292f5f9037f74508a579f158796ae7a19aaa9c63a5b0",
+      "wordCount": 49,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p039",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "3028b699cc8088c42e29cad9608bc4a2d73da216d9104b0f8585472b74a9e9d1",
+      "wordCount": 21,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p041",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "9b7042d28bf2f1a56e448f950c4713d411d1d2efde8abecda68245237fc1fbde",
+      "wordCount": 32,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p042",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "bc1f6cf7269c512a510bfd996cc37cc05aeb0f9c1fb99144eb74ed8a50c82d0e",
+      "wordCount": 60,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p043",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "a9db5efc17d03ecd30acf8ea8677a9a87bf196d159cf1b810d99255d3757c548",
+      "wordCount": 52,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p044",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "4db8ffa89807fe4e99181eeb1c4713831ded55f65fedb5ea5161ac3b330ae2d7",
+      "wordCount": 72,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p045",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "db5440cafd36e23ee243e3c6fc83862d85cd63e2f1f3bca80e39289276290c3b",
+      "wordCount": 56,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p046",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "db4a1412aaad0722046e5e1caa22a0de6f9f8baa0c382a60e4ad889f83914eb7",
+      "wordCount": 39,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p047",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "8b144b56b80e68a399d374e8d59d98516e5de4716664134e09daf0d12cb41f7f",
+      "wordCount": 79,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p048",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "4564acf6c951ea725b06449d93f9e44e1c699241e11027382724b936e9b51382",
+      "wordCount": 63,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p050",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "3517c188e5aec720bd4f706d664f4247790e249f6c340f34e42ca1f598332d11",
+      "wordCount": 102,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p051",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "dd29e14e1ccaa621b13ce90ca7847b4cad42caa8ef93c5ec33f2266da4355e76",
+      "wordCount": 80,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p053",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "19e28cd2214c0fcaa5bd5b48595b4ddd5004a85305f3bb1ab6b6f4a33a6bf8c4",
+      "wordCount": 164,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p055",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "231931ec2b0b3f2dbd08de8c198f2666b2c4cb03d1546f6115fad707b848e233",
+      "wordCount": 145,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p057",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "84f1685774245b58266caac10a4fbd72549ea9461199d6f227d5c4654c3de124",
+      "wordCount": 196,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p059",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "0c71cd6642f8763bb56e3df3189000f717b5bf0a2b2b989597e4b7eceeda0bcb",
+      "wordCount": 184,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p061",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "a717b76f3651644fc2af763d35765c4fc59dac3d832edb64f93211005f1289d6",
+      "wordCount": 246,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p063",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "567fd1c1b5ff62e7850435f3cd710ae72f5820a3c40553413f326aed65e8d0a9",
+      "wordCount": 183,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p065",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "c09dc779a7f28f3fa0ad23754b8ac2229515e53d5b3ea39dbfcbe9fbe711d2b9",
+      "wordCount": 215,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p067",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "b87dfdc55c924e16809958e3432aed0d28282c3985e2aee0dfa68ead3e0c0f99",
+      "wordCount": 191,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p069",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "1d523f2448bfa83cfb2849531703e32742ca1b446ff125ce36ddd05f8479b299",
+      "wordCount": 157,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p071",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "682d84dce2dbf2756f840ca1bcd9747c5784247039e59a28d61d535428050b08",
+      "wordCount": 185,
+      "exposedToStoredWriterInput": false,
+      "exposureMatch": null
+    },
+    {
+      "sourceId": "owner-article:venus-retrograde-2025:p073",
+      "sourcePath": "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/diagnostic-same-surface/venus-retrograde-2025.md",
+      "sourceSha256": "cd1021d63ff358df3c2d0c5a4144b8e63fa33946805bd7ee1ad8bf9d88ac9a1b",
+      "wordCount": 188,
+      "exposedToStoredWriterInput": true,
+      "exposureMatch": "source-id"
+    }
+  ]
+}

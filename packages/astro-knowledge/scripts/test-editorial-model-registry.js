@@ -4,6 +4,7 @@ const assert = require("assert");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const { auditExistingCorpus, markdown: existingCorpusMarkdown } = require("./audit-sky-placement-writer-existing-corpus.js");
 const {
   promoteCandidate,
   readRegistry,
@@ -46,6 +47,18 @@ try {
   assert.strictEqual(registry.lanes["writer:sky-placement"].candidate.model, "gpt-5.6-sol");
   assert.strictEqual(registry.lanes["writer:sky-placement"].candidate.reasoningEffort, "xhigh");
   assert.strictEqual(writerEvaluation.candidateReleaseId, registry.lanes["writer:sky-placement"].candidate.releaseId);
+  const existingWriterCorpus = auditExistingCorpus();
+  const storedExistingWriterCorpus = require("../review/sky-placement-writer-existing-owner-corpus-audit-v2.json");
+  assert.deepStrictEqual(storedExistingWriterCorpus, existingWriterCorpus);
+  assert.strictEqual(
+    fs.readFileSync(path.join(__dirname, "..", "review", "sky-placement-writer-existing-owner-corpus-audit-v2.md"), "utf8"),
+    existingCorpusMarkdown(existingWriterCorpus)
+  );
+  assert.strictEqual(existingWriterCorpus.newOwnerWritingRequired, false);
+  assert.strictEqual(existingWriterCorpus.evaluationSubsetFrozen, false);
+  assert.strictEqual(writerEvaluation.existingOwnerAuthoredSameSurfacePassageCount, existingWriterCorpus.ownerAuthoredSameSurfacePassageCount);
+  assert.strictEqual(writerEvaluation.existingOwnerAuthoredSameSurfacePassagesUnexposedToStoredWriterInputs, existingWriterCorpus.unexposedToStoredWriterInputCount);
+  assert.ok(existingWriterCorpus.unexposedToStoredWriterInputCount >= writerEvaluation.targetHeldoutFixtureCount);
   assert.throws(() => resolveActiveRelease({ role: "writer", surface: "sky-placement", registry }), /no active release/);
 
   const release = resolveActiveRelease({
