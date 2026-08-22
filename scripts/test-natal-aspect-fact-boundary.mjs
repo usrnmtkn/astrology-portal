@@ -121,6 +121,7 @@ assert.equal(actual.some((aspect) => aspect.from.startsWith("Transit ") || aspec
 
 const marieMoonRegression = {
   positions: [
+    position("Sun", 329.4164),
     position("Moon", 222.7888),
     position("Mercury", 337.0589),
     position("Venus", 284.9428),
@@ -157,6 +158,10 @@ assert.deepEqual(
   ],
   "Marie Moon regression: the actual birth-chart geometry must retain every canonical Moon contact."
 );
+const marieSunSquareAscendant = canonicalNatalAspectsForSnapshot(marieMoonRegression)
+  .find((aspect) => aspectKey(aspect) === "Sun|square|Ascendant");
+assert.ok(marieSunSquareAscendant, "Marie Sun regression: Sun square Ascendant must remain in the canonical natal inventory.");
+assert.equal(marieSunSquareAscendant.orb, 11.6, "Marie Sun square Ascendant must retain its direct-ephemeris orb.");
 assert.equal(
   calculateSkyAspects(marieMoonRegression.positions).some((aspect) => (
     aspectKey(aspect) === "Moon|square|Jupiter" || aspectKey(aspect) === "Moon|conjunction|Uranus"

@@ -151,6 +151,7 @@ const servingApprovedReviews = new Set(["approved", "approved_reuse", "reviewed"
 const postV13GovernedReleases = new Set([
   "ll-matrix-v13-incremental-owner-approval-2026-08-17",
   "natal-moon-final-rendered-v3",
+  "natal-sun-square-ascendant-owner-approved-runtime",
 ]);
 const priorApprovedRows = sourceRows.hookRows.filter((row) => (
   row.source_release !== "ll-matrix-v13-owner-approved-runtime"
