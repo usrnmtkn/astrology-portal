@@ -141,7 +141,16 @@ export interface EmptyHouseFacts {
 export type NormalizedAspect = "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx" | "semisextile";
 export type AspectInput = NormalizedAspect | "nonagen";
 export interface AspectFacts { planetA: string; planetB: string; aspect: AspectInput; voice: Voice }
-export interface RenderResult { headline: string; parts: string[]; partKeys?: string[]; body: string; templateKey: string; astroHint?: string; sourceKeys?: string[] }
+export interface RenderResult {
+  headline: string;
+  parts: string[];
+  partKeys?: string[];
+  body: string;
+  templateKey: string;
+  astroHint?: string;
+  sourceKeys?: string[];
+  provenanceTier?: "exact-owner-approved" | "legacy-reviewed";
+}
 export interface RenderOpts {
   allowUnreviewed?: boolean;
   /** Adds the owner-approved mechanism bridge on empty-house detail pages only. */
@@ -405,6 +414,22 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
         body: exactLived.body ?? "",
         astroHint: exactLived.astroHint,
         templateKey: exactLived.contentKey,
+        provenanceTier: "exact-owner-approved",
+      };
+    }
+
+    // Keep reviewed generic aspect prose as an explicitly labeled continuity
+    // fallback. Exact owner-approved rows always win and callers can surface or
+    // withhold this lower provenance tier without confusing the two.
+    const genericLived = getReaderLivedRow(`fallback-hook/aspect-lived/${aspect}`, voice, opts);
+    if (genericLived) {
+      return {
+        headline: `${title(facts.planetA)} ${aspect} ${title(facts.planetB)}`,
+        parts: [genericLived.body ?? ""],
+        body: genericLived.body ?? "",
+        astroHint: genericLived.astroHint,
+        templateKey: genericLived.contentKey,
+        provenanceTier: "legacy-reviewed",
       };
     }
     const group = ASPECT_GROUP[aspect];

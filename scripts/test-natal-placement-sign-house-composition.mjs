@@ -26,10 +26,14 @@ const expectedHouseBody = rows.hookRows.find(
 const expectedMercurySignBody = rows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/placement-sign-lived/mercury/pisces"
 )?.body;
+const expectedSunNinthHouseBody = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/placement-house-lived/sun/9"
+)?.body;
 
 assert.ok(expectedSignBody, "Moon-in-Scorpio approved sign copy must exist.");
 assert.ok(expectedHouseBody, "Moon-in-6th-house approved house copy must exist.");
 assert.ok(expectedMercurySignBody, "Mercury-in-Pisces approved sign copy must exist.");
+assert.ok(expectedSunNinthHouseBody, "The incremental owner-approved Sun-in-9th-house copy must exist.");
 
 for (const [rendererName, renderPlacement] of [
   ["Node", renderNodePlacement],
@@ -68,6 +72,10 @@ for (const [rendererName, renderPlacement] of [
     ["fallback-hook/placement-sign-lived/mercury/pisces", "fallback-template/natal.house-context"],
     `${rendererName} Mercury-in-Pisces placement must expose exact per-section provenance.`
   );
+
+  const sunNinth = renderPlacement({ planet: "sun", sign: "aquarius", house: 9, voice: "you" });
+  assert.equal(sunNinth.parts.at(-1), expectedSunNinthHouseBody);
+  assert.equal(sunNinth.partKeys?.at(-1), "fallback-hook/placement-house-lived/sun/9");
 }
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
@@ -89,4 +97,4 @@ assert.match(
   "The app must classify the final Moon house row as exact house copy."
 );
 
-console.log("natal placement sign + house composition: ok (exact rows and composed named-house precedence)");
+console.log("natal placement sign + house composition: ok (exact rows, composed precedence, and approved Sun 9th-house route)");

@@ -458,6 +458,8 @@ type RenderedSynastryContact = {
   tag: string | null;
   body: string;
   templateKey?: string;
+  contentKey?: string;
+  synastryTier?: "exact-owner-approved" | "owner-approved-grouped" | "legacy-reviewed";
 };
 
 type SurfaceProseLayer = "authored" | "generated" | "fallback";
@@ -991,21 +993,31 @@ function normalizeSynastryContactSurface(
   relationshipType?: string | null
 ): NormalizedSynastryContactArticle {
   void generatedContent;
+  // The package renderer is reader-directed. Friend-to-friend comparison needs
+  // a separately approved third-person register; do not rewrite reader copy.
+  if (!comparisonIsSelf) {
+    return { surface: "synastry-contact", status: "not-servable", sections: [] };
+  }
   void comparisonName;
-  void comparisonIsSelf;
-  void friendPronouns;
   void comparisonPronouns;
-  void romanticAllowed;
-  void relationshipType;
-  const rendered = renderReaderDirectedSynastryContact(contact, friendName);
+  const rendered = renderReaderDirectedSynastryContact(contact, friendName, {
+    otherPronouns: friendPronouns,
+    romanticAllowed,
+    relationshipType
+  });
   const section: NormalizedSurfaceSection<SynastryContactSlot> | null = rendered
     ? {
         slot: "scene",
         required: true,
-        layer: rendered.templateKey?.startsWith("authored/") ? "authored" : "fallback",
-        tier: "fallback-architecture-v3",
+        layer: rendered.synastryTier === "legacy-reviewed" ? "fallback" : "authored",
+        tier: rendered.synastryTier === "exact-owner-approved"
+          ? "exact-owner-approved-synastry-v1"
+          : rendered.synastryTier === "owner-approved-grouped"
+            ? "owner-approved-grouped-synastry-v1"
+            : "legacy-reviewed-synastry-continuity-v1",
         sourceKeys: [
           "tldrastro-fallback-architecture-v3",
+          rendered.contentKey ?? "",
           rendered.templateKey ?? ""
         ].filter(Boolean),
         body: rendered.body
@@ -1843,6 +1855,8 @@ function splitGeneratedDailyBody(value: string) {
 }
 
 function normalizeDailyTimingSurface(generated: LiveGeneratedContent | null, summary: string | null): NormalizedSurfaceArticle<"daily-timing", "writeup"> {
+  const isLegacyPackageCopy = generated?.provider === "tldrastro-fallback-architecture-v3"
+    || generated?.sourceSnapshot?.renderer === "renderDailyGlance";
   const summaryCopy = summary ? normalizeGeneratedDailyCopy(summary) : "";
   const keepParagraph = (paragraph: string) => {
     const copy = normalizeGeneratedDailyCopy(paragraph);
@@ -1864,8 +1878,10 @@ function normalizeDailyTimingSurface(generated: LiveGeneratedContent | null, sum
       sections: generatedSections.map((section) => ({
         slot: "writeup",
         required: false,
-        layer: "authored",
-        tier: "source-grounded-daily-timing",
+        layer: isLegacyPackageCopy ? "fallback" : "generated",
+        tier: isLegacyPackageCopy
+          ? "legacy-reviewed-daily-continuity-v1"
+          : "generated-daily-timing",
         sourceKeys: [contentKey],
         body: section.body.join("\n\n")
       }))
@@ -1883,8 +1899,10 @@ function normalizeDailyTimingSurface(generated: LiveGeneratedContent | null, sum
       ? [{
           slot: "writeup",
           required: false,
-          layer: "authored",
-          tier: "source-grounded-daily-timing",
+          layer: isLegacyPackageCopy ? "fallback" : "generated",
+          tier: isLegacyPackageCopy
+            ? "legacy-reviewed-daily-continuity-v1"
+            : "generated-daily-timing",
           sourceKeys: [contentKey],
           body: paragraphs.join("\n\n")
         }]
@@ -4086,11 +4104,15 @@ function sourceGroundedNatalAspectNormalizedSection(
       return null;
     }
 
+    const exactOwnerApproved = rendered.provenanceTier === "exact-owner-approved"
+      || rendered.templateKey.startsWith("fallback-hook/natal-aspect-lived/");
     return {
       slot: "meaning",
       required: true,
-      layer: "fallback",
-      tier: "fallback-architecture-v3",
+      layer: exactOwnerApproved ? "authored" : "fallback",
+      tier: exactOwnerApproved
+        ? "exact-owner-approved-natal-aspect-v1"
+        : "legacy-reviewed-natal-aspect-continuity-v1",
       sourceKeys: [
         "tldrastro-fallback-architecture-v3",
         rendered.templateKey
@@ -4878,7 +4900,7 @@ function generatedSkyPlacementWritingSection(
   return {
     slot: "meaning",
     required: true,
-    layer: "authored",
+    layer: "generated",
     tier: "generated-sky-placement-lint-v1",
     sourceKeys: [content.contentKey, expected.placementSource],
     heading: content.headline || skyPlacementDisplayTitle(position),
@@ -5071,11 +5093,11 @@ function normalizeSkyPlacementSurface(
       : fallbackSection
         ? [fallbackSection]
         : [];
-  const hasAuthoredSection = Boolean(approvedFallbackSection || mergedGeneratedSection);
+  const hasProductionSection = Boolean(approvedFallbackSection || mergedGeneratedSection);
 
   return {
     surface: "sky-placement",
-    status: hasAuthoredSection
+    status: hasProductionSection
       ? "servable"
       : fallbackSection
         ? (fallbackSection.layer === "authored" ? "servable" : "partial")
@@ -7366,11 +7388,14 @@ function personalTransitPackageSection(
       const returnBody = readerFacingParagraphs(renderedReturn.parts).join("\n\n");
 
       if (returnBody && isReaderFacingCopy(returnBody)) {
+        const legacyContinuity = renderedReturn.provenanceTier === "legacy-reviewed";
         return {
           slot: "meaning",
           required: true,
-          layer: "authored",
-          tier: "fallback-architecture-v3-authored",
+          layer: legacyContinuity ? "fallback" : "authored",
+          tier: legacyContinuity
+            ? "legacy-reviewed-transit-continuity-v1"
+            : "exact-owner-approved-transit-v1",
           sourceKeys: [
             "tldrastro-fallback-architecture-v3",
             renderedReturn.contentKey ?? "",
@@ -7405,17 +7430,18 @@ function personalTransitPackageSection(
     });
     const body = readerFacingParagraphs(rendered.parts).join("\n\n");
 
-    if (!body || !isReaderFacingCopy(body)) {
+    if (!rendered.templateKey.startsWith("authored/") || !body || !isReaderFacingCopy(body)) {
       return null;
     }
 
+    const legacyContinuity = rendered.provenanceTier === "legacy-reviewed";
     return {
       slot: "meaning",
       required: true,
-      layer: rendered.templateKey.startsWith("authored/") ? "authored" : "fallback",
-      tier: rendered.templateKey.startsWith("authored/")
-        ? "fallback-architecture-v3-authored"
-        : "fallback-architecture-v3",
+      layer: legacyContinuity ? "fallback" : "authored",
+      tier: legacyContinuity
+        ? "legacy-reviewed-transit-continuity-v1"
+        : "exact-owner-approved-transit-v1",
       sourceKeys: [
         "tldrastro-fallback-architecture-v3",
         rendered.contentKey ?? "",
@@ -7608,7 +7634,12 @@ function normalizedSurfacePreview(article: NormalizedSurfaceArticle<string, stri
 
 function renderReaderDirectedSynastryContact(
   contact: Omit<SynastryContact, "summary">,
-  friendName: string
+  friendName: string,
+  options: {
+    otherPronouns?: PronounChoice | null;
+    romanticAllowed?: boolean;
+    relationshipType?: string | null;
+  } = {}
 ): RenderedSynastryContact | null {
   const normalizedAspect = normalizeFallbackV3Aspect(contact.aspect);
 
@@ -7617,11 +7648,22 @@ function renderReaderDirectedSynastryContact(
   }
 
   try {
+    const otherReference = resolveThirdPersonReference({
+      name: friendName,
+      pronouns: options.otherPronouns
+    });
     const rendered = transitSynastryFallbackRendererV3.renderSynastryAspect({
       planetA: normalizeContentIdPart(contact.yourPoint.name),
       planetB: normalizeContentIdPart(contact.friendPoint.name),
       aspect: normalizedAspect,
-      otherName: friendName
+      otherName: friendName,
+      otherPronouns: {
+        subject: otherReference.subject,
+        object: otherReference.object,
+        possessive: otherReference.possessiveAdjective
+      },
+      romanticAllowed: options.romanticAllowed ?? false,
+      relationshipType: options.relationshipType ?? null
     });
     const body = readerFacingParagraphs(rendered.parts).join("\n\n");
 
@@ -7633,7 +7675,9 @@ function renderReaderDirectedSynastryContact(
       headline: rendered.headline,
       tag: rendered.tag ?? null,
       body,
-      templateKey: rendered.templateKey
+      templateKey: rendered.templateKey,
+      contentKey: rendered.contentKey,
+      synastryTier: rendered.synastryTier
     };
   } catch (error) {
     if (error instanceof FallbackV3SourceGapError) {

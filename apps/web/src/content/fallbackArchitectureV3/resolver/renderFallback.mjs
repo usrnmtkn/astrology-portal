@@ -321,6 +321,20 @@ export function renderNatalAspect(facts, opts = {}) {
       body: exactLived.body,
       astroHint: exactLived.astroHint,
       templateKey: exactLived.contentKey,
+      provenanceTier: "exact-owner-approved",
+    };
+  }
+  // Keep reviewed generic aspect prose as an explicitly labeled continuity
+  // fallback. Exact owner-approved rows always win.
+  const genericLived = getReaderLivedRow(`fallback-hook/aspect-lived/${aspect}`, voice, { allowUnreviewed });
+  if (genericLived) {
+    return {
+      headline: `${title(planetA)} ${aspect} ${title(planetB)}`,
+      parts: [genericLived.body],
+      body: genericLived.body,
+      astroHint: genericLived.astroHint,
+      templateKey: genericLived.contentKey,
+      provenanceTier: "legacy-reviewed",
     };
   }
   const group = ASPECT_GROUP[aspect];

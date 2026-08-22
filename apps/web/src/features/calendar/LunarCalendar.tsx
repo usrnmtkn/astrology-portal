@@ -1107,7 +1107,8 @@ function calendarEventPackageDescription(event: LunarCalendarEvent, dateLine = "
     try {
       const rendered = calendarFallbackRendererV3.renderSkyPlacement({
         planet: slugContentPart(event.planet),
-        sign: slugContentPart(sign ?? "")
+        sign: slugContentPart(sign ?? ""),
+        surface: "calendar"
       });
 
       return firstReaderFacingCopy(rendered.parts)
