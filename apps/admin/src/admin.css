@@ -5334,10 +5334,8 @@ body,
 .admin-post-editor {
   align-items: start;
   gap: var(--admin-space-xl);
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  grid-template-columns: 1fr;
   padding: var(--admin-space-xl);
-  max-height: calc(100vh - 156px);
-  overflow: auto;
 }
 
 .admin-review-copy-workspace,
@@ -10106,7 +10104,7 @@ body,
   border-radius: var(--admin-ui-radius-lg);
   display: grid;
   gap: 12px;
-  grid-template-columns: minmax(0, 1.2fr) minmax(120px, 0.6fr) minmax(150px, 0.7fr);
+  grid-template-columns: 1fr;
   padding: 14px;
 }
 
@@ -10134,4 +10132,8 @@ body,
 
 .admin-dashboard .admin-package-notes-field textarea {
   min-height: 88px;
+}
+
+.admin-editor-panel .admin-sky-related-heading {
+  flex-direction: column;
 }
