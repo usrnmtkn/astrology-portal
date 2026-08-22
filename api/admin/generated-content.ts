@@ -6,6 +6,9 @@ import { loadLocalWebEnv } from "../_lib/local-env.js";
 import {
   assertCompiledSkyArticleEdition,
   hasExactSkyArticleOwnerApproval,
+  reviseSkyArticleEdition,
+  skyArticleEditableFields,
+  skyArticleEditionFieldChanges,
   skyArticleEditionRecord
 } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
 import { validateCmsTemplate } from "../../apps/web/src/content/cmsTemplateValidation.js";
@@ -43,7 +46,11 @@ type GeneratedContentWriteBody = {
   evergreen?: boolean;
   evergreenAt?: string | null;
   evergreenBy?: string | null;
-  ownerAction?: "approve-and-schedule" | "approve-sky-article-edition";
+  ownerAction?:
+    | "approve-and-schedule"
+    | "approve-sky-article-edition"
+    | "save-sky-article-edition-revision"
+    | "publish-sky-article-edition-revision";
 };
 
 type GeneratedContentRequestBody = GeneratedContentWriteBody & {
@@ -850,6 +857,99 @@ async function fetchExistingRowById(id: string) {
   return Array.isArray(payload) ? payload[0] as ExistingGeneratedContentRow | undefined : undefined;
 }
 
+async function patchGeneratedContentRow(id: string, patch: Record<string, unknown>) {
+  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: {
+      ...adminHeaders(),
+      prefer: "return=representation"
+    },
+    body: JSON.stringify(patch)
+  });
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(`Supabase review update failed with ${response.status}: ${JSON.stringify(payload)}`);
+  }
+  return payload as ExistingGeneratedContentRow[];
+}
+
+async function upsertGeneratedContentRow(row: Record<string, unknown>) {
+  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
+    method: "POST",
+    headers: {
+      ...adminHeaders(),
+      prefer: "resolution=merge-duplicates,return=representation"
+    },
+    body: JSON.stringify(row)
+  });
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(`Supabase revision upsert failed with ${response.status}: ${JSON.stringify(payload)}`);
+  }
+  return payload as ExistingGeneratedContentRow[];
+}
+
+function skyArticleRevisionContentKey(contentKey: string) {
+  return `sky-article-revision/${contentKey.replace(/^sky-article\//u, "")}`;
+}
+
+function assertSkyArticleRevisionIdentity(
+  base: ReturnType<typeof assertCompiledSkyArticleEdition>,
+  revised: ReturnType<typeof assertCompiledSkyArticleEdition>
+) {
+  const immutableFields = [
+    "contentKey",
+    "templateKey",
+    "templateHash",
+    "fixedProseHash",
+    "planet",
+    "sign",
+    "entryYear",
+    "validFrom",
+    "validTo",
+    "transitStartInstant",
+    "transitEndInstant"
+  ] as const;
+  const changed = immutableFields.filter((field) => base[field] !== revised[field]);
+  if (changed.length > 0) {
+    throw new Error(`Sky article revisions cannot change calculated identity fields: ${changed.join(", ")}.`);
+  }
+}
+
+async function verifiedSkyArticleRevision(baseValue: unknown, revisedValue: unknown) {
+  const base = assertCompiledSkyArticleEdition(baseValue);
+  const submitted = assertCompiledSkyArticleEdition(revisedValue);
+  assertSkyArticleRevisionIdentity(base, submitted);
+  const canonical = await reviseSkyArticleEdition(base, skyArticleEditableFields(submitted));
+  if (canonical.compiledHash !== submitted.compiledHash) {
+    throw new Error("Sky article revision hash does not match its exact submitted fields.");
+  }
+  const changes = skyArticleEditionFieldChanges(base, skyArticleEditableFields(canonical));
+  if (changes.length === 0) throw new Error("Sky article revision contains no changed fields.");
+  return { base, revised: canonical, changes };
+}
+
+function skyArticleApprovalSnapshot(
+  sourceSnapshot: Record<string, unknown> | null | undefined,
+  edition: ReturnType<typeof assertCompiledSkyArticleEdition>,
+  now: string
+) {
+  const snapshot = isRecord(sourceSnapshot) ? { ...sourceSnapshot } : {};
+  snapshot.review_status = "approved";
+  snapshot.ownerApproval = {
+    approved: true,
+    action: "approve-sky-article-edition",
+    approvedAt: now,
+    source: "content-studio-explicit-action",
+    contentKey: edition.contentKey,
+    templateKey: edition.templateKey,
+    templateHash: edition.templateHash,
+    fixedProseHash: edition.fixedProseHash,
+    compiledHash: edition.compiledHash
+  };
+  return snapshot;
+}
+
 function generatedContentTargetKey({
   contentKey,
   targetDate,
@@ -943,6 +1043,127 @@ async function updateGeneratedContent(req: IncomingMessage) {
     updated_at: new Date().toISOString()
   };
 
+  if (body.ownerAction === "save-sky-article-edition-revision") {
+    if (!existing || !["sky-article-edition", "sky-article-edition-revision"].includes(existing.event_type ?? "")) {
+      throw new Error("Article autosave is available only for compiled Sky article editions.");
+    }
+    const sections = isRecord(body.sections) ? body.sections : null;
+    const existingSections = isRecord(existing.sections) ? existing.sections : {};
+    const baseValue = existing.event_type === "sky-article-edition-revision"
+      ? existingSections.skyArticleRevisionBase
+      : existingSections.skyArticleEdition;
+    const { base, revised, changes } = await verifiedSkyArticleRevision(baseValue, sections?.skyArticleEdition);
+    const now = new Date().toISOString();
+    const targetRowId = existing.event_type === "sky-article-edition-revision"
+      ? stringFrom(existing.source_snapshot?.targetRowId)
+      : existing.id;
+    const targetContentKey = base.contentKey;
+    const revisionSnapshot = {
+      ...(isRecord(existing.source_snapshot) ? existing.source_snapshot : {}),
+      review_status: "needs_review",
+      ownerApproval: null,
+      targetRowId,
+      targetContentKey,
+      baseCompiledHash: base.compiledHash,
+      changedFields: changes.map(({ fieldId, label }) => ({ fieldId, label })),
+      savedAt: now
+    };
+    const revisionSections = {
+      skyArticleEdition: revised,
+      skyArticleRevisionBase: base
+    };
+    const revisionPatch = {
+      headline: revised.headline,
+      summary: revised.tldr,
+      body: revised.body,
+      sections: revisionSections,
+      status: "DRAFT",
+      lane: "reference",
+      review_state: "owner-review-required",
+      source_snapshot: revisionSnapshot,
+      updated_at: now,
+      published_at: null
+    };
+
+    if (existing.status !== "LIVE") {
+      return patchGeneratedContentRow(existing.id, revisionPatch);
+    }
+
+    return upsertGeneratedContentRow({
+      content_key: skyArticleRevisionContentKey(base.contentKey),
+      surface: "sky",
+      mode: "article",
+      event_type: "sky-article-edition-revision",
+      target_date: existing.target_date,
+      facts: existing.facts ?? {},
+      knowledge_ids: [],
+      block_type: "sky_article",
+      prompt_version: "sky-article-owner-field-revision-v1",
+      provider: "owner-edited-sky-article",
+      model: "manual",
+      reviewer_notes: "Owner field revision. Non-serving until Publish changes.",
+      ...revisionPatch
+    });
+  }
+
+  if (body.ownerAction === "publish-sky-article-edition-revision") {
+    if (!existing || existing.event_type !== "sky-article-edition-revision") {
+      throw new Error("Publish changes is available only for a saved Sky article revision.");
+    }
+    const sections = isRecord(existing.sections) ? existing.sections : {};
+    const { base, revised, changes } = await verifiedSkyArticleRevision(
+      sections.skyArticleRevisionBase,
+      sections.skyArticleEdition
+    );
+    const targetRowId = stringFrom(existing.source_snapshot?.targetRowId);
+    if (!targetRowId) throw new Error("Sky article revision is missing its live target row.");
+    const target = await fetchExistingRowById(targetRowId);
+    if (!target || target.event_type !== "sky-article-edition") {
+      throw new Error("The live Sky article targeted by this revision no longer exists.");
+    }
+    const current = assertCompiledSkyArticleEdition(target.sections?.skyArticleEdition);
+    if (current.compiledHash !== base.compiledHash) {
+      throw new Error("The live Sky article changed after this draft began. Reopen it before publishing.");
+    }
+    const now = new Date().toISOString();
+    const targetSnapshot = isRecord(target.source_snapshot) ? { ...target.source_snapshot } : {};
+    const history = Array.isArray(targetSnapshot.skyArticleRevisionHistory)
+      ? targetSnapshot.skyArticleRevisionHistory.slice()
+      : [];
+    history.push({
+      edition: current,
+      ownerApproval: targetSnapshot.ownerApproval ?? null,
+      replacedAt: now
+    });
+    const approvedSnapshot = skyArticleApprovalSnapshot(targetSnapshot, revised, now);
+    approvedSnapshot.skyArticleRevisionHistory = history;
+    approvedSnapshot.lastFieldRevision = {
+      changedFields: changes.map(({ fieldId, label }) => ({ fieldId, label })),
+      revisionRowId: existing.id,
+      publishedAt: now
+    };
+    const published = await patchGeneratedContentRow(target.id, {
+      headline: revised.headline,
+      summary: revised.tldr,
+      body: revised.body,
+      sections: { skyArticleEdition: revised },
+      source_snapshot: approvedSnapshot,
+      status: "LIVE",
+      lane: "serving",
+      review_state: null,
+      reviewed_at: now,
+      published_at: now,
+      updated_at: now
+    });
+    await patchGeneratedContentRow(existing.id, {
+      status: "ARCHIVED",
+      lane: "reference",
+      review_state: "published-revision",
+      updated_at: now
+    });
+    return published;
+  }
+
   if (body.ownerAction === "approve-and-schedule") {
     if (!existing || !["sky_aspect", "sky_placement"].includes(existing.block_type ?? "")) {
       throw new Error("Approve and schedule is available only for generated Sky aspect and placement rows.");
@@ -999,19 +1220,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new Error("The saved edition no longer matches its compiled record. Recompile it before approval.");
     }
     const now = new Date().toISOString();
-    const sourceSnapshot = isRecord(existing.source_snapshot) ? { ...existing.source_snapshot } : {};
-    sourceSnapshot.review_status = "approved";
-    sourceSnapshot.ownerApproval = {
-      approved: true,
-      action: "approve-sky-article-edition",
-      approvedAt: now,
-      source: "content-studio-explicit-action",
-      contentKey: existing.content_key,
-      templateKey: edition.templateKey,
-      templateHash: edition.templateHash,
-      fixedProseHash: edition.fixedProseHash,
-      compiledHash: edition.compiledHash
-    };
+    const sourceSnapshot = skyArticleApprovalSnapshot(existing.source_snapshot, edition, now);
     patch.status = "LIVE";
     patch.lane = "serving";
     patch.review_state = null;
