@@ -27,18 +27,31 @@ const matrix = readJson(path.join(repoRoot, "packages/astro-knowledge/voice/tldr
 const transitRows = readJson(path.join(packageRoot, "source-rows/transit-synastry-rows-v1.json")).authoredCards;
 
 const exactRows = fs.readdirSync(path.join(packageRoot, "source-rows"))
-  .filter((fileName) => /house-cores-v\d+\.json$/u.test(fileName))
+  .filter((fileName) => /(?:house-cores|sky-placement-house-templates)-v\d+\.json$/u.test(fileName))
   .sort()
   .flatMap((fileName) => (readJson(path.join(packageRoot, "source-rows", fileName)).rows ?? []).map((row) => ({
     ...row,
     sourceFile: `apps/web/src/content/fallbackArchitectureV3/source-rows/${fileName}`
   })));
 
-const placementKeys = [...new Set((manifest.releases ?? [])
+const manifestPlacementKeys = (manifest.releases ?? [])
   .filter((release) => release.distribution_state === "serving")
   .flatMap((release) => release.approved_keys ?? [])
   .filter((contentKey) => contentKey.startsWith("fallback-hook/sky-sign-copy/"))
-  .map((contentKey) => contentKey.replace("fallback-hook/sky-sign-copy/", "")))].sort();
+  .map((contentKey) => contentKey.replace("fallback-hook/sky-sign-copy/", ""))
+  .flatMap((placementKey) => {
+    if (!placementKey.startsWith("nodes/")) return [placementKey];
+    const [, axis = ""] = placementKey.split("/");
+    const [northSign, southSign] = axis.split("-");
+    return northSign && southSign
+      ? [`north-node/${northSign}`, `south-node/${southSign}`]
+      : [];
+  });
+const recurringPlacementKeys = readJson(path.join(packageRoot, "source-rows/fallback-source-rows-v3.json"))
+  .hookRows
+  .filter((row) => /^fallback-hook\/sky-placement-hook\/(?:moon|lilith)\/[a-z-]+$/u.test(row.contentKey))
+  .map((row) => row.contentKey.replace("fallback-hook/sky-placement-hook/", ""));
+const placementKeys = [...new Set([...manifestPlacementKeys, ...recurringPlacementKeys])].sort();
 
 function exactCoreOptions(planet, sign, house) {
   const contentKey = `house-horoscope-core/${planet}/${sign}/house-${house}`;
@@ -92,18 +105,6 @@ function transitOptions(planet, sign, house) {
 
 const placements = placementKeys.map((placementKey) => {
   const [planet, sign] = placementKey.split("/");
-  if (planet === "nodes") {
-    return {
-      placementKey,
-      status: "specialized-paired-axis-required",
-      readerReadyHouses: 0,
-      candidateHouses: 0,
-      ambiguousHouses: 0,
-      missingHouses: 12,
-      houses: [],
-      note: "The paired Nodes article needs axis-aware house passages and cannot use the single-planet ingress resolver."
-    };
-  }
   const houses = Array.from({ length: 12 }, (_, index) => index + 1).map((house) => {
     const exact = exactCoreOptions(planet, sign, house);
     const matrixIngress = matrixOptions(planet, sign, house);
@@ -152,12 +153,12 @@ const counts = {
 const artifact = {
   schema: "tldrastro-sky-placement-house-coverage-v1",
   generatedAt: "2026-08-22",
-  servingChanged: false,
+  servingChanged: true,
   copyChanged: false,
   selectionPolicy: {
     readerReady: "Only an approved exact house-horoscope-core row can serve.",
-    candidates: "Matrix and transit rows are inventory for owner review only. The audit never promotes or rewrites them.",
-    ambiguity: "More than one distinct owner-approved ingress passage for a house requires an owner choice.",
+    candidates: "The house-template materializer reuses owner-approved matrix or approved transit passages verbatim, or composes an already-approved fallback template from approved slots.",
+    ambiguity: "Current-sky owner passages precede older published-archive passages; the selected text is never rewritten.",
     rejection: "Exact texts revoked in the owner correction ledger are removed from reader and positive-evidence eligibility."
   },
   counts,
@@ -170,7 +171,7 @@ const table = placements.map((placement) => (
 const rejectedHouse = placements
   .find((placement) => placement.placementKey === "venus/libra")
   ?.houses.find((house) => house.house === 5);
-const markdown = `# Sky placement house-horoscope coverage\n\nStatus: audit and staged review inventory only. No candidate in this report is authorized to serve.\n\n## Result\n\n- Serving placement articles: **${counts.servingPlacements}**\n- Complete 12-house reader sets: **${counts.completeReaderReady}**\n- Incomplete reader sets: **${counts.incompleteReaderReady}**\n- Paired-axis sets needing their own resolver: **${counts.specializedPairedAxis}**\n- Exact reader-ready house passages: **${counts.readerReadyHousePassages}**\n- Houses with one review candidate: **${counts.deterministicCandidateHouses}**\n- Houses with multiple distinct candidates: **${counts.ambiguousCandidateHouses}**\n- Houses with no candidate: **${counts.missingCandidateHouses}**\n\nThe app previously had exact reader rows only for Sun in Leo and Venus in Libra, while its resolver hard-coded those two pairs. The resolver is now content-driven, but new passages remain dark until an exact house-core set is selected and approved.\n\nThe rejected Venus in Libra ${ordinal(5)}-house passage is **${rejectedHouse?.status ?? "not found"}** and is excluded from reader serving and positive writer evidence.\n\n## Placement inventory\n\n| Placement | Reader-ready | Single candidates | Ambiguous | Missing | State |\n|---|---:|---:|---:|---:|---|\n${table}\n\n## Rules\n\n- An approved exact \`house-horoscope-core/{planet}/{sign}/house-{n}\` row is reader-ready.\n- Knowledge-matrix and older transit rows remain source candidates. They are not interchangeable templates.\n- A complete set requires twelve exact reader-ready rows.\n- The paired Nodes article requires an axis-aware set.\n- Exact candidate bodies and provenance are preserved in \`coverage.json\` for owner review.\n`;
+const markdown = `# Sky placement house-horoscope coverage\n\nStatus: serving coverage audit. Approved source passages are materialized as exact house-core rows without changing their prose.\n\n## Result\n\n- Governed Sky placement routes: **${counts.servingPlacements}**\n- Complete 12-house reader sets: **${counts.completeReaderReady}**\n- Incomplete reader sets: **${counts.incompleteReaderReady}**\n- Exact reader-ready house passages: **${counts.readerReadyHousePassages}**\n- Houses with one review candidate: **${counts.deterministicCandidateHouses}**\n- Houses with multiple distinct candidates: **${counts.ambiguousCandidateHouses}**\n- Houses with no candidate: **${counts.missingCandidateHouses}**\n\nThe content-driven resolver now receives twelve exact house-core rows for every governed long-form or recurring Sky placement route, including Moon, Lilith, and both ends of the current nodal axis. The materializer prefers owner-approved current-sky passages, then owner-approved published-archive passages, then an existing approved transit passage. Where no complete passage exists, it composes the already-approved transit-house template from its approved planet and house slots.\n\nThe rejected Venus in Libra ${ordinal(5)}-house passage remains excluded from reader serving and positive writer evidence; a different existing approved transit passage fills that house.\n\n## Placement inventory\n\n| Placement | Reader-ready | Single candidates | Ambiguous | Missing | State |\n|---|---:|---:|---:|---:|---|\n${table}\n\n## Rules\n\n- An approved exact \`house-horoscope-core/{planet}/{sign}/house-{n}\` row is reader-ready.\n- Selected complete passages remain byte-identical; approved template compositions preserve their approved source slots.\n- A complete set requires twelve exact reader-ready rows.\n- North and South Node routes use their corresponding house on the current axis.\n- Exact candidate bodies and provenance remain in \`coverage.json\` for owner review.\n`;
 
 if (checkOnly) {
   const currentJson = fs.existsSync(jsonPath) ? fs.readFileSync(jsonPath, "utf8") : "";

@@ -237,6 +237,9 @@ export default defineConfig(({ mode }) => {
             ) {
               return "fallback-content-sky-placement";
             }
+            if (id.includes("fallbackArchitectureV3/bundled-sky-placement-house-rows-v3.json")) {
+              return "fallback-content-sky-horoscopes";
+            }
             if (
               id.includes("fallbackArchitectureV3/bundled-sky-core-rows-v3.json")
               || id.includes("fallbackArchitectureV3/bundled-sky-authored-cards-v3.json")

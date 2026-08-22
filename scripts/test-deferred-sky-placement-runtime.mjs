@@ -35,6 +35,10 @@ const placementRows = JSON.parse(fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json"),
   "utf8"
 ));
+const placementHouseRows = JSON.parse(fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-house-rows-v3.json"),
+  "utf8"
+));
 const placementManifest = JSON.parse(fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json"),
   "utf8"
@@ -75,7 +79,11 @@ assert.equal(
   0,
   "The deferred placement partition must not revive retired Try this rows."
 );
-assert.equal(placementManifest.keyCount, placementRows.hookRows.length);
+assert.equal(
+  placementManifest.keyCount,
+  placementRows.hookRows.length + placementHouseRows.hookRows.length,
+  "The deferred placement manifest must cover both on-demand placement chunks."
+);
 
 const before = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(facts);
 assert.equal(before.templateKey, "sky-placement-standalone-hook-v1");
@@ -93,6 +101,19 @@ const concurrentLoads = await Promise.all([
 ]);
 assert.deepEqual(concurrentLoads, [true, true], "Concurrent route requests must share the same placement load.");
 assert.equal(runtime.isSkyPlacementFallbackArchitectureV3BundleLoaded(), true);
+
+for (let house = 1; house <= 12; house += 1) {
+  const renderedHouse = runtime.transitSynastryFallbackRendererV3.renderSkyPlacementHouseCore({
+    planet: "uranus",
+    sign: "gemini",
+    house
+  });
+  assert.match(
+    renderedHouse.body,
+    new RegExp(`Uranus in Gemini moves through your ${house}(?:st|nd|rd|th) house`, "u"),
+    `The deferred reader bundle must preserve the Uranus in Gemini house ${house} runtime contract.`
+  );
+}
 
 const after = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(facts);
 assert.equal(after.templateKey, "sky-placement-continuous-v2");

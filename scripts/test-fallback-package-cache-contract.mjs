@@ -19,7 +19,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-22b");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-22c");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
@@ -103,6 +103,14 @@ const skyArticleRows = readJson(`${packageDir}/source-rows/sky-article-v1.json`)
 const skyAspectPhrasebook = readJson(`${packageDir}/source-rows/sky-aspect-phrasebook-v1.json`);
 const skyPlacementVoicePass = readJson(`${packageDir}/source-rows/sky-placement-inventories-voice-pass-v1.json`);
 const skyPlacementOwnerApprovedFallbacks = readJson(`${packageDir}/bundled-sky-placement-owner-approved-reader-v1.json`);
+const skyPlacementHouseTemplates = readJson(`${packageDir}/source-rows/sky-placement-house-templates-v1.json`);
+const skyPlacementHouseTemplateReaderRows = skyPlacementHouseTemplates.rows.map((row) => ({
+  contentKey: row.contentKey,
+  content_role: row.content_role,
+  grammar_frame: row.grammar_frame,
+  body_you: row.body_you,
+  review_status: row.review_status
+}));
 const sunLeoHouseCores = readJson(`${packageDir}/source-rows/sun-leo-house-cores-v1.json`);
 const sunLeoHouseCoreReaderRows = sunLeoHouseCores.rows.map(({
   notes: _notes,
@@ -174,6 +182,7 @@ const expectedManifest = createPackageManifest({
       ...skyPlacementVoicePass.rows,
       ...skySignCopyRows,
       ...skyPlacementOwnerApprovedFallbacks.rows,
+      ...skyPlacementHouseTemplateReaderRows,
       ...sunLeoHouseCoreReaderRows,
       ...venusLibraHouseCoreReaderRows
     ]),
@@ -203,6 +212,7 @@ const skyPlacementRows = latestEligible([
   ...skyPlacementVoicePass.rows,
   ...skySignCopyRows,
   ...skyPlacementOwnerApprovedFallbacks.rows,
+  ...skyPlacementHouseTemplateReaderRows,
   ...sunLeoHouseCoreReaderRows,
   ...venusLibraHouseCoreReaderRows
 ]).filter((row) => isGovernedReaderEligible(row));
