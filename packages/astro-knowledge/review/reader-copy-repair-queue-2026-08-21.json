@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "reviewSet": "reader-copy-repair-queue-2026-08-21",
+  "status": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "servingPolicy": "facts-remain-visible; exact-approved-copy-wins; reviewed-legacy-copy-may-serve-only-in-an-explicit-continuity-tier",
+  "note": "This is a repair queue, not wording authority. It contains no newly invented astrology prose.",
+  "containment": {
+    "exactOwnerApprovedTransitRowsServing": 24,
+    "legacyReviewedTransitRowsServing": 1564,
+    "calendarWeeklyMoonLegacyRowsServing": 36,
+    "dailyGlanceLegacyRowsServing": 136,
+    "exactSynastryConjunctionRowsServing": 55,
+    "approvedGroupedSynastryRowsServing": 110,
+    "legacyReviewedSynastryRowsServing": 318,
+    "synastryRowsQuarantined": 0,
+    "synastryContainmentNote": "Exact rows win. Owner-approved hard/soft rows serve as labeled grouped fallbacks, and reviewed legacy rows remain in a labeled continuity tier while exact square, opposition, trine, and sextile copy is completed.",
+    "sunVirgoCurrentContractFailureQuarantined": true
+  },
+  "skyAspectGaps": [
+    {
+      "contentKey": "fallback-hook/sky-aspect-exact/mercury/trine/lilith",
+      "facts": { "first": "mercury", "aspect": "trine", "second": "lilith" },
+      "status": "missing_copy"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-exact/sun/trine/chiron",
+      "facts": { "first": "sun", "aspect": "trine", "second": "chiron" },
+      "status": "missing_copy"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-exact/sun/trine/lilith",
+      "facts": { "first": "sun", "aspect": "trine", "second": "lilith" },
+      "status": "missing_copy"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-exact/sun/opposition/north-node",
+      "facts": { "first": "sun", "aspect": "opposition", "second": "north-node" },
+      "status": "missing_copy"
+    }
+  ],
+  "natalAspectServingRepair": {
+    "problem": "Exact-owner-approved natal aspect rows used fallback-hook keys, while the page adapter only accepted authored/ keys; an interim fail-closed change also hid reviewed non-exact coverage.",
+    "resolution": "Exact natal-aspect-lived rows now win and are labeled exact owner-approved. Reviewed generic aspect and dual-voice composed rows remain available only as a labeled legacy continuity tier.",
+    "expectedRecoveredCurrentCards": 5,
+    "newCopyAdded": 0
+  },
+  "sunVirgo": {
+    "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
+    "candidateRecord": "packages/astro-knowledge/review/sun-virgo-spine-rewrite-v1/candidate.json",
+    "status": "needs_review",
+    "ownerApproved": false,
+    "promotionAuthorized": false
+  },
+  "nextOwnerDecisions": [
+    "Approve or line-edit the Sun in Virgo candidate.",
+    "Approve replacement Calendar Moon rows in collective register; legacy approved-reuse rows remain visible until then.",
+    "Approve exact square, opposition, trine, and sextile Synastry families progressively; grouped and legacy rows remain visibly classified fallbacks until each exact row exists.",
+    "Approve exact copy for the four listed Sky aspect gaps."
+  ]
+}
