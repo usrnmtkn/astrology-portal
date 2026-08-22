@@ -7,6 +7,11 @@ import {
 import type { LocationInput, PlanetPosition, SkySnapshot } from "../types";
 import { isEligibleTransitReturn } from "./transitReturns";
 import type { LunarCalendarEvent } from "./ephemeris";
+import {
+  cmsSurfaceKeys,
+  resolveCmsSurfaceOverride,
+  type CmsGeneratedContentMap
+} from "../content/cmsSurfaceOverrides";
 
 export type WeeklyHoroscopeWeekType =
   | "eclipse"
@@ -1272,6 +1277,7 @@ export async function buildWeeklyHoroscope({
   location,
   now = new Date(),
   dailyServedUnitsByDate = {},
+  generatedContent,
   rows = sourceRows
 }: {
   userId: string;
@@ -1280,6 +1286,7 @@ export async function buildWeeklyHoroscope({
   location: LocationInput;
   now?: Date;
   dailyServedUnitsByDate?: Record<string, string[]>;
+  generatedContent?: CmsGeneratedContentMap;
   rows?: WeeklySourceRow[];
 }): Promise<WeeklyHoroscopeAssembly> {
   const timeZone = location.timeZone || "UTC";
@@ -1463,6 +1470,25 @@ export async function buildWeeklyHoroscope({
     sections = sections.map((section, index) => ({ ...section, accented: index === accentIndex }));
   }
 
+  sections = sections.map((section) => {
+    const override = resolveCmsSurfaceOverride(
+      generatedContent,
+      cmsSurfaceKeys.weeklySection(section.source, risingSign),
+      {
+        risingSign,
+        date: section.dateKey ?? "",
+        day: section.dayLabel,
+        driver: section.driverLabel,
+        timing: section.timing ?? "",
+        house: section.house ?? "",
+        houseOrdinal: section.house ? `${section.house}${section.house === 1 ? "st" : section.house === 2 ? "nd" : section.house === 3 ? "rd" : "th"}` : ""
+      }
+    );
+    return override
+      ? { ...section, headline: override.headline || section.headline, body: override.body }
+      : section;
+  });
+
   const macroEvent = events.find(isPrincipalLunation);
   let macro: WeeklyHoroscopeAssembly["macro"];
   if (macroEvent) {
@@ -1471,9 +1497,14 @@ export async function buildWeeklyHoroscope({
         kind: lunationKind(macroEvent),
         sign: normalizeId(macroEvent.sign ?? "")
       });
+      const override = resolveCmsSurfaceOverride(
+        generatedContent,
+        cmsSurfaceKeys.weeklySection("macro", risingSign),
+        { risingSign, weekStart: window.weekStart, weekEnd: window.weekEnd }
+      );
       macro = {
-        headline: rendered.headline,
-        body: rendered.body
+        headline: override?.headline || rendered.headline,
+        body: override?.body || rendered.body
       };
     } catch (error) {
       if (!(error instanceof SourceGapError)) throw error;

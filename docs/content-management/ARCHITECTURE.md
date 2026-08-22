@@ -332,6 +332,21 @@ Important consequences:
 `generated_interpretations` stores more than the V3 mirror. Some surfaces look
 up exact live rows by content key before using package or knowledge fallback.
 
+The reserved `cms/` key family supplies owner-authored surface overrides for
+copy that otherwise comes from local assembly. Each call site requests the
+most-specific key first and then a documented surface template. Template rows
+may interpolate only the fact slots declared by that surface's Admin starter.
+These rows use the generic reader boundary rather than the package mirror, so
+an explicitly signed-off `LIVE` + `serving` row can take effect without a code
+deployment. The package or local renderer remains the fail-safe floor when an
+override is missing, held, incomplete, or unsafe.
+
+Content Studio sends a same-origin update signal after save, publish, demotion,
+or approval. Open reader tabs clear targeted and shared content caches and load
+the current reader-eligible rows again. This refresh signal changes hydration
+only; it does not bypass status, lane, review, safety, or package-distribution
+gates.
+
 The reader boundary in `generatedContent.ts` rejects:
 
 - non-live serving rows where live state is required;
