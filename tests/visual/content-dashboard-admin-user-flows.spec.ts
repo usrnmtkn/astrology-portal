@@ -1334,7 +1334,39 @@ test.describe("content dashboard admin user flow case studies", () => {
 
   test("generated placement candidates identify the owner-approved article that replaces them", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
-    await seedAdminApi(page);
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    const servingArticle = {
+      ...generatedContentRows[0],
+      id: "qa-jupiter-leo-serving-article",
+      content_key: "fallback-hook/sky-sign-copy/jupiter/leo",
+      headline: "Jupiter in Leo",
+      body: "Jupiter enters Leo on {{entryDate}}.\n\nAttention can become the measure.\n\nBefore {{exitDate}}, choose the work.",
+      facts: { fallbackArchitectureV3: true, review_status: "approved" },
+      provider: "tldrastro-fallback-architecture-v3",
+      source_snapshot: {
+        sourcePackage: "tldrastro-fallback-architecture-v3",
+        review_status: "approved"
+      },
+      sections: {
+        packageRecord: {
+          contentKey: "fallback-hook/sky-sign-copy/jupiter/leo",
+          content_role: "fallback_hook",
+          grammar_frame: "continuous_editorial_unit",
+          render_policy: "sky-placement-continuous-v2",
+          fact_line: "{{entryDate}} to {{exitDate}}",
+          aspect_insert: "{{aspectInsert}}",
+          opening: "Jupiter enters Leo on {{entryDate}}.",
+          tension: "Attention can become the measure.",
+          development: "The work can keep its own shape.",
+          close: "Before {{exitDate}}, choose the work.",
+          review_status: "approved"
+        }
+      }
+    };
+    await seedAdminApi(page, {
+      generatedRows: [servingArticle, ...generatedContentRows.slice(1)],
+      onGeneratedContentWrite: (write) => writes.push(write)
+    });
     await expectAdminRouteLoads(page, "/admin/content#review-queue");
 
     await page.getByRole("button", { name: /Upcoming 90 days/ }).click();
@@ -1342,6 +1374,26 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await expect(candidate.getByText("Not serving — replaced by owner-approved article", { exact: true })).toBeVisible();
     await expect(candidate.getByText("fallback-hook/sky-sign-copy/jupiter/leo", { exact: true })).toBeVisible();
+    await candidate.getByRole("button", { name: "Edit serving article" }).click();
+
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByRole("region", { name: "Sky Placement article workspace" })).toBeVisible();
+    await expect(editor.getByRole("region", { name: "Rendered fallback preview" })).toContainText("Jupiter enters Leo");
+    await expect(editor.getByLabel("Fallback field Opening")).toHaveValue("Jupiter enters Leo on {{entryDate}}.");
+    await expect(editor.getByLabel("Insert variable in Opening")).toContainText("{{exitDate}}");
+    await expect(editor.getByText("Package renderer")).toHaveCount(0);
+    await editor.getByLabel("Fallback field Development").fill("The work keeps its own shape.");
+    await expect(editor.getByRole("region", { name: "Review fallback changes" })).toContainText("The work keeps its own shape.");
+    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(1);
+    expect(writes[0].payload).toMatchObject({
+      id: "qa-jupiter-leo-serving-article",
+      reviewStatus: "needs_review",
+      sections: {
+        packageRecord: { development: "The work can keep its own shape.", review_status: "approved" },
+        packageDraft: { development: "The work keeps its own shape.", review_status: "approved" }
+      }
+    });
     await assertNoBrowserErrors();
   });
 

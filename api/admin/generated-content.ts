@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import fs from "node:fs";
 import path from "node:path";
-import { URL } from "node:url";
+import { fileURLToPath, URL } from "node:url";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import {
   assertCompiledSkyArticleEdition,
@@ -158,7 +158,10 @@ function normalizedGeneratedContentBlockType(blockType: unknown, surface?: Gener
 function contentRoleContract() {
   if (contentRoleContractCache) return contentRoleContractCache;
 
-  const contractPath = path.join(process.cwd(), "apps/web/src/content/fallbackArchitectureV3/contracts/CONTENT-ROLE-CONTRACT.json");
+  const contractPath = path.resolve(
+    path.dirname(fileURLToPath(import.meta.url)),
+    "../../apps/web/src/content/fallbackArchitectureV3/contracts/CONTENT-ROLE-CONTRACT.json"
+  );
   contentRoleContractCache = JSON.parse(fs.readFileSync(contractPath, "utf8")) as { styleRules?: { bannedWords?: string[] } };
   return contentRoleContractCache;
 }
@@ -208,6 +211,22 @@ function packagePlaceholders(value: unknown) {
   return new Set(matches.map((match) => match.replace(/\s+/g, "")));
 }
 
+function packageStringFields(value: unknown, prefix = ""): Array<[string, string]> {
+  if (typeof value === "string") return [[prefix, value]];
+  if (!isRecord(value)) return [];
+  return Object.entries(value).flatMap(([key, child]) => packageStringFields(child, prefix ? `${prefix}.${key}` : key));
+}
+
+function packageValueAt(value: unknown, path: string) {
+  return path.split(".").reduce<unknown>((current, part) => isRecord(current) ? current[part] : undefined, value);
+}
+
+function isEditablePackageCopyPath(path: string) {
+  return ["fact_line", "opening", "tension", "development", "close", "body", "body_you", "body_they"]
+    .includes(path)
+    || path.startsWith("era_layer.");
+}
+
 function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, patch: Record<string, unknown>) {
   const record = v3PackageRecord(row);
   const bannedWords = contentRoleContract().styleRules?.bannedWords ?? [];
@@ -219,6 +238,17 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
   const sections = isRecord(patch.sections) ? patch.sections : {};
   editableFields.push(["body_you", sections.body_you, record.body_you]);
   editableFields.push(["body_they", sections.body_they, record.body_they]);
+  const packageDraft = isRecord(sections.packageDraft) ? sections.packageDraft : null;
+  if (packageDraft) {
+    for (const [field, value] of packageStringFields(packageDraft).filter(([field]) => isEditablePackageCopyPath(field))) {
+      editableFields.push([`packageDraft.${field}`, value, packageValueAt(record, field)]);
+    }
+    for (const field of ["contentKey", "content_role", "grammar_frame", "render_policy"]) {
+      if (packageDraft[field] !== record[field]) {
+        throw new Error(`Package proposals cannot change ${field}.`);
+      }
+    }
+  }
 
   for (const [field, value, original] of editableFields) {
     if (typeof value !== "string") continue;
@@ -284,7 +314,10 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   const packageOriginalRecord = isRecord(storedSections.packageOriginalRecord)
     ? { ...storedSections.packageOriginalRecord }
     : { ...record };
-  const reviewStatus = packageReviewStatus(row, body.reviewStatus || stringFrom(sourceSnapshot.review_status));
+  const hasPackageDraft = isRecord(sections.packageDraft);
+  const reviewStatus = hasPackageDraft
+    ? "needs_review"
+    : packageReviewStatus(row, body.reviewStatus || stringFrom(sourceSnapshot.review_status));
 
   if (!fallbackArchitectureV3ReviewStatuses.has(reviewStatus)) {
     throw new Error("review_status must be needs_review, approved, or approved_reuse.");
@@ -374,7 +407,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   sections.body_you = record.body_you ?? null;
   sections.body_they = record.body_they ?? null;
 
-  record.review_status = reviewStatus;
+  if (!hasPackageDraft) record.review_status = reviewStatus;
   if (typeof body.editorialNotes === "string") {
     record.editorial_notes = body.editorialNotes;
   }

@@ -44,6 +44,13 @@ import {
   ownerApprovedReplacementLabel,
   ownerApprovedSkyPlacementArticleKey
 } from "./skyPlacementServingStatus";
+import {
+  effectivePackageRecord,
+  packageDraftChanges,
+  renderWorkspacePreview,
+  setPackageValueAt,
+  skyFallbackWorkspace
+} from "./skyFallbackWorkspace";
 import type {
   WritingSurfaceAdminAccess,
   WritingSurfaceMapItem,
@@ -1840,6 +1847,7 @@ export function GeneratedContentAdminDashboard() {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [skyWriteupParentId, setSkyWriteupParentId] = useState<string | null>(null);
   const [skyRelatedAspectQuery, setSkyRelatedAspectQuery] = useState("");
+  const [skyFallbackPreviewFacts, setSkyFallbackPreviewFacts] = useState<Record<string, string>>({});
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
@@ -2970,6 +2978,7 @@ export function GeneratedContentAdminDashboard() {
     setDraft(nextDraft);
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
+    setSkyFallbackPreviewFacts({});
     skyArticleAutosaveSequenceRef.current += 1;
     setSkyArticleEditor(edition && baseEdition ? {
       baseEdition,
@@ -2989,6 +2998,30 @@ export function GeneratedContentAdminDashboard() {
       saveState: "idle",
       workspaceId: null
     } : null);
+  }
+
+  async function openServingFallbackRow(contentKey: string, occurrence: SkyReviewHorizonOccurrence) {
+    setIsLoading(true);
+    try {
+      const existing = rows.find((row) => row.content_key === contentKey);
+      const row = existing ?? (await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?status=all&contentKey=${encodeURIComponent(contentKey)}&limit=1`,
+        secret
+      )).rows?.find((candidate) => candidate.content_key === contentKey);
+      if (!row) throw new Error(`The serving source ${contentKey} is not materialized in Content Studio.`);
+      if (!existing) setRows((current) => [row, ...current]);
+      openRow(row);
+      setSkyFallbackPreviewFacts({
+        ...occurrence.facts,
+        entryDate: occurrence.windows[0]?.startDate ?? "",
+        exitDate: occurrence.windows.at(-1)?.endDate ?? ""
+      });
+      setMessage(`Opened the reader source for ${occurrence.label}. Changes remain non-serving until separately approved and landed.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not open the serving fallback row.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function openMissingSkyDraft(occurrence: SkyReviewHorizonOccurrence) {
@@ -3443,6 +3476,7 @@ export function GeneratedContentAdminDashboard() {
       .map((row) => {
         const record = rowPackageRecord(row);
         const sections = objectRecord(row.sections) ?? {};
+        const packageDraft = objectRecord(sections.packageDraft);
         const current = {
           contentKey: row.content_key,
           headline: row.headline ?? "",
@@ -3451,7 +3485,10 @@ export function GeneratedContentAdminDashboard() {
           body_you: typeof sections.body_you === "string" ? sections.body_you : null,
           body_they: typeof sections.body_they === "string" ? sections.body_they : null,
           review_status: sourceSnapshotString(row.source_snapshot, "review_status") || String(record.review_status ?? ""),
-          editorial_notes: typeof record.editorial_notes === "string" ? record.editorial_notes : ""
+          editorial_notes: typeof record.editorial_notes === "string" ? record.editorial_notes : "",
+          package_original: packageDraft ? record : null,
+          proposed_record: packageDraft,
+          structured_changes: packageDraft ? packageDraftChanges(sections) : []
         };
         const original = {
           headline: typeof record.headline === "string" ? record.headline : "",
@@ -3460,7 +3497,10 @@ export function GeneratedContentAdminDashboard() {
           body_you: typeof record.body_you === "string" ? record.body_you : null,
           body_they: typeof record.body_they === "string" ? record.body_they : null,
           review_status: typeof record.review_status === "string" ? record.review_status : "",
-          editorial_notes: typeof record.editorial_notes === "string" ? record.editorial_notes : ""
+          editorial_notes: typeof record.editorial_notes === "string" ? record.editorial_notes : "",
+          package_original: null,
+          proposed_record: null,
+          structured_changes: []
         };
         return {
           current,
@@ -4753,6 +4793,11 @@ export function GeneratedContentAdminDashboard() {
                 </dl>
                 <div className="admin-sky-voice-body">{row?.body || "No saved draft exists yet. Create a manual draft to write this card, or run the separately authorized generation job."}</div>
                 <div className="admin-review-queue-actions">
+                  {ownerApprovedArticleKey ? (
+                    <button type="button" onClick={() => void openServingFallbackRow(ownerApprovedArticleKey, occurrence)} disabled={isLoading}>
+                      Edit serving article
+                    </button>
+                  ) : null}
                   {row ? <button type="button" onClick={() => openRow(row)}>Edit</button> : null}
                   {!row ? <button type="button" onClick={() => openMissingSkyDraft(occurrence)}>Create draft</button> : null}
                   {canApprove ? <button type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>Approve &amp; schedule</button> : null}
@@ -4796,6 +4841,12 @@ export function GeneratedContentAdminDashboard() {
       || fallbackHookReviewStatusForDraft(currentDraft);
     const packageReviewStatus = packageReviewStatusForDraft(currentDraft);
     const packageRecord = draftPackageRecord(currentDraft);
+    const skyFallbackEditor = skyFallbackWorkspace(currentDraft.contentKey, currentDraft.sections);
+    const effectiveSkyFallback = effectivePackageRecord(currentDraft.sections);
+    const skyFallbackChanges = packageDraftChanges(currentDraft.sections);
+    const skyFallbackPreview = skyFallbackEditor
+      ? renderWorkspacePreview(skyFallbackEditor.fields, skyFallbackPreviewFacts)
+      : [];
     const packageRole = typeof packageRecord.content_role === "string" ? packageRecord.content_role : "";
     const isContinuousSkyPackage = isPackageDraft && packageRecord.render_policy === "sky-placement-continuous-v2";
     const showPackageBodyYou = isPackageDraft && !isContinuousSkyPackage && ("body_you" in packageRecord || "body_you" in (currentDraft.sections ?? {}));
@@ -4934,6 +4985,52 @@ export function GeneratedContentAdminDashboard() {
         }
       });
     };
+    const updateSkyFallbackField = (field: string, value: string) => {
+      const sections = objectRecord(currentDraft.sections) ?? {};
+      const original = objectRecord(sections.packageRecord) ?? {};
+      const currentPackageDraft = Object.keys(objectRecord(sections.packageDraft) ?? {}).length
+        ? objectRecord(sections.packageDraft) ?? {}
+        : structuredClone(original);
+      setDraft({
+        ...currentDraft,
+        sections: {
+          ...sections,
+          packageDraft: setPackageValueAt(currentPackageDraft, field, value)
+        },
+        sourceSnapshot: {
+          ...(currentDraft.sourceSnapshot ?? {}),
+          review_status: "needs_review"
+        },
+        facts: {
+          ...(currentDraft.facts ?? {}),
+          review_status: "needs_review"
+        }
+      });
+    };
+    const discardSkyFallbackProposal = () => {
+      const sections = objectRecord(currentDraft.sections) ?? {};
+      const { packageDraft: _discarded, ...withoutDraft } = sections;
+      setDraft({ ...currentDraft, sections: withoutDraft });
+    };
+    const exportSkyFallbackProposal = () => {
+      const sections = objectRecord(currentDraft.sections) ?? {};
+      const payload = {
+        schema: "tldrastro-fallback-architecture-v3-dashboard-edit-v2",
+        exportedAt: new Date().toISOString(),
+        contentKey: currentDraft.contentKey,
+        packageOriginal: objectRecord(sections.packageRecord),
+        proposedRecord: objectRecord(sections.packageDraft),
+        changes: packageDraftChanges(sections)
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const href = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = href;
+      link.download = `${currentDraft.contentKey.replace(/[^a-z0-9]+/giu, "-")}-proposal.json`;
+      link.click();
+      URL.revokeObjectURL(href);
+      setMessage(`Exported the ${currentDraft.contentKey} proposal with its package original and field diff.`);
+    };
     const revertPackageDraft = () => {
       const original = draftPackageOriginalRecord(currentDraft);
       setDraft({
@@ -5044,6 +5141,95 @@ export function GeneratedContentAdminDashboard() {
               <p><strong>Reader rule:</strong> this text can support the fallback system, but it cannot appear as a standalone authored write-up.</p>
             )}
           </section>
+          {skyFallbackEditor && (
+            <section className="admin-fallback-diagnostic-panel" aria-label={skyFallbackEditor.title}>
+              <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
+                <div>
+                  <p className="admin-eyebrow">Reader source workspace</p>
+                  <h3>{skyFallbackEditor.title}</h3>
+                  <p>See the complete reader copy, its calculated variables, related passages, and every proposed change in one place.</p>
+                </div>
+                <dl className="admin-hook-pattern-list">
+                  <div><dt>Serving key</dt><dd><code>{currentDraft.contentKey}</code></dd></div>
+                  <div><dt>Render policy</dt><dd>{String(effectiveSkyFallback.render_policy ?? "Package renderer")}</dd></div>
+                  <div><dt>Current approval</dt><dd>{String(packageRecord.review_status ?? packageReviewStatus)}</dd></div>
+                  <div><dt>Proposal</dt><dd>{skyFallbackChanges.length ? `${skyFallbackChanges.length} changed field${skyFallbackChanges.length === 1 ? "" : "s"}` : "No changes"}</dd></div>
+                </dl>
+              </header>
+
+              <div className="admin-editor-guidance" role="note">
+                <strong>Safe editing boundary</strong>
+                <p>The package original remains immutable. Saving here creates a non-serving proposal with <code>needs_review</code> status. It does not change the app until the exact diff is owner-approved, landed in source, regenerated, and deployed.</p>
+              </div>
+
+              <section className="admin-hook-detail-section admin-copy-preview" aria-label="Rendered fallback preview">
+                <p className="admin-eyebrow">Reader preview</p>
+                <h3>{currentDraft.headline || titleFromKey(currentDraft.contentKey)}</h3>
+                {skyFallbackEditor.fields.find((field) => field.key === "fact_line") ? (
+                  <p className="admin-field-hint">{renderWorkspacePreview(
+                    [{ ...skyFallbackEditor.fields.find((field) => field.key === "fact_line")!, key: "date_line" }],
+                    skyFallbackPreviewFacts
+                  )[0] ?? skyFallbackEditor.fields.find((field) => field.key === "fact_line")?.value}</p>
+                ) : null}
+                {skyFallbackPreview.map((paragraph, index) => <p key={`${index}-${paragraph.slice(0, 24)}`}>{paragraph}</p>)}
+                {skyFallbackEditor.variables.some((variable) => !skyFallbackPreviewFacts[variable]) && (
+                  <small className="admin-field-hint">Unfilled tokens remain visible until this workspace is opened from a calculated Sky occurrence.</small>
+                )}
+              </section>
+
+              <section className="admin-sky-edition-fields" aria-label="Editable fallback fields">
+                <header>
+                  <p className="admin-eyebrow">Editable copy</p>
+                  <h3>Article and aspect fields</h3>
+                </header>
+                {skyFallbackEditor.fields.map((field) => (
+                  <label className="admin-review-copy-editor" key={field.key}>
+                    <span>{field.label}</span>
+                    <textarea
+                      aria-label={`Fallback field ${field.label}`}
+                      value={field.value}
+                      onChange={(event) => updateSkyFallbackField(field.key, event.target.value)}
+                    />
+                    {skyFallbackEditor.variables.length > 0 && (
+                      <select
+                        aria-label={`Insert variable in ${field.label}`}
+                        value=""
+                        onChange={(event) => {
+                          if (!event.target.value) return;
+                          const spacer = field.value && !/\s$/u.test(field.value) ? " " : "";
+                          updateSkyFallbackField(field.key, `${field.value}${spacer}{{${event.target.value}}}`);
+                        }}
+                      >
+                        <option value="">Insert calculated variable…</option>
+                        {skyFallbackEditor.variables.map((variable) => <option key={variable} value={variable}>{`{{${variable}}}`}</option>)}
+                      </select>
+                    )}
+                  </label>
+                ))}
+              </section>
+
+              <section className="admin-hook-detail-section" aria-label="Review fallback changes">
+                <div className="admin-fallback-diagnostic-heading">
+                  <div>
+                    <p className="admin-eyebrow">Review diff</p>
+                    <h3>{skyFallbackChanges.length ? "Proposed changes" : "Nothing changed"}</h3>
+                  </div>
+                  {skyFallbackChanges.length > 0 && (
+                    <div className="admin-toolbar-actions">
+                      <button type="button" onClick={exportSkyFallbackProposal}>Export proposal</button>
+                      <button type="button" onClick={discardSkyFallbackProposal}>Discard proposal</button>
+                    </div>
+                  )}
+                </div>
+                {skyFallbackChanges.map((change) => (
+                  <article className="admin-sky-article-diff" key={change.key}>
+                    <div><strong>{change.label} · package original</strong><p>{change.before}</p></div>
+                    <div><strong>{change.label} · proposal</strong><p>{change.after}</p></div>
+                  </article>
+                ))}
+              </section>
+            </section>
+          )}
           {isSkyArticleTemplate && selectedRow && skyArticleEditionForm && (
             <section className="admin-sky-edition-builder admin-fallback-diagnostic-panel" aria-label="Create an article edition from this template">
               <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
@@ -5368,27 +5554,27 @@ export function GeneratedContentAdminDashboard() {
               <small className="admin-field-hint">{vocabularySections.find((section) => section.key === vocabularySection)?.description}</small>
             </label>
           )}
-          {!compiledSkyArticleEdition && (
+          {!compiledSkyArticleEdition && !skyFallbackEditor && (
             <label className="admin-title-field">
               <span>{isVocabularyDraft ? "Phrase title" : "Headline"}</span>
               <input aria-label={isVocabularyDraft ? "Phrase title" : "Headline"} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
               {isVocabularyDraft && <small className="admin-field-hint">This is the human name editors see in the table. New rows use it to generate the internal key.</small>}
             </label>
           )}
-          {!compiledSkyArticleEdition && (
+          {!compiledSkyArticleEdition && !skyFallbackEditor && (
             <label className="admin-review-copy-editor">
               <span>{isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "TL;DR" : "Summary"}</span>
               <textarea aria-label={isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "Sky article TL;DR" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
               {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
             </label>
           )}
-          {showPackageBodyYou && (
+          {showPackageBodyYou && !skyFallbackEditor && (
             <label className="admin-review-copy-editor">
               <span>body_you</span>
               <textarea aria-label="body_you" value={packageFieldString(currentDraft, "body_you")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_you", event.target.value))} />
             </label>
           )}
-          {isContinuousSkyPackage && ([
+          {isContinuousSkyPackage && !skyFallbackEditor && ([
             ["opening", "Opening"],
             ["tension", "Tension"],
             ["development", "Development"],
@@ -5403,13 +5589,13 @@ export function GeneratedContentAdminDashboard() {
               />
             </label>
           ))}
-          {showPackageBodyThey && (
+          {showPackageBodyThey && !skyFallbackEditor && (
             <label className="admin-review-copy-editor">
               <span>body_they</span>
               <textarea aria-label="body_they" value={packageFieldString(currentDraft, "body_they")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))} />
             </label>
           )}
-          {!compiledSkyArticleEdition && showGenericBody && (
+          {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
             <label className="admin-review-copy-editor">
               <span>{isVocabularyDraft ? "Reusable phrase text" : "Body"}</span>
               <textarea aria-label={isVocabularyDraft ? "Reusable phrase text" : "Body"} value={currentDraft.body} onChange={(event) => setDraft({ ...currentDraft, body: event.target.value })} placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined} />
@@ -5434,7 +5620,7 @@ export function GeneratedContentAdminDashboard() {
                 </dl>
               </header>
 
-              <details className="admin-sky-related-group admin-diagnostics-details">
+              <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor)}>
                 <summary>
                   <span>Aspect passages</span>
                   {" "}
@@ -5476,7 +5662,7 @@ export function GeneratedContentAdminDashboard() {
                 </div>
               </details>
 
-              <details className="admin-sky-related-group admin-diagnostics-details">
+              <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor)}>
                 <summary>
                   <span>House horoscopes</span>
                   {" "}
@@ -5557,9 +5743,10 @@ export function GeneratedContentAdminDashboard() {
               </div>
               <label>
                 <span>review status</span>
-                <select aria-label="Package review status" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)}>
+                <select aria-label="Package review status" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)} disabled={Boolean(skyFallbackEditor)}>
                   {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => <option key={reviewStatus} value={reviewStatus}>{reviewStatus}</option>)}
                 </select>
+                {skyFallbackEditor && <small className="admin-field-hint">Copy proposals stay at needs_review until the source diff receives separate owner approval.</small>}
               </label>
               <label className="admin-package-notes-field">
                 <span>editorial notes</span>
@@ -5646,7 +5833,7 @@ export function GeneratedContentAdminDashboard() {
               <Save size={16} aria-hidden="true" />
               Save
             </button>
-            {isPackageDraft && (
+            {isPackageDraft && !skyFallbackEditor && (
               <button type="button" onClick={revertPackageDraft} disabled={isLoading}>
                 Revert to package original
               </button>
