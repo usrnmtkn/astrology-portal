@@ -64,6 +64,15 @@ assert.match(adminSource, /Generate unfinished fields/u);
 assert.match(adminSource, /if \(!Object\.prototype\.hasOwnProperty\.call\(slotValues, name\)\) slotValues\[name\] = value/u);
 assert.match(adminSource, /slotGeneration: form\.slotGeneration/u);
 
+for (const endpoint of ["sky-article-facts.ts", "sky-article-template-slots.ts"]) {
+  const endpointSource = fs.readFileSync(new URL(`../api/admin/${endpoint}`, import.meta.url), "utf8");
+  assert.match(
+    endpointSource,
+    /transitWindowPoints:\s*\[planet\]/u,
+    `${endpoint} must request the governed calculation window instead of accepting missing dates.`
+  );
+}
+
 const readerSource = fs.readFileSync(new URL("../apps/web/src/features/sky/SkyDetailArticle.tsx", import.meta.url), "utf8");
 assert.match(readerSource, /detail\.risingHoroscopes\?\.length && !detail\.personalizedPlacement/u);
 

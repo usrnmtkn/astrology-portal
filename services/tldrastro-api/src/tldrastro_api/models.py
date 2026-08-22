@@ -177,6 +177,7 @@ class SkyCurrentRequest(BaseModel):
     location: LocationInput
     settings: ChartSettings = Field(default_factory=ChartSettings)
     includeContentFacts: bool = True
+    transitWindowPoints: List[str] = Field(default_factory=list)
 
 
 class MoonStatus(BaseModel):
@@ -195,6 +196,11 @@ class MoonEvent(BaseModel):
     days: float
 
 
+class SignTransitWindow(BaseModel):
+    transitStart: str
+    transitEnd: str
+
+
 class SkyCurrentResponse(BaseModel):
     metadata: ChartMetadata
     location: LocationInput
@@ -211,6 +217,7 @@ class SkyCurrentResponse(BaseModel):
     moonIllumination: float
     moonStatus: Optional[MoonStatus] = None
     moonEvent: Optional[MoonEvent] = None
+    transitWindows: Dict[str, SignTransitWindow] = Field(default_factory=dict)
     contentFacts: List[ContentFactPacket] = Field(default_factory=list)
 
 

@@ -108,6 +108,11 @@ type CloudRunPosition = {
 
 type CloudRunSkyResponse = Partial<Omit<SkySnapshot, "positions" | "aspects">> & {
   positions?: CloudRunPosition[];
+  transitWindows?: Record<string, {
+    transitStart: string;
+    transitEnd: string;
+    transitRemainingLabel?: string | null;
+  }>;
 };
 
 const defaultLocation: LocationInput = {
@@ -271,7 +276,10 @@ async function postTldrAstro<TResponse>(path: string, body: unknown): Promise<TR
   return payload as TResponse;
 }
 
-export async function currentSkyFacts(date: Date): Promise<SkySnapshot> {
+export async function currentSkyFacts(
+  date: Date,
+  options: { transitWindowPoints?: string[] } = {}
+): Promise<SkySnapshot> {
   const sky = await postTldrAstro<CloudRunSkyResponse>("/sky/current", {
     datetime: {
       date: dateOnly(date),
@@ -285,9 +293,13 @@ export async function currentSkyFacts(date: Date): Promise<SkySnapshot> {
       zodiac: "tropical",
       aspectProfile: "standard"
     },
-    includeContentFacts: false
+    includeContentFacts: false,
+    transitWindowPoints: options.transitWindowPoints ?? []
   });
-  const normalizedPositions = (sky.positions ?? []).map(normalizePosition);
+  const normalizedPositions = (sky.positions ?? []).map((position) => {
+    const point = position.planet || position.point || "Unknown";
+    return normalizePosition({ ...position, ...sky.transitWindows?.[point] });
+  });
   const northNode = normalizedPositions.find((position) => position.planet === "North Node");
   const positions = northNode && Number.isFinite(northNode.longitude)
     ? [...normalizedPositions, southNodePositionFromNorthNode(northNode, sky.ascendant ?? "")]

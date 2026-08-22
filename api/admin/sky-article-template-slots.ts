@@ -130,7 +130,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const template = await loadApprovedTemplate(body.templateId.trim());
     const planet = templatePlanet(template);
     if (!planet) throw new Error("The selected template does not identify one Sky planet.");
-    const snapshot = await currentSkyFacts(new Date(`${referenceDate}T12:00:00.000Z`));
+    const snapshot = await currentSkyFacts(
+      new Date(`${referenceDate}T12:00:00.000Z`),
+      { transitWindowPoints: [planet] }
+    );
     const facts = skyArticleEditionFactsFromSnapshot(snapshot, planet);
     const placeholders = skyArticleTemplatePlaceholders(template.body ?? "")
       .filter((placeholder) => placeholder.name !== "risingBlocks");
