@@ -367,8 +367,10 @@ async function seedAdminApi(
     onGeneratedContentWrite?: (write: { method: string; payload: Record<string, unknown> }) => void;
     initialSecret?: string;
     expectedSecret?: string;
+    generatedRows?: Record<string, unknown>[];
   } = {}
 ) {
+  const apiGeneratedContentRows = options.generatedRows ?? generatedContentRows;
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
     await route.fulfill({
       status: 200,
@@ -481,7 +483,7 @@ async function seedAdminApi(
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify({ ok: true, rows: generatedContentRows })
+        body: JSON.stringify({ ok: true, rows: apiGeneratedContentRows })
       });
       return;
     }
@@ -871,6 +873,23 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(relatedPassages).toBeVisible();
     await expect(relatedPassages).toContainText("House horoscopes");
     await expect(relatedPassages).toContainText("Aspect passages");
+    await expect(relatedPassages.locator("details > summary > span")).toHaveText([
+      "Aspect passages",
+      "House horoscopes"
+    ]);
+    await expect(relatedPassages.locator("details[open]")).toHaveCount(0);
+    const editorReadingOrder = await editor.locator(".admin-post-editor").evaluate((postEditor) => {
+      const headline = postEditor.querySelector('[aria-label="Headline"]')?.closest("label");
+      const summary = postEditor.querySelector('[aria-label="Summary"]')?.closest("label");
+      const body = postEditor.querySelector('[aria-label="Body"]')?.closest("label");
+      const related = postEditor.querySelector('[aria-label="Related reader horoscope passages"]');
+      const nodes = [headline, summary, body, related];
+      return nodes.every(Boolean) && nodes.every((node, index) => (
+        index === nodes.length - 1
+        || Boolean(node?.compareDocumentPosition(nodes[index + 1] as Node) & Node.DOCUMENT_POSITION_FOLLOWING)
+      ));
+    });
+    expect(editorReadingOrder, "write-up fields precede aspects and house horoscopes").toBe(true);
     await mkdir(adminScreenshotDir, { recursive: true });
     await page.screenshot({
       animations: "disabled",
@@ -898,6 +917,84 @@ test.describe("content dashboard admin user flow case studies", () => {
       }
     });
     await expect(page.getByRole("status")).toContainText("sky.placement.sun.cancer saved as Published");
+    await assertNoBrowserErrors();
+  });
+
+  test("Sky write-up editor stays single-column and orders aspects before house horoscopes", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await page.setViewportSize({ width: 654, height: 900 });
+    const packageSkyRow = {
+      ...generatedContentRows[0],
+      id: "qa-chiron-package-row",
+      content_key: "sky.placement.chiron.taurus",
+      headline: "Chiron in Taurus",
+      summary: "Being seen without apology",
+      body: "A complete QA write-up used to verify the editor reading order.",
+      facts: { body: "Chiron", sign: "Taurus", fallbackArchitectureV3: true },
+      provider: "tldrastro-fallback-architecture-v3",
+      source_snapshot: {
+        contentSystem: "generated",
+        contentLevel: "source-grounded",
+        sourcePackage: "tldrastro-fallback-architecture-v3"
+      },
+      sections: {
+        packageRecord: {
+          content_role: "full-copy",
+          review_status: "approved",
+          editorial_notes: ""
+        }
+      }
+    };
+    await seedAdminApi(page, { generatedRows: [packageSkyRow, ...generatedContentRows.slice(1)] });
+    await expectAdminRouteLoads(page, "/admin/content#exact-content");
+
+    await page.getByLabel("Search content").fill("sky.placement.chiron.taurus");
+    const savedRow = page.locator(".admin-content-row", { hasText: "sky.placement.chiron.taurus" });
+    await expect(savedRow).toHaveCount(1);
+    await savedRow.getByRole("button", { name: "Edit" }).click();
+
+    const editor = page.locator(".admin-editor-panel");
+    await expect(editor).toBeVisible();
+    const relatedPassages = editor.getByRole("region", { name: "Related reader horoscope passages" });
+    await expect(relatedPassages.locator("details > summary > span")).toHaveText([
+      "Aspect passages",
+      "House horoscopes"
+    ]);
+    await expect(relatedPassages.locator("details[open]")).toHaveCount(0);
+
+    const layout = await editor.evaluate((panel) => {
+      const postEditor = panel.querySelector<HTMLElement>(".admin-post-editor");
+      const packagePanel = panel.querySelector<HTMLElement>(".admin-package-edit-panel");
+      const headline = panel.querySelector<HTMLElement>('[aria-label="Headline"]')?.closest("label");
+      const summary = panel.querySelector<HTMLElement>('[aria-label="Summary"]')?.closest("label");
+      const body = panel.querySelector<HTMLElement>('[aria-label="Body"]')?.closest("label");
+      const related = panel.querySelector<HTMLElement>('[aria-label="Related reader horoscope passages"]');
+      const topPositions = [headline, summary, body, related].map((node) => node?.getBoundingClientRect().top ?? -1);
+      const packageChildren = packagePanel ? Array.from(packagePanel.children).map((node) => {
+        const rect = (node as HTMLElement).getBoundingClientRect();
+        return { top: rect.top, bottom: rect.bottom };
+      }) : [];
+      return {
+        editorOverflow: panel.scrollWidth - panel.clientWidth,
+        postEditorColumns: postEditor ? getComputedStyle(postEditor).gridTemplateColumns : "",
+        packageColumns: packagePanel ? getComputedStyle(packagePanel).gridTemplateColumns : "",
+        topPositions,
+        packageChildren
+      };
+    });
+
+    expect(layout.editorOverflow).toBeLessThanOrEqual(1);
+    expect(layout.postEditorColumns.trim().split(/\s+/)).toHaveLength(1);
+    expect(layout.packageColumns.trim().split(/\s+/)).toHaveLength(1);
+    expect(layout.topPositions.every((top, index, positions) => index === 0 || top > positions[index - 1])).toBe(true);
+    expect(layout.packageChildren.every((child, index, children) => index === 0 || child.top >= children[index - 1].bottom)).toBe(true);
+    await expectNoHorizontalOverflow(page, "Narrow Sky write-up editor");
+    await mkdir(adminScreenshotDir, { recursive: true });
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: path.join(adminScreenshotDir, "narrow-sky-writeup-editor.png")
+    });
     await assertNoBrowserErrors();
   });
 

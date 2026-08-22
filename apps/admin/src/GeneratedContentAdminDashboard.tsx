@@ -5324,6 +5324,47 @@ export function GeneratedContentAdminDashboard() {
               )}
             </section>
           )}
+          {isVocabularyDraft && (
+            <label className="admin-title-field">
+              <span>Phrase section</span>
+              <select aria-label="Phrase section" value={vocabularySection} onChange={(event) => updateVocabularySection(event.target.value as AdminVocabularySection)} disabled={!isNewDraft}>
+                {vocabularySections.map((section) => <option key={section.key} value={section.key}>{section.label}</option>)}
+              </select>
+              <small className="admin-field-hint">{vocabularySections.find((section) => section.key === vocabularySection)?.description}</small>
+            </label>
+          )}
+          {!compiledSkyArticleEdition && (
+            <label className="admin-title-field">
+              <span>{isVocabularyDraft ? "Phrase title" : "Headline"}</span>
+              <input aria-label={isVocabularyDraft ? "Phrase title" : "Headline"} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
+              {isVocabularyDraft && <small className="admin-field-hint">This is the human name editors see in the table. New rows use it to generate the internal key.</small>}
+            </label>
+          )}
+          {!compiledSkyArticleEdition && (
+            <label className="admin-review-copy-editor">
+              <span>{isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "TL;DR" : "Summary"}</span>
+              <textarea aria-label={isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "Sky article TL;DR" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
+              {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
+            </label>
+          )}
+          {showPackageBodyYou && (
+            <label className="admin-review-copy-editor">
+              <span>body_you</span>
+              <textarea aria-label="body_you" value={packageFieldString(currentDraft, "body_you")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_you", event.target.value))} />
+            </label>
+          )}
+          {showPackageBodyThey && (
+            <label className="admin-review-copy-editor">
+              <span>body_they</span>
+              <textarea aria-label="body_they" value={packageFieldString(currentDraft, "body_they")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))} />
+            </label>
+          )}
+          {!compiledSkyArticleEdition && (
+            <label className="admin-review-copy-editor">
+              <span>{isVocabularyDraft ? "Reusable phrase text" : "Body"}</span>
+              <textarea aria-label={isVocabularyDraft ? "Reusable phrase text" : "Body"} value={currentDraft.body} onChange={(event) => setDraft({ ...currentDraft, body: event.target.value })} placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined} />
+            </label>
+          )}
           {skyWriteupContext && selectedRow && (
             <section className="admin-sky-related-editor admin-fallback-diagnostic-panel" aria-label="Related reader horoscope passages">
               <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
@@ -5337,51 +5378,16 @@ export function GeneratedContentAdminDashboard() {
                 </div>
                 <dl className="admin-hook-pattern-list">
                   <div><dt>Placement</dt><dd>{titleFromKey(skyWriteupContext.planet)}{skyWriteupContext.sign ? ` in ${titleFromKey(skyWriteupContext.sign)}` : ""}</dd></div>
+                  <div><dt>Aspect passages</dt><dd>{skyAspectPassages.length}</dd></div>
                   <div><dt>Reader-ready houses</dt><dd>{populatedSkyHouses}/12</dd></div>
                   <div><dt>Source candidates</dt><dd>{candidateSkyHouses}/12 houses</dd></div>
-                  <div><dt>Aspect passages</dt><dd>{skyAspectPassages.length}</dd></div>
                 </dl>
               </header>
-
-              <details className="admin-sky-related-group admin-diagnostics-details" open>
-                <summary>
-                  <span>House horoscopes</span>
-                  <strong>{populatedSkyHouses}/12 reader-ready</strong>
-                </summary>
-                <p className="admin-sky-related-help">
-                  Only an approved complete Sky house horoscope can serve on this placement page. House introductions, generic house passages, and older sign-specific transit passages remain visible as source candidates; the app will not substitute them silently.
-                </p>
-                <div className="admin-sky-house-grid admin-lunar-coverage-row-list">
-                  {Array.from({ length: 12 }, (_, index) => index + 1).map((house) => {
-                    const passages = skyHousePassages.filter((passage) => passage.house === house);
-                    return (
-                      <article key={house} className={`admin-hook-detail-section ${passages.length ? "has-passage" : "is-missing"}`}>
-                        <header className="admin-fallback-diagnostic-heading">
-                          <strong>{ordinalLabel(house)} House</strong>
-                          <span>{passages.length ? `${passages.length} field${passages.length === 1 ? "" : "s"}` : "Not saved"}</span>
-                        </header>
-                        {passages.map((passage) => (
-                          <div className="admin-sky-related-row admin-hook-detail-section" key={passage.row.id}>
-                            <div>
-                              <span>{passage.kind} · {passage.availability}</span>
-                              <code>{passage.row.content_key}</code>
-                              <p>{passage.row.body || "No passage body saved."}</p>
-                            </div>
-                            <button type="button" onClick={() => openRelatedSkyRow(selectedRow.id, passage.row)}>
-                              Edit passage
-                            </button>
-                          </div>
-                        ))}
-                        {!passages.length && <p>No house-horoscope row matches this placement and sign.</p>}
-                      </article>
-                    );
-                  })}
-                </div>
-              </details>
 
               <details className="admin-sky-related-group admin-diagnostics-details">
                 <summary>
                   <span>Aspect passages</span>
+                  {" "}
                   <strong>{skyAspectPassages.length} rows</strong>
                 </summary>
                 <p className="admin-sky-related-help">
@@ -5419,6 +5425,43 @@ export function GeneratedContentAdminDashboard() {
                   )}
                 </div>
               </details>
+
+              <details className="admin-sky-related-group admin-diagnostics-details">
+                <summary>
+                  <span>House horoscopes</span>
+                  {" "}
+                  <strong>{populatedSkyHouses}/12 reader-ready</strong>
+                </summary>
+                <p className="admin-sky-related-help">
+                  Only an approved complete Sky house horoscope can serve on this placement page. House introductions, generic house passages, and older sign-specific transit passages remain visible as source candidates; the app will not substitute them silently.
+                </p>
+                <div className="admin-sky-house-grid admin-lunar-coverage-row-list">
+                  {Array.from({ length: 12 }, (_, index) => index + 1).map((house) => {
+                    const passages = skyHousePassages.filter((passage) => passage.house === house);
+                    return (
+                      <article key={house} className={`admin-hook-detail-section ${passages.length ? "has-passage" : "is-missing"}`}>
+                        <header className="admin-fallback-diagnostic-heading">
+                          <strong>{ordinalLabel(house)} House</strong>
+                          <span>{passages.length ? `${passages.length} field${passages.length === 1 ? "" : "s"}` : "Not saved"}</span>
+                        </header>
+                        {passages.map((passage) => (
+                          <div className="admin-sky-related-row admin-hook-detail-section" key={passage.row.id}>
+                            <div>
+                              <span>{passage.kind} · {passage.availability}</span>
+                              <code>{passage.row.content_key}</code>
+                              <p>{passage.row.body || "No passage body saved."}</p>
+                            </div>
+                            <button type="button" onClick={() => openRelatedSkyRow(selectedRow.id, passage.row)}>
+                              Edit passage
+                            </button>
+                          </div>
+                        ))}
+                        {!passages.length && <p>No house-horoscope row matches this placement and sign.</p>}
+                      </article>
+                    );
+                  })}
+                </div>
+              </details>
             </section>
           )}
           {fallbackDiagnostic && (
@@ -5452,22 +5495,6 @@ export function GeneratedContentAdminDashboard() {
               <p><strong>Fix path:</strong> {fallbackDiagnostic.action}</p>
             </section>
           )}
-          {isVocabularyDraft && (
-            <label className="admin-title-field">
-              <span>Phrase section</span>
-              <select aria-label="Phrase section" value={vocabularySection} onChange={(event) => updateVocabularySection(event.target.value as AdminVocabularySection)} disabled={!isNewDraft}>
-                {vocabularySections.map((section) => <option key={section.key} value={section.key}>{section.label}</option>)}
-              </select>
-              <small className="admin-field-hint">{vocabularySections.find((section) => section.key === vocabularySection)?.description}</small>
-            </label>
-          )}
-          {!compiledSkyArticleEdition && (
-            <label className="admin-title-field">
-              <span>{isVocabularyDraft ? "Phrase title" : "Headline"}</span>
-              <input aria-label={isVocabularyDraft ? "Phrase title" : "Headline"} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
-              {isVocabularyDraft && <small className="admin-field-hint">This is the human name editors see in the table. New rows use it to generate the internal key.</small>}
-            </label>
-          )}
           {isPackageDraft && (
             <section className="admin-package-edit-panel" aria-label="Package row details">
               <div>
@@ -5489,31 +5516,6 @@ export function GeneratedContentAdminDashboard() {
                 <textarea aria-label="Editorial notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} />
               </label>
             </section>
-          )}
-          {!compiledSkyArticleEdition && (
-            <label className="admin-review-copy-editor">
-              <span>{isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "TL;DR" : "Summary"}</span>
-              <textarea aria-label={isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "Sky article TL;DR" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
-              {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
-            </label>
-          )}
-          {showPackageBodyYou && (
-            <label className="admin-review-copy-editor">
-              <span>body_you</span>
-              <textarea aria-label="body_you" value={packageFieldString(currentDraft, "body_you")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_you", event.target.value))} />
-            </label>
-          )}
-          {showPackageBodyThey && (
-            <label className="admin-review-copy-editor">
-              <span>body_they</span>
-              <textarea aria-label="body_they" value={packageFieldString(currentDraft, "body_they")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))} />
-            </label>
-          )}
-          {!compiledSkyArticleEdition && (
-            <label className="admin-review-copy-editor">
-              <span>{isVocabularyDraft ? "Reusable phrase text" : "Body"}</span>
-              <textarea aria-label={isVocabularyDraft ? "Reusable phrase text" : "Body"} value={currentDraft.body} onChange={(event) => setDraft({ ...currentDraft, body: event.target.value })} placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined} />
-            </label>
           )}
           <details className="admin-advanced admin-editor-key-details" open={!isVocabularyDraft}>
             <summary>{isVocabularyDraft ? "Internal generated key" : "Content key"}</summary>
