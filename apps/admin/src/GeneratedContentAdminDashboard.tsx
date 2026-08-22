@@ -22,6 +22,7 @@ import {
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
+import { renderCmsTemplatePreview, validateCmsTemplate } from "../../web/src/content/cmsTemplateValidation";
 import { announceContentUpdate } from "../../web/src/services/contentUpdateSignal";
 import {
   compileSkyArticleEdition,
@@ -4472,10 +4473,22 @@ export function GeneratedContentAdminDashboard() {
     const populatedSkyHouses = new Set(skyHousePassages.map((passage) => passage.house)).size;
     const isSkyArticleTemplate = isSkyArticleTemplateRow(selectedRow);
     const compiledSkyArticleEdition = compiledSkyArticleEditionForDraft(currentDraft);
-    const isCmsSurfaceDraft = currentDraft.sourceSnapshot?.contentSystem === "cms-surface-override";
+    const isCmsSurfaceDraft = currentDraft.sourceSnapshot?.contentSystem === "cms-surface-override" || currentDraft.contentKey.startsWith("cms/");
     const cmsAllowedSlots = Array.isArray(currentDraft.sourceSnapshot?.allowedSlots)
       ? currentDraft.sourceSnapshot.allowedSlots.filter((slot): slot is string => typeof slot === "string")
       : [];
+    const cmsTemplateValidation = validateCmsTemplate({
+      allowedSlots: cmsAllowedSlots,
+      headline: currentDraft.headline,
+      summary: currentDraft.summary,
+      body: currentDraft.body
+    });
+    const cmsCanSignOff = !isCmsSurfaceDraft || cmsTemplateValidation.errors.length === 0;
+    const cmsReaderEligible = isCmsSurfaceDraft
+      && currentDraft.status === "LIVE"
+      && currentDraft.lane === "serving"
+      && !currentDraft.reviewState
+      && cmsCanSignOff;
     const skyArticleTemplateFields = isSkyArticleTemplate && selectedRow
       ? skyArticleTemplatePlaceholders(selectedRow.body ?? "").filter((placeholder) => placeholder.name !== "risingBlocks")
       : [];
@@ -4627,6 +4640,21 @@ export function GeneratedContentAdminDashboard() {
               <p>A published row replaces prose on the named app surface immediately. Astrology facts remain calculated by the app and can enter this copy only through the allowed slots below.</p>
               <p><strong>Allowed slots:</strong> {cmsAllowedSlots.length > 0 ? cmsAllowedSlots.map((slot) => `{{${slot}}}`).join(", ") : "This row has no calculated slots."}</p>
               <p>Save as Draft while editing. Publish only when the exact wording is approved; draft and reviewed rows remain invisible to readers.</p>
+              <p><strong>Reader status:</strong> {cmsReaderEligible ? "LIVE and reader-eligible." : "Not serving. The existing approved fallback remains visible."}</p>
+              {cmsTemplateValidation.errors.length > 0 ? (
+                <div role="alert" aria-label="CMS template errors">
+                  <strong>Fix before Sign Off</strong>
+                  <ul>{cmsTemplateValidation.errors.map((error) => <li key={error}>{error}</li>)}</ul>
+                </div>
+              ) : (
+                <div aria-label="CMS template preview">
+                  <strong>Preview with representative chart facts</strong>
+                  {currentDraft.headline.trim() && <h4>{renderCmsTemplatePreview(currentDraft.headline, cmsTemplateValidation.previewSlots, "headline")}</h4>}
+                  {currentDraft.summary.trim() && <p>{renderCmsTemplatePreview(currentDraft.summary, cmsTemplateValidation.previewSlots, "summary")}</p>}
+                  <p>{renderCmsTemplatePreview(currentDraft.body, cmsTemplateValidation.previewSlots, "body")}</p>
+                  {cmsTemplateValidation.usedSlots.length > 0 && <small>Slots used: {cmsTemplateValidation.usedSlots.map((slot) => `{{${slot}}}`).join(", ")}</small>}
+                </div>
+              )}
             </div>
           )}
           <section className="admin-content-role-panel" aria-label="Content role">
@@ -5060,7 +5088,7 @@ export function GeneratedContentAdminDashboard() {
                     Approve &amp; schedule
                   </button>
                 ) : (
-                  <button type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading}>
+                  <button type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff} title={!cmsCanSignOff ? "Fix the CMS template errors before Sign Off." : undefined}>
                     <Check size={16} aria-hidden="true" />
                     Sign Off
                   </button>
