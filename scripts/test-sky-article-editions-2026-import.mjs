@@ -64,6 +64,8 @@ const staged = JSON.parse(fs.readFileSync(outPath, "utf8"));
 assert.equal(staged.serving, false);
 assert.equal(staged.review_status, "needs_review");
 assert.equal(staged.editions[0].sourceMarkdown, sourceMarkdown, "Importer must preserve source prose exactly.");
+assert.equal(staged.editions[0].tldr, null, "Importer must not derive a TL;DR from the owner-authored article.");
+assert.equal(staged.editions[0].tldrStatus, "missing_explicit_copy");
 assert.deepEqual(staged.editions[0].unresolvedPlaceholders, ["unresolvedThing"]);
 assert.deepEqual(staged.editions[0].dateRendering, {
   authority: "instantUtc",

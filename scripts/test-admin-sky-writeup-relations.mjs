@@ -82,10 +82,14 @@ const generatedContentApi = fs.readFileSync(path.join(repoRoot, "api/admin/gener
 const readerApp = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
 
 assert.match(dashboard, /Create a complete edition/u, "Template rows must expose the edition compiler in Content Studio.");
+assert.match(dashboard, /TL;DR · explicit edition copy/u, "Edition compilation must collect an explicit TL;DR in Content Studio.");
+assert.match(dashboard, /summary: edition\.tldr/u, "The saved summary mirror must use the explicit compiled TL;DR.");
 assert.match(dashboard, /All 12 approved house horoscopes are required/u, "Compilation must require complete house coverage.");
 assert.match(dashboard, /Approve & publish edition/u, "Compiled editions need a distinct owner approval action.");
 assert.match(generatedContentApi, /ownerAction === "approve-sky-article-edition"/u, "The API must enforce the explicit owner approval action.");
 assert.match(readerApp, /selectActiveSkyArticleEdition/u, "Sky reader articles must select active compiled editions.");
+assert.match(readerApp, /tldr: selected\.edition\.tldr/u, "Reader placement previews must consume the explicit compiled TL;DR.");
+assert.match(readerApp, /section\?\.tldr\s*\?\s*textPreview\(section\.tldr\)/u, "The Transits list must prefer explicit TL;DR copy over the full article body.");
 assert.match(readerApp, /compiledHousePassage/u, "Reader personalization must use the compiled house passage.");
 assert.match(readerApp, /compiledAspect/u, "Reader personalization must append the compiled natal-aspect passage.");
 

@@ -64,6 +64,7 @@ const compiled = await compileSkyArticleEdition({
   templateKey: "sky/article-template/pluto/ingress",
   planet: "pluto",
   sign: "aquarius",
+  tldr: "Explicit owner TL;DR for Pluto in {{sign}}.",
   entryYear: 2024,
   validFrom: "2024-11-19",
   validTo: "2043-03-08",
@@ -87,6 +88,7 @@ const compiled = await compileSkyArticleEdition({
 
 assert.equal(compiled.contentKey, "sky-article/pluto/aquarius/2024");
 assert.equal(compiled.headline, "Pluto Enters Aquarius");
+assert.equal(compiled.tldr, "Explicit owner TL;DR for Pluto in Aquarius.");
 assert.equal(compiled.housePassages.length, 12);
 assert.equal(compiled.aspectPassages.length, 1);
 assert.doesNotMatch(compiled.body, /Horoscopes|Owner horoscope|\{\{/u);
@@ -114,6 +116,31 @@ const ownerApproval = {
 };
 assert.equal(hasExactSkyArticleOwnerApproval(compiled, { ownerApproval }), true);
 assert.equal(hasExactSkyArticleOwnerApproval(compiled, { ownerApproval: { ...ownerApproval, templateHash: "changed" } }), false);
+assert.notEqual(
+  (await compileSkyArticleEdition({
+    templateBody: template,
+    templateKey: "sky/article-template/pluto/ingress",
+    planet: "pluto",
+    sign: "aquarius",
+    tldr: "A different explicit TL;DR.",
+    entryYear: 2024,
+    validFrom: "2024-11-19",
+    validTo: "2043-03-08",
+    transitStartInstant: "2024-11-19T20:29:00.000Z",
+    transitEndInstant: "2043-03-09T00:00:00.000Z",
+    slotValues: {
+      sign: "Aquarius",
+      seasonOpener: "Owner opener.",
+      entryDate: "November 19, 2024",
+      collectiveThemes: "Owner collective themes.",
+      aspectHits: "No exact hits are listed in this edition."
+    },
+    housePassages: houses,
+    aspectPassages: compiled.aspectPassages
+  })).compiledHash,
+  compiled.compiledHash,
+  "The immutable compilation hash must cover the exact TL;DR wording."
+);
 assert.equal(
   selectActiveSkyArticleEdition([{
     id: "edition-1",
@@ -140,6 +167,7 @@ await assert.rejects(
     templateKey: "sky/article-template/pluto/ingress",
     planet: "pluto",
     sign: "aquarius",
+    tldr: "Explicit owner TL;DR.",
     entryYear: 2024,
     validFrom: "2024-11-19",
     validTo: "2043-03-08",
@@ -157,6 +185,7 @@ await assert.rejects(
     templateKey: "sky/article-template/pluto/ingress",
     planet: "pluto",
     sign: "aquarius",
+    tldr: "Explicit owner TL;DR.",
     entryYear: 2024,
     validFrom: "2024-11-19",
     validTo: "2043-03-08",
@@ -174,4 +203,28 @@ await assert.rejects(
   /missing house horoscopes: 12/u
 );
 
-console.log("Sky article templates compile only complete editions and preserve all 12 house passages.");
+await assert.rejects(
+  compileSkyArticleEdition({
+    templateBody: template,
+    templateKey: "sky/article-template/pluto/ingress",
+    planet: "pluto",
+    sign: "aquarius",
+    tldr: "",
+    entryYear: 2024,
+    validFrom: "2024-11-19",
+    validTo: "2043-03-08",
+    transitStartInstant: "2024-11-19T20:29:00.000Z",
+    transitEndInstant: "2043-03-09T00:00:00.000Z",
+    slotValues: {
+      sign: "Aquarius",
+      seasonOpener: "Owner opener.",
+      entryDate: "November 19, 2024",
+      collectiveThemes: "Owner collective themes.",
+      aspectHits: "No exact hits are listed in this edition."
+    },
+    housePassages: houses
+  }),
+  /explicitly written TL;DR/u
+);
+
+console.log("Sky article templates require an explicit TL;DR, compile only complete editions, and preserve all 12 house passages.");

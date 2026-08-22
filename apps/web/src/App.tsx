@@ -475,6 +475,7 @@ type NormalizedSurfaceSection<Slot extends string = string> = {
   layer: SurfaceProseLayer;
   tier: string;
   sourceKeys: string[];
+  tldr?: string;
   body: string;
 };
 
@@ -5116,9 +5117,10 @@ function compiledSkyArticleWritingSection(
     slot: "meaning",
     required: true,
     layer: "authored",
-    tier: "compiled-sky-article-edition-v1",
-    sourceKeys: ["compiled-sky-article-edition-v1", selected.edition.templateKey, selected.content.contentKey],
+    tier: "compiled-sky-article-edition-v2",
+    sourceKeys: ["compiled-sky-article-edition-v2", selected.edition.templateKey, selected.content.contentKey],
     heading: selected.edition.headline,
+    tldr: selected.edition.tldr,
     body: selected.edition.body,
     articleWindow: `${selected.edition.validFrom} - ${selected.edition.validTo}`,
     articleMode: "current",
@@ -5239,7 +5241,7 @@ function currentSkyPlacementDetailArticle({
   const normalizedParagraphs = normalized.sections
     .flatMap((section) => taggedSectionParagraphs(section));
   const placementSection = normalized.sections[0];
-  const isRegistryArticle = placementSection?.sourceKeys.some((key) => key === "sky-article-v1" || key === "compiled-sky-article-edition-v1") ?? false;
+  const isRegistryArticle = placementSection?.sourceKeys.some((key) => key === "sky-article-v1" || key === "compiled-sky-article-edition-v2") ?? false;
   const isContinuousFallback = placementSection?.sourceKeys.includes("sky-placement-continuous-v2") ?? false;
   const authoredBody = normalized.sections
     .filter((section) => section.layer === "authored")
@@ -5297,12 +5299,13 @@ function currentSkyPlacementDetailArticle({
     keyDates: placementSection?.keyDates ?? [],
     keyDatesIntro: placementSection?.keyDatesIntro ?? null,
     closingCharge: placementSection?.closingCharge,
+    tldr: placementSection?.tldr,
     risingHoroscopes: placementSection?.risingHoroscopes,
     articleAspectPassages: placementSection?.articleAspectPassages,
     retrograde: isRetrograde,
     plainBody: articleSections.length === 0
       && normalized.sections.some((section) => section.layer === "authored"),
-    suppressTldr: authoredBody.length > 0 && !isRetrograde,
+    suppressTldr: !placementSection?.tldr && authoredBody.length > 0 && !isRetrograde,
     body: articleSections.length > 0 ? [] : body,
     sections: articleSections.length > 0 ? articleSections : relatedAspectSections,
     relatedAspects: sourceGapAspectRows.length > 0
@@ -7738,7 +7741,11 @@ function bondEffectFamily(transiting: string, aspect: string) {
 function normalizedSurfacePreview(article: NormalizedSurfaceArticle<string, string>) {
   const section = article.sections[0];
 
-  return section?.body ? textPreview(taggedSectionBody(section)) : "";
+  return section?.tldr
+    ? textPreview(section.tldr)
+    : section?.body
+      ? textPreview(taggedSectionBody(section))
+      : "";
 }
 
 function renderReaderDirectedSynastryContact(
