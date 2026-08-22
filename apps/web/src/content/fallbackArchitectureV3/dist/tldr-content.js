@@ -31,6 +31,13 @@ function mustache(body, ctx) {
   body = body.replace(/\{(houseOrdinal|houseTopic)\}/g, (_, key) => ctx[key] ?? `{${key}}`);
   return body;
 }
+function withoutLegacyHouseBridge(body, house, voice) {
+  const houseLabel = ordinal(house);
+  const legacyPrefix = voice === "you" ? `It's in your ${houseLabel} house, meaning` : `It's in their ${houseLabel} house, meaning`;
+  if (!body.startsWith(legacyPrefix)) return body.trim();
+  const paragraphBreak = body.indexOf("\n\n");
+  return paragraphBreak >= 0 ? body.slice(paragraphBreak + 2).trim() : "";
+}
 function createFallbackRenderer(templatesFile, rowsFile) {
   const vocab = /* @__PURE__ */ new Map();
   for (const row of rowsFile.vocabularyRows) {
@@ -166,15 +173,21 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     }
     let headlineTemplate = signTemplate;
     if (house) {
+      const houseMeaning = getHook(`fallback-hook/house-meaning/${house}`, voice, opts2);
+      if (houseMeaning == null) {
+        throw new SourceGapError(`SOURCE_GAP: missing contextual house bridge for ${gapLabel}`);
+      }
+      const renderedHouseMeaning = mustache(houseMeaning, ctx);
       if (exactHouseLived) {
-        parts.push(exactHouseLived.body ?? "");
+        const exactBody = withoutLegacyHouseBridge(exactHouseLived.body ?? "", house, voice);
+        parts.push([renderedHouseMeaning, exactBody].filter(Boolean).join("\n\n"));
         partKeys.push(exactHouseLived.contentKey);
       } else {
         const houseTemplate = getTemplate("fallback-template/natal.house-context");
         const houseCtx = {
           ...ctx,
           houseOrdinal: ordinal(house),
-          houseMeaning: getHook(`fallback-hook/house-meaning/${house}`, voice, opts2),
+          houseMeaning: renderedHouseMeaning,
           placementHouseSentences: getHook(`fallback-hook/placement-house-sentence/${planet}/${house}`, voice, opts2),
           modifierSentences: mods
         };

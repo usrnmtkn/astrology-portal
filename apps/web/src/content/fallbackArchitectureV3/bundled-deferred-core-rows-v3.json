@@ -355,9 +355,10 @@
       "contentKey": "fallback-hook/house-meaning/1",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "It's in your 1st house, meaning this side of you is right on the surface: it shapes first impressions and how you start things.",
-      "body_they": "It's in their 1st house, meaning this side of them is right on the surface: it shapes first impressions and how they start things.",
+      "body_you": "Your {{planetTitle}} is in your 1st house, meaning this side of you is right on the surface: it shapes first impressions and how you start things.",
+      "body_they": "Their {{planetTitle}} is in their 1st house, meaning this side of them is right on the surface: it shapes first impressions and how they start things.",
       "review_status": "approved",
+      "source_release": "natal-house-bridge-context-v2",
       "source_keys": [
         "cc/house/1"
       ],
@@ -367,9 +368,10 @@
       "contentKey": "fallback-hook/house-meaning/2",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "It's in your 2nd house, meaning this side of you comes out around money, security, and what you own and value.",
-      "body_they": "It's in their 2nd house, meaning this side of them comes out around money, security, and what they own and value.",
+      "body_you": "Your {{planetTitle}} is in your 2nd house, meaning this side of you comes out around money, security, and what you own and value.",
+      "body_they": "Their {{planetTitle}} is in their 2nd house, meaning this side of them comes out around money, security, and what they own and value.",
       "review_status": "approved",
+      "source_release": "natal-house-bridge-context-v2",
       "source_keys": [
         "cc/house/2"
       ],
@@ -379,9 +381,10 @@
       "contentKey": "fallback-hook/house-meaning/3",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "It's in your 3rd house, meaning this side of you comes out in how you talk, text, learn, and get through an ordinary day.",
-      "body_they": "It's in their 3rd house, meaning this side of them comes out in how they talk, text, learn, and get through an ordinary day.",
+      "body_you": "Your {{planetTitle}} is in your 3rd house, meaning this side of you comes out in how you talk, text, learn, and get through an ordinary day.",
+      "body_they": "Their {{planetTitle}} is in their 3rd house, meaning this side of them comes out in how they talk, text, learn, and get through an ordinary day.",
       "review_status": "approved",
+      "source_release": "natal-house-bridge-context-v2",
       "source_keys": [
         "cc/house/3"
       ],
@@ -391,9 +394,10 @@
       "contentKey": "fallback-hook/house-meaning/4",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "It's in your 4th house, meaning this side of you lives close to home: family, roots, and your private life bring it out.",
-      "body_they": "It's in their 4th house, meaning this side of them lives close to home: family, roots, and their private life bring it out.",
+      "body_you": "Your {{planetTitle}} is in your 4th house, meaning this side of you lives close to home: family, roots, and your private life bring it out.",
+      "body_they": "Their {{planetTitle}} is in their 4th house, meaning this side of them lives close to home: family, roots, and their private life bring it out.",
       "review_status": "approved",
+      "source_release": "natal-house-bridge-context-v2",
       "source_keys": [
         "cc/house/4"
       ],
@@ -403,9 +407,10 @@
       "contentKey": "fallback-hook/house-meaning/5",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "It's in your 5th house, meaning this side of you comes out through romance, creativity, and play.",
-      "body_they": "It's in their 5th house, meaning this side of them comes out through romance, creativity, and play.",
+      "body_you": "Your {{planetTitle}} is in your 5th house, meaning this side of you comes out through romance, creativity, and play.",
+      "body_they": "Their {{planetTitle}} is in their 5th house, meaning this side of them comes out through romance, creativity, and play.",
       "review_status": "approved",
+      "source_release": "natal-house-bridge-context-v2",
       "source_keys": [
         "cc/house/5"
       ],
@@ -415,9 +420,10 @@
       "contentKey": "fallback-hook/house-meaning/6",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "It's in your 6th house, meaning this side of you comes out at work, in your health habits, and in your daily routine.",
-      "body_they": "It's in their 6th house, meaning this side of them comes out at work, in their health habits, and in their daily routine.",
+      "body_you": "Your {{planetTitle}} is in your 6th house, meaning this side of you comes out at work, in your health habits, and in your daily routine.",
+      "body_they": "Their {{planetTitle}} is in their 6th house, meaning this side of them comes out at work, in their health habits, and in their daily routine.",
       "review_status": "approved",
+      "source_release": "natal-house-bridge-context-v2",
       "source_keys": [
         "cc/house/6"
       ],
@@ -427,9 +433,10 @@
       "contentKey": "fallback-hook/house-meaning/7",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "It's in your 7th house, meaning close relationships bring this side of you out more than anything else.",
-      "body_they": "It's in their 7th house, meaning close relationships bring this side of them out more than anything else.",
+      "body_you": "Your {{planetTitle}} is in your 7th house, meaning close relationships bring this side of you out more than anything else.",
+      "body_they": "Their {{planetTitle}} is in their 7th house, meaning close relationships bring this side of them out more than anything else.",
       "review_status": "approved",
+      "source_release": "natal-house-bridge-context-v2",
       "source_keys": [
         "cc/house/7"
       ],
@@ -439,9 +446,10 @@
       "contentKey": "fallback-hook/house-meaning/8",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "It's in your 8th house, meaning this side of you only fully shows once real trust is on the table: intimacy, shared money, the deep end.",
-      "body_they": "It's in their 8th house, meaning this side of them only fully shows once real trust is on the table: intimacy, shared money, the deep end.",
+      "body_you": "Your {{planetTitle}} is in your 8th house, meaning this side of you only fully shows once real trust is on the table: intimacy, shared money, the deep end.",
+      "body_they": "Their {{planetTitle}} is in their 8th house, meaning this side of them only fully shows once real trust is on the table: intimacy, shared money, the deep end.",
       "review_status": "approved",
+      "source_release": "natal-house-bridge-context-v2",
       "source_keys": [
         "cc/house/8"
       ],
@@ -451,9 +459,10 @@
       "contentKey": "fallback-hook/house-meaning/9",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "It's in your 9th house, meaning this side of you comes out through travel, study, belief, and the big questions.",
-      "body_they": "It's in their 9th house, meaning this side of them comes out through travel, study, belief, and the big questions.",
+      "body_you": "Your {{planetTitle}} is in your 9th house, meaning this side of you comes out through travel, study, belief, and the big questions.",
+      "body_they": "Their {{planetTitle}} is in their 9th house, meaning this side of them comes out through travel, study, belief, and the big questions.",
       "review_status": "approved",
+      "source_release": "natal-house-bridge-context-v2",
       "source_keys": [
         "cc/house/9"
       ],
@@ -463,9 +472,10 @@
       "contentKey": "fallback-hook/house-meaning/10",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "It's in your 10th house, meaning this side of you is on public display: career, reputation, and what you're known for.",
-      "body_they": "It's in their 10th house, meaning this side of them is on public display: career, reputation, and what they're known for.",
+      "body_you": "Your {{planetTitle}} is in your 10th house, meaning this side of you is on public display: career, reputation, and what you're known for.",
+      "body_they": "Their {{planetTitle}} is in their 10th house, meaning this side of them is on public display: career, reputation, and what they're known for.",
       "review_status": "approved",
+      "source_release": "natal-house-bridge-context-v2",
       "source_keys": [
         "cc/house/10"
       ],
@@ -475,9 +485,10 @@
       "contentKey": "fallback-hook/house-meaning/11",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "It's in your 11th house, meaning friends, groups, and your plans for the future bring this side of you out.",
-      "body_they": "It's in their 11th house, meaning friends, groups, and their plans for the future bring this side of them out.",
+      "body_you": "Your {{planetTitle}} is in your 11th house, meaning friends, groups, and your plans for the future bring this side of you out.",
+      "body_they": "Their {{planetTitle}} is in their 11th house, meaning friends, groups, and their plans for the future bring this side of them out.",
       "review_status": "approved",
+      "source_release": "natal-house-bridge-context-v2",
       "source_keys": [
         "cc/house/11"
       ],
@@ -487,9 +498,10 @@
       "contentKey": "fallback-hook/house-meaning/12",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "It's in your 12th house, meaning this side of you works behind the scenes: solitude, privacy, and what you keep to yourself.",
-      "body_they": "It's in their 12th house, meaning this side of them works behind the scenes: solitude, privacy, and what they keep to themselves.",
+      "body_you": "Your {{planetTitle}} is in your 12th house, meaning this side of you works behind the scenes: solitude, privacy, and what you keep to yourself.",
+      "body_they": "Their {{planetTitle}} is in their 12th house, meaning this side of them works behind the scenes: solitude, privacy, and what they keep to themselves.",
       "review_status": "approved",
+      "source_release": "natal-house-bridge-context-v2",
       "source_keys": [
         "cc/house/12"
       ],
