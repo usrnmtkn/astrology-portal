@@ -1,7 +1,7 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
-import { writingSurfaceSourceMap } from "../../apps/admin/src/writingSurfaceSourceMap";
+import { writingSurfaceAdminAccess, writingSurfaceSourceMap } from "../../apps/admin/src/writingSurfaceSourceMap";
 import {
   expectRouteLoadsWithin,
   routeReadyTimeoutMs,
@@ -21,6 +21,7 @@ const adminPages = [
   { nav: "Vocabulary & Phrases", title: "Vocabulary & Phrases", breadcrumb: "Admin / Composition / Vocabulary & phrases", hash: "vocabulary" },
   { nav: "Fallback Hooks", title: "Fallback Hooks", breadcrumb: "Admin / Composition / Fallback hooks", hash: "fallback-hooks" },
   { nav: "Surface Map", title: "Surface Map", breadcrumb: "Admin / App surfaces / Surface map", hash: "surface-map" },
+  { nav: "Sky Aspect Drafts", title: "Sky Aspect Drafts", breadcrumb: "Admin / App surfaces / Sky aspect drafts", hash: "source-drafts" },
   { nav: "Review Queue", title: "Review Queue", breadcrumb: "Admin / Publish / Review queue", hash: "review-queue" },
   { nav: "Connection", title: "Connection", breadcrumb: "Admin / Connection", hash: "connection" },
   { nav: "App Behavior", title: "App Behavior", breadcrumb: "Admin / App behavior", hash: "app-behavior" },
@@ -38,6 +39,37 @@ const adminCreateCases = [
 const forbiddenReaderPreviewCopy = /\b(?:Interpretation in review|Notice how this placement asks|puts first impressions, outward style|write a sentence|source framework|sourceSnapshot|templateVersion|Missing VITE|undefined|null|NaN)\b/i;
 
 const now = "2026-07-16T12:00:00.000Z";
+
+const heldSkyAspectDrafts = [
+  {
+    id: "sky.sun.trine.chiron",
+    canonicalId: "sky-aspect/chiron/sun/trine",
+    bodyA: "chiron",
+    bodyB: "sun",
+    aspect: "trine",
+    body: "People are telling the story of their worst year and finding out it counts as a credential.",
+    authorityClass: "unverified",
+    governanceState: "needs-owner-decision",
+    surfacePermission: ["doctrine-only"],
+    status: "NEEDS_OWNER_DECISION",
+    sourcePath: "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-sun-trine.json",
+    provenance: { sourceKey: "sky.sun.trine.chiron" }
+  },
+  {
+    id: "sky.sun.opposition.north-node",
+    canonicalId: "sky-aspect/north_node/sun/opposition",
+    bodyA: "north_node",
+    bodyB: "sun",
+    aspect: "opposition",
+    body: "The comeback offer is arriving, and it is excellent, and it points backward.",
+    authorityClass: "unverified",
+    governanceState: "needs-owner-decision",
+    surfacePermission: ["doctrine-only"],
+    status: "NEEDS_OWNER_DECISION",
+    sourcePath: "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/north_node-sun-opposition.json",
+    provenance: { sourceKey: "sky.sun.opposition.north-node" }
+  }
+];
 
 const generatedContentRows = [
   {
@@ -368,6 +400,14 @@ async function seedAdminApi(
 
     if (pathname.endsWith("/generated-content")) {
       const method = route.request().method();
+      if (method === "GET" && url.searchParams.get("sourceDrafts") === "sky-aspects") {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ ok: true, rows: heldSkyAspectDrafts })
+        });
+        return;
+      }
       if (method === "POST" || method === "PATCH") {
         const payload = route.request().postDataJSON() as Record<string, unknown>;
         options.onGeneratedContentWrite?.({ method, payload });
@@ -381,6 +421,9 @@ async function seedAdminApi(
           headline: typeof payload.headline === "string" ? payload.headline : generatedContentRows[0].headline,
           summary: typeof payload.summary === "string" ? payload.summary : generatedContentRows[0].summary,
           body: typeof payload.body === "string" ? payload.body : generatedContentRows[0].body,
+          source_snapshot: payload.sourceSnapshot && typeof payload.sourceSnapshot === "object"
+            ? payload.sourceSnapshot
+            : generatedContentRows[0].source_snapshot,
           lane: typeof payload.lane === "string" ? payload.lane : generatedContentRows[0].lane,
           review_state: typeof payload.reviewState === "string" ? payload.reviewState : null,
           block_type: typeof payload.blockType === "string" ? payload.blockType : generatedContentRows[0].block_type,
@@ -587,7 +630,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await openAdminDeepLink("#surface-map?area=friends&status=partial");
     await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
     await expect(page.getByRole("group", { name: "Filter surfaces by area" }).getByRole("button", { name: /Friends/ })).toHaveAttribute("aria-pressed", "true");
-    await expect(page.getByRole("group", { name: "Filter surfaces by normalization status" }).getByRole("button", { name: /Partial/ })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByRole("group", { name: "Filter surfaces by admin editability" }).getByRole("button", { name: /Runtime gaps/ })).toHaveAttribute("aria-pressed", "true");
 
     await expectAdminRouteLoads(page, "/admin/content#home");
     await expectAdminHeader(page, "Content Studio", "Admin / Home");
@@ -629,6 +672,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await expectAdminRouteLoads(page, "/admin/content#surface-map");
     await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
+    await page.getByText(/Supporting fallback-hook catalog/).click();
     await expect(page.getByRole("alert")).toContainText("failed with HTTP 503");
     await page.getByRole("button", { name: "Retry catalog" }).click();
 
@@ -883,17 +927,19 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
-  test("surface map filters keep visible hook rows aligned to the selected surface", async ({ page }) => {
+  test("surface map organizes editable content by the reader surface where it appears", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
-    await seedAdminApi(page);
+    let cmsWrite: { method: string; payload: Record<string, unknown> } | null = null;
+    await seedAdminApi(page, { onGeneratedContentWrite: (write) => { cmsWrite = write; } });
     await expectAdminRouteLoads(page, "/admin/content#surface-map");
 
     await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
 
     const areaFilters = page.getByRole("group", { name: "Filter surfaces by area" });
-    const statusFilters = page.getByRole("group", { name: "Filter surfaces by normalization status" });
-    const friendsV3Hook = page.locator(".admin-fallback-row", { hasText: "fallback-hook/synastry-aspect-type/conjunction" });
-    const calendarV3Hook = page.locator(".admin-fallback-row", { hasText: "fallback-hook/sky-event/eclipse-lunar" });
+    const statusFilters = page.getByRole("group", { name: "Filter surfaces by admin editability" });
+    const planetCards = page.locator(".admin-surface-card", { hasText: "Friends Compatibility: Planet Comparison Cards" });
+    const skyAspect = page.locator(".admin-surface-card", { hasText: "Sky Aspect Detail Pages" });
+    const calendarEvents = page.locator(".admin-surface-card", { hasText: "Sky Calendar: Event Cards" });
     const friendsSurfaceLabels = writingSurfaceSourceMap
       .filter((surface) => surface.area === "Friends")
       .map((surface) => surface.surface);
@@ -905,23 +951,95 @@ test.describe("content dashboard admin user flow case studies", () => {
     ]));
 
     await areaFilters.getByRole("button", { name: "Friends" }).click();
-    await expect(friendsV3Hook).toHaveCount(1);
-    await expect(calendarV3Hook).toHaveCount(0);
+    await expect(planetCards).toHaveCount(1);
+    await expect(skyAspect).toHaveCount(0);
 
-    await statusFilters.getByRole("button", { name: "Complete" }).click();
-    await expect(friendsV3Hook).toHaveCount(0);
-    await expect(page.locator(".admin-fallback-row", { hasText: "Needs row" })).toHaveCount(0);
+    await statusFilters.getByRole("button", { name: "Editable", exact: true }).click();
+    await expect(planetCards).toHaveCount(1);
 
-    await statusFilters.getByRole("button", { name: "Missing" }).click();
+    await statusFilters.getByRole("button", { name: "Runtime gaps" }).click();
     await expect(areaFilters.getByRole("button", { name: "Friends" })).toHaveAttribute("aria-pressed", "true");
-    await expect(statusFilters.getByRole("button", { name: "Missing" })).toHaveAttribute("aria-pressed", "true");
-    await expect(friendsV3Hook).toHaveCount(1);
-    await expect(calendarV3Hook).toHaveCount(0);
+    await expect(statusFilters.getByRole("button", { name: "Runtime gaps" })).toHaveAttribute("aria-pressed", "true");
+    await expect(planetCards).toHaveCount(0);
 
     await statusFilters.getByRole("button", { name: "All" }).click();
     await areaFilters.getByRole("button", { name: "Calendar" }).click();
-    await expect(calendarV3Hook).toHaveCount(1);
-    await expect(friendsV3Hook).toHaveCount(0);
+    await expect(calendarEvents).toHaveCount(1);
+    await expect(planetCards).toHaveCount(0);
+
+    await areaFilters.getByRole("button", { name: "Sky" }).click();
+    await expect(skyAspect).toHaveCount(1);
+    const skyAspectAccess = writingSurfaceAdminAccess["sky-aspect-detail"];
+    for (const route of skyAspectAccess.routes) {
+      await expect(skyAspect.locator(`a[href='${route.hash}']`)).toHaveCount(1);
+    }
+
+    await areaFilters.getByRole("button", { name: "You" }).click();
+    const emptyHouseSurface = page.locator(".admin-surface-card", { hasText: "Empty House Cards And Detail Pages" });
+    await emptyHouseSurface.getByRole("button", { name: "Start empty-house detail template" }).click();
+    const editor = page.locator(".admin-editor-panel");
+    await expect(editor.getByRole("heading", { name: "Author new row" })).toBeVisible();
+    await expect(editor.getByLabel("Content key")).toHaveValue("cms/natal-empty-house/detail/you/template");
+    await expect(editor.getByText("Reader-facing CMS override")).toBeVisible();
+    await expect(editor.locator("p", { hasText: "Allowed slots:" })).toContainText("{{houseOrdinal}}");
+    await fillAdminEditorField(editor, "Body", "Your {{houseOrdinal}} house begins in {{missingTopic}}.");
+    await expect(editor.getByRole("alert", { name: "CMS template errors" })).toContainText("{{missingTopic}}");
+    await expect(editor.getByRole("button", { name: "Sign Off" })).toBeDisabled();
+    await fillAdminEditorField(editor, "Body", "Your {{houseOrdinal}} house begins in {{sign}}. Review what you repeat here each month.");
+    await expect(editor.getByRole("alert", { name: "CMS template errors" })).toHaveCount(0);
+    await expect(editor.getByLabel("CMS template preview")).toContainText("Your 2nd house begins in Taurus.");
+    await expect(editor.getByRole("button", { name: "Sign Off" })).toBeEnabled();
+    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await expect(editor.getByText("Reader-facing CMS override")).toBeVisible();
+    await expect(editor.locator(".admin-editor-toolbar")).toContainText("Draft");
+    expect(cmsWrite?.method).toBe("POST");
+    expect(cmsWrite?.payload.sourceSnapshot).toMatchObject({
+      contentType: "mustache-template",
+      contentSystem: "cms-surface-override",
+      contentLevel: "owner-authored",
+      allowedSlots: expect.arrayContaining(["houseOrdinal", "sign"])
+    });
+    await editor.getByRole("button", { name: "Close" }).click();
+
+    await assertNoBrowserErrors();
+  });
+
+  test("held Sky aspect passages are searchable and editable without generic publication", async ({ page }) => {
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page, { onGeneratedContentWrite: (write) => writes.push(write) });
+    await expectAdminRouteLoads(page, "/admin/content#source-drafts");
+
+    await expectAdminHeader(page, "Sky Aspect Drafts", "Admin / App surfaces / Sky aspect drafts");
+    await expect(page.getByText("2 of 2 passages shown")).toBeVisible();
+    await page.getByLabel("Search Sky aspect drafts").fill("Sun trine Chiron");
+    const sourceRow = page.locator(".admin-fallback-row", { hasText: "sky.sun.trine.chiron" });
+    await expect(sourceRow).toHaveCount(1);
+    await expect(page.locator(".admin-fallback-row", { hasText: "sky.sun.opposition.north-node" })).toHaveCount(0);
+    await sourceRow.getByRole("button", { name: "Open draft" }).click();
+
+    const editor = page.locator(".admin-editor-panel");
+    await expect(editor.getByRole("heading", { name: "Author new row" })).toBeVisible();
+    await expect(editor.getByLabel("Content key")).toHaveValue("sky.sun.trine.chiron");
+    await expect(editor.getByLabel("Body")).toHaveValue(heldSkyAspectDrafts[0].body);
+    await expect(editor.getByLabel("Lane")).toHaveValue("reference");
+    await expect(editor.getByLabel("Review state")).toHaveValue("NEEDS_OWNER_DECISION");
+
+    await editor.getByLabel("Status").selectOption("LIVE");
+    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await expect(page.getByText(/still needs an explicit owner decision/)).toBeVisible();
+    expect(writes).toHaveLength(0);
+
+    await editor.getByLabel("Status").selectOption("DRAFT");
+    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(1);
+    expect(writes[0].payload).toMatchObject({
+      contentKey: "sky.sun.trine.chiron",
+      status: "DRAFT",
+      lane: "reference",
+      reviewState: "NEEDS_OWNER_DECISION",
+      blockType: "sky_aspect"
+    });
 
     await assertNoBrowserErrors();
   });
@@ -1027,7 +1145,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await openAdminDeepLink("#surface-map");
     await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
-    await expect(page.getByText(/public surfaces|content paths/i)).toBeVisible();
+    await expect(page.getByText(/reader surface directory|mapped surfaces/i).first()).toBeVisible();
 
     await assertNoBrowserErrors();
   });
