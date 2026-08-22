@@ -1104,6 +1104,21 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  test("review queue Edit opens the saved-row editor", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await expectAdminRouteLoads(page, "/admin/content#review-queue");
+
+    const reviewRow = page.locator(".admin-review-queue-row", { hasText: "sky.placement.sun.cancer" });
+    await expect(reviewRow).toHaveCount(1);
+    await reviewRow.getByRole("button", { name: "Edit" }).click();
+
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByRole("heading", { name: "Edit article" })).toBeVisible();
+    await expect(editor.getByLabel("Content key")).toHaveValue("sky.placement.sun.cancer");
+    await assertNoBrowserErrors();
+  });
+
   test("composition surfaces expose templates, slots, vocabulary, fallback hooks, and surface map", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
