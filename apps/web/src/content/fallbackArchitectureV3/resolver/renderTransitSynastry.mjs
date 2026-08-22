@@ -1400,6 +1400,7 @@ const SKY_PLACEMENT_ERA_PLANETS = new Set([
   "neptune",
   "pluto",
   "chiron",
+  "lilith",
   "north-node",
   "south-node",
   "nodes"
@@ -1871,7 +1872,10 @@ function renderSkyPlacementCopy({
     ));
   }
 
-  if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet)) {
+  // Lilith joins the continuous renderer only when an approved continuous row
+  // exists. Until then, its owner-approved four-slot page remains unchanged.
+  // This makes migration additive instead of blanking a page at cutover time.
+  if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet) || (planet === "lilith" && continuousSignCopy)) {
     const standaloneHook = hooks.get(`fallback-hook/sky-placement-sign/${planet}/${sign}`);
     if (continuousSignCopy) {
       return renderContinuousSkyPlacement(continuousSignCopy, {
