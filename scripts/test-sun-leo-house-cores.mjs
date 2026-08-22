@@ -52,7 +52,7 @@ assert.match(
   /if \(!risingSign \|\| !detail\.routePath\?\.startsWith\("sky\/placement\/"\)\) \{[\s\S]*?personalizedPlacement: null/u,
   "No stored rising sign must render no personalized block."
 );
-assert.match(app, /wholeSignHouseForSign\(sign, risingSign\)/u);
+assert.match(app, /wholeSignHouseForSign\(position\.sign, risingSign\)/u);
 assert.match(
   app,
   /console\.warn\(error instanceof Error \? error\.message : String\(error\)\);[\s\S]*?personalizedPlacement: null/u,

@@ -4694,12 +4694,18 @@ export function GeneratedContentAdminDashboard() {
     const skyWriteupParent = skyWriteupParentId ? rows.find((row) => row.id === skyWriteupParentId) ?? null : null;
     const skyWriteupContext = selectedRow ? skyWriteupContextForRow(selectedRow) : null;
     const skyHousePassages = skyWriteupContext ? relatedHousePassages(rows, skyWriteupContext) : [];
+    const skyReaderReadyHousePassages = skyHousePassages.filter((passage) => (
+      passage.availability === "Reader-ready" && isApprovedSkyRelationRow(passage.row)
+    ));
     const skyAspectPassages = skyWriteupContext ? relatedAspectPassages(rows, skyWriteupContext) : [];
     const filteredSkyAspectPassages = skyAspectPassages.filter((row) => matchesAdminSearch(
       `${row.content_key} ${row.headline ?? ""} ${row.body ?? ""}`,
       skyRelatedAspectQuery
     ));
-    const populatedSkyHouses = new Set(skyHousePassages.map((passage) => passage.house)).size;
+    const populatedSkyHouses = new Set(skyReaderReadyHousePassages.map((passage) => passage.house)).size;
+    const candidateSkyHouses = new Set(skyHousePassages
+      .filter((passage) => passage.availability === "Source candidate")
+      .map((passage) => passage.house)).size;
     const isSkyArticleTemplate = isSkyArticleTemplateRow(selectedRow);
     const compiledSkyArticleEdition = compiledSkyArticleEditionForDraft(currentDraft);
     const isSkyArticleSourceDraft = draftEventType(currentDraft) === "sky-article-edition-source";
@@ -4730,7 +4736,9 @@ export function GeneratedContentAdminDashboard() {
       ? { planet: skyArticleEditionFacts.planet, sign: skyArticleEditionFacts.sign }
       : null;
     const skyArticleEditionHouseRows = skyArticleEditionContext
-      ? relatedHousePassages(rows, skyArticleEditionContext).filter((passage) => isApprovedSkyRelationRow(passage.row))
+      ? relatedHousePassages(rows, skyArticleEditionContext).filter((passage) => (
+          passage.availability === "Reader-ready" && isApprovedSkyRelationRow(passage.row)
+        ))
       : [];
     const skyArticleEditionHouseCoverage = new Set(skyArticleEditionHouseRows.map((passage) => passage.house)).size;
     const skyArticleEditionAspectCount = skyArticleEditionContext
@@ -5254,7 +5262,8 @@ export function GeneratedContentAdminDashboard() {
                 </div>
                 <dl className="admin-hook-pattern-list">
                   <div><dt>Placement</dt><dd>{titleFromKey(skyWriteupContext.planet)}{skyWriteupContext.sign ? ` in ${titleFromKey(skyWriteupContext.sign)}` : ""}</dd></div>
-                  <div><dt>House coverage</dt><dd>{populatedSkyHouses}/12</dd></div>
+                  <div><dt>Reader-ready houses</dt><dd>{populatedSkyHouses}/12</dd></div>
+                  <div><dt>Source candidates</dt><dd>{candidateSkyHouses}/12 houses</dd></div>
                   <div><dt>Aspect passages</dt><dd>{skyAspectPassages.length}</dd></div>
                 </dl>
               </header>
@@ -5262,10 +5271,10 @@ export function GeneratedContentAdminDashboard() {
               <details className="admin-sky-related-group admin-diagnostics-details" open>
                 <summary>
                   <span>House horoscopes</span>
-                  <strong>{populatedSkyHouses}/12 houses</strong>
+                  <strong>{populatedSkyHouses}/12 reader-ready</strong>
                 </summary>
                 <p className="admin-sky-related-help">
-                  A house can have more than one row when the reader passage is assembled from an introduction, a sign-specific passage, or an approved complete horoscope.
+                  Only an approved complete Sky house horoscope can serve on this placement page. House introductions, generic house passages, and older sign-specific transit passages remain visible as source candidates; the app will not substitute them silently.
                 </p>
                 <div className="admin-sky-house-grid admin-lunar-coverage-row-list">
                   {Array.from({ length: 12 }, (_, index) => index + 1).map((house) => {
@@ -5279,7 +5288,7 @@ export function GeneratedContentAdminDashboard() {
                         {passages.map((passage) => (
                           <div className="admin-sky-related-row admin-hook-detail-section" key={passage.row.id}>
                             <div>
-                              <span>{passage.kind}</span>
+                              <span>{passage.kind} · {passage.availability}</span>
                               <code>{passage.row.content_key}</code>
                               <p>{passage.row.body || "No passage body saved."}</p>
                             </div>

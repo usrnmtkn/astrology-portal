@@ -2903,16 +2903,16 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("Venus in Libra exposes its complete approved rising-sign set", async ({ page }) => {
+  test("Venus in Libra does not expose an incomplete set after an owner rejection", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/venus/libra");
 
-    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
-    await expect(horoscopeSection).toBeVisible();
-    await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
-    await expect(horoscopeSection).toContainText("Venus in Libra is moving through your");
+    await expect(page.getByRole("heading", { name: "Venus in Libra" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Horoscopes by rising sign" })).toHaveCount(0);
+    await expect(page.getByRole("region", { name: "Where it lands for you" })).toHaveCount(0);
+    await expect(page.getByText("You may want more of what is actually fun.", { exact: true })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).not.toBeEmpty();
     await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
     await assertNoClientErrors();

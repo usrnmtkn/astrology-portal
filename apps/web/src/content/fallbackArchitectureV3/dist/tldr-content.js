@@ -791,7 +791,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     const normalizedHouse = Number(house);
     const key = `house-horoscope-core/${normalizedPlanet}/${normalizedSign}/house-${normalizedHouse}`;
     const row = hooks.get(key);
-    if (!(normalizedPlanet === "sun" && normalizedSign === "leo" || normalizedPlanet === "venus" && normalizedSign === "libra") || !Number.isInteger(normalizedHouse) || normalizedHouse < 1 || normalizedHouse > 12 || !row || row.content_role !== "house_horoscope_core" || row.grammar_frame !== "second_person_block" || !row.body_you) {
+    if (!Number.isInteger(normalizedHouse) || normalizedHouse < 1 || normalizedHouse > 12 || !row || row.content_role !== "house_horoscope_core" || row.grammar_frame !== "second_person_block" || !row.body_you) {
       throw new SourceGapError(`SOURCE_GAP: house horoscope core ${normalizedPlanet}/${normalizedSign}/house-${normalizedHouse}`);
     }
     return {
@@ -2738,7 +2738,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-21b";
+var PACKAGE_VERSION = "v3-2026-08-22a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
