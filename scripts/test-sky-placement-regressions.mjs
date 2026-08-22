@@ -207,6 +207,40 @@ const sunLeoMoonOpposition = renderer.renderSkyPlacement({
     applying: true
   }]
 });
+
+const plutoAquariusWithoutPriorOccurrenceFacts = {
+  planet: "pluto",
+  sign: "aquarius",
+  entryDate: "November 19, 2024",
+  exitDate: "March 8, 2043",
+  priorSign: "capricorn",
+  priorSignEntryDate: "January 27, 2008",
+  priorSignExitDate: "November 19, 2024",
+  previousResidencyEntryDate: null,
+  previousResidencyExitDate: null,
+  isRetrograde: true,
+  events: []
+};
+const plutoAquariusDist = renderer.renderSkyPlacement(plutoAquariusWithoutPriorOccurrenceFacts);
+const plutoAquariusReference = renderSkyPlacementReference(plutoAquariusWithoutPriorOccurrenceFacts);
+assert.deepEqual(
+  plutoAquariusDist,
+  plutoAquariusReference,
+  "The shipped reader artifact and Node resolver must agree when optional recurrence facts are unavailable."
+);
+assert.equal(plutoAquariusDist.templateKey, "sky-placement-continuous-v2");
+assert.match(plutoAquariusDist.body, /Pluto governs power and transformation/u);
+assert.match(plutoAquariusDist.body, /These systems can connect a group quickly/u);
+assert.match(plutoAquariusDist.body, /By March 8, a network that treats agreement as proof of truth/u);
+assert.doesNotMatch(plutoAquariusDist.body, /Pluto previously moved through Aquarius/u);
+assert.doesNotMatch(plutoAquariusDist.body, /\{\{/u);
+for (const [label, source] of [["Node", nodeTransitRenderer], ["browser", browserTransitRenderer]]) {
+  assert.match(
+    source,
+    /previousResidencyToken[\s\S]*?renderCollectivePart/u,
+    `${label} must omit only the fact-dependent collective section when prior-occurrence facts are unavailable.`
+  );
+}
 const moonTaurusFacts = {
   planet: "moon",
   sign: "taurus",
