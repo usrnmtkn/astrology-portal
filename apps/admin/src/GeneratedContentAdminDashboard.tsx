@@ -111,6 +111,7 @@ type SkyReviewHorizonOccurrence = {
   kind: "aspect" | "placement";
   contentKey: string;
   label: string;
+  facts: Record<string, string>;
   activeDates: string[];
   windows: Array<{ startDate: string; endDate: string }>;
   reviewStatus: "missing_draft" | "ready_for_owner" | "approved_scheduled" | "rejected" | "generation_error" | "draft_needs_work";
@@ -1403,6 +1404,8 @@ function draftEventType(draft: AdminDraft) {
   if (draft.blockType === "vocabulary_phrase" || draft.contentKey.startsWith("vocab/") || draft.contentKey.startsWith("fallback-vocab/") || draft.contentKey.startsWith("guide-phrase/")) return "vocab";
   if (draft.blockType === "template" || draft.contentKey.startsWith("slot-template/")) return "slot-template";
   if (draft.blockType === "sky_article" || draft.mode === "article") return "sky_article";
+  if (draft.blockType === "sky_aspect") return "collective-aspect-card";
+  if (draft.blockType === "sky_placement") return "collective-placement-card";
   return draft.blockType || "manual-content";
 }
 
@@ -2855,6 +2858,9 @@ export function GeneratedContentAdminDashboard() {
             blockType: draftForSave.blockType || null,
             promptVersion: draftForSave.promptVersion || "manual-admin",
             eventType: draftEventType(draftForSave),
+            sections: draftForSave.sections ?? {},
+            facts: draftForSave.facts ?? {},
+            reviewerNotes: draftForSave.reviewerNotes,
             sourceSnapshot: draftSourceSnapshot(draftForSave)
           };
       const method = draftForSave.id ? "PATCH" : "POST";
@@ -2957,6 +2963,41 @@ export function GeneratedContentAdminDashboard() {
       saveState: "idle",
       workspaceId: null
     } : null);
+  }
+
+  function openMissingSkyDraft(occurrence: SkyReviewHorizonOccurrence) {
+    setSelectedRowId(null);
+    setSkyWriteupParentId(null);
+    setSkyRelatedAspectQuery("");
+    setSkyArticleEditionForm(null);
+    skyArticleAutosaveSequenceRef.current += 1;
+    setSkyArticleEditor(null);
+    setDraft({
+      id: null,
+      contentKey: occurrence.contentKey,
+      surface: "sky",
+      mode: "feed",
+      status: "DRAFT",
+      headline: occurrence.label,
+      summary: "",
+      body: "",
+      lane: "serving",
+      reviewState: "EDITORIAL_REVIEW_REQUIRED",
+      blockType: occurrence.kind === "aspect" ? "sky_aspect" : "sky_placement",
+      promptVersion: "manual-admin",
+      sections: null,
+      facts: occurrence.facts,
+      reviewerNotes: "Created manually from the calculated 90-day Sky inventory.",
+      sourceSnapshot: {
+        contentType: occurrence.kind === "aspect" ? "owner-authored-sky-aspect" : "owner-authored-sky-placement",
+        content_role: "authored_card",
+        review_status: "needs_review",
+        authoringSource: "admin-dashboard-sky-horizon",
+        activeWindows: occurrence.windows
+      }
+    });
+    setMessage(`${occurrence.label} opened as a new manual draft. Add the missing writing, then save it for review.`);
+    scrollEditorToTop();
   }
 
   function openSourceDraft(item: AdminSourceDraft) {
@@ -4677,9 +4718,10 @@ export function GeneratedContentAdminDashboard() {
                   <div><dt>Active days</dt><dd>{occurrence.activeDates.length}</dd></div>
                   <div><dt>Windows</dt><dd>{occurrence.windows.length}</dd></div>
                 </dl>
-                <div className="admin-sky-voice-body">{row?.body || "No generated draft exists yet. A separately authorized generation run is required before there is writing to review."}</div>
+                <div className="admin-sky-voice-body">{row?.body || "No saved draft exists yet. Create a manual draft to write this card, or run the separately authorized generation job."}</div>
                 <div className="admin-review-queue-actions">
                   {row ? <button type="button" onClick={() => openRow(row)}>Edit</button> : null}
+                  {!row ? <button type="button" onClick={() => openMissingSkyDraft(occurrence)}>Create draft</button> : null}
                   {canApprove ? <button type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>Approve &amp; schedule</button> : null}
                 </div>
               </article>
