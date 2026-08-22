@@ -22,6 +22,7 @@ import { ModalPortal } from "../../components/ModalPortal";
 import { profileInitials } from "../../components/ProfileAvatar";
 import { CitySearchField } from "../../components/CitySearchField";
 import {
+  friendPlacementDescription,
   socialPlacementRows,
   type SocialPlacementRow
 } from "../../components/charts/PlacementRows";
@@ -1353,7 +1354,8 @@ export function ManualChartsPanel({
             transit.transitPlanet,
             selectedFriendTransits,
             currentSky.generatedAt
-          )
+          ),
+          friendGeneratedContent
         );
         const renderedWindow = normalized.sections[0]?.window ?? timingRange;
 
@@ -1372,6 +1374,7 @@ export function ManualChartsPanel({
       });
   }, [
     currentSky,
+    friendGeneratedContent,
     friendProfileWork.transits,
     selectedChart,
     selectedChartIsEvent,
@@ -1619,6 +1622,7 @@ export function ManualChartsPanel({
 
       return {
         ...row,
+        description: friendPlacementDescription(row.label, row.sign, friendGeneratedContent),
         detailAvailable: Boolean(detail && friendDetailHasReaderFacingContent(detail))
       };
     });
@@ -1757,7 +1761,8 @@ export function ManualChartsPanel({
         "friend",
         selectedChart.displayName,
         selectedChart.pronouns,
-        selectedFriendEmptyHouses
+        selectedFriendEmptyHouses,
+        friendGeneratedContent
       );
       const detailAvailable = friendDetailHasReaderFacingContent({
         body: article.body ?? [],
@@ -1779,11 +1784,12 @@ export function ManualChartsPanel({
           "friend",
           selectedChart.displayName,
           selectedChart.pronouns,
-          selectedFriendEmptyHouses
+          selectedFriendEmptyHouses,
+          friendGeneratedContent
         )
       };
     });
-  }, [fallbackArchitectureV3Version, selectedChart, selectedFriendEmptyHouses]);
+  }, [fallbackArchitectureV3Version, friendGeneratedContent, selectedChart, selectedFriendEmptyHouses]);
   const selectedFriendNatalAspectViewGroups = useMemo<FriendNatalViewAspectGroup[]>(() => (
     selectedFriendNatalAspectGroups.map((group) => ({
       key: group.key,
@@ -1967,7 +1973,8 @@ export function ManualChartsPanel({
       "friend",
       selectedChart.displayName,
       selectedChart.pronouns,
-      selectedFriendEmptyHouses
+      selectedFriendEmptyHouses,
+      friendGeneratedContent
     );
 
     openFriendDetail({

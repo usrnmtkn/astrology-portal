@@ -187,7 +187,15 @@ import {
   type GeneratedContentDrilldown,
   type LiveGeneratedContent
 } from "./services/generatedContent";
-import { loadSharedGeneratedContent } from "./services/sharedGeneratedContentCache";
+import {
+  clearSharedGeneratedContentCache,
+  loadSharedGeneratedContent
+} from "./services/sharedGeneratedContentCache";
+import { subscribeToContentUpdates } from "./services/contentUpdateSignal";
+import {
+  cmsSurfaceKeys,
+  resolveCmsSurfaceOverride
+} from "./content/cmsSurfaceOverrides";
 import { resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
 import {
   resolveApprovedExactSkyAspectCopy,
@@ -6780,12 +6788,45 @@ function normalizeEmptyHouseCardSurface(
   context: "self" | "friend" = "self",
   ownerName?: string,
   ownerPronouns?: PronounChoice | null,
-  emptyHouses?: number[]
+  emptyHouses?: number[],
+  generatedContent?: GeneratedContentMap
 ): NormalizedEmptyHouseArticle {
-  void ownerName;
   void ownerPronouns;
   void emptyHouses;
   const { sign, ruler, rulerPosition, rulerSystem } = emptyHouseContext(house, natalSky);
+  const voice = context === "self" ? "you" : "they";
+  const override = resolveCmsSurfaceOverride(
+    generatedContent,
+    cmsSurfaceKeys.emptyHouse("card", voice, house, sign),
+    {
+      house,
+      houseOrdinal: ordinalHouse(house),
+      sign,
+      ruler,
+      rulerSign: rulerPosition?.sign ?? "",
+      rulerHouse: rulerPosition?.house ?? "",
+      rulerHouseOrdinal: rulerPosition?.house ? ordinalHouse(rulerPosition.house) : "",
+      ownerName: ownerName ?? ""
+    }
+  );
+
+  if (override) {
+    const section = normalizedEmptyHouseSection(
+      "card-summary",
+      override.headline || emptyHouseTitle(house, natalSky),
+      override.body,
+      override.sourceKeys,
+      false
+    );
+    if (section) {
+      return {
+        surface: "empty-house",
+        status: "servable",
+        note: null,
+        sections: [{ ...section, layer: "authored", tier: "cms-live-serving" }]
+      };
+    }
+  }
   let rendered: ReturnType<typeof fallbackRendererV3.renderNatalEmptyHouse>;
 
   try {
@@ -6795,7 +6836,7 @@ function normalizeEmptyHouseCardSurface(
       rulerHouse: rulerPosition?.house,
       rulerSystem,
       sign: normalizeContentIdPart(sign),
-      voice: context === "self" ? "you" : "they"
+      voice
     });
   } catch (error) {
     if (error instanceof FallbackV3SourceGapError) {
@@ -6841,9 +6882,10 @@ function emptyHouseCardDescription(
   context: "self" | "friend" = "self",
   ownerName?: string,
   ownerPronouns?: PronounChoice | null,
-  emptyHouses?: number[]
+  emptyHouses?: number[],
+  generatedContent?: GeneratedContentMap
 ): string {
-  return normalizeEmptyHouseCardSurface(house, natalSky, context, ownerName, ownerPronouns, emptyHouses).sections[0]?.body ?? "";
+  return normalizeEmptyHouseCardSurface(house, natalSky, context, ownerName, ownerPronouns, emptyHouses, generatedContent).sections[0]?.body ?? "";
 }
 
 function normalizeEmptyHouseDetailSurface({
@@ -6855,7 +6897,8 @@ function normalizeEmptyHouseDetailSurface({
   ruler,
   rulerSystem,
   rulerPosition,
-  sign
+  sign,
+  generatedContent
 }: {
   compositionContext: "self" | "friend";
   context: "self" | "friend";
@@ -6866,6 +6909,7 @@ function normalizeEmptyHouseDetailSurface({
   rulerSystem: EmptyHouseRulerSystem;
   rulerPosition: PlanetPosition | null;
   sign: string;
+  generatedContent?: GeneratedContentMap;
 }): NormalizedEmptyHouseArticle {
   void compositionContext;
   void context;
@@ -6877,6 +6921,37 @@ function normalizeEmptyHouseDetailSurface({
     ruler ? `empty-house.ruler.${normalizeContentIdPart(ruler)}` : "",
     rulerPosition?.house ? `empty-house.ruler-house.${rulerPosition.house}` : ""
   ].filter(Boolean);
+  const voice = context === "self" ? "you" : "they";
+  const override = resolveCmsSurfaceOverride(
+    generatedContent,
+    cmsSurfaceKeys.emptyHouse("detail", voice, house, sign),
+    {
+      house,
+      houseOrdinal: ordinalHouse(house),
+      sign,
+      ruler,
+      rulerSign: rulerPosition?.sign ?? "",
+      rulerHouse: rulerPosition?.house ?? "",
+      rulerHouseOrdinal: rulerPosition?.house ? ordinalHouse(rulerPosition.house) : ""
+    }
+  );
+  if (override) {
+    const section = normalizedEmptyHouseSection(
+      "house-sign",
+      override.headline || `${ordinalHouse(house)} house sign`,
+      override.body,
+      override.sourceKeys,
+      true
+    );
+    if (section) {
+      return {
+        surface: "empty-house",
+        status: "servable",
+        note: null,
+        sections: [{ ...section, layer: "authored", tier: "cms-live-serving" }]
+      };
+    }
+  }
 
   try {
     const rendered = fallbackRendererV3.renderNatalEmptyHouse({
@@ -6885,7 +6960,7 @@ function normalizeEmptyHouseDetailSurface({
       rulerHouse: rulerPosition?.house,
       rulerSystem,
       sign: normalizeContentIdPart(sign),
-      voice: context === "self" ? "you" : "they"
+      voice
     }, { includeEmptyHouseBridge: true });
     const body = readerFacingParagraphs(rendered.parts).join("\n\n");
     const section = normalizedEmptyHouseSection(
@@ -6927,7 +7002,8 @@ function emptyHouseDetailArticle(
   context: "self" | "friend" = "self",
   ownerName?: string,
   ownerPronouns?: PronounChoice | null,
-  emptyHouses?: number[]
+  emptyHouses?: number[],
+  generatedContent?: GeneratedContentMap
 ): YouTransitArticle {
   void emptyHouses;
   const { sign, ruler, rulerPosition, rulerSystem } = emptyHouseContext(house, natalSky);
@@ -6946,7 +7022,8 @@ function emptyHouseDetailArticle(
     ruler,
     rulerSystem,
     rulerPosition,
-    sign
+    sign,
+    generatedContent
   });
   const paragraphs = normalized.sections.map((section) => taggedSectionBody(section));
 
@@ -7634,10 +7711,55 @@ function normalizeTransitHouseSurface(
   house: number,
   windowLabel: string,
   voice: "you" | string = "you",
-  events: ReturnType<typeof transitHouseAspectEvents> = []
+  events: ReturnType<typeof transitHouseAspectEvents> = [],
+  generatedContent?: GeneratedContentMap
 ): NormalizedTransitHouseArticle {
   let section: NormalizedTransitHouseSection | null = null;
   let detailSections: NormalizedTransitHouseSection[] = [];
+  const voiceKind = voice === "you" ? "you" : "they";
+  const override = resolveCmsSurfaceOverride(
+    generatedContent,
+    cmsSurfaceKeys.transitHouse(
+      voiceKind,
+      transit.transitPlanet,
+      house,
+      transit.transitSign ?? "",
+      transit.transitMotion ?? "direct"
+    ),
+    {
+      planet: transit.transitPlanet,
+      sign: transit.transitSign ?? "",
+      house,
+      houseOrdinal: ordinalHouse(house),
+      motion: transit.transitMotion ?? "direct",
+      window: windowLabel,
+      owner: voice,
+      ownerPossessive: voice === "you" ? "your" : possessiveLabel(voice)
+    }
+  );
+
+  if (override) {
+    section = {
+      slot: "house-activation",
+      required: true,
+      layer: "authored",
+      tier: "cms-live-serving",
+      sourceKeys: override.sourceKeys,
+      heading: override.headline || (
+        voice === "you"
+          ? `${transit.transitPlanet} through your ${ordinalHouse(house)} house`
+          : `${transit.transitPlanet} through ${possessiveLabel(voice)} ${ordinalHouse(house)} house`
+      ),
+      body: override.body,
+      window: windowLabel || null
+    };
+    return {
+      surface: "transit-house",
+      status: "servable",
+      sections: [section],
+      detailSections: [section]
+    };
+  }
 
   try {
     const rendered = transitSynastryFallbackRendererV3.renderTransitHouse({
@@ -10629,6 +10751,7 @@ export function App() {
   const [skyPlacementFallbackStatus, setSkyPlacementFallbackStatus] = useState<SkyPlacementContentStatus>("idle");
   const [skyPlacementFallbackRetryKey, setSkyPlacementFallbackRetryKey] = useState(0);
   const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
+  const [contentRefreshVersion, setContentRefreshVersion] = useState(0);
   const [, setPlanetTopicVocabularyVersion] = useState(0);
   const [, setNatalCardTaglineVersion] = useState(0);
   const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
@@ -11164,7 +11287,7 @@ export function App() {
       .catch((error) => {
         console.warn("Fallback architecture V3 dashboard bundle failed to install; local JSON snapshot remains active.", error);
       });
-  }, [mode]);
+  }, [contentRefreshVersion, mode]);
 
   useEffect(() => {
     let cancelled = false;
@@ -11216,7 +11339,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [mode, sky, skyDetailRoutePath, skyPlacementFallbackRetryKey]);
+  }, [contentRefreshVersion, mode, sky, skyDetailRoutePath, skyPlacementFallbackRetryKey]);
 
   useEffect(() => {
     function handlePortalUrlChange() {
@@ -11400,6 +11523,13 @@ export function App() {
     };
   }, []);
 
+  useEffect(() => subscribeToContentUpdates(() => {
+    clearSharedGeneratedContentCache();
+    calendarContentCacheRef.current.clear();
+    fallbackDashboardHydrationRequestedRef.current = false;
+    setContentRefreshVersion((version) => version + 1);
+  }), []);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -11556,7 +11686,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [calendarContentRequest, generatedContentPreviewMode, mode, sky, skyDate]);
+  }, [calendarContentRequest, contentRefreshVersion, generatedContentPreviewMode, mode, sky, skyDate]);
 
   useEffect(() => {
     let cancelled = false;
@@ -11597,7 +11727,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [friendNatalContentRequested, generatedContentPreviewMode, mode, skyDate]);
+  }, [contentRefreshVersion, friendNatalContentRequested, generatedContentPreviewMode, mode, skyDate]);
 
   useEffect(() => {
     let cancelled = false;
@@ -11641,7 +11771,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [friendRelationshipContentRequests, generatedContentPreviewMode, mode, skyDate]);
+  }, [contentRefreshVersion, friendRelationshipContentRequests, generatedContentPreviewMode, mode, skyDate]);
 
   useEffect(() => {
     if (!datePickerOpen) {
@@ -14701,8 +14831,12 @@ function natalPlacementMeta(position: PlanetPosition) {
   return `${ordinalHouse(position.house)} House · ${formatPlanetDegree(position)}`;
 }
 
-function natalPlacementDescription(planet: string) {
-  return natalCardTagline(planet);
+function natalPlacementDescription(planet: string, sign: string, generatedContent?: GeneratedContentMap) {
+  return resolveCmsSurfaceOverride(
+    generatedContent,
+    cmsSurfaceKeys.placementRow(planet),
+    { planet, sign, voice: "you" }
+  )?.body ?? natalCardTagline(planet);
 }
 
 function natalPlacementRouteId(position: PlanetPosition) {
@@ -16145,7 +16279,8 @@ function ProfileView({
           risingSign: displayRising,
           location: currentLocation,
           now: dateFromInput(targetDate),
-          dailyServedUnitsByDate
+          dailyServedUnitsByDate,
+          generatedContent
         })
           .then((assembly) => {
             if (!cancelled) setWeeklyHoroscopeAssembly(assembly);
@@ -16176,6 +16311,7 @@ function ProfileView({
     natalSky?.generatedAt,
     currentSky?.generatedAt,
     displayRising,
+    generatedContent,
     unknownBirthTime,
     targetDate
   ]);
@@ -16307,7 +16443,7 @@ function ProfileView({
     <PlacementTableRow
       asButton={Boolean(natalSun)}
       degree={natalSun ? formatPlanetDegree(natalSun) : null}
-      description={natalCardTagline("Sun")}
+      description={natalPlacementDescription("Sun", natalSun?.sign ?? displaySun, generatedContent)}
       dignity={natalSun ? placementDignity(natalSun) : null}
       glyph="☉"
       house={natalSun?.house ?? null}
@@ -16322,7 +16458,7 @@ function ProfileView({
     <PlacementTableRow
       asButton={Boolean(natalMoon)}
       degree={natalMoon ? formatPlanetDegree(natalMoon) : null}
-      description={natalCardTagline("Moon")}
+      description={natalPlacementDescription("Moon", natalMoon?.sign ?? displayMoon, generatedContent)}
       dignity={natalMoon ? placementDignity(natalMoon) : null}
       glyph="☽"
       house={natalMoon?.house ?? null}
@@ -16343,7 +16479,7 @@ function ProfileView({
       pointName="Ascendant"
       sign={natalAscendantPosition?.sign ?? (displayRising && displayRising !== "Rising pending" ? displayRising : null)}
       title={displayRising && displayRising !== "Rising pending" ? `Ascendant in ${displayRising}` : displayRising || "Rising calculating"}
-      description={natalCardTagline("Ascendant")}
+      description={natalPlacementDescription("Ascendant", natalAscendantPosition?.sign ?? displayRising, generatedContent)}
       variant="natal"
       key="ascendant"
     />,
@@ -16351,7 +16487,7 @@ function ProfileView({
   const planetPlacementRows = planetRows.map((position) => (
     <PlanetPlacementRow
       degree={formatPlanetDegree(position)}
-      description={natalPlacementDescription(position.planet)}
+      description={natalPlacementDescription(position.planet, position.sign, generatedContent)}
       dignity={placementDignity(position)}
       glyph={position.glyph}
       house={position.house}
@@ -16371,13 +16507,13 @@ function ProfileView({
       <PlacementTableRow
         ariaLabel={`Read more about ${emptyHouseTitle(house, natalSky)}`}
         asButton
-        description={emptyHouseCardDescription(house, natalSky, "self", undefined, undefined, emptyNatalHouses)}
+        description={emptyHouseCardDescription(house, natalSky, "self", undefined, undefined, emptyNatalHouses, generatedContent)}
         glyph={houseSign ? zodiacSignGlyphs[houseSign] ?? "○" : "○"}
         house={house}
         key={`empty-house-${house}`}
         onClick={() => {
           setActivePlacementRouteId(null);
-          setTransitArticle(emptyHouseDetailArticle(house, natalSky, "self", undefined, undefined, emptyNatalHouses));
+          setTransitArticle(emptyHouseDetailArticle(house, natalSky, "self", undefined, undefined, emptyNatalHouses, generatedContent));
           updatePortalModeUrl("profile", "push");
         }}
         title={emptyHouseTitle(house, natalSky)}
@@ -16649,7 +16785,8 @@ function ProfileView({
           transit.transitPlanet,
           qualifyingDailyTransits,
           targetDate
-        )
+        ),
+        generatedContent
       );
       const renderedWindow = normalizedHouseTransit.sections[0]?.window ?? timingRange;
       const rowSummary = transitCardPreview(
