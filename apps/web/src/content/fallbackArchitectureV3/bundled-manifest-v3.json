@@ -1,8 +1,8 @@
 {
   "packageVersion": "v3-2026-08-22c",
-  "contentHash": "ffc30129fa52afadc2cc62579f17c3f9",
-  "keyManifestHash": "cb5b6c8cd2ecc5d814c2eba63eacdefc",
-  "keyCount": 9143,
+  "contentHash": "67a13e6472ab604877b0bf66ca152e14",
+  "keyManifestHash": "9c407051a0b4484d9f1d3b6394fca761",
+  "keyCount": 9144,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -4370,6 +4370,7 @@
     "hook:fallback-hook/natal-aspect-lived/sun/quincunx/uranus",
     "hook:fallback-hook/natal-aspect-lived/sun/semisextile/ascendant",
     "hook:fallback-hook/natal-aspect-lived/sun/sextile/neptune",
+    "hook:fallback-hook/natal-aspect-lived/sun/square/ascendant",
     "hook:fallback-hook/natal-aspect-lived/sun/square/moon",
     "hook:fallback-hook/natal-aspect-lived/uranus/opposition/south-node",
     "hook:fallback-hook/natal-aspect-lived/uranus/quincunx/midheaven",

@@ -73,6 +73,7 @@ const existingApprovedRows = source.hookRows.filter((row) => (
   && row.source_release !== llMatrixV13Release
   && row.source_release !== incrementalOwnerApprovalRelease
   && row.source_release !== "natal-moon-final-rendered-v3"
+  && row.source_release !== "natal-sun-square-ascendant-owner-approved-runtime"
 )).map((row) => {
   // Preserve the frozen historical fingerprint while allowing the later,
   // separately hash-bound Friend house-bridge context release.

@@ -491,7 +491,7 @@ const venusLibraSceneEvidence = sceneEvidenceForTarget({
   }
 });
 assert.equal(matrixSceneCatalog.primary.length, 41, "Higher-governance matrix scene inventory must remain 41 unique rows.");
-assert.equal(servingSceneCatalog.length, 50, "Approved serving scene inventory must include the two V3 Moon rows that qualify as scene evidence.");
+assert.equal(servingSceneCatalog.length, 51, "Approved serving scene inventory must include the V3 Moon rows and the owner-approved Sun square Ascendant passage that qualify as scene evidence.");
 assert.equal(venusLibraHouseCoreScenes.length, 11);
 assert.equal(venusLibraSceneEvidence.counts.samePlanetSignHouseCoreSelected, 11);
 assert.equal(venusLibraSceneEvidence.counts.samePlanetSignSceneAvailable, 14);
