@@ -27,9 +27,15 @@ import { announceContentUpdate } from "../../web/src/services/contentUpdateSigna
 import {
   SKY_ARTICLE_COMPILER_VERSION,
   compileSkyArticleEdition,
+  reviseSkyArticleEdition,
+  skyArticleEditableFields,
+  skyArticleEditionFieldChanges,
   skyArticleEditionRecord,
   skyArticleTemplatePlaceholders,
+  type CompiledSkyArticleEdition,
   type SkyArticleAspectPassage,
+  type SkyArticleEditableFields,
+  type SkyArticleFieldChange,
   type SkyArticleHousePassage
 } from "../../web/src/content/skyArticleTemplateCompiler";
 import {
@@ -267,6 +273,17 @@ type SkyArticleEditionForm = {
     generationMetadata?: unknown;
   } | null;
   factBlockedSlots: Array<{ name: string; description?: string }>;
+  saveState: "idle" | "saved" | "saving" | "unsaved" | "error";
+  workspaceId: string | null;
+};
+
+type SkyArticleEditorState = {
+  baseEdition: CompiledSkyArticleEdition;
+  error: string | null;
+  fields: SkyArticleEditableFields;
+  reviewOpen: boolean;
+  rowId: string;
+  saveState: "saved" | "saving" | "unsaved" | "error";
 };
 
 type AdminDraft = {
@@ -1161,6 +1178,28 @@ function compiledSkyArticleEditionForDraft(draft: AdminDraft) {
   return skyArticleEditionRecord(draft.sections?.skyArticleEdition);
 }
 
+function skyArticleRevisionBaseForDraft(draft: AdminDraft) {
+  return skyArticleEditionRecord(draft.sections?.skyArticleRevisionBase)
+    ?? compiledSkyArticleEditionForDraft(draft);
+}
+
+function skyArticleWorkspaceContentKey(facts: Pick<SkyArticleEditionFacts, "planet" | "sign" | "entryYear">) {
+  return `sky-article-workspace/${facts.planet}/${facts.sign}/${facts.entryYear}`;
+}
+
+function skyArticleWorkspaceForm(row: AdminGeneratedContentRow | undefined) {
+  const sections = objectRecord(row?.sections);
+  const workspace = objectRecord(sections?.skyArticleWorkspace);
+  if (!row || row.event_type !== "sky-article-edition-workspace" || !workspace) return null;
+  const tldr = typeof workspace.tldr === "string" ? workspace.tldr : "";
+  const slotValues = objectRecord(workspace.slotValues);
+  return {
+    row,
+    tldr,
+    slotValues: Object.fromEntries(Object.entries(slotValues ?? {}).filter((entry): entry is [string, string] => typeof entry[1] === "string"))
+  };
+}
+
 function isApprovedSkyRelationRow(row: AdminGeneratedContentRow) {
   const reviewStatus = sourceSnapshotString(row.source_snapshot, "review_status");
   return row.status === "LIVE"
@@ -1751,6 +1790,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyWriteupParentId, setSkyWriteupParentId] = useState<string | null>(null);
   const [skyRelatedAspectQuery, setSkyRelatedAspectQuery] = useState("");
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
+  const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
   const [fallbackHookDefinitions, setFallbackHookDefinitions] = useState<FallbackHookDefinition[]>([]);
   const [hookCatalogPackageVersion, setHookCatalogPackageVersion] = useState("loading");
@@ -1767,6 +1807,8 @@ export function GeneratedContentAdminDashboard() {
   const hookCatalogRequestRef = useRef<Promise<{ definitions: FallbackHookDefinition[]; packageVersion: string }> | null>(null);
   const hookBodyPackagesRef = useRef(new Map<GeneratedContentSurface, Map<string, string>>());
   const hookBodyRequestsRef = useRef(new Map<GeneratedContentSurface, Promise<Map<string, string>>>());
+  const skyArticleAutosaveSequenceRef = useRef(0);
+  const skyArticleWorkspaceAutosaveSequenceRef = useRef(0);
 
   const visibleRows = rows;
   const savedFallbackRows = useMemo(
@@ -2163,6 +2205,132 @@ export function GeneratedContentAdminDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!skyArticleEditor || !secret.trim()) return;
+    const changes = skyArticleEditionFieldChanges(skyArticleEditor.baseEdition, skyArticleEditor.fields);
+    if (changes.length === 0) {
+      setSkyArticleEditor((current) => current ? { ...current, saveState: "saved", error: null } : current);
+      return;
+    }
+
+    const sequence = ++skyArticleAutosaveSequenceRef.current;
+    setSkyArticleEditor((current) => current ? { ...current, saveState: "unsaved", error: null } : current);
+    const timeout = window.setTimeout(() => {
+      void (async () => {
+        try {
+          setSkyArticleEditor((current) => current ? { ...current, saveState: "saving", error: null } : current);
+          const revised = await reviseSkyArticleEdition(skyArticleEditor.baseEdition, skyArticleEditor.fields);
+          const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
+            method: "PATCH",
+            body: JSON.stringify({
+              id: skyArticleEditor.rowId,
+              ownerAction: "save-sky-article-edition-revision",
+              sections: { skyArticleEdition: revised }
+            })
+          });
+          if (sequence !== skyArticleAutosaveSequenceRef.current) return;
+          const saved = payload.rows?.[0];
+          if (!saved) throw new Error("The saved article revision was not returned.");
+          setRows((current) => [saved, ...current.filter((row) => row.id !== saved.id)]);
+          setSelectedRowId(saved.id);
+          setDraft(draftFromRow(saved));
+          setSkyArticleEditor((current) => current ? {
+            ...current,
+            rowId: saved.id,
+            saveState: "saved",
+            error: null
+          } : current);
+        } catch (error) {
+          if (sequence !== skyArticleAutosaveSequenceRef.current) return;
+          setSkyArticleEditor((current) => current ? {
+            ...current,
+            saveState: "error",
+            error: error instanceof Error ? error.message : "Could not autosave the article revision."
+          } : current);
+        }
+      })();
+    }, 900);
+
+    return () => window.clearTimeout(timeout);
+  }, [secret, skyArticleEditor?.baseEdition, skyArticleEditor?.fields, skyArticleEditor?.rowId]);
+
+  useEffect(() => {
+    const form = skyArticleEditionForm;
+    const templateRow = selectedRow;
+    if (!form?.facts || !templateRow || !isSkyArticleTemplateRow(templateRow) || !secret.trim()) return;
+    const facts = form.facts;
+    const authoredSlotValues = Object.entries(form.slotValues).filter(([name, value]) => (
+      !Object.prototype.hasOwnProperty.call(facts.slotValues, name) && value.trim()
+    ));
+    if (!form.tldr.trim() && authoredSlotValues.length === 0) return;
+
+    const sequence = ++skyArticleWorkspaceAutosaveSequenceRef.current;
+    setSkyArticleEditionForm((current) => current ? { ...current, saveState: "unsaved" } : current);
+    const timeout = window.setTimeout(() => {
+      void (async () => {
+        try {
+          setSkyArticleEditionForm((current) => current ? { ...current, saveState: "saving" } : current);
+          const workspace = {
+            schema: "tldrastro-sky-article-workspace-v1",
+            targetContentKey: `sky-article/${facts.planet}/${facts.sign}/${facts.entryYear}`,
+            templateKey: templateRow.content_key.replace(/^sky-article-template\//u, "sky/article-template/"),
+            referenceDate: form.referenceDate,
+            facts,
+            tldr: form.tldr,
+            slotValues: form.slotValues
+          };
+          const requestBody = form.workspaceId ? {
+            id: form.workspaceId,
+            headline: `${titleFromKey(facts.planet)} in ${titleFromKey(facts.sign)} article draft`,
+            summary: form.tldr,
+            sections: { skyArticleWorkspace: workspace },
+            reviewState: "owner-review-required"
+          } : {
+            contentKey: skyArticleWorkspaceContentKey(facts),
+            surface: "sky",
+            mode: "article",
+            status: "DRAFT",
+            eventType: "sky-article-edition-workspace",
+            headline: `${titleFromKey(facts.planet)} in ${titleFromKey(facts.sign)} article draft`,
+            summary: form.tldr,
+            body: "",
+            sections: { skyArticleWorkspace: workspace },
+            lane: "reference",
+            reviewState: "owner-review-required",
+            blockType: "sky_article",
+            promptVersion: "sky-article-owner-workspace-v1",
+            provider: "owner-edited-sky-article",
+            model: "manual",
+            sourceSnapshot: {
+              review_status: "needs_review",
+              contentType: "sky-article-edition-workspace",
+              targetContentKey: workspace.targetContentKey
+            }
+          };
+          const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
+            method: form.workspaceId ? "PATCH" : "POST",
+            body: JSON.stringify(requestBody)
+          });
+          if (sequence !== skyArticleWorkspaceAutosaveSequenceRef.current) return;
+          const saved = payload.rows?.[0];
+          if (!saved) throw new Error("The saved article workspace was not returned.");
+          setRows((current) => [saved, ...current.filter((row) => row.id !== saved.id)]);
+          setSkyArticleEditionForm((current) => current ? {
+            ...current,
+            workspaceId: saved.id,
+            saveState: "saved"
+          } : current);
+        } catch (error) {
+          if (sequence !== skyArticleWorkspaceAutosaveSequenceRef.current) return;
+          setSkyArticleEditionForm((current) => current ? { ...current, saveState: "error" } : current);
+          setMessage(error instanceof Error ? error.message : "Could not autosave the article workspace.");
+        }
+      })();
+    }, 900);
+
+    return () => window.clearTimeout(timeout);
+  }, [secret, selectedRow, skyArticleEditionForm?.facts, skyArticleEditionForm?.tldr, skyArticleEditionForm?.slotValues, skyArticleEditionForm?.workspaceId]);
+
   function setAdminHash(nextHash: string, mode: "push" | "replace" = "push") {
     if (window.location.hash === nextHash) return;
     const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
@@ -2180,6 +2348,8 @@ export function GeneratedContentAdminDashboard() {
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
     setSkyArticleEditionForm(null);
+    skyArticleAutosaveSequenceRef.current += 1;
+    setSkyArticleEditor(null);
   }
 
   function navigateAdminPage(page: AdminDashboardPage, params?: URLSearchParams, options: { keepEditorOpen?: boolean } = {}) {
@@ -2356,12 +2526,17 @@ export function GeneratedContentAdminDashboard() {
         `/api/admin/sky-article-facts?planet=${encodeURIComponent(planet)}&date=${encodeURIComponent(skyArticleEditionForm.referenceDate)}`,
         secret
       );
+      const workspace = skyArticleWorkspaceForm(rows.find((row) => row.content_key === skyArticleWorkspaceContentKey(payload.facts)));
+      const authoredSource = rows.find((row) => row.content_key === `sky/article-edition/${payload.facts.planet}/${payload.facts.sign}`);
       setSkyArticleEditionForm((current) => current ? {
         ...current,
         facts: payload.facts,
-        slotValues: { ...current.slotValues, ...payload.facts.slotValues }
+        tldr: workspace?.tldr ?? authoredSource?.summary?.trim() ?? current.tldr,
+        slotValues: { ...current.slotValues, ...(workspace?.slotValues ?? {}), ...payload.facts.slotValues },
+        workspaceId: workspace?.row.id ?? null,
+        saveState: workspace ? "saved" : "idle"
       } : current);
-      setMessage(`Loaded the calculated ${titleFromKey(payload.facts.planet)} in ${titleFromKey(payload.facts.sign)} residency window.`);
+      setMessage(`Loaded the calculated ${titleFromKey(payload.facts.planet)} in ${titleFromKey(payload.facts.sign)} residency window.${workspace ? " Your saved article draft is restored." : ""}`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not load calculated Sky article facts.");
     } finally {
@@ -2542,6 +2717,40 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function publishSkyArticleChanges() {
+    if (!skyArticleEditor || skyArticleEditor.saveState !== "saved") return;
+    const revisionRow = rows.find((row) => row.id === skyArticleEditor.rowId);
+    if (!revisionRow) {
+      setMessage("The saved article revision is no longer available. Reopen the article before publishing.");
+      return;
+    }
+    const changes = skyArticleEditionFieldChanges(skyArticleEditor.baseEdition, skyArticleEditor.fields);
+    if (changes.length === 0) {
+      setMessage("There are no article changes to publish.");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const ownerAction = revisionRow.event_type === "sky-article-edition-revision"
+        ? "publish-sky-article-edition-revision"
+        : "approve-sky-article-edition";
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
+        method: "PATCH",
+        body: JSON.stringify({ id: revisionRow.id, ownerAction })
+      });
+      const saved = payload.rows?.[0];
+      if (!saved) throw new Error("The published article edition was not returned.");
+      setRows((current) => [saved, ...current.filter((row) => row.id !== saved.id && row.id !== revisionRow.id)]);
+      openRow(saved);
+      announceContentUpdate({ contentKey: saved.content_key, published: true, updatedAt: saved.updated_at ?? new Date().toISOString() });
+      setMessage(`${saved.content_key} published with ${changes.length} reviewed change${changes.length === 1 ? "" : "s"}.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not publish the article changes.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   async function saveDraft(nextStatus?: GeneratedContentStatus) {
     if (!draft) return;
     const status = nextStatus ?? draft.status;
@@ -2657,17 +2866,31 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function openRow(row: AdminGeneratedContentRow) {
+    const nextDraft = draftFromRow(row);
+    const edition = compiledSkyArticleEditionForDraft(nextDraft);
+    const baseEdition = skyArticleRevisionBaseForDraft(nextDraft);
     setSelectedRowId(row.id);
-    setDraft(draftFromRow(row));
+    setDraft(nextDraft);
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
+    skyArticleAutosaveSequenceRef.current += 1;
+    setSkyArticleEditor(edition && baseEdition ? {
+      baseEdition,
+      fields: skyArticleEditableFields(edition),
+      rowId: row.id,
+      saveState: "saved",
+      error: null,
+      reviewOpen: false
+    } : null);
     setSkyArticleEditionForm(isSkyArticleTemplateRow(row) ? {
       referenceDate: new Date().toISOString().slice(0, 10),
       facts: null,
       tldr: "",
       slotValues: {},
       slotGeneration: null,
-      factBlockedSlots: []
+      factBlockedSlots: [],
+      saveState: "idle",
+      workspaceId: null
     } : null);
   }
 
@@ -2683,6 +2906,8 @@ export function GeneratedContentAdminDashboard() {
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
     setSkyArticleEditionForm(null);
+    skyArticleAutosaveSequenceRef.current += 1;
+    setSkyArticleEditor(null);
     setDraft({
       id: null,
       contentKey: item.id,
@@ -4483,6 +4708,10 @@ export function GeneratedContentAdminDashboard() {
       .map((passage) => passage.house)).size;
     const isSkyArticleTemplate = isSkyArticleTemplateRow(selectedRow);
     const compiledSkyArticleEdition = compiledSkyArticleEditionForDraft(currentDraft);
+    const isSkyArticleSourceDraft = draftEventType(currentDraft) === "sky-article-edition-source";
+    const skyArticleChanges = skyArticleEditor
+      ? skyArticleEditionFieldChanges(skyArticleEditor.baseEdition, skyArticleEditor.fields)
+      : [];
     const isCmsSurfaceDraft = currentDraft.sourceSnapshot?.contentSystem === "cms-surface-override" || currentDraft.contentKey.startsWith("cms/");
     const cmsAllowedSlots = Array.isArray(currentDraft.sourceSnapshot?.allowedSlots)
       ? currentDraft.sourceSnapshot.allowedSlots.filter((slot): slot is string => typeof slot === "string")
@@ -4515,6 +4744,9 @@ export function GeneratedContentAdminDashboard() {
     const skyArticleEditionAspectCount = skyArticleEditionContext
       ? relatedAspectPassages(rows, skyArticleEditionContext).filter(isApprovedSkyRelationRow).length
       : 0;
+    const skyArticleEditionMissingTemplateFields = skyArticleTemplateFields.filter((field) => (
+      !Object.prototype.hasOwnProperty.call(skyArticleEditionForm?.slotValues ?? {}, field.name)
+    ));
     const updateVocabularySection = (nextSection: AdminVocabularySection) => {
       setDraft({
         ...currentDraft,
@@ -4526,6 +4758,29 @@ export function GeneratedContentAdminDashboard() {
         ...currentDraft,
         headline,
         contentKey: isVocabularyDraft && isNewDraft ? vocabularyContentKey(vocabularySection, headline) : currentDraft.contentKey
+      });
+    };
+    const updateSkyArticleFields = (next: Partial<SkyArticleEditableFields>) => {
+      setSkyArticleEditor((current) => current ? {
+        ...current,
+        fields: { ...current.fields, ...next },
+        reviewOpen: false
+      } : current);
+    };
+    const updateSkyArticleHouse = (contentKey: string, body: string) => {
+      if (!skyArticleEditor) return;
+      updateSkyArticleFields({
+        housePassages: skyArticleEditor.fields.housePassages.map((passage) => (
+          passage.contentKey === contentKey ? { ...passage, body } : passage
+        ))
+      });
+    };
+    const updateSkyArticleAspect = (contentKey: string, body: string) => {
+      if (!skyArticleEditor) return;
+      updateSkyArticleFields({
+        aspectPassages: skyArticleEditor.fields.aspectPassages.map((passage) => (
+          passage.contentKey === contentKey ? { ...passage, body } : passage
+        ))
       });
     };
     const updateFallbackReviewStatus = (reviewStatus: string) => {
@@ -4690,7 +4945,15 @@ export function GeneratedContentAdminDashboard() {
                     edition-specific fields, twelve approved house horoscopes, and approved natal-aspect passages.
                   </p>
                 </div>
-                <code>{selectedRow.content_key}</code>
+                <div>
+                  <code>{selectedRow.content_key}</code>
+                  <p className="admin-field-hint" aria-live="polite">
+                    {skyArticleEditionForm.saveState === "saving" ? "Saving draft…"
+                      : skyArticleEditionForm.saveState === "unsaved" ? "Unsaved changes"
+                        : skyArticleEditionForm.saveState === "error" ? "Autosave failed"
+                          : skyArticleEditionForm.saveState === "saved" ? "Draft saved automatically" : "Not saved yet"}
+                  </p>
+                </div>
               </header>
               <div className="admin-sky-edition-facts-row">
                 <label className="admin-title-field">
@@ -4706,7 +4969,9 @@ export function GeneratedContentAdminDashboard() {
                       tldr: "",
                       slotValues: {},
                       slotGeneration: null,
-                      factBlockedSlots: []
+                      factBlockedSlots: [],
+                      saveState: "idle",
+                      workspaceId: null
                     })}
                   />
                   <small className="admin-field-hint">The ephemeris uses this date to identify the active sign and complete residency window.</small>
@@ -4724,6 +4989,15 @@ export function GeneratedContentAdminDashboard() {
                     <div><dt>House coverage</dt><dd>{skyArticleEditionHouseCoverage}/12 approved</dd></div>
                     <div><dt>Aspect passages</dt><dd>{skyArticleEditionAspectCount} approved</dd></div>
                   </dl>
+                  <section className="admin-hook-detail-section" aria-label="Article completion checklist">
+                    <p className="admin-eyebrow">Publication checklist</p>
+                    <ul>
+                      <li>{skyArticleEditionForm.tldr.trim() ? "✓" : "○"} Explicit TL;DR</li>
+                      <li>{skyArticleEditionMissingTemplateFields.length === 0 ? "✓" : "○"} Article fields ({skyArticleTemplateFields.length - skyArticleEditionMissingTemplateFields.length}/{skyArticleTemplateFields.length})</li>
+                      <li>{skyArticleEditionHouseCoverage === 12 ? "✓" : "○"} House passages ({skyArticleEditionHouseCoverage}/12)</li>
+                      <li>✓ Calculated residency facts</li>
+                    </ul>
+                  </section>
                   <div className="admin-toolbar-actions">
                     <button
                       type="button"
@@ -4797,11 +5071,13 @@ export function GeneratedContentAdminDashboard() {
                       className="admin-primary-button"
                       type="button"
                       onClick={() => void createSkyArticleEdition(selectedRow)}
-                      disabled={isLoading || skyArticleEditionHouseCoverage < 12 || !skyArticleEditionForm.tldr.trim()}
+                      disabled={isLoading || skyArticleEditionHouseCoverage < 12 || !skyArticleEditionForm.tldr.trim() || skyArticleEditionMissingTemplateFields.length > 0}
                       title={skyArticleEditionHouseCoverage < 12
                         ? "All 12 approved house horoscopes are required before compilation."
                         : !skyArticleEditionForm.tldr.trim()
                           ? "Write the edition TL;DR before compilation."
+                          : skyArticleEditionMissingTemplateFields.length > 0
+                            ? `Complete or deliberately leave blank: ${skyArticleEditionMissingTemplateFields.map((field) => field.name).join(", ")}.`
                           : "Compile a non-serving edition draft."}
                     >
                       <Plus size={16} aria-hidden="true" />
@@ -4833,6 +5109,144 @@ export function GeneratedContentAdminDashboard() {
                 <div><dt>House horoscopes</dt><dd>{compiledSkyArticleEdition.housePassages.length}/12</dd></div>
                 <div><dt>Aspect passages</dt><dd>{compiledSkyArticleEdition.aspectPassages.length}</dd></div>
               </dl>
+              {skyArticleEditor && (
+                <div className="admin-sky-article-editor" aria-label="Edit Sky article">
+                  <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
+                    <div>
+                      <p className="admin-eyebrow">Article editor</p>
+                      <h3>Edit the reader experience</h3>
+                      <p>Drafts save automatically. Readers continue to receive the current published edition until you review and publish all changes together.</p>
+                    </div>
+                    <strong aria-live="polite">
+                      {skyArticleEditor.saveState === "saving" ? "Saving…"
+                        : skyArticleEditor.saveState === "unsaved" ? "Unsaved changes"
+                          : skyArticleEditor.saveState === "error" ? "Autosave failed"
+                            : "Saved"}
+                    </strong>
+                  </header>
+                  {skyArticleEditor.error && <p className="admin-inline-error">{skyArticleEditor.error}</p>}
+
+                  <label className="admin-title-field">
+                    <span>Headline</span>
+                    <input
+                      aria-label="Sky article headline"
+                      value={skyArticleEditor.fields.headline}
+                      onChange={(event) => updateSkyArticleFields({ headline: event.target.value })}
+                    />
+                  </label>
+                  <label className="admin-review-copy-editor">
+                    <span>TL;DR</span>
+                    <textarea
+                      aria-label="Sky article TL;DR"
+                      value={skyArticleEditor.fields.tldr}
+                      onChange={(event) => updateSkyArticleFields({ tldr: event.target.value })}
+                    />
+                    <small className="admin-field-hint">Written explicitly. It appears in the Transits list and at the top of the full reading.</small>
+                  </label>
+                  <label className="admin-review-copy-editor">
+                    <span>General article</span>
+                    <textarea
+                      aria-label="Sky article general copy"
+                      value={skyArticleEditor.fields.body}
+                      onChange={(event) => updateSkyArticleFields({ body: event.target.value })}
+                    />
+                  </label>
+
+                  <details className="admin-sky-related-group admin-diagnostics-details">
+                    <summary>
+                      <span>House passages</span>
+                      <strong>{skyArticleEditor.fields.housePassages.length}/12 complete</strong>
+                    </summary>
+                    <div className="admin-sky-house-grid admin-lunar-coverage-row-list">
+                      {skyArticleEditor.fields.housePassages.map((passage) => (
+                        <label className="admin-review-copy-editor" key={passage.contentKey}>
+                          <span>{ordinalLabel(passage.house)} House{passage.risingSign ? ` · ${titleFromKey(passage.risingSign)} Rising` : ""}</span>
+                          <textarea
+                            aria-label={`Sky article House ${passage.house}`}
+                            value={passage.body}
+                            onChange={(event) => updateSkyArticleHouse(passage.contentKey, event.target.value)}
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  </details>
+
+                  {skyArticleEditor.fields.aspectPassages.length > 0 && (
+                    <details className="admin-sky-related-group admin-diagnostics-details">
+                      <summary>
+                        <span>Natal-aspect passages</span>
+                        <strong>{skyArticleEditor.fields.aspectPassages.length}</strong>
+                      </summary>
+                      <div className="admin-sky-aspect-list admin-lunar-coverage-row-list">
+                        {skyArticleEditor.fields.aspectPassages.map((passage) => (
+                          <label className="admin-review-copy-editor" key={passage.contentKey}>
+                            <span>{titleFromKey(passage.natalPoint)} · {titleFromKey(passage.aspect)}</span>
+                            <textarea
+                              aria-label={`Sky article ${passage.natalPoint} ${passage.aspect}`}
+                              value={passage.body}
+                              onChange={(event) => updateSkyArticleAspect(passage.contentKey, event.target.value)}
+                            />
+                          </label>
+                        ))}
+                      </div>
+                    </details>
+                  )}
+
+                  <section className="admin-hook-detail-section" aria-label="Reader preview">
+                    <p className="admin-eyebrow">Reader preview</p>
+                    <h3>{skyArticleEditor.fields.headline}</h3>
+                    <p><strong>TL;DR:</strong> {skyArticleEditor.fields.tldr}</p>
+                    <div className="admin-copy-preview">{skyArticleEditor.fields.body}</div>
+                  </section>
+
+                  <div className="admin-toolbar-actions admin-sky-article-sticky-actions">
+                    <span>{skyArticleChanges.length} changed field{skyArticleChanges.length === 1 ? "" : "s"}</span>
+                    {skyArticleChanges.length > 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => setSkyArticleEditor((current) => current ? { ...current, reviewOpen: !current.reviewOpen } : current)}
+                      >
+                        Review {skyArticleChanges.length} change{skyArticleChanges.length === 1 ? "" : "s"}
+                      </button>
+                    ) : selectedRow && currentDraft.status !== "LIVE" ? (
+                      <button type="button" onClick={() => void approveSkyArticleEdition(selectedRow)} disabled={isLoading}>
+                        <Check size={16} aria-hidden="true" />
+                        Approve &amp; publish complete edition
+                      </button>
+                    ) : (
+                      <span>Published copy is unchanged.</span>
+                    )}
+                  </div>
+
+                  {skyArticleEditor.reviewOpen && (
+                    <section className="admin-sky-article-review" aria-label="Review Sky article changes">
+                      <header>
+                        <p className="admin-eyebrow">Before publishing</p>
+                        <h3>Review only what changed</h3>
+                      </header>
+                      {skyArticleChanges.map((change: SkyArticleFieldChange) => (
+                        <article className="admin-hook-detail-section" key={change.fieldId}>
+                          <h4>{change.label}</h4>
+                          <div className="admin-sky-article-diff">
+                            <div><strong>Current live copy</strong><p>{change.before || "Empty"}</p></div>
+                            <div><strong>Proposed copy</strong><p>{change.after || "Empty"}</p></div>
+                          </div>
+                        </article>
+                      ))}
+                      <button
+                        className="admin-primary-button"
+                        type="button"
+                        onClick={() => void publishSkyArticleChanges()}
+                        disabled={isLoading || skyArticleEditor.saveState !== "saved" || skyArticleChanges.length === 0}
+                        title={skyArticleEditor.saveState !== "saved" ? "Wait for autosave to finish before publishing." : "Publish the complete validated article revision."}
+                      >
+                        <Check size={16} aria-hidden="true" />
+                        Publish changes
+                      </button>
+                    </section>
+                  )}
+                </div>
+              )}
             </section>
           )}
           {skyWriteupContext && selectedRow && (
@@ -4972,11 +5386,13 @@ export function GeneratedContentAdminDashboard() {
               <small className="admin-field-hint">{vocabularySections.find((section) => section.key === vocabularySection)?.description}</small>
             </label>
           )}
-          <label className="admin-title-field">
-            <span>{isVocabularyDraft ? "Phrase title" : "Headline"}</span>
-            <input aria-label={isVocabularyDraft ? "Phrase title" : "Headline"} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} disabled={Boolean(compiledSkyArticleEdition)} />
-            {isVocabularyDraft && <small className="admin-field-hint">This is the human name editors see in the table. New rows use it to generate the internal key.</small>}
-          </label>
+          {!compiledSkyArticleEdition && (
+            <label className="admin-title-field">
+              <span>{isVocabularyDraft ? "Phrase title" : "Headline"}</span>
+              <input aria-label={isVocabularyDraft ? "Phrase title" : "Headline"} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
+              {isVocabularyDraft && <small className="admin-field-hint">This is the human name editors see in the table. New rows use it to generate the internal key.</small>}
+            </label>
+          )}
           {isPackageDraft && (
             <section className="admin-package-edit-panel" aria-label="Package row details">
               <div>
@@ -4999,10 +5415,13 @@ export function GeneratedContentAdminDashboard() {
               </label>
             </section>
           )}
-          <label className="admin-review-copy-editor">
-            <span>{isVocabularyDraft ? "Editor note or grouping detail" : compiledSkyArticleEdition ? "TL;DR" : "Summary"}</span>
-            <textarea aria-label={isVocabularyDraft ? "Editor note or grouping detail" : compiledSkyArticleEdition ? "TL;DR" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : undefined} disabled={Boolean(compiledSkyArticleEdition)} />
-          </label>
+          {!compiledSkyArticleEdition && (
+            <label className="admin-review-copy-editor">
+              <span>{isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "TL;DR" : "Summary"}</span>
+              <textarea aria-label={isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "Sky article TL;DR" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
+              {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
+            </label>
+          )}
           {showPackageBodyYou && (
             <label className="admin-review-copy-editor">
               <span>body_you</span>
@@ -5015,10 +5434,12 @@ export function GeneratedContentAdminDashboard() {
               <textarea aria-label="body_they" value={packageFieldString(currentDraft, "body_they")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))} />
             </label>
           )}
-          <label className="admin-review-copy-editor">
-            <span>{isVocabularyDraft ? "Reusable phrase text" : "Body"}</span>
-            <textarea aria-label={isVocabularyDraft ? "Reusable phrase text" : "Body"} value={currentDraft.body} onChange={(event) => setDraft({ ...currentDraft, body: event.target.value })} placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined} disabled={Boolean(compiledSkyArticleEdition)} />
-          </label>
+          {!compiledSkyArticleEdition && (
+            <label className="admin-review-copy-editor">
+              <span>{isVocabularyDraft ? "Reusable phrase text" : "Body"}</span>
+              <textarea aria-label={isVocabularyDraft ? "Reusable phrase text" : "Body"} value={currentDraft.body} onChange={(event) => setDraft({ ...currentDraft, body: event.target.value })} placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined} />
+            </label>
+          )}
           <details className="admin-advanced admin-editor-key-details" open={!isVocabularyDraft}>
             <summary>{isVocabularyDraft ? "Internal generated key" : "Content key"}</summary>
             <label className="admin-title-field">
@@ -5093,7 +5514,7 @@ export function GeneratedContentAdminDashboard() {
               <input aria-label="Block type" value={currentDraft.blockType} onChange={(event) => setDraft({ ...currentDraft, blockType: event.target.value })} disabled={isPackageDraft} />
             </label>
           </fieldset>
-          <div className="admin-toolbar-actions">
+          {!compiledSkyArticleEdition && <div className="admin-toolbar-actions">
             <button className="admin-primary-button" type="button" onClick={() => void saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined)} disabled={isLoading || Boolean(compiledSkyArticleEdition)}>
               <Save size={16} aria-hidden="true" />
               Save
@@ -5103,17 +5524,7 @@ export function GeneratedContentAdminDashboard() {
                 Revert to package original
               </button>
             )}
-            {!isPackageDraft && compiledSkyArticleEdition && selectedRow ? (
-              <button
-                type="button"
-                onClick={() => void approveSkyArticleEdition(selectedRow)}
-                disabled={isLoading || currentDraft.status === "LIVE"}
-                title="Record explicit owner approval for this exact compilation and make it reader-eligible."
-              >
-                <Check size={16} aria-hidden="true" />
-                {currentDraft.status === "LIVE" ? "Edition published" : "Approve & publish edition"}
-              </button>
-            ) : !isPackageDraft && (
+            {!isPackageDraft && (
               <>
                 <button type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading}>
                   <Check size={16} aria-hidden="true" />
@@ -5132,7 +5543,7 @@ export function GeneratedContentAdminDashboard() {
                 )}
               </>
             )}
-          </div>
+          </div>}
           {selectedRow && (
             <details className="admin-advanced admin-review-json">
               <summary>Structured fields</summary>
