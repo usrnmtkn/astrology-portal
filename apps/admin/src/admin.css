@@ -3612,6 +3612,102 @@ body,
   padding: var(--admin-space-sm) var(--admin-space-3xl);
 }
 
+.admin-surface-directory {
+  display: grid;
+  gap: var(--admin-space-2xl);
+}
+
+.admin-surface-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--admin-line);
+  border-radius: var(--admin-radius-lg);
+  display: grid;
+  gap: var(--admin-space-xl);
+  padding: var(--admin-space-2xl);
+}
+
+.admin-surface-card h3 {
+  color: var(--admin-ink);
+  font-size: var(--type-large-title-size);
+  line-height: var(--leading-title);
+  margin: var(--admin-space-xs) 0 var(--admin-space-md);
+}
+
+.admin-surface-card > p,
+.admin-surface-location {
+  color: rgba(232, 224, 208, 0.82);
+  line-height: var(--leading-description);
+  margin: 0;
+}
+
+.admin-surface-location strong,
+.admin-surface-warning strong {
+  color: var(--admin-ink);
+}
+
+.admin-surface-warning {
+  background: rgba(193, 127, 90, 0.1);
+  border-left: 3px solid var(--admin-accent);
+  border-radius: var(--admin-radius-sm);
+  padding: var(--admin-space-lg);
+}
+
+.admin-surface-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-md);
+}
+
+.admin-surface-actions .admin-source-action {
+  align-items: center;
+  display: inline-flex;
+  min-height: var(--admin-control-height-sm);
+  padding: var(--admin-space-sm) var(--admin-space-xl);
+  text-decoration: none;
+}
+
+.admin-surface-sources,
+.admin-surface-supporting-catalog {
+  border-top: 1px solid var(--admin-line);
+  padding-top: var(--admin-space-lg);
+}
+
+.admin-surface-sources summary,
+.admin-surface-supporting-catalog > summary {
+  color: var(--admin-ink);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.admin-surface-sources ul {
+  display: grid;
+  gap: var(--admin-space-md);
+  list-style: none;
+  margin: var(--admin-space-lg) 0 0;
+  padding: 0;
+}
+
+.admin-surface-sources li {
+  display: grid;
+  gap: var(--admin-space-xs);
+}
+
+.admin-surface-sources li span {
+  color: var(--admin-accent);
+  font-size: var(--type-meta-size);
+  text-transform: uppercase;
+}
+
+.admin-surface-sources li code {
+  color: var(--admin-muted);
+  overflow-wrap: anywhere;
+}
+
+.admin-surface-supporting-catalog[open] {
+  display: grid;
+  gap: var(--admin-space-xl);
+}
+
 .admin-lunar-coverage,
 .admin-lunar-hook-catalog {
   border-top: 1px solid var(--admin-line);

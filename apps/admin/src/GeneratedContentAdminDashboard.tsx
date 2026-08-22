@@ -34,6 +34,11 @@ import {
   relatedHousePassages,
   skyWriteupContextForRow
 } from "./skyWriteupRelations";
+import type {
+  WritingSurfaceAdminAccess,
+  WritingSurfaceMapItem,
+  WritingSurfaceSource
+} from "./writingSurfaceSourceMap";
 import "./admin.css";
 
 const AspectPatternDiagnostics = lazy(async () => {
@@ -66,6 +71,7 @@ type AdminDashboardPage =
   | "knowledge"
   | "templates"
   | "hooks"
+  | "sourceDrafts"
   | "aspectPatternCoverage"
   | "aspectPatternActivationCoverage"
   | "aspectDiagnostics"
@@ -309,6 +315,7 @@ const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   knowledge: "fallback-hooks",
   templates: "templates",
   hooks: "surface-map",
+  sourceDrafts: "source-drafts",
   aspectPatternCoverage: "content/aspect-patterns",
   aspectPatternActivationCoverage: "content/aspect-patterns/activation",
   aspectDiagnostics: "diagnostics/aspect-patterns",
@@ -351,8 +358,14 @@ const adminNavGroups: Array<{
       { page: "slotDictionary", label: "Slots", icon: KeyRound },
       { page: "vocabulary", label: "Vocabulary & Phrases", icon: BookOpenText },
       { page: "aspectPatternCoverage", label: "Aspect Patterns", icon: BookOpenText },
-      { page: "knowledge", label: "Fallback Hooks", icon: FileText },
-      { page: "hooks", label: "Surface Map", icon: Flag }
+      { page: "knowledge", label: "Fallback Hooks", icon: FileText }
+    ]
+  },
+  {
+    label: "App surfaces",
+    items: [
+      { page: "hooks", label: "Surface Map", icon: Flag },
+      { page: "sourceDrafts", label: "Sky Aspect Drafts", icon: FileText }
     ]
   },
   {
@@ -473,6 +486,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
     case "knowledge": return "Fallback Hooks";
     case "templates": return "Templates";
     case "hooks": return "Surface Map";
+    case "sourceDrafts": return "Sky Aspect Drafts";
     case "aspectPatternCoverage": return "Aspect Patterns";
     case "aspectPatternActivationCoverage": return "Aspect Pattern Activation";
     case "aspectDiagnostics": return "Aspect Pattern Diagnostics";
@@ -497,6 +511,7 @@ function adminPageBreadcrumb(activePage: AdminDashboardPage) {
     case "knowledge": return "Admin / Composition / Fallback hooks";
     case "templates": return "Admin / Composition / Templates";
     case "hooks": return "Admin / App surfaces / Surface map";
+    case "sourceDrafts": return "Admin / App surfaces / Sky aspect drafts";
     case "aspectPatternCoverage": return "Admin / Language System / Aspect Patterns";
     case "aspectPatternActivationCoverage": return "Admin / Language System / Aspect Pattern Activation";
     case "aspectDiagnostics": return "Admin / Diagnostics / Aspect patterns";
@@ -527,6 +542,8 @@ function adminPageDescription(activePage: AdminDashboardPage) {
       return "Compatibility content, fallback hooks, vocabulary, slots, and templates in one searchable review surface.";
     case "hooks":
       return "Every public surface and runtime hook request, with saved coverage separated from local placeholders.";
+    case "sourceDrafts":
+      return "Held Current Sky aspect passages, searchable by planet or aspect and editable without making them reader-eligible.";
     case "aspectPatternCoverage":
       return "Editable natal and Active Now aspect-pattern write-ups with resolver previews, validation, and authored/fallback comparison.";
     case "aspectPatternActivationCoverage":
@@ -1171,7 +1188,20 @@ type AdminHookCatalogBodyPayload = {
   schemaVersion: 1;
   rows: Array<{ key: string; body: string }>;
 };
-
+type AdminSourceDraft = {
+  id: string;
+  canonicalId: string;
+  bodyA: string;
+  bodyB: string;
+  aspect: string;
+  body: string;
+  authorityClass: "unverified";
+  governanceState: "needs-owner-decision";
+  surfacePermission: string[];
+  status: "NEEDS_OWNER_DECISION";
+  sourcePath: string;
+  provenance: Record<string, unknown> | null;
+};
 const adminHookCatalogRoot = `${import.meta.env.BASE_URL}generated`;
 
 async function adminHookCatalogJson<T>(fileName: string): Promise<T> {
@@ -1213,6 +1243,14 @@ async function loadAdminHookCatalogBodies(surface: GeneratedContentSurface): Pro
   }
 
   return new Map(payload.rows.map(({ key, body }) => [key, body]));
+}
+
+async function loadAdminSourceDraftCatalog(secret: string): Promise<AdminSourceDraft[]> {
+  const payload = await adminJsonRequest<{ ok: boolean; rows: AdminSourceDraft[] }>("/api/admin/generated-content?sourceDrafts=sky-aspects", secret);
+  if (!Array.isArray(payload.rows)) {
+    throw new Error("Source draft catalog failed validation.");
+  }
+  return payload.rows;
 }
 
 function rowTitle(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserGeneratedContentRow) {
@@ -1417,6 +1455,20 @@ function fallbackSectionForKey(key: string, surface?: string): AdminFallbackHook
 function surfaceAreaForFallbackSection(section: AdminFallbackHookSectionFilter): WritingSurfaceAreaFilter {
   if (section === "lunar-calendar") return "calendar";
   return section;
+}
+
+function areaForWritingSurface(item: WritingSurfaceMapItem): WritingSurfaceAreaFilter {
+  if (item.area === "Friends") return "friends";
+  if (item.area === "Natal" || item.area === "Transits") return "you";
+  if (item.area === "System") return "settings";
+  if (item.surface.includes("Calendar")) return "calendar";
+  return "sky";
+}
+
+function statusForWritingSurface(item: WritingSurfaceMapItem, accessById: Record<string, WritingSurfaceAdminAccess>): WritingSurfaceStatusFilter {
+  const access = accessById[item.id];
+  if (!access) return "missing";
+  return access.editability === "editable" ? "complete" : "partial";
 }
 
 function canonicalFallbackContentKey(key: string) {
@@ -1686,6 +1738,12 @@ export function GeneratedContentAdminDashboard() {
   const [hookCatalogPackageVersion, setHookCatalogPackageVersion] = useState("loading");
   const [hookCatalogLoadState, setHookCatalogLoadState] = useState<AdminHookCatalogLoadState>("idle");
   const [hookCatalogError, setHookCatalogError] = useState<string | null>(null);
+  const [sourceDrafts, setSourceDrafts] = useState<AdminSourceDraft[]>([]);
+  const [sourceDraftLoadState, setSourceDraftLoadState] = useState<AdminHookCatalogLoadState>("idle");
+  const [sourceDraftError, setSourceDraftError] = useState<string | null>(null);
+  const [writingSurfaces, setWritingSurfaces] = useState<WritingSurfaceMapItem[]>([]);
+  const [writingSurfaceAccess, setWritingSurfaceAccess] = useState<Record<string, WritingSurfaceAdminAccess>>({});
+  const [writingSurfaceRoleLabels, setWritingSurfaceRoleLabels] = useState<Partial<Record<WritingSurfaceSource["role"], string>>>({});
   const handledHashRef = useRef("");
   const editorRef = useRef<HTMLElement | null>(null);
   const hookCatalogRequestRef = useRef<Promise<{ definitions: FallbackHookDefinition[]; packageVersion: string }> | null>(null);
@@ -1697,6 +1755,7 @@ export function GeneratedContentAdminDashboard() {
     () => visibleRows.filter((row) => contentClassForRow(row) === "fallback-hook"),
     [visibleRows]
   );
+  const savedContentKeys = useMemo(() => new Set(visibleRows.map((row) => row.content_key)), [visibleRows]);
   const vocabRows = useMemo(
     () => visibleRows.filter((row) => contentClassForRow(row) === "vocab"),
     [visibleRows]
@@ -1879,6 +1938,31 @@ export function GeneratedContentAdminDashboard() {
         && (!search || matchesAdminSearch(`${item.key} ${item.label} ${item.section} ${item.type}`, search));
     });
   }, [hookCatalogItems, savedHookKeys, fallbackSectionFilter, surfaceAreaFilter, surfaceStatusFilter, query]);
+  const filteredWritingSurfaces = useMemo(() => writingSurfaces.filter((item) => {
+    const itemArea = areaForWritingSurface(item);
+    const itemStatus = statusForWritingSurface(item, writingSurfaceAccess);
+    const access = writingSurfaceAccess[item.id];
+    const searchText = [
+      item.surface,
+      item.area,
+      item.currentRenderPath,
+      item.sources.map((source) => `${source.label} ${source.path}`).join(" "),
+      access?.readerLocation ?? "",
+      access?.routes.map((route) => `${route.label} ${route.note}`).join(" ") ?? ""
+    ].join(" ");
+    return (surfaceAreaFilter === "all" || itemArea === surfaceAreaFilter)
+      && (surfaceStatusFilter === "all" || itemStatus === surfaceStatusFilter)
+      && matchesAdminSearch(searchText, query);
+  }), [writingSurfaces, writingSurfaceAccess, surfaceAreaFilter, surfaceStatusFilter, query]);
+  const filteredSourceDrafts = useMemo(() => sourceDrafts.filter((item) => matchesAdminSearch([
+    item.id,
+    item.canonicalId,
+    item.bodyA,
+    item.bodyB,
+    item.aspect,
+    item.body,
+    item.sourcePath
+  ].join(" "), query)), [sourceDrafts, query]);
   const templateRows = useMemo(
     () => rows.filter((row) => row.content_key.startsWith("slot-template/")),
     [rows]
@@ -1940,6 +2024,19 @@ export function GeneratedContentAdminDashboard() {
       setHookCatalogError(error instanceof Error ? error.message : "Could not load the hook catalog.");
     } finally {
       hookCatalogRequestRef.current = null;
+    }
+  }
+
+  async function refreshSourceDraftCatalog() {
+    setSourceDraftLoadState("loading");
+    setSourceDraftError(null);
+    try {
+      setSourceDrafts(await loadAdminSourceDraftCatalog(secret));
+      setSourceDraftLoadState("loaded");
+    } catch (error) {
+      setSourceDrafts([]);
+      setSourceDraftLoadState("error");
+      setSourceDraftError(error instanceof Error ? error.message : "Could not load the source draft catalog.");
     }
   }
 
@@ -2033,6 +2130,11 @@ export function GeneratedContentAdminDashboard() {
 
   useEffect(() => {
     void refreshHookCatalog();
+    void import("./writingSurfaceSourceMap").then((module) => {
+      setWritingSurfaces(module.writingSurfaceSourceMap);
+      setWritingSurfaceAccess(module.writingSurfaceAdminAccess);
+      setWritingSurfaceRoleLabels(module.writingSurfaceSourceRoleLabels);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -2123,12 +2225,15 @@ export function GeneratedContentAdminDashboard() {
     setLoadState("loading");
     setLoadError(null);
     setLoadDiagnostics(null);
+    setSourceDraftLoadState("loading");
+    setSourceDraftError(null);
     setIsLoading(true);
     try {
-      const [generatedResult, reviewResult, usersResult] = await Promise.allSettled([
+      const [generatedResult, reviewResult, usersResult, sourceDraftResult] = await Promise.allSettled([
         loadAllGeneratedContentRows(secret),
         adminJsonRequest<{ ok: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown }>("/api/admin/review-records?surface=upcomingAspects&status=all", secret),
-        adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>("/api/admin/user-generated-content?status=all&limit=100", secret)
+        adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>("/api/admin/user-generated-content?status=all&limit=100", secret),
+        loadAdminSourceDraftCatalog(secret)
       ]);
 
       if (generatedResult.status === "rejected") {
@@ -2145,11 +2250,21 @@ export function GeneratedContentAdminDashboard() {
         return { ...record, rawGlobalRow };
       }));
       setUserRows(usersPayload.rows ?? []);
+      if (sourceDraftResult.status === "fulfilled") {
+        setSourceDrafts(sourceDraftResult.value);
+        setSourceDraftLoadState("loaded");
+        setSourceDraftError(null);
+      } else {
+        setSourceDrafts([]);
+        setSourceDraftLoadState("error");
+        setSourceDraftError(dashboardErrorMessage(sourceDraftResult.reason));
+      }
       setFacts([]);
 
       const partialWarnings = [
         reviewResult.status === "rejected" ? "review records failed" : "",
-        usersResult.status === "rejected" ? "user rows failed" : ""
+        usersResult.status === "rejected" ? "user rows failed" : "",
+        sourceDraftResult.status === "rejected" ? "Sky source drafts failed" : ""
       ].filter(Boolean);
       setLoadState("loaded");
       setMessage(`Loaded ${generatedRows.length} saved rows, ${reviewRowsPayload.length} review records, and ${usersPayload.rows?.length ?? 0} user rows.${partialWarnings.length ? ` Partial load: ${partialWarnings.join(", ")}.` : ""}`);
@@ -2408,8 +2523,12 @@ export function GeneratedContentAdminDashboard() {
 
   async function saveDraft(nextStatus?: GeneratedContentStatus) {
     if (!draft) return;
-    setIsLoading(true);
     const status = nextStatus ?? draft.status;
+    if (status === "LIVE" && draft.sourceSnapshot?.governanceState === "needs-owner-decision") {
+      setMessage("This source draft still needs an explicit owner decision. Save it as Draft or Reviewed; the general editor cannot make it reader-serving.");
+      return;
+    }
+    setIsLoading(true);
     const draftForSave = { ...draft, status };
     const isPackageDraft = draftIsFallbackArchitectureV3(draftForSave);
 
@@ -2522,6 +2641,51 @@ export function GeneratedContentAdminDashboard() {
       slotGeneration: null,
       factBlockedSlots: []
     } : null);
+  }
+
+  function openSourceDraft(item: AdminSourceDraft) {
+    const saved = rows.find((row) => row.content_key === item.id || row.content_key === item.canonicalId);
+    if (saved) {
+      openRow(saved);
+      setMessage(`${item.id} already has a saved dashboard row.`);
+      return;
+    }
+
+    setSelectedRowId(null);
+    setSkyWriteupParentId(null);
+    setSkyRelatedAspectQuery("");
+    setSkyArticleEditionForm(null);
+    setDraft({
+      id: null,
+      contentKey: item.id,
+      surface: "sky",
+      mode: "in_depth",
+      status: "DRAFT",
+      headline: `${titleFromKey(item.bodyB)} ${titleFromKey(item.aspect)} ${titleFromKey(item.bodyA)}`,
+      summary: "",
+      body: item.body,
+      lane: "reference",
+      reviewState: "NEEDS_OWNER_DECISION",
+      blockType: "sky_aspect",
+      promptVersion: "held-source-draft-v1",
+      sections: null,
+      facts: { bodyA: item.bodyA, bodyB: item.bodyB, aspect: item.aspect },
+      reviewerNotes: "Held source draft. Editing or saving does not authorize reader serving.",
+      sourceSnapshot: {
+        contentType: "sky-aspect-source-draft",
+        content_role: "source_material",
+        contentSystem: "authored",
+        contentLevel: "source-grounded",
+        authorityClass: item.authorityClass,
+        governanceState: item.governanceState,
+        surfacePermission: item.surfacePermission,
+        sourcePath: item.sourcePath,
+        canonicalId: item.canonicalId,
+        provenance: item.provenance
+      }
+    });
+    setMessage(`${item.id} opened as a held draft. It remains non-serving until a separate owner approval action.`);
+    scrollEditorToTop();
   }
 
   function scrollEditorToTop() {
@@ -3272,12 +3436,16 @@ export function GeneratedContentAdminDashboard() {
           <section className="admin-template-page">
             <section className="admin-content-toolbar">
               <div>
-                <p className="admin-eyebrow">Runtime coverage</p>
+                <p className="admin-eyebrow">Reader surface directory</p>
                 <h2>Surface Map</h2>
-                <p>Public surfaces and content paths are mapped to saved rows, local hooks, vocab, and source material.</p>
+                <p>Start with the place a reader sees the writing, then open the exact dashboard workspace that edits it. Partial means some visible copy is still owned by code and needs runtime wiring.</p>
               </div>
-              <span className="ui-pill admin-status">{savedHookCatalogCount}/{hookCatalogItems.length} saved</span>
+              <span className="ui-pill admin-status">{writingSurfaces.length} mapped surfaces</span>
             </section>
+            <label className="admin-field-wide">
+              <span>Find a reader surface or content source</span>
+              <input aria-label="Search reader surfaces" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Sky aspect, weekly horoscope, calendar, synastry…" />
+            </label>
             <div className="admin-status-pills" role="group" aria-label="Filter surfaces by area">
               {[
                 ["all", "All"],
@@ -3292,54 +3460,125 @@ export function GeneratedContentAdminDashboard() {
                 </button>
               ))}
             </div>
-            <div className="admin-status-pills" role="group" aria-label="Filter surfaces by normalization status">
+            <div className="admin-status-pills" role="group" aria-label="Filter surfaces by admin editability">
               {[
                 ["all", "All"],
-                ["complete", "Complete"],
-                ["partial", "Partial"],
-                ["missing", "Missing"]
+                ["complete", "Editable"],
+                ["partial", "Partly editable"],
+                ["missing", "Unmapped"]
               ].map(([key, label]) => (
                 <button key={key} type="button" aria-pressed={surfaceStatusFilter === key} className={surfaceStatusFilter === key ? "active" : ""} onClick={() => navigateSurfaceMapFilters({ status: key as WritingSurfaceStatusFilter })}>
                   <span>{label}</span>
                 </button>
               ))}
             </div>
-            {renderFallbackTabs()}
-            <section className="admin-fallback-row-list" aria-label="Hook catalog">
-              {hookCatalogLoadState === "loading" && (
-                <div className="admin-empty-state" role="status">
-                  <RefreshCw size={18} aria-hidden="true" />
-                  <p>Loading hook catalog…</p>
-                </div>
+            <section className="admin-surface-directory" aria-label="Reader surface content directory">
+              {filteredWritingSurfaces.length === 0 && (
+                <div className="admin-empty-state"><p>No mapped reader surfaces match these filters.</p></div>
               )}
-              {hookCatalogLoadState === "error" && (
-                <div className="admin-empty-state" role="alert">
-                  <p>{hookCatalogError ?? "Could not load the hook catalog."}</p>
-                  <button type="button" onClick={() => void refreshHookCatalog()}>
-                    <RefreshCw size={15} aria-hidden="true" />
-                    Retry catalog
-                  </button>
-                </div>
-              )}
-              {filteredHookCatalog.map((item) => {
-                const saved = savedHookKeys.has(item.key) || savedHookKeys.has(canonicalFallbackContentKey(item.key));
+              {filteredWritingSurfaces.map((item) => {
+                const access = writingSurfaceAccess[item.id];
+                const editability = statusForWritingSurface(item, writingSurfaceAccess);
                 return (
-                  <article key={`${item.type}-${item.key}`} className="admin-fallback-row" role="button" tabIndex={0} onClick={() => void openHookDraft(item)} onKeyDown={(event) => onCatalogKeyDown(event, item)}>
-                    <div className="admin-fallback-row-main">
-                      <p className="admin-eyebrow">{item.section} / {item.type}</p>
-                      <h3>{item.label}</h3>
-                      <code>{canonicalFallbackContentKey(item.key)}</code>
+                  <article key={item.id} className="admin-surface-card">
+                    <div className="admin-section-heading-row">
+                      <div>
+                        <p className="admin-eyebrow">{areaForWritingSurface(item)} / {editability === "complete" ? "editable" : editability === "partial" ? "partly editable" : "unmapped"}</p>
+                        <h3>{item.surface}</h3>
+                        <p className="admin-surface-location"><strong>Reader location:</strong> {access?.readerLocation ?? "Not documented"}</p>
+                      </div>
+                      <span className={`ui-pill admin-status ${editability === "complete" ? "status-live" : "status-draft"}`}>
+                        {editability === "complete" ? "Dashboard editable" : editability === "partial" ? "Runtime gap" : "No admin route"}
+                      </span>
                     </div>
-                    <div className="admin-fallback-row-actions">
-                      <span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved row" : "Needs row"}</span>
-                      <button type="button" disabled={isLoading} onClick={(event) => { event.stopPropagation(); void openHookDraft(item); }}>
-                        <Plus size={15} aria-hidden="true" />
-                        Author
-                      </button>
+                    <p>{item.currentRenderPath}</p>
+                    {access?.editability === "partial" && <p className="admin-surface-warning"><strong>Still to wire:</strong> {item.nextAction}</p>}
+                    <div className="admin-surface-actions" aria-label={`${item.surface} editing destinations`}>
+                      {access?.routes.map((route) => (
+                        <a key={`${item.id}-${route.hash}`} href={route.hash} className={route.purpose === "reader-copy" ? "admin-source-action admin-source-action-primary" : "admin-source-action"} title={route.note}>
+                          {route.label}
+                        </a>
+                      ))}
                     </div>
+                    <details className="admin-surface-sources">
+                      <summary>Content sources ({item.sources.length})</summary>
+                      <ul>
+                        {item.sources.map((source) => (
+                          <li key={`${item.id}-${source.path}`}>
+                            <span>{writingSurfaceRoleLabels[source.role] ?? source.role}</span>
+                            <strong>{source.label}</strong>
+                            <code>{source.path}</code>
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
                   </article>
                 );
               })}
+            </section>
+            <details className="admin-surface-supporting-catalog">
+              <summary>Supporting fallback-hook catalog ({savedHookCatalogCount}/{hookCatalogItems.length} saved)</summary>
+              {renderFallbackTabs()}
+              <section className="admin-fallback-row-list" aria-label="Hook catalog">
+                {hookCatalogLoadState === "loading" && <div className="admin-empty-state" role="status"><p>Loading hook catalog…</p></div>}
+                {hookCatalogLoadState === "error" && <div className="admin-empty-state" role="alert"><p>{hookCatalogError ?? "Could not load the hook catalog."}</p><button type="button" onClick={() => void refreshHookCatalog()}><RefreshCw size={15} aria-hidden="true" />Retry catalog</button></div>}
+                {filteredHookCatalog.map((item) => {
+                  const saved = savedHookKeys.has(item.key) || savedHookKeys.has(canonicalFallbackContentKey(item.key));
+                  return (
+                    <article key={`${item.type}-${item.key}`} className="admin-fallback-row" role="button" tabIndex={0} onClick={() => void openHookDraft(item)} onKeyDown={(event) => onCatalogKeyDown(event, item)}>
+                      <div className="admin-fallback-row-main"><p className="admin-eyebrow">{item.section} / {item.type}</p><h3>{item.label}</h3><code>{canonicalFallbackContentKey(item.key)}</code></div>
+                      <div className="admin-fallback-row-actions"><span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved row" : "Needs row"}</span><button type="button" disabled={isLoading} onClick={(event) => { event.stopPropagation(); void openHookDraft(item); }}><Plus size={15} aria-hidden="true" />Author</button></div>
+                    </article>
+                  );
+                })}
+              </section>
+            </details>
+          </section>
+        )}
+
+        {activePage === "sourceDrafts" && (
+          <section className="admin-template-page">
+            <section className="admin-content-toolbar">
+              <div>
+                <p className="admin-eyebrow">Current Sky / held source material</p>
+                <h2>Sky Aspect Drafts</h2>
+                <p>{filteredSourceDrafts.length} of {sourceDrafts.length} passages shown. These drafts are searchable and editable here, but saving one does not approve it or make it visible to readers.</p>
+              </div>
+              <button type="button" onClick={() => navigateAdminPage("hooks", new URLSearchParams({ area: "sky" }))}><Flag size={16} aria-hidden="true" />Back to Sky surfaces</button>
+            </section>
+            <label className="admin-field-wide">
+              <span>Search by planet, point, aspect, phrase, or source key</span>
+              <input aria-label="Search Sky aspect drafts" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Sun trine Chiron" />
+            </label>
+            {sourceDraftLoadState === "loading" && <div className="admin-empty-state" role="status"><p>Loading held source drafts…</p></div>}
+            {sourceDraftLoadState === "error" && (
+              <div className="admin-empty-state" role="alert"><p>{sourceDraftError ?? "Could not load source drafts."}</p><button type="button" onClick={() => void refreshSourceDraftCatalog()}><RefreshCw size={15} aria-hidden="true" />Retry</button></div>
+            )}
+            <section className="admin-workbench admin-review-workspace">
+              {renderEditor()}
+              <aside className="admin-list-panel" aria-label="Held Sky aspect source drafts">
+                <div className="admin-fallback-row-list">
+                  {filteredSourceDrafts.map((item) => {
+                    const saved = savedContentKeys.has(item.id) || savedContentKeys.has(item.canonicalId);
+                    return (
+                      <article key={item.id} className="admin-fallback-row" role="button" tabIndex={0} onClick={() => openSourceDraft(item)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openSourceDraft(item); } }}>
+                        <div className="admin-fallback-row-main">
+                          <p className="admin-eyebrow">{item.bodyB} / {item.aspect} / {item.bodyA}</p>
+                          <h3>{titleFromKey(item.bodyB)} {titleFromKey(item.aspect)} {titleFromKey(item.bodyA)}</h3>
+                          <code>{item.id}</code>
+                          <p>{item.body.split("\n")[0]}</p>
+                          <small>{item.sourcePath}</small>
+                        </div>
+                        <div className="admin-fallback-row-actions">
+                          <span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved draft" : "Source only"}</span>
+                          <span className="ui-pill admin-status status-draft">Not serving</span>
+                          <button type="button" onClick={(event) => { event.stopPropagation(); openSourceDraft(item); }}>{saved ? "Edit" : "Open draft"}</button>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </aside>
             </section>
           </section>
         )}
