@@ -23,6 +23,7 @@ const transitCoreAuthoredOutputPath = path.join(packageRoot, "bundled-transit-co
 const relationshipAuthoredOutputPath = path.join(packageRoot, "bundled-relationship-authored-cards-v3.json");
 const skyAuthoredOutputPath = path.join(packageRoot, "bundled-sky-authored-cards-v3.json");
 const skyPlacementOutputPath = path.join(packageRoot, "bundled-sky-placement-rows-v3.json");
+const skyPlacementHouseOutputPath = path.join(packageRoot, "bundled-sky-placement-house-rows-v3.json");
 const coreManifestOutputPath = path.join(packageRoot, "bundled-core-manifest-v3.json");
 const skyPlacementManifestOutputPath = path.join(packageRoot, "bundled-sky-placement-manifest-v3.json");
 const skyPlacementOwnerApprovedReaderOutputPath = path.join(
@@ -158,6 +159,17 @@ function skyPlacementOwnerApprovedReaderRows() {
   };
 }
 
+function skyPlacementHouseTemplateReaderRows() {
+  const source = readJson("source-rows/sky-placement-house-templates-v1.json");
+
+  return source.rows.map((row) => ({
+    contentKey: row.contentKey,
+    content_role: row.content_role,
+    body_you: row.body_you,
+    review_status: row.review_status
+  }));
+}
+
 function isReaderEligible(row, allowBlank = false) {
   const status = String(row.review_status ?? "").trim().toLowerCase();
   return (
@@ -215,7 +227,7 @@ function fullReaderBundle() {
   const skyPlacementRows = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
   const skySignRows = readSkySignCopySources().flatMap((source) => source.rows ?? []);
   const skyPlacementOwnerApprovedRows = skyPlacementOwnerApprovedReaderRows();
-  const skyPlacementHouseTemplateRows = readJson("source-rows/sky-placement-house-templates-v1.json").rows;
+  const skyPlacementHouseTemplateRows = skyPlacementHouseTemplateReaderRows();
   const sunLeoHouseCoreRows = readJson("source-rows/sun-leo-house-cores-v1.json").rows
     .map(({ notes: _notes, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row);
   const venusLibraHouseCoreRows = readJson("source-rows/venus-libra-house-cores-v1.json").rows
@@ -276,7 +288,7 @@ const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");
 const skyPlacementVoicePassRows = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
 const skyPlanetFrameRows = readJson("source-rows/sky-planet-frames-v1.json");
 const skyPlacementOwnerApprovedRows = skyPlacementOwnerApprovedReaderRows();
-const skyPlacementHouseTemplateRows = readJson("source-rows/sky-placement-house-templates-v1.json").rows;
+const skyPlacementHouseTemplateRows = skyPlacementHouseTemplateReaderRows();
 const sunLeoHouseCoreRows = readJson("source-rows/sun-leo-house-cores-v1.json").rows
   .map(({ notes: _notes, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row);
 const venusLibraHouseCoreRows = readJson("source-rows/venus-libra-house-cores-v1.json").rows
@@ -329,17 +341,29 @@ const relationshipAuthoredCards = {
 const skyAuthoredCards = {
   authoredCards: transitRows.authoredCards.filter((row) => row.contentKey.startsWith("authored/sky-"))
 };
-const skyPlacementRows = {
+const skyPlacementBaseRows = {
   hookRows: latestReaderEligible([
     ...sourceRows.hookRows.filter(isSkyPlacementDeferredHook),
     ...(skyPlanetFrameRows.rows ?? []),
     ...(skyPlacementVoicePassRows.rows ?? []),
     ...skySignCopyRows,
-    ...skyPlacementOwnerApprovedRows.rows,
+    ...skyPlacementOwnerApprovedRows.rows
+  ]).filter((row) => isGovernedReaderEligible(row)),
+  vocabularyRows: []
+};
+const skyPlacementHouseRows = {
+  hookRows: latestReaderEligible([
     ...skyPlacementHouseTemplateRows,
     ...sunLeoHouseCoreRows,
     ...venusLibraHouseCoreRows
   ]).filter((row) => isGovernedReaderEligible(row)),
+  vocabularyRows: []
+};
+const skyPlacementRows = {
+  hookRows: latestReaderEligible([
+    ...skyPlacementBaseRows.hookRows,
+    ...skyPlacementHouseRows.hookRows
+  ]),
   vocabularyRows: []
 };
 const skyPlacementKeySet = new Set(skyPlacementRows.hookRows.map((row) => row.contentKey));
@@ -389,7 +413,8 @@ const serializedEmptyHouse = `${JSON.stringify(emptyHouseRows, null, 2)}\n`;
 const serializedTransitCoreAuthored = `${JSON.stringify(transitCoreAuthoredCards, null, 2)}\n`;
 const serializedRelationshipAuthored = `${JSON.stringify(relationshipAuthoredCards, null, 2)}\n`;
 const serializedSkyAuthored = `${JSON.stringify(skyAuthoredCards, null, 2)}\n`;
-const serializedSkyPlacement = `${JSON.stringify(skyPlacementRows, null, 2)}\n`;
+const serializedSkyPlacement = `${JSON.stringify(skyPlacementBaseRows, null, 2)}\n`;
+const serializedSkyPlacementHouses = `${JSON.stringify(skyPlacementHouseRows, null, 2)}\n`;
 const serializedCoreManifest = `${JSON.stringify(coreManifest, null, 2)}\n`;
 const serializedSkyPlacementManifest = `${JSON.stringify(skyPlacementManifest, null, 2)}\n`;
 const skyPlacementOwnerApprovedReader = skyPlacementOwnerApprovedReaderRows();
@@ -407,6 +432,9 @@ if (checkOnly) {
   const existingRelationshipAuthored = fs.existsSync(relationshipAuthoredOutputPath) ? fs.readFileSync(relationshipAuthoredOutputPath, "utf8") : "";
   const existingSkyAuthored = fs.existsSync(skyAuthoredOutputPath) ? fs.readFileSync(skyAuthoredOutputPath, "utf8") : "";
   const existingSkyPlacement = fs.existsSync(skyPlacementOutputPath) ? fs.readFileSync(skyPlacementOutputPath, "utf8") : "";
+  const existingSkyPlacementHouses = fs.existsSync(skyPlacementHouseOutputPath)
+    ? fs.readFileSync(skyPlacementHouseOutputPath, "utf8")
+    : "";
   const existingCoreManifest = fs.existsSync(coreManifestOutputPath) ? fs.readFileSync(coreManifestOutputPath, "utf8") : "";
   const existingSkyPlacementManifest = fs.existsSync(skyPlacementManifestOutputPath) ? fs.readFileSync(skyPlacementManifestOutputPath, "utf8") : "";
   const existingSkyPlacementOwnerApprovedReader = fs.existsSync(skyPlacementOwnerApprovedReaderOutputPath)
@@ -425,6 +453,7 @@ if (checkOnly) {
     || existingRelationshipAuthored !== serializedRelationshipAuthored
     || existingSkyAuthored !== serializedSkyAuthored
     || existingSkyPlacement !== serializedSkyPlacement
+    || existingSkyPlacementHouses !== serializedSkyPlacementHouses
     || existingCoreManifest !== serializedCoreManifest
     || existingSkyPlacementManifest !== serializedSkyPlacementManifest
     || existingSkyPlacementOwnerApprovedReader !== serializedSkyPlacementOwnerApprovedReader
@@ -446,6 +475,7 @@ if (checkOnly) {
   fs.writeFileSync(relationshipAuthoredOutputPath, serializedRelationshipAuthored);
   fs.writeFileSync(skyAuthoredOutputPath, serializedSkyAuthored);
   fs.writeFileSync(skyPlacementOutputPath, serializedSkyPlacement);
+  fs.writeFileSync(skyPlacementHouseOutputPath, serializedSkyPlacementHouses);
   fs.writeFileSync(coreManifestOutputPath, serializedCoreManifest);
   fs.writeFileSync(skyPlacementManifestOutputPath, serializedSkyPlacementManifest);
   fs.writeFileSync(skyPlacementOwnerApprovedReaderOutputPath, serializedSkyPlacementOwnerApprovedReader);
@@ -459,7 +489,8 @@ if (checkOnly) {
   console.log(`Wrote ${path.relative(repoRoot, transitCoreAuthoredOutputPath)} (${transitCoreAuthoredCards.authoredCards.length} authored cards).`);
   console.log(`Wrote ${path.relative(repoRoot, relationshipAuthoredOutputPath)} (${relationshipAuthoredCards.authoredCards.length} authored cards).`);
   console.log(`Wrote ${path.relative(repoRoot, skyAuthoredOutputPath)} (${skyAuthoredCards.authoredCards.length} authored cards).`);
-  console.log(`Wrote ${path.relative(repoRoot, skyPlacementOutputPath)} (${skyPlacementRows.hookRows.length} hooks).`);
+  console.log(`Wrote ${path.relative(repoRoot, skyPlacementOutputPath)} (${skyPlacementBaseRows.hookRows.length} hooks).`);
+  console.log(`Wrote ${path.relative(repoRoot, skyPlacementHouseOutputPath)} (${skyPlacementHouseRows.hookRows.length} hooks).`);
   console.log(`Wrote ${path.relative(repoRoot, coreManifestOutputPath)} (${coreManifest.keyCount} keys).`);
   console.log(`Wrote ${path.relative(repoRoot, skyPlacementManifestOutputPath)} (${skyPlacementManifest.keyCount} keys).`);
   console.log(`Wrote ${path.relative(repoRoot, skyPlacementOwnerApprovedReaderOutputPath)} (${skyPlacementOwnerApprovedReader.rows.length} metadata-free reader rows).`);

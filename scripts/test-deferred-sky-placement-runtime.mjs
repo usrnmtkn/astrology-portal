@@ -35,6 +35,10 @@ const placementRows = JSON.parse(fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json"),
   "utf8"
 ));
+const placementHouseRows = JSON.parse(fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-house-rows-v3.json"),
+  "utf8"
+));
 const placementManifest = JSON.parse(fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json"),
   "utf8"
@@ -75,7 +79,11 @@ assert.equal(
   0,
   "The deferred placement partition must not revive retired Try this rows."
 );
-assert.equal(placementManifest.keyCount, placementRows.hookRows.length);
+assert.equal(
+  placementManifest.keyCount,
+  placementRows.hookRows.length + placementHouseRows.hookRows.length,
+  "The deferred placement manifest must cover both on-demand placement chunks."
+);
 
 const before = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(facts);
 assert.equal(before.templateKey, "sky-placement-standalone-hook-v1");
