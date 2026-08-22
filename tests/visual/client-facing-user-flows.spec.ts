@@ -7,11 +7,18 @@ import {
   routeReadyTimeoutMs,
   watchBrowserErrors
 } from "./qaRuntimeGuards";
+import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
 import { resolveSkyAspectGeneratedContent } from "../../apps/web/src/services/skyAspectContent";
+import { zonedDateTimeToUtc } from "../../apps/web/src/services/timezones";
+import {
+  natalSkySnapshotCacheKey,
+  VERIFIED_SKY_CACHE_SCHEMA
+} from "../../apps/web/src/services/verifiedSkyCache";
 
 type SeedOptions = {
   profile?: boolean;
   profileBirthDate?: string;
+  preloadProfileNatalSky?: boolean;
   friends?: boolean;
   theme?: "light" | "dark";
   now?: string;
@@ -78,6 +85,20 @@ async function selectYouNatalTab(page: Page) {
 
 async function seedClientState(page: Page, options: SeedOptions = {}) {
   const requestedNow = options.now ?? fixedNow;
+  const profileBirthDate = options.profileBirthDate ?? "1979-02-18";
+  const profileBirthDateTime = zonedDateTimeToUtc(
+    profileBirthDate,
+    "8:24 AM",
+    fixtureLocation.timeZone
+  );
+  const preloadedNatalCache = options.profile && options.preloadProfileNatalSky
+    ? {
+        schema: VERIFIED_SKY_CACHE_SCHEMA,
+        cacheKey: natalSkySnapshotCacheKey(fixtureLocation, profileBirthDateTime),
+        snapshot: await getAstrodienstSky(fixtureLocation, profileBirthDateTime),
+        verifiedAt: requestedNow
+      }
+    : null;
 
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
     await route.fulfill({
@@ -103,7 +124,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
     });
   });
 
-  await page.addInitScript(({ fixtureLocation, fixtureUserId, fixedNow, options }) => {
+  await page.addInitScript(({ fixtureLocation, fixtureUserId, fixedNow, options, preloadedNatalCache }) => {
     const RealDate = Date;
     const storedQaNow = window.sessionStorage.getItem("tldrastro:qaNow");
     let fixedTime = new RealDate(storedQaNow ?? fixedNow).getTime();
@@ -139,6 +160,9 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       window.localStorage.setItem("tldrastro:sunriseOrb", "true");
       window.localStorage.setItem("tldrastro:dyslexiaFont", "false");
       window.localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(fixtureLocation));
+      if (preloadedNatalCache) {
+        window.localStorage.setItem(preloadedNatalCache.cacheKey, JSON.stringify(preloadedNatalCache));
+      }
     }
 
     if (!options.profile || !shouldSeedClientState) {
@@ -279,7 +303,13 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
         }
       ]));
     }
-  }, { fixtureLocation, fixtureUserId, fixedNow: requestedNow, options });
+  }, {
+    fixtureLocation,
+    fixtureUserId,
+    fixedNow: requestedNow,
+    options,
+    preloadedNatalCache
+  });
 
   await page.emulateMedia({ reducedMotion: "reduce" });
 }
@@ -2958,6 +2988,7 @@ test.describe("client-facing user flow case studies", () => {
       // Matching the calendar day makes the fixture's natal and transiting
       // Suns a deterministic conjunction after the natal chart hydrates.
       profileBirthDate: "1979-08-22",
+      preloadProfileNatalSky: true,
       now: "2026-08-22T16:00:00.000Z"
     });
     await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
