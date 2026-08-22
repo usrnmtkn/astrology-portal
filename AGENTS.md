@@ -34,6 +34,28 @@ before git operations. Never run `git stash`, `git clean`,
 `git checkout -- .`, or `git reset --hard`. Do not discard unrelated changes
 or commit without the owner's request.
 
+## Heading and visual-style integrity
+
+Do not add or change an `h1`-`h6` tag, visible title, eyebrow, section label, or
+heading-like text without first checking the affected surface's established
+component and design-token contract. A semantic HTML correction must not
+create an extra visible heading or silently change typography, spacing, casing,
+or alignment. When the document outline needs a parent heading that the visual
+design does not, use the shared screen-reader-only treatment and keep the
+approved visible label hierarchy intact.
+
+Before completing any heading or title change:
+
+- inspect every affected rendered variant, not only the generic fixture;
+- verify desktop and mobile, populated and empty states, and light and dark
+  themes when those states apply;
+- compare the computed font family, size, weight, line height, letter spacing,
+  margins, casing, and alignment with the analogous existing heading;
+- add or update a targeted regression that asserts both semantic heading order
+  and the intended visible-label order; and
+- run the CSS/token audit plus the relevant browser flow. Typecheck, DOM
+  semantics, or an unrelated visual baseline alone is not sufficient evidence.
+
 ## Content changes
 
 Before changing reader-facing astrology content, review state, resolver
