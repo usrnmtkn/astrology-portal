@@ -26,6 +26,7 @@ import {
   stripLegacySkyArticleScaffoldPrefix,
   stripTldrPrefix
 } from "../../utils/articleText";
+import { SkyRisingHoroscopes, type SkyRisingHoroscope } from "./SkyRisingHoroscopes";
 
 export type AspectToneBucket = "gifts" | "lessons";
 export type RelatedAspectGroup = AspectToneBucket | "planets" | "points";
@@ -62,7 +63,9 @@ export type SkyPersonalizedPlacement = {
   body: string;
   contentKey: string;
   heading: "Where it lands for you";
+  house: number;
   natalAspectLines: string[];
+  risingSign: string;
 };
 
 export type SkyDetail = {
@@ -76,7 +79,7 @@ export type SkyDetail = {
   keyDates?: SkyDetailKeyDate[];
   keyDatesIntro?: string | null;
   closingCharge?: string | null;
-  risingHoroscopes?: { risingSign?: string | null; house?: number; body: string; contentKey?: string }[];
+  risingHoroscopes?: SkyRisingHoroscope[];
   articleAspectPassages?: { natalPoint: string; aspect: string; body: string; contentKey: string }[];
   subtitle?: string;
   tldr?: string;
@@ -599,23 +602,6 @@ export function SkyDetailArticle({
                   <p>{detail.closingCharge}</p>
                 </section>
               ) : null}
-              {detail.risingHoroscopes?.length && !detail.personalizedPlacement ? (
-                <section
-                  className="article-section sky-detail-section"
-                  id="sky-rising-horoscopes"
-                  aria-labelledby="sky-rising-horoscopes-title"
-                >
-                  <h2 id="sky-rising-horoscopes-title">Horoscopes by rising sign</h2>
-                  {detail.risingHoroscopes.map((entry) => (
-                    <div key={entry.risingSign}>
-                      <h3 className="sky-rising-horoscope__title">{entry.risingSign} rising</h3>
-                      {readerFacingParagraphs([entry.body]).map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-              ) : null}
               {detail.seriesLine ? (
                 <aside className="article-section sky-detail-section sky-aspect-series" aria-label="Aspect series">
                   <p>{detail.seriesLine}</p>
@@ -736,7 +722,7 @@ export function SkyDetailArticle({
             </h2>
             <section
               className="article-card sky-detail-personalized-placement"
-              id="sky-rising-horoscopes"
+              id="sky-personalized-placement"
               aria-labelledby="sky-detail-personalized-placement-title"
             >
               <div className="article-body-card sky-detail-body">
@@ -757,6 +743,11 @@ export function SkyDetailArticle({
             </section>
           </>
         ) : null}
+
+        <SkyRisingHoroscopes
+          activeRisingSign={detail.personalizedPlacement?.risingSign}
+          entries={detail.risingHoroscopes}
+        />
       </article>
     </section>
   );
