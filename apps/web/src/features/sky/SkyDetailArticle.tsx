@@ -62,7 +62,11 @@ export type SkyPersonalizedPlacement = {
   body: string;
   contentKey: string;
   heading: "Where it lands for you";
-  natalAspectLines: string[];
+  natalAspects: Array<{
+    key: string;
+    heading: string;
+    body: string | null;
+  }>;
 };
 
 export type SkyDetail = {
@@ -743,11 +747,14 @@ export function SkyDetailArticle({
                 <div className="article-body-inner">
                   <section className="article-section sky-detail-section">
                     <p>{detail.personalizedPlacement.body}</p>
-                    {detail.personalizedPlacement.natalAspectLines.length > 0 ? (
+                    {detail.personalizedPlacement.natalAspects.length > 0 ? (
                       <>
                         <h3>Aspects to the natal chart</h3>
-                        {detail.personalizedPlacement.natalAspectLines.map((line, index) => (
-                          <p key={`${detail.personalizedPlacement?.contentKey}-natal-${index}`}>{line}</p>
+                        {detail.personalizedPlacement.natalAspects.map((aspect) => (
+                          <section className="sky-detail-personalized-aspect" key={aspect.key}>
+                            <h4>{aspect.heading}</h4>
+                            {aspect.body ? <p>{aspect.body}</p> : null}
+                          </section>
                         ))}
                       </>
                     ) : null}

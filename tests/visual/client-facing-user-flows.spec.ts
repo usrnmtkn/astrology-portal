@@ -2903,14 +2903,16 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("Venus in Libra does not expose an incomplete set after an owner rejection", async ({ page }) => {
+  test("Venus in Libra uses a different approved passage after the owner rejection", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/venus/libra");
 
     await expect(page.getByRole("heading", { name: "Venus in Libra" })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Horoscopes by rising sign" })).toHaveCount(0);
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    await expect(horoscopeSection).toBeVisible();
+    await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(page.getByRole("region", { name: "Where it lands for you" })).toHaveCount(0);
     await expect(page.getByText("You may want more of what is actually fun.", { exact: true })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).not.toBeEmpty();
@@ -2918,17 +2920,48 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("Moon in Sagittarius does not substitute unapproved house copy", async ({ page }) => {
+  test("Moon in Sagittarius shows all approved house-template compositions", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/moon/sagittarius");
 
     await expect(page.getByRole("heading", { name: "The Moon in Sagittarius" })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Horoscopes by rising sign" })).toHaveCount(0);
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    await expect(horoscopeSection).toBeVisible();
+    await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(page.getByRole("region", { name: "Where it lands for you" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).not.toBeEmpty();
+    await assertNoClientErrors();
+  });
+
+  test("Uranus in Gemini shows all rising-sign horoscopes", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#sky/placement/uranus/gemini");
+
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    await expect(horoscopeSection).toBeVisible();
+    await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
+    await expect(horoscopeSection).toContainText("Uranus in Gemini moves through your 5th house");
+    await assertNoClientErrors();
+  });
+
+  test("personalized Sky placement keeps applicable natal aspect facts visible", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, {
+      profile: true,
+      now: "2026-07-29T16:00:00.000Z"
+    });
+    await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
+
+    const personalizedSection = page.getByRole("region", { name: "Where it lands for you" });
+    await expect(personalizedSection).toBeVisible();
+    await expect(personalizedSection.getByRole("heading", { level: 3, name: "Aspects to the natal chart" })).toBeVisible();
+    await expect(personalizedSection.getByRole("heading", { level: 4 }).first()).toBeVisible();
     await assertNoClientErrors();
   });
 
