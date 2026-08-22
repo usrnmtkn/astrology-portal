@@ -244,12 +244,12 @@ for (const sign of ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libr
 }
 
 const corrections = jsonl("data/writing/owner-corrections.jsonl");
-assert.equal(corrections.length, 35, "All 35 owner correction fixtures must be seeded.");
+assert.equal(corrections.length, 36, "All 36 owner correction fixtures must be seeded.");
 const minedOwnerFeedback = jsonl("data/writing/owner-feedback-corpus.jsonl");
 const allOwnerCorrections = [...new Map(
   [...corrections, ...minedOwnerFeedback].map((entry) => [entry.bad.trim().toLowerCase(), entry])
 ).values()];
-assert.equal(allOwnerCorrections.length, 72, "The pair selector must receive all 72 deduplicated owner corrections.");
+assert.equal(allOwnerCorrections.length, 73, "The pair selector must receive all 73 deduplicated owner corrections.");
 for (const fixture of corrections) {
   for (const field of ["bad", "corrected", "category", "why", "family", "rule"]) assert.ok(fixture[field], `Correction fixture missing ${field}.`);
   const review = await reviewDraft({
@@ -461,14 +461,14 @@ const venusLibraSceneEvidence = sceneEvidenceForTarget({
 });
 assert.equal(matrixSceneCatalog.primary.length, 41, "Higher-governance matrix scene inventory must remain 41 unique rows.");
 assert.equal(servingSceneCatalog.length, 50, "Approved serving scene inventory must include the two V3 Moon rows that qualify as scene evidence.");
-assert.equal(venusLibraHouseCoreScenes.length, 12);
-assert.equal(venusLibraSceneEvidence.counts.samePlanetSignHouseCoreSelected, 12);
-assert.equal(venusLibraSceneEvidence.counts.samePlanetSignSceneAvailable, 15);
+assert.equal(venusLibraHouseCoreScenes.length, 11);
+assert.equal(venusLibraSceneEvidence.counts.samePlanetSignHouseCoreSelected, 11);
+assert.equal(venusLibraSceneEvidence.counts.samePlanetSignSceneAvailable, 14);
 assert.equal(venusLibraSceneEvidence.counts.servingSelected, 1);
 assert.equal(venusLibraSceneEvidence.counts.matrixSelected, 1);
-assert.ok(venusLibraSceneEvidence.selected.slice(0, 12).every((entry) => entry.sourceKind === "approved_house_horoscope_core"));
-assert.equal(venusLibraSceneEvidence.selected[12]?.sourceKind, "approved_serving_row");
-assert.ok(venusLibraSceneEvidence.selected.slice(13).every((entry) => entry.sourceKind === "owner_approved_knowledge_matrix_scene_index"));
+assert.ok(venusLibraSceneEvidence.selected.slice(0, 11).every((entry) => entry.sourceKind === "approved_house_horoscope_core"));
+assert.equal(venusLibraSceneEvidence.selected[11]?.sourceKind, "approved_serving_row");
+assert.ok(venusLibraSceneEvidence.selected.slice(12).every((entry) => entry.sourceKind === "owner_approved_knowledge_matrix_scene_index"));
 for (const expected of [
   "reread the text before you send it",
   "One quick favor turns into your whole afternoon",

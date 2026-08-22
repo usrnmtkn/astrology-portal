@@ -10,6 +10,7 @@ import {
   ownerPositiveEvidenceFromSurfaceQualifiedPool,
   ownerPositiveEvidenceFromVoiceIndex
 } from "../src/astro-writing/index.mjs";
+import { withoutOwnerRejectedEvidence } from "../src/astro-writing/ownerEvidenceRejections.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const reviewRoot = path.join(repoRoot, "packages/astro-knowledge/review/writing-pipeline-v3");
@@ -17,10 +18,25 @@ const checkOnly = process.argv.includes("--check");
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), "utf8"));
 const readJsonl = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8").trim().split("\n").filter(Boolean).map(JSON.parse);
 
-const voiceIndex = readJson("packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json");
+const corrections = [
+  ...readJsonl("data/writing/owner-corrections.jsonl"),
+  ...readJsonl("data/writing/owner-feedback-corpus.jsonl")
+];
+const rawVoiceIndex = readJson("packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json");
+const voiceIndex = {
+  ...rawVoiceIndex,
+  entries: withoutOwnerRejectedEvidence(rawVoiceIndex.entries, corrections)
+};
 const surfacePool = readJson("packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json");
-const approvedExamples = readJsonl("data/writing/OWNER_APPROVED_EXAMPLES.jsonl");
-const matrixEvidenceRows = readJsonl("data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl");
+const approvedExamples = withoutOwnerRejectedEvidence(
+  readJsonl("data/writing/OWNER_APPROVED_EXAMPLES.jsonl"),
+  corrections
+);
+const matrixEvidenceRows = withoutOwnerRejectedEvidence(
+  readJsonl("data/writing/matrix-evidence-index/TLDR-Matrix-Evidence-Index.jsonl"),
+  corrections,
+  "copy"
+);
 const matrixCoverage = readJson("data/writing/matrix-evidence-index/TLDR-Matrix-Coverage-By-Placement.json");
 const llMatrixV13Rows = readJson("packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json").rows;
 const llMatrixV13ManifestRows = readJson("packages/astro-knowledge/review/ll-matrix-v13-runtime-manifest.json").rows;

@@ -16,6 +16,7 @@ export type SkyWriteupContext = {
 export type RelatedHousePassage<Row extends SkyWriteupRelationRow = SkyWriteupRelationRow> = {
   house: number;
   kind: "Sky house horoscope" | "House and sign passage" | "House passage" | "House introduction";
+  availability: "Reader-ready" | "Source candidate";
   row: Row;
 };
 
@@ -130,18 +131,18 @@ function housePassageMatch(row: SkyWriteupRelationRow, context: SkyWriteupContex
   const exactCore = context.sign
     ? key.match(new RegExp(`^house-horoscope-core/${context.planet}/${context.sign}/house-(\\d+)$`, "u"))
     : null;
-  if (exactCore) return { house: Number(exactCore[1]), kind: "Sky house horoscope" };
+  if (exactCore) return { house: Number(exactCore[1]), kind: "Sky house horoscope", availability: "Reader-ready" };
 
   const exactSign = context.sign
     ? key.match(new RegExp(`^authored/transit-house-sign/${context.planet}/(\\d+)/${context.sign}(?:/variant-[^/]+)?$`, "u"))
     : null;
-  if (exactSign) return { house: Number(exactSign[1]), kind: "House and sign passage" };
+  if (exactSign) return { house: Number(exactSign[1]), kind: "House and sign passage", availability: "Source candidate" };
 
   const exactHouse = key.match(new RegExp(`^authored/transit-house/${context.planet}/(\\d+)(?:/variant-[^/]+)?$`, "u"));
-  if (exactHouse) return { house: Number(exactHouse[1]), kind: "House passage" };
+  if (exactHouse) return { house: Number(exactHouse[1]), kind: "House passage", availability: "Source candidate" };
 
   const intro = key.match(new RegExp(`^authored/transit-house-intro/${context.planet}/(\\d+)(?:/variant-[^/]+)?$`, "u"));
-  if (intro) return { house: Number(intro[1]), kind: "House introduction" };
+  if (intro) return { house: Number(intro[1]), kind: "House introduction", availability: "Source candidate" };
 
   return null;
 }
