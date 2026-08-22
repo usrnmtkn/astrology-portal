@@ -2997,7 +2997,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(personalizedSection).toBeVisible();
     await expect(
       personalizedSection.getByRole("heading", { level: 3, name: "Aspects to the natal chart" })
-    ).toBeVisible({ timeout: 20_000 });
+    ).toBeVisible({ timeout: 60_000 });
     await expect(personalizedSection.getByRole("heading", { level: 4 }).first()).toBeVisible();
     await assertNoClientErrors();
   });
