@@ -14,7 +14,7 @@ const adminPages = [
   { nav: "Review Queue", title: "Review Queue", breadcrumb: "Admin / Publish / Review queue", hash: "review-queue" },
   { nav: "Content Library", title: "Content Library", breadcrumb: "Admin / Write / Content library", hash: "exact-content" },
   { nav: "Articles", title: "Articles", breadcrumb: "Admin / Write / Articles", hash: "articles" },
-  { nav: "Composition", title: "Templates", breadcrumb: "Admin / Composition / Templates", hash: "templates" },
+  { nav: "Templates", title: "Templates", breadcrumb: "Admin / Composition / Templates", hash: "templates" },
   { nav: "Aspect Patterns", title: "Aspect Patterns", breadcrumb: "Admin / Language System / Aspect Patterns", hash: "content/aspect-patterns" }
 ];
 
@@ -337,6 +337,8 @@ async function seedAdminApi(
   page: Page,
   options: {
     onGeneratedContentWrite?: (write: { method: string; payload: Record<string, unknown> }) => void;
+    initialSecret?: string;
+    expectedSecret?: string;
   } = {}
 ) {
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
@@ -370,6 +372,17 @@ async function seedAdminApi(
   await page.route("**/api/admin/**", async (route) => {
     const url = new URL(route.request().url());
     const pathname = url.pathname;
+    if (
+      options.expectedSecret
+      && route.request().headers().authorization !== `Bearer ${options.expectedSecret}`
+    ) {
+      await route.fulfill({
+        status: 401,
+        contentType: "application/json",
+        body: JSON.stringify({ error: "Unauthorized." })
+      });
+      return;
+    }
 
     if (pathname.endsWith("/review-records")) {
       await route.fulfill({
@@ -461,10 +474,10 @@ async function seedAdminApi(
     });
   });
 
-  await page.addInitScript(() => {
-    window.localStorage.setItem("tldrastro:contentAdminSecret", "qa-secret");
+  await page.addInitScript(({ initialSecret }) => {
+    window.localStorage.setItem("tldrastro:contentAdminSecret", initialSecret);
     window.localStorage.setItem("tldrastro:slotDictionaryInfoDismissed", "true");
-  });
+  }, { initialSecret: options.initialSecret ?? "qa-secret" });
 }
 
 async function expectNoBrowserErrors(page: Page) {
@@ -556,6 +569,31 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("button", { name: "TLDR Astro home" })).toHaveCount(0);
 
     await assertNoBrowserErrors();
+  });
+
+  test("admin access trims pasted secrets and clears a rejected saved value", async ({ page }) => {
+    await seedAdminApi(page, {
+      initialSecret: "stale-secret",
+      expectedSecret: "qa-secret"
+    });
+    await page.goto("/admin/content");
+
+    await expect(page.getByRole("heading", { name: "Review Queue" })).toBeVisible({
+      timeout: routeReadyTimeoutMs
+    });
+    await expect(page.getByRole("status")).toContainText("The rejected saved secret was cleared");
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Access denied");
+    const secretInput = page.getByLabel("Secret");
+    await expect(secretInput).toHaveValue("");
+
+    await secretInput.fill("  qa-secret  ");
+    await expect(secretInput).toHaveValue("qa-secret");
+    await page.getByRole("button", { name: "Load content" }).click();
+
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("8 saved rows loaded", {
+      timeout: routeReadyTimeoutMs
+    });
+    await expect(page.getByRole("status")).toContainText("Loaded 8 saved rows");
   });
 
   test("admin shell navigates every primary dashboard surface", async ({ page }) => {
