@@ -10942,6 +10942,24 @@
       "approved_via": "Jupiter+Saturn wiring (2026-07-27)"
     },
     {
+      "contentKey": "fallback-hook/transit-house-event-frame/generic",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "While {{transitTitle}} is in your {{houseOrdinal}} house, it is also {{aspectVerb}} your natal {{natalTitle}}{{windowClause}}.",
+      "body_they": "While {{transitTitle}} is in {{Name}}'s {{houseOrdinal}} house, it is also {{aspectVerb}} their natal {{natalTitle}}{{windowClause}}.",
+      "review_status": "approved_reuse",
+      "source_keys": [
+        "fallback-hook/transit-house-event-frame/sun",
+        "fallback-hook/transit-house-event-frame/mercury",
+        "fallback-hook/transit-house-event-frame/venus",
+        "fallback-hook/transit-house-event-frame/mars",
+        "fallback-hook/transit-house-event-frame/jupiter",
+        "fallback-hook/transit-house-event-frame/saturn"
+      ],
+      "note": "Shared fact frame for transiting bodies without a planet-specific row. The sentence is the slot-generalized form of the six owner-approved event frames and adds no interpretation.",
+      "approved_via": "approved-reuse of owner-approved transit-house event frame construction (2026-07-27)"
+    },
+    {
       "contentKey": "fallback-hook/transit-house-event-wants/jupiter/aries",
       "content_role": "fallback_hook",
       "grammar_frame": "clause",

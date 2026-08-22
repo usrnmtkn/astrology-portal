@@ -1298,17 +1298,30 @@ function transitTimingPhase(direction?: TransitDirection) {
   return "active";
 }
 
-function transitToNatalTemplateSlots(transit: TransitItem, natalVariant: PlanetTopicVariant = "natal"): TemplateSlotValues {
+function transitToNatalTemplateSlots(
+  transit: TransitItem,
+  natalVariant: PlanetTopicVariant = "natal",
+  transitHouse?: number | null
+): TemplateSlotValues {
   const natalPointTopic = planetTopicSlot(transit.natalPoint, natalVariant);
 
   return {
+    transitHouse: transitHouse ?? "",
+    transitHouseOrdinal: transitHouse ? ordinalHouse(transitHouse) : "",
+    transitHouseTopic: transitHouse ? houseLifeAreas[transitHouse] ?? "" : "",
     transitPlanet: transit.transitPlanet,
     transitPlanetTopic: planetTopicSlot(transit.transitPlanet, "sky"),
+    transitSign: transit.transitSign ?? "",
     aspect: titleCase(transit.aspect).toLowerCase(),
     aspectAdj: transitAspectTechnicalVerb(transit.aspect),
+    aspectVerb: transitAspectTechnicalVerb(transit.aspect),
     aspectTone: aspectTonePhrase(transit.aspect),
     natalPoint: transit.natalPoint,
     natalPointTopic,
+    natalSign: transit.natalSign,
+    natalHouse: transit.natalHouse ?? "",
+    natalHouseOrdinal: transit.natalHouse ? ordinalHouse(transit.natalHouse) : "",
+    natalHouseTopic: transit.natalHouse ? houseLifeAreas[transit.natalHouse] ?? "" : "",
     transitPlanetWeather: transitPlanetWeatherPhrase(transit.transitPlanet),
     personalActivation: personalActivationPhrase(transit.natalPoint, natalPointTopic),
     house: transit.natalHouse ? ordinalHouse(transit.natalHouse) : "",
@@ -5423,7 +5436,8 @@ function personalizedSkyPlacementDetail(
   detail: SkyDetail | null,
   risingSign: string | null | undefined,
   transits: TransitItem[],
-  generatedAt: string
+  generatedAt: string,
+  generatedContent?: GeneratedContentMap
 ): SkyDetail | null {
   if (!detail) {
     return null;
@@ -5476,11 +5490,14 @@ function personalizedSkyPlacementDetail(
               transitingPlanet: planet
             })
           : null;
-        const packageSection = personalTransitPackageSection(transit, generatedAt);
+        const packageSection = personalTransitPackageSection(transit, generatedAt, "you", {
+          generatedContent,
+          transitHouse: house
+        });
         return {
           key: transit.id,
           heading: packageSection?.heading || personalTransitDisplayTitle(transit),
-          body: compiledAspect?.body ?? packageSection?.body ?? null
+          body: packageSection?.body ?? compiledAspect?.body ?? null
         };
       });
 
@@ -7562,7 +7579,11 @@ function dailyCalendarPhaseKey(phase: string) {
 function personalTransitPackageSection(
   transit: TransitItem,
   generatedAt: string,
-  voice: "you" | string = "you"
+  voice: "you" | string = "you",
+  context: {
+    generatedContent?: GeneratedContentMap;
+    transitHouse?: number | null;
+  } = {}
 ): NormalizedPersonalTransitSection | null {
   const normalizedAspect = normalizeFallbackV3Aspect(transit.aspect);
 
@@ -7607,6 +7628,74 @@ function personalTransitPackageSection(
     }
   }
 
+  const windowLabel = personalTransitPackageWindow(transit, generatedAt);
+  const voiceKind = voice === "you" ? "you" : "they";
+  const cmsOverride = resolveCmsSurfaceOverride(
+    context.generatedContent,
+    cmsSurfaceKeys.transitAspect(
+      voiceKind,
+      transit.transitPlanet,
+      transit.transitSign ?? "",
+      transit.natalPoint,
+      transit.aspect
+    ),
+    {
+      ...transitToNatalTemplateSlots(transit, voice === "you" ? "natal" : "friend", context.transitHouse),
+      owner: voice,
+      ownerPossessive: voice === "you" ? "your" : possessiveLabel(voice),
+      window: windowLabel
+    }
+  );
+
+  if (cmsOverride) {
+    return {
+      slot: "meaning",
+      required: true,
+      layer: "authored",
+      tier: "cms-live-serving",
+      sourceKeys: cmsOverride.sourceKeys,
+      heading: cmsOverride.headline || personalTransitDisplayTitle(transit),
+      body: cmsOverride.body
+    };
+  }
+
+  if (context.transitHouse) {
+    try {
+      const renderedEvent = transitSynastryFallbackRendererV3.renderTransitHouseEvent({
+        aspect: normalizedAspect,
+        house: context.transitHouse,
+        natal: normalizeContentIdPart(transit.natalPoint),
+        natalHouse: transit.natalHouse,
+        planet: normalizeContentIdPart(transit.transitPlanet),
+        sign: transit.transitSign ? normalizeContentIdPart(transit.transitSign) : undefined,
+        variant: stableTransitCopyVariant(voice, transit.id),
+        voice,
+        window: windowLabel
+      });
+      const body = readerFacingParagraphs(renderedEvent.parts).join("\n\n");
+
+      if (body && isReaderFacingCopy(body)) {
+        return {
+          slot: "meaning",
+          required: true,
+          layer: "fallback",
+          tier: "approved-house-aware-transit-composition-v1",
+          sourceKeys: [
+            "tldrastro-fallback-architecture-v3",
+            ...(renderedEvent.sourceKeys ?? []),
+            renderedEvent.templateKey
+          ].filter(Boolean),
+          heading: renderedEvent.headline || personalTransitDisplayTitle(transit),
+          body
+        };
+      }
+    } catch (error) {
+      if (!(error instanceof FallbackV3SourceGapError)) {
+        throw error;
+      }
+    }
+  }
+
   try {
     const rendered = transitSynastryFallbackRendererV3.renderTransitAspect({
       aspect: normalizedAspect,
@@ -7618,7 +7707,7 @@ function personalTransitPackageSection(
       sign: transit.transitSign ? normalizeContentIdPart(transit.transitSign) : undefined,
       transiting: normalizeContentIdPart(transit.transitPlanet),
       variant: stableTransitCopyVariant(voice, transit.id),
-      window: personalTransitPackageWindow(transit, generatedAt),
+      window: windowLabel,
       voice
     });
     const body = readerFacingParagraphs(rendered.parts).join("\n\n");
@@ -7706,6 +7795,7 @@ function transitHouseAspectEvents(
       return aspect
         ? [{
             natal: normalizeContentIdPart(transit.natalPoint),
+            natalHouse: transit.natalHouse,
             aspect,
             window: transitHouseAspectEventWindow(transit, generatedAt)
           }]
@@ -11020,7 +11110,8 @@ export function App() {
       detail,
       profileNatalSky?.ascendant ?? userProfile?.rising,
       skyPlacementPersonalizationTransits,
-      sky?.generatedAt ?? new Date().toISOString()
+      sky?.generatedAt ?? new Date().toISOString(),
+      skyGeneratedContent
     ));
 
     if (detail.routePath) {
@@ -11531,7 +11622,8 @@ export function App() {
       detail,
       profileNatalSky?.ascendant ?? userProfile?.rising,
       skyPlacementPersonalizationTransits,
-      sky.generatedAt
+      sky.generatedAt,
+      skyGeneratedContent
     ));
   }, [fallbackArchitectureV3Version, profileNatalSky?.ascendant, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent, skyPlacementPersonalizationTransits, userProfile?.rising]);
 
@@ -11714,7 +11806,22 @@ export function App() {
           : ""
       ].filter(Boolean);
     });
-    const currentSkyContentKeys = [...aspectContentKeys, ...placementContentKeys];
+    const personalTransitAspectContentKeys = skyPlacementPersonalizationTransits.flatMap((transit) => (
+      cmsSurfaceKeys.transitAspect(
+        "you",
+        transit.transitPlanet,
+        transit.transitSign ?? "",
+        transit.natalPoint,
+        transit.aspect
+      )
+    ));
+    const currentSkyContentKeys = [
+      ...new Set([
+        ...aspectContentKeys,
+        ...placementContentKeys,
+        ...personalTransitAspectContentKeys
+      ])
+    ];
 
     loadLiveGeneratedContentForKeys(currentSkyContentKeys)
       .then((content) => {
@@ -11729,7 +11836,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [calendarContentRequest, contentRefreshVersion, generatedContentPreviewMode, mode, sky, skyDate]);
+  }, [calendarContentRequest, contentRefreshVersion, generatedContentPreviewMode, mode, sky, skyDate, skyPlacementPersonalizationTransits]);
 
   useEffect(() => {
     let cancelled = false;

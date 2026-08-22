@@ -36,6 +36,7 @@ import {
   type SkyArticleHousePassage
 } from "../../web/src/content/skyArticleTemplateCompiler";
 import {
+  personalTransitAspectCmsStarter,
   relatedAspectPassages,
   relatedHousePassages,
   skyWriteupContextForRow
@@ -3321,6 +3322,33 @@ export function GeneratedContentAdminDashboard() {
     scrollEditorToTop();
   }
 
+  function openSkyAspectCmsStarter(row: AdminGeneratedContentRow, context: NonNullable<ReturnType<typeof skyWriteupContextForRow>>) {
+    const starter = personalTransitAspectCmsStarter(row, context);
+    const surfaceItem = writingSurfaces.find((item) => item.id === "personal-transit-detail");
+    const baseStarter = writingSurfaceAccess["personal-transit-detail"]?.cmsStarters?.[0];
+
+    if (!starter || !surfaceItem || !baseStarter) {
+      setMessage("This source row does not map to a personalized transit-aspect CMS override.");
+      return;
+    }
+
+    openCmsStarter(surfaceItem, {
+      label: "Edit house-aware reader override",
+      contentKey: starter.contentKey,
+      surface: "you",
+      headline: starter.headline,
+      allowedSlots: [...baseStarter.allowedSlots]
+    });
+    setDraft((current) => current ? {
+      ...current,
+      sourceSnapshot: {
+        ...(current.sourceSnapshot ?? {}),
+        transitAspectSourceKey: starter.sourceContentKey,
+        calculatedHouseContext: true
+      }
+    } : current);
+  }
+
   function handleCompatibilityCreateAction(kind: AdminCompatibilityCreateKind) {
     navigateAdminPage("compatibility", undefined, { keepEditorOpen: true });
     setIsCreateMenuOpen(false);
@@ -5649,9 +5677,14 @@ export function GeneratedContentAdminDashboard() {
                         <code>{row.content_key}</code>
                         <p>{row.body || "No aspect passage body saved."}</p>
                       </div>
-                      <button type="button" onClick={() => openRelatedSkyRow(selectedRow.id, row)}>
-                        Edit passage
-                      </button>
+                      <div className="admin-surface-actions">
+                        <button type="button" onClick={() => openRelatedSkyRow(selectedRow.id, row)}>
+                          Edit reusable source
+                        </button>
+                        <button type="button" onClick={() => openSkyAspectCmsStarter(row, skyWriteupContext)}>
+                          Edit house-aware reader override
+                        </button>
+                      </div>
                     </article>
                   ))}
                   {!filteredSkyAspectPassages.length && (

@@ -40,6 +40,28 @@ export type WritingSurfaceAdminAccess = {
   }>;
 };
 
+export const personalTransitAspectAllowedSlots = [
+  "transitPlanet",
+  "transitPlanetTopic",
+  "transitSign",
+  "transitHouse",
+  "transitHouseOrdinal",
+  "transitHouseTopic",
+  "aspect",
+  "aspectAdj",
+  "aspectVerb",
+  "aspectTone",
+  "natalPoint",
+  "natalPointTopic",
+  "natalSign",
+  "natalHouse",
+  "natalHouseOrdinal",
+  "natalHouseTopic",
+  "window",
+  "owner",
+  "ownerPossessive"
+] as const;
+
 export const writingLayerLabels: Record<WritingLayer, string> = {
   "source-grounded": "Source-grounded",
   generated: "Generated",
@@ -245,9 +267,9 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     status: "normalized",
     requiredSlots: ["transit meaning", "personal activation"],
     visibleLayerOrder: ["source-grounded", "madlib-fallback"],
-    currentRenderPath: "normalizePersonalTransitSurface resolves reviewed/source-grounded transit composition first, then a source-based transit-to-natal madlib fallback.",
-    risk: "The visible detail block is normalized; friend/circle transit summary cards now use a shared card-body normalizer, but their QA provenance is not yet visible in the card UI.",
-    nextAction: "Expose section-level layer/tier/sourceKeys in the read block and card previews.",
+    currentRenderPath: "Personal transit details and Sky-placement natal-aspect sections resolve a LIVE CMS override first, then compose the reader's calculated transit house and natal house with governed authored aspect rows.",
+    risk: "The house values are reader-specific calculated facts and must remain slots; they must never be copied into reusable authored-row metadata as fixed values.",
+    nextAction: "Keep the CMS allowed-slot contract aligned with transitToNatalTemplateSlots and preserve source-key provenance in previews.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
       { label: "fallbackArchitectureV3Runtime.ts", path: "apps/web/src/content/fallbackArchitectureV3Runtime.ts", role: "source-grounded" },
@@ -459,9 +481,16 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
     ]
   },
   "personal-transit-detail": {
-    readerLocation: "You or Friends > personal transit detail",
+    readerLocation: "Sky > placement detail > Aspects to the natal chart; You or Friends > personal transit detail",
     editability: "editable",
-    routes: [{ label: "Edit personal transits", hash: "#exact-content?q=transit", purpose: "reader-copy", note: "Opens stored personal-transit rows." }]
+    routes: [{ label: "Edit personalized aspect overrides", hash: "#exact-content?q=cms%2Fpersonal-transit-aspect", purpose: "reader-copy", note: "Opens house-aware LIVE-first overrides for transits to natal placements." }],
+    cmsStarters: [{
+      label: "Start personalized aspect template",
+      contentKey: "cms/personal-transit-aspect/you/template",
+      surface: "you",
+      headline: "{{transitPlanet}} {{aspect}} your {{natalPoint}}",
+      allowedSlots: [...personalTransitAspectAllowedSlots]
+    }]
   },
   "sky-daily-timing": {
     readerLocation: "Today or You > daily timing writeup",

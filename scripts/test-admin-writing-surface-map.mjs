@@ -35,6 +35,7 @@ const cmsSurfaceIds = [
   "sky-horoscopes",
   "chart-placement-row-microcopy",
   "natal-empty-house",
+  "personal-transit-detail",
   "personal-transit-house"
 ];
 for (const surfaceId of cmsSurfaceIds) {
@@ -61,6 +62,7 @@ const requiredCmsStarterKeys = [
   "cms/natal-empty-house/detail/you/template",
   "cms/natal-empty-house/card/they/template",
   "cms/natal-empty-house/detail/they/template",
+  "cms/personal-transit-aspect/you/template",
   "cms/personal-transit-house/you/template",
   "cms/personal-transit-house/they/template"
 ];
@@ -72,6 +74,11 @@ for (const contentKey of requiredCmsStarterKeys) {
 const skyAspectAccess = writingSurfaceAdminAccess["sky-aspect-detail"];
 assert.ok(skyAspectAccess.routes.some((route) => route.hash === "#source-drafts"), "Current Sky aspect details must link to the held source-draft review surface.");
 assert.ok(skyAspectAccess.routes.some((route) => route.hash.startsWith("#exact-content")), "Current Sky aspect details must also link to saved exact content.");
+
+const personalTransitStarter = writingSurfaceAdminAccess["personal-transit-detail"].cmsStarters?.[0];
+assert.ok(personalTransitStarter?.allowedSlots.includes("transitHouseOrdinal"), "Personalized aspect CMS metadata must expose the calculated transit house.");
+assert.ok(personalTransitStarter?.allowedSlots.includes("natalHouseOrdinal"), "Personalized aspect CMS metadata must expose the calculated natal house.");
+assert.ok(personalTransitStarter?.allowedSlots.includes("aspectVerb"), "Personalized aspect CMS metadata must expose the exact aspect verb.");
 
 const dashboardSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/GeneratedContentAdminDashboard.tsx"), "utf8");
 assert.match(dashboardSource, /governanceState === "needs-owner-decision"/u, "The general editor must block held source drafts from being made LIVE.");

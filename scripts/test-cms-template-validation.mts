@@ -36,6 +36,17 @@ const mismatched = validateCmsTemplate({
   allowedSlots: ["sign", "planet"],
   body: "{{#sign}}{{sign}}{{\/planet}}"
 });
+
+const personalizedAspect = validateCmsTemplate({
+  allowedSlots: ["transitPlanet", "transitHouseOrdinal", "aspectVerb", "natalPoint", "natalHouseOrdinal", "window"],
+  headline: "{{transitPlanet}} {{aspectVerb}} your {{natalPoint}}",
+  body: "{{transitPlanet}} in your {{transitHouseOrdinal}} house is {{aspectVerb}} your natal {{natalPoint}} in your {{natalHouseOrdinal}} house {{window}}."
+});
+assert.deepEqual(personalizedAspect.errors, []);
+assert.equal(personalizedAspect.previewSlots.transitHouseOrdinal, "3rd");
+assert.equal(personalizedAspect.previewSlots.natalHouseOrdinal, "6th");
+assert.equal(personalizedAspect.previewSlots.aspectVerb, "trining");
+
 assert.match(mismatched.errors.join(" "), /does not match its opening tag/u);
 
 console.log("CMS template validation passed: valid slots preview, while empty, unknown, and broken templates fail closed.");
