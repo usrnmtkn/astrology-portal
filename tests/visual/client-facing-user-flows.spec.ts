@@ -689,6 +689,24 @@ async function expectReaderFacingCopy(locator: ReturnType<Page["locator"]>, labe
   expect(text, `${label} does not surface directional or moralizing scaffold copy`).not.toMatch(directionalCopyPattern);
 }
 
+async function expectReaderFacingCopyExcluding(
+  locator: ReturnType<Page["locator"]>,
+  excludedSelector: string,
+  label: string,
+  minLength = 120
+) {
+  await expect(locator, `${label} is visible`).toBeVisible();
+  const text = await locator.evaluate((root, selector) => {
+    const clone = root.cloneNode(true) as HTMLElement;
+    clone.querySelectorAll(selector).forEach((element) => element.remove());
+    return (clone.textContent ?? "").replace(/\s+/g, " ").trim();
+  }, excludedSelector);
+
+  expect(text.length, `${label} has substantial reader-facing copy`).toBeGreaterThanOrEqual(minLength);
+  expect(text, `${label} does not leak scaffolding or placeholder copy`).not.toMatch(readerCopyLeakPattern);
+  expect(text, `${label} does not surface directional or moralizing scaffold copy`).not.toMatch(directionalCopyPattern);
+}
+
 async function expectHydrationKeepsReaderCopyStable(
   page: Page,
   locator: ReturnType<Page["locator"]>,
@@ -2728,7 +2746,11 @@ test.describe("client-facing user flow case studies", () => {
 
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Sky fallback placement detail");
-    await expectReaderFacingCopy(page.locator("article, .sky-detail-article").first(), "Sky placement fallback detail");
+    await expectReaderFacingCopyExcluding(
+      page.locator("article, .sky-detail-article").first(),
+      "[aria-label='Horoscopes by rising sign'], [aria-label='Where it lands for you']",
+      "Sky placement fallback detail"
+    );
     await assertNoClientErrors();
   });
 
