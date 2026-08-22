@@ -19,7 +19,6 @@ const cron = read("api/cron/generate-sky-placements.ts");
 const placementGenerator = read("packages/astro-knowledge/scripts/generate-sky-aspect-cards.js");
 const generatedContentAdmin = read("api/admin/generated-content.ts");
 const userContentRoute = read("api/generate-user-content.ts");
-const topperCalibrationRoute = read("api/admin/sky-placement-topper-calibration-oneoff.ts");
 const dashboard = read("apps/admin/src/GeneratedContentAdminDashboard.tsx");
 const vercel = JSON.parse(read("vercel.json"));
 
@@ -120,16 +119,6 @@ assert.doesNotMatch(
   "User-content status preservation operates on a separate user-scoped table and cannot revive a global placement row."
 );
 
-assert.match(topperCalibrationRoute, /target\.provider !== "openai"/);
-assert.match(topperCalibrationRoute, /target\.model !== "gpt-4\.1"/);
-assert.match(topperCalibrationRoute, /target\.temperature !== 0\.1/);
-assert.match(topperCalibrationRoute, /samples: 5/);
-assert.match(topperCalibrationRoute, /status: "eq\.LIVE"/);
-assert.match(topperCalibrationRoute, /judge_score === 3/);
-assert.match(topperCalibrationRoute, /skyPlacementVoiceLint/);
-assert.match(topperCalibrationRoute, /baseText: base\.body/);
-assert.match(topperCalibrationRoute, /database: false/);
-assert.match(topperCalibrationRoute, /enableFlag: false/);
 
 assert.equal(
   vercel.crons.some((entry) => entry.path === "/api/cron/generate-sky-placements"),

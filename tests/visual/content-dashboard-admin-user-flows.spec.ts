@@ -11,21 +11,11 @@ import {
 const adminScreenshotDir = path.join("test-results", "content-dashboard-admin-flow");
 
 const adminPages = [
-  { nav: "Studio Home", title: "Content Studio", breadcrumb: "Admin / Home", hash: "home" },
-  { nav: "Articles", title: "Articles", breadcrumb: "Admin / Write / Articles", hash: "articles" },
-  { nav: "Compatibility", title: "Compatibility", breadcrumb: "Admin / Write / Compatibility", hash: "compatibility" },
-  { nav: "Content Library", title: "Content Library", breadcrumb: "Admin / Write / Content library", hash: "exact-content" },
-  { nav: "Composite Review", title: "Composite Review", breadcrumb: "Admin / Write / Composite review", hash: "composite-review" },
-  { nav: "Templates", title: "Templates", breadcrumb: "Admin / Composition / Templates", hash: "templates" },
-  { nav: "Slots", title: "Slots", breadcrumb: "Admin / Composition / Slots", hash: "slots" },
-  { nav: "Vocabulary & Phrases", title: "Vocabulary & Phrases", breadcrumb: "Admin / Composition / Vocabulary & phrases", hash: "vocabulary" },
-  { nav: "Fallback Hooks", title: "Fallback Hooks", breadcrumb: "Admin / Composition / Fallback hooks", hash: "fallback-hooks" },
-  { nav: "Surface Map", title: "Surface Map", breadcrumb: "Admin / App surfaces / Surface map", hash: "surface-map" },
-  { nav: "Sky Aspect Drafts", title: "Sky Aspect Drafts", breadcrumb: "Admin / App surfaces / Sky aspect drafts", hash: "source-drafts" },
   { nav: "Review Queue", title: "Review Queue", breadcrumb: "Admin / Publish / Review queue", hash: "review-queue" },
-  { nav: "Connection", title: "Connection", breadcrumb: "Admin / Connection", hash: "connection" },
-  { nav: "App Behavior", title: "App Behavior", breadcrumb: "Admin / App behavior", hash: "app-behavior" },
-  { nav: "Release Notes", title: "Release Notes", breadcrumb: "Admin / Release notes", hash: "release-notes" }
+  { nav: "Content Library", title: "Content Library", breadcrumb: "Admin / Write / Content library", hash: "exact-content" },
+  { nav: "Articles", title: "Articles", breadcrumb: "Admin / Write / Articles", hash: "articles" },
+  { nav: "Composition", title: "Templates", breadcrumb: "Admin / Composition / Templates", hash: "templates" },
+  { nav: "Aspect Patterns", title: "Aspect Patterns", breadcrumb: "Admin / Language System / Aspect Patterns", hash: "content/aspect-patterns" }
 ];
 
 const adminCreateCases = [
@@ -500,7 +490,7 @@ async function expectAdminHeader(page: Page, title: string, breadcrumb: string) 
 
 async function openAdminHome(page: Page) {
   await expectAdminRouteLoads(page, "/admin/content");
-  await expectAdminHeader(page, "Content Studio", "Admin / Home");
+  await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
 }
 
 async function openCreateMenu(page: Page) {
@@ -553,7 +543,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.waitForTimeout(1_500);
 
     expect(mainFrameNavigations).toBe(navigationsAfterInitialLoad);
-    await expectAdminHeader(page, "Content Studio", "Admin / Home");
+    await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
   });
 
   test("legacy content/admin path opens the admin dashboard instead of the reader app", async ({ page }) => {
@@ -562,7 +552,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminRouteLoads(page, "/content/admin");
 
     await expect(page.getByRole("navigation", { name: "Content operations" })).toBeVisible();
-    await expectAdminHeader(page, "Content Studio", "Admin / Home");
+    await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
     await expect(page.getByRole("button", { name: "TLDR Astro home" })).toHaveCount(0);
 
     await assertNoBrowserErrors();
@@ -574,7 +564,12 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminRouteLoads(page, "/admin/content");
 
     await expect(page.getByRole("navigation", { name: "Content operations" })).toBeVisible();
-    await expectAdminHeader(page, "Content Studio", "Admin / Home");
+    await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
+    await expect(page.getByRole("button", { name: "Studio Home" })).toHaveCount(0);
+    const advanced = page.locator("details.admin-nav-advanced");
+    await expect(advanced).not.toHaveAttribute("open", "");
+    await advanced.getByText("Operations / Advanced").click();
+    await expect(advanced.getByRole("button", { name: "Connection" })).toBeVisible();
 
     for (const [index, adminPage] of adminPages.entries()) {
       if (index === 1) {
@@ -628,18 +623,18 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("tab", { name: /Friends/ })).toHaveAttribute("aria-selected", "true");
 
     await openAdminDeepLink("#surface-map?area=friends&status=partial");
-    await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
+    await expectAdminHeader(page, "Surface Map", "Admin / Composition / Surface map");
     await expect(page.getByRole("group", { name: "Filter surfaces by area" }).getByRole("button", { name: /Friends/ })).toHaveAttribute("aria-pressed", "true");
     await expect(page.getByRole("group", { name: "Filter surfaces by admin editability" }).getByRole("button", { name: /Runtime gaps/ })).toHaveAttribute("aria-pressed", "true");
 
     await expectAdminRouteLoads(page, "/admin/content#home");
-    await expectAdminHeader(page, "Content Studio", "Admin / Home");
+    await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Articles" }).click();
     await expectAdminHeader(page, "Articles", "Admin / Write / Articles");
     await expect(page).toHaveURL(/\/admin\/content#articles$/);
 
     await page.goBack();
-    await expectAdminHeader(page, "Content Studio", "Admin / Home");
+    await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
     await expect(page).toHaveURL(/\/admin\/content(?:#home)?$/);
 
     await page.goForward();
@@ -671,7 +666,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await seedAdminApi(page);
 
     await expectAdminRouteLoads(page, "/admin/content#surface-map");
-    await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
+    await expectAdminHeader(page, "Surface Map", "Admin / Composition / Surface map");
     await page.getByText(/Supporting fallback-hook catalog/).click();
     await expect(page.getByRole("alert")).toContainText("failed with HTTP 503");
     await page.getByRole("button", { name: "Retry catalog" }).click();
@@ -839,7 +834,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminHeader(page, "Articles", "Admin / Write / Articles");
     const articleFilters = page.locator("section[aria-label='Article filters']");
     await expect(articleFilters).toBeVisible();
-    await expect(articleFilters.getByLabel("Article status")).toHaveValue("all");
+    await expect(articleFilters.getByLabel("Article status")).toHaveValue("LIVE");
     await expect(articleFilters.getByLabel("Article planet or point")).toHaveValue("all");
     await expect(articleFilters.getByLabel("Article content system")).toHaveValue("all");
 
@@ -863,66 +858,20 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
-  test("compatibility workspace searches, sorts, and groups content support rows", async ({ page }) => {
+  test("compatibility is a saved Content Library view", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
     await expectAdminRouteLoads(page, "/admin/content#compatibility");
 
-    await expectAdminHeader(page, "Compatibility", "Admin / Write / Compatibility");
-    await expect(page.getByRole("tablist", { name: "Compatibility sections" })).toBeVisible();
-    await expect(page.getByRole("tab", { name: /App card copy/ })).toContainText(/[1-9]\d*/);
-    await expect(page.getByRole("tab", { name: /Simple fallbacks/ })).toContainText(/[1-9]\d*/);
-    await expect(page.getByRole("tab", { name: /Reusable phrases/ })).toContainText(/[1-9]\d*/);
-    await expect(page.getByRole("tab", { name: /Templates & slots/ })).toContainText(/[1-9]\d*/);
-
-    const compatibilityFilters = page.locator("section[aria-label='Compatibility filters']");
-    await expect(compatibilityFilters.getByLabel("Compatibility status")).toHaveValue("all");
-    await expect(compatibilityFilters.getByLabel("Compatibility planet or point")).toHaveValue("all");
-    await expect(compatibilityFilters.getByLabel("Compatibility sort")).toHaveValue("updated-desc");
-
-    await compatibilityFilters.getByLabel("Compatibility planet or point").selectOption("sun");
+    await expectAdminHeader(page, "Content Library", "Admin / Write / Content library");
+    const libraryViews = page.getByRole("tablist", { name: "Content Library saved views" });
+    await expect(libraryViews.getByRole("tab", { name: "Compatibility" })).toHaveAttribute("aria-selected", "true");
     await expect(page.locator(".admin-content-row", { hasText: "compatibility.sun.aries.libra" })).toHaveCount(1);
-    await expect(page.locator(".admin-content-row", { hasText: "slot-template/compatibility/planet-card" })).toHaveCount(1);
+    await expect(page.locator(".admin-content-row", { hasText: "Moon in Virgo" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Show reference" })).toHaveAttribute("aria-pressed", "false");
 
-    await compatibilityFilters.getByLabel("Search compatibility").fill("aries libra");
-    await expect(page.locator(".admin-content-row", { hasText: "Sun compatibility / Aries and Libra" })).toHaveCount(1);
-
-    await page.getByRole("tab", { name: /Simple fallbacks/ }).click();
-    await compatibilityFilters.getByLabel("Search compatibility").fill("");
-    await expect(
-      page.locator(".admin-content-row", { hasText: "fallback-hook/friends.compatibility.planet-card" }),
-    ).toHaveCount(1);
-
-    await page.getByRole("tab", { name: /Reusable phrases/ }).click();
-    await compatibilityFilters.getByLabel("Compatibility planet or point").selectOption("venus");
-    await expect(
-      page.locator(".admin-content-row", { hasText: "vocab/relationship/compatibility-repair" }),
-    ).toHaveCount(1);
-
-    await compatibilityFilters.getByLabel("Compatibility sort").selectOption("title-asc");
-    await page.getByRole("button", { name: "Clear filters" }).click();
-    await expect(compatibilityFilters.getByLabel("Compatibility sort")).toHaveValue("updated-desc");
-    await expect(page.locator(".admin-content-row", { hasText: "compatibility.sun.aries.libra" })).toHaveCount(1);
-
-    await page.locator(".admin-content-row", { hasText: "compatibility.sun.aries.libra" }).getByRole("button", { name: "Edit" }).click();
-    await expect(page.locator(".admin-editor-panel").getByRole("heading", { name: "Edit saved row" })).toBeVisible();
-    await page.locator(".admin-editor-panel").getByRole("button", { name: "Close" }).click();
-    await expect(page.locator(".admin-editor-panel")).toBeHidden();
-
-    const compatibilityShortcuts = page.locator("[aria-label='Compatibility shortcuts']");
-    await compatibilityShortcuts.getByRole("button", { name: "Card copy" }).click();
-    await expect(page.locator(".admin-editor-panel").getByRole("heading", { name: "Author new row" })).toBeVisible();
-    await expect(page.locator(".admin-editor-panel").getByLabel("Content key")).toHaveValue("compatibility.venus.aries.libra");
-    await page.locator(".admin-editor-panel").getByRole("button", { name: "Close" }).click();
-
-    await compatibilityShortcuts.getByRole("button", { name: "Phrase", exact: true }).click();
-    await expect(page.getByRole("dialog", { name: "Generated content editor" }).getByRole("heading", { name: "Create reusable phrase" })).toBeVisible();
-    await expect(page.getByRole("dialog", { name: "Generated content editor" }).getByLabel("Phrase section")).toHaveValue("relationship");
-    await expect(page.getByRole("dialog", { name: "Generated content editor" }).getByLabel("Phrase title")).toHaveValue("Compatibility phrase");
-    await page.getByRole("dialog", { name: "Generated content editor" }).getByRole("button", { name: "Close" }).click();
-
-    await compatibilityShortcuts.getByRole("button", { name: "Fallback" }).click();
-    await expect(page.locator(".admin-editor-panel").getByLabel("Content key")).toHaveValue("fallback-hook/friends.compatibility.planet-card");
+    await libraryViews.getByRole("tab", { name: "Editorial content" }).click();
+    await expect(libraryViews.getByRole("tab", { name: "Editorial content" })).toHaveAttribute("aria-selected", "true");
 
     await assertNoBrowserErrors();
   });
@@ -933,7 +882,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await seedAdminApi(page, { onGeneratedContentWrite: (write) => { cmsWrite = write; } });
     await expectAdminRouteLoads(page, "/admin/content#surface-map");
 
-    await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
+    await expectAdminHeader(page, "Surface Map", "Admin / Composition / Surface map");
 
     const areaFilters = page.getByRole("group", { name: "Filter surfaces by area" });
     const statusFilters = page.getByRole("group", { name: "Filter surfaces by admin editability" });
@@ -1063,7 +1012,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.locator(".admin-content-row")).toHaveCount(1);
     await expect(page.locator(".admin-content-row")).toContainText("vocab/relationship/compatibility-repair");
 
-    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Fallback Hooks" }).click();
+    await page.getByRole("navigation", { name: "Composition workspace" }).getByRole("button", { name: "Fallback Hooks" }).click();
     await expectAdminHeader(page, "Fallback Hooks", "Admin / Composition / Fallback hooks");
     const friendsFallbackTab = page
       .getByRole("tablist", { name: "Fallback hook sections" })
@@ -1144,7 +1093,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.locator("main.admin-dashboard")).toContainText(/Sky|Natal|Lunar Calendar|Settings|Friends/);
 
     await openAdminDeepLink("#surface-map");
-    await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
+    await expectAdminHeader(page, "Surface Map", "Admin / Composition / Surface map");
     await expect(page.getByText(/reader surface directory|mapped surfaces/i).first()).toBeVisible();
 
     await assertNoBrowserErrors();
@@ -1157,9 +1106,9 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await page.setViewportSize({ width: 1440, height: 1000 });
     await expectAdminRouteLoads(page, "/admin/content");
-    await expectAdminHeader(page, "Content Studio", "Admin / Home");
+    await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
     await expectNoHorizontalOverflow(page, "Admin desktop home");
-    await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(adminScreenshotDir, "desktop-content-studio.png") });
+    await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(adminScreenshotDir, "desktop-review-queue.png") });
 
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Content Library" }).click();
     await expect(page.locator("main.admin-dashboard")).not.toContainText(forbiddenReaderPreviewCopy);
@@ -1168,10 +1117,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await expectAdminRouteLoads(page, "/admin/content");
     await expect(page.getByRole("navigation", { name: "Content operations" })).toBeVisible();
-    await expectAdminHeader(page, "Content Studio", "Admin / Home");
+    await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
     await expectNoHorizontalOverflow(page, "Admin mobile home");
-    await expect(page.locator(".admin-studio-map").first()).toHaveCSS("grid-template-columns", /^(?:\d+(?:\.\d+)?px)$/);
-    await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(adminScreenshotDir, "mobile-content-studio.png") });
+    await expect(page.getByRole("button", { name: "Studio Home" })).toHaveCount(0);
+    await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(adminScreenshotDir, "mobile-review-queue.png") });
 
     await assertNoBrowserErrors();
   });
