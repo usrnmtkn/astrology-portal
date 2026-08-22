@@ -125,6 +125,7 @@ const compiledEdition = await compileSkyArticleEdition({
   templateKey: "sky/article-template/pluto/ingress",
   planet: "pluto",
   sign: "aquarius",
+  tldr: "Explicit owner article TL;DR.",
   entryYear: 2024,
   validFrom: "2024-11-19",
   validTo: "2043-03-08",
@@ -143,14 +144,14 @@ const editionRow = existingRow({
   mode: "article",
   event_type: "sky-article-edition",
   headline: compiledEdition.headline,
-  summary: "Owner article opening.",
+  summary: compiledEdition.tldr,
   body: compiledEdition.body,
   sections: { skyArticleEdition: compiledEdition },
   lane: "reference",
   review_state: "owner-review-required",
   block_type: "sky_article",
   provider: "owner-compiled-sky-article",
-  prompt_version: "sky-article-template-compiler-v1",
+  prompt_version: "sky-article-template-compiler-v2",
   source_snapshot: { review_status: "needs_review" },
   judge_score: null,
   judge_verdict: null,
@@ -176,5 +177,13 @@ const changedEdition = await invoke(
 assert.equal(changedEdition.status, 500);
 assert.equal(changedEdition.patches.length, 0);
 assert.match(changedEdition.payload.error, /no longer matches its compiled record/u);
+
+const changedEditionTldr = await invoke(
+  { id: "sky-row", ownerAction: "approve-sky-article-edition" },
+  { ...editionRow, summary: "Changed outside the compiler." }
+);
+assert.equal(changedEditionTldr.status, 500);
+assert.equal(changedEditionTldr.patches.length, 0);
+assert.match(changedEditionTldr.payload.error, /no longer matches its compiled record/u);
 
 console.log("Sky owner review action checks passed: cards and exact compiled article editions use separate atomic approval gates.");
