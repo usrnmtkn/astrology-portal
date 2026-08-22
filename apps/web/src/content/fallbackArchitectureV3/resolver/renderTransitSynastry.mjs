@@ -25,6 +25,7 @@ const pairDailyClausesV1 = JSON.parse(fs.readFileSync(path.join(here, "../source
 const skySignCopySunV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-sign-copy-sun-v1.json"), "utf8"));
 const sunLeoHouseCoresV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sun-leo-house-cores-v1.json"), "utf8"));
 const venusLibraHouseCoresV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/venus-libra-house-cores-v1.json"), "utf8"));
+const skyPlacementHouseTemplatesV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-placement-house-templates-v1.json"), "utf8"));
 const skyPlacementOwnerApprovedReaderV1 = JSON.parse(fs.readFileSync(path.join(here, "../bundled-sky-placement-owner-approved-reader-v1.json"), "utf8"));
 const templates = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallback-templates-v3.json"), "utf8"));
 
@@ -37,6 +38,7 @@ rowsFile.hookRows.push(...skyAspectPhrasebookV1.hookRows);
 rowsFile.hookRows.push(...pairDailyFramesV1.rows);
 rowsFile.hookRows.push(...pairDailyClausesV1.rows);
 rowsFile.hookRows.push(...skySignCopySunV1.rows);
+rowsFile.hookRows.push(...skyPlacementHouseTemplatesV1.rows);
 rowsFile.hookRows.push(...sunLeoHouseCoresV1.rows);
 rowsFile.hookRows.push(...venusLibraHouseCoresV1.rows);
 rowsFile.hookRows.push(...skyPlacementOwnerApprovedReaderV1.rows);
