@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-08-20b",
-  "contentHash": "1ae834e8aae6ab7cca11047a2391ce78",
-  "keyManifestHash": "6235eb7885e729bc2e9e8eee41d33848",
-  "keyCount": 7395,
+  "packageVersion": "v3-2026-08-21a",
+  "contentHash": "21b23c431403106f36e80409aea1f973",
+  "keyManifestHash": "6370c1f486be9a00573fbb5abdeb08a4",
+  "keyCount": 7397,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -4633,6 +4633,7 @@
     "hook:fallback-hook/placement-house-lived/saturn/8",
     "hook:fallback-hook/placement-house-lived/sun/5",
     "hook:fallback-hook/placement-house-lived/sun/8",
+    "hook:fallback-hook/placement-house-lived/sun/9",
     "hook:fallback-hook/placement-house-lived/uranus/10",
     "hook:fallback-hook/placement-house-lived/venus/1",
     "hook:fallback-hook/placement-house-lived/venus/11",
@@ -5535,6 +5536,7 @@
     "hook:fallback-hook/sky-season-shadow/scorpio",
     "hook:fallback-hook/sky-season-shadow/taurus",
     "hook:fallback-hook/sky-season-shadow/virgo",
+    "hook:fallback-hook/sky-sign-copy/sun/virgo",
     "hook:fallback-hook/sky-sign-trap/aquarius",
     "hook:fallback-hook/sky-sign-trap/aries",
     "hook:fallback-hook/sky-sign-trap/cancer",

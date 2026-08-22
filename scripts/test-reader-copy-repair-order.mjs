@@ -28,8 +28,8 @@ const browserFallback = fs.readFileSync(new URL("../apps/web/src/content/fallbac
 const transitRows = transit.authoredCards.filter((row) => row.contentKey.startsWith("authored/transit-"));
 const exactTransitRows = transitRows.filter((row) => row.approval?.approvalLevel === "exact_owner_approved");
 const legacyTransitRows = transitRows.filter((row) => transitReaderTier(row) === "legacy-reviewed");
-assert.equal(transitRows.length, 1588);
-assert.equal(exactTransitRows.length, 24);
+assert.equal(transitRows.length, 1589);
+assert.equal(exactTransitRows.length, 25);
 assert.equal(legacyTransitRows.length, 1564);
 assert.ok(exactTransitRows.every((row) => isGovernedReaderEligible(row)));
 assert.ok(legacyTransitRows.every((row) => isGovernedReaderEligible(row)));
@@ -63,11 +63,13 @@ const exactNatal = renderNatalAspect({
   voice: "you"
 });
 assert.equal(exactNatal.templateKey, "fallback-hook/natal-aspect-lived/sun/square/moon");
+assert.equal(exactNatal.provenanceTier, "exact-owner-approved");
 assert.ok(exactNatal.body.length > 0);
-const genericNatal = renderNatalAspect({ planetA: "mars", aspect: "sextile", planetB: "pluto", voice: "you" });
-assert.equal(genericNatal.templateKey, "fallback-hook/aspect-lived/sextile");
-assert.equal(genericNatal.provenanceTier, "legacy-reviewed");
-assert.ok(genericNatal.body.length > 0);
+assert.throws(
+  () => renderNatalAspect({ planetA: "ceres", aspect: "sextile", planetB: "pluto", voice: "you" }),
+  /SOURCE_GAP: natal aspect pair/u,
+  "Generic aspect prose must not replace a missing governed natal pair."
+);
 assert.doesNotMatch(browserFallback, /That's your/iu);
 
 function assertRenderedOutputBoundary(body, label) {

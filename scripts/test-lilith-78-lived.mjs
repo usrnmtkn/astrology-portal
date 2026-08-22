@@ -39,6 +39,7 @@ const browser = createFallbackRenderer(
 
 const destinationPrefix = "fallback-hook/natal-aspect-lived/lilith/";
 const llMatrixV13Release = "ll-matrix-v13-owner-approved-runtime";
+const incrementalOwnerApprovalRelease = "ll-matrix-v13-incremental-owner-approval-2026-08-17";
 const recordPrefix = `${reviewRoot}/records/`;
 const sha256 = (value) => crypto.createHash("sha256").update(value, "utf8").digest("hex");
 

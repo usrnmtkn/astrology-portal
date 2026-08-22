@@ -300,7 +300,12 @@ export function renderNatalAngle(facts, opts = {}) {
   };
   const template = getTemplate("fallback-template/natal.angle-in-sign");
   const body = renderTemplate(template, ctx, `${angle}/${sign}`, voice);
-  return { headline: mustache(template.headline, ctx), parts: [body], body, templateKey: template.contentKey };
+  return {
+    headline: mustache(template.headline, ctx),
+    parts: [body],
+    body,
+    templateKey: template.contentKey,
+  };
 }
 
 const ASPECT_GROUP = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
@@ -322,19 +327,6 @@ export function renderNatalAspect(facts, opts = {}) {
       astroHint: exactLived.astroHint,
       templateKey: exactLived.contentKey,
       provenanceTier: "exact-owner-approved",
-    };
-  }
-  // Keep reviewed generic aspect prose as an explicitly labeled continuity
-  // fallback. Exact owner-approved rows always win.
-  const genericLived = getReaderLivedRow(`fallback-hook/aspect-lived/${aspect}`, voice, { allowUnreviewed });
-  if (genericLived) {
-    return {
-      headline: `${title(planetA)} ${aspect} ${title(planetB)}`,
-      parts: [genericLived.body],
-      body: genericLived.body,
-      astroHint: genericLived.astroHint,
-      templateKey: genericLived.contentKey,
-      provenanceTier: "legacy-reviewed",
     };
   }
   const group = ASPECT_GROUP[aspect];
@@ -363,7 +355,13 @@ export function renderNatalAspect(facts, opts = {}) {
   };
   const template = getTemplate("fallback-template/natal.aspect");
   const body = renderTemplate(template, ctx, `${planetA}-${aspect}-${planetB}`, voice);
-  return { headline: mustache(template.headline, ctx), parts: [body], body, templateKey: template.contentKey };
+  return {
+    headline: mustache(template.headline, ctx),
+    parts: [body],
+    body,
+    templateKey: template.contentKey,
+    provenanceTier: "legacy-reviewed",
+  };
 }
 
 /** Normalize app wording to the supported canonical aspect ids ("conjunct" -> "conjunction", etc).

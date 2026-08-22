@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-08-20b",
-  "contentHash": "039f1a479a82416b4e4fbba5e5c4d0f7",
-  "keyManifestHash": "d18a762a7bb9d5d6200014ec38a31b5a",
-  "keyCount": 8182,
+  "packageVersion": "v3-2026-08-21a",
+  "contentHash": "d71ae829da9f135d0210090398031419",
+  "keyManifestHash": "c4443c143ed292a0ba4179fe5dc90f84",
+  "keyCount": 8183,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -4633,6 +4633,7 @@
     "hook:fallback-hook/placement-house-lived/saturn/8",
     "hook:fallback-hook/placement-house-lived/sun/5",
     "hook:fallback-hook/placement-house-lived/sun/8",
+    "hook:fallback-hook/placement-house-lived/sun/9",
     "hook:fallback-hook/placement-house-lived/uranus/10",
     "hook:fallback-hook/placement-house-lived/venus/1",
     "hook:fallback-hook/placement-house-lived/venus/11",

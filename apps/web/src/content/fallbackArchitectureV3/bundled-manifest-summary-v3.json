@@ -1,19 +1,19 @@
 {
-  "packageVersion": "v3-2026-08-20b",
-  "contentHash": "039f1a479a82416b4e4fbba5e5c4d0f7",
-  "keyManifestHash": "d18a762a7bb9d5d6200014ec38a31b5a",
-  "keyCount": 8182,
+  "packageVersion": "v3-2026-08-21a",
+  "contentHash": "d71ae829da9f135d0210090398031419",
+  "keyManifestHash": "c4443c143ed292a0ba4179fe5dc90f84",
+  "keyCount": 8183,
   "runtimeCapability": "sky-placement-on-demand-v1",
   "partitions": {
     "core": {
-      "contentHash": "1ae834e8aae6ab7cca11047a2391ce78",
-      "keyManifestHash": "6235eb7885e729bc2e9e8eee41d33848",
-      "keyCount": 7395
+      "contentHash": "21b23c431403106f36e80409aea1f973",
+      "keyManifestHash": "6370c1f486be9a00573fbb5abdeb08a4",
+      "keyCount": 7397
     },
     "skyPlacement": {
-      "contentHash": "40920d64d00da5e0217b4f467451f654",
-      "keyManifestHash": "f8dfd1eb99116d5fe9fe7055813f551b",
-      "keyCount": 787
+      "contentHash": "06b54a4928f8892db5dbd00bc26f9259",
+      "keyManifestHash": "3f8cf847f68d6c63c053ca29804e7397",
+      "keyCount": 786
     }
   }
 }

@@ -7,6 +7,10 @@ process.env.SUPABASE_URL = "https://example.invalid";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role";
 
 const { default: handler } = await import("../api/admin/generated-content.ts");
+// The handler loads local development configuration during import. Reassert
+// the fixture secret afterward so a developer's .env.local cannot change this
+// test's authorization contract.
+process.env.CONTENT_GENERATION_SECRET = "test-secret";
 
 function request(body) {
   const req = Readable.from([JSON.stringify(body)]);
