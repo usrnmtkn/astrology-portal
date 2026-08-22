@@ -190,23 +190,13 @@ for (const [, context] of examples) {
   assert.doesNotMatch(text, /\b(structural context|geometry confidence|warning codes?|source IDs?|source aspect|ranking reason|display priority|sourceAspectIds|baseDisplayPriority|structuralContext)\b/i);
 }
 
-const coverageComponent = read("apps/admin/src/AspectPatternCoverage.tsx");
-const coverageEndpoint = read("api/admin/aspect-pattern-copy-coverage.ts");
+const writeupsComponent = read("apps/admin/src/AspectPatternWriteups.tsx");
 const dashboard = read("apps/admin/src/GeneratedContentAdminDashboard.tsx");
-const styles = read("apps/admin/src/admin.css");
 
-assert.match(coverageComponent, /fetch\("\/api\/admin\/aspect-pattern-copy-coverage", \{ method: "GET" \}\)/);
-assert.doesNotMatch(coverageComponent, /\bmethod:\s*"(POST|PUT|PATCH|DELETE)"/);
-assert.match(coverageComponent, /Authored result/);
-assert.match(coverageComponent, /Fallback result/);
-assert.match(coverageComponent, /Changed:/);
-assert.match(coverageEndpoint, /req\.method !== "GET"/);
-assert.doesNotMatch(coverageEndpoint, /\bmethod:\s*"(POST|PUT|PATCH|DELETE)"/);
-assert.match(coverageEndpoint, /resolveAspectPatternCopy\(context, \{ authoredRecords: AUTHORED_ASPECT_PATTERN_RECORDS, useLegacyResolver: true \}\)/);
-assert.match(coverageEndpoint, /resolveAspectPatternCopy\(context, \{ authoredRecords: \[\], useLegacyResolver: true \}\)/);
+assert.match(writeupsComponent, /fetch\(`\/api\/admin\/aspect-pattern-writeups\?kind=\$\{nextKind\}`/);
+assert.match(writeupsComponent, /Authored result/);
+assert.match(writeupsComponent, /Approved fallback/);
 assert.match(dashboard, /aspectPatternCoverage: "content\/aspect-patterns"/);
-assert.match(dashboard, /AspectPatternCoverage/);
-assert.match(styles, /aspect-coverage-page/);
-assert.match(styles, /aspect-coverage-copy-compare/);
+assert.match(dashboard, /AspectPatternWriteups/);
 
-console.log("Aspect-pattern authored copy and coverage tests passed.");
+console.log("Aspect-pattern authored copy and admin workspace tests passed.");
