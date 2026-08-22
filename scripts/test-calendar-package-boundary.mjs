@@ -29,9 +29,11 @@ assert.equal(
 );
 assert.doesNotMatch(weeklyMoon.body, /—/u);
 
-const phase = renderer.renderCalendarPhase({ phase: "waxing-gibbous", sign: "scorpio" });
-assert.equal(phase.headline, "Waxing Gibbous Moon in Scorpio");
-assert.equal(phase.tagline, "The Refinement");
+assert.throws(
+  () => renderer.renderCalendarPhase({ phase: "waxing-gibbous", sign: "scorpio" }),
+  /violates the collective register/u,
+  "Second-person weekly Moon continuity copy must not cross into the collective phase slot."
+);
 
 const calendarSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/calendar/LunarCalendar.tsx"),

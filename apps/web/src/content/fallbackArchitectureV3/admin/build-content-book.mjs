@@ -48,11 +48,11 @@ const EXAMPLES = {
   "Natal: planet meanings": para(renderNatalPlacement({ planet: "chiron", sign: "scorpio", house: 8, voice: "you" }, O)),
   "Natal: planet in sign": para(renderNatalPlacement({ planet: "venus", sign: "aries", voice: "you" }, O)),
   "Natal: angles (Rising, MC, DC, IC)": para(renderNatalAngle({ angle: "ascendant", sign: "gemini", voice: "you" }, O)),
-  "Natal: aspects": para(renderNatalAspect({ planetA: "moon", planetB: "saturn", aspect: "square", voice: "you" }, O)),
+  "Natal: aspects": para(renderNatalAspect({ planetA: "sun", planetB: "moon", aspect: "square", voice: "you" }, O)),
   "Natal: empty houses": para(renderNatalEmptyHouse({ house: 8, sign: "pisces", rulerSign: "capricorn", rulerHouse: 6, voice: "Sofia" }, O)),
   "Profection years": para(renderProfectionYear({ house: 6, sign: "virgo", voice: "you" }, O)),
   "Transits: effect lines + variants": para(renderTransitAspect({ transiting: "saturn", natal: "mercury", aspect: "square", window: "Until November 13" })),
-  "Synastry + compatibility": para(renderSynastryAspect({ planetA: "moon", planetB: "mercury", aspect: "trine", otherName: "Sofia" })),
+  "Synastry + compatibility": para(renderSynastryAspect({ planetA: "moon", planetB: "mercury", aspect: "conjunction", otherName: "Sofia" })),
   "Connection transits (bonds)": para(renderBondTransit({ transiting: "jupiter", aspect: "trine", endpointPlanet: "mercury", endpointOwner: "friend", activatedPlanets: ["moon"], otherName: "Jose", window: "This month" })),
   "Sky page: reviewed aspect phrasebook": para(renderSkyAspectCard({ a: "venus", b: "saturn", aspect: "square", aSign: "aries", bSign: "cancer" })),
   "Sky page: placements + articles": para(renderSkyPlacement({

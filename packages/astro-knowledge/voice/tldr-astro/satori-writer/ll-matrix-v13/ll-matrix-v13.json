@@ -1248,10 +1248,12 @@
    "sheet": "PlacementMeanings",
    "key": "sun|9th house",
    "copy": "Sun in the 9th house wants a worldview large enough to inhabit. You travel, study, learn languages, pursue higher education, argue philosophy, publish, or chase a truth that makes the rest of life more coherent. Principles can become central to identity.\n\nThe blind spot appears when one form of proof becomes so important that every other way of knowing is dismissed before it has been considered. You are strongest when conviction keeps expanding through experience. A philosophy has more value after it has survived contact with a larger world.",
-   "governance": "assistant-clarity-first-authorial-audit-ll-v12-ready-for-author-approval",
-   "ownerApproved": false,
+   "governance": "owner-approved-clarity-fix-ll-v12",
+   "ownerApproved": true,
    "planet": "sun",
-   "position": "9th house"
+   "position": "9th house",
+   "approvalRecord": "packages/astro-knowledge/review/ll-sun-9th-house-owner-approval-2026-08-17.json",
+   "approvedAt": "2026-08-17"
   },
   {
    "sheet": "PlacementMeanings",

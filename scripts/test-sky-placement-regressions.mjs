@@ -828,7 +828,11 @@ const fillOwnerFallback = (value, facts) => value.replace(/\{\{([\w.]+)\}\}/gu, 
     priorSignEntryDate: "July 26",
     priorSignExitDate: "August 24",
     previousResidencyEntryDate: "September 9",
-    previousResidencyExitDate: "October 10"
+    previousResidencyExitDate: "October 10",
+    priorSignEntryDateWithYear: "July 26, 2027",
+    priorSignExitDateWithYear: "August 24, 2028",
+    previousResidencyEntryDateWithYear: "September 9, 2016",
+    previousResidencyExitDateWithYear: "October 10, 2017"
   };
   return renderedDates[key] ?? facts[key] ?? `{{${key}}}`;
 });
@@ -836,6 +840,7 @@ const fillOwnerFallback = (value, facts) => value.replace(/\{\{([\w.]+)\}\}/gu, 
 for (const row of skyPlacementOwnerApprovedFallbacksV1.rows.filter((candidate) => (
   candidate.render_policy === "sky-placement-continuous-v2"
   && candidate.contentKey !== "fallback-hook/sky-sign-copy/saturn/capricorn"
+  && candidate.contentKey !== "fallback-hook/sky-sign-copy/sun/virgo"
 ))) {
   const [, , planet, sign] = row.contentKey.split("/");
   const facts = {
@@ -862,6 +867,12 @@ for (const row of skyPlacementOwnerApprovedFallbacksV1.rows.filter((candidate) =
   );
   assert.doesNotMatch(rendered.body, /\{\{/u);
 }
+
+assert.throws(
+  () => renderer.renderSkyPlacement({ planet: "sun", sign: "virgo", ...ownerFallbackDateFacts }),
+  /SOURCE_GAP: continuous sky placement sign copy sun\/virgo/u,
+  "The known Sun in Virgo contract failure must stay quarantined until replacement prose is owner-approved."
+);
 
 const recoveredJupiterScorpio = renderer.renderSkyPlacement({
   planet: "jupiter",
