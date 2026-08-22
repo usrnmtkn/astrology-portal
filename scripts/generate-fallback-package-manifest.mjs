@@ -165,6 +165,7 @@ function skyPlacementHouseTemplateReaderRows() {
   return source.rows.map((row) => ({
     contentKey: row.contentKey,
     content_role: row.content_role,
+    grammar_frame: row.grammar_frame,
     body_you: row.body_you,
     review_status: row.review_status
   }));
