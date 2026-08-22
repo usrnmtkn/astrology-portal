@@ -2919,13 +2919,14 @@ test.describe("client-facing user flow case studies", () => {
 
     await seedClientState(page, {
       profile: true,
+      preloadProfileNatalSky: true,
       now: "2026-07-29T16:00:00.000Z"
     });
     await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
 
     const personalizedSection = page.getByRole("region", { name: "Where it lands for you" });
     await expect(personalizedSection).toBeVisible();
-    await expect(personalizedSection).toContainText("3rd house");
+    await expect(personalizedSection).toContainText("5th house");
     await expect(page.getByRole("heading", { level: 2, name: "Where it lands for you" })).toBeVisible();
     await expectSemanticArticleHeadingOrder(page, "Personalized Sky placement article");
     await expect(page.getByRole("region", { name: "Horoscopes by rising sign" })).toHaveCount(0);
@@ -2997,7 +2998,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(personalizedSection).toBeVisible();
     await expect(
       personalizedSection.getByRole("heading", { level: 3, name: "Aspects to the natal chart" })
-    ).toBeVisible({ timeout: 60_000 });
+    ).toBeVisible({ timeout: 20_000 });
     await expect(personalizedSection.getByRole("heading", { level: 4 }).first()).toBeVisible();
     await assertNoClientErrors();
   });
