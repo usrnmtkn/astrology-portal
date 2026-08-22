@@ -7,7 +7,7 @@ process.env.SUPABASE_URL = "https://example.invalid";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role";
 
 const { default: handler } = await import("../api/admin/generated-content.ts");
-const { compileSkyArticleEdition } = await import("../apps/web/src/content/skyArticleTemplateCompiler.ts");
+const { compileSkyArticleEdition, reviseSkyArticleEdition, skyArticleEditableFields } = await import("../apps/web/src/content/skyArticleTemplateCompiler.ts");
 // The handler loads local development configuration during import. Reassert
 // the fixture secret afterward so a developer's .env.local cannot change this
 // test's authorization contract.
@@ -186,4 +186,98 @@ assert.equal(changedEditionTldr.status, 500);
 assert.equal(changedEditionTldr.patches.length, 0);
 assert.match(changedEditionTldr.payload.error, /no longer matches its compiled record/u);
 
-console.log("Sky owner review action checks passed: cards and exact compiled article editions use separate atomic approval gates.");
+const revisedFields = skyArticleEditableFields(compiledEdition);
+revisedFields.tldr = "Owner revised the explicit article TL;DR.";
+revisedFields.housePassages[3].body = "Owner revised the fourth-house passage.";
+const revisedEdition = await reviseSkyArticleEdition(compiledEdition, revisedFields);
+const liveEditionRow = {
+  ...editionRow,
+  status: "LIVE",
+  lane: "serving",
+  review_state: null,
+  source_snapshot: approvedEdition.patches[0].source_snapshot
+};
+
+async function invokeRevision(body, rowsById) {
+  const writes = [];
+  globalThis.fetch = async (url, options = {}) => {
+    if (!options.method) {
+      const id = new URL(url).searchParams.get("id")?.replace(/^eq\./u, "");
+      return new Response(JSON.stringify(id && rowsById[id] ? [rowsById[id]] : []), { status: 200 });
+    }
+    const write = JSON.parse(options.body);
+    writes.push({ method: options.method, url, body: write });
+    if (options.method === "POST") {
+      return new Response(JSON.stringify([{ id: "revision-row", ...write }]), { status: 200 });
+    }
+    if (options.method === "PATCH") {
+      const id = new URL(url).searchParams.get("id")?.replace(/^eq\./u, "");
+      return new Response(JSON.stringify([{ ...(rowsById[id] ?? {}), ...write }]), { status: 200 });
+    }
+    throw new Error(`Unexpected fetch method ${options.method}`);
+  };
+  const { res, completed } = responseResult();
+  await handler(request(body), res);
+  return { ...await completed, writes };
+}
+
+const savedRevision = await invokeRevision({
+  id: "sky-row",
+  ownerAction: "save-sky-article-edition-revision",
+  sections: { skyArticleEdition: revisedEdition }
+}, { "sky-row": liveEditionRow });
+assert.equal(savedRevision.status, 200);
+assert.equal(savedRevision.writes.length, 1);
+assert.equal(savedRevision.writes[0].method, "POST", "Editing LIVE copy must create a separate non-serving revision row.");
+assert.equal(savedRevision.writes[0].body.status, "DRAFT");
+assert.equal(savedRevision.writes[0].body.lane, "reference");
+assert.equal(savedRevision.writes[0].body.content_key, "sky-article-revision/pluto/aquarius/2024");
+assert.deepEqual(
+  savedRevision.writes[0].body.source_snapshot.changedFields.map((field) => field.fieldId),
+  ["tldr", "house:4"]
+);
+assert.equal(liveEditionRow.summary, compiledEdition.tldr, "Autosave must leave the LIVE row byte-unchanged.");
+
+const revisionRow = {
+  ...liveEditionRow,
+  id: "revision-row",
+  content_key: "sky-article-revision/pluto/aquarius/2024",
+  event_type: "sky-article-edition-revision",
+  status: "DRAFT",
+  lane: "reference",
+  review_state: "owner-review-required",
+  headline: revisedEdition.headline,
+  summary: revisedEdition.tldr,
+  body: revisedEdition.body,
+  sections: {
+    skyArticleEdition: revisedEdition,
+    skyArticleRevisionBase: compiledEdition
+  },
+  source_snapshot: savedRevision.writes[0].body.source_snapshot
+};
+const publishedRevision = await invokeRevision({
+  id: "revision-row",
+  ownerAction: "publish-sky-article-edition-revision"
+}, { "revision-row": revisionRow, "sky-row": liveEditionRow });
+assert.equal(publishedRevision.status, 200);
+assert.equal(publishedRevision.writes.length, 2);
+assert.equal(publishedRevision.writes[0].method, "PATCH");
+assert.equal(publishedRevision.writes[0].body.status, "LIVE");
+assert.equal(publishedRevision.writes[0].body.summary, revisedEdition.tldr);
+assert.equal(publishedRevision.writes[0].body.source_snapshot.ownerApproval.compiledHash, revisedEdition.compiledHash);
+assert.equal(publishedRevision.writes[0].body.source_snapshot.skyArticleRevisionHistory[0].edition.compiledHash, compiledEdition.compiledHash);
+assert.equal(publishedRevision.writes[1].body.status, "ARCHIVED");
+
+const staleLiveRow = {
+  ...liveEditionRow,
+  sections: { skyArticleEdition: { ...compiledEdition, compiledHash: "newer-live-hash" } }
+};
+const staleRevision = await invokeRevision({
+  id: "revision-row",
+  ownerAction: "publish-sky-article-edition-revision"
+}, { "revision-row": revisionRow, "sky-row": staleLiveRow });
+assert.equal(staleRevision.status, 500);
+assert.equal(staleRevision.writes.length, 0);
+assert.match(staleRevision.payload.error, /changed after this draft began/u);
+
+console.log("Sky owner review action checks passed: cards, complete editions, and field revisions use separate atomic approval gates.");
