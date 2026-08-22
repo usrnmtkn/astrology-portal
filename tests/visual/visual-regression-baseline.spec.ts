@@ -23,13 +23,6 @@ const screenshotOptions = {
   timeout: 15_000
 };
 
-const adminHomeScreenshotOptions = {
-  ...screenshotOptions,
-  // Chromium's bundled UI font wraps this dense admin shell differently on macOS and Linux.
-  // Keep the redesigned landing-page comparison strict enough to catch structural regressions.
-  maxDiffPixelRatio: 0.05
-};
-
 async function freezeTime(page: Page) {
   await page.addInitScript(({ fixedNow }) => {
     const RealDate = Date;
@@ -291,7 +284,7 @@ test.describe("visual regression baseline", () => {
         timeout: routeReadyTimeoutMs
       });
     });
-    await expect(page).toHaveScreenshot("admin-home-mobile.png", adminHomeScreenshotOptions);
+    await expect(page).toHaveScreenshot("admin-home-mobile.png", screenshotOptions);
 
     await page.setViewportSize({ width: 1440, height: 1000 });
     await expectRouteLoadsWithin(page, "/admin/content", "admin home desktop", async () => {
@@ -299,7 +292,7 @@ test.describe("visual regression baseline", () => {
         timeout: routeReadyTimeoutMs
       });
     });
-    await expect(page).toHaveScreenshot("admin-home-desktop.png", adminHomeScreenshotOptions);
+    await expect(page).toHaveScreenshot("admin-home-desktop.png", screenshotOptions);
 
     await expectInteractionLoadsWithin(
       "admin content library desktop",
