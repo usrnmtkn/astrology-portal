@@ -13,6 +13,7 @@ type FriendsContentLoadingState = {
   mode: FriendsContentLoadingMode;
   friendNatalContentRequested: boolean;
   friendRelationshipContentRequests: ReadonlySet<Exclude<FriendProfileTab, "natal">>;
+  skyPlacementPersonalizationRequested?: boolean;
 };
 
 export function shouldLoadEmptyHouseFallbackContent({
@@ -31,8 +32,10 @@ export function shouldHydrateFallbackDashboardContent(mode: FriendsContentLoadin
 export function shouldLoadDeferredFallbackContent({
   mode,
   friendNatalContentRequested,
-  friendRelationshipContentRequests
+  friendRelationshipContentRequests,
+  skyPlacementPersonalizationRequested = false
 }: FriendsContentLoadingState) {
+  if (skyPlacementPersonalizationRequested) return true;
   if (mode === "guest" || mode === "member") return false;
   if (mode !== "friends") return true;
 

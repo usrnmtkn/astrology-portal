@@ -60,7 +60,8 @@ await build({
       export {
         fallbackRendererV3,
         isDeferredFallbackArchitectureV3BundleLoaded,
-        loadDeferredFallbackArchitectureV3Bundle
+        loadDeferredFallbackArchitectureV3Bundle,
+        transitSynastryFallbackRendererV3
       } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
       export { friendDetailHasReaderFacingContent } from "./apps/web/src/features/friends/friendDetailAvailability.ts";
       export { shouldLoadDeferredFallbackContent } from "./apps/web/src/features/friends/friendsContentLoading.ts";
@@ -78,6 +79,23 @@ assert.throws(
   "Friends natal placement must be unavailable before its deferred source bundle loads."
 );
 assert.equal(await runtime.loadDeferredFallbackArchitectureV3Bundle(), true);
+
+const moonSextileSun = runtime.transitSynastryFallbackRendererV3.renderTransitAspect({
+  aspect: "sextile",
+  natal: "sun",
+  sign: "sagittarius",
+  transiting: "moon",
+  voice: "you"
+});
+assert.equal(
+  moonSextileSun.contentKey,
+  "authored/transit-aspect/moon/sun/soft",
+  "Moon sextile Sun must resolve the approved soft Moon-Sun interpretation after the deferred bundle loads."
+);
+assert.ok(
+  moonSextileSun.body.trim().length >= 100,
+  "Moon sextile Sun must include substantial approved reader writing, not only its calculated title."
+);
 
 const placement = runtime.fallbackRendererV3.renderNatalPlacement(safePlacement);
 assert.ok(placement.body.trim(), "The reported Sun in Aquarius in the 7th house Friend placement must render a non-empty body after the bundle loads.");
@@ -118,4 +136,4 @@ assert.doesNotMatch(
   "Every Friends detail opener must pass through the shared non-empty guard."
 );
 
-console.log("Friends natal fallback runtime: all 720 vocabulary rows resolve in both voices; reported Sun placement and natal aspect bodies render after deferred load; all detail opens are guarded.");
+console.log("Friends natal fallback runtime: all 720 vocabulary rows resolve in both voices; Moon sextile Sun, reported Sun placement, and natal aspect bodies render after deferred load; all detail opens are guarded.");

@@ -139,6 +139,19 @@ assert.equal(
   true,
   "Friends Natal must retain the Natal/Transit fallback partition."
 );
+assert.equal(
+  shouldLoadDeferredFallbackContent(loadingState([], {
+    mode: "member",
+    skyPlacementPersonalizationRequested: true
+  })),
+  true,
+  "A signed-in personalized Sky placement must load its approved transit-aspect writing."
+);
+assert.equal(
+  shouldLoadDeferredFallbackContent(loadingState([], { mode: "member" })),
+  false,
+  "The signed-in Sky landing page must not load transit-aspect writing before a personalized placement opens."
+);
 
 for (const tab of ["compatibility", "transits", "synastry", "composite"]) {
   assert.equal(
